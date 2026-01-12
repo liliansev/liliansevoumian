@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Landing page for Lilian Sevoumian, a No-Code freelance expert specializing in Make, n8n, and Airtable automation. Built with Astro.
+Landing page for Lilian Sevoumian, a No-Code freelance expert specializing in Make, n8n, and Airtable automation. Built with Astro 5.x.
 
 ## Commands
 
@@ -12,39 +12,49 @@ Landing page for Lilian Sevoumian, a No-Code freelance expert specializing in Ma
 pnpm dev        # Start dev server at localhost:4321
 pnpm build      # Build production site to ./dist/
 pnpm preview    # Preview production build locally
-pnpm astro add  # Add integrations (e.g., pnpm astro add tailwind)
 ```
 
 ## Tech Stack
 
-- **Framework**: Astro 5.x (minimal template)
-- **Styling**: Tailwind CSS (to be integrated)
-- **Icons**: Lucide (via Iconify CDN in reference design)
-- **Fonts**: Geist, Plus Jakarta Sans (Google Fonts)
+- **Framework**: Astro 5.x with static output
+- **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
+- **Icons**: astro-icon with Lucide and Simple Icons
+- **Fonts**: Geist, Geist Mono (Google Fonts)
 - **Language**: French (fr)
+- **Testing**: Playwright (E2E tests)
 
 ## Architecture
 
 ```
 src/
-└── pages/
-    └── index.astro    # Main landing page
+├── components/         # Astro components for each section
+│   ├── Navigation.astro
+│   ├── Hero.astro
+│   ├── Stats.astro
+│   ├── Expertise.astro
+│   ├── ToolsCarousel.astro
+│   ├── Quote.astro
+│   ├── Methodology.astro
+│   ├── Testimonials.astro
+│   ├── Timeline.astro
+│   ├── Pricing.astro
+│   ├── FAQ.astro
+│   ├── CTA.astro
+│   ├── Footer.astro
+│   ├── ScrollingLogos.astro
+│   └── ui/             # Reusable UI components
+├── layouts/
+│   └── Layout.astro    # Main layout with SEO/meta
+├── pages/
+│   └── index.astro     # Single page landing
+└── styles/
+    └── global.css      # Tailwind imports + custom CSS
 public/
-└── favicon.svg
-aurabuild.html         # Design reference/mockup (HTML export to convert)
+├── favicon.svg
+├── logo_liliansevoumian.svg
+├── og-image.svg
+└── robots.txt
 ```
-
-## Design Reference
-
-The `aurabuild.html` file contains the complete design mockup that should be converted to Astro components. Key sections:
-- Navigation (fixed header with smooth scroll links)
-- Hero section with availability badge and CTA
-- Stats section (experience, workflows, expertise)
-- Expertise cards (n8n/Make, Airtable, Integration)
-- Process/methodology timeline
-- Career timeline section
-- Contact CTA
-- Footer with social links
 
 ## Design System
 
@@ -55,17 +65,16 @@ Colors (zinc-based palette):
 - Text secondary: `zinc-500`
 - Text muted: `zinc-400`
 - Borders: `zinc-200`
-- Accents: `indigo-400`, `purple-200/50`
 
 Typography:
-- Monospace base: `font-mono`
-- Headings: `tracking-tight`, `font-semibold`
-- Body: `font-light` for larger text
+- Sans: Geist (`font-sans`)
+- Mono: Geist Mono (`font-mono`)
 
 ## Key Implementation Notes
 
 - All text content is in French
+- Single-page landing with smooth scroll navigation
+- JSON-LD structured data for SEO (Person + ProfessionalService schemas)
 - Mobile-first responsive design with `md:` and `lg:` breakpoints
-- Smooth scroll behavior (`scroll-smooth` on html)
-- Hover animations on cards and buttons
-- Custom scrollbar styling for webkit browsers
+- Custom scrollbar styling and infinite scroll animations in global.css
+- Site URL: https://liliansevoumian.fr
