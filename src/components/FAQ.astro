@@ -1,0 +1,73 @@
+---
+const faqs = [
+  {
+    question: "Qu'est-ce que l'automatisation No-Code ?",
+    answer: "L'automatisation No-Code permet de connecter vos outils et d'automatiser vos processus métier sans écrire de code. Grâce à des plateformes comme Make ou n8n, vous pouvez créer des workflows qui font le travail répétitif à votre place : synchronisation de données, envoi d'emails, création de documents, notifications, etc."
+  },
+  {
+    question: "Quelle est la différence entre Make et n8n ?",
+    answer: "Make (anciennement Integromat) est une plateforme cloud, intuitive et très visuelle, idéale pour des automatisations business classiques. n8n est open-source, auto-hébergeable, et particulièrement puissant pour l'intégration d'IA et d'agents intelligents. Je recommande Make pour la simplicité et n8n pour les projets techniques ou nécessitant de l'IA."
+  },
+  {
+    question: "Combien coûte un projet d'automatisation ?",
+    answer: "Cela dépend de la complexité. Un coaching d'1h pour débloquer un problème coûte 200€. Un audit complet de vos processus coûte 500€. Pour un projet sur-mesure (construction complète d'automatisations), comptez à partir de 1 500€, le périmètre et le tarif étant définis ensemble après un premier échange."
+  },
+  {
+    question: "Combien de temps pour automatiser un process ?",
+    answer: "Un processus simple (connexion de 2-3 outils) peut être automatisé en quelques heures. Un projet plus complexe (ERP, CRM automatisé, workflows multi-étapes) prend généralement 1 à 4 semaines. Je travaille en sprints courts avec des livrables réguliers, pas de tunnel de 3 mois sans nouvelles."
+  }
+];
+
+// FAQ Schema for SEO
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+};
+---
+
+<section id="faq" class="py-24 px-6">
+  <div class="max-w-3xl mx-auto">
+    <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-4 text-center">
+      Questions fréquentes
+    </h2>
+    <p class="text-zinc-500 font-light text-lg text-center mb-12">
+      Les réponses aux questions que vous vous posez sûrement.
+    </p>
+
+    <div class="space-y-4">
+      {faqs.map((faq, index) => (
+        <details
+          class="group bg-white border border-zinc-200 rounded-lg overflow-hidden"
+          data-faq-item
+        >
+          <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer list-none hover:bg-zinc-50 transition-colors">
+            <h3 class="text-base font-medium text-zinc-900 text-left">
+              {faq.question}
+            </h3>
+            <span class="shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="px-5 pb-5 pt-0">
+            <p class="text-zinc-500 text-sm leading-relaxed">
+              {faq.answer}
+            </p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</section>

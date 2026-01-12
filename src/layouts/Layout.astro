@@ -10,6 +10,40 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.svg', Astro.site);
+
+// JSON-LD Structured Data
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Lilian Sevoumian",
+  "url": "https://liliansevoumian.fr",
+  "image": ogImage.toString(),
+  "jobTitle": "Expert Automatisation & No-Code",
+  "description": "Expert Make, n8n et Airtable avec 5 ans d'expérience. Certification Make niveau 5, 1er en France, top 5 mondial.",
+  "knowsAbout": ["Make", "n8n", "Airtable", "Automatisation", "No-Code", "Workflow Automation"],
+  "sameAs": [
+    "https://www.linkedin.com/in/liliansevoumian/",
+    "https://github.com/liliansev",
+    "https://www.youtube.com/@lilian.sevoumian"
+  ]
+};
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Lilian Sevoumian - Automatisation No-Code",
+  "description": "Services d'automatisation et de conseil No-Code. Expertise Make, n8n, Airtable. Formations et projets sur-mesure.",
+  "url": "https://liliansevoumian.fr",
+  "image": ogImage.toString(),
+  "priceRange": "€€",
+  "areaServed": "France",
+  "serviceType": ["Automatisation", "Conseil No-Code", "Formation Make", "Formation n8n"],
+  "provider": {
+    "@type": "Person",
+    "name": "Lilian Sevoumian"
+  }
+};
 ---
 
 <!doctype html>
@@ -31,11 +65,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content="Lilian Sevoumian" />
     <meta property="og:locale" content="fr_FR" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Lilian Sevoumian - Expert Automatisation & No-Code" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:creator" content="@liliansevoumian" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
