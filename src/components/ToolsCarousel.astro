@@ -1,0 +1,191 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// Ligne 1 - Automatisation & No-Code (17 outils)
+const row1 = [
+  { name: "Make", icon: "simple-icons:make" },
+  { name: "n8n", icon: "simple-icons:n8n" },
+  { name: "Zapier", icon: "simple-icons:zapier" },
+  { name: "Airtable", icon: "simple-icons:airtable" },
+  { name: "Notion", icon: "simple-icons:notion" },
+  { name: "ClickUp", icon: "simple-icons:clickup" },
+  { name: "Asana", icon: "simple-icons:asana" },
+  { name: "Trello", icon: "simple-icons:trello" },
+  { name: "Jira", icon: "simple-icons:jira" },
+  { name: "Supabase", icon: "simple-icons:supabase" },
+  { name: "Firebase", icon: "simple-icons:firebase" },
+  { name: "Webflow", icon: "simple-icons:webflow" },
+  { name: "Framer", icon: "simple-icons:framer" },
+  { name: "Figma", icon: "simple-icons:figma" },
+  { name: "Retool", icon: "simple-icons:retool" },
+  { name: "Todoist", icon: "simple-icons:todoist" },
+  { name: "Miro", icon: "simple-icons:miro" },
+];
+
+// Ligne 2 - Communication & CRM (17 outils)
+const row2 = [
+  { name: "Slack", icon: "simple-icons:slack" },
+  { name: "Discord", icon: "simple-icons:discord" },
+  { name: "Gmail", icon: "simple-icons:gmail" },
+  { name: "HubSpot", icon: "simple-icons:hubspot" },
+  { name: "Salesforce", icon: "simple-icons:salesforce" },
+  { name: "Zendesk", icon: "simple-icons:zendesk" },
+  { name: "Intercom", icon: "simple-icons:intercom" },
+  { name: "Typeform", icon: "simple-icons:typeform" },
+  { name: "Calendly", icon: "simple-icons:calendly" },
+  { name: "Zoom", icon: "simple-icons:zoom" },
+  { name: "Mailchimp", icon: "simple-icons:mailchimp" },
+  { name: "Telegram", icon: "simple-icons:telegram" },
+  { name: "WhatsApp", icon: "simple-icons:whatsapp" },
+  { name: "Messenger", icon: "simple-icons:messenger" },
+  { name: "Google Calendar", icon: "simple-icons:googlecalendar" },
+  { name: "LinkedIn", icon: "simple-icons:linkedin" },
+  { name: "Brevo", icon: "simple-icons:brevo" },
+];
+
+// Ligne 3 - Paiement, Cloud & AI (17 outils)
+const row3 = [
+  { name: "Stripe", icon: "simple-icons:stripe" },
+  { name: "PayPal", icon: "simple-icons:paypal" },
+  { name: "Shopify", icon: "simple-icons:shopify" },
+  { name: "WooCommerce", icon: "simple-icons:woocommerce" },
+  { name: "Google Sheets", icon: "simple-icons:googlesheets" },
+  { name: "Google Drive", icon: "simple-icons:googledrive" },
+  { name: "Dropbox", icon: "simple-icons:dropbox" },
+  { name: "AWS", icon: "simple-icons:amazonaws" },
+  { name: "OpenAI", icon: "simple-icons:openai" },
+  { name: "Anthropic", icon: "simple-icons:anthropic" },
+  { name: "Vercel", icon: "simple-icons:vercel" },
+  { name: "GitHub", icon: "simple-icons:github" },
+  { name: "Twilio", icon: "simple-icons:twilio" },
+  { name: "Linear", icon: "simple-icons:linear" },
+  { name: "Loom", icon: "simple-icons:loom" },
+  { name: "Notion", icon: "simple-icons:notion" },
+  { name: "Bitly", icon: "simple-icons:bitly" },
+];
+
+const gapSize = 48;
+---
+
+<section class="py-12 bg-white border-y border-zinc-200 overflow-hidden">
+  <p class="text-center text-sm uppercase tracking-wider text-zinc-400 mb-8 px-6">
+    Je peux connecter vos outils...
+  </p>
+
+  <div class="space-y-4">
+    <!-- Ligne 1 - Gauche -->
+    <div class="relative">
+      <div class="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+      <div class="flex overflow-hidden">
+        <div class="flex items-center shrink-0 animate-scroll-left" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
+          {row1.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-700 transition-colors whitespace-nowrap">
+              <Icon name={tool.icon} class="w-6 h-6" />
+              <span class="text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+        <div class="flex items-center shrink-0 animate-scroll-left" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
+          {row1.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-700 transition-colors whitespace-nowrap">
+              <Icon name={tool.icon} class="w-6 h-6" />
+              <span class="text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Ligne 2 - Droite (inverse) -->
+    <div class="relative">
+      <div class="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+      <div class="flex overflow-hidden">
+        <div class="flex items-center shrink-0 animate-scroll-right" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
+          {row2.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-700 transition-colors whitespace-nowrap">
+              <Icon name={tool.icon} class="w-6 h-6" />
+              <span class="text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+        <div class="flex items-center shrink-0 animate-scroll-right" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
+          {row2.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-700 transition-colors whitespace-nowrap">
+              <Icon name={tool.icon} class="w-6 h-6" />
+              <span class="text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Ligne 3 - Gauche -->
+    <div class="relative">
+      <div class="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+      <div class="flex overflow-hidden">
+        <div class="flex items-center shrink-0 animate-scroll-left-slow" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
+          {row3.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-700 transition-colors whitespace-nowrap">
+              <Icon name={tool.icon} class="w-6 h-6" />
+              <span class="text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+        <div class="flex items-center shrink-0 animate-scroll-left-slow" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
+          {row3.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-700 transition-colors whitespace-nowrap">
+              <Icon name={tool.icon} class="w-6 h-6" />
+              <span class="text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes scroll-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .animate-scroll-left {
+    animation: scroll-left 35s linear infinite;
+  }
+
+  .animate-scroll-right {
+    animation: scroll-right 40s linear infinite;
+  }
+
+  .animate-scroll-left-slow {
+    animation: scroll-left 45s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-scroll-left,
+    .animate-scroll-right,
+    .animate-scroll-left-slow {
+      animation: none;
+    }
+  }
+</style>

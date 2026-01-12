@@ -35,6 +35,8 @@ const timeline = [
     description: "Premiers clients : Qonto, KlaK, WeTechCare, Familytrip."
   }
 ];
+
+const totalItems = timeline.length;
 ---
 
 <section id="parcours" class="overflow-hidden z-10 bg-white border-y border-zinc-200 py-24 relative">
@@ -55,7 +57,10 @@ const timeline = [
         <div class="md:grid md:grid-cols-[120px_1fr] md:gap-8 relative group">
           <!-- Year (Desktop) -->
           <div class="hidden md:flex flex-col items-end pt-1 pr-4">
-            <span class={`text-sm font-semibold ${index === 0 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+            <span
+              class={`text-sm font-semibold timeline-year ${index === 0 ? 'is-current' : 'is-past'}`}
+              style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
+            >
               {item.year}
             </span>
             {item.badge && (
@@ -64,16 +69,25 @@ const timeline = [
           </div>
 
           <!-- Timeline Dot (Desktop) -->
-          <div class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full ring-4 ring-white ${index === 0 ? 'bg-zinc-900' : 'bg-zinc-300 group-hover:bg-zinc-400'} transition-colors`}></div>
+          <div
+            class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
+            style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
+          ></div>
 
           <!-- Timeline Dot (Mobile) -->
-          <div class={`md:hidden absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full ring-4 ring-white ${index === 0 ? 'bg-zinc-900' : 'bg-zinc-300'}`}></div>
+          <div
+            class={`md:hidden absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
+            style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
+          ></div>
 
           <!-- Content -->
           <div class={`pb-4 md:pb-12 md:border-l md:border-zinc-200 md:pl-12 ${index === timeline.length - 1 ? 'md:border-transparent pb-0' : ''}`}>
             <!-- Year (Mobile) -->
             <div class="md:hidden flex items-center gap-2 mb-2 ml-2">
-              <span class={`text-sm font-semibold ${index === 0 ? 'text-zinc-900' : 'text-zinc-400'}`}>
+              <span
+                class={`text-sm font-semibold timeline-year ${index === 0 ? 'is-current' : 'is-past'}`}
+                style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
+              >
                 {item.year}
               </span>
               {item.badge && (
@@ -95,3 +109,98 @@ const timeline = [
     </div>
   </div>
 </section>
+
+<style>
+  /* Animation pour les années passées - fade in noir, fade out vers gris */
+  @keyframes pulse-dot {
+    0% {
+      background-color: #d4d4d8;
+    }
+    30% {
+      background-color: #18181b;
+    }
+    70% {
+      background-color: #18181b;
+    }
+    100% {
+      background-color: #d4d4d8;
+    }
+  }
+
+  @keyframes pulse-year {
+    0% {
+      color: #a1a1aa;
+    }
+    30% {
+      color: #18181b;
+    }
+    70% {
+      color: #18181b;
+    }
+    100% {
+      color: #a1a1aa;
+    }
+  }
+
+  /* Animation pour 2026 - fade in vers noir et reste */
+  @keyframes arrive-dot {
+    0% {
+      background-color: #d4d4d8;
+    }
+    100% {
+      background-color: #18181b;
+    }
+  }
+
+  @keyframes arrive-year {
+    0% {
+      color: #a1a1aa;
+    }
+    100% {
+      color: #18181b;
+    }
+  }
+
+  .timeline-dot {
+    background-color: #d4d4d8;
+  }
+
+  .timeline-dot.is-past {
+    animation: pulse-dot 0.8s ease-in-out forwards;
+    animation-delay: var(--delay);
+  }
+
+  .timeline-dot.is-current {
+    animation: arrive-dot 0.5s ease-out forwards;
+    animation-delay: var(--delay);
+  }
+
+  .timeline-year {
+    color: #a1a1aa;
+  }
+
+  .timeline-year.is-past {
+    animation: pulse-year 0.8s ease-in-out forwards;
+    animation-delay: var(--delay);
+  }
+
+  .timeline-year.is-current {
+    animation: arrive-year 0.5s ease-out forwards;
+    animation-delay: var(--delay);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-dot.is-past,
+    .timeline-dot.is-current,
+    .timeline-year.is-past,
+    .timeline-year.is-current {
+      animation: none;
+    }
+    .timeline-dot.is-current {
+      background-color: #18181b;
+    }
+    .timeline-year.is-current {
+      color: #18181b;
+    }
+  }
+</style>

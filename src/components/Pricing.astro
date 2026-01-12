@@ -42,9 +42,9 @@ const plans = [
     <!-- Pricing Cards -->
     <div class="grid md:grid-cols-3 gap-6">
       {plans.map((plan) => (
-        <div class={`relative p-8 bg-white border rounded-lg transition-all ${plan.featured ? 'border-zinc-900 shadow-lg' : 'border-zinc-200 hover:border-zinc-300 hover:shadow-md'}`}>
+        <div class={`relative p-8 bg-white rounded-lg transition-all ${plan.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-200 hover:border-zinc-300 hover:shadow-md'}`}>
           {plan.featured && (
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
               Populaire
             </div>
           )}
@@ -81,3 +81,46 @@ const plans = [
     </div>
   </div>
 </section>
+
+<style>
+  .pricing-featured {
+    position: relative;
+    background: white;
+    border-radius: 0.5rem;
+  }
+
+  .pricing-featured::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    padding: 1px;
+    background: linear-gradient(
+      var(--gradient-angle, 0deg),
+      #18181b,
+      #a1a1aa,
+      #18181b
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: rotate-gradient 4s linear infinite;
+  }
+
+  @keyframes rotate-gradient {
+    0% {
+      --gradient-angle: 0deg;
+    }
+    100% {
+      --gradient-angle: 360deg;
+    }
+  }
+
+  @property --gradient-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+</style>

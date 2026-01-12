@@ -1,0 +1,147 @@
+---
+import { Image } from 'astro:assets';
+import ismailImg from '../assets/testimonials/ismail.jpeg';
+import alexisImg from '../assets/testimonials/alexis.jpeg';
+import benjaminImg from '../assets/testimonials/benjamin.png';
+import carolineImg from '../assets/testimonials/caroline.jpeg';
+import geraldImg from '../assets/testimonials/gerald.jpeg';
+
+const testimonials = [
+  {
+    quote: "Un Champion du no code d'Airtable et de Make avéré ! Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make. Il est à l'écoute, arrangeant et passionné.",
+    author: "Ismail Landoulsi",
+    role: "Co-Founder & COO",
+    company: "CasanovaParis",
+    link: "https://www.linkedin.com/in/ismail-landoulsi/",
+    image: ismailImg
+  },
+  {
+    quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian et nous avons même conçu une formation à Make ensemble. Je peux témoigner à la fois de son expertise en automatisation et de sa volonté infaillible de servir un projet.",
+    author: "Alexis Kovalenko",
+    role: "Co-fondateur",
+    company: "Contournement",
+    link: "https://www.linkedin.com/in/alexiskovalenko/",
+    image: alexisImg
+  },
+  {
+    quote: "Il a une approche très professionnelle, un large spectre de connaissances, et un bon esprit de synthèse. Tout cela fait que les projets qu'il prend en charge sont un succès. Je le recommande chaudement !",
+    author: "Benjamin Potet",
+    role: "Solution Architect",
+    company: "Customer Experience",
+    link: "https://www.linkedin.com/in/benjaminpo/",
+    image: benjaminImg
+  },
+  {
+    quote: "Lilian nous a accompagné à migrer nos automatisations de Zapier à Make en améliorant de nombreux scénarios pour plus d'efficacité.",
+    author: "Caroline Le Viet",
+    role: "Co-fondatrice",
+    company: "Edumiam",
+    link: "https://www.linkedin.com/in/carolineleviet/",
+    image: carolineImg
+  },
+  {
+    quote: "Plus qu'une prestation de service, c'est réellement un moment d'échange, de partage, et de formation que Lilian offre à travers ses interventions. On ressort grandit dans notre manière de travailler à chaque fois.",
+    author: "Gérald Durand",
+    role: "Directeur Général",
+    company: "BodyCoaching",
+    link: "https://www.linkedin.com/in/gerald-savemind/",
+    image: geraldImg
+  }
+];
+
+const fakeTestimonial = {
+  quote: "Peut-être vous, bientôt ? On en discute ?",
+  author: "Vous ?",
+  role: "Chief Très Occupé",
+  company: "Votre Entreprise",
+  link: "https://cal.com/lilian-sevoumian/prise-de-brief"
+};
+---
+
+<section class="py-24 px-6 bg-zinc-50 border-y border-zinc-200">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-4">
+        Ce qu'ils en disent
+      </h2>
+      <p class="text-zinc-500 font-light text-lg">
+        Retours de clients et collaborateurs.
+      </p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {testimonials.map((testimonial) => (
+        <a
+          href={testimonial.link}
+          target="_blank"
+          rel="noopener"
+          class="flex flex-col bg-white rounded-lg border border-zinc-200 p-6 shadow-sm hover:shadow-md hover:border-zinc-300 transition-all group h-full"
+        >
+          <!-- Quote -->
+          <blockquote class="text-zinc-600 text-sm leading-relaxed mb-6 flex-1">
+            "{testimonial.quote}"
+          </blockquote>
+
+          <!-- Author -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <Image
+                src={testimonial.image}
+                alt={testimonial.author}
+                width={40}
+                height={40}
+                class="w-10 h-10 rounded-full object-cover"
+              />
+              <div>
+                <div class="text-sm font-medium text-zinc-900">{testimonial.author}</div>
+                <div class="text-xs text-zinc-500">{testimonial.role} @ {testimonial.company}</div>
+              </div>
+            </div>
+
+            <!-- LinkedIn icon -->
+            <svg class="w-5 h-5 text-zinc-300 group-hover:text-[#0A66C2] transition-colors" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </div>
+        </a>
+      ))}
+
+      <!-- Fake testimonial - CTA card -->
+      <a
+        href={fakeTestimonial.link}
+        class="flex flex-col rounded-lg border-2 border-dashed border-zinc-300 p-6 hover:border-zinc-400 hover:bg-zinc-200 transition-all group h-full bg-zinc-100"
+      >
+        <!-- Quote -->
+        <blockquote class="text-zinc-600 text-sm leading-relaxed mb-6 flex-1 italic flex items-center justify-center text-center">
+          "{fakeTestimonial.quote}"
+        </blockquote>
+
+        <!-- Author -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-zinc-300 flex items-center justify-center text-zinc-500 group-hover:bg-zinc-400 group-hover:text-zinc-600 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <line x1="19" x2="19" y1="8" y2="14"/>
+                <line x1="22" x2="16" y1="11" y2="11"/>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-zinc-800">{fakeTestimonial.author}</div>
+              <div class="text-xs text-zinc-500">{fakeTestimonial.role} @ {fakeTestimonial.company}</div>
+            </div>
+          </div>
+
+          <!-- Arrow icon -->
+          <svg class="w-5 h-5 text-zinc-900 group-hover:translate-x-1 transition-all" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="m12 5 7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

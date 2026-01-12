@@ -33,7 +33,7 @@ const faqSchema = {
 };
 ---
 
-<section id="faq" class="py-24 px-6">
+<section id="faq" class="py-24 px-6 bg-white">
   <div class="max-w-3xl mx-auto">
     <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-4 text-center">
       Questions fréquentes
@@ -45,23 +45,26 @@ const faqSchema = {
     <div class="space-y-4">
       {faqs.map((faq, index) => (
         <details
-          class="group bg-white border border-zinc-200 rounded-lg overflow-hidden"
+          class="group bg-white border border-zinc-200 rounded-lg overflow-hidden faq-item"
           data-faq-item
+          open={index === 0}
         >
           <summary class="flex items-center justify-between gap-4 p-5 cursor-pointer list-none hover:bg-zinc-50 transition-colors">
             <h3 class="text-base font-medium text-zinc-900 text-left">
               {faq.question}
             </h3>
-            <span class="shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-200">
+            <span class="shrink-0 text-zinc-400 group-open:rotate-180 transition-transform duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m6 9 6 6 6-6"/>
               </svg>
             </span>
           </summary>
-          <div class="px-5 pb-5 pt-0">
-            <p class="text-zinc-500 text-sm leading-relaxed">
-              {faq.answer}
-            </p>
+          <div class="faq-content">
+            <div class="px-5 pb-5 pt-0">
+              <p class="text-zinc-500 text-sm leading-relaxed">
+                {faq.answer}
+              </p>
+            </div>
           </div>
         </details>
       ))}
@@ -71,3 +74,27 @@ const faqSchema = {
   <!-- FAQ Schema -->
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 </section>
+
+<style>
+  .faq-item {
+    transition: border-color 0.2s ease;
+  }
+
+  .faq-item[open] {
+    border-color: #a1a1aa;
+  }
+
+  .faq-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-out;
+  }
+
+  .faq-item[open] .faq-content {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-content > div {
+    overflow: hidden;
+  }
+</style>
