@@ -1,0 +1,61 @@
+---
+const steps = [
+  {
+    number: "01",
+    title: "Audit",
+    description: "On identifie ensemble ce qui vous fait perdre du temps. Vous repartez avec une vision claire des quick wins et des chantiers prioritaires."
+  },
+  {
+    number: "02",
+    title: "Conseil",
+    description: "Je vous recommande les bons outils selon vos besoins et votre budget. Pas de sur-engineering, juste ce qu'il vous faut."
+  },
+  {
+    number: "03",
+    title: "Architecture",
+    description: "Je conçois le système avant de le construire. Vous validez les flux et les connexions entre vos outils avant qu'on commence."
+  },
+  {
+    number: "04",
+    title: "Construction",
+    description: "Je développe, teste, ajuste. Vous voyez l'avancement en temps réel, pas de tunnel de 3 mois sans nouvelles."
+  },
+  {
+    number: "05",
+    title: "Livraison",
+    description: "Vous recevez une documentation complète, une formation pour vos équipes, et un support maintenance inclus. Vous êtes autonomes."
+  },
+  {
+    number: "06",
+    title: "Support & Maintenance",
+    description: "Vos process évoluent, vos automatisations aussi. Je reste disponible pour corriger, ajuster et faire évoluer ce qu'on a construit ensemble."
+  }
+];
+---
+
+<section id="process" class="py-24 bg-white border-y border-zinc-200 px-6">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-12 text-center">
+      Méthodologie
+    </h2>
+
+    <div class="space-y-10 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200 before:content-[''] md:before:left-[19px]">
+      {steps.map((step, index) => (
+        <div class="relative pl-16">
+          <!-- Step number -->
+          <div class={`absolute left-0 top-1 w-10 h-10 bg-white border border-zinc-200 rounded flex items-center justify-center text-sm font-semibold shadow-sm z-10 ${index === 0 ? 'text-zinc-900 border-zinc-300' : 'text-zinc-400'}`}>
+            {step.number}
+          </div>
+
+          <!-- Content -->
+          <h3 class="text-lg font-semibold text-zinc-900">
+            {step.title}
+          </h3>
+          <p class="text-zinc-500 mt-2 text-sm max-w-lg leading-relaxed">
+            {step.description}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

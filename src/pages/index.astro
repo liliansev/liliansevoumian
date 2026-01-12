@@ -1,16 +1,82 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Hero from '../components/Hero.astro';
+import ScrollingLogos from '../components/ScrollingLogos.astro';
+import Stats from '../components/Stats.astro';
+import Expertise from '../components/Expertise.astro';
+import Methodology from '../components/Methodology.astro';
+import Timeline from '../components/Timeline.astro';
+import Pricing from '../components/Pricing.astro';
+import CTA from '../components/CTA.astro';
+import Footer from '../components/Footer.astro';
 
+// Clients logos
+const clients = [
+  { text: "Qonto" },
+  { text: "Jellysmack" },
+  { text: "Edumiam" },
+  { text: "Movecool" },
+  { text: "KlaK" },
+  { text: "WeTechCare" },
+  { text: "Familytrip" },
+  { text: "Boost ton Biz" },
+  { text: "Deuxième Souffle" },
+  { text: "Reborn" }
+];
+
+// Tools logos
+const tools = [
+  { name: "Make", icon: "simple-icons:make" },
+  { name: "n8n", icon: "simple-icons:n8n" },
+  { name: "Airtable", icon: "simple-icons:airtable" },
+  { name: "Notion", icon: "simple-icons:notion" },
+  { name: "Slack", icon: "simple-icons:slack" },
+  { name: "Stripe", icon: "simple-icons:stripe" },
+  { name: "OpenAI", icon: "simple-icons:openai" },
+  { name: "Google Sheets", icon: "simple-icons:googlesheets" },
+  { name: "HubSpot", icon: "simple-icons:hubspot" },
+  { name: "Zapier", icon: "simple-icons:zapier" },
+  { name: "Webflow", icon: "simple-icons:webflow" },
+  { name: "Discord", icon: "simple-icons:discord" }
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <Navigation />
+
+  <main>
+    <Hero />
+
+    <!-- Clients carousel -->
+    <ScrollingLogos
+      items={clients}
+      title="Ils m'ont fait confiance"
+      speed={30}
+      direction="left"
+      showNames={false}
+    />
+
+    <Stats />
+
+    <!-- Tools carousel -->
+    <ScrollingLogos
+      items={tools}
+      title="Je peux connecter vos outils..."
+      speed={35}
+      direction="right"
+    />
+
+    <Expertise />
+
+    <Methodology />
+
+    <Pricing />
+
+    <Timeline />
+
+    <CTA />
+  </main>
+
+  <Footer />
+</Layout>

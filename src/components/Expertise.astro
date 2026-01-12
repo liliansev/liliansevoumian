@@ -1,0 +1,70 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const tools = [
+  {
+    name: "Make",
+    icon: "simple-icons:make",
+    description: "Connexion de tous vos outils entre eux. Automatisation de process complexes, même avec des centaines de données à traiter.",
+    features: ["Connecte tous vos outils", "Traite vos données automatiquement", "Gère les erreurs sans vous"]
+  },
+  {
+    name: "n8n",
+    icon: "simple-icons:n8n",
+    description: "Automatisation pensée pour l'IA. Intégrez des agents, des LLMs et des workflows intelligents directement dans vos process.",
+    features: ["IA native dans chaque workflow", "Agents et LLMs intégrés", "Aucune limite technique"]
+  },
+  {
+    name: "Airtable",
+    icon: "simple-icons:airtable",
+    description: "Bases de données sur-mesure. CRM, ERP, suivi RH — avec des interfaces pensées pour vos équipes.",
+    features: ["Structure sur-mesure", "Interfaces simples pour vos équipes", "Automatisations intégrées"]
+  }
+];
+---
+
+<section id="expertise" class="py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-16 md:w-2/3">
+      <h2 class="text-3xl md:text-4xl font-semibold text-zinc-900 tracking-tight mb-4">
+        Ma stack pour vous accompagner
+      </h2>
+      <p class="text-zinc-500 font-light text-lg">
+        Je ne me contente pas d'utiliser des outils — je construis des écosystèmes complets qui transforment votre façon de travailler.
+      </p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid md:grid-cols-3 gap-6">
+      {tools.map((tool) => (
+        <div class="group p-8 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-lg hover:border-zinc-300 transition-all">
+          <!-- Icon -->
+          <div class="w-12 h-12 bg-zinc-50 border border-zinc-100 rounded flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <Icon name={tool.icon} class="w-6 h-6 text-zinc-700" />
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-xl font-semibold text-zinc-900 mb-3 tracking-tight">
+            {tool.name}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-sm text-zinc-500 leading-relaxed mb-6">
+            {tool.description}
+          </p>
+
+          <!-- Features -->
+          <ul class="text-xs text-zinc-400 space-y-2 font-mono">
+            {tool.features.map((feature) => (
+              <li class="flex items-center gap-2">
+                <Icon name="lucide:check" class="w-3 h-3 text-zinc-500" />
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,91 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface LogoItem {
+  name: string;
+  icon?: string;
+  text?: string;
+}
+
+interface Props {
+  items: LogoItem[];
+  title?: string;
+  speed?: number;
+  direction?: 'left' | 'right';
+  variant?: 'dark' | 'light';
+  showNames?: boolean;
+}
+
+const {
+  items,
+  title,
+  speed = 40,
+  direction = 'left',
+  variant = 'light',
+  showNames = true
+} = Astro.props;
+
+const bgClass = variant === 'dark' ? 'bg-zinc-900' : 'bg-white';
+const textClass = variant === 'dark' ? 'text-zinc-400' : 'text-zinc-500';
+const titleClass = variant === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
+const borderClass = variant === 'dark' ? 'border-zinc-800' : 'border-zinc-200';
+const fadeFrom = variant === 'dark' ? 'from-zinc-900' : 'from-white';
+---
+
+<section class={`py-8 ${bgClass} border-y ${borderClass} overflow-hidden`}>
+  {title && (
+    <p class={`text-center text-xs uppercase tracking-wider ${titleClass} mb-6 px-6`}>
+      {title}
+    </p>
+  )}
+
+  <div class="relative">
+    <!-- Fade left -->
+    <div class={`absolute left-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-r ${fadeFrom} to-transparent z-10 pointer-events-none`}></div>
+
+    <!-- Fade right -->
+    <div class={`absolute right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-l ${fadeFrom} to-transparent z-10 pointer-events-none`}></div>
+
+    <!-- Scrolling wrapper -->
+    <div class="flex overflow-hidden scrolling-container">
+      <!-- First track -->
+      <div
+        class={`flex items-center gap-8 md:gap-12 shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
+        style={`animation-duration: ${speed}s;`}
+      >
+        {items.map((item) => (
+          <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors px-4`}>
+            {item.icon ? (
+              <Icon name={item.icon} class="w-5 h-5" aria-hidden="true" />
+            ) : item.text ? (
+              <span class="text-sm font-semibold">{item.text}</span>
+            ) : null}
+            {showNames && item.icon && (
+              <span class="text-xs font-medium">{item.name}</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <!-- Duplicate track for seamless loop -->
+      <div
+        class={`flex items-center gap-8 md:gap-12 shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
+        style={`animation-duration: ${speed}s;`}
+        aria-hidden="true"
+      >
+        {items.map((item) => (
+          <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors px-4`}>
+            {item.icon ? (
+              <Icon name={item.icon} class="w-5 h-5" aria-hidden="true" />
+            ) : item.text ? (
+              <span class="text-sm font-semibold">{item.text}</span>
+            ) : null}
+            {showNames && item.icon && (
+              <span class="text-xs font-medium">{item.name}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+

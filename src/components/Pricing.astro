@@ -1,0 +1,83 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const plans = [
+  {
+    name: "Coaching",
+    price: "200 €",
+    description: "1 heure en visio pour débloquer un problème, valider une architecture ou monter en compétence.",
+    cta: "Réserver une session",
+    href: "https://cal.com/lilian-sevoumian/coaching-1"
+  },
+  {
+    name: "Audit",
+    price: "500 €",
+    description: "Analyse de vos processus + document de restitution avec axes d'amélioration concrets.",
+    cta: "Demander un audit",
+    href: "https://cal.com/lilian-sevoumian/audit",
+    featured: true
+  },
+  {
+    name: "Projet sur-mesure",
+    price: "À partir de 1 500 €",
+    description: "Construction complète de vos automatisations. Périmètre, délais et tarif définis ensemble.",
+    cta: "Discuter de mon projet",
+    href: "https://cal.com/lilian-sevoumian/prise-de-brief"
+  }
+];
+---
+
+<section id="tarifs" class="py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-semibold text-zinc-900 tracking-tight mb-4">
+        Tarifs
+      </h2>
+      <p class="text-zinc-500 font-light text-lg">
+        Des formules claires, adaptées à vos besoins.
+      </p>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="grid md:grid-cols-3 gap-6">
+      {plans.map((plan) => (
+        <div class={`relative p-8 bg-white border rounded-lg transition-all ${plan.featured ? 'border-zinc-900 shadow-lg' : 'border-zinc-200 hover:border-zinc-300 hover:shadow-md'}`}>
+          {plan.featured && (
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-[10px] font-medium uppercase tracking-wider rounded-full">
+              Populaire
+            </div>
+          )}
+
+          <!-- Plan Name -->
+          <h3 class="text-lg font-semibold text-zinc-900 mb-2">
+            {plan.name}
+          </h3>
+
+          <!-- Price -->
+          <div class="mb-4">
+            <span class="text-3xl font-semibold text-zinc-900 tracking-tight">
+              {plan.price}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-sm text-zinc-500 leading-relaxed mb-8">
+            {plan.description}
+          </p>
+
+          <!-- CTA -->
+          <a
+            href={plan.href}
+            target="_blank"
+            rel="noopener"
+            class={`inline-flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium rounded transition-all ${plan.featured ? 'bg-zinc-900 text-white hover:bg-zinc-800' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'}`}
+          >
+            {plan.cta}
+            <Icon name="lucide:arrow-right" class="w-4 h-4" />
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
