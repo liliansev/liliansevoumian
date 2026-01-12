@@ -1,70 +1,31 @@
 ---
-import { Icon } from 'astro-icon/components';
-
 const stats = [
   {
     value: "300+",
-    label: "Personnes formées",
-    icon: "lucide:graduation-cap",
-    description: "sur Make, n8n & Airtable"
+    label: "Personnes formées"
   },
   {
     value: "14k+",
-    label: "Réponses à la communauté",
-    icon: "lucide:message-circle",
-    description: "sur les forums NoCode"
+    label: "Réponses à la communauté NoCode"
   },
   {
     value: "1 000+",
-    label: "Scénarios automatisés",
-    icon: "lucide:workflow",
-    description: "livrés à mes clients"
+    label: "Scénarios automatisés"
   }
 ];
 ---
 
-<section class="border-y border-zinc-200 bg-white py-12 md:py-16">
-  <div class="max-w-5xl mx-auto px-6">
-    <!-- Mobile: Stack vertical -->
-    <div class="md:hidden space-y-8">
-      {stats.map((stat) => (
-        <div class="flex items-start gap-4">
-          <div class="shrink-0 w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center">
-            <Icon name={stat.icon} class="w-6 h-6 text-zinc-600" />
-          </div>
-          <div>
-            <div class="text-3xl font-semibold text-zinc-900 tracking-tight">
-              {stat.value}
-            </div>
-            <div class="text-sm font-medium text-zinc-700 mt-0.5">
-              {stat.label}
-            </div>
-            <div class="text-xs text-zinc-400 mt-0.5">
-              {stat.description}
-            </div>
-          </div>
+<section class="border-y border-zinc-200 bg-white">
+  <div class="max-w-7xl mx-auto grid grid-cols-3 divide-x divide-zinc-100">
+    {stats.map((stat) => (
+      <div class="p-6 md:p-8 text-center md:text-left">
+        <div class="text-2xl md:text-3xl font-semibold text-zinc-900 tracking-tight">
+          {stat.value}
         </div>
-      ))}
-    </div>
-
-    <!-- Desktop: 3 columns -->
-    <div class="hidden md:grid md:grid-cols-3 md:gap-8">
-      {stats.map((stat, index) => (
-        <div class={`relative text-center py-4 ${index !== stats.length - 1 ? 'border-r border-zinc-200' : ''}`}>
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-zinc-100 mb-4">
-            <Icon name={stat.icon} class="w-7 h-7 text-zinc-600" />
-          </div>
-          <div class="text-4xl lg:text-5xl font-semibold text-zinc-900 tracking-tight">
-            {stat.value}
-          </div>
-          <div class="text-sm font-medium text-zinc-700 mt-2">
-            {stat.label}
-          </div>
-          <div class="text-xs text-zinc-400 mt-1">
-            {stat.description}
-          </div>
+        <div class="text-xs text-zinc-500 mt-1 uppercase tracking-wider">
+          {stat.label}
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
   </div>
 </section>

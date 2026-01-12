@@ -45,7 +45,7 @@ const plans = [
 ];
 ---
 
-<section id="tarifs" class="py-24 px-6 bg-zinc-50/50">
+<section id="tarifs" class="py-24 px-6">
   <div class="max-w-5xl mx-auto">
     <!-- Header -->
     <div class="mb-16">
@@ -60,7 +60,7 @@ const plans = [
     <!-- Pricing Cards -->
     <div class="grid md:grid-cols-3 gap-6">
       {plans.map((plan) => (
-        <div class={`relative p-8 bg-white rounded-xl transition-all ${plan.featured ? 'shadow-xl pricing-featured' : 'border border-zinc-200 shadow-md hover:shadow-lg hover:-translate-y-1'}`}>
+        <div class={`relative p-8 bg-white rounded-lg transition-all ${plan.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-200 hover:border-zinc-300 hover:shadow-md'}`}>
           {plan.featured && (
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
               Populaire
@@ -116,15 +116,15 @@ const plans = [
   .pricing-featured {
     position: relative;
     background: white;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
   }
 
   .pricing-featured::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.75rem;
-    padding: 2px;
+    border-radius: 0.5rem;
+    padding: 1px;
     background: linear-gradient(
       var(--gradient-angle, 0deg),
       #18181b,

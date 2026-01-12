@@ -54,7 +54,7 @@ const totalItems = timeline.length;
     </div>
 
     <!-- Timeline -->
-    <div class="relative pl-16 md:pl-0 border-l-2 border-zinc-300 md:border-l-0 space-y-6 md:space-y-0">
+    <div class="relative pl-16 md:pl-0 border-l border-zinc-200 md:border-l-0 space-y-6 md:space-y-0">
       {timeline.map((item, index) => (
         <div class="md:grid md:grid-cols-[120px_1fr] md:gap-8 relative group">
           <!-- Year (Desktop) -->
@@ -66,26 +66,26 @@ const totalItems = timeline.length;
               {item.year}
             </span>
             {item.badge && item.link ? (
-              <a href={item.link} target="_blank" rel="noopener" class="text-xs text-zinc-400 hover:text-zinc-600 font-mono mt-1 underline underline-offset-2">{item.badge}</a>
+              <a href={item.link} target="_blank" rel="noopener" class="text-xs text-zinc-400 hover:text-zinc-600 font-mono mt-1 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
             ) : item.badge && (
-              <span class="text-xs text-zinc-400 font-mono mt-1">{item.badge}</span>
+              <span class="text-xs text-zinc-400 font-mono mt-1 whitespace-nowrap">{item.badge}</span>
             )}
           </div>
 
           <!-- Timeline Dot (Desktop) -->
           <div
-            class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
+            class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
             style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
           ></div>
 
           <!-- Timeline Dot (Mobile) -->
           <div
-            class={`md:hidden absolute -left-[6px] top-2 w-3.5 h-3.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
+            class={`md:hidden absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
             style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
           ></div>
 
           <!-- Content -->
-          <div class={`pb-4 md:pb-12 md:border-l-2 md:border-zinc-300 md:pl-12 ${index === timeline.length - 1 ? 'md:border-transparent pb-0' : ''}`}>
+          <div class={`pb-4 md:pb-12 md:border-l md:border-zinc-200 md:pl-12 ${index === timeline.length - 1 ? 'md:border-transparent pb-0' : ''}`}>
             <!-- Year (Mobile) -->
             <div class="md:hidden flex items-center gap-2 mb-2 ml-2">
               <span
@@ -95,11 +95,11 @@ const totalItems = timeline.length;
                 {item.year}
               </span>
               {item.badge && item.link ? (
-                <a href={item.link} target="_blank" rel="noopener" class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200 hover:bg-zinc-200 hover:text-zinc-700 transition-colors">
+                <a href={item.link} target="_blank" rel="noopener" class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200 hover:bg-zinc-200 hover:text-zinc-700 transition-colors whitespace-nowrap">
                   {item.badge}
                 </a>
               ) : item.badge && (
-                <span class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200">
+                <span class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200 whitespace-nowrap">
                   {item.badge}
                 </span>
               )}
