@@ -1,0 +1,75 @@
+---
+const testimonials = [
+  {
+    quote: "Lilian a automatisé notre onboarding client en 2 semaines. Ce qui nous prenait 45 minutes se fait maintenant en 2 minutes.",
+    author: "Marie L.",
+    role: "Ops Manager",
+    company: "Startup B2B",
+    result: "45 min → 2 min"
+  },
+  {
+    quote: "Grâce à l'automatisation de nos relances, on a récupéré 15h par semaine. L'investissement a été rentabilisé en 1 mois.",
+    author: "Thomas D.",
+    role: "Fondateur",
+    company: "Agence digitale",
+    result: "15h/semaine gagnées"
+  },
+  {
+    quote: "Formation Make excellente. J'ai pu automatiser mes process sans dépendre d'un dev. Très pédagogue.",
+    author: "Sophie M.",
+    role: "Freelance",
+    company: "Consultante",
+    result: "Autonomie totale"
+  }
+];
+---
+
+<section class="py-24 px-6 bg-zinc-50 border-y border-zinc-200">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-4">
+        Ce qu'ils en disent
+      </h2>
+      <p class="text-zinc-500 font-light text-lg">
+        Retours de clients et personnes formées.
+      </p>
+    </div>
+
+    <!-- Testimonials Grid -->
+    <div class="grid md:grid-cols-3 gap-6">
+      {testimonials.map((testimonial) => (
+        <div class="bg-white rounded-lg border border-zinc-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+          <!-- Quote -->
+          <blockquote class="text-zinc-600 text-sm leading-relaxed mb-6">
+            "{testimonial.quote}"
+          </blockquote>
+
+          <!-- Result Badge -->
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-xs font-medium mb-4">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            {testimonial.result}
+          </div>
+
+          <!-- Author -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 text-sm font-medium">
+              {testimonial.author.split(' ').map(n => n[0]).join('')}
+            </div>
+            <div>
+              <div class="text-sm font-medium text-zinc-900">{testimonial.author}</div>
+              <div class="text-xs text-zinc-500">{testimonial.role} @ {testimonial.company}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Note for authenticity -->
+    <p class="text-center text-xs text-zinc-400 mt-8">
+      Témoignages anonymisés pour respecter la confidentialité des clients.
+    </p>
+  </div>
+</section>
