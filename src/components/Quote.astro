@@ -1,0 +1,20 @@
+---
+interface Props {
+  quote: string;
+}
+
+const { quote } = Astro.props;
+---
+
+<section class="py-16 px-6">
+  <div class="max-w-2xl mx-auto">
+    <blockquote class="relative pl-6">
+      <!-- Gradient vertical line -->
+      <div class="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-zinc-200 to-transparent"></div>
+
+      <p class="text-xl md:text-2xl text-zinc-700 font-light leading-relaxed italic">
+        {quote}
+      </p>
+    </blockquote>
+  </div>
+</section>
