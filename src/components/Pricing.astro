@@ -5,14 +5,26 @@ const plans = [
   {
     name: "Coaching",
     price: "200 €",
-    description: "1 heure en visio pour débloquer un problème, valider une architecture ou monter en compétence. Vous repartez avec des réponses claires et des actions concrètes.",
+    description: "1 heure en visio pour débloquer un problème, valider une architecture ou monter en compétence.",
+    features: [
+      "Session de 60 min en visio",
+      "Réponses claires et concrètes",
+      "Recommandations personnalisées",
+      "Replay disponible"
+    ],
     cta: "Réserver une session",
     href: "https://cal.com/lilian-sevoumian/coaching-1"
   },
   {
     name: "Audit",
     price: "500 €",
-    description: "Analyse de vos processus + document de restitution avec axes d'amélioration concrets. Vous repartez avec un plan d'action priorisé sous 48h.",
+    description: "Analyse complète de vos processus avec axes d'amélioration concrets et priorisés.",
+    features: [
+      "Analyse de vos workflows",
+      "Document de restitution",
+      "Plan d'action priorisé",
+      "Livré sous 48h"
+    ],
     cta: "Demander un audit",
     href: "https://cal.com/lilian-sevoumian/audit",
     featured: true
@@ -20,14 +32,20 @@ const plans = [
   {
     name: "Projet sur-mesure",
     price: "À partir de 1 500 €",
-    description: "Construction complète de vos automatisations. Ex : Migration Zapier → Make ~2 000€ / CRM complet ~4 000€. Périmètre et tarif définis ensemble.",
+    description: "Construction complète de vos automatisations avec formation et support inclus.",
+    features: [
+      "Développement sur-mesure",
+      "Tests et ajustements",
+      "Documentation complète",
+      "Formation équipe incluse"
+    ],
     cta: "Discuter de mon projet",
     href: "https://cal.com/lilian-sevoumian/prise-de-brief"
   }
 ];
 ---
 
-<section id="tarifs" class="py-24 px-6">
+<section id="tarifs" class="py-24 px-6 bg-zinc-50/50">
   <div class="max-w-5xl mx-auto">
     <!-- Header -->
     <div class="mb-16">
@@ -42,7 +60,7 @@ const plans = [
     <!-- Pricing Cards -->
     <div class="grid md:grid-cols-3 gap-6">
       {plans.map((plan) => (
-        <div class={`relative p-8 bg-white rounded-lg transition-all ${plan.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-200 hover:border-zinc-300 hover:shadow-md'}`}>
+        <div class={`relative p-8 bg-white rounded-xl transition-all ${plan.featured ? 'shadow-xl pricing-featured' : 'border border-zinc-200 shadow-md hover:shadow-lg hover:-translate-y-1'}`}>
           {plan.featured && (
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
               Populaire
@@ -62,16 +80,28 @@ const plans = [
           </div>
 
           <!-- Description -->
-          <p class="fluid-text-sm text-zinc-500 leading-relaxed mb-8">
+          <p class="text-sm text-zinc-500 leading-relaxed mb-6">
             {plan.description}
           </p>
+
+          <!-- Features List -->
+          <ul class="space-y-3 mb-8">
+            {plan.features.map((feature) => (
+              <li class="flex items-start gap-2.5 text-sm">
+                <div class={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${plan.featured ? 'bg-zinc-900' : 'bg-zinc-100'}`}>
+                  <Icon name="lucide:check" class={`w-3 h-3 ${plan.featured ? 'text-white' : 'text-zinc-600'}`} />
+                </div>
+                <span class="text-zinc-600">{feature}</span>
+              </li>
+            ))}
+          </ul>
 
           <!-- CTA -->
           <a
             href={plan.href}
             target="_blank"
             rel="noopener"
-            class={`inline-flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium rounded transition-all ${plan.featured ? 'bg-zinc-900 text-white hover:bg-zinc-800' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'}`}
+            class={`inline-flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-medium rounded-lg transition-all ${plan.featured ? 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-400/30' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'}`}
           >
             {plan.cta}
             <Icon name="lucide:arrow-right" class="w-4 h-4" />
@@ -86,15 +116,15 @@ const plans = [
   .pricing-featured {
     position: relative;
     background: white;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
   }
 
   .pricing-featured::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.5rem;
-    padding: 1px;
+    border-radius: 0.75rem;
+    padding: 2px;
     background: linear-gradient(
       var(--gradient-angle, 0deg),
       #18181b,
