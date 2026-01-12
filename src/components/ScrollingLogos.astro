@@ -54,7 +54,7 @@ const gapSize = 48;
       <!-- First track -->
       <div
         class={`flex items-center shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
-        style={`animation-duration: ${speed}s; gap: ${gapSize}px;`}
+        style={`animation-duration: ${speed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`}
       >
         {items.map((item) => (
           <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors whitespace-nowrap`}>
@@ -74,7 +74,7 @@ const gapSize = 48;
       <!-- Duplicate track for seamless loop -->
       <div
         class={`flex items-center shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
-        style={`animation-duration: ${speed}s; gap: ${gapSize}px; margin-left: ${gapSize}px;`}
+        style={`animation-duration: ${speed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`}
         aria-hidden="true"
       >
         {items.map((item) => (
