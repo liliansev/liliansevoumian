@@ -2,7 +2,7 @@
 import { Icon } from 'astro-icon/components';
 
 interface LogoItem {
-  name: string;
+  name?: string;
   icon?: string;
   text?: string;
 }
@@ -30,6 +30,9 @@ const textClass = variant === 'dark' ? 'text-zinc-400' : 'text-zinc-500';
 const titleClass = variant === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
 const borderClass = variant === 'dark' ? 'border-zinc-800' : 'border-zinc-200';
 const fadeFrom = variant === 'dark' ? 'from-zinc-900' : 'from-white';
+
+// Gap uniforme entre tous les items (en pixels)
+const gapSize = 48;
 ---
 
 <section class={`py-8 ${bgClass} border-y ${borderClass} overflow-hidden`}>
@@ -41,51 +44,54 @@ const fadeFrom = variant === 'dark' ? 'from-zinc-900' : 'from-white';
 
   <div class="relative">
     <!-- Fade left -->
-    <div class={`absolute left-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-r ${fadeFrom} to-transparent z-10 pointer-events-none`}></div>
+    <div class={`absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r ${fadeFrom} to-transparent z-10 pointer-events-none`}></div>
 
     <!-- Fade right -->
-    <div class={`absolute right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-l ${fadeFrom} to-transparent z-10 pointer-events-none`}></div>
+    <div class={`absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l ${fadeFrom} to-transparent z-10 pointer-events-none`}></div>
 
     <!-- Scrolling wrapper -->
     <div class="flex overflow-hidden scrolling-container">
       <!-- First track -->
       <div
-        class={`flex items-center gap-8 md:gap-12 shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
-        style={`animation-duration: ${speed}s;`}
+        class={`flex items-center shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
+        style={`animation-duration: ${speed}s; gap: ${gapSize}px;`}
       >
         {items.map((item) => (
-          <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors px-4`}>
+          <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors whitespace-nowrap`}>
             {item.icon ? (
-              <Icon name={item.icon} class="w-5 h-5" aria-hidden="true" />
+              <>
+                <Icon name={item.icon} class="w-5 h-5" aria-hidden="true" />
+                {showNames && item.name && (
+                  <span class="text-xs font-medium">{item.name}</span>
+                )}
+              </>
             ) : item.text ? (
               <span class="text-sm font-semibold">{item.text}</span>
             ) : null}
-            {showNames && item.icon && (
-              <span class="text-xs font-medium">{item.name}</span>
-            )}
           </div>
         ))}
       </div>
       <!-- Duplicate track for seamless loop -->
       <div
-        class={`flex items-center gap-8 md:gap-12 shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
-        style={`animation-duration: ${speed}s;`}
+        class={`flex items-center shrink-0 scrolling-logos ${direction === 'left' ? 'scroll-left' : 'scroll-right'}`}
+        style={`animation-duration: ${speed}s; gap: ${gapSize}px; margin-left: ${gapSize}px;`}
         aria-hidden="true"
       >
         {items.map((item) => (
-          <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors px-4`}>
+          <div class={`flex items-center gap-2 shrink-0 ${textClass} hover:text-zinc-700 transition-colors whitespace-nowrap`}>
             {item.icon ? (
-              <Icon name={item.icon} class="w-5 h-5" aria-hidden="true" />
+              <>
+                <Icon name={item.icon} class="w-5 h-5" aria-hidden="true" />
+                {showNames && item.name && (
+                  <span class="text-xs font-medium">{item.name}</span>
+                )}
+              </>
             ) : item.text ? (
               <span class="text-sm font-semibold">{item.text}</span>
             ) : null}
-            {showNames && item.icon && (
-              <span class="text-xs font-medium">{item.name}</span>
-            )}
           </div>
         ))}
       </div>
     </div>
   </div>
 </section>
-
