@@ -1,91 +1,307 @@
 ---
-// Minimalist line-art automation/workflow illustration
+// Animated workflow builder illustration
+// Nodes appear sequentially, connections draw, data flows
 ---
 
-<svg
-  viewBox="0 0 400 300"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
-  class="w-full h-auto"
->
-  <!-- Background grid (subtle) -->
-  <defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e4e4e7" stroke-width="0.5"/>
-    </pattern>
-    <!-- Subtle animation -->
-    <style>
-      .flow-line {
-        stroke-dasharray: 12 6;
-        animation: flow 4s linear infinite;
-      }
-      @keyframes flow {
-        0% { stroke-dashoffset: 0; }
-        100% { stroke-dashoffset: -36; }
-      }
-      .node-hover {
-        transition: transform 0.3s ease;
-      }
-      .node-hover:hover {
-        transform: scale(1.05);
-      }
-    </style>
-  </defs>
+<div class="workflow-animation w-full aspect-[4/3] relative">
+  <svg
+    viewBox="0 0 400 300"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-full h-full"
+  >
+    <defs>
+      <!-- Grid pattern -->
+      <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e4e4e7" stroke-width="0.5"/>
+      </pattern>
 
-  <rect width="400" height="300" fill="url(#grid)" opacity="0.5"/>
+      <!-- Gradient for data particles -->
+      <linearGradient id="particle-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#6366f1"/>
+        <stop offset="100%" stop-color="#8b5cf6"/>
+      </linearGradient>
 
-  <!-- Connection lines (animated) -->
-  <path d="M 80 100 Q 140 80 180 120" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
-  <path d="M 180 120 L 260 120" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
-  <path d="M 260 120 Q 300 120 320 160" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
-  <path d="M 180 120 Q 180 160 180 200" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
-  <path d="M 180 200 Q 220 200 260 200" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
-  <path d="M 320 160 Q 320 180 320 200" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
-  <path d="M 260 200 L 320 200" stroke="#a1a1aa" stroke-width="1.5" fill="none" class="flow-line"/>
+      <!-- Glow filter -->
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
 
-  <!-- Input Node (left) -->
-  <g class="node-hover" style="transform-origin: 60px 100px;">
-    <rect x="40" y="80" width="40" height="40" rx="8" fill="white" stroke="#d4d4d8" stroke-width="1.5"/>
-    <circle cx="60" cy="100" r="8" fill="#18181b"/>
-    <line x1="54" y1="100" x2="66" y2="100" stroke="white" stroke-width="1.5"/>
-    <line x1="60" y1="94" x2="60" y2="106" stroke="white" stroke-width="1.5"/>
-  </g>
+    <!-- Background grid -->
+    <rect width="400" height="300" fill="url(#grid)" opacity="0.5"/>
 
-  <!-- Process Node 1 (Make-style) -->
-  <g class="node-hover" style="transform-origin: 180px 120px;">
-    <rect x="155" y="95" width="50" height="50" rx="10" fill="white" stroke="#d4d4d8" stroke-width="1.5"/>
-    <circle cx="180" cy="120" r="12" fill="#6366f1"/>
-    <path d="M 174 120 L 180 125 L 186 115" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
+    <!-- CONNECTION LINES - Draw animation -->
+    <!-- Line 1: Trigger to Process 1 -->
+    <path
+      class="connection-line line-1"
+      d="M 80 100 Q 115 85 150 100"
+      stroke="#d4d4d8"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
 
-  <!-- Process Node 2 (n8n-style) -->
-  <g class="node-hover" style="transform-origin: 260px 120px;">
-    <rect x="235" y="95" width="50" height="50" rx="10" fill="white" stroke="#d4d4d8" stroke-width="1.5"/>
-    <rect x="250" y="110" width="20" height="20" rx="4" fill="#ea580c"/>
-  </g>
+    <!-- Line 2: Process 1 to Process 2 -->
+    <path
+      class="connection-line line-2"
+      d="M 200 100 L 250 100"
+      stroke="#d4d4d8"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
 
-  <!-- Data Node (Airtable-style) -->
-  <g class="node-hover" style="transform-origin: 180px 200px;">
-    <rect x="155" y="175" width="50" height="50" rx="10" fill="white" stroke="#d4d4d8" stroke-width="1.5"/>
-    <rect x="165" y="188" width="30" height="4" rx="1" fill="#18181b"/>
-    <rect x="165" y="196" width="20" height="4" rx="1" fill="#a1a1aa"/>
-    <rect x="165" y="204" width="25" height="4" rx="1" fill="#d4d4d8"/>
-  </g>
+    <!-- Line 3: Process 2 to Output -->
+    <path
+      class="connection-line line-3"
+      d="M 300 100 Q 335 100 350 130"
+      stroke="#d4d4d8"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
 
-  <!-- Output Node (right) -->
-  <g class="node-hover" style="transform-origin: 320px 180px;">
-    <rect x="295" y="155" width="50" height="50" rx="10" fill="white" stroke="#d4d4d8" stroke-width="1.5"/>
-    <circle cx="320" cy="180" r="14" fill="#18181b"/>
-    <path d="M 313 180 L 320 186 L 327 174" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </g>
+    <!-- Line 4: Process 1 to Database -->
+    <path
+      class="connection-line line-4"
+      d="M 175 125 L 175 175"
+      stroke="#d4d4d8"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
 
-  <!-- Decorative elements -->
-  <circle cx="100" cy="240" r="3" fill="#d4d4d8"/>
-  <circle cx="340" cy="80" r="4" fill="#e4e4e7"/>
-  <circle cx="60" cy="180" r="2" fill="#d4d4d8"/>
+    <!-- Line 5: Database to Process 3 -->
+    <path
+      class="connection-line line-5"
+      d="M 200 200 L 250 200"
+      stroke="#d4d4d8"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
 
-  <!-- Small floating dots -->
-  <circle cx="140" cy="60" r="2" fill="#a1a1aa"/>
-  <circle cx="280" cy="250" r="2" fill="#a1a1aa"/>
-  <circle cx="360" cy="140" r="2" fill="#a1a1aa"/>
-</svg>
+    <!-- Line 6: Process 3 to Output -->
+    <path
+      class="connection-line line-6"
+      d="M 300 200 Q 335 200 350 170"
+      stroke="#d4d4d8"
+      stroke-width="2"
+      fill="none"
+      stroke-linecap="round"
+    />
+
+    <!-- DATA PARTICLES - Flow along paths -->
+    <circle class="data-particle particle-1" r="4" fill="url(#particle-gradient)" filter="url(#glow)">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="1.5s">
+        <mpath href="#path-1"/>
+      </animateMotion>
+    </circle>
+
+    <circle class="data-particle particle-2" r="3" fill="#6366f1" filter="url(#glow)">
+      <animateMotion dur="1.5s" repeatCount="indefinite" begin="2s">
+        <mpath href="#path-2"/>
+      </animateMotion>
+    </circle>
+
+    <circle class="data-particle particle-3" r="3" fill="#ea580c" filter="url(#glow)">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="2.5s">
+        <mpath href="#path-3"/>
+      </animateMotion>
+    </circle>
+
+    <!-- Hidden paths for particle motion -->
+    <path id="path-1" d="M 80 100 Q 115 85 150 100 L 200 100 L 250 100 L 300 100 Q 335 100 350 130 L 350 150" fill="none" stroke="none"/>
+    <path id="path-2" d="M 175 125 L 175 175 L 175 200 L 200 200 L 250 200 L 300 200 Q 335 200 350 170 L 350 150" fill="none" stroke="none"/>
+    <path id="path-3" d="M 80 100 Q 115 85 150 100 L 175 100 L 175 125 L 175 175" fill="none" stroke="none"/>
+
+    <!-- NODE 1: Trigger (webhook style) -->
+    <g class="node node-1">
+      <rect x="45" y="75" width="50" height="50" rx="12" fill="white" stroke="#18181b" stroke-width="2"/>
+      <circle cx="70" cy="100" r="12" fill="#18181b"/>
+      <path d="M 64 100 L 70 94 L 76 100 L 70 106 Z" fill="white"/>
+      <!-- Pulse ring -->
+      <circle cx="70" cy="100" r="20" fill="none" stroke="#18181b" stroke-width="1" class="pulse-ring"/>
+    </g>
+
+    <!-- NODE 2: Process 1 (Make style - purple) -->
+    <g class="node node-2">
+      <rect x="150" y="75" width="50" height="50" rx="12" fill="white" stroke="#6366f1" stroke-width="2"/>
+      <circle cx="175" cy="100" r="14" fill="#6366f1"/>
+      <path d="M 169 100 L 173 104 L 181 96" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- NODE 3: Process 2 (n8n style - orange) -->
+    <g class="node node-3">
+      <rect x="250" y="75" width="50" height="50" rx="12" fill="white" stroke="#ea580c" stroke-width="2"/>
+      <rect x="263" y="88" width="24" height="24" rx="6" fill="#ea580c"/>
+      <path d="M 271 100 L 279 100 M 275 96 L 275 104" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <!-- NODE 4: Database (Airtable style) -->
+    <g class="node node-4">
+      <rect x="150" y="175" width="50" height="50" rx="12" fill="white" stroke="#18181b" stroke-width="2"/>
+      <rect x="162" y="188" width="26" height="5" rx="1.5" fill="#18181b"/>
+      <rect x="162" y="196" width="18" height="5" rx="1.5" fill="#71717a"/>
+      <rect x="162" y="204" width="22" height="5" rx="1.5" fill="#a1a1aa"/>
+    </g>
+
+    <!-- NODE 5: Process 3 (AI style - gradient) -->
+    <g class="node node-5">
+      <rect x="250" y="175" width="50" height="50" rx="12" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+      <circle cx="275" cy="200" r="14" fill="#8b5cf6"/>
+      <text x="275" y="205" text-anchor="middle" fill="white" font-size="14" font-weight="bold">AI</text>
+    </g>
+
+    <!-- NODE 6: Output (final node) -->
+    <g class="node node-6">
+      <rect x="325" y="125" width="50" height="50" rx="12" fill="#18181b" stroke="#18181b" stroke-width="2"/>
+      <circle cx="350" cy="150" r="14" fill="white"/>
+      <path d="M 344 150 L 350 156 L 356 144" stroke="#18181b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Success glow -->
+      <circle cx="350" cy="150" r="22" fill="none" stroke="#22c55e" stroke-width="2" class="success-ring"/>
+    </g>
+
+    <!-- Floating decorative elements -->
+    <circle cx="120" cy="50" r="2" fill="#d4d4d8" class="float-dot dot-1"/>
+    <circle cx="320" cy="60" r="3" fill="#e4e4e7" class="float-dot dot-2"/>
+    <circle cx="50" cy="220" r="2" fill="#d4d4d8" class="float-dot dot-3"/>
+    <circle cx="380" cy="240" r="2" fill="#e4e4e7" class="float-dot dot-4"/>
+  </svg>
+</div>
+
+<style>
+  /* Node appearance animation */
+  .node {
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: center;
+    animation: node-appear 0.5s ease-out forwards;
+  }
+
+  .node-1 { animation-delay: 0.2s; transform-origin: 70px 100px; }
+  .node-2 { animation-delay: 0.6s; transform-origin: 175px 100px; }
+  .node-3 { animation-delay: 1s; transform-origin: 275px 100px; }
+  .node-4 { animation-delay: 1.4s; transform-origin: 175px 200px; }
+  .node-5 { animation-delay: 1.8s; transform-origin: 275px 200px; }
+  .node-6 { animation-delay: 2.2s; transform-origin: 350px 150px; }
+
+  @keyframes node-appear {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Connection lines draw animation */
+  .connection-line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw-line 0.4s ease-out forwards;
+  }
+
+  .line-1 { animation-delay: 0.5s; }
+  .line-2 { animation-delay: 0.9s; }
+  .line-3 { animation-delay: 1.3s; }
+  .line-4 { animation-delay: 0.9s; }
+  .line-5 { animation-delay: 1.7s; }
+  .line-6 { animation-delay: 2.1s; }
+
+  @keyframes draw-line {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Data particles */
+  .data-particle {
+    opacity: 0;
+    animation: particle-show 0.3s ease-out forwards;
+  }
+
+  .particle-1 { animation-delay: 1.5s; }
+  .particle-2 { animation-delay: 2s; }
+  .particle-3 { animation-delay: 2.5s; }
+
+  @keyframes particle-show {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Pulse ring on trigger node */
+  .pulse-ring {
+    opacity: 0;
+    animation: pulse-ring 2s ease-out infinite;
+    animation-delay: 0.5s;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      opacity: 0.8;
+      r: 12;
+    }
+    100% {
+      opacity: 0;
+      r: 28;
+    }
+  }
+
+  /* Success ring on output node */
+  .success-ring {
+    opacity: 0;
+    animation: success-glow 1.5s ease-out infinite;
+    animation-delay: 2.5s;
+  }
+
+  @keyframes success-glow {
+    0% {
+      opacity: 0;
+      r: 14;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0;
+      r: 28;
+    }
+  }
+
+  /* Floating dots */
+  .float-dot {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  .dot-1 { animation-delay: 0s; }
+  .dot-2 { animation-delay: 1s; }
+  .dot-3 { animation-delay: 2s; }
+  .dot-4 { animation-delay: 3s; }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* Hover effect on whole illustration */
+  .workflow-animation:hover .node {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+    transition: filter 0.3s ease;
+  }
+</style>
