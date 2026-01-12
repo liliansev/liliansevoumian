@@ -19,9 +19,10 @@ const timeline = [
   },
   {
     year: "2023",
-    badge: "1er France, top 5 mondial",
+    badge: "1er France, top 5 mondial Make",
     title: "Boost ton Biz & Coaching",
-    description: "Expert nocode pour Margo Cunego. Automatisation d'onboarding et optimisation des processus clients."
+    description: "Expert nocode pour Margo Cunego. Automatisation d'onboarding et optimisation des processus clients.",
+    link: "https://community.make.com/u/lilian_sevoumian/summary"
   },
   {
     year: "2022",
@@ -63,7 +64,9 @@ const totalItems = timeline.length;
             >
               {item.year}
             </span>
-            {item.badge && (
+            {item.badge && item.link ? (
+              <a href={item.link} target="_blank" rel="noopener" class="text-xs text-zinc-400 hover:text-zinc-600 font-mono mt-1 underline underline-offset-2">{item.badge}</a>
+            ) : item.badge && (
               <span class="text-xs text-zinc-400 font-mono mt-1">{item.badge}</span>
             )}
           </div>
@@ -90,7 +93,11 @@ const totalItems = timeline.length;
               >
                 {item.year}
               </span>
-              {item.badge && (
+              {item.badge && item.link ? (
+                <a href={item.link} target="_blank" rel="noopener" class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200 hover:bg-zinc-200 hover:text-zinc-700 transition-colors">
+                  {item.badge}
+                </a>
+              ) : item.badge && (
                 <span class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200">
                   {item.badge}
                 </span>
