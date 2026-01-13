@@ -1,307 +1,326 @@
 ---
-// Animated workflow builder illustration
-// Nodes appear sequentially, connections draw, data flows
+// Premium workflow animation - Stripe/Apple quality
+// Spring physics, glow effects, breathing modules, dynamic shadows
 ---
 
-<div class="workflow-animation w-full aspect-[4/3] relative">
+<div class="workflow-hero" id="workflow-hero">
   <svg
-    viewBox="0 0 400 300"
+    viewBox="0 0 440 280"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     class="w-full h-full"
   >
     <defs>
-      <!-- Grid pattern -->
-      <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-        <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e4e4e7" stroke-width="0.5"/>
+      <!-- Subtle dot grid pattern -->
+      <pattern id="grid-dots" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="10" cy="10" r="0.6" fill="#e4e4e7"/>
       </pattern>
 
-      <!-- Gradient for data particles -->
-      <linearGradient id="particle-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#6366f1"/>
-        <stop offset="100%" stop-color="#8b5cf6"/>
-      </linearGradient>
-
-      <!-- Glow filter -->
-      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-        <feMerge>
-          <feMergeNode in="coloredBlur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
+      <!-- Shadow filter for modules -->
+      <filter id="shadow-sm" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#18181b" flood-opacity="0.08"/>
       </filter>
     </defs>
 
-    <!-- Background grid -->
-    <rect width="400" height="300" fill="url(#grid)" opacity="0.5"/>
+    <!-- Background dots (behind everything) -->
+    <rect width="440" height="280" fill="url(#grid-dots)" opacity="0.4"/>
 
-    <!-- CONNECTION LINES - Draw animation -->
-    <!-- Line 1: Trigger to Process 1 -->
-    <path
-      class="connection-line line-1"
-      d="M 80 100 Q 115 85 150 100"
-      stroke="#d4d4d8"
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-
-    <!-- Line 2: Process 1 to Process 2 -->
-    <path
-      class="connection-line line-2"
-      d="M 200 100 L 250 100"
-      stroke="#d4d4d8"
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-
-    <!-- Line 3: Process 2 to Output -->
-    <path
-      class="connection-line line-3"
-      d="M 300 100 Q 335 100 350 130"
-      stroke="#d4d4d8"
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-
-    <!-- Line 4: Process 1 to Database -->
-    <path
-      class="connection-line line-4"
-      d="M 175 125 L 175 175"
-      stroke="#d4d4d8"
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-
-    <!-- Line 5: Database to Process 3 -->
-    <path
-      class="connection-line line-5"
-      d="M 200 200 L 250 200"
-      stroke="#d4d4d8"
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-
-    <!-- Line 6: Process 3 to Output -->
-    <path
-      class="connection-line line-6"
-      d="M 300 200 Q 335 200 350 170"
-      stroke="#d4d4d8"
-      stroke-width="2"
-      fill="none"
-      stroke-linecap="round"
-    />
-
-    <!-- DATA PARTICLES - Flow along paths -->
-    <circle class="data-particle particle-1" r="4" fill="url(#particle-gradient)" filter="url(#glow)">
-      <animateMotion dur="2s" repeatCount="indefinite" begin="1.5s">
-        <mpath href="#path-1"/>
-      </animateMotion>
-    </circle>
-
-    <circle class="data-particle particle-2" r="3" fill="#6366f1" filter="url(#glow)">
-      <animateMotion dur="1.5s" repeatCount="indefinite" begin="2s">
-        <mpath href="#path-2"/>
-      </animateMotion>
-    </circle>
-
-    <circle class="data-particle particle-3" r="3" fill="#ea580c" filter="url(#glow)">
-      <animateMotion dur="2s" repeatCount="indefinite" begin="2.5s">
-        <mpath href="#path-3"/>
-      </animateMotion>
-    </circle>
-
-    <!-- Hidden paths for particle motion -->
-    <path id="path-1" d="M 80 100 Q 115 85 150 100 L 200 100 L 250 100 L 300 100 Q 335 100 350 130 L 350 150" fill="none" stroke="none"/>
-    <path id="path-2" d="M 175 125 L 175 175 L 175 200 L 200 200 L 250 200 L 300 200 Q 335 200 350 170 L 350 150" fill="none" stroke="none"/>
-    <path id="path-3" d="M 80 100 Q 115 85 150 100 L 175 100 L 175 125 L 175 175" fill="none" stroke="none"/>
-
-    <!-- NODE 1: Trigger (webhook style) -->
-    <g class="node node-1">
-      <rect x="45" y="75" width="50" height="50" rx="12" fill="white" stroke="#18181b" stroke-width="2"/>
-      <circle cx="70" cy="100" r="12" fill="#18181b"/>
-      <path d="M 64 100 L 70 94 L 76 100 L 70 106 Z" fill="white"/>
-      <!-- Pulse ring -->
-      <circle cx="70" cy="100" r="20" fill="none" stroke="#18181b" stroke-width="1" class="pulse-ring"/>
+    <!-- CONNECTIONS - clean black lines, no glow -->
+    <g class="connections">
+      <path class="wf-line wf-line-1" d="M 70 100 L 130 100" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+      <path class="wf-line wf-line-2" d="M 190 100 L 250 100" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+      <path class="wf-line wf-line-3" d="M 310 100 C 340 100 350 45 380 45" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+      <path class="wf-line wf-line-4" d="M 310 100 L 380 100" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+      <path class="wf-line wf-line-5" d="M 310 100 C 340 100 350 155 380 155" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
     </g>
 
-    <!-- NODE 2: Process 1 (Make style - purple) -->
-    <g class="node node-2">
-      <rect x="150" y="75" width="50" height="50" rx="12" fill="white" stroke="#6366f1" stroke-width="2"/>
-      <circle cx="175" cy="100" r="14" fill="#6366f1"/>
-      <path d="M 169 100 L 173 104 L 181 96" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- DATA PARTICLES - placed BEFORE modules so they render behind -->
+    <circle class="wf-particle wf-particle-1" r="5" fill="#18181b"/>
+    <circle class="wf-particle wf-particle-2" r="5" fill="#18181b"/>
+    <circle class="wf-particle wf-particle-3" r="5" fill="#18181b"/>
+
+    <!-- MODULES (white backgrounds to mask dots and particles) -->
+
+    <!-- 1. Trigger - Lightning bolt (universal trigger symbol) -->
+    <g class="wf-module wf-module-1" filter="url(#shadow-sm)">
+      <rect x="10" y="70" width="60" height="60" rx="14" fill="white" stroke="#18181b" stroke-width="2"/>
+      <!-- Clean lightning bolt -->
+      <path d="M 46 84 L 34 102 L 42 102 L 38 116 L 52 98 L 44 98 L 46 84 Z" fill="#18181b"/>
     </g>
 
-    <!-- NODE 3: Process 2 (n8n style - orange) -->
-    <g class="node node-3">
-      <rect x="250" y="75" width="50" height="50" rx="12" fill="white" stroke="#ea580c" stroke-width="2"/>
-      <rect x="263" y="88" width="24" height="24" rx="6" fill="#ea580c"/>
-      <path d="M 271 100 L 279 100 M 275 96 L 275 104" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <!-- 2. Process - Gear (automation symbol) -->
+    <g class="wf-module wf-module-2" filter="url(#shadow-sm)">
+      <rect x="130" y="70" width="60" height="60" rx="14" fill="white" stroke="#52525b" stroke-width="2"/>
+      <!-- Clean gear icon -->
+      <circle cx="160" cy="100" r="8" fill="none" stroke="#52525b" stroke-width="2"/>
+      <circle cx="160" cy="100" r="3" fill="#52525b"/>
+      <path d="M 160 88 L 160 92 M 160 108 L 160 112 M 148 100 L 152 100 M 168 100 L 172 100" stroke="#52525b" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 151.5 91.5 L 154.5 94.5 M 165.5 105.5 L 168.5 108.5 M 151.5 108.5 L 154.5 105.5 M 165.5 94.5 L 168.5 91.5" stroke="#52525b" stroke-width="2.5" stroke-linecap="round"/>
     </g>
 
-    <!-- NODE 4: Database (Airtable style) -->
-    <g class="node node-4">
-      <rect x="150" y="175" width="50" height="50" rx="12" fill="white" stroke="#18181b" stroke-width="2"/>
-      <rect x="162" y="188" width="26" height="5" rx="1.5" fill="#18181b"/>
-      <rect x="162" y="196" width="18" height="5" rx="1.5" fill="#71717a"/>
-      <rect x="162" y="204" width="22" height="5" rx="1.5" fill="#a1a1aa"/>
+    <!-- 3. Router - Diamond (standard routing symbol) -->
+    <g class="wf-module wf-module-3" filter="url(#shadow-sm)">
+      <rect x="250" y="70" width="60" height="60" rx="14" fill="#18181b"/>
+      <!-- Diamond with question mark -->
+      <path d="M 280 86 L 294 100 L 280 114 L 266 100 Z" fill="none" stroke="white" stroke-width="2"/>
+      <text x="280" y="104" text-anchor="middle" fill="white" font-size="12" font-weight="600" font-family="system-ui">?</text>
     </g>
 
-    <!-- NODE 5: Process 3 (AI style - gradient) -->
-    <g class="node node-5">
-      <rect x="250" y="175" width="50" height="50" rx="12" fill="white" stroke="#8b5cf6" stroke-width="2"/>
-      <circle cx="275" cy="200" r="14" fill="#8b5cf6"/>
-      <text x="275" y="205" text-anchor="middle" fill="white" font-size="14" font-weight="bold">AI</text>
+    <!-- 4. Output: Notification bell -->
+    <g class="wf-module wf-module-4" filter="url(#shadow-sm)">
+      <rect x="380" y="20" width="50" height="50" rx="12" fill="white" stroke="#71717a" stroke-width="1.5"/>
+      <!-- Bell icon -->
+      <path d="M 405 34 C 400 34 396 38 396 44 L 396 48 L 394 50 L 416 50 L 414 48 L 414 44 C 414 38 410 34 405 34 Z" fill="none" stroke="#52525b" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M 402 50 L 402 52 C 402 54 403.5 55 405 55 C 406.5 55 408 54 408 52 L 408 50" fill="none" stroke="#52525b" stroke-width="2"/>
+      <circle cx="412" cy="35" r="3" fill="#52525b"/>
     </g>
 
-    <!-- NODE 6: Output (final node) -->
-    <g class="node node-6">
-      <rect x="325" y="125" width="50" height="50" rx="12" fill="#18181b" stroke="#18181b" stroke-width="2"/>
-      <circle cx="350" cy="150" r="14" fill="white"/>
-      <path d="M 344 150 L 350 156 L 356 144" stroke="#18181b" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Success glow -->
-      <circle cx="350" cy="150" r="22" fill="none" stroke="#22c55e" stroke-width="2" class="success-ring"/>
+    <!-- 5. Output: Document/file -->
+    <g class="wf-module wf-module-5" filter="url(#shadow-sm)">
+      <rect x="380" y="75" width="50" height="50" rx="12" fill="white" stroke="#71717a" stroke-width="1.5"/>
+      <!-- Document icon -->
+      <path d="M 395 86 L 395 114 L 415 114 L 415 92 L 409 86 L 395 86 Z" fill="none" stroke="#52525b" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M 409 86 L 409 92 L 415 92" fill="none" stroke="#52525b" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M 399 99 L 411 99 M 399 105 L 407 105" stroke="#52525b" stroke-width="1.5" stroke-linecap="round"/>
     </g>
 
-    <!-- Floating decorative elements -->
-    <circle cx="120" cy="50" r="2" fill="#d4d4d8" class="float-dot dot-1"/>
-    <circle cx="320" cy="60" r="3" fill="#e4e4e7" class="float-dot dot-2"/>
-    <circle cx="50" cy="220" r="2" fill="#d4d4d8" class="float-dot dot-3"/>
-    <circle cx="380" cy="240" r="2" fill="#e4e4e7" class="float-dot dot-4"/>
+    <!-- 6. Output: Send/Export arrow -->
+    <g class="wf-module wf-module-6" filter="url(#shadow-sm)">
+      <rect x="380" y="130" width="50" height="50" rx="12" fill="white" stroke="#71717a" stroke-width="1.5"/>
+      <!-- Send arrow -->
+      <path d="M 395 165 L 395 150 L 410 150" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 404 145 L 410 150 L 404 156" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="415" cy="145" r="3" fill="#52525b"/>
+    </g>
+
   </svg>
 </div>
 
-<style>
-  /* Node appearance animation */
-  .node {
-    opacity: 0;
-    transform: scale(0.5);
-    transform-origin: center;
-    animation: node-appear 0.5s ease-out forwards;
+<style is:global>
+  .workflow-hero {
+    width: 100%;
+    aspect-ratio: 4/3;
   }
 
-  .node-1 { animation-delay: 0.2s; transform-origin: 70px 100px; }
-  .node-2 { animation-delay: 0.6s; transform-origin: 175px 100px; }
-  .node-3 { animation-delay: 1s; transform-origin: 275px 100px; }
-  .node-4 { animation-delay: 1.4s; transform-origin: 175px 200px; }
-  .node-5 { animation-delay: 1.8s; transform-origin: 275px 200px; }
-  .node-6 { animation-delay: 2.2s; transform-origin: 350px 150px; }
+  /* === INITIAL STATES === */
+  .wf-module {
+    opacity: 0;
+    transform: scale(0.7) translateY(8px);
+    transform-origin: center;
+    transform-box: fill-box;
+  }
 
-  @keyframes node-appear {
+  .wf-line {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  .wf-particle {
+    opacity: 0;
+  }
+
+  /* === SPRING EASING (Apple-style) === */
+  /* cubic-bezier approximating spring with slight overshoot */
+
+  /* === ANIMATED STATES === */
+  .workflow-hero.is-animated .wf-module {
+    animation: moduleSpring 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* Staggered delays with organic rhythm (not linear) */
+  .workflow-hero.is-animated .wf-module-1 { animation-delay: 0ms; }
+  .workflow-hero.is-animated .wf-module-2 { animation-delay: 120ms; }
+  .workflow-hero.is-animated .wf-module-3 { animation-delay: 280ms; }
+  .workflow-hero.is-animated .wf-module-4 { animation-delay: 700ms; }
+  .workflow-hero.is-animated .wf-module-5 { animation-delay: 780ms; }
+  .workflow-hero.is-animated .wf-module-6 { animation-delay: 860ms; }
+
+  /* Lines draw with easing */
+  .workflow-hero.is-animated .wf-line {
+    animation: lineDraw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .workflow-hero.is-animated .wf-line-1 { animation-delay: 180ms; }
+  .workflow-hero.is-animated .wf-line-2 { animation-delay: 380ms; }
+  .workflow-hero.is-animated .wf-line-3 { animation-delay: 650ms; }
+  .workflow-hero.is-animated .wf-line-4 { animation-delay: 700ms; }
+  .workflow-hero.is-animated .wf-line-5 { animation-delay: 750ms; }
+
+  /* Particles with offset-path - travel along the workflow lines */
+  .workflow-hero.is-animated .wf-particle {
+    animation: particleTravel 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  .workflow-hero.is-animated .wf-particle-1 {
+    animation-delay: 1.8s;
+    offset-path: path('M 40 100 L 160 100 L 280 100 C 340 100 350 45 405 45');
+  }
+
+  .workflow-hero.is-animated .wf-particle-2 {
+    animation-delay: 2.4s;
+    offset-path: path('M 40 100 L 160 100 L 280 100 L 405 100');
+  }
+
+  .workflow-hero.is-animated .wf-particle-3 {
+    animation-delay: 3s;
+    offset-path: path('M 40 100 L 160 100 L 280 100 C 340 100 350 155 405 155');
+  }
+
+  /* Breathing effect on trigger module */
+  .workflow-hero.is-animated .wf-module-1 {
+    animation:
+      moduleSpring 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      moduleBreathe 3s ease-in-out 1.5s infinite;
+  }
+
+  /* Subtle pulse on output modules when particle arrives */
+  .workflow-hero.is-animated .wf-module-4 {
+    animation:
+      moduleSpring 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      moduleReceive 3s ease-out 1.8s infinite;
+  }
+
+  .workflow-hero.is-animated .wf-module-5 {
+    animation:
+      moduleSpring 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      moduleReceive 3s ease-out 2.4s infinite;
+  }
+
+  .workflow-hero.is-animated .wf-module-6 {
+    animation:
+      moduleSpring 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+      moduleReceive 3s ease-out 3s infinite;
+  }
+
+  /* === KEYFRAMES === */
+  @keyframes moduleSpring {
     0% {
       opacity: 0;
-      transform: scale(0.5);
+      transform: scale(0.7) translateY(8px);
     }
-    50% {
-      transform: scale(1.1);
+    60% {
+      opacity: 1;
+      transform: scale(1.03) translateY(-2px);
+    }
+    80% {
+      transform: scale(0.98) translateY(1px);
     }
     100% {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
   }
 
-  /* Connection lines draw animation */
-  .connection-line {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: draw-line 0.4s ease-out forwards;
-  }
-
-  .line-1 { animation-delay: 0.5s; }
-  .line-2 { animation-delay: 0.9s; }
-  .line-3 { animation-delay: 1.3s; }
-  .line-4 { animation-delay: 0.9s; }
-  .line-5 { animation-delay: 1.7s; }
-  .line-6 { animation-delay: 2.1s; }
-
-  @keyframes draw-line {
-    to {
+  @keyframes lineDraw {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
       stroke-dashoffset: 0;
     }
   }
 
-  /* Data particles */
-  .data-particle {
-    opacity: 0;
-    animation: particle-show 0.3s ease-out forwards;
+  @keyframes fadeIn {
+    to { opacity: 1; }
   }
 
-  .particle-1 { animation-delay: 1.5s; }
-  .particle-2 { animation-delay: 2s; }
-  .particle-3 { animation-delay: 2.5s; }
-
-  @keyframes particle-show {
-    to {
+  @keyframes particleTravel {
+    0% {
+      opacity: 0;
+      offset-distance: 0%;
+    }
+    5% {
       opacity: 1;
     }
-  }
-
-  /* Pulse ring on trigger node */
-  .pulse-ring {
-    opacity: 0;
-    animation: pulse-ring 2s ease-out infinite;
-    animation-delay: 0.5s;
-  }
-
-  @keyframes pulse-ring {
-    0% {
-      opacity: 0.8;
-      r: 12;
+    90% {
+      opacity: 1;
     }
     100% {
       opacity: 0;
-      r: 28;
+      offset-distance: 100%;
     }
   }
 
-  /* Success ring on output node */
-  .success-ring {
-    opacity: 0;
-    animation: success-glow 1.5s ease-out infinite;
-    animation-delay: 2.5s;
-  }
-
-  @keyframes success-glow {
-    0% {
-      opacity: 0;
-      r: 14;
-    }
-    50% {
-      opacity: 0.6;
-    }
-    100% {
-      opacity: 0;
-      r: 28;
-    }
-  }
-
-  /* Floating dots */
-  .float-dot {
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .dot-1 { animation-delay: 0s; }
-  .dot-2 { animation-delay: 1s; }
-  .dot-3 { animation-delay: 2s; }
-  .dot-4 { animation-delay: 3s; }
-
-  @keyframes float {
+  @keyframes moduleBreathe {
     0%, 100% {
-      transform: translateY(0);
+      transform: scale(1);
     }
     50% {
-      transform: translateY(-8px);
+      transform: scale(1.015);
     }
   }
 
-  /* Hover effect on whole illustration */
-  .workflow-animation:hover .node {
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
-    transition: filter 0.3s ease;
+  @keyframes moduleReceive {
+    0%, 80% {
+      transform: scale(1);
+    }
+    90% {
+      transform: scale(1.04);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* === REDUCED MOTION === */
+  @media (prefers-reduced-motion: reduce) {
+    .wf-module {
+      opacity: 1;
+      transform: none;
+    }
+    .wf-line {
+      stroke-dashoffset: 0;
+    }
+    .workflow-hero.is-animated .wf-module,
+    .workflow-hero.is-animated .wf-line,
+    .workflow-hero.is-animated .wf-particle {
+      animation: none;
+    }
+    .wf-particle {
+      opacity: 0;
+    }
   }
 </style>
+
+<script>
+  function initWorkflow() {
+    const hero = document.getElementById("workflow-hero");
+    if (!hero) return;
+
+    // Set up line lengths for accurate dash animation
+    hero.querySelectorAll(".wf-line").forEach(line => {
+      const pathEl = line as SVGPathElement;
+      const len = pathEl.getTotalLength();
+      pathEl.style.strokeDasharray = String(len);
+      pathEl.style.strokeDashoffset = String(len);
+    });
+
+    // Reduced motion: show immediately without animation
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      hero.classList.add("is-animated");
+      return;
+    }
+
+    // Intersection Observer to trigger animation
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            hero.classList.add("is-animated");
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(hero);
+  }
+
+  // Initialize
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWorkflow);
+  } else {
+    initWorkflow();
+  }
+</script>

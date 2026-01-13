@@ -97,13 +97,26 @@ const plans = [
           </ul>
 
           <!-- CTA -->
-          <a
-            href={plan.href}
-            class={`inline-flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-medium rounded-lg transition-all ${plan.featured ? 'bg-zinc-900 text-white hover:bg-zinc-800 shadow-lg shadow-zinc-400/30' : 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200'}`}
-          >
-            {plan.cta}
-            <Icon name="lucide:arrow-right" class="w-4 h-4" />
-          </a>
+          {plan.featured ? (
+            <a
+              href={plan.href}
+              class="group relative inline-flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-medium rounded-lg transition-all bg-[#14B8A6] text-white shadow-lg shadow-teal-400/30 overflow-hidden"
+            >
+              <span class="relative z-10 flex items-center gap-2">
+                {plan.cta}
+                <Icon name="lucide:arrow-right" class="w-4 h-4" />
+              </span>
+              <div class="absolute inset-0 bg-[#0EA5E9] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+            </a>
+          ) : (
+            <a
+              href={plan.href}
+              class="inline-flex items-center justify-center gap-2 w-full px-4 py-3.5 text-sm font-medium rounded-lg transition-all bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
+            >
+              {plan.cta}
+              <Icon name="lucide:arrow-right" class="w-4 h-4" />
+            </a>
+          )}
         </div>
       ))}
     </div>

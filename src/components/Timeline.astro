@@ -54,7 +54,7 @@ const totalItems = timeline.length;
     </div>
 
     <!-- Timeline -->
-    <div class="relative pl-16 md:pl-0 border-l border-zinc-200 md:border-l-0 space-y-6 md:space-y-0">
+    <div class="relative pl-16 md:pl-0 border-l-2 border-zinc-300 md:border-l-0 space-y-6 md:space-y-0">
       {timeline.map((item, index) => (
         <div class="md:grid md:grid-cols-[120px_1fr] md:gap-8 relative group" data-timeline-item={index === timeline.length - 1 ? "last" : undefined}>
           <!-- Year (Desktop) -->
@@ -74,13 +74,13 @@ const totalItems = timeline.length;
 
           <!-- Timeline Dot (Desktop) -->
           <div
-            class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-2.5 h-2.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
+            class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
             style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
           ></div>
 
           <!-- Timeline Dot (Mobile) -->
           <div
-            class={`md:hidden absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
+            class={`md:hidden absolute -left-[8px] top-2 w-3.5 h-3.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
             style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
           ></div>
 
