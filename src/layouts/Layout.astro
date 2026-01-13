@@ -44,6 +44,19 @@ const serviceSchema = {
     "name": "Lilian Sevoumian"
   }
 };
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Lilian Sevoumian",
+  "url": "https://liliansevoumian.fr",
+  "description": description,
+  "inLanguage": "fr-FR",
+  "author": {
+    "@type": "Person",
+    "name": "Lilian Sevoumian"
+  }
+};
 ---
 
 <!doctype html>
@@ -57,6 +70,10 @@ const serviceSchema = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content="index, follow" />
+    <meta name="author" content="Lilian Sevoumian" />
+    <meta name="theme-color" content="#14B8A6" />
+    <meta name="geo.region" content="FR" />
+    <meta name="geo.placename" content="France" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -80,14 +97,21 @@ const serviceSchema = {
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon_liliansevoumian.svg" />
+    <link rel="apple-touch-icon" href="/favicon_liliansevoumian.svg" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Fonts -->
+    <!-- DNS Prefetch & Preconnect -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cal.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <!-- Styles -->
