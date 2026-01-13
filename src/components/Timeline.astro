@@ -41,7 +41,7 @@ const timeline = [
 const totalItems = timeline.length;
 ---
 
-<section id="parcours" class="overflow-hidden z-10 bg-white border-y border-zinc-200 py-24 px-6 relative">
+<section id="parcours" class="overflow-hidden z-10 bg-white border-y border-zinc-200 py-24 px-6 relative" data-timeline>
   <div class="z-10 max-w-4xl mx-auto relative">
     <!-- Header -->
     <div class="mb-16">
@@ -56,7 +56,7 @@ const totalItems = timeline.length;
     <!-- Timeline -->
     <div class="relative pl-16 md:pl-0 border-l border-zinc-200 md:border-l-0 space-y-6 md:space-y-0">
       {timeline.map((item, index) => (
-        <div class="md:grid md:grid-cols-[120px_1fr] md:gap-8 relative group">
+        <div class="md:grid md:grid-cols-[120px_1fr] md:gap-8 relative group" data-timeline-item={index === timeline.length - 1 ? "last" : undefined}>
           <!-- Year (Desktop) -->
           <div class="hidden md:flex flex-col items-end pt-1 pr-4">
             <span
@@ -173,12 +173,13 @@ const totalItems = timeline.length;
     background-color: #d4d4d8;
   }
 
-  .timeline-dot.is-past {
+  /* Animations démarrent seulement quand la section a la classe .animate */
+  [data-timeline].animate .timeline-dot.is-past {
     animation: pulse-dot 0.8s ease-in-out forwards;
     animation-delay: var(--delay);
   }
 
-  .timeline-dot.is-current {
+  [data-timeline].animate .timeline-dot.is-current {
     animation: arrive-dot 0.5s ease-out forwards;
     animation-delay: var(--delay);
   }
@@ -187,21 +188,21 @@ const totalItems = timeline.length;
     color: #a1a1aa;
   }
 
-  .timeline-year.is-past {
+  [data-timeline].animate .timeline-year.is-past {
     animation: pulse-year 0.8s ease-in-out forwards;
     animation-delay: var(--delay);
   }
 
-  .timeline-year.is-current {
+  [data-timeline].animate .timeline-year.is-current {
     animation: arrive-year 0.5s ease-out forwards;
     animation-delay: var(--delay);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .timeline-dot.is-past,
-    .timeline-dot.is-current,
-    .timeline-year.is-past,
-    .timeline-year.is-current {
+    [data-timeline].animate .timeline-dot.is-past,
+    [data-timeline].animate .timeline-dot.is-current,
+    [data-timeline].animate .timeline-year.is-past,
+    [data-timeline].animate .timeline-year.is-current {
       animation: none;
     }
     .timeline-dot.is-current {
@@ -212,3 +213,28 @@ const totalItems = timeline.length;
     }
   }
 </style>
+
+<script>
+  // Déclenche l'animation quand le dernier item (2021) devient visible
+  const timeline = document.querySelector('[data-timeline]');
+  const lastItem = document.querySelector('[data-timeline-item="last"]');
+
+  if (timeline && lastItem && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            timeline.classList.add('animate');
+            observer.disconnect(); // Une seule fois
+          }
+        });
+      },
+      { threshold: 0.5 } // 50% de l'élément visible
+    );
+
+    observer.observe(lastItem);
+  } else if (timeline) {
+    // Si reduced-motion, appliquer directement les styles finaux
+    timeline.classList.add('animate');
+  }
+</script>
