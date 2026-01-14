@@ -4,7 +4,8 @@ const timeline = [
     year: "2026",
     badge: "Aujourd'hui",
     title: "Consultant IA & Automatisation",
-    description: "Lancement de formation-n8n.com. Je continue d'accompagner les entreprises dans leur optimisation des processus et la mise en place d'IA."
+    description: "Lancement de formation-n8n.com. Je continue d'accompagner les entreprises dans leur optimisation des processus et la mise en place d'IA.",
+    isCurrent: true
   },
   {
     year: "2025",
@@ -37,78 +38,42 @@ const timeline = [
     description: "Premiers clients : Qonto, KlaK, WeTechCare, Familytrip."
   }
 ];
-
-const totalItems = timeline.length;
 ---
 
-<section id="parcours" class="overflow-hidden z-10 bg-white border-y border-zinc-200 py-24 px-6 relative" data-timeline>
-  <div class="z-10 max-w-4xl mx-auto relative">
+<section id="parcours" class="bg-white border-y border-zinc-200 py-24 px-6">
+  <div class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="mb-16">
-      <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-4">
+      <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
         5 ans d'automatisation
       </h2>
-      <p class="text-zinc-500 font-light fluid-text-lg">
+      <p class="text-zinc-600 font-light fluid-text-base leading-relaxed">
         De freelance débutant à expert top 5 mondial Make.
       </p>
     </div>
 
     <!-- Timeline -->
-    <div class="relative pl-16 md:pl-0 border-l-2 border-zinc-300 md:border-l-0 space-y-6 md:space-y-0">
+    <div class="space-y-8 md:space-y-0">
       {timeline.map((item, index) => (
-        <div class="md:grid md:grid-cols-[120px_1fr] md:gap-8 relative group" data-timeline-item={index === timeline.length - 1 ? "last" : undefined}>
-          <!-- Year (Desktop) -->
-          <div class="hidden md:flex flex-col items-end pt-1 pr-4">
-            <span
-              class={`text-sm font-semibold timeline-year ${index === 0 ? 'is-current' : 'is-past'}`}
-              style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
-            >
+        <div class="md:grid md:grid-cols-[100px_1fr] md:gap-8 group">
+          <!-- Year -->
+          <div class="flex flex-col items-start md:items-end md:pt-1">
+            <span class={`fluid-text-sm font-semibold ${item.isCurrent ? 'text-zinc-900' : 'text-zinc-400'}`}>
               {item.year}
             </span>
             {item.badge && item.link ? (
-              <a href={item.link} target="_blank" rel="noopener" class="text-xs text-zinc-400 hover:text-zinc-600 font-mono mt-1 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
+              <a href={item.link} target="_blank" rel="noopener" class="text-xs text-zinc-500 hover:text-zinc-700 font-mono mt-1 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
             ) : item.badge && (
-              <span class="text-xs text-zinc-400 font-mono mt-1 whitespace-nowrap">{item.badge}</span>
+              <span class="text-xs text-zinc-500 font-mono mt-1 whitespace-nowrap">{item.badge}</span>
             )}
           </div>
 
-          <!-- Timeline Dot (Desktop) -->
-          <div
-            class={`hidden md:block absolute left-[120px] top-2 -translate-x-1/2 w-3.5 h-3.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
-            style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
-          ></div>
-
-          <!-- Timeline Dot (Mobile) -->
-          <div
-            class={`md:hidden absolute -left-[8px] top-2 w-3.5 h-3.5 rounded-full ring-4 ring-white timeline-dot ${index === 0 ? 'is-current' : 'is-past'}`}
-            style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
-          ></div>
-
           <!-- Content -->
-          <div class={`pb-4 md:pb-12 md:border-l md:border-zinc-200 md:pl-12 ${index === timeline.length - 1 ? 'md:border-transparent pb-0' : ''}`}>
-            <!-- Year (Mobile) -->
-            <div class="md:hidden flex items-center gap-2 mb-2 ml-2">
-              <span
-                class={`text-sm font-semibold timeline-year ${index === 0 ? 'is-current' : 'is-past'}`}
-                style={`--delay: ${(totalItems - 1 - index) * 0.3}s`}
-              >
-                {item.year}
-              </span>
-              {item.badge && item.link ? (
-                <a href={item.link} target="_blank" rel="noopener" class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200 hover:bg-zinc-200 hover:text-zinc-700 transition-colors whitespace-nowrap">
-                  {item.badge}
-                </a>
-              ) : item.badge && (
-                <span class="px-2 py-1 rounded text-xs bg-zinc-100 text-zinc-500 border border-zinc-200 whitespace-nowrap">
-                  {item.badge}
-                </span>
-              )}
-            </div>
-
-            <h3 class="text-lg font-semibold text-zinc-900 mb-2 group-hover:text-zinc-700 transition-colors">
+          <div class={`mt-2 md:mt-0 pb-8 ${index === timeline.length - 1 ? 'pb-0' : ''}`}>
+            <h3 class="fluid-h4 font-semibold text-zinc-900 mb-2 group-hover:text-zinc-700 transition-colors">
               {item.title}
             </h3>
-            <p class="text-zinc-500 fluid-text-sm leading-relaxed">
+            <p class="text-zinc-600 fluid-text-sm leading-relaxed">
               {item.description}
             </p>
           </div>
@@ -117,124 +82,3 @@ const totalItems = timeline.length;
     </div>
   </div>
 </section>
-
-<style>
-  /* Animation pour les années passées - fade in noir, fade out vers gris */
-  @keyframes pulse-dot {
-    0% {
-      background-color: #d4d4d8;
-    }
-    30% {
-      background-color: #18181b;
-    }
-    70% {
-      background-color: #18181b;
-    }
-    100% {
-      background-color: #d4d4d8;
-    }
-  }
-
-  @keyframes pulse-year {
-    0% {
-      color: #a1a1aa;
-    }
-    30% {
-      color: #18181b;
-    }
-    70% {
-      color: #18181b;
-    }
-    100% {
-      color: #a1a1aa;
-    }
-  }
-
-  /* Animation pour 2026 - fade in vers noir et reste */
-  @keyframes arrive-dot {
-    0% {
-      background-color: #d4d4d8;
-    }
-    100% {
-      background-color: #18181b;
-    }
-  }
-
-  @keyframes arrive-year {
-    0% {
-      color: #a1a1aa;
-    }
-    100% {
-      color: #18181b;
-    }
-  }
-
-  .timeline-dot {
-    background-color: #d4d4d8;
-  }
-
-  /* Animations démarrent seulement quand la section a la classe .animate */
-  [data-timeline].animate .timeline-dot.is-past {
-    animation: pulse-dot 0.8s ease-in-out forwards;
-    animation-delay: var(--delay);
-  }
-
-  [data-timeline].animate .timeline-dot.is-current {
-    animation: arrive-dot 0.5s ease-out forwards;
-    animation-delay: var(--delay);
-  }
-
-  .timeline-year {
-    color: #a1a1aa;
-  }
-
-  [data-timeline].animate .timeline-year.is-past {
-    animation: pulse-year 0.8s ease-in-out forwards;
-    animation-delay: var(--delay);
-  }
-
-  [data-timeline].animate .timeline-year.is-current {
-    animation: arrive-year 0.5s ease-out forwards;
-    animation-delay: var(--delay);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    [data-timeline].animate .timeline-dot.is-past,
-    [data-timeline].animate .timeline-dot.is-current,
-    [data-timeline].animate .timeline-year.is-past,
-    [data-timeline].animate .timeline-year.is-current {
-      animation: none;
-    }
-    .timeline-dot.is-current {
-      background-color: #18181b;
-    }
-    .timeline-year.is-current {
-      color: #18181b;
-    }
-  }
-</style>
-
-<script>
-  // Déclenche l'animation quand le dernier item (2021) devient visible
-  const timeline = document.querySelector('[data-timeline]');
-  const lastItem = document.querySelector('[data-timeline-item="last"]');
-
-  if (timeline && lastItem && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            timeline.classList.add('animate');
-            observer.disconnect(); // Une seule fois
-          }
-        });
-      },
-      { threshold: 0.5 } // 50% de l'élément visible
-    );
-
-    observer.observe(lastItem);
-  } else if (timeline) {
-    // Si reduced-motion, appliquer directement les styles finaux
-    timeline.classList.add('animate');
-  }
-</script>

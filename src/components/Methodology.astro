@@ -1,145 +1,48 @@
 ---
-const steps = [
+const phases = [
   {
     number: "01",
-    title: "Audit",
-    description: "On identifie ensemble ce qui peut être automatisé et optimisé. Vous repartez avec une vision claire des outils à utiliser, des processus à automatiser et du coût global."
+    title: "Comprendre",
+    description: "Audit de vos process, conseil sur les outils adaptés, architecture de la solution. Vous repartez avec une vision claire."
   },
   {
     number: "02",
-    title: "Conseil",
-    description: "Je vous recommande les bons outils (SaaS) selon vos besoins et votre budget. Pas de sur-engineering, juste ce qu'il vous faut."
+    title: "Construire",
+    description: "Développement itératif avec livrables réguliers. Vous voyez l'avancement en temps réel, on ajuste ensemble."
   },
   {
     number: "03",
-    title: "Architecture",
-    description: "Je conçois le système avant de le construire. Vous validez les scénarios et les déclencheurs entre vos outils avant qu'on commence."
-  },
-  {
-    number: "04",
-    title: "Construction",
-    description: "Je développe, teste, ajuste. Vous voyez l'avancement en temps réel, agilité et transparence."
-  },
-  {
-    number: "05",
-    title: "Livraison",
-    description: "Vos scénarios sont livrés et optimisés, vous testez et validez."
-  },
-  {
-    number: "06",
-    title: "Support & Maintenance",
-    description: "Vos process évoluent, vos automatisations le doivent aussi. Je reste disponible pour corriger, ajuster et faire évoluer ce qu'on a construit ensemble."
+    title: "Livrer",
+    description: "Tests, validation, documentation et formation. Je reste disponible pour le support et les évolutions."
   }
 ];
 ---
 
 <section id="process" class="py-24 bg-white border-y border-zinc-200 px-6">
-  <div class="max-w-4xl mx-auto">
+  <div class="max-w-5xl mx-auto">
     <div class="mb-12">
-      <h2 class="text-3xl font-semibold text-zinc-900 tracking-tight mb-4">
+      <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
         Méthodologie
       </h2>
-      <p class="text-zinc-500 font-light text-lg">
-        Comment je travaille avec vous.
+      <p class="text-zinc-600 font-light fluid-text-xl leading-relaxed">
+        3 phases. Focus résultats et transparence.
       </p>
     </div>
 
-    <div class="methodology-timeline space-y-10 relative" data-methodology>
-      <!-- Animated timeline line -->
-      <div class="methodology-line absolute left-[19px] top-2 bottom-2 w-[1px] bg-zinc-200 origin-top" data-timeline-line></div>
-
-      {steps.map((step, index) => {
-        // Gradient: 01 = zinc-400 (light) → 06 = zinc-900 (dark)
-        const textColors = ['text-zinc-400', 'text-zinc-500', 'text-zinc-600', 'text-zinc-700', 'text-zinc-800', 'text-zinc-900'];
-        const borderColors = ['border-zinc-200', 'border-zinc-200', 'border-zinc-200', 'border-zinc-200', 'border-zinc-300', 'border-zinc-300'];
-        return (
-        <div
-          class="methodology-step relative pl-16 opacity-0"
-          data-step
-          style={`--step-index: ${index}`}
-        >
-          <!-- Step number -->
-          <div class={`absolute left-0 top-1 w-10 h-10 bg-white border rounded flex items-center justify-center text-sm font-semibold shadow-sm z-10 ${textColors[index]} ${borderColors[index]}`}>
-            {step.number}
-          </div>
-
-          <!-- Content -->
-          <h3 class="text-lg font-semibold text-zinc-900">
-            {step.title}
+    <div class="grid md:grid-cols-3 gap-6">
+      {phases.map((phase) => (
+        <div class="p-6 bg-white border border-zinc-200 rounded-xl card-interactive">
+          <span class="text-sm font-semibold text-zinc-400 font-mono">
+            {phase.number}
+          </span>
+          <h3 class="fluid-h4 font-semibold text-zinc-900 mt-2 mb-3">
+            {phase.title}
           </h3>
-          <p class="text-zinc-500 mt-2 fluid-text-sm leading-relaxed fluid-prose-lg">
-            {step.description}
+          <p class="text-zinc-600 fluid-text-sm leading-relaxed">
+            {phase.description}
           </p>
         </div>
-      )})}
+      ))}
     </div>
   </div>
 </section>
-
-<style>
-  .methodology-line {
-    transform: scaleY(0);
-    transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .methodology-timeline.is-visible .methodology-line {
-    transform: scaleY(1);
-  }
-
-  .methodology-step {
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-
-  .methodology-timeline.is-visible .methodology-step {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: calc(0.1s + var(--step-index) * 0.15s);
-  }
-
-  /* Mobile: faster animation */
-  @media (max-width: 768px) {
-    .methodology-timeline.is-visible .methodology-step {
-      transition-delay: calc(0.05s + var(--step-index) * 0.1s);
-    }
-  }
-</style>
-
-<script>
-  const initMethodologyAnimation = () => {
-    const timeline = document.querySelector('[data-methodology]');
-    if (!timeline) return;
-
-    // Check for reduced motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      timeline.classList.add('is-visible');
-      return;
-    }
-
-    // Mobile needs earlier trigger since section is taller
-    const isMobile = window.innerWidth < 768;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            timeline.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: isMobile ? 0.05 : 0.15,
-        rootMargin: isMobile ? '0px 0px 0px 0px' : '0px 0px -50px 0px'
-      }
-    );
-
-    observer.observe(timeline);
-  };
-
-  // Run on initial load
-  initMethodologyAnimation();
-
-  // Re-run on Astro page transitions
-  document.addEventListener('astro:page-load', initMethodologyAnimation);
-</script>

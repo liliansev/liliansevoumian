@@ -18,35 +18,32 @@ const techBadges = [
     <!-- Content -->
     <div class="z-10 relative space-y-8">
       <!-- Headline -->
-      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-zinc-900 tracking-tight leading-[1.1]">
-        Expert IA & Automatisations<br /><span class="text-zinc-400">via Make & n8n.</span>
+      <h1 class="fluid-h0 font-semibold text-zinc-900 leading-[1.1]">
+        Expert IA & Automatisations<br /><span class="text-zinc-500">via Make & n8n.</span>
       </h1>
 
       <!-- Subheadline -->
-      <p class="hero-subtitle text-zinc-500 font-light leading-relaxed">
+      <p class="hero-subtitle text-zinc-600 font-light leading-relaxed">
         5 ans d'expertise sur <strong class="text-zinc-700 font-medium">Make</strong>, <strong class="text-zinc-700 font-medium">n8n</strong> et <strong class="text-zinc-700 font-medium">Airtable</strong>.<br />+2 000 heures économisées pour mes clients.
       </p>
 
       <!-- CTA Block - aligned elements -->
-      <div class="pt-4 space-y-4 max-w-md">
+      <div class="pt-4 space-y-4 fluid-prose-xl">
         <a
           href="https://cal.com/lilian-sevoumian/prise-de-brief"
-          class="group relative w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-[#14B8A6] text-white text-sm font-medium rounded shadow-lg shadow-teal-300/50 hover:shadow-xl hover:shadow-teal-400/50 hover:-translate-y-0.5 transition-all overflow-hidden"
+          class="group w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-zinc-900 text-white text-sm font-medium rounded-xl shadow-lg shadow-zinc-900/25 hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/30 btn-primary"
         >
-          <span class="relative z-10 flex items-center gap-3">
-            Me confier votre projet
-            <Icon name="lucide:arrow-right" class="w-4 h-4" />
-          </span>
-          <div class="absolute inset-0 bg-[#0EA5E9] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+          Me confier votre projet
+          <Icon name="lucide:arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" />
         </a>
 
         <!-- Social proof -->
-        <div class="flex items-center justify-between text-sm text-zinc-500">
+        <div class="flex items-center justify-between text-sm text-zinc-600">
           <div class="flex items-center gap-1">
             <Icon name="lucide:users" class="w-4 h-4" />
             <span><strong class="text-zinc-700">100+</strong> entreprises accompagnées</span>
           </div>
-          <span class="text-zinc-300">•</span>
+          <span class="text-zinc-400">•</span>
           <div class="flex items-center gap-1">
             <Icon name="lucide:graduation-cap" class="w-4 h-4" />
             <span><strong class="text-zinc-700">300+</strong> personnes formées</span>
@@ -54,7 +51,7 @@ const techBadges = [
         </div>
 
         <!-- Tech badges -->
-        <div class="pt-2 flex items-center justify-between text-zinc-400">
+        <div class="pt-2 flex items-center justify-between text-zinc-500">
           {techBadges.map((badge) => (
             <a href={badge.href} target="_blank" rel="noopener" class="flex items-center gap-2 hover:text-zinc-600 active:text-zinc-500 transition-colors py-2">
               <Icon name={badge.icon} class="w-5 h-5" />
@@ -76,10 +73,8 @@ const techBadges = [
 
 <style>
   .hero-subtitle {
-    /* Fluid typography: scales from 1rem (16px) to 1.25rem (20px) */
-    font-size: clamp(1rem, 0.5rem + 2vw, 1.25rem);
-    /* Fluid max-width: scales based on viewport */
-    max-width: clamp(18rem, 85vw, 32rem);
+    font-size: var(--fluid-text-xl);
+    max-width: var(--fluid-prose-xl);
   }
 </style>
 
