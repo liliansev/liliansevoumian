@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
+import lilianPhoto from '../assets/lilian-cta.png';
 ---
 
 <section id="contact" class="relative text-center py-24 md:py-32 px-6 overflow-hidden">
@@ -9,6 +11,21 @@ import { Icon } from 'astro-icon/components';
   <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
 
   <div class="relative max-w-3xl mx-auto">
+    <!-- Photo -->
+    <div class="mb-8">
+      <div class="w-20 h-20 mx-auto rounded-full overflow-hidden ring-4 ring-white shadow-lg">
+        <Image
+          src={lilianPhoto}
+          alt="Lilian Sevoumian"
+          width={160}
+          height={160}
+          format="webp"
+          quality={85}
+          class="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+
     <!-- Headline -->
     <h2 class="text-3xl md:text-4xl lg:text-5xl font-semibold text-zinc-900 tracking-tight mb-6">
       Combien d'heures perdez-vous <span class="text-zinc-400">chaque semaine</span> ?
