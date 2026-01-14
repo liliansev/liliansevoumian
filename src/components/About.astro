@@ -1,8 +1,13 @@
 ---
 import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
 import lilianPortrait from '../assets/lilian-portrait.png';
 
-const passions = ["Podcasts", "Gaming", "Voyages"];
+const passions = [
+  { name: "Podcasts", icon: "lucide:headphones" },
+  { name: "Gaming", icon: "lucide:gamepad-2" },
+  { name: "Voyages", icon: "lucide:plane" }
+];
 ---
 
 <section id="about" class="py-24 bg-white px-6">
@@ -49,10 +54,11 @@ const passions = ["Podcasts", "Gaming", "Voyages"];
         </div>
 
         <!-- Passions -->
-        <div class="flex flex-wrap gap-2 mt-8">
+        <div class="flex flex-wrap gap-3 mt-8">
           {passions.map((passion) => (
-            <span class="px-3 py-1.5 bg-white rounded-full border border-zinc-200 text-sm text-zinc-700">
-              {passion}
+            <span class="passion-tag flex items-center gap-2 px-4 py-2 rounded-full">
+              <Icon name={passion.icon} class="w-4 h-4 text-zinc-600 passion-icon" />
+              <span class="text-sm text-zinc-700">{passion.name}</span>
             </span>
           ))}
         </div>
@@ -60,3 +66,26 @@ const passions = ["Podcasts", "Gaming", "Voyages"];
     </div>
   </div>
 </section>
+
+<style>
+  .passion-tag {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(161, 161, 170, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+  }
+
+  .passion-tag:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(161, 161, 170, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .passion-icon {
+    fill: currentColor;
+    stroke-width: 2.5;
+  }
+</style>
