@@ -15,16 +15,12 @@ const stats = [
 ];
 ---
 
-<section class="py-12 bg-white">
-  <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-0">
+<section class="py-6 bg-white md:hidden">
+  <div class="max-w-sm mx-auto px-6 flex flex-col gap-4">
     {stats.map((stat) => (
-      <div class="p-4 md:p-8 text-center">
-        <div class="fluid-h4 font-semibold text-zinc-900">
-          {stat.value}
-        </div>
-        <div class="text-xs text-zinc-700 mt-1 uppercase tracking-wider">
-          {stat.label}
-        </div>
+      <div class="flex items-center justify-between py-3 border-b border-zinc-100 last:border-0">
+        <span class="text-xs text-zinc-500 uppercase tracking-wider">{stat.label}</span>
+        <span class="text-lg font-semibold text-zinc-900">{stat.value}</span>
       </div>
     ))}
   </div>

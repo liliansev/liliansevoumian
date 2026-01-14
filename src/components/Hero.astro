@@ -1,6 +1,5 @@
 ---
 import { Icon } from 'astro-icon/components';
-import HeroIllustration from './ui/HeroIllustration.astro';
 import CTAButton from './ui/CTAButton.astro';
 
 const techBadges = [
@@ -8,32 +7,68 @@ const techBadges = [
   { name: "n8n", icon: "simple-icons:n8n" },
   { name: "Airtable", icon: "simple-icons:airtable" }
 ];
+
+const stats = [
+  { value: "300+", label: "Personnes formées" },
+  { value: "100+", label: "Entreprises accompagnées" },
+  { value: "2 000+", label: "Heures économisées" }
+];
+
+const clients = [
+  { text: "Qonto" },
+  { text: "Jellysmack" },
+  { text: "Digital Campus" },
+  { text: "Edumiam" },
+  { text: "Rocket School" },
+  { text: "Movecool" },
+  { text: "KlaK" },
+  { text: "Digilytix" },
+  { text: "WeTechCare" },
+  { text: "Contournement" },
+  { text: "Familytrip" },
+  { text: "Alegria Academy" },
+  { text: "Boost ton Biz" },
+  { text: "Deuxième Souffle" },
+  { text: "Reborn" }
+];
+
+const scrollSpeed = 60;
+const gapSize = 48;
 ---
 
-<section class="overflow-hidden pt-24 pb-16 md:pt-48 md:pb-32 px-6 relative">
-  <!-- Grid pattern background -->
-  <div class="absolute inset-0 hero-grid-pattern pointer-events-none"></div>
+<section class="min-h-screen flex flex-col">
+  <!-- Main Hero Content -->
+  <div class="flex-1 overflow-hidden px-3 md:px-6 relative flex items-center pt-12 md:pt-0">
+    <!-- Subtle grid pattern background -->
+    <div class="absolute inset-0 hero-grid-pattern pointer-events-none"></div>
 
-  <!-- Background decorations -->
-  <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
-  <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+    <!-- Subtle gradient overlay - more Linear/Stripe style -->
+    <div class="absolute inset-0 bg-gradient-to-b from-white via-transparent to-zinc-50/50 pointer-events-none"></div>
 
-  <div class="grid xl:grid-cols-2 gap-12 xl:gap-16 max-w-7xl mx-auto items-center">
-    <!-- Content -->
-    <div class="z-10 relative space-y-8 min-w-0">
-      <!-- Headline -->
-      <h1 class="fluid-h0 font-semibold text-zinc-900 leading-[1.1]">
-        Expert IA &<br />Automations<br /><span class="text-zinc-500 whitespace-nowrap">Make & n8n</span>
-      </h1>
+    <div class="max-w-5xl mx-auto text-center w-full">
+      <div class="z-10 relative">
+        <!-- Headline - BIGGER -->
+        <h1 class="hero-title font-semibold text-zinc-900 leading-[1] tracking-tight">
+          Expert IA &<br />Automations<br /><span class="text-zinc-400">Make & n8n</span>
+        </h1>
 
-      <!-- Subheadline -->
-      <p class="hero-subtitle text-zinc-700 font-light leading-relaxed">
-        5 ans d'expertise sur <strong class="text-zinc-700 font-medium">Make</strong>, <strong class="text-zinc-700 font-medium">n8n</strong> et <strong class="text-zinc-700 font-medium">Airtable</strong>.<br />+2 000 heures économisées pour mes clients.
-      </p>
+        <!-- Subheadline -->
+        <p class="hero-subtitle text-zinc-600 font-light leading-relaxed mx-auto mt-5 md:mt-6">
+          5 ans d'expertise sur <strong class="text-zinc-700 font-medium">Make</strong>, <strong class="text-zinc-700 font-medium">n8n</strong> et <strong class="text-zinc-700 font-medium">Airtable</strong>.<br />+2 000 heures économisées pour mes clients.
+        </p>
 
-      <!-- CTA Block - aligned elements -->
-      <div class="pt-4 space-y-4 max-w-full">
-        <div id="hero-cta">
+        <!-- Tech badges -->
+        <div class="flex items-center justify-center gap-6 md:gap-10 mt-5 md:mt-6 text-zinc-400">
+          {techBadges.map((badge) => (
+            <div class="flex items-center gap-1.5 md:gap-2">
+              <Icon name={badge.icon} class="w-4 h-4 md:w-5 md:h-5" />
+              <span class="text-[10px] md:text-xs font-medium uppercase tracking-wider">{badge.name}</span>
+            </div>
+          ))}
+        </div>
+
+        <!-- CTA Button -->
+        <div class="mt-8 md:mt-10">
           <CTAButton
             href="https://cal.com/lilian-sevoumian/prise-de-brief"
             text="Lancer mon projet"
@@ -41,81 +76,92 @@ const techBadges = [
           />
         </div>
 
-        <!-- Social proof -->
-        <div class="flex items-center justify-between md:justify-start md:gap-6 text-sm text-zinc-700">
-          <div class="flex items-center gap-1">
-            <Icon name="lucide:users" class="w-4 h-4" />
-            <span><strong class="text-zinc-700">100+</strong> clients</span>
-          </div>
-          <span class="text-zinc-400">•</span>
-          <div class="flex items-center gap-1">
-            <Icon name="lucide:graduation-cap" class="w-4 h-4" />
-            <span><strong class="text-zinc-700">300+</strong> formés</span>
-          </div>
-        </div>
-
-        <!-- Tech badges -->
-        <div class="pt-2 flex items-center justify-between md:justify-start md:gap-8 text-zinc-500">
-          {techBadges.map((badge) => (
-            <div class="flex items-center gap-2 py-2">
-              <Icon name={badge.icon} class="w-5 h-5" />
-              <span class="text-xs font-semibold uppercase tracking-wide">{badge.name}</span>
+        <!-- Stats - Desktop only -->
+        <div class="hidden md:flex items-center justify-center gap-20 mt-12">
+          {stats.map((stat) => (
+            <div class="text-center">
+              <div class="text-3xl font-semibold text-zinc-900">{stat.value}</div>
+              <div class="text-xs text-zinc-500 mt-1 uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Illustration with parallax -->
-    <div class="relative xl:h-full flex items-center justify-center xl:justify-end">
-      <div class="relative w-full max-w-xl parallax-container" data-parallax>
-        <HeroIllustration />
+  <!-- Scrolling Logos - cleaner transition -->
+  <div class="bg-zinc-900 py-5 md:py-6 overflow-hidden">
+    <p class="text-center text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4 md:mb-5 px-6">
+      Ils m'ont fait confiance
+    </p>
+
+    <div class="relative">
+      <!-- Fade left -->
+      <div class="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+
+      <!-- Fade right -->
+      <div class="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+
+      <!-- Scrolling wrapper -->
+      <div class="flex overflow-hidden scrolling-container">
+        <!-- First track -->
+        <div
+          class="flex items-center shrink-0 scrolling-logos scroll-left"
+          style={`animation-duration: ${scrollSpeed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`}
+        >
+          {clients.map((item) => (
+            <span class="text-[13px] font-medium text-zinc-500 whitespace-nowrap">{item.text}</span>
+          ))}
+        </div>
+        <!-- Duplicate track for seamless loop -->
+        <div
+          class="flex items-center shrink-0 scrolling-logos scroll-left"
+          style={`animation-duration: ${scrollSpeed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`}
+          aria-hidden="true"
+        >
+          {clients.map((item) => (
+            <span class="text-[13px] font-medium text-zinc-500 whitespace-nowrap">{item.text}</span>
+          ))}
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
+  .hero-title {
+    font-size: clamp(3.5rem, 14vw, 7rem);
+  }
+
   .hero-subtitle {
-    font-size: var(--fluid-text-xl);
-    max-width: var(--fluid-prose-xl);
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    max-width: 38rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: clamp(3rem, 15vw, 4.5rem);
+    }
   }
 
   .hero-grid-pattern {
     background-image:
-      linear-gradient(to right, rgb(228 228 231 / 0.5) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(228 228 231 / 0.5) 1px, transparent 1px);
+      linear-gradient(to right, rgb(161 161 170 / 0.15) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(161 161 170 / 0.15) 1px, transparent 1px);
     background-size: 80px 80px;
     -webkit-mask-image: radial-gradient(
-      ellipse 50% 70% at 25% 50%,
+      ellipse 80% 70% at 50% 40%,
       transparent 0%,
+      transparent 30%,
+      black 70%,
       black 100%
     );
     mask-image: radial-gradient(
-      ellipse 50% 70% at 25% 50%,
+      ellipse 80% 70% at 50% 40%,
       transparent 0%,
+      transparent 30%,
+      black 70%,
       black 100%
     );
   }
 </style>
-
-<script>
-  // Subtle parallax effect on scroll
-  const parallaxElement = document.querySelector('[data-parallax]');
-
-  if (parallaxElement && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-    let ticking = false;
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          const translateY = scrollY * 0.08; // Subtle movement
-          (parallaxElement as HTMLElement).style.transform = `translateY(${translateY}px)`;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-  }
-</script>
