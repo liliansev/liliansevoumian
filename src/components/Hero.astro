@@ -1,25 +1,29 @@
 ---
 import { Icon } from 'astro-icon/components';
 import HeroIllustration from './ui/HeroIllustration.astro';
+import CTAButton from './ui/CTAButton.astro';
 
 const techBadges = [
-  { name: "Make", icon: "simple-icons:make", href: "https://www.make.com" },
-  { name: "n8n", icon: "simple-icons:n8n", href: "https://n8n.io" },
-  { name: "Airtable", icon: "simple-icons:airtable", href: "https://airtable.com" }
+  { name: "Make", icon: "simple-icons:make" },
+  { name: "n8n", icon: "simple-icons:n8n" },
+  { name: "Airtable", icon: "simple-icons:airtable" }
 ];
 ---
 
 <section class="overflow-hidden pt-32 pb-20 md:pt-48 md:pb-32 px-6 relative">
+  <!-- Grid pattern background -->
+  <div class="absolute inset-0 hero-grid-pattern pointer-events-none"></div>
+
   <!-- Background decorations -->
   <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
   <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
   <div class="grid xl:grid-cols-2 gap-12 xl:gap-16 max-w-7xl mx-auto items-center">
     <!-- Content -->
-    <div class="z-10 relative space-y-8">
+    <div class="z-10 relative space-y-8 min-w-0">
       <!-- Headline -->
       <h1 class="fluid-h0 font-semibold text-zinc-900 leading-[1.1]">
-        Expert IA & Automatisations<br /><span class="text-zinc-500">via Make & n8n.</span>
+        Expert IA &<br />Automations<br /><span class="text-zinc-500 whitespace-nowrap">Make & n8n</span>
       </h1>
 
       <!-- Subheadline -->
@@ -28,35 +32,35 @@ const techBadges = [
       </p>
 
       <!-- CTA Block - aligned elements -->
-      <div class="pt-4 space-y-4 fluid-prose-xl">
-        <a
-          href="https://cal.com/lilian-sevoumian/prise-de-brief"
-          class="group w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-zinc-900 text-white text-sm font-medium rounded-xl shadow-lg shadow-zinc-900/25 hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/30 btn-primary"
-        >
-          Me confier votre projet
-          <Icon name="lucide:arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" />
-        </a>
+      <div class="pt-4 space-y-4 max-w-full">
+        <div id="hero-cta">
+          <CTAButton
+            href="https://cal.com/lilian-sevoumian/prise-de-brief"
+            text="Lancer mon projet"
+            size="lg"
+          />
+        </div>
 
         <!-- Social proof -->
-        <div class="flex items-center justify-between text-sm text-zinc-600">
+        <div class="flex items-center justify-between md:justify-start md:gap-6 text-sm text-zinc-600">
           <div class="flex items-center gap-1">
             <Icon name="lucide:users" class="w-4 h-4" />
-            <span><strong class="text-zinc-700">100+</strong> entreprises accompagnées</span>
+            <span><strong class="text-zinc-700">100+</strong> clients</span>
           </div>
           <span class="text-zinc-400">•</span>
           <div class="flex items-center gap-1">
             <Icon name="lucide:graduation-cap" class="w-4 h-4" />
-            <span><strong class="text-zinc-700">300+</strong> personnes formées</span>
+            <span><strong class="text-zinc-700">300+</strong> formés</span>
           </div>
         </div>
 
         <!-- Tech badges -->
-        <div class="pt-2 flex items-center justify-between text-zinc-500">
+        <div class="pt-2 flex items-center justify-between md:justify-start md:gap-8 text-zinc-500">
           {techBadges.map((badge) => (
-            <a href={badge.href} target="_blank" rel="noopener" class="flex items-center gap-2 hover:text-zinc-600 active:text-zinc-500 transition-colors py-2">
+            <div class="flex items-center gap-2 py-2">
               <Icon name={badge.icon} class="w-5 h-5" />
               <span class="text-xs font-semibold uppercase tracking-wide">{badge.name}</span>
-            </a>
+            </div>
           ))}
         </div>
       </div>
@@ -75,6 +79,23 @@ const techBadges = [
   .hero-subtitle {
     font-size: var(--fluid-text-xl);
     max-width: var(--fluid-prose-xl);
+  }
+
+  .hero-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgb(228 228 231 / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(228 228 231 / 0.5) 1px, transparent 1px);
+    background-size: 80px 80px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 50% 70% at 25% 50%,
+      transparent 0%,
+      black 100%
+    );
+    mask-image: radial-gradient(
+      ellipse 50% 70% at 25% 50%,
+      transparent 0%,
+      black 100%
+    );
   }
 </style>
 

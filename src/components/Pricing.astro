@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import CTAButton from './ui/CTAButton.astro';
 
 const plans = [
   {
@@ -45,8 +46,8 @@ const plans = [
 ];
 ---
 
-<section id="tarifs" class="py-24 px-6">
-  <div class="max-w-5xl mx-auto">
+<section id="tarifs" class="py-24 px-6 bg-zinc-50">
+  <div class="max-w-6xl mx-auto">
     <!-- Header -->
     <div class="mb-16">
       <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
@@ -98,23 +99,13 @@ const plans = [
           </ul>
 
           <!-- CTA -->
-          {plan.featured ? (
-            <a
-              href={plan.href}
-              class="group inline-flex items-center justify-center gap-2 w-full px-4 py-3.5 fluid-text-sm font-medium rounded-lg transition-all bg-zinc-900 text-white hover:bg-zinc-800"
-            >
-              {plan.cta}
-              <Icon name="lucide:arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
-          ) : (
-            <a
-              href={plan.href}
-              class="group inline-flex items-center justify-center gap-2 w-full px-4 py-3.5 fluid-text-sm font-medium rounded-lg transition-all bg-zinc-100 text-zinc-900 hover:bg-zinc-200"
-            >
-              {plan.cta}
-              <Icon name="lucide:arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
-          )}
+          <CTAButton
+            href={plan.href}
+            text={plan.cta}
+            variant={plan.featured ? 'primary' : 'secondary'}
+            size="md"
+            fullWidth={true}
+          />
         </div>
       ))}
     </div>

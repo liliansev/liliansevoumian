@@ -1,0 +1,56 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  href: string;
+  text: string;
+  variant?: 'primary' | 'secondary' | 'inverted';
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+  showArrow?: boolean;
+}
+
+const {
+  href,
+  text,
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  showArrow = true
+} = Astro.props;
+
+// Size classes
+const sizeClasses = {
+  sm: 'px-4 py-2.5 text-xs gap-2',
+  md: 'px-6 py-3.5 text-sm gap-2',
+  lg: 'px-8 py-4 text-sm gap-3'
+};
+
+const iconSizes = {
+  sm: 'w-3.5 h-3.5',
+  md: 'w-4 h-4',
+  lg: 'w-4 h-4'
+};
+
+// Variant classes
+const variantClasses = {
+  primary: 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/25 hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/30',
+  secondary: 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200',
+  inverted: 'bg-white text-zinc-900 shadow-lg hover:bg-zinc-100'
+};
+
+const baseClasses = 'group inline-flex items-center justify-center font-medium rounded-xl transition-all btn-primary';
+const widthClass = fullWidth ? 'w-full' : '';
+
+const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${widthClass}`;
+---
+
+<a href={href} class={classes}>
+  {text}
+  {showArrow && (
+    <Icon
+      name="lucide:arrow-right"
+      class={`${iconSizes[size]} transition-transform group-hover:translate-x-1`}
+    />
+  )}
+</a>

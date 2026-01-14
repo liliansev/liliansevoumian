@@ -4,9 +4,27 @@ import Navigation from '../components/Navigation.astro';
 import Hero from '../components/Hero.astro';
 import ScrollingLogos from '../components/ScrollingLogos.astro';
 import Stats from '../components/Stats.astro';
+
+// Tous les clients (projets + formations)
+const clients = [
+  { text: "Qonto" },
+  { text: "Jellysmack" },
+  { text: "Digital Campus" },
+  { text: "Edumiam" },
+  { text: "Rocket School" },
+  { text: "Movecool" },
+  { text: "KlaK" },
+  { text: "Digilytix" },
+  { text: "WeTechCare" },
+  { text: "Contournement" },
+  { text: "Familytrip" },
+  { text: "Alegria Academy" },
+  { text: "Boost ton Biz" },
+  { text: "Deuxième Souffle" },
+  { text: "Reborn" }
+];
 import Testimonials from '../components/Testimonials.astro';
 import ToolsCarousel from '../components/ToolsCarousel.astro';
-import Quote from '../components/Quote.astro';
 import Expertise from '../components/Expertise.astro';
 import Methodology from '../components/Methodology.astro';
 import Timeline from '../components/Timeline.astro';
@@ -16,20 +34,6 @@ import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
 
-// Clients logos
-const clients = [
-  { text: "Qonto" },
-  { text: "Jellysmack" },
-  { text: "Edumiam" },
-  { text: "Movecool" },
-  { text: "KlaK" },
-  { text: "WeTechCare" },
-  { text: "Familytrip" },
-  { text: "Boost ton Biz" },
-  { text: "Deuxième Souffle" },
-  { text: "Reborn" }
-];
-
 ---
 
 <Layout>
@@ -38,29 +42,29 @@ const clients = [
   <main>
     <Hero />
 
-    <!-- Clients carousel -->
+    <!-- Clients -->
     <ScrollingLogos
       items={clients}
-      speed={80}
+      title="Ils m'ont fait confiance"
+      speed={60}
       direction="left"
       showNames={false}
+      variant="dark"
     />
 
     <Stats />
 
-    <Expertise />
+    <Methodology />
 
     <ToolsCarousel />
 
-    <Quote quote="Je ne pourrais plus créer un business sans penser automatisation dès le premier jour." />
-
-    <Methodology />
+    <Expertise />
 
     <Testimonials />
 
-    <Timeline />
-
     <About />
+
+    <Timeline />
 
     <Pricing />
 

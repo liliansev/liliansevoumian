@@ -18,8 +18,8 @@ const phases = [
 ];
 ---
 
-<section id="process" class="py-24 bg-white border-y border-zinc-200 px-6">
-  <div class="max-w-5xl mx-auto">
+<section id="process" class="py-24 bg-white px-6">
+  <div class="max-w-6xl mx-auto">
     <div class="mb-12">
       <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
         Méthodologie
@@ -32,17 +32,33 @@ const phases = [
     <div class="grid md:grid-cols-3 gap-6">
       {phases.map((phase) => (
         <div class="p-6 bg-white border border-zinc-200 rounded-xl card-interactive">
-          <span class="text-sm font-semibold text-zinc-400 font-mono">
-            {phase.number}
-          </span>
-          <h3 class="fluid-h4 font-semibold text-zinc-900 mt-2 mb-3">
-            {phase.title}
-          </h3>
+          <div class="flex items-baseline gap-3 md:block mb-3">
+            <span class="text-sm font-semibold text-zinc-400 font-mono">
+              {phase.number}
+            </span>
+            <h3 class="fluid-h4 font-semibold text-zinc-900 md:mt-2">
+              {phase.title}
+            </h3>
+          </div>
           <p class="text-zinc-600 fluid-text-sm leading-relaxed">
             {phase.description}
           </p>
         </div>
       ))}
+    </div>
+
+    <!-- Micro-CTA -->
+    <div class="mt-10 text-center">
+      <a
+        href="https://cal.com/lilian-sevoumian/prise-de-brief"
+        class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 transition-colors link-underline"
+      >
+        Commencer par l'étape 1
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/>
+          <path d="m12 5 7 7-7 7"/>
+        </svg>
+      </a>
     </div>
   </div>
 </section>
