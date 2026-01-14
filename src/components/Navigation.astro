@@ -62,10 +62,11 @@ const navLinks = [
   <div class="mobile-menu-content h-full flex flex-col px-6 py-8">
     <!-- Navigation Links -->
     <div class="flex-1 space-y-2">
-      {navLinks.map((link) => (
+      {navLinks.map((link, i) => (
         <a
           href={link.href}
           class="mobile-menu-link block text-2xl font-medium text-zinc-900 hover:text-zinc-600 transition-colors py-3"
+          style={`--i: ${i}`}
         >
           {link.label}
         </a>
@@ -124,12 +125,25 @@ const navLinks = [
   .mobile-menu {
     opacity: 0;
     visibility: hidden;
-    transition: opacity 200ms ease, visibility 200ms ease;
+    transition: opacity 250ms ease, visibility 250ms ease;
   }
 
   .mobile-menu.open {
     opacity: 1;
     visibility: visible;
+  }
+
+  /* Stagger fade in on links */
+  .mobile-menu .mobile-menu-link {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 200ms ease, transform 200ms ease;
+  }
+
+  .mobile-menu.open .mobile-menu-link {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(var(--i, 0) * 40ms + 80ms);
   }
 
   /* Body scroll lock */
@@ -140,8 +154,14 @@ const navLinks = [
   /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu,
+    .mobile-menu .mobile-menu-link,
     #mobile-menu-btn .burger-line {
       transition: none;
+    }
+
+    .mobile-menu .mobile-menu-link {
+      opacity: 1;
+      transform: none;
     }
   }
 </style>
