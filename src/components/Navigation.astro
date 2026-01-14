@@ -58,15 +58,14 @@ const navLinks = [
 </nav>
 
 <!-- Mobile Menu (Fullscreen Overlay - Outside nav for proper z-index) -->
-<div id="mobile-menu" class="mobile-menu hidden fixed inset-0 top-16 z-[100] bg-zinc-100 md:hidden">
+<div id="mobile-menu" class="mobile-menu fixed inset-0 top-16 z-[100] bg-zinc-100 md:hidden">
   <div class="mobile-menu-content h-full flex flex-col px-6 py-8">
     <!-- Navigation Links -->
     <div class="flex-1 space-y-2">
-      {navLinks.map((link, index) => (
+      {navLinks.map((link) => (
         <a
           href={link.href}
           class="mobile-menu-link block text-2xl font-medium text-zinc-900 hover:text-zinc-600 transition-colors py-3"
-          style={`--index: ${index}`}
         >
           {link.label}
         </a>
@@ -74,7 +73,7 @@ const navLinks = [
     </div>
 
     <!-- CTA Button at bottom -->
-    <div id="menu-cta">
+    <div>
       <CTAButton
         href={calUrl}
         text="Lancer mon projet"
@@ -88,134 +87,31 @@ const navLinks = [
 <script>
   const menuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
-  let closeTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  // Flying CTA animation
-  function animateFlyingCTA() {
-    // Skip if reduced motion is preferred
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    // Clean up any existing ghost elements (prevent memory leak)
-    document.querySelectorAll('#flying-cta-ghost').forEach(el => el.remove());
-
-    const heroCTA = document.getElementById('hero-cta');
-    const menuCTA = document.getElementById('menu-cta');
-
-    if (!heroCTA || !menuCTA) return;
-
-    // Check if Hero CTA is visible in viewport
-    const heroRect = heroCTA.getBoundingClientRect();
-    const isHeroVisible = heroRect.top < window.innerHeight && heroRect.bottom > 0;
-
-    if (!isHeroVisible) return;
-
-    // Get positions
-    const startRect = heroCTA.getBoundingClientRect();
-
-    // Create ghost element
-    const ghost = heroCTA.cloneNode(true) as HTMLElement;
-    ghost.id = 'flying-cta-ghost';
-    ghost.style.cssText = `
-      position: fixed;
-      top: ${startRect.top}px;
-      left: ${startRect.left}px;
-      width: ${startRect.width}px;
-      height: ${startRect.height}px;
-      z-index: 200;
-      pointer-events: none;
-      transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
-    `;
-    document.body.appendChild(ghost);
-
-    // Force reflow
-    void ghost.offsetHeight;
-
-    // Calculate end position (bottom of screen with padding)
-    const endTop = window.innerHeight - startRect.height - 32; // 32px = py-8 padding
-    const endLeft = 24; // px-6 padding
-    const endWidth = window.innerWidth - 48; // full width minus padding
-
-    // Animate to end position
-    requestAnimationFrame(() => {
-      ghost.style.top = `${endTop}px`;
-      ghost.style.left = `${endLeft}px`;
-      ghost.style.width = `${endWidth}px`;
-      ghost.style.opacity = '0.5';
-    });
-
-    // Remove ghost after animation
-    setTimeout(() => {
-      ghost.remove();
-    }, 400);
+  function toggleMenu() {
+    const isOpen = mobileMenu?.classList.toggle('open');
+    menuBtn?.classList.toggle('open', isOpen);
+    menuBtn?.setAttribute('aria-expanded', String(isOpen));
+    document.body.classList.toggle('menu-open', isOpen);
   }
 
-  function openMenu() {
-    // Cancel any pending close timeout
-    if (closeTimeout) {
-      clearTimeout(closeTimeout);
-      closeTimeout = null;
-    }
-
-    // Trigger flying CTA animation
-    animateFlyingCTA();
-
-    mobileMenu?.classList.remove('hidden');
-    void mobileMenu?.offsetHeight; // Force reflow for animation
-    mobileMenu?.classList.add('open');
-    menuBtn?.classList.add('open');
-    menuBtn?.setAttribute('aria-expanded', 'true');
-    menuBtn?.setAttribute('aria-label', 'Fermer le menu');
-    document.body.classList.add('menu-open');
-
-    // Focus first link for accessibility
-    const firstLink = mobileMenu?.querySelector('.mobile-menu-link') as HTMLElement;
-    firstLink?.focus();
-  }
-
-  function closeMenu() {
-    mobileMenu?.classList.remove('open');
-    menuBtn?.classList.remove('open');
-    menuBtn?.setAttribute('aria-expanded', 'false');
-    menuBtn?.setAttribute('aria-label', 'Ouvrir le menu');
-    document.body.classList.remove('menu-open');
-
-    // Return focus to menu button
-    menuBtn?.focus();
-
-    // Respect reduced motion for timeout
-    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 10 : 300;
-    closeTimeout = setTimeout(() => {
-      if (!mobileMenu?.classList.contains('open')) {
-        mobileMenu?.classList.add('hidden');
-      }
-      closeTimeout = null;
-    }, delay);
-  }
-
-  // Toggle menu on burger button click
-  menuBtn?.addEventListener('click', () => {
-    mobileMenu?.classList.contains('open') ? closeMenu() : openMenu();
-  });
+  menuBtn?.addEventListener('click', toggleMenu);
 
   // Close menu when clicking a navigation link
   mobileMenu?.querySelectorAll('.mobile-menu-link').forEach(link => {
-    link.addEventListener('click', closeMenu);
+    link.addEventListener('click', toggleMenu);
   });
 
   // Close menu on Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && mobileMenu?.classList.contains('open')) {
-      closeMenu();
+      toggleMenu();
     }
   });
 </script>
 
 <style is:global>
   /* Burger → X transformation */
-  #mobile-menu-btn.open {
-    color: #18181b;
-  }
-
   #mobile-menu-btn.open .burger-line:first-child {
     transform: translateY(7px) rotate(45deg);
   }
@@ -224,27 +120,16 @@ const navLinks = [
     transform: translateY(-7px) rotate(-45deg);
   }
 
-  /* Fullscreen menu */
-  .mobile-menu:not(.hidden) {
+  /* Fullscreen menu - hidden by default */
+  .mobile-menu {
     opacity: 0;
-    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: hidden;
+    transition: opacity 200ms ease, visibility 200ms ease;
   }
 
   .mobile-menu.open {
     opacity: 1;
-  }
-
-  /* Stagger animation on links */
-  .mobile-menu .mobile-menu-link {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 250ms ease, transform 250ms ease;
-  }
-
-  .mobile-menu.open .mobile-menu-link {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: calc((var(--index, 0) * 50 + 50) * 1ms);
+    visibility: visible;
   }
 
   /* Body scroll lock */
@@ -252,17 +137,11 @@ const navLinks = [
     overflow: hidden;
   }
 
-  /* Reduced motion - instant toggle */
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .mobile-menu,
-    .mobile-menu .mobile-menu-link,
     #mobile-menu-btn .burger-line {
       transition: none;
-    }
-
-    .mobile-menu .mobile-menu-link {
-      opacity: 1;
-      transform: none;
     }
   }
 </style>
