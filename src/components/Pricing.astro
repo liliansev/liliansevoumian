@@ -117,6 +117,15 @@ const plans = [
     position: relative;
     background: white;
     border-radius: 0.75rem;
+    /* Fallback border for browsers without @property support (Firefox) */
+    border: 1px solid #a1a1aa;
+  }
+
+  /* Hide fallback border when animation works */
+  @supports (background: paint(something)) {
+    .pricing-featured {
+      border: none;
+    }
   }
 
   .pricing-featured::before {

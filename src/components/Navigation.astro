@@ -95,6 +95,9 @@ const navLinks = [
     // Skip if reduced motion is preferred
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    // Clean up any existing ghost elements (prevent memory leak)
+    document.querySelectorAll('#flying-cta-ghost').forEach(el => el.remove());
+
     const heroCTA = document.getElementById('hero-cta');
     const menuCTA = document.getElementById('menu-cta');
 
