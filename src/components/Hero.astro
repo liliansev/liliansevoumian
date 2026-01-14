@@ -9,9 +9,9 @@ const techBadges = [
 ];
 
 const stats = [
-  { value: "300+", label: "Personnes formées" },
-  { value: "100+", label: "Entreprises accompagnées" },
-  { value: "2 000+", label: "Heures économisées" }
+  { value: 300, suffix: "+", label: "Personnes formées" },
+  { value: 100, suffix: "+", label: "Entreprises accompagnées" },
+  { value: 2000, suffix: "+", label: "Heures économisées", format: true }
 ];
 
 const clients = [
@@ -36,39 +36,39 @@ const scrollSpeed = 60;
 const gapSize = 48;
 ---
 
-<section class="min-h-screen flex flex-col">
+<section class="hero-section flex flex-col">
   <!-- Main Hero Content -->
   <div class="flex-1 overflow-hidden px-3 md:px-6 relative flex items-center pt-12 md:pt-0">
-    <!-- Subtle grid pattern background -->
+    <!-- Animated grid pattern background -->
     <div class="absolute inset-0 hero-grid-pattern pointer-events-none"></div>
 
-    <!-- Subtle gradient overlay - more Linear/Stripe style -->
+    <!-- Subtle gradient overlay -->
     <div class="absolute inset-0 bg-gradient-to-b from-white via-transparent to-zinc-50/50 pointer-events-none"></div>
 
     <div class="max-w-5xl mx-auto text-center w-full">
       <div class="z-10 relative">
-        <!-- Headline - BIGGER -->
-        <h1 class="hero-title font-semibold text-zinc-900 leading-[1] tracking-tight">
-          Expert IA &<br />Automations<br /><span class="text-zinc-400">Make & n8n</span>
+        <!-- Headline with staggered animation -->
+        <h1 class="hero-title font-semibold text-zinc-900 leading-[1] tracking-tight hero-fade-in" style="--delay: 0">
+          Expert IA &<br />Automations<br /><span class="hero-gradient-text">Make & n8n</span>
         </h1>
 
         <!-- Subheadline -->
-        <p class="hero-subtitle text-zinc-600 font-light leading-relaxed mx-auto mt-5 md:mt-6">
+        <p class="hero-subtitle text-zinc-600 font-light leading-relaxed mx-auto mt-5 md:mt-6 hero-fade-in" style="--delay: 1">
           5 ans d'expertise sur <strong class="text-zinc-700 font-medium">Make</strong>, <strong class="text-zinc-700 font-medium">n8n</strong> et <strong class="text-zinc-700 font-medium">Airtable</strong>.<br />+2 000 heures économisées pour mes clients.
         </p>
 
-        <!-- Tech badges -->
-        <div class="flex items-center justify-center gap-6 md:gap-10 mt-5 md:mt-6 text-zinc-400">
-          {techBadges.map((badge) => (
-            <div class="flex items-center gap-1.5 md:gap-2">
-              <Icon name={badge.icon} class="w-4 h-4 md:w-5 md:h-5" />
-              <span class="text-[10px] md:text-xs font-medium uppercase tracking-wider">{badge.name}</span>
+        <!-- Tech badges with glassmorphism -->
+        <div class="flex items-center justify-center gap-4 md:gap-6 mt-5 md:mt-6 hero-fade-in" style="--delay: 2">
+          {techBadges.map((badge, i) => (
+            <div class="tech-badge flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full">
+              <Icon name={badge.icon} class="w-4 h-4 md:w-5 md:h-5 text-zinc-600" />
+              <span class="text-[10px] md:text-xs font-medium uppercase tracking-wider text-zinc-600">{badge.name}</span>
             </div>
           ))}
         </div>
 
         <!-- CTA Button -->
-        <div class="mt-8 md:mt-10">
+        <div class="mt-8 md:mt-10 hero-fade-in" style="--delay: 3">
           <CTAButton
             href="https://cal.com/lilian-sevoumian/prise-de-brief"
             text="Lancer mon projet"
@@ -76,11 +76,18 @@ const gapSize = 48;
           />
         </div>
 
-        <!-- Stats - Desktop only -->
-        <div class="hidden md:flex items-center justify-center gap-20 mt-12">
+        <!-- Stats - Desktop only with counter animation -->
+        <div class="hidden md:flex items-center justify-center gap-20 mt-12 hero-fade-in" style="--delay: 4">
           {stats.map((stat) => (
             <div class="text-center">
-              <div class="text-3xl font-semibold text-zinc-900">{stat.value}</div>
+              <div
+                class="text-3xl font-semibold text-zinc-900 stat-counter"
+                data-target={stat.value}
+                data-suffix={stat.suffix}
+                data-format={stat.format ? "true" : "false"}
+              >
+                0{stat.suffix}
+              </div>
               <div class="text-xs text-zinc-500 mt-1 uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
@@ -89,8 +96,8 @@ const gapSize = 48;
     </div>
   </div>
 
-  <!-- Scrolling Logos - cleaner transition -->
-  <div class="bg-zinc-900 py-5 md:py-6 overflow-hidden">
+  <!-- Scrolling Logos - smoother transition -->
+  <div class="bg-zinc-900 py-5 md:py-6 overflow-hidden hero-logos-section">
     <p class="text-center text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4 md:mb-5 px-6">
       Ils m'ont fait confiance
     </p>
@@ -129,6 +136,13 @@ const gapSize = 48;
 </section>
 
 <style>
+  /* Hero section height - iOS Safari fix */
+  .hero-section {
+    min-height: 100vh; /* Fallback */
+    min-height: 100dvh; /* Dynamic viewport height for iOS Safari */
+  }
+
+  /* Title sizing */
   .hero-title {
     font-size: clamp(3.5rem, 14vw, 7rem);
   }
@@ -144,6 +158,54 @@ const gapSize = 48;
     }
   }
 
+  /* Gradient text for "Make & n8n" */
+  .hero-gradient-text {
+    background: linear-gradient(135deg, #71717a 0%, #a1a1aa 50%, #71717a 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Staggered fade-in animation */
+  .hero-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-fade-up 0.8s ease-out forwards;
+    animation-delay: calc(var(--delay) * 0.15s);
+  }
+
+  @keyframes hero-fade-up {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Tech badges glassmorphism */
+  .tech-badge {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(161, 161, 170, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+  }
+
+  .tech-badge:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(161, 161, 170, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* Animated grid pattern */
   .hero-grid-pattern {
     background-image:
       linear-gradient(to right, rgb(161 161 170 / 0.15) 1px, transparent 1px),
@@ -163,5 +225,93 @@ const gapSize = 48;
       black 70%,
       black 100%
     );
+    animation: grid-pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes grid-pulse {
+    0%, 100% {
+      opacity: 1;
+      background-size: 80px 80px;
+    }
+    50% {
+      opacity: 0.7;
+      background-size: 82px 82px;
+    }
+  }
+
+  /* Smoother transition to logos section */
+  .hero-logos-section {
+    position: relative;
+  }
+
+  .hero-logos-section::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(to bottom, transparent, rgb(24 24 27 / 0.3));
+    pointer-events: none;
   }
 </style>
+
+<script>
+  // Counter animation for stats
+  const animateCounter = (element: HTMLElement) => {
+    const target = parseInt(element.dataset.target || '0');
+    const suffix = element.dataset.suffix || '';
+    const shouldFormat = element.dataset.format === 'true';
+    const duration = 2000;
+    const startTime = performance.now();
+
+    const updateCounter = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Easing function (ease-out)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(easeOut * target);
+
+      // Format number with space for thousands
+      const formatted = shouldFormat
+        ? current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+        : current.toString();
+
+      element.textContent = formatted + suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCounter);
+      }
+    };
+
+    requestAnimationFrame(updateCounter);
+  };
+
+  // Intersection Observer for stats
+  const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px'
+  };
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const counters = entry.target.querySelectorAll('.stat-counter');
+        counters.forEach(counter => {
+          if (!counter.classList.contains('animated')) {
+            counter.classList.add('animated');
+            animateCounter(counter as HTMLElement);
+          }
+        });
+      }
+    });
+  }, observerOptions);
+
+  // Observe the stats section
+  document.querySelectorAll('.hero-fade-in').forEach(el => {
+    if (el.querySelector('.stat-counter')) {
+      statsObserver.observe(el);
+    }
+  });
+</script>

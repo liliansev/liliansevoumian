@@ -1,27 +1,111 @@
 ---
 const stats = [
   {
-    value: "300+",
+    value: 300,
+    suffix: "+",
     label: "Personnes formées"
   },
   {
-    value: "100+",
+    value: 100,
+    suffix: "+",
     label: "Entreprises accompagnées"
   },
   {
-    value: "2 000+",
-    label: "Heures économisées"
+    value: 2000,
+    suffix: "+",
+    label: "Heures économisées",
+    format: true
   }
 ];
 ---
 
-<section class="py-6 bg-white md:hidden">
-  <div class="max-w-sm mx-auto px-6 flex flex-col gap-4">
+<section class="py-6 bg-gradient-to-b from-white to-zinc-50/50 md:hidden stats-section">
+  <div class="max-w-sm mx-auto px-6 flex flex-col gap-3">
     {stats.map((stat) => (
-      <div class="flex items-center justify-between py-3 border-b border-zinc-100 last:border-0">
+      <div class="flex items-center justify-between py-3 border-b border-zinc-100 last:border-0 stat-row">
         <span class="text-xs text-zinc-500 uppercase tracking-wider">{stat.label}</span>
-        <span class="text-lg font-semibold text-zinc-900">{stat.value}</span>
+        <span
+          class="text-lg font-semibold text-zinc-900 stat-counter-mobile"
+          data-target={stat.value}
+          data-suffix={stat.suffix}
+          data-format={stat.format ? "true" : "false"}
+        >
+          0{stat.suffix}
+        </span>
       </div>
     ))}
   </div>
 </section>
+
+<style>
+  .stats-section {
+    position: relative;
+  }
+
+  .stat-row {
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: stat-slide-in 0.5s ease-out forwards;
+  }
+
+  .stat-row:nth-child(1) { animation-delay: 0.1s; }
+  .stat-row:nth-child(2) { animation-delay: 0.2s; }
+  .stat-row:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes stat-slide-in {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>
+
+<script>
+  // Counter animation for mobile stats
+  const animateCounter = (element: HTMLElement) => {
+    const target = parseInt(element.dataset.target || '0');
+    const suffix = element.dataset.suffix || '';
+    const shouldFormat = element.dataset.format === 'true';
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const updateCounter = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(easeOut * target);
+
+      const formatted = shouldFormat
+        ? current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+        : current.toString();
+
+      element.textContent = formatted + suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCounter);
+      }
+    };
+
+    requestAnimationFrame(updateCounter);
+  };
+
+  // Intersection Observer for mobile stats
+  const mobileStatsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const counters = entry.target.querySelectorAll('.stat-counter-mobile');
+        counters.forEach(counter => {
+          if (!counter.classList.contains('animated')) {
+            counter.classList.add('animated');
+            animateCounter(counter as HTMLElement);
+          }
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.stats-section').forEach(el => {
+    mobileStatsObserver.observe(el);
+  });
+</script>
