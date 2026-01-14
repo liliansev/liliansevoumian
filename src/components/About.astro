@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import lilianPortrait from '../assets/lilian-portrait.png';
+
+const passions = [
+  { icon: "lucide:headphones", label: "Podcasts" },
+  { icon: "lucide:gamepad-2", label: "Gaming" },
+  { icon: "lucide:plane", label: "Voyages" }
+];
+---
+
+<section id="about" class="py-24 bg-zinc-50 border-y border-zinc-200 px-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="grid md:grid-cols-[280px_1fr] gap-12 md:gap-16 items-start">
+      <!-- Photo -->
+      <div class="relative mx-auto md:mx-0">
+        <div class="relative w-64 md:w-full aspect-[4/5] rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-200">
+          <Image
+            src={lilianPortrait}
+            alt="Lilian Sevoumian"
+            width={560}
+            height={700}
+            format="webp"
+            quality={85}
+            class="w-full h-full object-cover object-top"
+            loading="lazy"
+          />
+        </div>
+        <!-- Decorative element -->
+        <div class="absolute -bottom-3 -right-3 w-24 h-24 bg-emerald-500/10 rounded-2xl -z-10"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="flex flex-col justify-center">
+        <p class="text-sm font-medium text-emerald-600 uppercase tracking-wider mb-3">
+          À propos
+        </p>
+
+        <h2 class="text-2xl md:text-3xl font-semibold text-zinc-900 tracking-tight mb-6">
+          Optimiser, c'est dans mon ADN.
+        </h2>
+
+        <div class="space-y-4 text-zinc-600 leading-relaxed">
+          <p>
+            Plus jeune, je passais des heures à min-maxer mes persos sur WoW et Final Fantasy. Aujourd'hui, c'est pareil — sauf que j'optimise des business au lieu de stats d'attaque.
+          </p>
+
+          <p>
+            Je suis transparent (parfois trop), j'aime challenger les idées reçues, et je ne lâche rien tant qu'un problème n'est pas résolu. Si un truc ne marche pas, ça me hante.
+          </p>
+
+          <p class="text-zinc-500 italic border-l-2 border-zinc-300 pl-4">
+            "Quand je me balade quelque part, je vois tout ce qu'on pourrait automatiser. C'est une malédiction."
+          </p>
+        </div>
+
+        <!-- Passions -->
+        <div class="flex flex-wrap gap-3 mt-8">
+          {passions.map((passion) => (
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-zinc-200 text-sm text-zinc-600">
+              <Icon name={passion.icon} class="w-4 h-4 text-zinc-400" />
+              <span>{passion.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
