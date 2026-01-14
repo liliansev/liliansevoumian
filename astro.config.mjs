@@ -10,5 +10,12 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()]
   },
-  integrations: [icon(), sitemap()]
+  integrations: [
+    icon({
+      include: {
+        mdi: ['headphones', 'gamepad-variant', 'airplane']
+      }
+    }),
+    sitemap()
+  ]
 });
