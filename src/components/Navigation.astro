@@ -125,7 +125,6 @@ const navLinks = [
   .mobile-menu {
     opacity: 0;
     visibility: hidden;
-    transition: opacity 250ms ease, visibility 250ms ease;
   }
 
   .mobile-menu.open {
@@ -133,17 +132,13 @@ const navLinks = [
     visibility: visible;
   }
 
-  /* Stagger fade in on links */
+  /* Links - instant display */
   .mobile-menu .mobile-menu-link {
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 200ms ease, transform 200ms ease;
   }
 
   .mobile-menu.open .mobile-menu-link {
     opacity: 1;
-    transform: translateY(0);
-    transition-delay: calc(var(--i, 0) * 40ms + 80ms);
   }
 
   /* Body scroll lock */
@@ -151,17 +146,4 @@ const navLinks = [
     overflow: hidden;
   }
 
-  /* Reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .mobile-menu,
-    .mobile-menu .mobile-menu-link,
-    #mobile-menu-btn .burger-line {
-      transition: none;
-    }
-
-    .mobile-menu .mobile-menu-link {
-      opacity: 1;
-      transform: none;
-    }
-  }
 </style>
