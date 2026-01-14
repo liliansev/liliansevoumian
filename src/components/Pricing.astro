@@ -61,7 +61,7 @@ const plans = [
     <!-- Pricing Cards -->
     <div class="grid md:grid-cols-3 gap-6">
       {plans.map((plan) => (
-        <div class={`relative p-6 md:p-8 bg-white rounded-xl transition-all ${plan.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-200 card-interactive'}`}>
+        <div class={`relative p-6 bg-white rounded-2xl transition-all ${plan.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-100 shadow-sm card-interactive'}`}>
           {plan.featured && (
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
               Populaire
@@ -116,7 +116,7 @@ const plans = [
   .pricing-featured {
     position: relative;
     background: white;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     /* Fallback border for browsers without @property support (Firefox) */
     border: 1px solid #a1a1aa;
   }
@@ -132,7 +132,7 @@ const plans = [
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     padding: 1px;
     pointer-events: none;
     background: linear-gradient(
