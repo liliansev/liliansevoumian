@@ -5,8 +5,8 @@ interface Props {
 }
 
 const {
-  title = "Lilian Sevoumian | Expert No-Code & Automatisation",
-  description = "Expert Make, n8n et Airtable. +5 ans d'expérience, certification Make niveau 5 (1er français). Formations et missions freelance."
+  title = "Lilian Sevoumian | Expert Automatisation Make & n8n - Freelance",
+  description = "Freelance expert en automatisation Make & n8n. +5 ans d'expérience, certification Make niveau 5 (1er français). Formations, audits et projets sur-mesure."
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -19,14 +19,30 @@ const personSchema = {
   "name": "Lilian Sevoumian",
   "url": "https://liliansevoumian.fr",
   "image": ogImage.toString(),
-  "jobTitle": "Expert Automatisation & No-Code",
+  "jobTitle": ["Expert Automatisation", "Freelance Make & n8n", "Consultant No-Code"],
   "description": "Expert Make, n8n et Airtable avec 5 ans d'expérience. Certification Make niveau 5, 1er en France, top 5 mondial.",
-  "knowsAbout": ["Make", "n8n", "Airtable", "Automatisation", "No-Code", "Workflow Automation"],
+  "knowsAbout": ["Make", "n8n", "Airtable", "Automatisation", "No-Code", "Workflow Automation", "IA", "Zapier", "API Integration", "Agents IA"],
   "sameAs": [
     "https://www.linkedin.com/in/liliansevoumian/",
     "https://github.com/liliansev",
     "https://www.youtube.com/@lilian.sevoumian"
   ]
+};
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Lilian Sevoumian - Expert Automatisation",
+  "description": "Freelance expert en automatisation Make & n8n. Formations, audits et projets sur-mesure.",
+  "url": "https://liliansevoumian.fr",
+  "image": ogImage.toString(),
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "FR",
+    "addressLocality": "France"
+  },
+  "priceRange": "€€",
+  "openingHours": "Mo-Fr 09:00-18:00"
 };
 
 const serviceSchema = {
@@ -74,6 +90,7 @@ const websiteSchema = {
     <meta name="theme-color" content="#18181b" />
     <meta name="geo.region" content="FR" />
     <meta name="geo.placename" content="France" />
+    <meta name="keywords" content="expert automatisation, freelance make, consultant n8n, formation airtable, automatisation no-code, expert make france, lilian sevoumian" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -97,6 +114,7 @@ const websiteSchema = {
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
     <!-- Favicon -->
