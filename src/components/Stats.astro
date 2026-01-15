@@ -90,20 +90,34 @@ const stats = [
     requestAnimationFrame(updateCounter);
   };
 
-  // Animate counters when visible
-  const animateVisibleCounters = () => {
-    document.querySelectorAll('.stat-counter-mobile').forEach(counter => {
-      if (!counter.classList.contains('animated')) {
-        const rect = counter.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          counter.classList.add('animated');
-          animateCounter(counter as HTMLElement);
-        }
-      }
-    });
+  // Use IntersectionObserver for reliable detection
+  const initCounters = () => {
+    const counters = document.querySelectorAll('.stat-counter-mobile');
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+            entry.target.classList.add('animated');
+            animateCounter(entry.target as HTMLElement);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      counters.forEach(counter => observer.observe(counter));
+    } else {
+      // Fallback for older browsers
+      counters.forEach(counter => {
+        counter.classList.add('animated');
+        animateCounter(counter as HTMLElement);
+      });
+    }
   };
 
-  // Run on load and scroll
-  animateVisibleCounters();
-  window.addEventListener('scroll', animateVisibleCounters, { passive: true });
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCounters);
+  } else {
+    initCounters();
+  }
 </script>

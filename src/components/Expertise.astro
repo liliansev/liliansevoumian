@@ -2,72 +2,57 @@
 import { Icon } from 'astro-icon/components';
 
 const tools = [
-  {
-    name: "Make",
-    icon: "simple-icons:make",
-    description: "L'outil #1 du marché. L'outil que j'utilise depuis 5 ans.",
-    features: ["+1000 connecteurs", "Fiable et scalable"]
-  },
-  {
-    name: "n8n",
-    icon: "simple-icons:n8n",
-    description: "Automatisation pensée pour l'IA. Intégration de LLMs (OpenAI, Anthropic), agents IA, workflows intelligents.",
-    features: ["IA native", "Self-host possible"]
-  },
-  {
-    name: "Airtable",
-    icon: "simple-icons:airtable",
-    description: "Bases de données sur-mesure. CRM, ERP, outils internes — interfaces claires.",
-    features: ["No-code DB", "Interfaces équipes"]
-  }
+  { name: "Make", icon: "simple-icons:make" },
+  { name: "n8n", icon: "simple-icons:n8n" },
+  { name: "Airtable", icon: "simple-icons:airtable" },
+  { name: "API", icon: "lucide:webhook" },
+  { name: "Claude", icon: "simple-icons:anthropic" },
+  { name: "Linear", icon: "simple-icons:linear" }
 ];
 ---
 
-<section id="expertise" class="py-24 px-6 bg-zinc-50">
-  <div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="mb-16 text-center">
-      <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
-        Ma stack pour vous accompagner
-      </h2>
-      <p class="text-zinc-700 font-light fluid-text-base leading-relaxed">
-        Mes outils de prédilection pour automatiser votre business.
-      </p>
-    </div>
+<section id="expertise" class="py-20 px-6 bg-white">
+  <div class="max-w-4xl mx-auto">
+    <!-- Title -->
+    <h2 class="text-center text-zinc-400 text-sm md:text-base font-medium tracking-wide mb-12">
+      Les technologies que j'utilise
+    </h2>
 
-    <!-- Cards Grid -->
-    <div class="grid md:grid-cols-3 gap-6">
+    <!-- Icons grid with premium floating style -->
+    <div class="flex flex-wrap items-center justify-center gap-5 md:gap-6">
       {tools.map((tool) => (
-        <div class="group p-6 bg-white border border-zinc-100 rounded-2xl shadow-sm card-interactive">
-          <!-- Icon -->
-          <div class="mb-6">
-            <Icon name={tool.icon} class="w-8 h-8 text-zinc-700" />
-          </div>
-
-          <!-- Title -->
-          <h3 class="fluid-h3 font-semibold text-zinc-900 mb-3">
-            {tool.name}
-          </h3>
-
-          <!-- Description -->
-          <p class="fluid-text-sm text-zinc-700 leading-relaxed mb-6" set:html={tool.description} />
-
-          <!-- Features -->
-          <ul class="fluid-text-sm text-zinc-500 space-y-2 font-mono">
-            {tool.features.map((feature) => (
-              <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                {feature}
-              </li>
-            ))}
-          </ul>
+        <div
+          class="tech-icon-box flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-2xl"
+          title={tool.name}
+        >
+          <Icon name={tool.icon} class="w-6 h-6 md:w-7 md:h-7 text-zinc-400" />
         </div>
       ))}
     </div>
-
-    <!-- Mention Zapier -->
-    <p class="text-center text-zinc-500 fluid-text-sm mt-10">
-      Je travaille aussi avec Zapier (notamment pour les migrations) et des dizaines d'autres outils que je connecte au quotidien.
-    </p>
   </div>
 </section>
+
+<style>
+  .tech-icon-box {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 4px 8px rgba(0, 0, 0, 0.04),
+      0 12px 24px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tech-icon-box:hover {
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.04),
+      0 8px 16px rgba(0, 0, 0, 0.06),
+      0 20px 40px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+
+  .tech-icon-box:hover :global(svg) {
+    color: #18181b;
+  }
+</style>

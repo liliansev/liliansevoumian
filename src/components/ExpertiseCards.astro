@@ -1,0 +1,79 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const expertises = [
+  {
+    icon: "lucide:workflow",
+    title: "Automatisations",
+    description: "Workflows sur-mesure. Make, n8n, connexion d'outils."
+  },
+  {
+    icon: "lucide:graduation-cap",
+    title: "Formation",
+    description: "Make & n8n. Débutant à avancé. +300 personnes formées."
+  },
+  {
+    icon: "lucide:search",
+    title: "Conseil",
+    description: "Il y a tant d'outils sur le marché, utilisez-vous les bons ? Adaptés à votre activité ?"
+  }
+];
+
+const tools = [
+  { name: "Make", icon: "simple-icons:make" },
+  { name: "n8n", icon: "simple-icons:n8n" },
+  { name: "Airtable", icon: "simple-icons:airtable" },
+  { name: "API", icon: "lucide:webhook" },
+  { name: "Claude", icon: "simple-icons:anthropic" },
+  { name: "Linear", icon: "simple-icons:linear" }
+];
+---
+
+<section class="py-16 md:py-28 px-6 bg-zinc-950">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="mb-10 md:mb-16">
+      <p class="text-zinc-500 text-xs md:text-sm font-medium tracking-wider uppercase mb-3">
+        Expertise
+      </p>
+      <h2 class="text-3xl md:text-5xl font-semibold text-white leading-tight max-w-2xl">
+        J'automatise.<br />Je forme.<br />Je conseille.
+      </h2>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+      {expertises.map((item) => (
+        <div class="group">
+          <!-- Title -->
+          <h3 class="text-base md:text-lg font-medium text-white mb-3">
+            {item.title}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-zinc-500 text-sm leading-relaxed">
+            {item.description}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Tools Section -->
+    <div class="pt-10 md:pt-14 border-t border-zinc-800/50">
+      <p class="text-zinc-600 text-xs font-medium tracking-wider uppercase mb-6 md:mb-8 text-center">
+        Stack
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4 md:gap-5">
+        {tools.map((tool) => (
+          <div
+            class="tool-icon w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-zinc-900 border border-zinc-800/50 flex items-center justify-center hover:border-zinc-700 hover:bg-zinc-800 hover:scale-105 transition-all duration-300"
+            title={tool.name}
+          >
+            <Icon name={tool.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-500 group-hover:text-zinc-300 transition-colors duration-300" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

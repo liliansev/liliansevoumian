@@ -54,15 +54,14 @@ const gapSize = 48;
 
         <!-- Subheadline -->
         <p class="hero-subtitle text-zinc-600 font-light leading-relaxed mx-auto mt-5 md:mt-6 hero-fade-in" style="--delay: 1">
-          5 ans d'expertise sur <strong class="text-zinc-700 font-medium">Make</strong>, <strong class="text-zinc-700 font-medium">n8n</strong> et <strong class="text-zinc-700 font-medium">Airtable</strong>.<br />+2 000 heures économisées pour mes clients.
+          Freelance & Formateur nocode, spécialisé en automatisations.<br />Je vous fais gagner + de 10 heures par semaine.
         </p>
 
         <!-- Tech badges with glassmorphism -->
-        <div class="flex items-center justify-center gap-4 md:gap-6 mt-5 md:mt-6 hero-fade-in" style="--delay: 2">
+        <div class="flex items-center justify-center gap-3 md:gap-4 mt-5 md:mt-6 hero-fade-in" style="--delay: 2">
           {techBadges.map((badge, i) => (
-            <div class="tech-badge flex items-center gap-1.5 md:gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full">
-              <Icon name={badge.icon} class="w-4 h-4 md:w-5 md:h-5 text-zinc-600" />
-              <span class="text-[10px] md:text-xs font-medium uppercase tracking-wider text-zinc-600">{badge.name}</span>
+            <div class="tech-badge flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full">
+              <Icon name={badge.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-600" />
             </div>
           ))}
         </div>
@@ -142,20 +141,14 @@ const gapSize = 48;
     min-height: 100svh; /* Small viewport height - stable, no jank during scroll */
   }
 
-  /* Title sizing */
+  /* Title sizing - Single fluid clamp, no media query */
   .hero-title {
-    font-size: clamp(3.5rem, 14vw, 7rem);
+    font-size: clamp(2.75rem, 1rem + 8vw, 6rem);
   }
 
   .hero-subtitle {
-    font-size: clamp(1rem, 3.5vw, 1.25rem);
+    font-size: clamp(0.9375rem, 0.75rem + 0.5vw, 1.25rem);
     max-width: 38rem;
-  }
-
-  @media (max-width: 768px) {
-    .hero-title {
-      font-size: clamp(3rem, 15vw, 4.5rem);
-    }
   }
 
   /* Gradient text for "Make & n8n" */
