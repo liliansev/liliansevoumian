@@ -90,22 +90,20 @@ const stats = [
     requestAnimationFrame(updateCounter);
   };
 
-  // Intersection Observer for mobile stats
-  const mobileStatsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const counters = entry.target.querySelectorAll('.stat-counter-mobile');
-        counters.forEach(counter => {
-          if (!counter.classList.contains('animated')) {
-            counter.classList.add('animated');
-            animateCounter(counter as HTMLElement);
-          }
-        });
+  // Animate counters when visible
+  const animateVisibleCounters = () => {
+    document.querySelectorAll('.stat-counter-mobile').forEach(counter => {
+      if (!counter.classList.contains('animated')) {
+        const rect = counter.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          counter.classList.add('animated');
+          animateCounter(counter as HTMLElement);
+        }
       }
     });
-  }, { threshold: 0.3 });
+  };
 
-  document.querySelectorAll('.stats-section').forEach(el => {
-    mobileStatsObserver.observe(el);
-  });
+  // Run on load and scroll
+  animateVisibleCounters();
+  window.addEventListener('scroll', animateVisibleCounters, { passive: true });
 </script>
