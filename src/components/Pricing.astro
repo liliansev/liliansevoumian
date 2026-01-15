@@ -7,7 +7,7 @@ const services = [
     id: "coaching",
     explanation: {
       title: "Un blocage ? Une question ?",
-      before: "Vous êtes coincé sur un scénario. Vous hésitez sur une architecture. Vous avez besoin d'un regard externe.",
+      before: "Vous êtes coincé sur un scénario. Vous hésitez sur une architecture. Vous avez besoin d'un œil externe et expert.",
       after: "En 1h, c'est débloqué. Vous savez quoi faire et comment."
     },
     card: {
@@ -28,17 +28,25 @@ const services = [
     explanation: {
       title: "Arrêtez de naviguer à vue.",
       before: "Vous ne savez pas si vous avez les bons outils. Vous perdez du temps sur des tâches répétitives. Vous sentez que ça pourrait être mieux — mais par où commencer ?",
-      after: "Vision claire. Plan d'action concret. Vous savez quoi garder, quoi virer, et ce qui peut tourner tout seul.",
+      after: "Vous recevez un livrable actionnable sous 72h :",
+      afterList: [
+        "Les bons outils pour votre activité (et pourquoi)",
+        "Ce que vous pouvez automatiser dès maintenant",
+        "Un plan d'action priorisé"
+      ],
+      bonus: "Vous recevez un document complet + une vidéo personnalisée pour tout vous expliquer.",
       options: ["Diagnostic Stack", "Audit Process"]
     },
     card: {
-      name: "Audit Express",
+      name: "Diagnostic",
       price: "350 €",
+      featuresLabel: "Comment ça se passe",
       features: [
-        "Call 45min",
-        "Recherches de mon côté",
-        "Livrable sous 72h"
+        "Call 45min en visio",
+        "Analyses de mon côté",
+        "Livrable + vidéo sous 72h"
       ],
+      numbered: true,
       cta: "Réserver mon audit",
       href: "https://cal.com/lilian-sevoumian/audit"
     }
@@ -51,12 +59,12 @@ const services = [
       after: "Vos automatisations sont en place. Ça tourne. Vous récupérez des heures chaque semaine."
     },
     card: {
-      name: "Projet sur-mesure",
-      price: "Sur devis",
+      name: "Mission complète",
+      price: "→ Selon vos besoins",
       features: [
-        "Développement complet",
-        "Tests et ajustements",
-        "Documentation + formation"
+        "Scénarios optimisés, pas du bricolage",
+        "Tests jusqu'à ce que ça tourne",
+        "30 jours de SAV inclus"
       ],
       cta: "Discuter de mon projet",
       href: "https://lilian.yt/contact"
@@ -70,7 +78,7 @@ const services = [
     <!-- Header -->
     <div class="mb-16 text-center">
       <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
-        Tarifs
+        Mes services
       </h2>
       <p class="text-zinc-700 font-light fluid-text-xl leading-relaxed">
         Des formules claires, adaptées à vos besoins.
@@ -89,17 +97,30 @@ const services = [
 
             <div class="space-y-3 fluid-text-sm">
               <div>
-                <span class="text-zinc-500 font-medium uppercase tracking-wider text-xs">Avant</span>
-                <p class="text-zinc-600 mt-1">{service.explanation.before}</p>
+                <span class="text-zinc-400 font-medium text-xs">Avant</span>
+                <p class="text-zinc-500 mt-1">{service.explanation.before}</p>
               </div>
 
               <div>
-                <span class="text-zinc-900 font-medium uppercase tracking-wider text-xs">Après</span>
-                <p class="text-zinc-700 mt-1">{service.explanation.after}</p>
+                <span class="text-zinc-900 font-medium text-xs">Après.</span>
+                <p class="text-zinc-800 mt-1">{service.explanation.after}</p>
+                {service.explanation.afterList && (
+                  <ul class="mt-2 space-y-1 text-zinc-700">
+                    {service.explanation.afterList.map((item) => (
+                      <li class="flex items-start gap-2">
+                        <span class="text-zinc-400">–</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {service.explanation.bonus && (
+                  <p class="mt-3 text-zinc-600 italic text-xs">{service.explanation.bonus}</p>
+                )}
               </div>
 
               {service.explanation.options && (
-                <div class="flex gap-2 mt-3">
+                <div class="flex gap-2 mt-2">
                   {service.explanation.options.map((option) => (
                     <span class="px-3 py-1 bg-zinc-100 rounded-full text-xs text-zinc-600">
                       {option}
@@ -111,7 +132,7 @@ const services = [
           </div>
 
           <!-- Card Column -->
-          <div class={`relative p-6 bg-white rounded-2xl transition-all ${service.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-100 shadow-sm card-interactive'}`}>
+          <div class={`relative p-6 bg-white rounded-2xl transition-all ${service.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-200/80 shadow-sm card-interactive'}`}>
             {service.featured && (
               <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
                 Populaire
@@ -128,18 +149,27 @@ const services = [
               <span class="fluid-h4 font-semibold text-zinc-900">
                 {service.card.price}
               </span>
-              {service.card.price !== "Sur devis" && (
+              {!service.card.price.startsWith("→") && service.card.price !== "Sur devis" && (
                 <span class="text-xs text-zinc-500 ml-1">ht</span>
               )}
             </div>
 
             <!-- Features List -->
+            {service.card.featuresLabel && (
+              <p class="text-xs text-zinc-500 mb-2">{service.card.featuresLabel}</p>
+            )}
             <ul class="space-y-2.5 mb-6">
-              {service.card.features.map((feature) => (
+              {service.card.features.map((feature, index) => (
                 <li class="flex items-start gap-2.5 fluid-text-sm">
-                  <div class={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${service.featured ? 'bg-zinc-900' : 'bg-zinc-100'}`}>
-                    <Icon name="lucide:check" class={`w-3 h-3 ${service.featured ? 'text-white' : 'text-zinc-700'}`} />
-                  </div>
+                  {service.card.numbered ? (
+                    <span class="text-sm font-semibold text-zinc-400 font-mono shrink-0">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  ) : (
+                    <div class={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${service.featured ? 'bg-zinc-900' : 'bg-zinc-200'}`}>
+                      <Icon name="lucide:check" class={`w-3 h-3 ${service.featured ? 'text-white' : 'text-zinc-600'}`} />
+                    </div>
+                  )}
                   <span class="text-zinc-700">{feature}</span>
                 </li>
               ))}
@@ -212,7 +242,7 @@ const services = [
 
   .pricing-row-featured {
     padding: 1.5rem;
-    background: linear-gradient(to right, rgba(244, 244, 245, 0.5), transparent);
+    background: linear-gradient(to right, rgba(244, 244, 245, 0.8), rgba(250, 250, 250, 0.3));
     border-radius: 1.5rem;
     margin-left: -1.5rem;
     margin-right: -1.5rem;
