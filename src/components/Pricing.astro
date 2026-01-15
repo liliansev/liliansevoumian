@@ -2,52 +2,71 @@
 import { Icon } from 'astro-icon/components';
 import CTAButton from './ui/CTAButton.astro';
 
-const plans = [
+const services = [
   {
-    name: "Coaching",
-    price: "200 €",
-    description: "1 heure en visio pour débloquer un problème, valider une architecture ou monter en compétence.",
-    features: [
-      "Session de 60 min en visio",
-      "Réponses claires et concrètes",
-      "Recommandations personnalisées",
-      "Replay disponible"
-    ],
-    cta: "Réserver une session",
-    href: "https://cal.com/lilian-sevoumian/coaching-1"
+    id: "coaching",
+    explanation: {
+      title: "Un blocage ? Une question ?",
+      before: "Vous êtes coincé sur un scénario. Vous hésitez sur une architecture. Vous avez besoin d'un regard externe.",
+      after: "En 1h, c'est débloqué. Vous savez quoi faire et comment."
+    },
+    card: {
+      name: "Coaching",
+      price: "150 €",
+      features: [
+        "Call 1h en visio",
+        "Réponses claires",
+        "Replay disponible"
+      ],
+      cta: "Réserver ma session",
+      href: "https://cal.com/lilian-sevoumian/coaching-1"
+    }
   },
   {
-    name: "Audit",
-    price: "500 €",
-    description: "Analyse complète de vos processus avec axes d'amélioration concrets et priorisés.",
-    features: [
-      "Analyse de vos workflows",
-      "Document de restitution",
-      "Plan d'action priorisé",
-      "Livré sous 48h"
-    ],
-    cta: "Demander un audit",
-    href: "https://cal.com/lilian-sevoumian/audit",
-    featured: true
+    id: "audit",
+    featured: true,
+    explanation: {
+      title: "Arrêtez de naviguer à vue.",
+      before: "Vous ne savez pas si vous avez les bons outils. Vous perdez du temps sur des tâches répétitives. Vous sentez que ça pourrait être mieux — mais par où commencer ?",
+      after: "Vision claire. Plan d'action concret. Vous savez quoi garder, quoi virer, et ce qui peut tourner tout seul.",
+      options: ["Diagnostic Stack", "Audit Process"]
+    },
+    card: {
+      name: "Audit Express",
+      price: "350 €",
+      features: [
+        "Call 45min",
+        "Recherches de mon côté",
+        "Livrable sous 72h"
+      ],
+      cta: "Réserver mon audit",
+      href: "https://cal.com/lilian-sevoumian/audit"
+    }
   },
   {
-    name: "Projet sur-mesure",
-    price: "À partir de 1 500 €",
-    description: "Construction complète de vos automatisations avec formation et support inclus.",
-    features: [
-      "Développement sur-mesure",
-      "Tests et ajustements",
-      "Documentation complète",
-      "Formation équipe incluse"
-    ],
-    cta: "Discuter de mon projet",
-    href: "https://cal.com/lilian-sevoumian/prise-de-brief"
+    id: "projet",
+    explanation: {
+      title: "Vous voulez que ça tourne. Sans vous.",
+      before: "Vous faites tout à la main. Ça prend des heures. Vous savez que c'est automatisable mais vous n'avez pas le temps de vous y mettre.",
+      after: "Vos automatisations sont en place. Ça tourne. Vous récupérez des heures chaque semaine."
+    },
+    card: {
+      name: "Projet sur-mesure",
+      price: "Sur devis",
+      features: [
+        "Développement complet",
+        "Tests et ajustements",
+        "Documentation + formation"
+      ],
+      cta: "Discuter de mon projet",
+      href: "https://tally.so/r/wL8EBE"
+    }
   }
 ];
 ---
 
 <section id="tarifs" class="py-24 px-6 bg-zinc-50">
-  <div class="max-w-6xl mx-auto">
+  <div class="max-w-5xl mx-auto">
     <!-- Header -->
     <div class="mb-16 text-center">
       <h2 class="fluid-h1 font-semibold text-zinc-900 mb-4">
@@ -58,54 +77,83 @@ const plans = [
       </p>
     </div>
 
-    <!-- Pricing Cards -->
-    <div class="grid md:grid-cols-3 gap-6">
-      {plans.map((plan) => (
-        <div class={`relative p-6 bg-white rounded-2xl transition-all ${plan.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-100 shadow-sm card-interactive'}`}>
-          {plan.featured && (
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
-              Populaire
+    <!-- Services Grid -->
+    <div class="space-y-8">
+      {services.map((service) => (
+        <div class={`grid md:grid-cols-2 gap-6 md:gap-10 items-center ${service.featured ? 'pricing-row-featured' : ''}`}>
+          <!-- Explanation Column -->
+          <div class="space-y-4">
+            <h3 class="fluid-h3 font-semibold text-zinc-900">
+              {service.explanation.title}
+            </h3>
+
+            <div class="space-y-3 fluid-text-sm">
+              <div>
+                <span class="text-zinc-500 font-medium uppercase tracking-wider text-xs">Avant</span>
+                <p class="text-zinc-600 mt-1">{service.explanation.before}</p>
+              </div>
+
+              <div>
+                <span class="text-zinc-900 font-medium uppercase tracking-wider text-xs">Après</span>
+                <p class="text-zinc-700 mt-1">{service.explanation.after}</p>
+              </div>
+
+              {service.explanation.options && (
+                <div class="flex gap-2 mt-3">
+                  {service.explanation.options.map((option) => (
+                    <span class="px-3 py-1 bg-zinc-100 rounded-full text-xs text-zinc-600">
+                      {option}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-
-          <!-- Plan Name -->
-          <h3 class="fluid-h4 font-semibold text-zinc-900 mb-2">
-            {plan.name}
-          </h3>
-
-          <!-- Price -->
-          <div class="mb-4 whitespace-nowrap">
-            <span class="fluid-h4 font-semibold text-zinc-900">
-              {plan.price}
-            </span>
-            <span class="text-xs text-zinc-500 ml-1">ht</span>
           </div>
 
-          <!-- Description -->
-          <p class="fluid-text-sm text-zinc-700 leading-relaxed mb-6">
-            {plan.description}
-          </p>
+          <!-- Card Column -->
+          <div class={`relative p-6 bg-white rounded-2xl transition-all ${service.featured ? 'shadow-lg pricing-featured' : 'border border-zinc-100 shadow-sm card-interactive'}`}>
+            {service.featured && (
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-zinc-900 text-white text-xs font-medium uppercase tracking-wider rounded-full z-10">
+                Populaire
+              </div>
+            )}
 
-          <!-- Features List -->
-          <ul class="space-y-3 mb-8">
-            {plan.features.map((feature) => (
-              <li class="flex items-start gap-2.5 fluid-text-sm">
-                <div class={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${plan.featured ? 'bg-zinc-900' : 'bg-zinc-100'}`}>
-                  <Icon name="lucide:check" class={`w-3 h-3 ${plan.featured ? 'text-white' : 'text-zinc-700'}`} />
-                </div>
-                <span class="text-zinc-700">{feature}</span>
-              </li>
-            ))}
-          </ul>
+            <!-- Plan Name -->
+            <h4 class="fluid-h4 font-semibold text-zinc-900 mb-2">
+              {service.card.name}
+            </h4>
 
-          <!-- CTA -->
-          <CTAButton
-            href={plan.href}
-            text={plan.cta}
-            variant={plan.featured ? 'primary' : 'secondary'}
-            size="md"
-            fullWidth={true}
-          />
+            <!-- Price -->
+            <div class="mb-4 whitespace-nowrap">
+              <span class="fluid-h4 font-semibold text-zinc-900">
+                {service.card.price}
+              </span>
+              {service.card.price !== "Sur devis" && (
+                <span class="text-xs text-zinc-500 ml-1">ht</span>
+              )}
+            </div>
+
+            <!-- Features List -->
+            <ul class="space-y-2.5 mb-6">
+              {service.card.features.map((feature) => (
+                <li class="flex items-start gap-2.5 fluid-text-sm">
+                  <div class={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${service.featured ? 'bg-zinc-900' : 'bg-zinc-100'}`}>
+                    <Icon name="lucide:check" class={`w-3 h-3 ${service.featured ? 'text-white' : 'text-zinc-700'}`} />
+                  </div>
+                  <span class="text-zinc-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <!-- CTA -->
+            <CTAButton
+              href={service.card.href}
+              text={service.card.cta}
+              variant={service.featured ? 'primary' : 'secondary'}
+              size="md"
+              fullWidth={true}
+            />
+          </div>
         </div>
       ))}
     </div>
@@ -117,11 +165,9 @@ const plans = [
     position: relative;
     background: white;
     border-radius: 1rem;
-    /* Fallback border for browsers without @property support (Firefox) */
     border: 1px solid #a1a1aa;
   }
 
-  /* Hide fallback border when animation works */
   @supports (background: paint(something)) {
     .pricing-featured {
       border: none;
@@ -162,5 +208,21 @@ const plans = [
     syntax: '<angle>';
     initial-value: 0deg;
     inherits: false;
+  }
+
+  .pricing-row-featured {
+    padding: 1.5rem;
+    background: linear-gradient(to right, rgba(244, 244, 245, 0.5), transparent);
+    border-radius: 1.5rem;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .pricing-row-featured {
+      margin-left: -0.75rem;
+      margin-right: -0.75rem;
+      padding: 1rem;
+    }
   }
 </style>
