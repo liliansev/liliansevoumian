@@ -67,10 +67,12 @@ const passions = [
                 <span class={`text-sm font-semibold ${item.isCurrent ? 'text-white' : 'text-zinc-500'}`}>
                   {item.year}
                 </span>
-                {item.badge && item.link ? (
-                  <a href={item.link} target="_blank" rel="noopener" class="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono mt-0.5 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
-                ) : item.badge && (
-                  <span class="text-[10px] text-zinc-500 font-mono mt-0.5 whitespace-nowrap">{item.badge}</span>
+                {item.badge && (
+                  item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener" class="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono mt-0.5 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
+                  ) : (
+                    <span class="text-[10px] text-zinc-500 font-mono mt-0.5 whitespace-nowrap">{item.badge}</span>
+                  )
                 )}
               </div>
 
