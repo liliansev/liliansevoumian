@@ -58,9 +58,9 @@ const passions = [
           </p>
         </div>
 
-        <!-- Photo Mobile Only -->
-        <div class="md:hidden flex justify-center mb-10">
-          <div class="w-48 aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700">
+        <!-- Photo + Quote + Passions - Mobile Only -->
+        <div class="md:hidden flex flex-col items-center mb-10">
+          <div class="w-48 aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
             <Image
               src={lilianPortrait}
               alt="Lilian Sevoumian"
@@ -71,6 +71,17 @@ const passions = [
               class="w-full h-full object-cover object-top -scale-x-100"
               loading="lazy"
             />
+          </div>
+          <p class="text-zinc-400 text-sm italic text-center leading-relaxed mb-6">
+            "Quand je me balade quelque part, je vois tout ce qu'on pourrait automatiser. C'est plus fort que moi."
+          </p>
+          <div class="flex flex-wrap gap-2 justify-center">
+            {passions.map((passion) => (
+              <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full text-xs text-zinc-400">
+                <Icon name={passion.icon} class="w-3.5 h-3.5" />
+                {passion.name}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -106,10 +117,10 @@ const passions = [
         </div>
       </div>
 
-      <!-- About Column -->
-      <div class="flex flex-col items-center md:items-start">
-        <!-- Photo - Desktop Only -->
-        <div class="hidden md:block w-full aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
+      <!-- About Column - Desktop Only -->
+      <div class="hidden md:flex flex-col items-start">
+        <!-- Photo -->
+        <div class="w-full aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
           <Image
             src={lilianPortrait}
             alt="Lilian Sevoumian"
@@ -123,12 +134,12 @@ const passions = [
         </div>
 
         <!-- Quote -->
-        <p class="text-zinc-400 text-sm italic text-center md:text-left leading-relaxed mb-6">
+        <p class="text-zinc-400 text-sm italic text-left leading-relaxed mb-6">
           "Quand je me balade quelque part, je vois tout ce qu'on pourrait automatiser. C'est plus fort que moi."
         </p>
 
         <!-- Passions -->
-        <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+        <div class="flex flex-wrap gap-2 justify-start">
           {passions.map((passion) => (
             <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full text-xs text-zinc-400">
               <Icon name={passion.icon} class="w-3.5 h-3.5" />
