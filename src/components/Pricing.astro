@@ -18,13 +18,17 @@ const services = [
     // Description section
     headline: "Un blocage ?",
     headline2: "Une question ?",
-    description: "Vous êtes coincé sur un scénario, vous hésitez sur une architecture, vous avez besoin d'un œil externe et expert. En 1h de call, on débloque ensemble. Vous repartez avec une direction claire et des actions concrètes à mettre en place."
+    description: [
+      "Vous êtes coincé sur un scénario, vous hésitez sur une architecture, vous avez besoin d'un œil externe et expert.",
+      "En 1h de call, on débloque ensemble.",
+      "Vous repartez avec une direction claire et des actions concrètes à mettre en place."
+    ]
   },
   {
     id: "audit",
     featured: true,
     name: "Diagnostic",
-    tagline: "Clarté en 72h.",
+    tagline: "Plan d'action en 72h.",
     price: "350",
     features: [
       "Call 45min en visio",
@@ -38,7 +42,11 @@ const services = [
     headline: "Quoi automatiser.",
     headline2: "Pourquoi.",
     headline3: "Les meilleurs Softwares.",
-    description: "Vous dépensez des centaines d'euros chaque mois pour des outils qui ne correspondent pas à vos besoins ? Vous souhaitez automatiser mais vous ne savez pas quoi ni pourquoi ? Repartez avec un plan d'action, les outils nécessaires benchmarkés et le coût."
+    description: [
+      "Vous dépensez des centaines d'euros chaque mois pour des outils qui ne correspondent pas à vos besoins ?",
+      "Vous souhaitez automatiser mais vous ne savez pas quoi ni pourquoi ?",
+      "Repartez avec un plan d'action, les outils nécessaires benchmarkés et le coût."
+    ]
   },
   {
     id: "projet",
@@ -56,7 +64,12 @@ const services = [
     // Description section
     headline: "Vous voulez que ça tourne.",
     headline2: "Sans vous.",
-    description: "Vous faites tout à la main, ça prend des heures. Vous savez que c'est automatisable mais vous n'avez pas le temps de vous y mettre. Vos automatisations seront en place, testées, documentées. Vous récupérerez des heures chaque semaine."
+    description: [
+      "Vous faites tout à la main, ça prend des heures.",
+      "Vous savez que c'est automatisable mais vous n'avez pas le temps de vous y mettre.",
+      "Vos automatisations seront en place, testées, documentées.",
+      "Vous récupérerez des heures chaque semaine."
+    ]
   }
 ];
 ---
@@ -99,7 +112,12 @@ const services = [
             </h3>
 
             <p class="text-zinc-600 text-sm md:text-base leading-relaxed">
-              {service.description}
+              {Array.isArray(service.description)
+                ? service.description.map((line, i) => (
+                    <>{i > 0 && <br />}{line}</>
+                  ))
+                : service.description
+              }
             </p>
           </div>
 
