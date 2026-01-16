@@ -28,15 +28,17 @@
   --tracking-tighter: -0.03em;  /* display headlines */
   --tracking-tight: -0.02em;    /* section headings */
   --tracking-normal: 0;         /* body text */
-  --tracking-wide: 0.025em;     /* labels, overlines */
-  --tracking-wider: 0.05em;     /* all caps */
 
   /* Typography - Line Heights (4px grid aligned) */
-  --leading-none: 1;
   --leading-tight: 1.1;      /* display headlines */
   --leading-snug: 1.25;      /* section headings */
   --leading-normal: 1.5;     /* body text */
   --leading-relaxed: 1.625;  /* prose, long-form */
+
+  /* Shadows - Consistent elevation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* Custom theme */
@@ -50,6 +52,7 @@
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 /* =========================================
@@ -131,7 +134,7 @@ h1, h2, h3, h4, h5, h6 {
 .fluid-text-xs {
   font-size: clamp(0.75rem, 0.6875rem + 0.25vw, 0.8125rem);
   line-height: var(--leading-normal);
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: 0.025em;
 }
 
 /* Section padding utility - Tailwind v4 @utility syntax */
@@ -162,10 +165,6 @@ h1, h2, h3, h4, h5, h6 {
    TEXT WRAPPING - Orphan Prevention
    ======================================== */
 
-h1, h2, h3, h4, h5, h6 {
-  text-wrap: balance;
-}
-
 p, li, blockquote {
   text-wrap: pretty;
 }
@@ -175,7 +174,7 @@ p, li, blockquote {
    ======================================== */
 
 ::selection {
-  background-color: #18181b;
+  background-color: rgb(24 24 27); /* zinc-900 */
   color: white;
 }
 
@@ -194,38 +193,30 @@ p, li, blockquote {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f4f4f5;
+  background: rgb(244 244 245); /* zinc-100 */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: rgb(212 212 216); /* zinc-300 */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1aa;
+  background: rgb(161 161 170); /* zinc-400 */
 }
 
 /* =========================================
-   ANIMATIONS
+   ANIMATIONS - Scroll Carousel
    ======================================== */
 
 @keyframes scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
 }
 
 @keyframes scroll-right {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
 }
 
 .scrolling-logos {
@@ -247,76 +238,14 @@ p, li, blockquote {
 }
 
 /* =========================================
-   MICRO-INTERACTIONS - Linear/Stripe Style
+   MICRO-INTERACTIONS
    ======================================== */
-
-/* Smooth transitions for interactive elements only (performance) */
-a, button, input, textarea, select,
-[role="button"], [tabindex]:not([tabindex="-1"]) {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 /* Focus states - Accessible & Beautiful */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px white, 0 0 0 4px #18181b;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgb(24 24 27);
   border-radius: 0.5rem;
-}
-
-/* Button focus override */
-a:focus-visible,
-button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px white, 0 0 0 4px #18181b;
-}
-
-/* Interactive card (clickable) */
-@utility card-interactive {
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    border-color: #d4d4d8;
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  }
-}
-
-/* Button micro-interactions */
-@utility btn-primary {
-  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-/* Link underline animation */
-@utility link-underline {
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background-color: currentColor;
-    transition: width 0.2s ease;
-  }
-
-  &:hover::after {
-    width: 100%;
-  }
 }
 
 /* Fade in animation for page load */
@@ -335,31 +264,15 @@ button:focus-visible {
   animation: fade-in-up 0.5s ease forwards;
 }
 
-/* Stagger children animation */
-.stagger-children > * {
-  opacity: 0;
-  animation: fade-in-up 0.4s ease forwards;
-}
+/* =========================================
+   ACCESSIBILITY - Reduced Motion
+   ======================================== */
 
-.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
-.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
-.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
-.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
-.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
-.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
-
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .card-interactive:hover,
-  .btn-primary:hover {
-    transform: none;
+    animation: none;
+    transition: none;
   }
 }

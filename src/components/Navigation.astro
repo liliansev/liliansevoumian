@@ -23,7 +23,7 @@ const navLinks = [
     <!-- Navigation Links (Desktop) -->
     <div class="hidden md:flex items-center gap-8 fluid-text-sm font-medium text-zinc-700">
       {navLinks.map((link) => (
-        <a href={link.href} class="hover:text-zinc-900 transition-colors">{link.label}</a>
+        <a href={link.href} class="hover:text-zinc-900 transition-colors duration-150">{link.label}</a>
       ))}
     </div>
 
@@ -43,13 +43,13 @@ const navLinks = [
     <!-- Mobile Menu Button -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-zinc-700 hover:text-zinc-900 transition-colors"
+      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-zinc-700 hover:text-zinc-900 transition-colors duration-150"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
     >
       <div class="burger-icon relative w-5 h-3.5">
-        <span class="burger-line absolute left-0 top-0 w-full h-0.5 bg-current rounded-sm transition-all duration-300"></span>
-        <span class="burger-line absolute left-0 bottom-0 w-full h-0.5 bg-current rounded-sm transition-all duration-300"></span>
+        <span class="burger-line absolute left-0 top-0 w-full h-0.5 bg-current rounded-sm transition-transform duration-200"></span>
+        <span class="burger-line absolute left-0 bottom-0 w-full h-0.5 bg-current rounded-sm transition-transform duration-200"></span>
       </div>
     </button>
   </div>
@@ -63,7 +63,7 @@ const navLinks = [
       {navLinks.map((link, i) => (
         <a
           href={link.href}
-          class="mobile-menu-link block text-2xl font-medium text-zinc-900 hover:text-zinc-700 transition-colors py-3"
+          class="mobile-menu-link block text-2xl font-medium text-zinc-900 hover:text-zinc-700 transition-colors duration-150 py-3"
           style={`--i: ${i}`}
         >
           {link.label}
@@ -109,7 +109,7 @@ const navLinks = [
   });
 </script>
 
-<style is:global>
+<style>
   /* Burger → X transformation */
   #mobile-menu-btn.open .burger-line:first-child {
     transform: translateY(7px) rotate(45deg);
@@ -139,9 +139,8 @@ const navLinks = [
     opacity: 1;
   }
 
-  /* Body scroll lock */
-  body.menu-open {
+  /* Body scroll lock - must be global to target body element */
+  :global(body.menu-open) {
     overflow: hidden;
   }
-
 </style>

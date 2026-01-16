@@ -4,18 +4,18 @@ import { Icon } from 'astro-icon/components';
 const expertises = [
   {
     icon: "lucide:workflow",
-    title: "Automatisations",
-    description: "Workflows sur-mesure. Make, n8n, connexion d'outils."
+    title: "Ce qui prend des heures, en 0 clic",
+    description: ["Workflows sur-mesure.", "Make, n8n, Agents IA, connexion d'outils."]
   },
   {
     icon: "lucide:graduation-cap",
-    title: "Formation",
-    description: "Make & n8n. Débutant à avancé. +300 personnes formées."
+    title: "Devenez autonome sur Make & n8n",
+    description: ["Make & n8n.", "Débutant à avancé.", "+300 personnes formées."]
   },
   {
     icon: "lucide:search",
-    title: "Conseil",
-    description: "Il y a tant d'outils sur le marché, utilisez-vous les bons ? Adaptés à votre activité ?"
+    title: "Les bons outils. Zéro gaspillage.",
+    description: ["Il y a tant d'outils sur le marché, utilisez-vous les bons ?", "Adaptés à votre activité ?"]
   }
 ];
 
@@ -37,7 +37,7 @@ const tools = [
         Expertise
       </p>
       <h2 class="fluid-h1 font-semibold text-white max-w-2xl">
-        J'automatise.<br />Je forme.<br />Je conseille.
+        Moins de tâches.<br />Plus de résultats.
       </h2>
     </div>
 
@@ -52,7 +52,12 @@ const tools = [
 
           <!-- Description -->
           <p class="fluid-text-sm text-zinc-500">
-            {item.description}
+            {Array.isArray(item.description)
+              ? item.description.map((line, i) => (
+                  <>{i > 0 && <br />}{line}</>
+                ))
+              : item.description
+            }
           </p>
         </div>
       ))}
@@ -67,10 +72,10 @@ const tools = [
       <div class="flex flex-wrap items-center justify-center gap-4 md:gap-5">
         {tools.map((tool) => (
           <div
-            class="tool-icon w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-zinc-900 border border-zinc-800/50 flex items-center justify-center hover:border-zinc-700 hover:bg-zinc-800 hover:scale-105 transition-all duration-300"
+            class="tool-icon w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-zinc-900 border border-zinc-800/50 flex items-center justify-center hover:border-zinc-700 hover:bg-zinc-800 hover:scale-105 transition-[background-color,border-color,transform] duration-200"
             title={tool.name}
           >
-            <Icon name={tool.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-500 group-hover:text-zinc-300 transition-colors duration-300" />
+            <Icon name={tool.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-500 transition-colors duration-200" />
           </div>
         ))}
       </div>

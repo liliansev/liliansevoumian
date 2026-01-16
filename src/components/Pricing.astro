@@ -3,73 +3,25 @@ import { Icon } from 'astro-icon/components';
 
 const services = [
   {
-    id: "coaching",
     name: "Coaching",
-    tagline: "Un blocage ? Je débloque.",
-    price: "150",
-    features: [
-      "Call 1h en visio",
-      "Réponses actionnables",
-      "Replay disponible"
-    ],
-    justification: "En 1h, c'est débloqué.",
-    cta: "Réserver ma session",
-    href: "https://cal.com/lilian-sevoumian/coaching-1",
-    // Description section
-    headline: "Un blocage ?",
-    headline2: "Une question ?",
-    description: [
-      "Vous êtes coincé sur un scénario, vous hésitez sur une architecture, vous avez besoin d'un œil externe et expert.",
-      "En 1h de call, on débloque ensemble.",
-      "Vous repartez avec une direction claire et des actions concrètes à mettre en place."
-    ]
+    tagline: "Coincé ? Débloquez en 1h.",
+    description: ["Un call, une solution.", "Vous repartez avec une direction claire."],
+    cta: "Réserver un coaching",
+    href: "https://cal.com/lilian-sevoumian/coaching-1"
   },
   {
-    id: "audit",
-    featured: true,
     name: "Diagnostic",
-    tagline: "Plan d'action en 72h.",
-    price: "350",
-    features: [
-      "Call 45min en visio",
-      "Analyse de votre stack",
-      "Livrable + vidéo"
-    ],
-    justification: "Document complet + vidéo personnalisée.",
-    cta: "Réserver mon audit",
-    href: "https://cal.com/lilian-sevoumian/audit",
-    // Description section
-    headline: "Quoi automatiser.",
-    headline2: "Pourquoi.",
-    headline3: "Les meilleurs Softwares.",
-    description: [
-      "Vous dépensez des centaines d'euros chaque mois pour des outils qui ne correspondent pas à vos besoins ?",
-      "Vous souhaitez automatiser mais vous ne savez pas quoi ni pourquoi ?",
-      "Repartez avec un plan d'action, les outils nécessaires benchmarkés et le coût."
-    ]
+    tagline: "Votre plan d'action en 72h.",
+    description: ["Analyse complète de votre stack.", "Document + vidéo personnalisée."],
+    cta: "Obtenir mon plan d'action",
+    href: "https://cal.com/lilian-sevoumian/audit"
   },
   {
-    id: "projet",
     name: "Mission",
     tagline: "Je construis. Ça tourne.",
-    price: "Sur devis",
-    features: [
-      "Scénarios optimisés",
-      "Tests jusqu'au succès",
-      "30 jours de support"
-    ],
-    justification: "Vos automatisations en place.",
+    description: ["Vos automatisations en place, testées, documentées.", "Vous récupérez vos heures."],
     cta: "Discuter de mon projet",
-    href: "https://lilian.yt/contact",
-    // Description section
-    headline: "Vous voulez que ça tourne.",
-    headline2: "Sans vous.",
-    description: [
-      "Vous faites tout à la main, ça prend des heures.",
-      "Vous savez que c'est automatisable mais vous n'avez pas le temps de vous y mettre.",
-      "Vos automatisations seront en place, testées, documentées.",
-      "Vous récupérerez des heures chaque semaine."
-    ]
+    href: "https://lilian.yt/contact"
   }
 ];
 ---
@@ -81,123 +33,40 @@ const services = [
       <p class="fluid-text-xs text-zinc-400 font-medium uppercase mb-3">
         Services
       </p>
-      <h2 class="fluid-h1 font-semibold text-zinc-900">
+      <h2 class="fluid-h1 font-semibold text-zinc-900 max-w-2xl">
         Travaillons ensemble.
       </h2>
     </div>
 
-    <!-- Services rows -->
-    <div class="space-y-0">
-      {services.map((service, serviceIndex) => (
-        <div class={`
-          grid lg:grid-cols-[1.2fr_1fr] gap-8 lg:gap-16 items-start py-10 lg:py-14
-          ${serviceIndex < services.length - 1 ? 'border-b border-zinc-200' : ''}
-        `}>
-          {/* Left: Description - First on mobile, left on desktop */}
-          <div>
-            <h3 class="fluid-h3 font-semibold text-zinc-900 mb-3">
-              {service.headline}
-              {service.headline2 && (
-                <>
-                  <br />
-                  {service.headline2}
-                </>
-              )}
-              {service.headline3 && (
-                <>
-                  <br />
-                  {service.headline3}
-                </>
-              )}
-            </h3>
+    <!-- Cards Grid -->
+    <div class="grid md:grid-cols-3 gap-10 md:gap-6 lg:gap-8">
+      {services.map((service) => (
+        <div class="group">
+          <!-- Name -->
+          <p class="fluid-text-xs text-zinc-400 font-medium uppercase mb-2">
+            {service.name}
+          </p>
 
-            <p class="fluid-text-base text-zinc-600">
-              {Array.isArray(service.description)
-                ? service.description.map((line, i) => (
-                    <>{i > 0 && <br />}{line}</>
-                  ))
-                : service.description
-              }
-            </p>
-          </div>
+          <!-- Tagline -->
+          <h3 class="fluid-h5 font-medium text-zinc-900 mb-3">
+            {service.tagline}
+          </h3>
 
-          {/* Right: Card - Second on mobile, right on desktop */}
-          <div>
-            <div
-              class={`
-                relative flex flex-col p-5 md:p-6 rounded-xl transition-all duration-200 bg-white
-                ${service.featured
-                  ? 'border border-zinc-900 shadow-md hover:shadow-lg'
-                  : 'border border-zinc-200 shadow-sm hover:border-zinc-300 hover:shadow-md'
-                }
-              `}
-            >
-              {/* Name + Tagline */}
-              <div class="mb-4">
-                <h4 class="fluid-h4 font-semibold text-zinc-900">
-                  {service.name}
-                </h4>
-                <p class="fluid-text-xs text-zinc-500 mt-0.5">
-                  {service.tagline}
-                </p>
-              </div>
+          <!-- Description -->
+          <p class="fluid-text-sm text-zinc-500 mb-4">
+            {service.description.map((line, i) => (
+              <>{i > 0 && <br />}{line}</>
+            ))}
+          </p>
 
-              {/* Price */}
-              <div class="mb-4">
-                {service.price === "Sur devis" ? (
-                  <span class="fluid-h3 font-bold text-zinc-900">
-                    Sur devis
-                  </span>
-                ) : (
-                  <div class="flex items-baseline gap-1">
-                    <span class="fluid-h2 font-bold text-zinc-900">
-                      {service.price}
-                    </span>
-                    <span class="fluid-text-sm text-zinc-500">€</span>
-                    <span class="fluid-text-xs ml-0.5 text-zinc-400">ht</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Features */}
-              <ul class="space-y-2 mb-4">
-                {service.features.map((feature, index) => (
-                  <li class="flex items-center gap-2">
-                    {service.featured ? (
-                      <span class="fluid-text-xs font-medium text-zinc-400 font-mono shrink-0">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                    ) : (
-                      <span class="text-zinc-400 fluid-text-xs shrink-0">–</span>
-                    )}
-                    <span class="fluid-text-sm text-zinc-700">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Justification */}
-              <p class="fluid-text-xs text-zinc-400 mb-4">
-                {service.justification}
-              </p>
-
-              {/* CTA */}
-              <a
-                href={service.href}
-                class={`
-                  w-full py-2.5 px-5 fluid-text-sm font-medium rounded-lg text-center transition-all duration-200 flex items-center justify-center gap-2
-                  ${service.featured
-                    ? 'bg-zinc-900 text-white hover:bg-zinc-800'
-                    : 'bg-white border border-zinc-300 text-zinc-900 hover:border-zinc-900'
-                  }
-                `}
-              >
-                {service.cta}
-                <Icon name="lucide:arrow-right" class="w-4 h-4" />
-              </a>
-            </div>
-          </div>
+          <!-- Link -->
+          <a
+            href={service.href}
+            class="inline-flex items-center gap-1.5 fluid-text-sm font-medium text-zinc-900 hover:text-zinc-600 transition-colors"
+          >
+            {service.cta}
+            <Icon name="lucide:arrow-right" class="w-4 h-4" />
+          </a>
         </div>
       ))}
     </div>
