@@ -38,13 +38,13 @@ const passions = [
 ];
 ---
 
-<section id="parcours" class="bg-zinc-900 py-24 px-6">
+<section id="parcours" class="bg-zinc-900 section-padding px-6">
   <div class="max-w-5xl mx-auto">
-    <div class="grid md:grid-cols-[1fr_280px] gap-12 md:gap-16">
+    <div class="grid lg:grid-cols-[1fr_280px] gap-12 lg:gap-16">
       <!-- Timeline Column -->
       <div>
         <!-- Quote -->
-        <p class="text-zinc-500 text-sm italic mb-8 max-w-md">
+        <p class="text-zinc-500 fluid-text-sm italic mb-8 max-w-md">
           "Plus jeune, je passais des heures à min-maxer mes persos sur WoW et Final Fantasy. Aujourd'hui, c'est pareil — sauf que j'optimise des business au lieu de stats d'attaque."
         </p>
 
@@ -59,7 +59,7 @@ const passions = [
         </div>
 
         <!-- Photo + Quote + Passions - Mobile Only -->
-        <div class="md:hidden flex flex-col items-center mb-10">
+        <div class="lg:hidden flex flex-col items-center mb-10">
           <div class="w-48 aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
             <Image
               src={lilianPortrait}
@@ -72,12 +72,12 @@ const passions = [
               loading="lazy"
             />
           </div>
-          <p class="text-zinc-400 text-sm italic text-center leading-relaxed mb-6">
+          <p class="text-zinc-400 fluid-text-sm italic text-center mb-6">
             "Quand je me balade quelque part, je vois tout ce qu'on pourrait automatiser. C'est plus fort que moi."
           </p>
           <div class="flex flex-wrap gap-2 justify-center">
             {passions.map((passion) => (
-              <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full text-xs text-zinc-400">
+              <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full fluid-text-xs text-zinc-400">
                 <Icon name={passion.icon} class="w-3.5 h-3.5" />
                 {passion.name}
               </span>
@@ -91,14 +91,14 @@ const passions = [
             <div class="flex gap-4 group">
               <!-- Year -->
               <div class="flex flex-col items-end w-16 shrink-0 pt-0.5">
-                <span class={`text-sm font-semibold ${item.isCurrent ? 'text-white' : 'text-zinc-500'}`}>
+                <span class={`fluid-text-sm font-semibold ${item.isCurrent ? 'text-white' : 'text-zinc-500'}`}>
                   {item.year}
                 </span>
                 {item.badge && (
                   item.link ? (
-                    <a href={item.link} target="_blank" rel="noopener" class="text-[10px] text-zinc-500 hover:text-zinc-300 font-mono mt-0.5 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
+                    <a href={item.link} target="_blank" rel="noopener" class="fluid-text-xs text-zinc-500 hover:text-zinc-300 font-mono mt-0.5 underline underline-offset-2 whitespace-nowrap">{item.badge}</a>
                   ) : (
-                    <span class="text-[10px] text-zinc-500 font-mono mt-0.5 whitespace-nowrap">{item.badge}</span>
+                    <span class="fluid-text-xs text-zinc-500 font-mono mt-0.5 whitespace-nowrap">{item.badge}</span>
                   )
                 )}
               </div>
@@ -108,7 +108,7 @@ const passions = [
                 <h3 class="fluid-text-base font-semibold text-white mb-1 group-hover:text-zinc-300 transition-colors">
                   {item.title}
                 </h3>
-                <p class="text-zinc-400 text-sm leading-relaxed">
+                <p class="text-zinc-400 fluid-text-sm">
                   {item.description}
                 </p>
               </div>
@@ -118,7 +118,7 @@ const passions = [
       </div>
 
       <!-- About Column - Desktop Only -->
-      <div class="hidden md:flex flex-col items-start">
+      <div class="hidden lg:flex flex-col items-start">
         <!-- Photo -->
         <div class="w-full aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
           <Image
@@ -134,14 +134,14 @@ const passions = [
         </div>
 
         <!-- Quote -->
-        <p class="text-zinc-400 text-sm italic text-left leading-relaxed mb-6">
+        <p class="text-zinc-400 fluid-text-sm italic text-left mb-6">
           "Quand je me balade quelque part, je vois tout ce qu'on pourrait automatiser. C'est plus fort que moi."
         </p>
 
         <!-- Passions -->
         <div class="flex flex-wrap gap-2 justify-start">
           {passions.map((passion) => (
-            <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full text-xs text-zinc-400">
+            <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full fluid-text-xs text-zinc-400">
               <Icon name={passion.icon} class="w-3.5 h-3.5" />
               {passion.name}
             </span>

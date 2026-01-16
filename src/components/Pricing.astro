@@ -74,14 +74,14 @@ const services = [
 ];
 ---
 
-<section id="tarifs" class="py-16 md:py-24 px-6 bg-white">
+<section id="tarifs" class="section-padding px-6 bg-white">
   <div class="max-w-5xl mx-auto">
     <!-- Header -->
-    <div class="mb-10 md:mb-16">
-      <p class="text-zinc-400 text-xs md:text-sm font-medium tracking-wider uppercase mb-3">
+    <div class="mb-10 lg:mb-16">
+      <p class="fluid-text-xs text-zinc-400 font-medium uppercase mb-3">
         Services
       </p>
-      <h2 class="text-3xl md:text-5xl font-semibold text-zinc-900 leading-tight">
+      <h2 class="fluid-h1 font-semibold text-zinc-900">
         Travaillons ensemble.
       </h2>
     </div>
@@ -90,12 +90,12 @@ const services = [
     <div class="space-y-0">
       {services.map((service, serviceIndex) => (
         <div class={`
-          grid md:grid-cols-[1.2fr_1fr] gap-8 md:gap-16 items-start py-10 md:py-14
+          grid lg:grid-cols-[1.2fr_1fr] gap-8 lg:gap-16 items-start py-10 lg:py-14
           ${serviceIndex < services.length - 1 ? 'border-b border-zinc-200' : ''}
         `}>
           {/* Left: Description - First on mobile, left on desktop */}
           <div>
-            <h3 class="text-xl md:text-2xl font-semibold text-zinc-900 mb-3 leading-tight tracking-tight">
+            <h3 class="fluid-h3 font-semibold text-zinc-900 mb-3">
               {service.headline}
               {service.headline2 && (
                 <>
@@ -111,7 +111,7 @@ const services = [
               )}
             </h3>
 
-            <p class="text-zinc-600 text-sm md:text-base leading-relaxed">
+            <p class="fluid-text-base text-zinc-600">
               {Array.isArray(service.description)
                 ? service.description.map((line, i) => (
                     <>{i > 0 && <br />}{line}</>
@@ -134,10 +134,10 @@ const services = [
             >
               {/* Name + Tagline */}
               <div class="mb-4">
-                <h4 class="text-lg md:text-xl font-semibold text-zinc-900">
+                <h4 class="fluid-h4 font-semibold text-zinc-900">
                   {service.name}
                 </h4>
-                <p class="text-xs text-zinc-500 mt-0.5">
+                <p class="fluid-text-xs text-zinc-500 mt-0.5">
                   {service.tagline}
                 </p>
               </div>
@@ -145,16 +145,16 @@ const services = [
               {/* Price */}
               <div class="mb-4">
                 {service.price === "Sur devis" ? (
-                  <span class="text-xl md:text-2xl font-bold text-zinc-900">
+                  <span class="fluid-h3 font-bold text-zinc-900">
                     Sur devis
                   </span>
                 ) : (
                   <div class="flex items-baseline gap-1">
-                    <span class="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900">
+                    <span class="fluid-h2 font-bold text-zinc-900">
                       {service.price}
                     </span>
-                    <span class="text-sm text-zinc-500">€</span>
-                    <span class="text-xs ml-0.5 text-zinc-400">ht</span>
+                    <span class="fluid-text-sm text-zinc-500">€</span>
+                    <span class="fluid-text-xs ml-0.5 text-zinc-400">ht</span>
                   </div>
                 )}
               </div>
@@ -164,13 +164,13 @@ const services = [
                 {service.features.map((feature, index) => (
                   <li class="flex items-center gap-2">
                     {service.featured ? (
-                      <span class="text-xs font-medium text-zinc-400 font-mono shrink-0">
+                      <span class="fluid-text-xs font-medium text-zinc-400 font-mono shrink-0">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                     ) : (
-                      <span class="text-zinc-400 text-xs shrink-0">–</span>
+                      <span class="text-zinc-400 fluid-text-xs shrink-0">–</span>
                     )}
-                    <span class="text-sm text-zinc-700">
+                    <span class="fluid-text-sm text-zinc-700">
                       {feature}
                     </span>
                   </li>
@@ -178,7 +178,7 @@ const services = [
               </ul>
 
               {/* Justification */}
-              <p class="text-xs text-zinc-400 mb-4">
+              <p class="fluid-text-xs text-zinc-400 mb-4">
                 {service.justification}
               </p>
 
@@ -186,7 +186,7 @@ const services = [
               <a
                 href={service.href}
                 class={`
-                  w-full py-2.5 px-5 text-sm font-medium rounded-lg text-center transition-all duration-200 flex items-center justify-center gap-2
+                  w-full py-2.5 px-5 fluid-text-sm font-medium rounded-lg text-center transition-all duration-200 flex items-center justify-center gap-2
                   ${service.featured
                     ? 'bg-zinc-900 text-white hover:bg-zinc-800'
                     : 'bg-white border border-zinc-300 text-zinc-900 hover:border-zinc-900'

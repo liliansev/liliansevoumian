@@ -48,12 +48,12 @@ const gapSize = 48;
     <div class="max-w-5xl mx-auto text-center w-full">
       <div class="z-10 relative">
         <!-- Headline with staggered animation -->
-        <h1 class="hero-title font-semibold text-zinc-900 leading-[1] tracking-tight hero-fade-in" style="--delay: 0">
+        <h1 class="fluid-h0 font-semibold text-zinc-900 hero-fade-in" style="--delay: 0">
           Expert IA &<br />Automations<br /><span class="hero-gradient-text">Make & n8n</span>
         </h1>
 
         <!-- Subheadline -->
-        <p class="hero-subtitle text-zinc-600 font-light leading-relaxed mx-auto mt-5 md:mt-6 hero-fade-in" style="--delay: 1">
+        <p class="fluid-text-lg text-zinc-600 font-light mx-auto mt-5 md:mt-6 hero-fade-in max-w-lg" style="--delay: 1">
           Freelance & Formateur nocode, spécialisé en automatisations.<br />Je vous fais gagner + de 10 heures par semaine.
         </p>
 
@@ -80,14 +80,14 @@ const gapSize = 48;
           {stats.map((stat) => (
             <div class="text-center">
               <div
-                class="text-3xl font-semibold text-zinc-900 stat-counter"
+                class="fluid-h3 font-semibold text-zinc-900 stat-counter"
                 data-target={stat.value}
                 data-suffix={stat.suffix}
                 data-format={stat.format ? "true" : "false"}
               >
                 0{stat.suffix}
               </div>
-              <div class="text-xs text-zinc-500 mt-1 uppercase tracking-wider">{stat.label}</div>
+              <div class="fluid-text-xs text-zinc-500 mt-1 uppercase">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ const gapSize = 48;
 
   <!-- Scrolling Logos - smoother transition -->
   <div class="bg-zinc-900 py-6 md:py-8 overflow-hidden hero-logos-section">
-    <p class="text-center text-[11px] uppercase tracking-[0.2em] text-zinc-500 mb-4 md:mb-5 px-6">
+    <p class="text-center fluid-text-xs uppercase text-zinc-500 mb-4 md:mb-5 px-6">
       Ils m'ont fait confiance
     </p>
 
@@ -139,16 +139,6 @@ const gapSize = 48;
   .hero-section {
     min-height: 100vh; /* Fallback */
     min-height: 100svh; /* Small viewport height - stable, no jank during scroll */
-  }
-
-  /* Title sizing - Single fluid clamp, no media query */
-  .hero-title {
-    font-size: clamp(2.75rem, 1rem + 8vw, 6rem);
-  }
-
-  .hero-subtitle {
-    font-size: clamp(0.9375rem, 0.75rem + 0.5vw, 1.25rem);
-    max-width: 38rem;
   }
 
   /* Gradient text for "Make & n8n" */

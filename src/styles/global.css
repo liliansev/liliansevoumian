@@ -20,6 +20,10 @@
   --space-24: 6rem;     /* 96px */
   --space-32: 8rem;     /* 128px */
 
+  /* Section Spacing - Consistent vertical rhythm */
+  --section-py: 4rem;      /* 64px mobile */
+  --section-py-lg: 7rem;   /* 112px desktop */
+
   /* Typography - Letter Spacing (Linear-style) */
   --tracking-tighter: -0.03em;  /* display headlines */
   --tracking-tight: -0.02em;    /* section headings */
@@ -91,35 +95,55 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: var(--tracking-normal);
 }
 
-/* Body Text */
+/* Body Text - Minimum 16px on mobile for readability */
 .fluid-text-3xl {
   font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
   line-height: var(--leading-normal);
 }
 
 .fluid-text-2xl {
-  font-size: clamp(1.25rem, 1rem + 1vw, 1.5rem);
+  font-size: clamp(1.25rem, 1.125rem + 0.5vw, 1.5rem);
   line-height: var(--leading-normal);
 }
 
 .fluid-text-xl {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+  font-size: clamp(1.125rem, 1.0625rem + 0.25vw, 1.25rem);
   line-height: var(--leading-normal);
 }
 
 .fluid-text-lg {
-  font-size: clamp(1rem, 0.9375rem + 0.25vw, 1.125rem);
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.125rem);
   line-height: var(--leading-normal);
 }
 
 .fluid-text-base {
-  font-size: clamp(0.9375rem, 0.875rem + 0.25vw, 1rem);
+  font-size: clamp(1rem, 0.9375rem + 0.25vw, 1.0625rem);
   line-height: var(--leading-relaxed);
 }
 
 .fluid-text-sm {
-  font-size: clamp(0.8125rem, 0.75rem + 0.25vw, 0.875rem);
+  font-size: clamp(0.875rem, 0.8125rem + 0.25vw, 0.9375rem);
   line-height: var(--leading-relaxed);
+}
+
+/* Small labels - can be smaller */
+.fluid-text-xs {
+  font-size: clamp(0.75rem, 0.6875rem + 0.25vw, 0.8125rem);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Section padding utility */
+.section-padding {
+  padding-top: var(--section-py);
+  padding-bottom: var(--section-py);
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-top: var(--section-py-lg);
+    padding-bottom: var(--section-py-lg);
+  }
 }
 
 /* Fluid Max-Widths for Text */

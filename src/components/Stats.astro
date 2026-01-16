@@ -19,13 +19,13 @@ const stats = [
 ];
 ---
 
-<section class="py-6 bg-gradient-to-b from-white to-zinc-50/50 md:hidden stats-section">
+<section class="py-6 bg-gradient-to-b from-white to-zinc-50/50 lg:hidden stats-section">
   <div class="max-w-sm mx-auto px-6 flex flex-col gap-3">
     {stats.map((stat) => (
       <div class="flex items-center justify-between py-3 border-b border-zinc-100 last:border-0 stat-row">
-        <span class="text-xs text-zinc-500 uppercase tracking-wider">{stat.label}</span>
+        <span class="fluid-text-xs text-zinc-500 uppercase">{stat.label}</span>
         <span
-          class="text-lg font-semibold text-zinc-900 stat-counter-mobile"
+          class="fluid-h5 font-semibold text-zinc-900 stat-counter-mobile"
           data-target={stat.value}
           data-suffix={stat.suffix}
           data-format={stat.format ? "true" : "false"}
