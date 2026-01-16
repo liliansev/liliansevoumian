@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import ScrollFade from './ui/ScrollFade.astro';
 
 interface Tool {
   name: string;
@@ -73,8 +74,7 @@ const TRACK_COUNT = [0, 1, 2];
 
   <!-- Mobile: single row -->
   <div class="md:hidden relative">
-    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+    <ScrollFade color="zinc-900" width="w-16" />
 
     <div class="flex overflow-hidden">
       {TRACK_COUNT.map((i) => (
@@ -98,8 +98,7 @@ const TRACK_COUNT = [0, 1, 2];
   <div class="hidden md:block space-y-4">
     {desktopRows.map(({ tools, animation }) => (
       <div class="relative">
-        <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+        <ScrollFade color="zinc-900" width="w-40" />
 
         <div class="flex overflow-hidden">
           {TRACK_COUNT.map((i) => (

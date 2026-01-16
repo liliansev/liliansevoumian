@@ -1,22 +1,5 @@
 ---
-const stats = [
-  {
-    value: 300,
-    suffix: "+",
-    label: "Personnes formées"
-  },
-  {
-    value: 100,
-    suffix: "+",
-    label: "Entreprises accompagnées"
-  },
-  {
-    value: 2000,
-    suffix: "+",
-    label: "Heures économisées",
-    format: true
-  }
-];
+import { stats } from '../data/stats';
 ---
 
 <section class="py-8 bg-gradient-to-b from-white to-zinc-50/50 lg:hidden stats-section">
@@ -61,34 +44,7 @@ const stats = [
 </style>
 
 <script>
-  // Counter animation for mobile stats
-  const animateCounter = (element: HTMLElement) => {
-    const target = parseInt(element.dataset.target || '0');
-    const suffix = element.dataset.suffix || '';
-    const shouldFormat = element.dataset.format === 'true';
-    const duration = 1500;
-    const startTime = performance.now();
-
-    const updateCounter = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(easeOut * target);
-
-      const formatted = shouldFormat
-        ? current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-        : current.toString();
-
-      element.textContent = formatted + suffix;
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      }
-    };
-
-    requestAnimationFrame(updateCounter);
-  };
+  import { animateCounter } from '../utils/counter';
 
   // Use IntersectionObserver for reliable detection
   const initCounters = () => {

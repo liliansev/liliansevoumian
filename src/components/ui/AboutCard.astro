@@ -1,0 +1,52 @@
+---
+import { Picture } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+
+interface Passion {
+  name: string;
+  icon: string;
+}
+
+interface Props {
+  image: ImageMetadata;
+  quote: string;
+  passions: Passion[];
+  layout: 'mobile' | 'desktop';
+}
+
+const { image, quote, passions, layout } = Astro.props;
+
+const isMobile = layout === 'mobile';
+const containerClass = isMobile
+  ? 'lg:hidden flex flex-col items-center mb-10'
+  : 'hidden lg:flex flex-col items-start';
+const imageClass = isMobile ? 'w-48' : 'w-full';
+const textAlign = isMobile ? 'text-center' : 'text-left';
+const flexJustify = isMobile ? 'justify-center' : 'justify-start';
+---
+
+<div class={containerClass}>
+  <div class={`${imageClass} aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6`}>
+    <Picture
+      src={image}
+      alt="Lilian Sevoumian"
+      width={280}
+      height={280}
+      formats={['avif', 'webp']}
+      quality={85}
+      class="w-full h-full object-cover object-top -scale-x-100"
+      loading="lazy"
+    />
+  </div>
+  <p class={`text-zinc-400 fluid-text-sm italic ${textAlign} mb-6`}>
+    "{quote}"
+  </p>
+  <div class={`flex flex-wrap gap-2 ${flexJustify}`}>
+    {passions.map((passion) => (
+      <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 rounded-full fluid-text-xs text-zinc-400">
+        <Icon name={passion.icon} class="w-3.5 h-3.5" />
+        {passion.name}
+      </span>
+    ))}
+  </div>
+</div>

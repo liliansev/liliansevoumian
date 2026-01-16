@@ -1,0 +1,11 @@
+---
+interface Props {
+  color?: string;
+  width?: string;
+}
+
+const { color = "zinc-900", width = "w-20 md:w-32" } = Astro.props;
+---
+
+<div class={`absolute left-0 top-0 bottom-0 ${width} bg-gradient-to-r from-${color} to-transparent z-10 pointer-events-none`}></div>
+<div class={`absolute right-0 top-0 bottom-0 ${width} bg-gradient-to-l from-${color} to-transparent z-10 pointer-events-none`}></div>

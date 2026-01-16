@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import MultiLine from './ui/MultiLine.astro';
 
 const expertises = [
   {
@@ -52,12 +53,7 @@ const tools = [
 
           <!-- Description -->
           <p class="fluid-text-sm text-zinc-500">
-            {Array.isArray(item.description)
-              ? item.description.map((line, i) => (
-                  <>{i > 0 && <br />}{line}</>
-                ))
-              : item.description
-            }
+            <MultiLine lines={item.description} />
           </p>
         </div>
       ))}

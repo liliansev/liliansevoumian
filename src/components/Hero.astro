@@ -1,17 +1,13 @@
 ---
 import { Icon } from 'astro-icon/components';
 import CTAButton from './ui/CTAButton.astro';
+import ScrollFade from './ui/ScrollFade.astro';
+import { stats } from '../data/stats';
 
 const techBadges = [
   { name: "Make", icon: "simple-icons:make" },
   { name: "n8n", icon: "simple-icons:n8n" },
   { name: "Airtable", icon: "simple-icons:airtable" }
-];
-
-const stats = [
-  { value: 300, suffix: "+", label: "Personnes formées" },
-  { value: 100, suffix: "+", label: "Entreprises accompagnées" },
-  { value: 2000, suffix: "+", label: "Heures économisées", format: true }
 ];
 
 const clients = [
@@ -104,11 +100,7 @@ const TRACK_COUNT = [0, 1, 2];
     </p>
 
     <div class="relative">
-      <!-- Fade left -->
-      <div class="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-
-      <!-- Fade right -->
-      <div class="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+      <ScrollFade color="zinc-900" width="w-20 md:w-32" />
 
       <!-- Scrolling wrapper with 3 tracks for seamless infinite scroll -->
       <div class="flex overflow-hidden scrolling-container">
@@ -222,36 +214,7 @@ const TRACK_COUNT = [0, 1, 2];
 </style>
 
 <script>
-  // Counter animation for stats
-  const animateCounter = (element: HTMLElement) => {
-    const target = parseInt(element.dataset.target || '0');
-    const suffix = element.dataset.suffix || '';
-    const shouldFormat = element.dataset.format === 'true';
-    const duration = 2000;
-    const startTime = performance.now();
-
-    const updateCounter = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function (ease-out)
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(easeOut * target);
-
-      // Format number with space for thousands
-      const formatted = shouldFormat
-        ? current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-        : current.toString();
-
-      element.textContent = formatted + suffix;
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      }
-    };
-
-    requestAnimationFrame(updateCounter);
-  };
+  import { animateCounter } from '../utils/counter';
 
   // Intersection Observer for stats
   const observerOptions = {

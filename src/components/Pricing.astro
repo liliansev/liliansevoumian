@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components';
+import MultiLine from './ui/MultiLine.astro';
 
 const services = [
   {
@@ -54,9 +55,7 @@ const services = [
 
           <!-- Description -->
           <p class="fluid-text-sm text-zinc-500 mb-4">
-            {service.description.map((line, i) => (
-              <>{i > 0 && <br />}{line}</>
-            ))}
+            <MultiLine lines={service.description} />
           </p>
 
           <!-- Link -->
