@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
   title?: string;
   description?: string;
@@ -119,6 +121,7 @@ const websiteSchema = {
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon_liliansevoumian.svg" />
+    <!-- Note: For full iOS compatibility, convert to 180x180 PNG -->
     <link rel="apple-touch-icon" href="/favicon_liliansevoumian.svg" />
     <meta name="generator" content={Astro.generator} />
 
@@ -129,13 +132,16 @@ const websiteSchema = {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Fonts with font-display: swap for better LCP -->
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <!-- Styles -->
     <style is:global>
       @import "../styles/global.css";
     </style>
+
+    <!-- View Transitions for smooth navigation -->
+    <ViewTransitions />
   </head>
   <body class="bg-zinc-100 text-zinc-900 font-sans antialiased overflow-x-hidden">
     <slot />

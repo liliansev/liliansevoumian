@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import lilianPortrait from '../assets/lilian-portrait.png';
 
@@ -61,12 +61,12 @@ const passions = [
         <!-- Photo + Quote + Passions - Mobile Only -->
         <div class="lg:hidden flex flex-col items-center mb-10">
           <div class="w-48 aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
-            <Image
+            <Picture
               src={lilianPortrait}
               alt="Lilian Sevoumian"
               width={280}
               height={280}
-              format="webp"
+              formats={['avif', 'webp']}
               quality={85}
               class="w-full h-full object-cover object-top -scale-x-100"
               loading="lazy"
@@ -121,12 +121,12 @@ const passions = [
       <div class="hidden lg:flex flex-col items-start">
         <!-- Photo -->
         <div class="w-full aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-700 mb-6">
-          <Image
+          <Picture
             src={lilianPortrait}
             alt="Lilian Sevoumian"
             width={280}
             height={280}
-            format="webp"
+            formats={['avif', 'webp']}
             quality={85}
             class="w-full h-full object-cover object-top -scale-x-100"
             loading="lazy"

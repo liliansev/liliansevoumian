@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import CTAButton from './ui/CTAButton.astro';
 import lilianPhoto from '../assets/lilian-cta.png';
 ---
@@ -13,12 +13,12 @@ import lilianPhoto from '../assets/lilian-cta.png';
     <!-- Photo -->
     <div class="mb-8">
       <div class="w-20 h-20 mx-auto rounded-full overflow-hidden ring-1 ring-zinc-300 shadow-lg">
-        <Image
+        <Picture
           src={lilianPhoto}
           alt="Lilian Sevoumian"
           width={160}
           height={160}
-          format="webp"
+          formats={['avif', 'webp']}
           quality={85}
           class="w-full h-full object-cover"
         />
