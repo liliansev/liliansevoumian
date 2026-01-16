@@ -1,8 +1,12 @@
 ---
 import { Icon } from 'astro-icon/components';
 
-// Ligne 1 - Automatisation & No-Code
-const row1 = [
+interface Tool {
+  name: string;
+  icon: string;
+}
+
+const row1: Tool[] = [
   { name: "Zapier", icon: "simple-icons:zapier" },
   { name: "Airtable", icon: "simple-icons:airtable" },
   { name: "Notion", icon: "simple-icons:notion" },
@@ -11,10 +15,14 @@ const row1 = [
   { name: "Trello", icon: "simple-icons:trello" },
   { name: "Webflow", icon: "simple-icons:webflow" },
   { name: "Todoist", icon: "simple-icons:todoist" },
+  { name: "Linear", icon: "simple-icons:linear" },
+  { name: "Google Sheets", icon: "simple-icons:googlesheets" },
+  { name: "Google Drive", icon: "simple-icons:googledrive" },
+  { name: "Dropbox", icon: "simple-icons:dropbox" },
+  { name: "Loom", icon: "simple-icons:loom" },
 ];
 
-// Ligne 2 - Communication & CRM (17 outils)
-const row2 = [
+const row2: Tool[] = [
   { name: "Slack", icon: "simple-icons:slack" },
   { name: "Discord", icon: "simple-icons:discord" },
   { name: "Gmail", icon: "simple-icons:gmail" },
@@ -26,35 +34,36 @@ const row2 = [
   { name: "Calendly", icon: "simple-icons:calendly" },
   { name: "Zoom", icon: "simple-icons:zoom" },
   { name: "Mailchimp", icon: "simple-icons:mailchimp" },
-  { name: "Telegram", icon: "simple-icons:telegram" },
-  { name: "Messenger", icon: "simple-icons:messenger" },
-  { name: "Google Calendar", icon: "simple-icons:googlecalendar" },
-  { name: "LinkedIn", icon: "simple-icons:linkedin" },
   { name: "Brevo", icon: "simple-icons:brevo" },
 ];
 
-// Ligne 3 - Paiement, Cloud & AI (17 outils)
-const row3 = [
+const row3: Tool[] = [
   { name: "Stripe", icon: "simple-icons:stripe" },
   { name: "PayPal", icon: "simple-icons:paypal" },
   { name: "Shopify", icon: "simple-icons:shopify" },
   { name: "WooCommerce", icon: "simple-icons:woocommerce" },
-  { name: "Google Sheets", icon: "simple-icons:googlesheets" },
-  { name: "Google Drive", icon: "simple-icons:googledrive" },
-  { name: "Dropbox", icon: "simple-icons:dropbox" },
+  { name: "Telegram", icon: "simple-icons:telegram" },
+  { name: "Messenger", icon: "simple-icons:messenger" },
+  { name: "Google Calendar", icon: "simple-icons:googlecalendar" },
+  { name: "LinkedIn", icon: "simple-icons:linkedin" },
   { name: "OpenAI", icon: "simple-icons:openai" },
   { name: "Anthropic", icon: "simple-icons:anthropic" },
   { name: "Twilio", icon: "simple-icons:twilio" },
-  { name: "Linear", icon: "simple-icons:linear" },
-  { name: "Loom", icon: "simple-icons:loom" },
-  { name: "Notion", icon: "simple-icons:notion" },
   { name: "Bitly", icon: "simple-icons:bitly" },
 ];
 
-// Tous les outils pour mobile (une seule ligne)
 const allTools = [...row1, ...row2, ...row3];
 
-const gapSize = 48;
+const GAP = 48;
+const trackStyle = `gap: ${GAP}px; padding-right: ${GAP}px;`;
+
+const desktopRows = [
+  { tools: row1, animation: "animate-scroll-left" },
+  { tools: row2, animation: "animate-scroll-right" },
+  { tools: row3, animation: "animate-scroll-left-slow" },
+];
+
+const TRACK_COUNT = [0, 1, 2];
 ---
 
 <section class="py-8 lg:py-10 bg-zinc-900 overflow-hidden">
@@ -62,112 +71,58 @@ const gapSize = 48;
     Vous utilisez ces outils ? Je les ai déjà automatisés. Tous.
   </p>
 
-  <!-- Mobile: 1 seule ligne -->
+  <!-- Mobile: single row -->
   <div class="md:hidden relative">
-    <div class="absolute left-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
 
     <div class="flex overflow-hidden">
-      <div class="flex items-center shrink-0 animate-scroll-left-mobile" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
-        {allTools.map((tool) => (
-          <div class="flex items-center gap-2 shrink-0 text-zinc-400 whitespace-nowrap">
-            <Icon name={tool.icon} class="w-5 h-5" />
-            <span class="fluid-text-sm font-medium">{tool.name}</span>
-          </div>
-        ))}
-      </div>
-      <div class="flex items-center shrink-0 animate-scroll-left-mobile" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
-        {allTools.map((tool) => (
-          <div class="flex items-center gap-2 shrink-0 text-zinc-400 whitespace-nowrap">
-            <Icon name={tool.icon} class="w-5 h-5" />
-            <span class="fluid-text-sm font-medium">{tool.name}</span>
-          </div>
-        ))}
-      </div>
+      {TRACK_COUNT.map((i) => (
+        <div
+          class="flex items-center shrink-0 animate-scroll-left-mobile"
+          style={trackStyle}
+          aria-hidden={i > 0 ? "true" : undefined}
+        >
+          {allTools.map((tool) => (
+            <div class="flex items-center gap-2 shrink-0 text-zinc-400 whitespace-nowrap">
+              <Icon name={tool.icon} class="w-5 h-5" />
+              <span class="fluid-text-sm font-medium">{tool.name}</span>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   </div>
 
-  <!-- Desktop: 3 lignes -->
+  <!-- Desktop: 3 rows -->
   <div class="hidden md:block space-y-4">
-    <!-- Ligne 1 - Gauche -->
-    <div class="relative">
-      <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+    {desktopRows.map(({ tools, animation }) => (
+      <div class="relative">
+        <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
 
-      <div class="flex overflow-hidden">
-        <div class="flex items-center shrink-0 animate-scroll-left" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
-          {row1.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
-              <Icon name={tool.icon} class="w-6 h-6" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
-            </div>
-          ))}
-        </div>
-        <div class="flex items-center shrink-0 animate-scroll-left" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
-          {row1.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
-              <Icon name={tool.icon} class="w-6 h-6" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
+        <div class="flex overflow-hidden">
+          {TRACK_COUNT.map((i) => (
+            <div
+              class={`flex items-center shrink-0 ${animation}`}
+              style={trackStyle}
+              aria-hidden={i > 0 ? "true" : undefined}
+            >
+              {tools.map((tool) => (
+                <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
+                  <Icon name={tool.icon} class="w-6 h-6" />
+                  <span class="fluid-text-sm font-medium">{tool.name}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>
       </div>
-    </div>
-
-    <!-- Ligne 2 - Droite -->
-    <div class="relative">
-      <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-
-      <div class="flex overflow-hidden">
-        <div class="flex items-center shrink-0 animate-scroll-right" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
-          {row2.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
-              <Icon name={tool.icon} class="w-6 h-6" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
-            </div>
-          ))}
-        </div>
-        <div class="flex items-center shrink-0 animate-scroll-right" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
-          {row2.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
-              <Icon name={tool.icon} class="w-6 h-6" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    <!-- Ligne 3 - Gauche -->
-    <div class="relative">
-      <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-
-      <div class="flex overflow-hidden">
-        <div class="flex items-center shrink-0 animate-scroll-left-slow" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`}>
-          {row3.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
-              <Icon name={tool.icon} class="w-6 h-6" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
-            </div>
-          ))}
-        </div>
-        <div class="flex items-center shrink-0 animate-scroll-left-slow" style={`gap: ${gapSize}px; padding-right: ${gapSize}px;`} aria-hidden="true">
-          {row3.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
-              <Icon name={tool.icon} class="w-6 h-6" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    ))}
   </div>
 </section>
 
 <style>
-  /* Keyframes defined in global.css */
   .animate-scroll-left {
     animation: scroll-left 70s linear infinite;
   }

@@ -15,25 +15,27 @@ const stats = [
 ];
 
 const clients = [
-  { text: "Qonto" },
-  { text: "Jellysmack" },
-  { text: "Digital Campus" },
-  { text: "Edumiam" },
-  { text: "Rocket School" },
-  { text: "Movecool" },
-  { text: "KlaK" },
-  { text: "Digilytix" },
-  { text: "WeTechCare" },
-  { text: "Contournement" },
-  { text: "Familytrip" },
-  { text: "Alegria Academy" },
-  { text: "Boost ton Biz" },
-  { text: "Deuxième Souffle" },
-  { text: "Reborn" }
+  "Qonto",
+  "Jellysmack",
+  "Digital Campus",
+  "Edumiam",
+  "Rocket School",
+  "Movecool",
+  "KlaK",
+  "Digilytix",
+  "WeTechCare",
+  "Contournement",
+  "Familytrip",
+  "Alegria Academy",
+  "Boost ton Biz",
+  "Deuxième Souffle",
+  "Reborn",
 ];
 
 const scrollSpeed = 60;
 const gapSize = 48;
+const trackStyle = `animation-duration: ${scrollSpeed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`;
+const TRACK_COUNT = [0, 1, 2];
 ---
 
 <section class="hero-section flex flex-col">
@@ -108,27 +110,19 @@ const gapSize = 48;
       <!-- Fade right -->
       <div class="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
 
-      <!-- Scrolling wrapper -->
+      <!-- Scrolling wrapper with 3 tracks for seamless infinite scroll -->
       <div class="flex overflow-hidden scrolling-container">
-        <!-- First track -->
-        <div
-          class="flex items-center shrink-0 scrolling-logos scroll-left"
-          style={`animation-duration: ${scrollSpeed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`}
-        >
-          {clients.map((item) => (
-            <span class="text-[13px] font-medium text-zinc-400 whitespace-nowrap">{item.text}</span>
-          ))}
-        </div>
-        <!-- Duplicate track for seamless loop -->
-        <div
-          class="flex items-center shrink-0 scrolling-logos scroll-left"
-          style={`animation-duration: ${scrollSpeed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`}
-          aria-hidden="true"
-        >
-          {clients.map((item) => (
-            <span class="text-[13px] font-medium text-zinc-400 whitespace-nowrap">{item.text}</span>
-          ))}
-        </div>
+        {TRACK_COUNT.map((i) => (
+          <div
+            class="flex items-center shrink-0 scrolling-logos scroll-left"
+            style={trackStyle}
+            aria-hidden={i > 0 ? "true" : undefined}
+          >
+            {clients.map((name) => (
+              <span class="text-[13px] font-medium text-zinc-400 whitespace-nowrap">{name}</span>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   </div>
