@@ -1,0 +1,55 @@
+---
+import { Picture } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import lilianPortrait from '../../assets/lilian-portrait.png';
+
+interface Props {
+  variant: 'mobile' | 'desktop';
+}
+
+const { variant } = Astro.props;
+
+const passions = [
+  { name: "Podcasts", icon: "mdi:headphones" },
+  { name: "Gaming", icon: "mdi:gamepad-variant" },
+  { name: "Voyages", icon: "mdi:airplane" }
+];
+
+const quote = "Quand je me balade quelque part, je vois tout ce qu'on pourrait automatiser. C'est plus fort que moi.";
+
+const isMobile = variant === 'mobile';
+---
+
+<div class={isMobile
+  ? "lg:hidden flex flex-col items-center mb-10"
+  : "hidden lg:flex flex-col items-start"
+}>
+  <!-- Photo -->
+  <div class={`${isMobile ? 'w-48' : 'w-full'} aspect-square rounded-2xl overflow-hidden shadow-xl ring-1 ring-zinc-300 mb-6`}>
+    <Picture
+      src={lilianPortrait}
+      alt="Lilian Sevoumian"
+      width={280}
+      height={280}
+      formats={['avif', 'webp']}
+      quality={85}
+      class="w-full h-full object-cover object-top -scale-x-100"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Quote -->
+  <p class={`text-zinc-500 fluid-text-sm italic ${isMobile ? 'text-center' : 'text-left'} mb-6`}>
+    "{quote}"
+  </p>
+
+  <!-- Passions -->
+  <div class={`flex flex-wrap gap-2 ${isMobile ? 'justify-center' : 'justify-start'}`}>
+    {passions.map((passion) => (
+      <span class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-200 rounded-full fluid-text-xs text-zinc-600">
+        <Icon name={passion.icon} class="w-3.5 h-3.5" />
+        {passion.name}
+      </span>
+    ))}
+  </div>
+</div>

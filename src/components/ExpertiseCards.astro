@@ -43,7 +43,7 @@ const tools = [
     <!-- Cards Grid -->
     <div class="grid md:grid-cols-3 gap-6 lg:gap-8 mb-12 lg:mb-20">
       {expertises.map((item) => (
-        <div class="group">
+        <div>
           <!-- Title -->
           <h3 class="fluid-h5 font-medium text-zinc-900 mb-3">
             {item.title}
@@ -66,8 +66,9 @@ const tools = [
       <div class="flex flex-wrap items-center justify-center gap-4 md:gap-5">
         {tools.map((tool) => (
           <div
-            class="tool-icon w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white border border-zinc-200 flex items-center justify-center hover:border-zinc-300 hover:bg-zinc-50 hover:scale-105 transition-all duration-300"
-            title={tool.name}
+            class="group tool-icon w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white border border-zinc-200 flex items-center justify-center hover:border-zinc-300 hover:bg-zinc-50 hover:scale-105 transition-all duration-300"
+            role="img"
+            aria-label={tool.name}
           >
             <Icon name={tool.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-300" />
           </div>
