@@ -179,6 +179,12 @@ p, li, blockquote {
   color: white;
 }
 
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #a1a1aa #f4f4f5;
+}
+
 /* Hide scrollbar for horizontal scroll carousels */
 @utility scrollbar-hide {
   -ms-overflow-style: none;
@@ -189,6 +195,7 @@ p, li, blockquote {
   }
 }
 
+/* Webkit scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -198,12 +205,12 @@ p, li, blockquote {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: #a1a1aa;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1aa;
+  background: #71717a;
 }
 
 /* =========================================
@@ -252,21 +259,22 @@ p, li, blockquote {
 /* Smooth transitions for interactive elements only (performance) */
 a, button, input, textarea, select,
 [role="button"], [tabindex]:not([tabindex="-1"]) {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 150ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Focus states - Accessible & Beautiful */
 :focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px white, 0 0 0 4px #18181b;
-  border-radius: 0.5rem;
+  outline: 2px solid #18181b;
+  outline-offset: 2px;
 }
 
-/* Button focus override */
-a:focus-visible,
-button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px white, 0 0 0 4px #18181b;
+/* High contrast mode support */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid CanvasText;
+  }
 }
 
 /* Interactive card (clickable) */
@@ -352,9 +360,8 @@ button:focus-visible {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none;
+    transition: none;
   }
 
   .card-interactive:hover,
