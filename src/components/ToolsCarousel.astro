@@ -66,15 +66,15 @@ const desktopRows = [
 const TRACK_COUNT = [0, 1, 2];
 ---
 
-<section class="py-8 lg:py-10 bg-zinc-900 overflow-hidden">
-  <p class="text-center fluid-text-xs uppercase text-zinc-400 mb-4 lg:mb-5 px-6">
+<section class="py-12 lg:py-16 bg-zinc-200 overflow-hidden">
+  <p class="text-center fluid-text-xs uppercase text-zinc-600 mb-4 lg:mb-5 px-6">
     Vous utilisez ces outils ? Je les ai déjà automatisés. Tous.
   </p>
 
   <!-- Mobile: single row -->
   <div class="md:hidden relative">
-    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-zinc-200 to-transparent z-10 pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-zinc-200 to-transparent z-10 pointer-events-none"></div>
 
     <div class="flex overflow-hidden">
       {TRACK_COUNT.map((i) => (
@@ -84,7 +84,7 @@ const TRACK_COUNT = [0, 1, 2];
           aria-hidden={i > 0 ? "true" : undefined}
         >
           {allTools.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-400 whitespace-nowrap">
+            <div class="flex items-center gap-2 shrink-0 text-zinc-600 whitespace-nowrap">
               <Icon name={tool.icon} class="w-5 h-5" />
               <span class="fluid-text-sm font-medium">{tool.name}</span>
             </div>
@@ -98,8 +98,8 @@ const TRACK_COUNT = [0, 1, 2];
   <div class="hidden md:block space-y-4">
     {desktopRows.map(({ tools, animation }) => (
       <div class="relative">
-        <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-900 to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-900 to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-200 to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-200 to-transparent z-10 pointer-events-none"></div>
 
         <div class="flex overflow-hidden">
           {TRACK_COUNT.map((i) => (
@@ -109,7 +109,7 @@ const TRACK_COUNT = [0, 1, 2];
               aria-hidden={i > 0 ? "true" : undefined}
             >
               {tools.map((tool) => (
-                <div class="flex items-center gap-2 shrink-0 text-zinc-400 hover:text-zinc-200 transition-colors whitespace-nowrap">
+                <div class="flex items-center gap-2 shrink-0 text-zinc-600 hover:text-zinc-900 transition-colors whitespace-nowrap">
                   <Icon name={tool.icon} class="w-6 h-6" />
                   <span class="fluid-text-sm font-medium">{tool.name}</span>
                 </div>
