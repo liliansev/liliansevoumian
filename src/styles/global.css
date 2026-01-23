@@ -355,6 +355,44 @@ a, button, input, textarea, select,
 .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
 .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
 
+/* =========================================
+   TEXT REVEAL ANIMATION
+   ======================================== */
+
+.text-reveal {
+  overflow: hidden;
+}
+
+.text-reveal-word {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.text-reveal-word > span {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.text-reveal.is-visible .text-reveal-word > span {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Stagger delays for word animation */
+.text-reveal.is-visible .text-reveal-word:nth-child(1) > span { transition-delay: 0s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(2) > span { transition-delay: 0.05s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(3) > span { transition-delay: 0.1s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(4) > span { transition-delay: 0.15s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(5) > span { transition-delay: 0.2s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(6) > span { transition-delay: 0.25s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(7) > span { transition-delay: 0.3s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(8) > span { transition-delay: 0.35s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(9) > span { transition-delay: 0.4s; }
+.text-reveal.is-visible .text-reveal-word:nth-child(10) > span { transition-delay: 0.45s; }
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -367,5 +405,11 @@ a, button, input, textarea, select,
   .card-interactive:hover,
   .btn-primary:hover {
     transform: none;
+  }
+
+  /* Show text immediately without animation */
+  .text-reveal-word > span {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
