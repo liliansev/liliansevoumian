@@ -112,12 +112,9 @@ const services = [
             </h3>
 
             <p class="fluid-text-base text-zinc-600">
-              {Array.isArray(service.description)
-                ? service.description.map((line, i) => (
-                    <>{i > 0 && <br />}{line}</>
-                  ))
-                : service.description
-              }
+              {service.description.map((line, i) => (
+                <>{i > 0 && <br />}{line}</>
+              ))}
             </p>
           </div>
 
