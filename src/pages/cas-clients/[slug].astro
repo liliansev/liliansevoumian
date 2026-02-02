@@ -20,11 +20,84 @@ const caseStudy = await getCaseStudyBySlug(slug as string);
 if (!caseStudy) {
   return Astro.redirect('/cas-clients');
 }
+
+// SEO: Build optimized meta description
+const seoDescription = `${caseStudy.title}. ${caseStudy.kpis.length > 0 ? `Résultats : ${caseStudy.kpis.map(k => `${k.value} ${k.label}`).join(', ')}. ` : ''}Découvrez comment l'automatisation ${caseStudy.tools.length > 0 ? `avec ${caseStudy.tools.join(', ')} ` : ''}a transformé ${caseStudy.secteur ? `ce projet ${caseStudy.secteur}` : 'cette entreprise'}.`.substring(0, 160);
+
+// SEO: Breadcrumbs
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: 'Cas clients', url: '/cas-clients' },
+  { name: caseStudy.title, url: `/cas-clients/${caseStudy.slug}` }
+];
+
+// SEO: Article Schema (Case Study)
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": caseStudy.title,
+  "description": seoDescription,
+  "author": {
+    "@type": "Person",
+    "name": "Lilian Sevoumian",
+    "url": "https://liliansevoumian.fr"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Lilian Sevoumian",
+    "url": "https://liliansevoumian.fr"
+  },
+  "datePublished": caseStudy.date || new Date().toISOString(),
+  "dateModified": caseStudy.date || new Date().toISOString(),
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": `https://liliansevoumian.fr/cas-clients/${caseStudy.slug}`
+  },
+  "articleSection": "Cas client",
+  "keywords": [
+    "automatisation",
+    "cas client",
+    caseStudy.secteur,
+    ...caseStudy.tags,
+    ...caseStudy.tools
+  ].filter(Boolean).join(", "),
+  "about": {
+    "@type": "Thing",
+    "name": "Automatisation No-Code",
+    "description": "Automatisation de processus métier avec Make, n8n et Airtable"
+  }
+};
+
+// SEO: HowTo Schema for the steps section
+const howToSchema = caseStudy.etapes ? {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": `Comment automatiser : ${caseStudy.title}`,
+  "description": caseStudy.probleme?.substring(0, 200),
+  "tool": caseStudy.tools.map(tool => ({
+    "@type": "HowToTool",
+    "name": tool
+  })),
+  "totalTime": "P5W",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "EUR"
+  }
+} : null;
+
+// Combine schemas
+const combinedSchema = howToSchema
+  ? { ...articleSchema, hasPart: howToSchema }
+  : articleSchema;
 ---
 
 <Layout
-  title={`${caseStudy.title} | Cas client - Lilian Sevoumian`}
-  description={`${caseStudy.entreprise.substring(0, 150)}...`}
+  title={`${caseStudy.title} | Cas client Automatisation - Lilian Sevoumian`}
+  description={seoDescription}
+  ogType="article"
+  publishedDate={caseStudy.date}
+  articleSchema={combinedSchema}
+  breadcrumbs={breadcrumbs}
 >
   <Navigation />
 
