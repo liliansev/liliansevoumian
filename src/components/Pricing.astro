@@ -7,22 +7,14 @@ const services = [
     name: "Coaching",
     tagline: "Un blocage ? Je débloque.",
     price: "150",
+    icon: "lucide:message-circle",
     features: [
       "Call 1h en visio",
       "Réponses actionnables",
       "Replay disponible"
     ],
-    justification: "En 1h, c'est débloqué.",
     cta: "Je me débloque",
-    href: "https://cal.com/lilian-sevoumian/coaching-1",
-    // Description section
-    headline: "Un blocage ?",
-    headline2: "Une question ?",
-    description: [
-      "Vous êtes coincé sur un scénario, vous hésitez sur une architecture, vous avez besoin d'un œil externe et expert.",
-      "En 1h de call, on débloque ensemble.",
-      "Vous repartez avec une direction claire et des actions concrètes à mettre en place."
-    ]
+    href: "https://cal.com/lilian-sevoumian/coaching-1"
   },
   {
     id: "audit",
@@ -30,173 +22,204 @@ const services = [
     name: "Diagnostic",
     tagline: "Plan d'action en 72h.",
     price: "350",
+    badge: "Populaire",
+    icon: "lucide:scan-search",
     features: [
       "Call 45min en visio",
-      "Analyse de votre stack",
-      "Livrable + vidéo"
+      "Analyse complète de votre stack",
+      "Livrable détaillé + vidéo personnalisée",
+      "Recommandations outils & coûts"
     ],
-    justification: "Document complet + vidéo personnalisée.",
     cta: "Je veux y voir clair",
-    href: "https://cal.com/lilian-sevoumian/audit",
-    // Description section
-    headline: "Quoi automatiser.",
-    headline2: "Pourquoi.",
-    headline3: "Les meilleurs Softwares.",
-    description: [
-      "Vous dépensez des centaines d'euros chaque mois pour des outils qui ne correspondent pas à vos besoins ?",
-      "Vous souhaitez automatiser mais vous ne savez pas quoi ni pourquoi ?",
-      "Repartez avec un plan d'action, les outils nécessaires benchmarkés et le coût."
-    ]
+    href: "https://cal.com/lilian-sevoumian/audit"
   },
   {
     id: "projet",
     name: "Mission",
     tagline: "Je construis. Ça tourne.",
     price: "Sur devis",
+    icon: "lucide:rocket",
     features: [
       "Scénarios optimisés",
       "Tests jusqu'au succès",
-      "30 jours de support"
+      "Documentation complète",
+      "30 jours de support"
     ],
-    justification: "Vos automatisations en place.",
     cta: "Je veux automatiser",
-    href: "https://lilian.yt/contact",
-    // Description section
-    headline: "Vous voulez que ça tourne.",
-    headline2: "Sans vous.",
-    description: [
-      "Vous faites tout à la main, ça prend des heures.",
-      "Vous savez que c'est automatisable mais vous n'avez pas le temps de vous y mettre.",
-      "Vos automatisations seront en place, testées, documentées.",
-      "Vous récupérerez des heures chaque semaine."
-    ]
+    href: "https://lilian.yt/contact"
   }
 ];
 ---
 
 <section id="tarifs" class="section-padding px-6 bg-white">
-  <div class="max-w-5xl mx-auto">
+  <div class="max-w-6xl mx-auto">
     <!-- Header -->
-    <div class="mb-10 lg:mb-16">
+    <div class="text-center mb-12 lg:mb-16">
       <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-3">
         Services
       </p>
       <h2 class="fluid-h1 font-semibold text-zinc-900 text-reveal">
         Travaillons ensemble.
       </h2>
+      <p class="fluid-text-lg text-zinc-500 mt-4 max-w-xl mx-auto font-light">
+        Un format adapté à chaque besoin.<br />Du déblocage rapide à la mission complète.
+      </p>
     </div>
 
-    <!-- Services rows -->
-    <div class="space-y-0">
-      {services.map((service, serviceIndex) => (
-        <div class={`
-          grid lg:grid-cols-[1.2fr_1fr] gap-8 lg:gap-16 items-start py-10 lg:py-14
-          ${serviceIndex < services.length - 1 ? 'border-b border-zinc-200' : ''}
-        `}>
-          {/* Left: Description - First on mobile, left on desktop */}
-          <div>
-            <h3 class="fluid-h3 font-semibold text-zinc-900 mb-3">
-              {service.headline}
-              {service.headline2 && (
-                <>
-                  <br />
-                  {service.headline2}
-                </>
-              )}
-              {service.headline3 && (
-                <>
-                  <br />
-                  {service.headline3}
-                </>
-              )}
-            </h3>
+    <!-- Cards Grid -->
+    <div class="grid md:grid-cols-3 gap-5 lg:gap-6 items-start">
+      {services.map((service) => (
+        <div class={`pricing-card group relative flex flex-col rounded-2xl bg-white transition-all duration-300 ${
+          service.featured
+            ? 'pricing-featured md:-mt-4 md:mb-[-1rem]'
+            : 'border border-zinc-200 hover:border-zinc-300 hover:shadow-lg'
+        }`}>
 
-            <p class="fluid-text-base text-zinc-600">
-              {service.description.map((line, i) => (
-                <>{i > 0 && <br />}{line}</>
-              ))}
-            </p>
-          </div>
+          {/* Badge */}
+          {service.badge && (
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+              <div class="bg-emerald-500 text-white fluid-text-xs font-semibold px-4 py-1 rounded-full shadow-md shadow-emerald-500/20">
+                {service.badge}
+              </div>
+            </div>
+          )}
 
-          {/* Right: Card - Second on mobile, right on desktop */}
-          <div>
-            <div
-              class={`
-                relative flex flex-col p-5 md:p-6 rounded-xl transition-all duration-200 bg-white
-                ${service.featured
-                  ? 'border border-zinc-900 shadow-md hover:shadow-lg'
-                  : 'border border-zinc-200 shadow-sm hover:border-zinc-300 hover:shadow-md'
-                }
-              `}
-            >
-              {/* Name + Tagline */}
-              <div class="mb-4">
-                <h4 class="fluid-h4 font-semibold text-zinc-900">
+          {/* Card content */}
+          <div class={`p-6 lg:p-8 flex flex-col flex-1 relative z-[1] ${
+            service.featured ? 'pt-8 lg:pt-10' : ''
+          }`}>
+            {/* Icon + Name */}
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50">
+                <Icon name={service.icon} class="w-5 h-5 text-emerald-600" />
+              </div>
+              <div>
+                <h3 class="fluid-text-base font-semibold text-zinc-900">
                   {service.name}
-                </h4>
-                <p class="fluid-text-xs text-zinc-500 mt-0.5">
+                </h3>
+                <p class="fluid-text-xs text-zinc-500">
                   {service.tagline}
                 </p>
               </div>
-
-              {/* Price */}
-              <div class="mb-4">
-                {service.price === "Sur devis" ? (
-                  <span class="fluid-h3 font-bold text-zinc-900">
-                    Sur devis
-                  </span>
-                ) : (
-                  <div class="flex items-baseline gap-1">
-                    <span class="fluid-h2 font-bold text-zinc-900">
-                      {service.price}
-                    </span>
-                    <span class="fluid-text-sm text-zinc-500">€</span>
-                    <span class="fluid-text-xs ml-0.5 text-zinc-400">ht</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Features */}
-              <ul class="space-y-2 mb-4">
-                {service.features.map((feature, index) => (
-                  <li class="flex items-center gap-2">
-                    {service.featured ? (
-                      <span class="fluid-text-xs font-medium text-zinc-400 font-mono shrink-0">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                    ) : (
-                      <span class="text-zinc-400 fluid-text-xs shrink-0">–</span>
-                    )}
-                    <span class="fluid-text-sm text-zinc-700">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Justification */}
-              <p class="fluid-text-xs text-zinc-500 mb-4">
-                {service.justification}
-              </p>
-
-              {/* CTA */}
-              <a
-                href={service.href}
-                class={`
-                  w-full py-2.5 px-5 fluid-text-sm font-medium rounded-lg text-center transition-all duration-200 flex items-center justify-center gap-2
-                  ${service.featured
-                    ? 'bg-zinc-900 text-white hover:bg-zinc-800'
-                    : 'bg-white border border-zinc-300 text-zinc-900 hover:border-zinc-900'
-                  }
-                `}
-              >
-                {service.cta}
-                <Icon name="lucide:arrow-right" class="w-4 h-4" />
-              </a>
             </div>
+
+            {/* Price */}
+            <div class="mb-6">
+              {service.price === "Sur devis" ? (
+                <span class="fluid-h3 font-bold text-zinc-900">
+                  Sur devis
+                </span>
+              ) : (
+                <div class="flex items-baseline gap-1.5">
+                  <span class="fluid-h2 font-bold text-zinc-900">
+                    {service.price}
+                  </span>
+                  <span class="fluid-text-base text-zinc-400">€</span>
+                  <span class="fluid-text-xs text-zinc-400">ht</span>
+                </div>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div class="h-px bg-zinc-100 mb-6"></div>
+
+            {/* Features */}
+            <ul class="space-y-3.5 mb-8 flex-1">
+              {service.features.map((feature) => (
+                <li class="flex items-start gap-3">
+                  <div class={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                    service.featured ? 'bg-emerald-50' : 'bg-zinc-50'
+                  }`}>
+                    <Icon name="lucide:check" class={`w-3 h-3 ${
+                      service.featured ? 'text-emerald-600' : 'text-zinc-400'
+                    }`} />
+                  </div>
+                  <span class="fluid-text-sm text-zinc-600">
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            {/* CTA */}
+            <a
+              href={service.href}
+              class={`w-full py-3 px-5 fluid-text-sm font-medium rounded-xl text-center transition-all duration-300 flex items-center justify-center gap-2 ${
+                service.featured
+                  ? 'cta-gradient text-white hover:shadow-lg hover:shadow-emerald-500/30'
+                  : 'border border-zinc-200 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-50'
+              }`}
+            >
+              {service.cta}
+              <Icon name="lucide:arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </a>
           </div>
         </div>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  @property --pricing-border-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* Featured card — animated emerald border */
+  .pricing-featured {
+    position: relative;
+    padding: 2px;
+    background:
+      conic-gradient(
+        from var(--pricing-border-angle),
+        #d4d4d8 0%,
+        #10b981 20%,
+        #34d399 30%,
+        #a7f3d0 35%,
+        #34d399 40%,
+        #10b981 50%,
+        #d4d4d8 70%,
+        #e4e4e7 100%
+      );
+    border-radius: 1rem;
+    animation: pricing-rotate 6s linear infinite;
+  }
+
+  /* Inner white background */
+  .pricing-featured > div {
+    background: white;
+    border-radius: calc(1rem - 2px);
+  }
+
+  /* Soft glow behind the card */
+  .pricing-featured::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background:
+      conic-gradient(
+        from var(--pricing-border-angle),
+        transparent 0%,
+        #10b981 20%,
+        #34d399 35%,
+        #10b981 50%,
+        transparent 70%
+      );
+    filter: blur(12px);
+    opacity: 0.3;
+    z-index: 0;
+    animation: pricing-rotate 6s linear infinite;
+  }
+
+  @keyframes pricing-rotate {
+    to { --pricing-border-angle: 360deg; }
+  }
+
+  /* Standard cards hover lift */
+  .pricing-card:not(.pricing-featured):hover {
+    transform: translateY(-4px);
+  }
+</style>

@@ -34,7 +34,7 @@ const iconSizes = {
 
 // Variant classes
 const variantClasses = {
-  primary: 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 hover:bg-zinc-800 hover:shadow-xl hover:shadow-zinc-900/20 hover:scale-[1.02] active:scale-[0.98]',
+  primary: 'cta-gradient text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98]',
   secondary: 'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98]',
   inverted: 'bg-white text-zinc-900 shadow-lg hover:bg-zinc-50 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
 };
@@ -54,3 +54,76 @@ const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} 
     />
   )}
 </a>
+
+<style is:global>
+  @property --cta-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .cta-gradient {
+    position: relative;
+    z-index: 0;
+    /* The visible gradient is on the inner element (::after) */
+    background: transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Rotating border — thin conic gradient behind the fill */
+  .cta-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: inherit;
+    padding: 1.5px;
+    background:
+      conic-gradient(
+        from var(--cta-angle),
+        transparent 0%,
+        transparent 40%,
+        rgba(167, 243, 208, 0.5) 47%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(167, 243, 208, 0.5) 53%,
+        transparent 60%,
+        transparent 100%
+      );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .cta-gradient:hover::before {
+    opacity: 1;
+    animation: cta-spin 2.5s linear infinite;
+  }
+
+  /* Inner fill */
+  .cta-gradient::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #059669 0%, #10b981 40%, #14b8a6 100%);
+    background-size: 200% 200%;
+    background-position: 0% 50%;
+    transition: background-position 0.4s ease;
+  }
+
+  .cta-gradient:hover::after {
+    background-position: 100% 50%;
+  }
+
+  @keyframes cta-spin {
+    to { --cta-angle: 360deg; }
+  }
+</style>

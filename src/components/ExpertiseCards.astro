@@ -20,60 +20,198 @@ const expertises = [
 ];
 
 const tools = [
-  { name: "Make", icon: "simple-icons:make" },
-  { name: "n8n", icon: "simple-icons:n8n" },
-  { name: "Airtable", icon: "simple-icons:airtable" },
-  { name: "API", icon: "lucide:webhook" },
-  { name: "Claude", icon: "simple-icons:anthropic" }
+  {
+    name: "Make",
+    icon: "simple-icons:make",
+    description: "Plateforme d'automatisation visuelle. Connecte +1500 apps sans code.",
+    color: "#6d4aff"
+  },
+  {
+    name: "n8n",
+    icon: "simple-icons:n8n",
+    description: "Automatisation open-source et self-hosted. Flexible et puissant.",
+    color: "#ea4b71"
+  },
+  {
+    name: "Airtable",
+    icon: "simple-icons:airtable",
+    description: "Base de données collaborative. CRM, gestion de projet, inventaire.",
+    color: "#18bfff"
+  },
+  {
+    name: "API",
+    icon: "lucide:webhook",
+    description: "Connexions sur-mesure entre vos outils via webhooks et API REST.",
+    color: "#10b981"
+  },
+  {
+    name: "Claude",
+    icon: "simple-icons:anthropic",
+    description: "IA générative Anthropic. Analyse, rédaction, extraction de données.",
+    color: "#d4a27f"
+  }
 ];
 ---
 
 <section id="expertise" class="section-padding px-6 bg-zinc-100">
-  <div class="max-w-5xl mx-auto">
-    <!-- Header -->
-    <div class="mb-10 lg:mb-16">
-      <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-3">
-        Expertise
-      </p>
-      <h2 class="fluid-h1 font-semibold text-zinc-900 max-w-2xl text-reveal">
-        J'automatise.<br />Je forme.<br />Je conseille.
-      </h2>
-    </div>
+  <div class="max-w-6xl mx-auto">
+    <!-- 2-column layout -->
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-    <!-- Cards Grid -->
-    <div class="grid md:grid-cols-3 gap-6 lg:gap-8 mb-12 lg:mb-20">
-      {expertises.map((item) => (
-        <div>
-          <!-- Title -->
-          <h3 class="fluid-h5 font-medium text-zinc-900 mb-3">
-            {item.title}
-          </h3>
-
-          <!-- Description -->
-          <p class="fluid-text-sm text-zinc-500">
-            {item.description}
+      <!-- LEFT: Header + Expertise cards -->
+      <div>
+        <!-- Header -->
+        <div class="mb-10">
+          <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-3">
+            Expertise
           </p>
+          <h2 class="fluid-h1 font-semibold text-zinc-900 text-reveal">
+            J'automatise.<br />Je forme.<br />Je conseille.
+          </h2>
         </div>
-      ))}
-    </div>
 
-    <!-- Tools Section -->
-    <div class="pt-10 lg:pt-14 border-t border-zinc-200">
-      <p class="fluid-text-xs text-zinc-600 font-medium uppercase mb-6 lg:mb-8 text-center">
-        Ma stack
-      </p>
-
-      <div class="flex flex-wrap items-center justify-center gap-4 md:gap-5">
-        {tools.map((tool) => (
-          <div
-            class="group tool-icon w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white border border-zinc-200 flex items-center justify-center hover:border-zinc-300 hover:bg-zinc-50 hover:scale-105 transition-all duration-300"
-            role="img"
-            aria-label={tool.name}
-          >
-            <Icon name={tool.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-500 group-hover:text-zinc-600 transition-colors duration-300" />
-          </div>
-        ))}
+        <!-- Expertise items -->
+        <div class="space-y-6">
+          {expertises.map((item) => (
+            <div class="flex gap-4">
+              <div class="shrink-0 w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center">
+                <Icon name={item.icon} class="w-5 h-5 text-zinc-500" />
+              </div>
+              <div>
+                <h3 class="fluid-text-base font-medium text-zinc-900 mb-1">
+                  {item.title}
+                </h3>
+                <p class="fluid-text-sm text-zinc-500">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <!-- RIGHT: Stack tools grouped by theme -->
+      <div class="flex flex-col items-center" id="tools-section">
+        <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-8">
+          Ma stack
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-6" id="tools-grid">
+          {tools.map((tool, i) => (
+            <button
+              class="tool-btn group flex flex-col items-center gap-2 cursor-pointer"
+              data-tool={i}
+              data-color={tool.color}
+              aria-expanded="false"
+            >
+              <div class="tool-icon w-14 h-14 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center transition-all duration-300">
+                <Icon name={tool.icon} class="w-6 h-6 text-zinc-400 transition-all duration-300" />
+              </div>
+              <span class="fluid-text-xs text-zinc-500 font-medium transition-colors duration-300">
+                {tool.name}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <!-- Description panel (appears on click) -->
+        <div id="tool-detail" class="tool-detail mt-6 w-full max-w-sm">
+          <div class="tool-detail-inner bg-white border border-zinc-200 rounded-2xl p-5 text-center">
+            <p id="tool-detail-text" class="fluid-text-sm text-zinc-600"></p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
+
+<style>
+  /* Tool button hover */
+  .tool-btn:hover .tool-icon {
+    border-color: var(--tool-color, #d4d4d8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .tool-btn:hover .tool-icon svg {
+    color: var(--tool-color, #10b981);
+  }
+
+  /* Active state */
+  .tool-btn.active .tool-icon {
+    border-color: var(--tool-color, #10b981);
+    box-shadow: 0 0 0 1px var(--tool-color, #10b981), 0 4px 15px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .tool-btn.active .tool-icon svg {
+    color: var(--tool-color, #10b981);
+  }
+
+  .tool-btn.active span {
+    color: var(--tool-color, #10b981);
+  }
+
+  /* Detail panel */
+  .tool-detail {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease;
+  }
+
+  .tool-detail.visible {
+    max-height: 120px;
+    opacity: 1;
+  }
+
+  .tool-detail-inner {
+    transition: border-color 0.3s ease;
+  }
+</style>
+
+<script>
+  const grid = document.getElementById('tools-grid');
+  const detail = document.getElementById('tool-detail');
+  const detailText = document.getElementById('tool-detail-text');
+  const detailInner = detail?.querySelector('.tool-detail-inner') as HTMLElement;
+
+  if (grid && detail && detailText && detailInner) {
+    const buttons = grid.querySelectorAll<HTMLButtonElement>('.tool-btn');
+
+    const descriptions = [
+      "Plateforme d'automatisation visuelle. Connecte +1500 apps sans code.",
+      "Automatisation open-source et self-hosted. Flexible et puissant.",
+      "Base de données collaborative. CRM, gestion de projet, inventaire.",
+      "Connexions sur-mesure entre vos outils via webhooks et API REST.",
+      "IA générative Anthropic. Analyse, rédaction, extraction de données."
+    ];
+
+    buttons.forEach(btn => {
+      const color = btn.dataset.color;
+      if (color) btn.style.setProperty('--tool-color', color);
+
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.tool || '0');
+        const isActive = btn.classList.contains('active');
+
+        buttons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-expanded', 'false');
+        });
+
+        if (isActive) {
+          detail.classList.remove('visible');
+        } else {
+          btn.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+          detailText.textContent = descriptions[idx];
+          detailInner.style.borderColor = color || '#e4e4e7';
+          detail.classList.add('visible');
+        }
+      });
+    });
+  }
+</script>

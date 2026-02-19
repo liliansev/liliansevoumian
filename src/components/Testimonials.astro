@@ -74,11 +74,8 @@ const fakeTestimonial = {
     <!-- Testimonials Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {testimonials.map((testimonial) => (
-        <a
-          href={testimonial.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex flex-col bg-white rounded-2xl border border-zinc-200 p-6 card-interactive group h-full"
+        <div
+          class="flex flex-col bg-white rounded-2xl border border-zinc-200 p-6 h-full"
         >
           <!-- Quote -->
           <blockquote class="text-zinc-700 fluid-text-sm mb-6 flex-1 fluid-prose-lg">
@@ -86,25 +83,20 @@ const fakeTestimonial = {
           </blockquote>
 
           <!-- Author -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <Image
-                src={testimonial.image}
-                alt={testimonial.author}
-                width={40}
-                height={40}
-                class="w-10 h-10 rounded-full object-cover"
-              />
-              <div>
-                <div class="fluid-text-sm font-medium text-zinc-900">{testimonial.author}</div>
-                <div class="fluid-text-xs text-zinc-700">{testimonial.role} @ {testimonial.company}</div>
-              </div>
+          <div class="flex items-center gap-3">
+            <Image
+              src={testimonial.image}
+              alt={testimonial.author}
+              width={40}
+              height={40}
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div>
+              <div class="fluid-text-sm font-medium text-zinc-900">{testimonial.author}</div>
+              <div class="fluid-text-xs text-zinc-500">{testimonial.role} @ {testimonial.company}</div>
             </div>
-
-            <!-- LinkedIn icon -->
-            <Icon name="simple-icons:linkedin" class="w-5 h-5 text-zinc-300 group-hover:text-[#0A66C2] transition-colors" />
           </div>
-        </a>
+        </div>
       ))}
 
       <!-- Fake testimonial - CTA card -->
