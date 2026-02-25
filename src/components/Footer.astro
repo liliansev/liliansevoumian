@@ -1,84 +1,70 @@
 ---
-import { Icon } from 'astro-icon/components';
-
-const socialLinks = [
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "simple-icons:linkedin" },
-  { name: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian", icon: "simple-icons:youtube" },
-  { name: "Substack", href: "https://liliansevoumian.substack.com/", icon: "simple-icons:substack" }
+const navigation = [
+  { name: "Expertise", href: "#expertise" },
+  { name: "Parcours", href: "#parcours" },
+  { name: "Méthode", href: "#process" },
+  { name: "Services", href: "#tarifs" }
 ];
 
 const formations = [
   { name: "Apprendre Make", href: "https://apprendre-make.com" },
   { name: "Formation n8n", href: "https://formation-n8n.com" }
 ];
+
+const social = [
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/" },
+  { name: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian" },
+  { name: "Substack", href: "https://liliansevoumian.substack.com/" }
+];
 ---
 
-<footer class="bg-zinc-900 py-12 px-6">
-  <div class="max-w-7xl mx-auto">
-    <!-- Main Footer Content -->
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
+<footer class="bg-white py-16 px-6 lg:px-[120px]">
+  <div class="max-w-7xl mx-auto flex flex-col gap-12">
+    <!-- Top -->
+    <div class="flex flex-col md:flex-row justify-between gap-12">
       <!-- Brand -->
-      <div class="col-span-2 md:col-span-1">
-        <div class="flex items-center gap-2 mb-4">
-          <img src="/logo_liliansevoumian.svg" alt="Logo Lilian Sevoumian" class="h-4 w-auto invert" />
-          <span class="fluid-text-sm font-semibold text-white">Lilian Sevoumian</span>
-        </div>
-        <p class="fluid-text-sm text-zinc-400 leading-relaxed">
-          J'automatise les business qui veulent scaler.<br />
-          Make · n8n · Airtable
+      <div class="max-w-[300px] flex flex-col gap-3">
+        <span class="text-2xl font-black text-black">LS</span>
+        <p class="text-sm text-[#71717A] leading-[1.5]">
+          J'automatise les entreprises qui veulent scaler.
         </p>
       </div>
 
-      <!-- Formations -->
-      <div>
-        <h4 class="fluid-text-sm font-medium text-white mb-3">
-          Formations
-        </h4>
-        <ul class="space-y-1">
-          {formations.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="fluid-text-sm text-zinc-400 hover:text-white active:text-zinc-400 transition-colors flex items-center gap-1.5 py-2 -my-1"
-              >
-                {link.name}
-                <Icon name="lucide:external-link" class="w-3.5 h-3.5" />
-              </a>
-            </li>
+      <!-- Links -->
+      <div class="flex gap-16 lg:gap-20">
+        <!-- Navigation -->
+        <div class="flex flex-col gap-4">
+          <h4 class="font-mono text-[11px] font-bold text-black tracking-[2px]">NAVIGATION</h4>
+          {navigation.map((link) => (
+            <a href={link.href} class="text-sm text-[#71717A] hover:text-black transition-colors">{link.name}</a>
           ))}
-        </ul>
-      </div>
+        </div>
 
-      <!-- Réseaux -->
-      <div>
-        <h4 class="fluid-text-sm font-medium text-white mb-3">
-          Réseaux
-        </h4>
-        <ul class="space-y-1">
-          {socialLinks.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="fluid-text-sm text-zinc-400 hover:text-white active:text-zinc-400 transition-colors flex items-center gap-2 py-2 -my-1"
-              >
-                <Icon name={link.icon} class="w-4 h-4" />
-                {link.name}
-              </a>
-            </li>
+        <!-- Formations -->
+        <div class="flex flex-col gap-4">
+          <h4 class="font-mono text-[11px] font-bold text-black tracking-[2px]">FORMATIONS</h4>
+          {formations.map((link) => (
+            <a href={link.href} target="_blank" rel="noopener noreferrer" class="text-sm text-[#71717A] hover:text-black transition-colors">{link.name}</a>
           ))}
-        </ul>
+        </div>
+
+        <!-- Social -->
+        <div class="flex flex-col gap-4">
+          <h4 class="font-mono text-[11px] font-bold text-black tracking-[2px]">SOCIAL</h4>
+          {social.map((link) => (
+            <a href={link.href} target="_blank" rel="noopener noreferrer" class="text-sm text-[#71717A] hover:text-black transition-colors">{link.name}</a>
+          ))}
+        </div>
       </div>
     </div>
 
-    <!-- Bottom Bar -->
-    <div class="pt-8 border-t border-zinc-800">
-      <p class="fluid-text-xs text-zinc-400 font-mono text-center">
-        © 2026 Lilian Sevoumian · Built with Claude Code
-      </p>
+    <!-- Divider -->
+    <div class="h-px bg-[#E4E4E7]"></div>
+
+    <!-- Bottom -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <span class="text-[13px] text-[#A1A1AA] font-normal">© 2026 Lilian Sevoumian. Tous droits réservés.</span>
+      <span class="text-[13px] text-[#A1A1AA] font-mono font-medium">Built with Claude Code</span>
     </div>
   </div>
 </footer>

@@ -3,215 +3,113 @@ import { Icon } from 'astro-icon/components';
 
 const expertises = [
   {
-    icon: "lucide:workflow",
+    icon: "lucide:zap",
     title: "Automatisations",
-    description: "Workflows sur-mesure. Make, n8n, connexion d'outils."
+    description: "Workflows sur-mesure connectant +1500 apps pour éliminer les tâches répétitives et gagner en efficacité."
   },
   {
     icon: "lucide:graduation-cap",
     title: "Formation",
-    description: "Make & n8n. Débutant à avancé. +300\u00A0personnes formées."
+    description: "De débutant à expert, +300 personnes formées aux outils no-code et à l'automatisation."
   },
   {
-    icon: "lucide:search",
+    icon: "lucide:target",
     title: "Conseil",
-    description: "Il y a tant d'outils sur le marché, utilisez-vous les bons ? Adaptés à votre activité ?"
+    description: "Optimisation de votre stack technologique pour des résultats mesurables et durables."
   }
 ];
 
 const tools = [
   {
+    icon: "lucide:layers",
     name: "Make",
-    icon: "simple-icons:make",
-    description: "Plateforme d'automatisation visuelle. Connecte +1500 apps sans code.",
-    color: "#6d4aff"
+    description: "Plateforme d'automatisation no-code pour orchestrer des workflows complexes et connecter des centaines d'apps.",
+    badge: "Automation"
   },
   {
+    icon: "lucide:git-branch",
     name: "n8n",
-    icon: "simple-icons:n8n",
-    description: "Automatisation open-source et self-hosted. Flexible et puissant.",
-    color: "#ea4b71"
+    description: "Outil d'automatisation open-source pour des intégrations avancées et un contrôle total sur les données.",
+    badge: "Open Source"
   },
   {
+    icon: "lucide:database",
     name: "Airtable",
-    icon: "simple-icons:airtable",
-    description: "Base de données collaborative. CRM, gestion de projet, inventaire.",
-    color: "#18bfff"
+    description: "Base de données no-code flexible pour structurer, relier et visualiser les données métier.",
+    badge: "Database"
   },
   {
+    icon: "lucide:code",
     name: "API",
-    icon: "lucide:webhook",
-    description: "Connexions sur-mesure entre vos outils via webhooks et API REST.",
-    color: "#10b981"
+    description: "Intégration et consommation d'APIs REST, webhooks et connecteurs personnalisés pour tout relier.",
+    badge: "Intégration"
   },
   {
-    name: "Claude",
-    icon: "simple-icons:anthropic",
-    description: "IA générative Anthropic. Analyse, rédaction, extraction de données.",
-    color: "#d4a27f"
+    icon: "lucide:brain",
+    name: "Claude AI",
+    description: "Intelligence artificielle pour générer, analyser et automatiser des tâches complexes avec précision.",
+    badge: "Intelligence"
   }
 ];
 ---
 
-<section id="expertise" class="section-padding px-6 bg-zinc-100">
-  <div class="max-w-6xl mx-auto">
-    <!-- 2-column layout -->
-    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+<!-- Expertise Section -->
+<section id="expertise" class="bg-white py-20 px-6 lg:px-[120px]">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-12 flex flex-col gap-4">
+      <span class="font-mono text-[13px] font-semibold text-[#A1A1AA] tracking-[2px]">// Expertise</span>
+      <h2 class="text-[32px] lg:text-[40px] font-extrabold text-black leading-[1.1] tracking-[-1px] max-w-[900px]">
+        Des compétences au service de votre productivité
+      </h2>
+      <p class="text-[18px] text-[#71717A] font-normal leading-[1.5] max-w-[800px]">
+        Une approche transversale mêlant automatisation, formation et conseil pour transformer vos processus métier.
+      </p>
+    </div>
 
-      <!-- LEFT: Header + Expertise cards -->
-      <div>
-        <!-- Header -->
-        <div class="mb-10">
-          <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-3">
-            Expertise
-          </p>
-          <h2 class="fluid-h1 font-semibold text-zinc-900 text-reveal">
-            J'automatise.<br />Je forme.<br />Je conseille.
-          </h2>
-        </div>
-
-        <!-- Expertise items -->
-        <div class="space-y-6">
-          {expertises.map((item) => (
-            <div class="flex gap-4">
-              <div class="shrink-0 w-10 h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center">
-                <Icon name={item.icon} class="w-5 h-5 text-zinc-500" />
-              </div>
-              <div>
-                <h3 class="fluid-text-base font-medium text-zinc-900 mb-1">
-                  {item.title}
-                </h3>
-                <p class="fluid-text-sm text-zinc-500">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- RIGHT: Stack tools grouped by theme -->
-      <div class="flex flex-col items-center" id="tools-section">
-        <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-8">
-          Ma stack
-        </p>
-
-        <div class="flex flex-wrap items-center justify-center gap-6" id="tools-grid">
-          {tools.map((tool, i) => (
-            <button
-              class="tool-btn group flex flex-col items-center gap-2 cursor-pointer"
-              data-tool={i}
-              data-color={tool.color}
-              aria-expanded="false"
-            >
-              <div class="tool-icon w-14 h-14 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center transition-all duration-300">
-                <Icon name={tool.icon} class="w-6 h-6 text-zinc-400 transition-all duration-300" />
-              </div>
-              <span class="fluid-text-xs text-zinc-500 font-medium transition-colors duration-300">
-                {tool.name}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        <!-- Description panel (appears on click) -->
-        <div id="tool-detail" class="tool-detail mt-6 w-full max-w-sm">
-          <div class="tool-detail-inner bg-white border border-zinc-200 rounded-2xl p-5 text-center">
-            <p id="tool-detail-text" class="fluid-text-sm text-zinc-600"></p>
+    <!-- Expertise Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-20">
+      {expertises.map((item) => (
+        <div class="bg-[#F4F4F5] rounded-xl p-8 flex flex-col gap-4 border-t-[3px] border-black">
+          <div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center">
+            <Icon name={item.icon} class="w-6 h-6 text-black" />
           </div>
+          <h3 class="text-xl font-extrabold text-black">{item.title}</h3>
+          <p class="text-sm text-[#71717A] font-normal leading-[1.5]">{item.description}</p>
         </div>
-      </div>
-
+      ))}
     </div>
   </div>
 </section>
 
-<style>
-  /* Tool button hover */
-  .tool-btn:hover .tool-icon {
-    border-color: var(--tool-color, #d4d4d8);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  }
+<!-- Tech Stack Section -->
+<section class="bg-white py-20 px-6 lg:px-[120px]">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-12 flex flex-col gap-4">
+      <span class="font-mono text-[13px] font-semibold text-[#A1A1AA] tracking-[2px]">// Stack technique</span>
+      <h2 class="text-[32px] lg:text-[40px] font-extrabold text-black leading-[0.95] tracking-[-1px]">
+        Les outils que je maîtrise
+      </h2>
+      <p class="text-[18px] text-[#71717A] font-normal leading-[1.5] max-w-[600px]">
+        De Make à Claude AI, une stack pensée pour automatiser, connecter et déployer des solutions sur mesure.
+      </p>
+    </div>
 
-  .tool-btn:hover .tool-icon svg {
-    color: var(--tool-color, #10b981);
-  }
-
-  /* Active state */
-  .tool-btn.active .tool-icon {
-    border-color: var(--tool-color, #10b981);
-    box-shadow: 0 0 0 1px var(--tool-color, #10b981), 0 4px 15px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
-
-  .tool-btn.active .tool-icon svg {
-    color: var(--tool-color, #10b981);
-  }
-
-  .tool-btn.active span {
-    color: var(--tool-color, #10b981);
-  }
-
-  /* Detail panel */
-  .tool-detail {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.25s ease;
-  }
-
-  .tool-detail.visible {
-    max-height: 120px;
-    opacity: 1;
-  }
-
-  .tool-detail-inner {
-    transition: border-color 0.3s ease;
-  }
-</style>
-
-<script>
-  const grid = document.getElementById('tools-grid');
-  const detail = document.getElementById('tool-detail');
-  const detailText = document.getElementById('tool-detail-text');
-  const detailInner = detail?.querySelector('.tool-detail-inner') as HTMLElement;
-
-  if (grid && detail && detailText && detailInner) {
-    const buttons = grid.querySelectorAll<HTMLButtonElement>('.tool-btn');
-
-    const descriptions = [
-      "Plateforme d'automatisation visuelle. Connecte +1500 apps sans code.",
-      "Automatisation open-source et self-hosted. Flexible et puissant.",
-      "Base de données collaborative. CRM, gestion de projet, inventaire.",
-      "Connexions sur-mesure entre vos outils via webhooks et API REST.",
-      "IA générative Anthropic. Analyse, rédaction, extraction de données."
-    ];
-
-    buttons.forEach(btn => {
-      const color = btn.dataset.color;
-      if (color) btn.style.setProperty('--tool-color', color);
-
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.tool || '0');
-        const isActive = btn.classList.contains('active');
-
-        buttons.forEach(b => {
-          b.classList.remove('active');
-          b.setAttribute('aria-expanded', 'false');
-        });
-
-        if (isActive) {
-          detail.classList.remove('visible');
-        } else {
-          btn.classList.add('active');
-          btn.setAttribute('aria-expanded', 'true');
-          detailText.textContent = descriptions[idx];
-          detailInner.style.borderColor = color || '#e4e4e7';
-          detail.classList.add('visible');
-        }
-      });
-    });
-  }
-</script>
+    <!-- Tool Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
+      {tools.map((tool) => (
+        <div class="bg-[#F4F4F5] rounded-xl p-6 flex flex-col gap-3">
+          <div class="w-11 h-11 rounded-lg bg-white flex items-center justify-center">
+            <Icon name={tool.icon} class="w-[22px] h-[22px] text-black" />
+          </div>
+          <h3 class="text-base font-semibold text-black">{tool.name}</h3>
+          <p class="text-[13px] text-[#71717A] font-normal leading-[1.4]">{tool.description}</p>
+          <span class="inline-flex self-start bg-[#F4F4F5] border border-[#E4E4E7] text-[11px] text-[#A1A1AA] font-mono px-2.5 py-1 rounded-full">
+            {tool.badge}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,49 +1,39 @@
 ---
-import CTAButton from './ui/CTAButton.astro';
-
 const ctaUrl = "https://lilian.yt/contact";
 
 const navLinks = [
   { href: "#expertise", label: "Expertise" },
-  { href: "#parcours", label: "Mon parcours" },
+  { href: "#parcours", label: "Parcours" },
   { href: "#process", label: "Méthode" },
   { href: "#tarifs", label: "Services" }
 ];
 ---
 
-<!-- Navigation Bar -->
-<nav class="fixed top-0 w-full z-50 bg-zinc-100/80 backdrop-blur-md border-b border-zinc-200">
-  <div class="flex h-16 max-w-7xl mx-auto px-6 items-center justify-between">
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-[#E4E4E7]">
+  <div class="flex h-[72px] max-w-7xl mx-auto px-6 items-center justify-between">
     <!-- Logo -->
-    <a href="#" class="fluid-text-base tracking-tighter font-semibold flex items-center gap-2">
-      <img src="/logo_liliansevoumian.svg" alt="Logo Lilian Sevoumian" class="hidden md:block h-4 w-auto" />
-      <span class="text-zinc-900">Lilian Sevoumian</span>
+    <a href="#" class="text-2xl font-extrabold text-black tracking-tight">
+      LS
     </a>
 
     <!-- Navigation Links (Desktop) -->
-    <div class="hidden md:flex items-center gap-8 fluid-text-sm font-medium text-zinc-700">
+    <div class="hidden md:flex items-center gap-8">
       {navLinks.map((link) => (
-        <a href={link.href} class="hover:text-zinc-900 transition-colors">{link.label}</a>
+        <a href={link.href} class="text-sm font-medium text-[#71717A] hover:text-black transition-colors">{link.label}</a>
       ))}
     </div>
 
-    <!-- CTA Button with availability (Desktop) -->
-    <div class="hidden md:flex items-center gap-3">
-      <span class="flex items-center gap-1.5 fluid-text-xs text-zinc-700">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        Disponible
-      </span>
-      <CTAButton
-        href={ctaUrl}
-        text="Je veux automatiser"
-        size="sm"
-      />
+    <!-- CTA Button (Desktop) -->
+    <div class="hidden md:block">
+      <a href={ctaUrl} class="inline-flex items-center justify-center bg-black text-white text-sm font-semibold px-6 py-3 rounded-lg hover:bg-zinc-800 transition-colors">
+        Je veux automatiser
+      </a>
     </div>
 
     <!-- Mobile Menu Button -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-zinc-700 hover:text-zinc-900 transition-colors"
+      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-zinc-700 hover:text-black transition-colors"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
     >
@@ -55,15 +45,14 @@ const navLinks = [
   </div>
 </nav>
 
-<!-- Mobile Menu (Fullscreen Overlay - Outside nav for proper z-index) -->
-<div id="mobile-menu" class="mobile-menu fixed inset-0 top-16 z-[100] bg-zinc-100 md:hidden">
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="mobile-menu fixed inset-0 top-[72px] z-[100] bg-white md:hidden">
   <div class="mobile-menu-content h-full flex flex-col px-6 py-8">
-    <!-- Navigation Links -->
     <div class="flex-1 space-y-2">
       {navLinks.map((link, i) => (
         <a
           href={link.href}
-          class="mobile-menu-link block fluid-h3 font-medium text-zinc-900 hover:text-zinc-700 transition-colors py-3"
+          class="mobile-menu-link block text-2xl font-bold text-black hover:text-zinc-600 transition-colors py-3"
           style={`--i: ${i}`}
         >
           {link.label}
@@ -71,14 +60,10 @@ const navLinks = [
       ))}
     </div>
 
-    <!-- CTA Button at bottom -->
     <div>
-      <CTAButton
-        href={ctaUrl}
-        text="Je veux automatiser"
-        size="lg"
-        fullWidth={true}
-      />
+      <a href={ctaUrl} class="w-full inline-flex items-center justify-center bg-black text-white text-base font-semibold px-8 py-4 rounded-lg hover:bg-zinc-800 transition-colors">
+        Je veux automatiser
+      </a>
     </div>
   </div>
 </div>
@@ -96,12 +81,10 @@ const navLinks = [
 
   menuBtn?.addEventListener('click', toggleMenu);
 
-  // Close menu when clicking a navigation link
   mobileMenu?.querySelectorAll('.mobile-menu-link').forEach(link => {
     link.addEventListener('click', toggleMenu);
   });
 
-  // Close menu on Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && mobileMenu?.classList.contains('open')) {
       toggleMenu();
@@ -110,7 +93,6 @@ const navLinks = [
 </script>
 
 <style is:global>
-  /* Burger → X transformation */
   #mobile-menu-btn.open .burger-line:first-child {
     transform: translateY(7px) rotate(45deg);
   }
@@ -119,7 +101,6 @@ const navLinks = [
     transform: translateY(-7px) rotate(-45deg);
   }
 
-  /* Fullscreen menu - hidden by default */
   .mobile-menu {
     opacity: 0;
     visibility: hidden;
@@ -130,7 +111,6 @@ const navLinks = [
     visibility: visible;
   }
 
-  /* Links - instant display */
   .mobile-menu .mobile-menu-link {
     opacity: 0;
   }
@@ -139,9 +119,7 @@ const navLinks = [
     opacity: 1;
   }
 
-  /* Body scroll lock */
   body.menu-open {
     overflow: hidden;
   }
-
 </style>

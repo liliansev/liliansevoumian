@@ -1,274 +1,75 @@
 ---
-import { Icon } from 'astro-icon/components';
-import CTAButton from './ui/CTAButton.astro';
-import { stats } from '../data/stats';
-
-const techBadges = [
-  { name: "Make", icon: "simple-icons:make" },
-  { name: "n8n", icon: "simple-icons:n8n" },
-  { name: "Airtable", icon: "simple-icons:airtable" }
-];
-
 const clients = [
   "Qonto",
   "Jellysmack",
   "Digital Campus",
   "Edumiam",
   "Rocket School",
-  "Movecool",
-  "KlaK",
-  "Digilytix",
-  "WeTechCare",
   "Contournement",
-  "Familytrip",
-  "Alegria Academy",
-  "Boost ton Biz",
-  "Deuxième Souffle",
-  "Reborn",
 ];
 
-const scrollSpeed = 60;
-const gapSize = 48;
-const trackStyle = `animation-duration: ${scrollSpeed}s; gap: ${gapSize}px; padding-right: ${gapSize}px;`;
-const TRACK_COUNT = [0, 1, 2];
+const stats = [
+  { number: "+300", label: "personnes formées" },
+  { number: "+50", label: "entreprises accompagnées" },
+  { number: "+10 000", label: "heures économisées" },
+];
 ---
 
-<section class="hero-section flex flex-col">
-  <!-- Main Hero Content -->
-  <div class="flex-1 overflow-hidden px-3 md:px-6 relative flex items-center pt-12 md:pt-0 bg-zinc-100">
-    <!-- Animated grid pattern background -->
-    <div class="absolute inset-0 hero-grid-pattern pointer-events-none"></div>
-
-    <!-- Subtle gradient overlay -->
-    <div class="absolute inset-0 bg-gradient-to-b from-zinc-100 via-transparent to-zinc-100 pointer-events-none"></div>
-
-    <div class="max-w-5xl mx-auto text-center w-full">
-      <div class="z-10 relative">
-        <!-- Headline with staggered animation -->
-        <h1 class="fluid-h0 font-semibold text-zinc-900 hero-fade-in" style="--delay: 0">
-          Expert IA &<br />Automations<br /><span class="hero-gradient-text">Make & n8n</span>
-        </h1>
-
-        <!-- Subheadline -->
-        <p class="fluid-text-lg text-zinc-600 font-light mx-auto mt-5 md:mt-6 hero-fade-in max-w-lg" style="--delay: 1">
-          Freelance & Formateur nocode, spécialisé en automatisations.<br />Je vous fais gagner + de 10&nbsp;heures par semaine.
-        </p>
-
-        <!-- Tech badges with glassmorphism -->
-        <div class="flex items-center justify-center gap-3 md:gap-4 mt-5 md:mt-6 hero-fade-in" style="--delay: 2">
-          {techBadges.map((badge) => (
-            <div class="tech-badge flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full">
-              <Icon name={badge.icon} class="w-5 h-5 md:w-6 md:h-6 text-zinc-600" />
-            </div>
-          ))}
-        </div>
-
-        <!-- CTA Button -->
-        <div class="mt-8 md:mt-10 hero-fade-in" style="--delay: 3">
-          <CTAButton
-            href="https://lilian.yt/contact"
-            text="Je veux automatiser"
-            size="lg"
-          />
-        </div>
-
-        <!-- Stats - Desktop only with counter animation -->
-        <div class="hidden md:flex items-center justify-center gap-20 mt-12 hero-fade-in" style="--delay: 4">
-          {stats.map((stat) => (
-            <div class="text-center">
-              <div
-                class="fluid-h3 font-semibold text-zinc-900 stat-counter"
-                data-target={stat.value}
-                data-suffix={stat.suffix}
-                data-format={stat.format ? "true" : "false"}
-              >
-                0{stat.suffix}
-              </div>
-              <div class="fluid-text-xs text-zinc-500 mt-1 uppercase">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+<section class="bg-white">
+  <!-- Hero Content -->
+  <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 px-6 lg:px-[120px] pt-[172px] pb-[100px]">
+    <!-- Left Column -->
+    <div class="flex-1 flex flex-col gap-7">
+      <!-- Badge -->
+      <div class="inline-flex self-start">
+        <span class="bg-[#F4F4F5] text-black font-mono text-[13px] font-medium px-4 py-2 rounded-lg">
+          &gt; Expert IA & Automations
+        </span>
       </div>
+
+      <!-- Headline -->
+      <h1 class="text-[48px] lg:text-[64px] font-extrabold text-black leading-[1.05] tracking-[-2px]">
+        Expert IA &<br />Automations<br />Make & n8n
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="text-[18px] text-[#71717A] font-normal leading-[1.5] max-w-xl">
+        Freelance & formateur spécialisé en automatisations intelligentes. Je fais gagner +10h par semaine aux entreprises ambitieuses.
+      </p>
+
+      <!-- CTA Row -->
+      <div class="flex flex-wrap items-center gap-4">
+        <a href="https://lilian.yt/contact" class="inline-flex items-center justify-center bg-black text-white text-base font-semibold px-7 py-3.5 rounded-lg hover:bg-zinc-800 transition-colors">
+          Réserver un appel
+        </a>
+        <a href="#tarifs" class="inline-flex items-center justify-center bg-white text-black text-base font-medium px-7 py-3.5 rounded-lg border border-black hover:bg-zinc-50 transition-colors">
+          Voir les services
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column — Stat Cards -->
+    <div class="w-full lg:w-[380px] flex flex-col gap-4">
+      {stats.map((stat) => (
+        <div class="bg-[#F4F4F5] rounded-xl px-7 py-6 flex flex-col gap-1.5">
+          <span class="font-mono text-[40px] font-black text-black leading-none">{stat.number}</span>
+          <span class="text-sm text-[#71717A] font-normal">{stat.label}</span>
+        </div>
+      ))}
     </div>
   </div>
 
-  <!-- Scrolling Logos - smoother transition -->
-  <div class="bg-zinc-100 py-6 md:py-8 overflow-hidden">
-    <p class="text-center fluid-text-xs uppercase text-zinc-500 mb-4 md:mb-5 px-6">
-      Ils m'ont fait confiance
-    </p>
-
-    <div class="relative">
-      <!-- Fade left -->
-      <div class="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-zinc-100 to-transparent z-10 pointer-events-none"></div>
-
-      <!-- Fade right -->
-      <div class="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-zinc-100 to-transparent z-10 pointer-events-none"></div>
-
-      <!-- Scrolling wrapper with 3 tracks for seamless infinite scroll -->
-      <div class="flex overflow-hidden scrolling-container">
-        {TRACK_COUNT.map((i) => (
-          <div
-            class="flex items-center shrink-0 scrolling-logos scroll-left"
-            style={trackStyle}
-            aria-hidden={i > 0 ? "true" : undefined}
-          >
-            {clients.map((name) => (
-              <span class="fluid-text-xs font-medium text-zinc-500 whitespace-nowrap">{name}</span>
-            ))}
-          </div>
+  <!-- Trust Logos -->
+  <div class="bg-[#F4F4F5] py-12 px-6 lg:px-[120px]">
+    <div class="flex flex-col items-center gap-6">
+      <p class="font-mono text-[11px] font-semibold text-[#A1A1AA] uppercase tracking-[2px] text-center">
+        ILS ME FONT CONFIANCE
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-8 lg:gap-12">
+        {clients.map((name) => (
+          <span class="text-sm font-medium text-[#A1A1AA]">{name}</span>
         ))}
       </div>
     </div>
   </div>
 </section>
-
-<style>
-  /* Hero section height - iOS Safari fix */
-  .hero-section {
-    min-height: 100vh; /* Fallback */
-    min-height: 100svh; /* Small viewport height - stable, no jank during scroll */
-  }
-
-  /* Gradient text for "Make & n8n" */
-  .hero-gradient-text {
-    background: linear-gradient(135deg, #059669 0%, #34d399 50%, #059669 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-shift 8s ease-in-out infinite;
-  }
-
-  @keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  /* Staggered fade-in animation */
-  .hero-fade-in {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: hero-fade-up 0.8s ease-out forwards;
-    animation-delay: calc(var(--delay) * 0.15s);
-  }
-
-  @keyframes hero-fade-up {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Tech badges glassmorphism */
-  .tech-badge {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(161, 161, 170, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s ease;
-  }
-
-  .tech-badge:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(161, 161, 170, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-  }
-
-  /* Animated grid pattern */
-  .hero-grid-pattern {
-    background-image:
-      linear-gradient(to right, rgb(161 161 170 / 0.15) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(161 161 170 / 0.15) 1px, transparent 1px);
-    background-size: 80px 80px;
-    -webkit-mask-image: radial-gradient(
-      ellipse 80% 70% at 50% 40%,
-      transparent 0%,
-      transparent 30%,
-      black 70%,
-      black 100%
-    );
-    mask-image: radial-gradient(
-      ellipse 80% 70% at 50% 40%,
-      transparent 0%,
-      transparent 30%,
-      black 70%,
-      black 100%
-    );
-    animation: grid-pulse 4s ease-in-out infinite;
-  }
-
-  @keyframes grid-pulse {
-    0%, 100% {
-      opacity: 1;
-      background-size: 80px 80px;
-    }
-    50% {
-      opacity: 0.7;
-      background-size: 82px 82px;
-    }
-  }
-
-</style>
-
-<script>
-  // Counter animation for stats
-  const animateCounter = (element: HTMLElement) => {
-    const target = parseInt(element.dataset.target || '0');
-    const suffix = element.dataset.suffix || '';
-    const shouldFormat = element.dataset.format === 'true';
-    const duration = 2000;
-    const startTime = performance.now();
-
-    const updateCounter = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Easing function (ease-out)
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(easeOut * target);
-
-      // Format number with space for thousands
-      const formatted = shouldFormat
-        ? current.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-        : current.toString();
-
-      element.textContent = formatted + suffix;
-
-      if (progress < 1) {
-        requestAnimationFrame(updateCounter);
-      }
-    };
-
-    requestAnimationFrame(updateCounter);
-  };
-
-  // Intersection Observer for stats
-  const observerOptions = {
-    threshold: 0.5,
-    rootMargin: '0px'
-  };
-
-  const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const counters = entry.target.querySelectorAll('.stat-counter');
-        counters.forEach(counter => {
-          if (!counter.classList.contains('animated')) {
-            counter.classList.add('animated');
-            animateCounter(counter as HTMLElement);
-          }
-        });
-      }
-    });
-  }, observerOptions);
-
-  // Observe the stats section
-  document.querySelectorAll('.hero-fade-in').forEach(el => {
-    if (el.querySelector('.stat-counter')) {
-      statsObserver.observe(el);
-    }
-  });
-</script>

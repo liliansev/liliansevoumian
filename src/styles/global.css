@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* =========================================
-   DESIGN SYSTEM - Linear/Stripe Style
+   DESIGN SYSTEM — V01 Portfolio (Minimal B&W)
    ======================================== */
 
 :root {
@@ -20,23 +20,23 @@
   --space-24: 6rem;     /* 96px */
   --space-32: 8rem;     /* 128px */
 
-  /* Section Spacing - Consistent vertical rhythm */
+  /* Section Spacing */
   --section-py: 4rem;      /* 64px mobile */
-  --section-py-lg: 7rem;   /* 112px desktop */
+  --section-py-lg: 5rem;   /* 80px desktop */
 
-  /* Typography - Letter Spacing (Linear-style) */
-  --tracking-tighter: -0.03em;  /* display headlines */
-  --tracking-tight: -0.02em;    /* section headings */
-  --tracking-normal: 0;         /* body text */
-  --tracking-wide: 0.025em;     /* labels, overlines */
-  --tracking-wider: 0.05em;     /* all caps */
+  /* Typography - Letter Spacing */
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
 
-  /* Typography - Line Heights (4px grid aligned) */
+  /* Typography - Line Heights */
   --leading-none: 1;
-  --leading-tight: 1.1;      /* display headlines */
-  --leading-snug: 1.25;      /* section headings */
-  --leading-normal: 1.5;     /* body text */
-  --leading-relaxed: 1.625;  /* prose, long-form */
+  --leading-tight: 1.05;
+  --leading-snug: 1.1;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
 }
 
 /* Custom theme */
@@ -49,15 +49,12 @@
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  text-transform: uppercase;
 }
 
 /* =========================================
    FLUID TYPOGRAPHY SYSTEM
-   Scale Ratio: 1.25 (Major Third)
    ======================================== */
 
-/* Display Headlines */
 .fluid-h0 {
   font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
   line-height: var(--leading-tight);
@@ -70,7 +67,6 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: var(--tracking-tight);
 }
 
-/* Section Headings */
 .fluid-h2 {
   font-size: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
   line-height: var(--leading-snug);
@@ -83,7 +79,6 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: var(--tracking-tight);
 }
 
-/* Minor Headings */
 .fluid-h4 {
   font-size: clamp(1.25rem, 1rem + 0.8vw, 1.5rem);
   line-height: var(--leading-snug);
@@ -96,7 +91,6 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: var(--tracking-normal);
 }
 
-/* Body Text - Minimum 16px on mobile for readability */
 .fluid-text-3xl {
   font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
   line-height: var(--leading-normal);
@@ -127,14 +121,13 @@ h1, h2, h3, h4, h5, h6 {
   line-height: var(--leading-relaxed);
 }
 
-/* Small labels - can be smaller */
 .fluid-text-xs {
   font-size: clamp(0.75rem, 0.6875rem + 0.25vw, 0.8125rem);
   line-height: var(--leading-normal);
   letter-spacing: var(--tracking-wide);
 }
 
-/* Section padding utility - Tailwind v4 @utility syntax */
+/* Section padding utility */
 @utility section-padding {
   padding-top: var(--section-py);
   padding-bottom: var(--section-py);
@@ -159,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* =========================================
-   TEXT WRAPPING - Orphan Prevention
+   TEXT WRAPPING
    ======================================== */
 
 h1, h2, h3, h4, h5, h6 {
@@ -175,17 +168,15 @@ p, li, blockquote {
    ======================================== */
 
 ::selection {
-  background-color: #10b981;
+  background-color: #000000;
   color: white;
 }
 
-/* Firefox scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: #a1a1aa #f4f4f5;
 }
 
-/* Hide scrollbar for horizontal scroll carousels */
 @utility scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -195,7 +186,6 @@ p, li, blockquote {
   }
 }
 
-/* Webkit scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -253,10 +243,9 @@ p, li, blockquote {
 }
 
 /* =========================================
-   MICRO-INTERACTIONS - Linear/Stripe Style
+   MICRO-INTERACTIONS
    ======================================== */
 
-/* Smooth transitions for interactive elements only (performance) */
 a, button, input, textarea, select,
 [role="button"], [tabindex]:not([tabindex="-1"]) {
   transition-property: color, background-color, border-color, box-shadow, transform;
@@ -264,20 +253,17 @@ a, button, input, textarea, select,
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Focus states - Accessible & Beautiful */
 :focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid #000000;
   outline-offset: 2px;
 }
 
-/* High contrast mode support */
 @media (forced-colors: active) {
   :focus-visible {
     outline: 2px solid CanvasText;
   }
 }
 
-/* Interactive card (clickable) */
 @utility card-interactive {
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 
@@ -293,7 +279,6 @@ a, button, input, textarea, select,
   }
 }
 
-/* Button micro-interactions */
 @utility btn-primary {
   transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 
@@ -306,7 +291,6 @@ a, button, input, textarea, select,
   }
 }
 
-/* Link underline animation */
 @utility link-underline {
   position: relative;
 
@@ -326,7 +310,6 @@ a, button, input, textarea, select,
   }
 }
 
-/* Fade in animation for page load */
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -342,7 +325,6 @@ a, button, input, textarea, select,
   animation: fade-in-up 0.5s ease forwards;
 }
 
-/* Stagger children animation */
 .stagger-children > * {
   opacity: 0;
   animation: fade-in-up 0.4s ease forwards;
@@ -381,7 +363,6 @@ a, button, input, textarea, select,
   opacity: 1;
 }
 
-/* Stagger delays for word animation */
 .text-reveal.is-visible .text-reveal-word:nth-child(1) > span { transition-delay: 0s; }
 .text-reveal.is-visible .text-reveal-word:nth-child(2) > span { transition-delay: 0.05s; }
 .text-reveal.is-visible .text-reveal-word:nth-child(3) > span { transition-delay: 0.1s; }
@@ -393,7 +374,6 @@ a, button, input, textarea, select,
 .text-reveal.is-visible .text-reveal-word:nth-child(9) > span { transition-delay: 0.4s; }
 .text-reveal.is-visible .text-reveal-word:nth-child(10) > span { transition-delay: 0.45s; }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -407,7 +387,6 @@ a, button, input, textarea, select,
     transform: none;
   }
 
-  /* Show text immediately without animation */
   .text-reveal-word > span {
     transform: translateY(0);
     opacity: 1;

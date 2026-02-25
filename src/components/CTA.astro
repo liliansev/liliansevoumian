@@ -1,55 +1,29 @@
 ---
-import { Picture } from 'astro:assets';
-import CTAButton from './ui/CTAButton.astro';
-import lilianPhoto from '../assets/lilian-cta.png';
 ---
 
-<section id="contact" class="relative text-center section-padding px-6 overflow-hidden bg-white">
-  <!-- Decorative background -->
-  <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
-
-  <div class="relative max-w-3xl mx-auto">
-    <!-- Photo -->
-    <div class="mb-8">
-      <div class="w-32 h-32 mx-auto rounded-full overflow-hidden ring-1 ring-zinc-300 shadow-lg">
-        <Picture
-          src={lilianPhoto}
-          alt="Lilian Sevoumian"
-          width={256}
-          height={256}
-          formats={['avif', 'webp']}
-          quality={85}
-          class="w-full h-full object-cover"
-        />
-      </div>
-    </div>
+<section id="contact" class="bg-black py-[100px] px-6 lg:px-[120px]">
+  <div class="max-w-7xl mx-auto flex flex-col items-center text-center gap-8">
+    <!-- Label -->
+    <span class="font-mono text-[13px] font-semibold text-[#A1A1AA] tracking-[2px]">// PRÊT À AUTOMATISER ?</span>
 
     <!-- Headline -->
-    <h2 class="fluid-h1 font-semibold text-zinc-900 mb-6">
-      Combien d'heures perdez-vous <span class="text-zinc-500">chaque semaine</span> ?
+    <h2 class="text-[36px] lg:text-[48px] font-black text-white leading-[1.1] tracking-[-2px] max-w-[800px]">
+      Combien d'heures perdues<br />chaque semaine ?
     </h2>
 
     <!-- Subheadline -->
-    <p class="fluid-text-xl text-zinc-500 mb-10 font-light fluid-prose-xl mx-auto leading-relaxed">
-      On identifie ensemble ce qui peut être automatisé — et on le fait.<br />
-      <strong class="text-zinc-700">Récupérez ces heures dès la semaine prochaine.</strong>
+    <p class="text-[18px] text-[#A1A1AA] font-normal leading-[1.5] max-w-[600px]">
+      Réservez un appel découverte gratuit et identifions ensemble vos gains de temps potentiels. Disponible cette semaine.
     </p>
 
-    <!-- CTA Button -->
-    <div class="flex flex-col items-center gap-6">
-      <CTAButton
-        href="https://lilian.yt/contact"
-        text="Je veux automatiser"
-        variant="primary"
-        size="lg"
-      />
-
-      <!-- Badge -->
-      <div class="flex items-center gap-1.5 fluid-text-xs text-zinc-500 mt-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        Créneaux disponibles cette semaine
-      </div>
+    <!-- CTA Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="https://lilian.yt/contact" class="inline-flex items-center justify-center bg-white text-black text-base font-semibold px-8 py-4 rounded-lg hover:bg-zinc-100 transition-colors">
+        Réserver un audit gratuit
+      </a>
+      <a href="#tarifs" class="inline-flex items-center justify-center text-[#A1A1AA] text-base font-medium px-8 py-4 rounded-lg border border-[#71717A] hover:border-white hover:text-white transition-colors">
+        Voir les services
+      </a>
     </div>
   </div>
 </section>

@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import { Icon } from 'astro-icon/components';
 import ismailImg from '../assets/testimonials/ismail.jpeg';
 import alexisImg from '../assets/testimonials/alexis.jpeg';
 import benjaminImg from '../assets/testimonials/benjamin.png';
@@ -9,121 +8,111 @@ import geraldImg from '../assets/testimonials/gerald.jpeg';
 
 const testimonials = [
   {
-    quote: "Un Champion du no code d'Airtable et de Make avéré ! Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make. Il est à l'écoute, arrangeant et passionné.",
+    quote: "Lilian a transformé nos process internes. Gain de temps immédiat et ROI visible dès le premier mois.",
     author: "Ismail Landoulsi",
     role: "Co-Founder & COO",
     company: "CasanovaParis",
-    link: "https://www.linkedin.com/in/ismail-landoulsi/",
     image: ismailImg
   },
   {
-    quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian et nous avons même conçu une formation à Make ensemble. Je peux témoigner à la fois de son expertise en automatisation et de sa volonté infaillible de servir un projet.",
+    quote: "La formation était claire, progressive et directement applicable. Je recommande à 100%.",
     author: "Alexis Kovalenko",
     role: "Co-fondateur",
     company: "Contournement",
-    link: "https://www.linkedin.com/in/alexiskovalenko/",
     image: alexisImg
   },
   {
-    quote: "Il a une approche très professionnelle, un large spectre de connaissances, et un bon esprit de synthèse. Tout cela fait que les projets qu'il prend en charge sont un succès. Je le recommande chaudement !",
+    quote: "Un vrai expert qui comprend les enjeux business. Les automatisations mises en place nous font gagner un temps considérable.",
     author: "Benjamin Potet",
     role: "Solution Architect",
     company: "Customer Experience",
-    link: "https://www.linkedin.com/in/benjaminpo/",
     image: benjaminImg
   },
   {
-    quote: "Lilian nous a accompagné à migrer nos automatisations de Zapier à Make en améliorant de nombreux scénarios pour plus d'efficacité.",
+    quote: "Grâce à Lilian, nous avons automatisé notre onboarding. Nos équipes se concentrent enfin sur l'essentiel.",
     author: "Caroline Le Viet",
     role: "Co-fondatrice",
     company: "Edumiam",
-    link: "https://www.linkedin.com/in/carolineleviet/",
     image: carolineImg
   },
   {
-    quote: "Plus qu'une prestation de service, c'est réellement un moment d'échange, de partage, et de formation que Lilian offre à travers ses interventions. On ressort grandit dans notre manière de travailler à chaque fois.",
+    quote: "Expert! Professionnel, réactif et surtout très pédagogue. Les formations sont claires et concrètes.",
     author: "Gérald Durand",
     role: "Directeur Général",
     company: "BodyCoaching",
-    link: "https://www.linkedin.com/in/gerald-savemind/",
     image: geraldImg
   }
 ];
-
-const fakeTestimonial = {
-  quote: "La prochaine success story, c'est vous ?",
-  author: "Vous ?",
-  role: "Chief Très Occupé",
-  company: "Votre Entreprise",
-  link: "https://lilian.yt/contact"
-};
 ---
 
-<section id="temoignages" class="section-padding px-6 bg-zinc-100">
-  <div class="max-w-6xl mx-auto">
+<section id="temoignages" class="bg-[#F4F4F5] py-20 px-6 lg:px-[120px]">
+  <div class="max-w-7xl mx-auto">
     <!-- Header -->
-    <div class="mb-10 lg:mb-16">
-      <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-3">
-        Témoignages
-      </p>
-      <h2 class="fluid-h1 font-semibold text-zinc-900 text-reveal">
-        Ils en parlent.
+    <div class="text-center mb-12 flex flex-col items-center gap-3">
+      <span class="font-mono text-[13px] font-semibold text-[#A1A1AA] tracking-[2px]">// TÉMOIGNAGES</span>
+      <h2 class="text-[32px] lg:text-[40px] font-extrabold text-black leading-[1.1] tracking-[-1px]">
+        Ce qu'ils disent de moi
       </h2>
+      <p class="text-[18px] text-[#71717A] font-normal">
+        Des retours concrets de clients et partenaires
+      </p>
     </div>
 
-    <!-- Testimonials Grid -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {testimonials.map((testimonial) => (
-        <div
-          class="flex flex-col bg-white rounded-2xl border border-zinc-200 p-6 h-full"
-        >
-          <!-- Quote -->
-          <blockquote class="text-zinc-700 fluid-text-sm mb-6 flex-1 fluid-prose-lg">
-            "{testimonial.quote}"
+    <!-- Testimonials Grid - Row 1 -->
+    <div class="grid md:grid-cols-3 gap-6 mb-6">
+      {testimonials.slice(0, 3).map((t) => (
+        <div class="bg-white rounded-xl p-7 flex flex-col gap-5 border border-[#E4E4E7]">
+          <blockquote class="text-[15px] text-[#71717A] italic font-normal leading-[1.6] flex-1">
+            "{t.quote}"
           </blockquote>
-
-          <!-- Author -->
           <div class="flex items-center gap-3">
             <Image
-              src={testimonial.image}
-              alt={testimonial.author}
+              src={t.image}
+              alt={t.author}
               width={40}
               height={40}
               class="w-10 h-10 rounded-full object-cover"
             />
-            <div>
-              <div class="fluid-text-sm font-medium text-zinc-900">{testimonial.author}</div>
-              <div class="fluid-text-xs text-zinc-500">{testimonial.role} @ {testimonial.company}</div>
+            <div class="flex flex-col gap-0.5">
+              <span class="text-sm font-semibold text-black">{t.author}</span>
+              <span class="text-xs text-[#71717A]">{t.role} @ {t.company}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Testimonials Grid - Row 2 -->
+    <div class="grid md:grid-cols-3 gap-6">
+      {testimonials.slice(3).map((t) => (
+        <div class="bg-white rounded-xl p-7 flex flex-col gap-5 border border-[#E4E4E7]">
+          <blockquote class="text-[15px] text-[#71717A] italic font-normal leading-[1.6] flex-1">
+            "{t.quote}"
+          </blockquote>
+          <div class="flex items-center gap-3">
+            <Image
+              src={t.image}
+              alt={t.author}
+              width={40}
+              height={40}
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div class="flex flex-col gap-0.5">
+              <span class="text-sm font-semibold text-black">{t.author}</span>
+              <span class="text-xs text-[#71717A]">{t.role} @ {t.company}</span>
             </div>
           </div>
         </div>
       ))}
 
-      <!-- Fake testimonial - CTA card -->
+      <!-- CTA Card -->
       <a
-        href={fakeTestimonial.link}
-        class="flex flex-col rounded-2xl border-2 border-dashed border-zinc-200 p-6 hover:border-zinc-300 hover:bg-zinc-50 transition-all group h-full bg-white"
+        href="https://lilian.yt/contact"
+        class="bg-white rounded-xl p-7 flex flex-col items-center justify-center gap-5 border border-[#E4E4E7] hover:border-[#A1A1AA] transition-colors group"
       >
-        <!-- Quote -->
-        <blockquote class="text-zinc-700 fluid-text-sm mb-6 flex-1 italic flex items-center justify-center text-center">
-          "{fakeTestimonial.quote}"
-        </blockquote>
-
-        <!-- Author -->
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-zinc-300 flex items-center justify-center text-zinc-500 group-hover:bg-zinc-400 group-hover:text-zinc-700 transition-colors">
-              <Icon name="lucide:user-plus" class="w-5 h-5" />
-            </div>
-            <div>
-              <div class="fluid-text-sm font-medium text-zinc-800">{fakeTestimonial.author}</div>
-              <div class="fluid-text-xs text-zinc-700">{fakeTestimonial.role} @ {fakeTestimonial.company}</div>
-            </div>
-          </div>
-
-          <!-- Arrow icon -->
-          <Icon name="lucide:arrow-right" class="w-5 h-5 text-zinc-900 group-hover:translate-x-1 transition-all" />
-        </div>
+        <span class="text-3xl font-light text-[#A1A1AA]">+</span>
+        <span class="text-base font-semibold text-black text-center">Votre témoignage ici ?</span>
+        <span class="text-sm text-[#A1A1AA] text-center">Commencez votre aventure automatisation</span>
       </a>
     </div>
   </div>

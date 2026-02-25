@@ -1,93 +1,63 @@
 ---
-import AboutCard from './ui/AboutCard.astro';
-
 const timeline = [
   {
-    year: "2026",
-    badge: "Aujourd'hui",
-    title: "Consultant IA & Automatisation",
-    description: "Lancement de formation-n8n.com. J'accompagne les entreprises dans leur optimisation et la mise en place d'IA.",
-    isCurrent: true
-  },
-  {
-    year: "2024",
-    badge: "Partner Make",
-    title: "Co-fondation de La Capsule Studio",
-    description: "Studio podcast à Paris. Automatisation complète : réservations, facturation, planning, delivery."
+    year: "2021",
+    title: "Découverte du no-code",
+    description: "Premiers pas avec Make et les outils d'automatisation. Début de l'aventure freelance et premières missions.",
+    isCurrent: false
   },
   {
     year: "2022",
-    badge: "Certif\u00A05",
-    title: "Jellysmack & Accélération",
-    description: "No-Code Engineer. Lancement d'apprendre-make.com.",
-    link: "https://partnertraining.make.com/certificates/7qip5uhbat"
+    title: "Premières formations",
+    description: "Lancement des formations Make et n8n. +100 personnes formées la première année.",
+    isCurrent: false
   },
   {
-    year: "2021",
-    title: "Lancement freelance",
-    description: "Premiers clients : Qonto, KlaK, WeTechCare."
+    year: "2024",
+    title: "Passage à l'échelle",
+    description: "+50 entreprises automatisées. Formation de +300 personnes aux outils no-code et automatisation.",
+    isCurrent: false
+  },
+  {
+    year: "2026",
+    title: "IA & Automations avancées",
+    description: "Intégration de l'IA avec Claude et workflows complexes. Automatisation de nouvelle génération.",
+    isCurrent: true
   }
 ];
-
 ---
 
-<section id="parcours" class="bg-zinc-900 section-padding px-6">
-  <div class="max-w-5xl mx-auto">
-    <div class="grid lg:grid-cols-[1fr_280px] gap-12 lg:gap-16">
-      <!-- Timeline Column -->
-      <div>
-        <!-- Quote -->
-        <p class="text-zinc-400 fluid-text-sm italic mb-8 max-w-md">
-          "Plus jeune, je passais des heures à min-maxer mes persos sur WoW et Final Fantasy. Aujourd'hui, c'est pareil — sauf que j'optimise des business au lieu de stats d'attaque."
-        </p>
+<section id="parcours" class="bg-[#F4F4F5] py-20 px-6 lg:px-[120px]">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-12 flex flex-col gap-4">
+      <span class="font-mono text-[13px] font-semibold text-[#A1A1AA] tracking-[2px]">// Mon parcours</span>
+      <h2 class="text-[32px] lg:text-[40px] font-extrabold text-black leading-[0.95] tracking-[-1px]">
+        De gamer à automaticien
+      </h2>
+      <p class="text-[18px] text-[#71717A] font-normal leading-[1.5] max-w-[600px]">
+        Un parcours atypique guidé par la curiosité, l'optimisation et l'envie de construire des systèmes qui tournent tout seuls.
+      </p>
+    </div>
 
-        <!-- Header -->
-        <div class="mb-10">
-          <h2 class="fluid-h1 font-semibold text-white mb-3">
-            Mon histoire.
-          </h2>
-          <p class="text-zinc-400 fluid-text-base">
-            5&nbsp;ans d'automatisation. De freelance à expert top&nbsp;5 mondial Make.
-          </p>
+    <!-- Timeline entries -->
+    <div class="flex flex-col">
+      {timeline.map((item, index) => (
+        <div class={`flex items-start gap-8 py-6 ${index < timeline.length - 1 ? 'border-b border-[#E4E4E7]' : ''}`}>
+          <!-- Year badge -->
+          <div class={`shrink-0 w-[100px] flex items-center justify-center px-4 py-2 rounded-lg font-mono text-sm font-extrabold ${
+            item.isCurrent ? 'bg-black text-white' : 'bg-white text-black'
+          }`}>
+            {item.year}
+          </div>
+
+          <!-- Content -->
+          <div class="flex flex-col gap-1.5">
+            <h3 class="text-lg font-bold text-black">{item.title}</h3>
+            <p class="text-sm text-[#71717A] font-normal leading-[1.5]">{item.description}</p>
+          </div>
         </div>
-
-        <!-- Photo + Quote + Passions - Mobile Only -->
-        <AboutCard variant="mobile" />
-
-        <!-- Timeline -->
-        <div class="space-y-6">
-          {timeline.map((item, index) => (
-            <div class="flex gap-4 group">
-              <!-- Year -->
-              <div class="flex flex-col items-end w-16 shrink-0 pt-0.5">
-                <span class={`fluid-text-sm font-semibold ${item.isCurrent ? 'text-white' : 'text-zinc-400'}`}>
-                  {item.year}
-                </span>
-                {item.badge && (
-                  item.link ? (
-                    <a href={item.link} target="_blank" rel="noopener noreferrer" class="fluid-text-xs text-zinc-400 hover:text-white font-mono mt-0.5 underline underline-offset-2">{item.badge}</a>
-                  ) : (
-                    <span class="fluid-text-xs text-zinc-400 font-mono mt-0.5">{item.badge}</span>
-                  )
-                )}
-              </div>
-
-              <!-- Content -->
-              <div>
-                <h3 class="fluid-text-base font-semibold text-white mb-1 group-hover:text-zinc-300 transition-colors">
-                  {item.title}
-                </h3>
-                <p class="text-zinc-400 fluid-text-sm">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- About Column - Desktop Only -->
-      <AboutCard variant="desktop" />
+      ))}
     </div>
   </div>
 </section>
