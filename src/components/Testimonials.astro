@@ -1,46 +1,29 @@
 ---
-import { Image } from 'astro:assets';
-import ismailImg from '../assets/testimonials/ismail.jpeg';
-import alexisImg from '../assets/testimonials/alexis.jpeg';
-import benjaminImg from '../assets/testimonials/benjamin.png';
-import carolineImg from '../assets/testimonials/caroline.jpeg';
-import geraldImg from '../assets/testimonials/gerald.jpeg';
-
 const testimonials = [
   {
     quote: "Lilian a transformé nos process internes. Gain de temps immédiat et ROI visible dès le premier mois.",
-    author: "Ismail Landoulsi",
-    role: "Co-Founder & COO",
-    company: "CasanovaParis",
-    image: ismailImg
+    author: "Ismail Landoulski",
+    role: "CasanovaParis"
   },
   {
     quote: "La formation était claire, progressive et directement applicable. Je recommande à 100%.",
     author: "Alexis Kovalenko",
-    role: "Co-fondateur",
-    company: "Contournement",
-    image: alexisImg
+    role: "Contournement"
   },
   {
     quote: "Un vrai expert qui comprend les enjeux business. Les automatisations mises en place nous font gagner un temps considérable.",
     author: "Benjamin Potet",
-    role: "Solution Architect",
-    company: "Customer Experience",
-    image: benjaminImg
+    role: "Customer Experience"
   },
   {
     quote: "Grâce à Lilian, nous avons automatisé notre onboarding. Nos équipes se concentrent enfin sur l'essentiel.",
-    author: "Caroline Le Viet",
-    role: "Co-fondatrice",
-    company: "Edumiam",
-    image: carolineImg
+    author: "Caroline Le Viot",
+    role: "Infopreneur"
   },
   {
     quote: "Expert! Professionnel, réactif et surtout très pédagogue. Les formations sont claires et concrètes.",
     author: "Gérald Durand",
-    role: "Directeur Général",
-    company: "BodyCoaching",
-    image: geraldImg
+    role: "Directeur marketing / formateur"
   }
 ];
 ---
@@ -65,18 +48,9 @@ const testimonials = [
           <blockquote class="text-[15px] text-[#71717A] italic font-normal leading-[1.6] flex-1">
             "{t.quote}"
           </blockquote>
-          <div class="flex items-center gap-3">
-            <Image
-              src={t.image}
-              alt={t.author}
-              width={40}
-              height={40}
-              class="w-10 h-10 rounded-full object-cover"
-            />
-            <div class="flex flex-col gap-0.5">
-              <span class="text-sm font-semibold text-black">{t.author}</span>
-              <span class="text-xs text-[#71717A]">{t.role} @ {t.company}</span>
-            </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[15px] font-semibold text-black">{t.author}</span>
+            <span class="text-[13px] text-[#A1A1AA]">{t.role}</span>
           </div>
         </div>
       ))}
@@ -89,18 +63,9 @@ const testimonials = [
           <blockquote class="text-[15px] text-[#71717A] italic font-normal leading-[1.6] flex-1">
             "{t.quote}"
           </blockquote>
-          <div class="flex items-center gap-3">
-            <Image
-              src={t.image}
-              alt={t.author}
-              width={40}
-              height={40}
-              class="w-10 h-10 rounded-full object-cover"
-            />
-            <div class="flex flex-col gap-0.5">
-              <span class="text-sm font-semibold text-black">{t.author}</span>
-              <span class="text-xs text-[#71717A]">{t.role} @ {t.company}</span>
-            </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-[15px] font-semibold text-black">{t.author}</span>
+            <span class="text-[13px] text-[#A1A1AA]">{t.role}</span>
           </div>
         </div>
       ))}
@@ -110,7 +75,7 @@ const testimonials = [
         href="https://lilian.yt/contact"
         class="bg-white rounded-xl p-7 flex flex-col items-center justify-center gap-5 border border-[#E4E4E7] hover:border-[#A1A1AA] transition-colors group"
       >
-        <span class="text-3xl font-light text-[#A1A1AA]">+</span>
+        <span class="text-[32px] font-light text-[#A1A1AA]">+</span>
         <span class="text-base font-semibold text-black text-center">Votre témoignage ici ?</span>
         <span class="text-sm text-[#A1A1AA] text-center">Commencez votre aventure automatisation</span>
       </a>
