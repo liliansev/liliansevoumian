@@ -58,11 +58,11 @@ const tools: Tool[] = [
       </div>
     </div>
 
-    <!-- Dense grid -->
-    <div id="tools-wall" class="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 md:gap-3">
+    <!-- Dense grid — hide last tool on mobile for clean 4-col rows (32/4=8) -->
+    <div id="tools-wall" class="grid grid-cols-4 md:grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 md:gap-3">
       {tools.map((tool, i) => (
         <div
-          class="tool-cell aspect-square flex flex-col items-center justify-center gap-1.5 bg-[var(--bg-card)] border border-[var(--border)] cursor-default"
+          class:list={["tool-cell aspect-square flex flex-col items-center justify-center gap-1.5 bg-[var(--bg-card)] border border-[var(--border)] cursor-default", i === tools.length - 1 && "hidden md:flex"]}
           style={`transition-delay: ${i * 40}ms;`}
         >
           <Icon name={tool.icon} class="w-6 h-6 text-[var(--text-muted)]" />

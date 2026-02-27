@@ -81,8 +81,18 @@ const timeline: TimelineItem[] = [
       </h2>
     </div>
 
-    <!-- 5 Tool Cards centered -->
-    <div class="flex flex-wrap justify-center gap-4 mc-stagger">
+    <!-- Mobile: Pills (icon + name) -->
+    <div class="flex flex-wrap items-center justify-center gap-2 md:hidden">
+      {tools.map((tool) => (
+        <span class="inline-flex items-center gap-1.5 font-mono text-[10px] font-semibold text-[var(--text-muted)] tracking-[1px] px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)]">
+          <Icon name={tool.icon} class="w-3.5 h-3.5 text-[var(--accent)]" />
+          {tool.name}
+        </span>
+      ))}
+    </div>
+
+    <!-- Desktop: Full Cards -->
+    <div class="hidden md:flex md:flex-wrap md:justify-center md:gap-4 mc-stagger">
       {tools.map((tool) => (
         <div class="mc-card w-[160px] lg:w-[220px] bg-[var(--bg-card)] border border-[var(--border)] p-5 flex flex-col items-center gap-3">
           <div class="w-12 h-12 flex items-center justify-center">

@@ -5,7 +5,7 @@
 <section id="contact" class="fade-in-section bg-[var(--bg-dark)] py-16 lg:py-20">
   <div class="max-w-[1440px] mx-auto px-6 lg:px-[60px]">
     <!-- CTA Block: Deep Emerald with Bright Border -->
-    <div class="relative border-2 border-[var(--accent)] p-10 lg:p-16 flex flex-col items-center gap-6 text-center overflow-hidden bg-[var(--accent-dark)]">
+    <div class="relative border-2 border-[var(--accent)] p-6 md:p-10 lg:p-16 flex flex-col items-center gap-6 text-center overflow-hidden bg-[var(--accent-dark)]">
       <!-- Pickaxe icon + Label -->
       <div class="flex items-center gap-3">
         <span class="text-2xl">⛏</span>
@@ -23,11 +23,15 @@
       </p>
 
       <!-- CTA Buttons -->
-      <div class="flex flex-wrap items-center justify-center gap-4 mt-2">
-        <a href="https://lilian.yt/contact" class="inline-flex items-center gap-2 bg-[var(--gold)] text-[var(--bg-darkest)] font-mono text-sm font-bold px-9 py-3.5 tracking-[1px] hover:bg-yellow-400 transition-colors">
-          Réserver un appel gratuit <span>→</span>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-4 mt-2 w-full md:w-auto">
+        <!-- Mobile: single CTA -->
+        <a href="https://lilian.yt/contact" class="cta-glow inline-flex items-center justify-center gap-2 bg-[var(--gold)] text-[var(--bg-darkest)] font-mono text-xs md:text-sm font-bold px-6 md:px-9 py-3.5 tracking-[0.5px] md:tracking-[1px] hover:bg-yellow-400 transition-colors w-full md:w-auto">
+          <span class="md:hidden">Contactez-moi</span>
+          <span class="hidden md:inline">Réserver un appel gratuit</span>
+          <span>→</span>
         </a>
-        <a href="#tarifs" class="inline-flex items-center justify-center border border-[var(--text-on-accent)]/30 text-[var(--text-on-accent)] font-mono text-sm font-semibold px-9 py-3.5 tracking-[1px] hover:border-[var(--text-on-accent)] hover:bg-[var(--text-on-accent)]/10 transition-colors">
+        <!-- Desktop only: secondary CTA -->
+        <a href="#tarifs" class="hidden md:inline-flex items-center justify-center border border-[var(--text-on-accent)]/30 text-[var(--text-on-accent)] font-mono text-sm font-semibold px-9 py-3.5 tracking-[1px] hover:border-[var(--text-on-accent)] hover:bg-[var(--text-on-accent)]/10 transition-colors">
           Voir les services
         </a>
       </div>
