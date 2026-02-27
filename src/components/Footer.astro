@@ -1,70 +1,73 @@
 ---
-const navigation = [
-  { name: "Expertise", href: "#expertise" },
-  { name: "Parcours", href: "#parcours" },
-  { name: "Méthode", href: "#process" },
-  { name: "Services", href: "#tarifs" }
+const navLinks = [
+  { label: "Expertise", href: "#expertise" },
+  { label: "Outils", href: "#outils" },
+  { label: "Parcours", href: "#parcours" },
+  { label: "Méthode", href: "#process" },
 ];
 
 const formations = [
-  { name: "Apprendre Make", href: "https://apprendre-make.com" },
-  { name: "Formation n8n", href: "https://formation-n8n.com" }
+  { label: "Make", href: "https://lilian.yt/contact" },
+  { label: "n8n", href: "https://lilian.yt/contact" },
+  { label: "Airtable", href: "https://lilian.yt/contact" },
 ];
 
 const social = [
   { name: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/" },
   { name: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian" },
-  { name: "Substack", href: "https://liliansevoumian.substack.com/" }
+  { name: "Substack", href: "https://liliansevoumian.substack.com/" },
 ];
 ---
 
-<footer class="bg-white pt-16 pb-8 px-6 lg:px-[120px]">
-  <div class="max-w-7xl mx-auto flex flex-col gap-12">
-    <!-- Top -->
-    <div class="flex flex-col md:flex-row justify-between gap-12">
-      <!-- Brand -->
-      <div class="max-w-[300px] flex flex-col gap-3">
-        <span class="text-2xl font-black text-black">LS</span>
-        <p class="text-sm text-[#71717A] leading-[1.5]">
-          J'automatise les entreprises qui veulent scaler.
-        </p>
+<!-- Footer: dark gaming with emerald + gold accents -->
+<footer class="bg-[var(--bg-darkest)]">
+  <div class="max-w-[1440px] mx-auto px-6 lg:px-[60px] py-12">
+    <!-- Top: Logo + 3 columns (4-column grid) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+      <!-- Logo + Tagline -->
+      <div class="col-span-2 md:col-span-1 flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-[var(--accent)] text-lg">⛏</span>
+          <span class="font-mono text-base font-bold text-[var(--accent)] tracking-[1px]">LS</span>
+        </div>
+        <span class="font-mono text-xs text-[var(--text-secondary)]">Expert IA & Automations</span>
       </div>
 
-      <!-- Links -->
-      <div class="flex gap-16 lg:gap-20">
-        <!-- Navigation -->
-        <div class="flex flex-col gap-4">
-          <h4 class="font-mono text-[11px] font-bold text-black tracking-[2px]">NAVIGATION</h4>
-          {navigation.map((link) => (
-            <a href={link.href} class="text-sm text-[#71717A] hover:text-black transition-colors">{link.name}</a>
-          ))}
-        </div>
+      <!-- Navigation -->
+      <div class="flex flex-col gap-3">
+        <span class="font-mono text-[11px] font-bold text-[var(--text-primary)] tracking-[2px]">NAVIGATION</span>
+        {navLinks.map((link) => (
+          <a href={link.href} class="font-mono text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200">{link.label}</a>
+        ))}
+      </div>
 
-        <!-- Formations -->
-        <div class="flex flex-col gap-4">
-          <h4 class="font-mono text-[11px] font-bold text-black tracking-[2px]">FORMATIONS</h4>
-          {formations.map((link) => (
-            <a href={link.href} target="_blank" rel="noopener noreferrer" class="text-sm text-[#71717A] hover:text-black transition-colors">{link.name}</a>
-          ))}
-        </div>
+      <!-- Formations -->
+      <div class="flex flex-col gap-3">
+        <span class="font-mono text-[11px] font-bold text-[var(--text-primary)] tracking-[2px]">FORMATIONS</span>
+        {formations.map((link) => (
+          <a href={link.href} class="font-mono text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200">{link.label}</a>
+        ))}
+      </div>
 
-        <!-- Social -->
-        <div class="flex flex-col gap-4">
-          <h4 class="font-mono text-[11px] font-bold text-black tracking-[2px]">SOCIAL</h4>
-          {social.map((link) => (
-            <a href={link.href} target="_blank" rel="noopener noreferrer" class="text-sm text-[#71717A] hover:text-black transition-colors">{link.name}</a>
-          ))}
-        </div>
+      <!-- Social -->
+      <div class="flex flex-col gap-3">
+        <span class="font-mono text-[11px] font-bold text-[var(--text-primary)] tracking-[2px]">SOCIAL</span>
+        {social.map((link) => (
+          <a href={link.href} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200">{link.name}</a>
+        ))}
       </div>
     </div>
 
     <!-- Divider -->
-    <div class="h-px bg-[#E4E4E7]"></div>
+    <div class="w-full h-0.5 bg-[var(--border)] mb-6"></div>
 
     <!-- Bottom -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-      <span class="text-[13px] text-[#A1A1AA] font-normal">© 2026 Lilian Sevoumian. Tous droits réservés.</span>
-      <span class="text-[13px] text-[#A1A1AA] font-mono font-medium">Built with Claude Code</span>
+      <span class="font-mono text-xs text-[var(--text-muted)]">&copy; 2026 Lilian Sevoumian. Tous droits réservés.</span>
+      <div class="flex items-center gap-6">
+        <a href="/mentions-legales" class="font-mono text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors duration-200">Mentions légales</a>
+        <span class="font-mono text-xs text-[var(--text-muted)]">Made with ⛏ & ❤</span>
+      </div>
     </div>
   </div>
 </footer>

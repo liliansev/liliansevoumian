@@ -6,23 +6,18 @@ interface Tool {
   icon: string;
 }
 
-const row1: Tool[] = [
+const tools: Tool[] = [
   { name: "Zapier", icon: "simple-icons:zapier" },
   { name: "Airtable", icon: "simple-icons:airtable" },
   { name: "Notion", icon: "simple-icons:notion" },
   { name: "ClickUp", icon: "simple-icons:clickup" },
   { name: "Asana", icon: "simple-icons:asana" },
-  { name: "Trello", icon: "simple-icons:trello" },
   { name: "Webflow", icon: "simple-icons:webflow" },
   { name: "Todoist", icon: "simple-icons:todoist" },
   { name: "Linear", icon: "simple-icons:linear" },
   { name: "Google Sheets", icon: "simple-icons:googlesheets" },
   { name: "Google Drive", icon: "simple-icons:googledrive" },
   { name: "Dropbox", icon: "simple-icons:dropbox" },
-  { name: "Loom", icon: "simple-icons:loom" },
-];
-
-const row2: Tool[] = [
   { name: "Slack", icon: "simple-icons:slack" },
   { name: "Discord", icon: "simple-icons:discord" },
   { name: "Gmail", icon: "simple-icons:gmail" },
@@ -32,12 +27,8 @@ const row2: Tool[] = [
   { name: "Intercom", icon: "simple-icons:intercom" },
   { name: "Typeform", icon: "simple-icons:typeform" },
   { name: "Calendly", icon: "simple-icons:calendly" },
-  { name: "Zoom", icon: "simple-icons:zoom" },
   { name: "Mailchimp", icon: "simple-icons:mailchimp" },
   { name: "Brevo", icon: "simple-icons:brevo" },
-];
-
-const row3: Tool[] = [
   { name: "Stripe", icon: "simple-icons:stripe" },
   { name: "PayPal", icon: "simple-icons:paypal" },
   { name: "Shopify", icon: "simple-icons:shopify" },
@@ -49,102 +40,35 @@ const row3: Tool[] = [
   { name: "OpenAI", icon: "simple-icons:openai" },
   { name: "Anthropic", icon: "simple-icons:anthropic" },
   { name: "Twilio", icon: "simple-icons:twilio" },
-  { name: "Bitly", icon: "simple-icons:bitly" },
 ];
-
-const allTools = [...row1, ...row2, ...row3];
-
-const GAP = 48;
-const trackStyle = `gap: ${GAP}px; padding-right: ${GAP}px;`;
-
-const desktopRows = [
-  { tools: row1, animation: "animate-scroll-left" },
-  { tools: row2, animation: "animate-scroll-right" },
-  { tools: row3, animation: "animate-scroll-left-slow" },
-];
-
-const TRACK_COUNT = [0, 1, 2];
 ---
 
-<section class="py-12 lg:py-16 bg-zinc-100 overflow-hidden">
-  <p class="text-center fluid-text-xs uppercase text-zinc-500 mb-4 lg:mb-5 px-6">
-    Vous utilisez ces outils ? Je les ai déjà automatisés. Tous.
-  </p>
+<!-- Tools Wall: dense icon grid -->
+<section class="py-16 lg:py-20 bg-[var(--bg-darkest)] fade-in-section">
+  <div class="max-w-[1440px] mx-auto px-6 lg:px-[60px]">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <p class="font-mono text-xs font-semibold text-[var(--accent)] tracking-[2px] uppercase mb-4">// OUTILS AUTOMATISÉS</p>
+      <h2 class="font-heading text-[28px] lg:text-[36px] font-extrabold text-[var(--text-primary)] leading-[1.2] tracking-[-1px] mb-6">
+        Un arsenal complet
+      </h2>
+      <div class="flex items-center justify-center gap-3">
+        <span class="font-heading text-[48px] lg:text-[56px] font-extrabold text-[var(--gold)] leading-none">{tools.length}+</span>
+        <span class="font-mono text-sm text-[var(--text-secondary)] text-left">outils<br />automatisés</span>
+      </div>
+    </div>
 
-  <!-- Mobile: single row -->
-  <div class="md:hidden relative">
-    <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-zinc-100 to-transparent z-10 pointer-events-none"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-zinc-100 to-transparent z-10 pointer-events-none"></div>
-
-    <div class="flex overflow-hidden">
-      {TRACK_COUNT.map((i) => (
+    <!-- Dense grid -->
+    <div id="tools-wall" class="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2 md:gap-3">
+      {tools.map((tool, i) => (
         <div
-          class="flex items-center shrink-0 animate-scroll-left-mobile"
-          style={trackStyle}
-          aria-hidden={i > 0 ? "true" : undefined}
+          class="tool-cell aspect-square flex flex-col items-center justify-center gap-1.5 bg-[var(--bg-card)] border border-[var(--border)] cursor-default"
+          style={`transition-delay: ${i * 40}ms;`}
         >
-          {allTools.map((tool) => (
-            <div class="flex items-center gap-2 shrink-0 text-zinc-500 whitespace-nowrap">
-              <Icon name={tool.icon} class="w-5 h-5" />
-              <span class="fluid-text-sm font-medium">{tool.name}</span>
-            </div>
-          ))}
+          <Icon name={tool.icon} class="w-6 h-6 text-[var(--text-muted)]" />
+          <span class="font-mono text-[10px] text-[var(--text-muted)] text-center leading-tight px-1 truncate w-full">{tool.name}</span>
         </div>
       ))}
     </div>
   </div>
-
-  <!-- Desktop: 3 rows -->
-  <div class="hidden md:block space-y-4">
-    {desktopRows.map(({ tools, animation }) => (
-      <div class="relative">
-        <div class="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-zinc-100 to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-zinc-100 to-transparent z-10 pointer-events-none"></div>
-
-        <div class="flex overflow-hidden">
-          {TRACK_COUNT.map((i) => (
-            <div
-              class={`flex items-center shrink-0 ${animation}`}
-              style={trackStyle}
-              aria-hidden={i > 0 ? "true" : undefined}
-            >
-              {tools.map((tool) => (
-                <div class="flex items-center gap-2 shrink-0 text-zinc-500 hover:text-zinc-700 transition-colors whitespace-nowrap">
-                  <Icon name={tool.icon} class="w-6 h-6" />
-                  <span class="fluid-text-sm font-medium">{tool.name}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    ))}
-  </div>
 </section>
-
-<style>
-  .animate-scroll-left {
-    animation: scroll-left 70s linear infinite;
-  }
-
-  .animate-scroll-right {
-    animation: scroll-right 80s linear infinite;
-  }
-
-  .animate-scroll-left-slow {
-    animation: scroll-left 90s linear infinite;
-  }
-
-  .animate-scroll-left-mobile {
-    animation: scroll-left 120s linear infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .animate-scroll-left,
-    .animate-scroll-right,
-    .animate-scroll-left-slow,
-    .animate-scroll-left-mobile {
-      animation: none;
-    }
-  }
-</style>

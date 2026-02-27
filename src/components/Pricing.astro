@@ -1,118 +1,67 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 const services = [
   {
-    id: "coaching",
-    name: "COACHING",
-    price: "150€",
-    priceUnit: "HT",
-    description: "Session individuelle pour débloquer un problème technique ou valider une architecture.",
-    features: [
-      "Appel vidéo de 1h",
-      "Compte-rendu écrit",
-      "Plan d'action personnalisé"
-    ],
-    cta: "Réserver",
-    href: "https://cal.com/lilian-sevoumian/coaching-1",
-    featured: false
+    title: "Consultation",
+    description: "Appels stratégiques pour structurer vos projets",
   },
   {
-    id: "audit",
-    name: "DIAGNOSTIC",
-    badge: "Populaire",
-    price: "350€",
-    priceUnit: "HT",
-    description: "Audit complet de vos process avec recommandations détaillées et plan d'implémentation.",
-    features: [
-      "Audit complet de vos outils",
-      "Cartographie des process",
-      "Recommandations prioritaires",
-      "Estimation ROI détaillée"
-    ],
-    cta: "Réserver un diagnostic",
-    href: "https://cal.com/lilian-sevoumian/audit",
-    featured: true
+    title: "Accompagnement",
+    description: "Audit, formation et support continu",
   },
   {
-    id: "projet",
-    name: "MISSION",
-    price: "Sur devis",
-    priceUnit: "",
-    description: "Accompagnement complet de A à Z. Développement, intégration et automatisation sur mesure.",
-    features: [
-      "Cahier des charges détaillé",
-      "Développement sur mesure",
-      "Intégrations API & Webhooks",
-      "Formation de vos équipes",
-      "Support 30 jours inclus"
-    ],
-    cta: "Discuter de mon projet",
-    href: "https://lilian.yt/contact",
-    featured: false
-  }
+    title: "Mission",
+    description: "Déploiement d'automatisations de A à Z",
+  },
 ];
 ---
 
-<section id="tarifs" class="bg-white py-20 px-6 lg:px-[120px]">
-  <div class="max-w-7xl mx-auto flex flex-col items-center">
+<!-- Pricing: bg-dark -->
+<section id="tarifs" class="fade-in-section bg-[var(--bg-dark)] py-16 lg:py-20">
+  <div class="max-w-[1440px] mx-auto px-6 lg:px-[60px]">
     <!-- Header -->
-    <div class="text-center mb-12 flex flex-col items-center gap-4">
-      <span class="font-mono text-[13px] font-semibold text-[#A1A1AA] tracking-[2px]">// Services</span>
-      <h2 class="text-[32px] lg:text-[40px] font-extrabold text-black leading-[1.1] tracking-[-1px] max-w-[800px] text-center">
-        Des offres adaptées à chaque besoin
+    <div class="flex flex-col items-center gap-4 mb-10">
+      <span class="font-mono text-xs font-semibold text-[var(--accent)] tracking-[3px]">// SERVICES</span>
+      <h2 class="font-heading text-[28px] lg:text-[40px] font-extrabold text-[var(--text-primary)] text-center tracking-[-1px]">
+        Chaque défi a sa solution automatisée
       </h2>
-      <p class="text-[18px] text-[#71717A] font-normal leading-[1.5] max-w-[700px] text-center">
-        Que vous ayez besoin d'un conseil ponctuel ou d'un accompagnement complet, il y a une formule pour vous.
-      </p>
     </div>
 
-    <!-- Pricing Cards -->
-    <div class="grid md:grid-cols-3 gap-6 w-full">
-      {services.map((service) => (
-        <div class={`bg-[#F4F4F5] rounded-xl p-8 flex flex-col gap-6 ${
-          service.featured ? 'border-2 border-black' : 'border border-[#E4E4E7]'
-        }`}>
-          <!-- Label + Badge -->
-          <div class="flex items-center gap-3">
-            <span class="font-mono text-xs font-semibold text-[#A1A1AA] tracking-[2px]">{service.name}</span>
-            {service.badge && (
-              <span class="bg-black text-white font-mono text-xs font-medium px-3 py-1 rounded-full">{service.badge}</span>
-            )}
-          </div>
+    <!-- Single CTA Card -->
+    <div class="max-w-[720px] mx-auto mc-stagger">
+      <div class="mc-card bg-[var(--bg-card)] border-2 border-[var(--accent)] p-8 lg:p-10 flex flex-col gap-8">
+        <!-- Intro text -->
+        <p class="font-mono text-sm text-[var(--text-secondary)] leading-[1.8] text-center">
+          Consultation ponctuelle, accompagnement sur la durée ou mission complète — chaque collaboration est sur-mesure.
+        </p>
 
-          <!-- Price -->
-          <div class="flex items-end gap-1">
-            <span class="font-mono text-4xl font-black text-black">{service.price}</span>
-            {service.priceUnit && (
-              <span class="font-mono text-base text-[#A1A1AA] mb-1">{service.priceUnit}</span>
-            )}
-          </div>
+        <!-- 3 Service types -->
+        <div class="flex flex-col gap-5">
+          {services.map((service) => (
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check" class="w-5 h-5 text-[var(--accent)] shrink-0 mt-0.5" />
+              <div class="flex flex-col gap-0.5">
+                <span class="font-heading text-base font-bold text-[var(--text-primary)]">{service.title}</span>
+                <span class="font-mono text-xs text-[var(--text-secondary)] leading-[1.6]">{service.description}</span>
+              </div>
+            </div>
+          ))}
+        </div>
 
-          <!-- Description -->
-          <p class="text-[15px] text-[#71717A] font-normal leading-[1.6]">{service.description}</p>
+        <!-- Separator -->
+        <div class="w-full h-[2px] bg-[var(--border)]"></div>
 
-          <!-- Divider -->
-          <div class="h-px bg-[#E4E4E7]"></div>
-
-          <!-- Features -->
-          <ul class="flex flex-col gap-3 flex-1">
-            {service.features.map((feature) => (
-              <li class="text-sm text-[#71717A] font-normal">✓  {feature}</li>
-            ))}
-          </ul>
-
-          <!-- CTA -->
+        <!-- CTA Button -->
+        <div class="flex justify-center">
           <a
-            href={service.href}
-            class={`w-full py-3.5 text-sm font-semibold rounded-lg text-center transition-colors ${
-              service.featured
-                ? 'bg-black text-white hover:bg-zinc-800'
-                : 'bg-transparent text-black border border-black hover:bg-black hover:text-white'
-            }`}
+            href="https://lilian.yt/contact"
+            class="cta-glow bg-[var(--accent)] text-[var(--text-on-accent)] font-mono text-sm font-bold px-10 py-4 tracking-[1px] hover:bg-[var(--accent-dark)] transition-colors"
           >
-            {service.cta}
+            Contactez-moi →
           </a>
         </div>
-      ))}
+      </div>
     </div>
   </div>
 </section>
