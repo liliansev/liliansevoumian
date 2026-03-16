@@ -1,0 +1,87 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const steps = [
+  {
+    number: "01",
+    icon: "lucide:search",
+    title: "Audit gratuit (30 min)",
+    description: "On passe en revue vos process actuels ensemble. Je repère les tâches automatisables et vous livre un plan d'action chiffré sous 48h.",
+  },
+  {
+    number: "02",
+    icon: "lucide:code",
+    title: "Construction & déploiement",
+    description: "Je développe vos automatisations, les teste en conditions réelles et les déploie. Vous validez chaque étape avant la mise en production.",
+  },
+  {
+    number: "03",
+    icon: "lucide:trending-up",
+    title: "Suivi & autonomie",
+    description: "30 jours de suivi inclus après livraison. Je forme vos équipes et documente chaque workflow pour que vous soyez 100% autonomes.",
+  },
+];
+---
+
+<!-- Process -->
+<div
+  id="methode"
+  class="rounded-2xl px-6 py-8 md:px-12 md:py-14"
+  style="background: #0A0A0A;"
+>
+  <!-- Header -->
+  <div class="flex flex-col items-center gap-5 mb-12">
+    <span
+      class="inline-block rounded-full border px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase"
+      style="background: #1A1028; border-color: rgba(139,92,246,0.19); color: #8B5CF6;"
+    >
+      MÉTHODE
+    </span>
+    <h2 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-[#EDEDED] text-center">
+      Comment ça marche
+    </h2>
+    <p class="font-[var(--font-body)] text-[15px] md:text-lg text-[#888888] leading-[1.6] text-center max-w-[600px]">
+      De l'audit à l'autonomie, en 3 étapes claires.
+    </p>
+  </div>
+
+  <!-- Step cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+    {steps.map((step) => (
+      <div
+        class="flex flex-col gap-5 p-6 md:p-9 rounded-2xl"
+        style="background: #111111; border: 1px solid #222222;"
+      >
+        <!-- Step number -->
+        <span class="font-[var(--font-mono)] text-4xl md:text-5xl font-bold text-[#8B5CF6]">
+          {step.number}
+        </span>
+
+        <!-- Gradient line -->
+        <div
+          class="h-0.5 w-20"
+          style="background: linear-gradient(to right, #8B5CF6, transparent);"
+          aria-hidden="true"
+        ></div>
+
+        <!-- Icon circle -->
+        <div
+          class="flex items-center justify-center w-10 h-10 rounded-full"
+          style="background: rgba(139,92,246,0.08);"
+        >
+          <Icon name={step.icon} class="w-5 h-5 text-[#8B5CF6]" />
+        </div>
+
+        <!-- Title -->
+        <h3 class="font-[var(--font-display)] text-base md:text-lg font-semibold text-[#EDEDED]">
+          {step.title}
+        </h3>
+
+        <!-- Description -->
+        <p class="font-[var(--font-body)] text-sm md:text-[15px] text-[#888888] leading-[1.6]">
+          {step.description}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>

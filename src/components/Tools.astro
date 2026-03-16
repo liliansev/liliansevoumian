@@ -1,0 +1,208 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Tool {
+  name: string;
+  icon: string;
+  category: string;
+  description: string;
+}
+
+interface Category {
+  id: string;
+  label: string;
+  color: string;
+  tools: Tool[];
+}
+
+const categories: Category[] = [
+  {
+    id: "automation",
+    label: "Automatisation",
+    color: "#8B5CF6",
+    tools: [
+      { name: "Make", icon: "simple-icons:make", category: "automatisation", description: "Scénarios d'automatisation complexes" },
+      { name: "n8n", icon: "simple-icons:n8n", category: "automatisation", description: "Workflows self-hosted avancés" },
+      { name: "Zapier", icon: "simple-icons:zapier", category: "automatisation", description: "Intégrations rapides multi-apps" },
+    ],
+  },
+  {
+    id: "ai",
+    label: "Intelligence Artificielle",
+    color: "#3B82F6",
+    tools: [
+      { name: "Claude", icon: "simple-icons:anthropic", category: "ia", description: "Raisonnement avancé et agents intelligents" },
+    ],
+  },
+  {
+    id: "productivity",
+    label: "Productivité",
+    color: "#F59E0B",
+    tools: [
+      { name: "Notion", icon: "simple-icons:notion", category: "productivité", description: "Documentation et gestion de projets" },
+      { name: "Airtable", icon: "simple-icons:airtable", category: "productivité", description: "Bases de données relationnelles no-code" },
+    ],
+  },
+];
+
+// Flatten all tools for desktop grid
+const allTools = categories.flatMap((cat) => cat.tools.map((tool) => ({ ...tool, color: cat.color, categoryLabel: cat.label })));
+---
+
+<section id="expertise" class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]" style="background-color: #000000;">
+  <div class="max-w-[1200px] mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col items-center gap-5 mb-12">
+      <span class="inline-block rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase" style="background: #1A1028; border: 1px solid rgba(139,92,246,0.19); font-family: var(--font-mono); color: #8B5CF6;">
+        STACK TECHNIQUE
+      </span>
+      <h2 class="text-[length:var(--text-heading)] text-center" style="font-family: var(--font-display); font-weight: 700; color: #EDEDED;">
+        Les outils que je maîtrise au quotidien
+      </h2>
+    </div>
+
+    <!-- Desktop grid: 3 columns -->
+    <div id="tools-wall" class="hidden md:grid grid-cols-3 gap-4">
+      {allTools.map((tool, i) => (
+        <div
+          class="tool-cell flex flex-col gap-3.5 p-5 rounded-2xl"
+          style={`background: #111111; border: 1px solid #222222; transition-delay: ${i * 40}ms;`}
+        >
+          <!-- Icon container -->
+          <div
+            class="flex items-center justify-center rounded-[10px]"
+            style="width: 40px; height: 40px; background: rgba(255,255,255,0.06);"
+          >
+            <Icon name={tool.icon} class="w-6 h-6" style="color: #AAAAAA;" />
+          </div>
+
+          <!-- Name + category pill -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: #EDEDED;">
+              {tool.name}
+            </span>
+            <span
+              class="inline-block"
+              style={`background: ${tool.color}21; border-radius: 8px; padding: 3px 8px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: ${tool.color};`}
+            >
+              {tool.category}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <p style="font-family: var(--font-body); font-size: 13px; color: #888888; line-height: 1.6;">
+            {tool.description}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Mobile: Accordion by category -->
+    <div class="md:hidden flex flex-col gap-2" id="tools-accordion">
+      {categories.map((cat, catIndex) => (
+        <div class="tools-category rounded-xl overflow-hidden" style="background: #111111; border: 1px solid #222222;">
+          <!-- Category header (toggle) -->
+          <button
+            type="button"
+            class="tools-accordion-trigger w-full flex items-center gap-3 p-4 text-left"
+            aria-expanded={catIndex === 0 ? "true" : "false"}
+            data-category={cat.id}
+          >
+            <!-- Category icon -->
+            <div
+              class="flex items-center justify-center rounded-[10px] shrink-0"
+              style="width: 36px; height: 36px; background: rgba(255,255,255,0.06);"
+            >
+              <Icon name={cat.tools[0].icon} class="w-5 h-5" style="color: #AAAAAA;" />
+            </div>
+
+            <!-- Category name + count -->
+            <div class="flex-1 min-w-0">
+              <span style={`font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: #EDEDED;`}>
+                {cat.label}
+              </span>
+              <span style="font-family: var(--font-body); font-size: 12px; color: #888888; margin-left: 8px;">
+                {cat.tools.length} outils
+              </span>
+            </div>
+
+            <!-- Expand arrow -->
+            <Icon
+              name="lucide:chevron-down"
+              class:list={["w-5 h-5 shrink-0 tools-accordion-arrow", catIndex === 0 && "rotate-180"]}
+              style="color: #777777; transition: transform 0.2s ease;"
+            />
+          </button>
+
+          <!-- Category tools (collapsible) -->
+          <div
+            class:list={["tools-accordion-content", catIndex !== 0 && "hidden"]}
+            data-category-content={cat.id}
+          >
+            {cat.tools.map((tool, toolIndex) => (
+              <div
+                class:list={["flex items-start gap-3 px-4 py-3", toolIndex < cat.tools.length - 1 && "border-b border-[#1A1A1A]"]}
+              >
+                <!-- Tool icon -->
+                <div
+                  class="flex items-center justify-center rounded-lg shrink-0 mt-0.5"
+                  style="width: 32px; height: 32px; background: rgba(255,255,255,0.06);"
+                >
+                  <Icon name={tool.icon} class="w-4 h-4" style="color: #AAAAAA;" />
+                </div>
+
+                <!-- Tool info -->
+                <div class="flex-1 min-w-0">
+                  <span style="font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: #EDEDED; display: block;">
+                    {tool.name}
+                  </span>
+                  <span style="font-family: var(--font-body); font-size: 12px; color: #888888; line-height: 1.4;">
+                    {tool.description}
+                  </span>
+                </div>
+              </div>
+            ))}
+            <!-- Bottom padding for last item in expanded section -->
+            <div class="h-2"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  function initToolsAccordion(): void {
+    const triggers = document.querySelectorAll<HTMLButtonElement>('.tools-accordion-trigger');
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const categoryId = trigger.getAttribute('data-category');
+        if (!categoryId) return;
+
+        const content = document.querySelector<HTMLElement>(`[data-category-content="${categoryId}"]`);
+        const arrow = trigger.querySelector<HTMLElement>('.tools-accordion-arrow');
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+        if (isExpanded) {
+          // Collapse
+          trigger.setAttribute('aria-expanded', 'false');
+          content?.classList.add('hidden');
+          arrow?.classList.remove('rotate-180');
+        } else {
+          // Expand
+          trigger.setAttribute('aria-expanded', 'true');
+          content?.classList.remove('hidden');
+          arrow?.classList.add('rotate-180');
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initToolsAccordion);
+  } else {
+    initToolsAccordion();
+  }
+  document.addEventListener('astro:page-load', initToolsAccordion);
+</script>

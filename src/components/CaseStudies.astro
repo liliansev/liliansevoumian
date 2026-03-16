@@ -1,48 +1,201 @@
 ---
-import { Icon } from 'astro-icon/components';
-import CaseStudyCard from './ui/CaseStudyCard.astro';
-import { getCaseStudies } from '../lib/notion';
-
-const allCaseStudies = await getCaseStudies();
-const caseStudies = allCaseStudies.slice(0, 3);
-const hasMore = allCaseStudies.length > 3;
+const caseStudies = [
+  {
+    metric: "-70%",
+    metricLabel: "TEMPS DE TRAITEMENT",
+    code: "// e-commerce",
+    title: "Onboarding client : de 45min à 12min",
+    description: "Un e-commerce en forte croissance perdait 45 minutes par nouveau client sur la saisie CRM, la facturation et l'envoi des accès. Workflow Make déployé en 5 jours. Résultat : tout est automatisé, zéro erreur.",
+    link: "Voir le détail",
+    href: "/cas-clients/onboarding-ecommerce",
+  },
+  {
+    metric: "3x",
+    metricLabel: "CAPACITÉ DE TRAITEMENT",
+    code: "// SaaS B2B",
+    title: "Support client : 850 tickets/mois sans recrutement",
+    description: "Un SaaS noyait son équipe support sous les demandes répétitives. Chatbot IA déployé en 3 semaines : il résout le niveau 1 et escalade les cas complexes avec tout le contexte.",
+    link: "Voir le détail",
+    href: "/cas-clients/chatbot-support-saas",
+  },
+  {
+    metric: "+15h",
+    metricLabel: "ÉCONOMISÉES PAR SEMAINE",
+    code: "// cabinet conseil",
+    title: "12 rapports manuels remplacés par des dashboards temps réel",
+    description: "Un cabinet conseil passait 2 jours par semaine à compiler des rapports dans Excel. Dashboards automatisés avec alertes IA. ROI atteint en 3 semaines.",
+    link: "Voir le détail",
+    href: "/cas-clients/reporting-dashboards-ia",
+  },
+];
 ---
 
-{caseStudies.length > 0 && (
-  <section id="cas-clients" class="section-padding px-6 bg-zinc-100">
-    <div class="max-w-5xl mx-auto">
+<section id="cas-clients" class="relative" style="background-color: #F7F7F7;">
+  <!-- Top separator -->
+  <div class="h-px w-full" style="background-color: #E5E5E5;"></div>
+
+  <div class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+    <div class="max-w-[1200px] mx-auto">
       <!-- Header -->
-      <div class="mb-10 lg:mb-16">
-        <p class="fluid-text-xs text-zinc-500 font-medium uppercase mb-3">
-          Cas clients
-        </p>
-        <h2 class="fluid-h1 font-semibold text-zinc-900 max-w-2xl text-reveal">
-          Des résultats<br />concrets.
+      <div class="flex flex-col items-center gap-5 mb-12 fade-in-section">
+        <span
+          class="inline-block rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase"
+          style="background-color: #F3F0FF; border: 1px solid rgba(139, 92, 246, 0.19); color: #8B5CF6; font-family: var(--font-mono);"
+        >
+          RÉSULTATS
+        </span>
+        <h2
+          class="text-[length:var(--text-heading)] font-bold text-center"
+          style="color: #0A0A0A; font-family: var(--font-display);"
+        >
+          Ce que l'automatisation change concrètement
         </h2>
+        <p
+          class="text-center max-w-[700px] text-[15px] md:text-[18px] leading-[1.6]"
+          style="color: #555555; font-family: var(--font-body);"
+        >
+          Des missions réelles, des chiffres vérifiables. Voici ce que l'automatisation a changé pour mes clients.
+        </p>
       </div>
 
-      <!-- Cards Grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-10">
-        {caseStudies.map((caseStudy) => (
-          <CaseStudyCard caseStudy={caseStudy} />
+      <!-- Desktop: 3 columns grid -->
+      <div class="hidden md:grid md:grid-cols-3 gap-4 md:gap-6 reveal-stagger">
+        {caseStudies.map((study) => (
+          <div
+            class="reveal-card card-spotlight flex flex-col gap-5 p-6 md:p-8 rounded-xl"
+            style="background-color: #FFFFFF; border: 1px solid #E5E5E5;"
+          >
+            <!-- Metric -->
+            <div class="flex flex-col gap-1">
+              <span
+                class="text-[40px] lg:text-[56px] font-bold leading-none"
+                style="color: #8B5CF6; font-family: var(--font-mono);"
+              >
+                {study.metric}
+              </span>
+              <span
+                class="text-[13px] font-medium tracking-[1px] uppercase"
+                style="color: #8B5CF6; font-family: var(--font-mono);"
+              >
+                {study.metricLabel}
+              </span>
+            </div>
+
+            <!-- Separator -->
+            <div class="w-full h-px" style="background-color: #E5E5E5;"></div>
+
+            <!-- Code tag -->
+            <span
+              class="text-xs leading-normal"
+              style="color: rgba(139, 92, 246, 0.5); font-family: var(--font-mono);"
+            >
+              {study.code}
+            </span>
+
+            <!-- Title -->
+            <h3
+              class="text-lg lg:text-xl font-semibold"
+              style="color: #0A0A0A; font-family: var(--font-display);"
+            >
+              {study.title}
+            </h3>
+
+            <!-- Description -->
+            <p
+              class="text-sm lg:text-[15px] leading-[1.6] flex-1"
+              style="color: #555555; font-family: var(--font-body);"
+            >
+              {study.description}
+            </p>
+
+            <!-- Link -->
+            <a
+              href={study.href}
+              class="inline-flex items-center gap-1 text-sm mt-auto hover:opacity-80 transition-opacity"
+              style="color: #8B5CF6; font-family: var(--font-body);"
+            >
+              {study.link} &rarr;
+            </a>
+          </div>
         ))}
       </div>
 
-      <!-- Link to all case studies -->
-      {hasMore && (
-        <div class="text-center">
-          <a
-            href="/cas-clients"
-            class="group inline-flex items-center gap-2 text-zinc-600 hover:text-zinc-900 font-medium transition-colors"
-          >
-            Voir tous les cas clients
-            <Icon
-              name="lucide:arrow-right"
-              class="w-4 h-4 transition-transform group-hover:translate-x-1"
-            />
-          </a>
+      <!-- Mobile: Horizontal scroll -->
+      <div class="md:hidden relative">
+        <div class="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-0 pr-0">
+          {caseStudies.map((study) => (
+            <div
+              class="reveal-card card-spotlight flex flex-col gap-5 p-6 rounded-xl snap-start shrink-0 w-[85vw] max-w-[340px]"
+              style="background-color: #FFFFFF; border: 1px solid #E5E5E5;"
+            >
+              <!-- Metric -->
+              <div class="flex flex-col gap-1">
+                <span
+                  class="text-[40px] font-bold leading-none"
+                  style="color: #8B5CF6; font-family: var(--font-mono);"
+                >
+                  {study.metric}
+                </span>
+                <span
+                  class="text-[13px] font-medium tracking-[1px] uppercase"
+                  style="color: #8B5CF6; font-family: var(--font-body);"
+                >
+                  {study.metricLabel}
+                </span>
+              </div>
+
+              <!-- Separator -->
+              <div class="w-full h-px" style="background-color: #E5E5E5;"></div>
+
+              <!-- Code tag -->
+              <span
+                class="text-xs leading-normal"
+                style="color: rgba(139, 92, 246, 0.5); font-family: var(--font-mono);"
+              >
+                {study.code}
+              </span>
+
+              <!-- Title -->
+              <h3
+                class="text-lg font-semibold"
+                style="color: #0A0A0A; font-family: var(--font-display);"
+              >
+                {study.title}
+              </h3>
+
+              <!-- Description -->
+              <p
+                class="text-sm leading-[1.6] flex-1"
+                style="color: #555555; font-family: var(--font-body);"
+              >
+                {study.description}
+              </p>
+
+              <!-- Link -->
+              <a
+                href="#contact"
+                class="inline-flex items-center gap-1 text-sm mt-auto hover:opacity-80 transition-opacity"
+                style="color: #8B5CF6; font-family: var(--font-body);"
+              >
+                {study.link} &rarr;
+              </a>
+            </div>
+          ))}
+
+          <!-- Spacer for right padding -->
+          <div class="shrink-0 w-3" aria-hidden="true"></div>
         </div>
-      )}
+
+        <!-- Fade gradient on the right -->
+        <div
+          class="absolute top-0 right-0 bottom-0 w-12 pointer-events-none"
+          style="background: linear-gradient(to left, #F7F7F7, transparent);"
+          aria-hidden="true"
+        ></div>
+      </div>
     </div>
-  </section>
-)}
+  </div>
+
+  <!-- Bottom separator -->
+  <div class="h-px w-full" style="background-color: #E5E5E5;"></div>
+</section>

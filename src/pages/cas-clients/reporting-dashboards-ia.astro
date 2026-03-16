@@ -1,0 +1,104 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+
+const title = "Reporting automatisé : +15h économisées/semaine | Lilian Sevoumian";
+const description = "Comment un cabinet conseil a remplacé 12 rapports manuels par des dashboards temps réel avec alertes IA.";
+---
+
+<Layout title={title} description={description}>
+  <Navigation />
+
+  <main id="main-content" class="bg-black pt-[56px]">
+    <!-- Hero -->
+    <section class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+      <div class="max-w-[800px] mx-auto">
+        <a href="/#cas-clients" class="inline-flex items-center gap-2 font-[var(--font-body)] text-sm text-[#888888] hover:text-[#EDEDED] transition-colors mb-8">
+          &larr; Retour aux cas clients
+        </a>
+
+        <div class="flex flex-col gap-6 mb-12">
+          <span class="inline-block self-start rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase" style="background: #1A1028; border: 1px solid rgba(139,92,246,0.19); font-family: var(--font-mono); color: #8B5CF6;">
+            CABINET CONSEIL
+          </span>
+          <h1 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-[#EDEDED] leading-[1.15]">
+            12 rapports manuels remplacés par des dashboards temps réel
+          </h1>
+          <p class="font-[var(--font-body)] text-lg text-[#888888] leading-[1.6]">
+            Comment un cabinet conseil a récupéré 15 heures par semaine en automatisant son reporting.
+          </p>
+        </div>
+
+        <!-- Metric -->
+        <div class="flex items-center gap-8 mb-16 p-8 rounded-xl" style="background: #0A0A0A; border: 1px solid #1A1A1A;">
+          <div class="flex flex-col">
+            <span class="font-[var(--font-mono)] text-5xl md:text-6xl font-bold text-[#8B5CF6]">+15h</span>
+            <span class="font-[var(--font-body)] text-sm text-[#8B5CF6] tracking-[1px] uppercase mt-1">économisées par semaine</span>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="flex flex-col gap-10 font-[var(--font-body)] text-[#EDEDED] leading-[1.7]">
+          <div>
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">Le problème</h2>
+            <p class="text-[#888888]">
+              Ce cabinet conseil produisait 12 rapports différents chaque semaine pour ses clients : extraction de données depuis 4 outils différents, consolidation dans Excel, mise en forme, envoi par email. Deux consultants y passaient 2 jours par semaine — du temps perdu sur des tâches à forte valeur ajoutée.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">La solution</h2>
+            <p class="text-[#888888]">
+              Des dashboards automatisés alimentés en temps réel par les données des outils clients (CRM, Analytics, Ads). Un workflow Make collecte les données, les consolide dans Airtable, et déclenche des alertes IA quand un KPI dévie de la trajectoire. Les rapports sont générés et envoyés automatiquement chaque lundi.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">Les résultats</h2>
+            <ul class="text-[#888888] space-y-3">
+              <li class="flex items-start gap-3">
+                <span class="font-[var(--font-mono)] text-[#8B5CF6] font-bold shrink-0">→</span>
+                <span>15 heures économisées par semaine</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-[var(--font-mono)] text-[#8B5CF6] font-bold shrink-0">→</span>
+                <span>12 rapports générés automatiquement chaque lundi</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-[var(--font-mono)] text-[#8B5CF6] font-bold shrink-0">→</span>
+                <span>Alertes IA proactives sur les KPIs critiques</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-[var(--font-mono)] text-[#8B5CF6] font-bold shrink-0">→</span>
+                <span>ROI atteint en 3 semaines</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">Outils utilisés</h2>
+            <div class="flex flex-wrap gap-2">
+              {["Make", "Airtable", "Claude (Anthropic)", "Google Sheets", "Gmail"].map((tool) => (
+                <span class="rounded-md px-3 py-1.5 text-xs font-medium" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); color: #8B5CF6; font-family: var(--font-mono);">
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="mt-16 p-8 rounded-xl text-center flex flex-col items-center gap-4" style="background: #0A0A0A; border: 1px solid #1A1A1A;">
+          <p class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED]">Un cas similaire ?</p>
+          <p class="font-[var(--font-body)] text-sm text-[#888888]">Parlons de votre situation — l'appel est gratuit.</p>
+          <a href="https://cal.com/liliansevoumian/diagnostic" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-[#8B5CF6] text-white font-[var(--font-body)] text-[15px] font-medium rounded-lg px-7 py-3.5 hover:bg-[#7C3AED] transition-colors">
+            Parlons automatisations →
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

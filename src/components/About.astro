@@ -1,0 +1,86 @@
+---
+import { Image } from 'astro:assets';
+import lilianPortrait from '../assets/lilian-portrait.png';
+
+const stats = [
+  { number: "50+", label: "Automatisations déployées" },
+  { number: "200h+", label: "Économisées chaque mois" },
+  { number: "5 ans", label: "D'expérience terrain" },
+];
+
+const tags = ["Make", "n8n", "Claude", "Zapier", "Airtable", "Notion"];
+---
+
+<section id="a-propos" class="section-light-alt py-[var(--spacing-section)] px-[var(--spacing-section-x)]" style="background-color: #F7F7F7;">
+  <div class="max-w-[1200px] mx-auto">
+    <!-- Mobile: photo first -->
+    <div class="md:hidden mb-8">
+      <div class="w-full h-[250px] rounded-xl overflow-hidden" style="border: 2px solid rgba(139,92,246,0.13);">
+        <Image src={lilianPortrait} alt="Lilian Sevoumian" width={600} height={400} class="w-full h-full object-cover object-top" loading="lazy" />
+      </div>
+    </div>
+
+    <!-- Desktop: horizontal layout -->
+    <div class="flex flex-col md:flex-row md:gap-16">
+      <!-- Left column: text content -->
+      <div class="flex-1 flex flex-col gap-8">
+        <!-- Badge -->
+        <div>
+          <span class="inline-block rounded-full px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase" style="background: #F3F0FF; border: 1px solid rgba(139,92,246,0.19); color: #777777;">
+            QUI JE SUIS
+          </span>
+        </div>
+
+        <!-- Code tag -->
+        <span style="font-family: var(--font-mono); font-size: 13px; color: rgba(139,92,246,0.5); margin-top: -16px;">
+          // à propos
+        </span>
+
+        <!-- Name -->
+        <h2 class="text-[length:var(--text-heading)]" style="font-family: var(--font-display); font-weight: 700; color: #0A0A0A; margin-top: -16px;">
+          Lilian Sevoumian
+        </h2>
+
+        <!-- Job title -->
+        <p style="font-family: var(--font-body); font-size: 18px; color: #555555; margin-top: -16px;">
+          Expert en automatisations &amp; Intelligence Artificielle
+        </p>
+
+        <!-- Bio -->
+        <p style="font-family: var(--font-body); font-size: 16px; color: #555555; line-height: 1.6;">
+          Depuis plus de 5 ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. Mon approche&nbsp;: je commence toujours par comprendre votre métier et vos contraintes avant de toucher à un seul outil. Résultat&nbsp;: des automatisations qui tiennent dans la durée, pas des usines à gaz que personne ne maintient.
+        </p>
+
+        <!-- Stats row -->
+        <div class="flex flex-wrap gap-x-10 gap-y-4">
+          {stats.map((stat) => (
+            <div class="flex flex-col">
+              <span class="text-2xl md:text-[32px]" style="font-family: var(--font-mono); font-weight: 700; color: #8B5CF6; line-height: 1.2;">
+                {stat.number}
+              </span>
+              <span style="font-family: var(--font-body); font-size: 13px; color: #777777;">
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <!-- Tech tags -->
+        <div class="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <span style="background: #F3F0FF; border: 1px solid rgba(139,92,246,0.13); border-radius: 6px; padding: 4px 12px; font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: #7C3AED;">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Right column: photo (desktop only) -->
+      <div class="hidden md:flex items-start">
+        <div class="rounded-xl overflow-hidden shrink-0" style="width: 420px; height: 500px; border: 2px solid rgba(139,92,246,0.13);">
+          <Image src={lilianPortrait} alt="Lilian Sevoumian" width={420} height={500} class="w-full h-full object-cover object-top" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

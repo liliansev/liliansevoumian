@@ -13,7 +13,7 @@ interface Props {
 
 const {
   title = "Lilian Sevoumian | Expert Automatisation Make & n8n - Freelance",
-  description = "Freelance expert en automatisation Make & n8n. +5\u00A0ans d'expérience, certification Make niveau\u00A05 (1er français). Formations, audits et projets sur-mesure.",
+  description = "Freelance expert en automatisation Make & n8n. +5 ans d'expérience, certification Make niveau 5 (1er français). Formations, audits et projets sur-mesure.",
   ogType = 'website',
   ogImage: customOgImage,
   publishedDate,
@@ -39,7 +39,7 @@ const personSchema = {
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "image": ogImage.toString(),
   "jobTitle": ["Expert Automatisation", "Freelance Make & n8n", "Consultant No-Code"],
-  "description": "Expert Make, n8n et Airtable avec 5\u00A0ans d'expérience.",
+  "description": "Expert Make, n8n et Airtable avec 5 ans d'expérience.",
   "knowsAbout": ["Make", "n8n", "Airtable", "Automatisation", "No-Code", "IA"],
   "sameAs": ["https://www.linkedin.com/in/liliansevoumian/", "https://github.com/liliansev", "https://www.youtube.com/@lilian.sevoumian"]
 };
@@ -78,7 +78,7 @@ const websiteSchema = {
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <meta name="author" content="Lilian Sevoumian" />
-    <meta name="theme-color" content="#0B1520" />
+    <meta name="theme-color" content="#000000" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
@@ -108,21 +108,21 @@ const websiteSchema = {
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
     <style is:global>
       @import "../styles/global.css";
     </style>
   </head>
-  <body class="bg-[var(--bg-dark)] text-[var(--text-primary)] font-sans antialiased overflow-x-hidden">
+  <body class="antialiased overflow-x-hidden m-0 p-0">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K46TZ5RV" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--accent)] focus:text-white focus:outline-none">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-accent)] focus:text-white focus:rounded-lg focus:outline-none">
       Aller au contenu principal
     </a>
     <slot />
 
-    <script is:inline src="https://contact.liliansevoumian.fr/embed.js" data-form="mecontacter" data-button-color="#009C9C"></script>
+    <script is:inline src="https://contact.liliansevoumian.fr/embed.js" data-form="mecontacter" data-button-color="#8B5CF6"></script>
 
     <script src="../scripts/text-reveal.ts"></script>
     <script>
@@ -137,8 +137,8 @@ const websiteSchema = {
           obs.observe(el);
         });
 
-        document.querySelectorAll<HTMLElement>('.mc-stagger').forEach((container) => {
-          const cards = container.querySelectorAll<HTMLElement>('.mc-card');
+        document.querySelectorAll<HTMLElement>('.reveal-stagger').forEach((container) => {
+          const cards = container.querySelectorAll<HTMLElement>('.reveal-card');
           if (prefersReducedMotion) { cards.forEach(c => c.classList.add('is-visible')); return; }
           const obs = new IntersectionObserver((entries) => {
             entries.forEach((e) => {
@@ -180,9 +180,20 @@ const websiteSchema = {
         });
       }
 
-      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initAnimations); }
-      else { initAnimations(); }
-      document.addEventListener('astro:page-load', initAnimations);
+      function initSpotlight(): void {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        document.querySelectorAll<HTMLElement>('.card-spotlight').forEach(card => {
+          card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+          });
+        });
+      }
+
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => { initAnimations(); initSpotlight(); }); }
+      else { initAnimations(); initSpotlight(); }
+      document.addEventListener('astro:page-load', () => { initAnimations(); initSpotlight(); });
     </script>
   </body>
 </html>

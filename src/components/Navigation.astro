@@ -1,85 +1,119 @@
 ---
-const ctaUrl = "https://lilian.yt/contact";
-
 const navLinks = [
   { href: "#expertise", label: "Expertise" },
-  { href: "#outils", label: "Outils" },
-  { href: "#parcours", label: "Parcours" },
-  { href: "#tarifs", label: "Services" }
+  { href: "#methode", label: "Méthode" },
+  { href: "#temoignages", label: "Témoignages" },
+  { href: "#faq", label: "FAQ" },
 ];
 ---
 
-<!-- Top accent strip 3px -->
-<div class="fixed top-0 left-0 w-full h-[3px] z-[60] bg-[var(--accent)]"></div>
-
 <!-- Nav -->
-<nav id="main-nav" class="fixed top-[3px] w-full z-50 bg-[var(--bg-dark)]/0 backdrop-blur-sm transition-all duration-300 border-b border-transparent">
-  <div class="flex h-16 max-w-[1440px] mx-auto px-6 lg:px-[60px] items-center justify-between">
-    <!-- Logo: pickaxe + LS -->
-    <a href="#" class="flex items-center gap-2">
-      <span class="text-[var(--accent)] text-lg">⛏</span>
-      <span class="font-mono text-base font-bold text-[var(--accent)] tracking-[1px]">LS</span>
+<nav id="main-nav" class="fixed top-0 w-full z-50 bg-black/0 backdrop-blur-sm transition-all duration-300 border-b border-transparent">
+  <div class="flex h-[56px] max-w-[1200px] mx-auto px-[var(--spacing-section-x)] items-center justify-between">
+    <!-- Logo -->
+    <a href="#" class="font-[var(--font-body)] text-sm md:text-base font-semibold text-[#EDEDED]">
+      Lilian Sevoumian
     </a>
 
-    <!-- Nav Links: JetBrains Mono 12 600 -->
+    <!-- Nav Links (desktop) -->
     <div class="hidden md:flex items-center gap-8">
       {navLinks.map((link) => (
-        <a href={link.href} class="font-mono text-xs font-semibold text-[var(--text-secondary)] tracking-[1px] uppercase hover:text-[var(--text-primary)] transition-colors">{link.label}</a>
-      ))}
-    </div>
-
-    <!-- CTA: emerald bg, clean no outline -->
-    <div class="hidden md:block">
-      <a href={ctaUrl} class="inline-flex items-center justify-center bg-[var(--accent)] text-[var(--text-on-accent)] font-mono text-xs font-semibold px-6 py-2.5 tracking-[1px] hover:bg-[var(--accent-light)] transition-colors">
-        Reserver un appel
-      </a>
-    </div>
-
-    <!-- Mobile Menu Button -->
-    <button
-      id="mobile-menu-btn"
-      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--text-primary)]"
-      aria-label="Ouvrir le menu"
-      aria-expanded="false"
-    >
-      <div class="burger-icon relative w-5 h-3.5">
-        <span class="burger-line absolute left-0 top-0 w-full h-0.5 bg-current transition-all duration-300"></span>
-        <span class="burger-line absolute left-0 bottom-0 w-full h-0.5 bg-current transition-all duration-300"></span>
-      </div>
-    </button>
-  </div>
-</nav>
-
-<!-- Mobile Menu -->
-<div id="mobile-menu" class="mobile-menu fixed inset-0 top-[67px] z-[100] bg-[var(--bg-dark)] md:hidden">
-  <div class="mobile-menu-content h-full flex flex-col px-6 py-8">
-    <div class="flex-1 space-y-2">
-      {navLinks.map((link) => (
-        <a href={link.href} class="mobile-menu-link block text-xl font-mono font-bold text-[var(--text-primary)] py-3 tracking-[1px]">
+        <a
+          href={link.href}
+          class="font-[var(--font-body)] text-sm text-[#888888] hover:text-[#EDEDED] transition-colors"
+        >
           {link.label}
         </a>
       ))}
     </div>
-    <a href={ctaUrl} class="w-full inline-flex items-center justify-center bg-[var(--accent)] text-[var(--text-on-accent)] font-mono text-sm font-semibold px-8 py-4 hover:bg-[var(--accent-light)] transition-colors">
-      Reserver un appel
+
+    <!-- CTA (desktop) -->
+    <div class="hidden md:block">
+      <a
+        href="#contact"
+        class="inline-flex items-center justify-center font-[var(--font-body)] text-sm font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-6 py-2.5 transition-colors"
+      >
+        Parlons automatisations
+      </a>
+    </div>
+
+    <!-- Hamburger (mobile) -->
+    <button
+      id="mobile-menu-btn"
+      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-[#EDEDED]"
+      aria-label="Ouvrir le menu"
+      aria-expanded="false"
+    >
+      <svg class="hamburger-open w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+      </svg>
+      <svg class="hamburger-close hidden w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="mobile-menu fixed inset-0 top-[56px] z-[100] bg-black md:hidden">
+  <div class="mobile-menu-content h-full flex flex-col px-5 py-8">
+    <div class="flex-1 space-y-2">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-menu-link block font-[var(--font-body)] text-lg font-medium text-[#EDEDED] py-3 border-b border-[#222222]"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+    <a
+      href="#contact"
+      class="w-full inline-flex items-center justify-center font-[var(--font-body)] text-[15px] font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-7 py-3.5 transition-colors"
+    >
+      Parlons automatisations
     </a>
   </div>
 </div>
 
+<style>
+  nav.scrolled {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom-color: #222222 !important;
+  }
+</style>
+
 <script>
   const menuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
+  const openIcon = menuBtn?.querySelector('.hamburger-open');
+  const closeIcon = menuBtn?.querySelector('.hamburger-close');
+
   function toggleMenu() {
     const isOpen = mobileMenu?.classList.toggle('open');
-    menuBtn?.classList.toggle('open', isOpen);
     menuBtn?.setAttribute('aria-expanded', String(isOpen));
-    document.body.classList.toggle('menu-open', isOpen);
+    document.body.classList.toggle('menu-open', isOpen ?? false);
+
+    if (isOpen) {
+      openIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+    } else {
+      openIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+    }
   }
+
   menuBtn?.addEventListener('click', toggleMenu);
-  mobileMenu?.querySelectorAll('.mobile-menu-link').forEach(link => {
+
+  mobileMenu?.querySelectorAll('.mobile-menu-link').forEach((link) => {
     link.addEventListener('click', toggleMenu);
   });
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileMenu?.classList.contains('open')) toggleMenu();
+    if (e.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+      toggleMenu();
+    }
   });
 </script>

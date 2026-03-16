@@ -1,86 +1,63 @@
 ---
-import { Icon } from 'astro-icon/components';
-
 const stats = [
-  { icon: "lucide:pickaxe", number: "+300", label: "PERSONNES FORMÉES" },
-  { icon: "lucide:mountain", number: "+50", label: "ENTREPRISES" },
-  { icon: "lucide:hourglass", number: "+10K", label: "HEURES ÉCONOMISÉES" },
-];
-
-const pixelBlocks = [
-  { size: 24, top: 8, left: 5, opacity: 0.04, duration: 8, delay: 0 },
-  { size: 40, top: 15, left: 88, opacity: 0.05, duration: 10, delay: 1 },
-  { size: 16, top: 25, left: 20, opacity: 0.03, duration: 7, delay: 2 },
-  { size: 48, top: 70, left: 92, opacity: 0.04, duration: 12, delay: 0.5 },
-  { size: 32, top: 80, left: 8, opacity: 0.05, duration: 9, delay: 3 },
-  { size: 20, top: 45, left: 95, opacity: 0.03, duration: 6, delay: 1.5 },
-  { size: 36, top: 60, left: 3, opacity: 0.04, duration: 11, delay: 2.5 },
-  { size: 16, top: 35, left: 75, opacity: 0.06, duration: 8, delay: 0.8 },
-  { size: 28, top: 90, left: 45, opacity: 0.03, duration: 10, delay: 1.2 },
-  { size: 44, top: 5, left: 55, opacity: 0.04, duration: 9, delay: 3.5 },
-  { size: 20, top: 55, left: 40, opacity: 0.03, duration: 7, delay: 2.2 },
-  { size: 32, top: 20, left: 65, opacity: 0.05, duration: 11, delay: 0.3 },
-  { size: 16, top: 75, left: 70, opacity: 0.04, duration: 8, delay: 1.8 },
-  { size: 24, top: 40, left: 12, opacity: 0.03, duration: 10, delay: 4 },
-  { size: 20, top: 12, left: 35, opacity: 0.04, duration: 9, delay: 0.6 },
-  { size: 36, top: 50, left: 80, opacity: 0.03, duration: 10, delay: 2.8 },
-  { size: 28, top: 85, left: 25, opacity: 0.05, duration: 8, delay: 1.4 },
-  { size: 16, top: 30, left: 50, opacity: 0.04, duration: 7, delay: 3.2 },
-  { size: 44, top: 65, left: 55, opacity: 0.03, duration: 11, delay: 0.9 },
-  { size: 24, top: 18, left: 72, opacity: 0.05, duration: 9, delay: 2.1 },
+  { number: "50+", label: "automatisations déployées" },
+  { number: "200h+", label: "économisées chaque mois" },
+  { number: "3 sem.", label: "pour un ROI mesurable" },
 ];
 ---
 
-<!-- Hero: full-screen centered with pixel blocks -->
-<section class="relative w-full bg-[var(--bg-dark)] overflow-hidden pt-32 pb-20 lg:pt-40 lg:pb-28">
-  <!-- Pixel blocks background -->
-  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-    {pixelBlocks.map((block) => (
-      <div
-        class="pixel-block absolute bg-[var(--accent)]"
-        style={`width:${block.size}px; height:${block.size}px; top:${block.top}%; left:${block.left}%; opacity:${block.opacity}; animation: pixel-float ${block.duration}s ease-in-out infinite; animation-delay: ${block.delay}s;`}
-      />
-    ))}
-  </div>
+<!-- Hero -->
+<section class="relative w-full bg-black overflow-hidden min-h-screen flex items-center justify-center pt-[56px]">
+  <!-- Grid background -->
+  <div class="absolute inset-0 grid-pattern grid-fade-center" aria-hidden="true"></div>
 
   <!-- Content -->
-  <div class="relative max-w-[1440px] mx-auto px-6 lg:px-[60px] w-full">
+  <div class="relative z-[1] max-w-[1200px] mx-auto px-[var(--spacing-section-x)] w-full py-16 md:py-20">
     <div class="flex flex-col items-center text-center gap-8">
+
       <!-- Badge -->
-      <div class="px-4 py-2 bg-[var(--accent-surface)] border border-[var(--accent)]/20">
-        <span class="font-mono text-xs font-semibold text-[var(--accent)] tracking-[2px]">&gt; Expert IA & Automations</span>
+      <div class="inline-flex items-center rounded-full bg-[#1A1A1A] border border-[#222222] px-4 py-1.5">
+        <span class="font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase text-[#777777]">
+          Expert Automatisation & IA pour PME
+        </span>
       </div>
 
       <!-- Headline -->
-      <h1 class="font-heading text-[40px] lg:text-[56px] font-extrabold text-[var(--text-primary)] leading-[1.1] tracking-[-2px] max-w-[700px]">
-        Automatisez vos process avec Make & n8n
+      <h1 class="font-[var(--font-display)] font-bold text-[length:var(--text-display)] text-[#EDEDED] leading-[1.15] tracking-tight max-w-[800px]">
+        Vos process manuels<br class="hidden md:block" />
+        vous coûtent des heures.<br class="hidden md:block" />
+        Je les automatise.
       </h1>
 
       <!-- Subtitle -->
-      <p class="font-mono text-sm text-[var(--text-secondary)] leading-[1.7] max-w-[540px]">
-        Freelance & formateur spécialisé en automatisations intelligentes.
-        Je fais gagner +10h par semaine aux entreprises ambitieuses.
+      <p class="font-[var(--font-body)] text-base md:text-xl text-[#888888] leading-[1.6] max-w-[600px] mt-[-8px]">
+        Automatisations Make, n8n, Zapier et intégrations IA sur mesure. Vos équipes arrêtent de saisir, copier-coller et relancer — et se concentrent sur ce qui compte.
       </p>
 
-      <!-- Single CTA -->
-      <a href="https://lilian.yt/contact" class="cta-glow inline-flex items-center justify-center bg-[var(--accent)] text-[var(--text-on-accent)] font-mono text-sm font-semibold px-8 md:px-10 py-4 tracking-[1px] hover:bg-[var(--accent-dark)] transition-colors mt-4 w-full md:w-auto">
-        Contactez-moi →
-      </a>
+      <!-- CTA Button -->
+      <div class="flex items-center justify-center mt-4">
+        <a
+          href="#contact"
+          class="inline-flex items-center justify-center font-[var(--font-body)] text-[15px] font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-7 py-3.5 transition-colors"
+        >
+          Parlons automatisations &rarr;
+        </a>
+      </div>
 
-      <!-- 3 Stats row -->
-      <div class="flex flex-col items-center gap-6 lg:flex-row lg:justify-center lg:gap-12 mt-10 w-full">
+      <!-- Trust Metrics -->
+      <div class="flex flex-row items-center justify-center gap-8 md:gap-12 mt-10 w-full">
         {stats.map((stat) => (
-          <div class="stat-item flex items-center gap-4 w-full max-w-[260px] lg:w-auto lg:max-w-none text-left">
-            <div class="w-11 h-11 flex items-center justify-center shrink-0 bg-[var(--gold-surface)]">
-              <Icon name={stat.icon} class="w-5 h-5 text-[var(--gold)]" />
-            </div>
-            <div class="flex flex-col gap-0.5">
-              <span class="font-heading text-[28px] font-extrabold leading-none text-[var(--gold)]">{stat.number}</span>
-              <span class="font-mono text-[10px] font-semibold text-[var(--text-secondary)] tracking-[2px]">{stat.label}</span>
-            </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="font-[var(--font-mono)] text-xl md:text-2xl font-bold text-[#8B5CF6]">
+              {stat.number}
+            </span>
+            <span class="font-[var(--font-body)] text-[11px] md:text-[13px] text-[#777777]">
+              {stat.label}
+            </span>
           </div>
         ))}
       </div>
+
     </div>
   </div>
 </section>

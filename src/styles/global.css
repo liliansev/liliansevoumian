@@ -1,70 +1,113 @@
 @import "tailwindcss";
 
 /* =========================================
-   DESIGN SYSTEM — Minecraft Deep Dark (Sculk)
-   Blue-black void · Sculk turquoise CTAs · Cyan glow highlights
+   DESIGN SYSTEM — Dark-first with alternating sections
+   #000000 bg · #EDEDED text · #8B5CF6 accent
    ======================================== */
-
-:root {
-  /* Backgrounds — Deep Dark void */
-  --bg-darkest: #080E14;     /* abyss — alt sections */
-  --bg-dark: #0B1520;        /* deep dark — main bg */
-  --bg-card: #111D2A;        /* deepslate — cards */
-  --border: #1C2D3D;         /* reinforced deepslate */
-
-  /* Primary — Sculk Turquoise (CTAs, interactive) */
-  --accent: #009C9C;
-  --accent-light: #00B8B8;
-  --accent-dark: #008080;
-  --accent-surface: rgba(0, 156, 156, 0.08);
-
-  /* Secondary — Sculk Glow (stats, numbers, highlights) */
-  --gold: #00D4D4;
-  --gold-light: #20E8E8;
-  --gold-surface: rgba(0, 212, 212, 0.06);
-
-  /* Text — blue-grey frost */
-  --text-primary: #D4DEE8;
-  --text-secondary: #6B8099;
-  --text-muted: #445C70;
-
-  /* Text on colored backgrounds */
-  --text-on-accent: #FFFFFF;
-}
 
 @theme {
-  --font-sans: 'Outfit', system-ui, sans-serif;
-  --font-heading: 'Outfit', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* Font families */
+  --font-display: 'Geist', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Fluid typography tokens */
+  --text-display: clamp(2rem, 4vw + 1rem, 3rem);
+  --text-heading: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
+  --text-subheading: clamp(1.125rem, 1.5vw + 0.5rem, 1.25rem);
+  --text-cta-heading: clamp(1.75rem, 3.5vw + 0.5rem, 3rem);
+
+  /* Fluid spacing tokens */
+  --spacing-section: clamp(4rem, 6vw, 7.5rem);
+  --spacing-section-sm: clamp(3rem, 5vw, 5rem);
+  --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
+
+  /* Design colors */
+  --color-bg-dark: #000000;
+  --color-bg-card: #0A0A0A;
+  --color-bg-surface: #111111;
+  --color-bg-surface-2: #161616;
+  --color-bg-light: #FFFFFF;
+  --color-bg-light-alt: #F7F7F7;
+
+  --color-border: #222222;
+  --color-border-subtle: #1A1A1A;
+  --color-border-light: #E5E5E5;
+
+  --color-text-primary: #EDEDED;
+  --color-text-secondary: #888888;
+  --color-text-dark: #0A0A0A;
+  --color-text-dark-secondary: #555555;
+  --color-text-muted: #777777;
+
+  --color-accent: #8B5CF6;
+  --color-accent-muted: rgba(139, 92, 246, 0.25);
+  --color-accent-text: #7C3AED;
+
+  /* Category colors for tools grid */
+  --color-cat-automation: #8B5CF6;
+  --color-cat-ai: #3B82F6;
+  --color-cat-dev: #10B981;
+  --color-cat-tools: #F59E0B;
 }
 
-h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
-
 /* =========================================
-   TEXT WRAPPING
+   BASE STYLES
    ======================================== */
 
-h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
-p, li, blockquote { text-wrap: pretty; }
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  background: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
 
 /* =========================================
-   SELECTION & SCROLLBAR
+   TYPOGRAPHY
+   ======================================== */
+
+h1, h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+p, li, blockquote {
+  text-wrap: pretty;
+}
+
+/* =========================================
+   SELECTION
    ======================================== */
 
 ::selection {
-  background-color: var(--accent);
+  background-color: var(--color-accent);
   color: #FFFFFF;
 }
 
+/* =========================================
+   SCROLLBAR — dark theme
+   ======================================== */
+
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--bg-dark);
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
 /* =========================================
    MICRO-INTERACTIONS
@@ -74,11 +117,11 @@ a, button, input, textarea, select,
 [role="button"], [tabindex]:not([tabindex="-1"]) {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity;
   transition-duration: 200ms;
-  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -87,14 +130,283 @@ a, button, input, textarea, select,
 }
 
 /* =========================================
+   SECTION BACKGROUNDS — dark & light
+   ======================================== */
+
+.section-dark {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-secondary);
+}
+
+.section-dark h1,
+.section-dark h2,
+.section-dark h3,
+.section-dark h4,
+.section-dark h5,
+.section-dark h6,
+.section-dark .text-heading {
+  color: var(--color-text-primary);
+}
+
+.section-surface {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+}
+
+.section-surface h1,
+.section-surface h2,
+.section-surface h3,
+.section-surface h4,
+.section-surface h5,
+.section-surface h6,
+.section-surface .text-heading {
+  color: var(--color-text-primary);
+}
+
+.section-light {
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark-secondary);
+}
+
+.section-light h1,
+.section-light h2,
+.section-light h3,
+.section-light h4,
+.section-light h5,
+.section-light h6,
+.section-light .text-heading {
+  color: var(--color-text-dark);
+}
+
+.section-light-alt {
+  background-color: var(--color-bg-light-alt);
+  color: var(--color-text-dark-secondary);
+}
+
+.section-light-alt h1,
+.section-light-alt h2,
+.section-light-alt h3,
+.section-light-alt h4,
+.section-light-alt h5,
+.section-light-alt h6,
+.section-light-alt .text-heading {
+  color: var(--color-text-dark);
+}
+
+/* =========================================
+   GRID PATTERN BACKGROUNDS
+   ======================================== */
+
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.grid-pattern-light {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dot-pattern-light {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Grid fade masks */
+.grid-fade-center {
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
+}
+
+.grid-fade-top {
+  mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
+}
+
+.grid-fade-bottom {
+  mask-image: linear-gradient(to top, black 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 80%);
+}
+
+/* =========================================
+   BUTTONS
+   ======================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  box-shadow: 0 1px 2px rgba(139, 92, 246, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-text-secondary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Light section button variants */
+.section-light .btn-primary,
+.section-light-alt .btn-primary {
+  background-color: var(--color-text-dark);
+  color: #FFFFFF;
+}
+
+.section-light .btn-primary:hover,
+.section-light-alt .btn-primary:hover {
+  background-color: #1a1a1a;
+}
+
+.section-light .btn-secondary,
+.section-light-alt .btn-secondary {
+  color: var(--color-text-dark);
+  border-color: var(--color-border-light);
+}
+
+.section-light .btn-secondary:hover,
+.section-light-alt .btn-secondary:hover {
+  border-color: var(--color-text-dark-secondary);
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* =========================================
+   CARDS — dark theme
+   ======================================== */
+
+.card-dark {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-dark:hover {
+  border-color: var(--color-border);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Light cards (for light sections) */
+.card-light {
+  background-color: #FFFFFF;
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-light:hover {
+  border-color: #d4d4d4;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   MOUSE-TRACKING SPOTLIGHT (cards)
+   ======================================== */
+
+.card-spotlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    300px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(139, 92, 246, 0.06) 0%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card-spotlight:hover::before {
+  opacity: 1;
+}
+
+.card-spotlight > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Light section spotlight */
+.section-light .card-spotlight::before,
+.section-light-alt .card-spotlight::before {
+  background: radial-gradient(
+    300px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(139, 92, 246, 0.04) 0%,
+    transparent 100%
+  );
+}
+
+/* =========================================
+   BENTO CARDS
+   ======================================== */
+
+.card-bento {
+  background: #111111;
+  border: 1px solid #222222;
+  border-radius: 16px;
+}
+
+.card-bento-featured {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 0 0.5px rgba(139, 92, 246, 0.15), 0 0 20px rgba(139, 92, 246, 0.05);
+}
+
+/* =========================================
    SCROLL FADE-IN
    ======================================== */
 
 .fade-in-section {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateY(12px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .fade-in-section.is-visible {
@@ -103,112 +415,79 @@ a, button, input, textarea, select,
 }
 
 /* =========================================
-   CARD — staggered reveal + hover glow
+   CARD — staggered reveal
    ======================================== */
 
-.mc-card {
+.reveal-card {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              border-color 0.3s ease,
-              box-shadow 0.3s ease;
+  transform: translateY(12px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
 }
 
-.mc-card.is-visible {
+.reveal-card.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.mc-card:hover {
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 10%, transparent);
-}
-
-.mc-stagger > .mc-card:nth-child(1) { transition-delay: 0ms; }
-.mc-stagger > .mc-card:nth-child(2) { transition-delay: 100ms; }
-.mc-stagger > .mc-card:nth-child(3) { transition-delay: 200ms; }
-.mc-stagger > .mc-card:nth-child(4) { transition-delay: 300ms; }
-.mc-stagger > .mc-card:nth-child(5) { transition-delay: 400ms; }
-.mc-stagger > .mc-card:nth-child(6) { transition-delay: 500ms; }
+.reveal-stagger > .reveal-card:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger > .reveal-card:nth-child(2) { transition-delay: 100ms; }
+.reveal-stagger > .reveal-card:nth-child(3) { transition-delay: 200ms; }
+.reveal-stagger > .reveal-card:nth-child(4) { transition-delay: 300ms; }
+.reveal-stagger > .reveal-card:nth-child(5) { transition-delay: 400ms; }
+.reveal-stagger > .reveal-card:nth-child(6) { transition-delay: 500ms; }
 
 /* =========================================
    STAT ITEMS — reveal
    ======================================== */
 
-@keyframes stat-pop {
-  from { opacity: 0; transform: scale(0.9) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
 .stat-item {
   opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stat-item.is-visible {
-  animation: stat-pop 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.stat-item.is-visible:nth-child(1) { animation-delay: 200ms; }
-.stat-item.is-visible:nth-child(2) { animation-delay: 400ms; }
-.stat-item.is-visible:nth-child(3) { animation-delay: 600ms; }
+.stat-item.is-visible:nth-child(1) { transition-delay: 200ms; }
+.stat-item.is-visible:nth-child(2) { transition-delay: 400ms; }
+.stat-item.is-visible:nth-child(3) { transition-delay: 600ms; }
 
 /* =========================================
-   CTA GLOW — accent pulse
-   ======================================== */
-
-@keyframes accent-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 40%, transparent); }
-  50% { box-shadow: 0 0 20px 4px color-mix(in srgb, var(--accent) 15%, transparent); }
-}
-
-.cta-glow {
-  animation: accent-pulse 3s ease-in-out infinite;
-}
-
-/* =========================================
-   TOOLS WALL — cascade reveal
+   TOOLS GRID — fade in
    ======================================== */
 
 .tool-cell {
   opacity: 0;
-  transform: translateY(12px) scale(0.95);
-  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              border-color 0.3s ease,
-              box-shadow 0.3s ease;
+  transform: translateY(8px);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
+}
+
+.tool-cell svg {
+  transition: color 0.2s ease;
 }
 
 #tools-wall.is-visible .tool-cell {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 .tool-cell:hover {
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: var(--color-border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* =========================================
-   HERO — pixel float
-   ======================================== */
-
-@keyframes pixel-float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(2deg); }
-}
-
-/* =========================================
-   PIXEL BORDER — Minecraft style
-   ======================================== */
-
-@keyframes pixel-march {
-  from { transform: translateX(0); }
-  to { transform: translateX(20px); }
-}
-
-.pixel-march {
-  animation: pixel-march 2s linear infinite;
+.tool-cell:hover svg {
+  color: var(--color-text-primary) !important;
 }
 
 /* =========================================
@@ -216,8 +495,10 @@ a, button, input, textarea, select,
    ======================================== */
 
 nav.scrolled {
-  background-color: color-mix(in srgb, var(--bg-dark) 95%, transparent) !important;
-  border-bottom: 1px solid var(--border) !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #222222 !important;
 }
 
 /* =========================================
@@ -250,9 +531,9 @@ nav.scrolled {
 .mobile-menu.open .mobile-menu-link:nth-child(2) { transition-delay: 100ms; }
 .mobile-menu.open .mobile-menu-link:nth-child(3) { transition-delay: 150ms; }
 .mobile-menu.open .mobile-menu-link:nth-child(4) { transition-delay: 200ms; }
+.mobile-menu.open .mobile-menu-link:nth-child(5) { transition-delay: 250ms; }
 
-#mobile-menu-btn.open .burger-line:first-child { transform: translateY(7px) rotate(45deg); }
-#mobile-menu-btn.open .burger-line:last-child { transform: translateY(-7px) rotate(-45deg); }
+/* Hamburger icon toggle handled via SVG swap in Navigation.astro */
 
 body.menu-open { overflow: hidden; }
 
@@ -280,6 +561,19 @@ body.menu-open { overflow: hidden; }
 }
 
 /* =========================================
+   ACCENT GLOW — for hero & CTA
+   ======================================== */
+
+.accent-glow {
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.15),
+              0 0 120px rgba(139, 92, 246, 0.05);
+}
+
+.accent-glow-text {
+  text-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+}
+
+/* =========================================
    REDUCED MOTION
    ======================================== */
 
@@ -288,11 +582,15 @@ body.menu-open { overflow: hidden; }
     animation: none !important;
     transition: none !important;
   }
-  .fade-in-section, .mc-card, .stat-item, .tool-cell {
+  .fade-in-section, .reveal-card, .stat-item, .tool-cell {
     opacity: 1;
     transform: none;
   }
-  .pixel-block {
-    animation: none !important;
+  .card-spotlight::before {
+    display: none;
+  }
+  .btn-primary:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
