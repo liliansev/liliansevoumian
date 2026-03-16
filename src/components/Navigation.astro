@@ -1,9 +1,9 @@
 ---
 const navLinks = [
-  { href: "#expertise", label: "Expertise" },
-  { href: "#methode", label: "Méthode" },
-  { href: "#temoignages", label: "Témoignages" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#expertise", label: "Expertise" },
+  { href: "/#methode", label: "Méthode" },
+  { href: "/#temoignages", label: "Témoignages" },
+  { href: "/#faq", label: "FAQ" },
 ];
 ---
 
@@ -11,7 +11,7 @@ const navLinks = [
 <nav id="main-nav" class="fixed top-0 w-full z-50 bg-black/0 backdrop-blur-sm transition-all duration-300 border-b border-transparent">
   <div class="flex h-[56px] max-w-[1200px] mx-auto px-[var(--spacing-section-x)] items-center justify-between">
     <!-- Logo -->
-    <a href="#" class="font-[var(--font-body)] text-sm md:text-base font-semibold text-[#EDEDED]">
+    <a href="/" class="font-[var(--font-body)] text-sm md:text-base font-semibold text-[#EDEDED]">
       Lilian Sevoumian
     </a>
 
@@ -30,7 +30,7 @@ const navLinks = [
     <!-- CTA (desktop) -->
     <div class="hidden md:block">
       <a
-        href="#contact"
+        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
         class="inline-flex items-center justify-center font-[var(--font-body)] text-sm font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-6 py-2.5 transition-colors"
       >
         Parlons automatisations
@@ -61,15 +61,15 @@ const navLinks = [
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class="mobile-menu-link block font-[var(--font-body)] text-lg font-medium text-[#EDEDED] py-3 border-b border-[#222222]"
+          class="mobile-menu-link block font-[var(--font-body)] text-lg font-medium text-[#EDEDED] py-3 border-b border-[#222222] min-h-[48px] flex items-center"
         >
           {link.label}
         </a>
       ))}
     </div>
     <a
-      href="#contact"
-      class="w-full inline-flex items-center justify-center font-[var(--font-body)] text-[15px] font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-7 py-3.5 transition-colors"
+      href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+      class="w-full inline-flex items-center justify-center font-[var(--font-body)] text-[15px] font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-7 py-3.5 min-h-[48px] transition-colors"
     >
       Parlons automatisations
     </a>

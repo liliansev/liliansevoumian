@@ -5,9 +5,27 @@ import Footer from '../../components/Footer.astro';
 
 const title = "Chatbot IA : 3x plus de tickets traités | Lilian Sevoumian";
 const description = "Comment un SaaS B2B a triplé la capacité de son support client grâce à un chatbot IA déployé en 3 semaines.";
+
+const breadcrumbs = [
+  { name: "Accueil", url: "/" },
+  { name: "Cas clients", url: "/cas-clients" },
+  { name: "Chatbot support SaaS", url: "/cas-clients/chatbot-support-saas" },
+];
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Support client : 850 tickets/mois sans recrutement",
+  "description": description,
+  "author": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+  "publisher": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://liliansevoumian.fr/cas-clients/chatbot-support-saas" },
+  "articleSection": "Cas client",
+  "keywords": "automatisation, chatbot, IA, Claude, Anthropic, support client, SaaS, Make, Intercom",
+};
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} ogType="article" breadcrumbs={breadcrumbs} articleSchema={articleSchema}>
   <Navigation />
 
   <main id="main-content" class="bg-black pt-[56px]">
@@ -92,7 +110,7 @@ const description = "Comment un SaaS B2B a triplé la capacité de son support c
         <div class="mt-16 p-8 rounded-xl text-center flex flex-col items-center gap-4" style="background: #0A0A0A; border: 1px solid #1A1A1A;">
           <p class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED]">Un cas similaire ?</p>
           <p class="font-[var(--font-body)] text-sm text-[#888888]">Parlons de votre situation — l'appel est gratuit.</p>
-          <a href="https://cal.com/liliansevoumian/diagnostic" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-[#8B5CF6] text-white font-[var(--font-body)] text-[15px] font-medium rounded-lg px-7 py-3.5 hover:bg-[#7C3AED] transition-colors">
+          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-[#8B5CF6] text-white font-[var(--font-body)] text-[15px] font-medium rounded-lg px-7 py-3.5 hover:bg-[#7C3AED] transition-colors">
             Parlons automatisations →
           </a>
         </div>

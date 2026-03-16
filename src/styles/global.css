@@ -24,9 +24,7 @@
 
   /* Design colors */
   --color-bg-dark: #000000;
-  --color-bg-card: #0A0A0A;
   --color-bg-surface: #111111;
-  --color-bg-surface-2: #161616;
   --color-bg-light: #FFFFFF;
   --color-bg-light-alt: #F7F7F7;
 
@@ -41,14 +39,7 @@
   --color-text-muted: #777777;
 
   --color-accent: #8B5CF6;
-  --color-accent-muted: rgba(139, 92, 246, 0.25);
   --color-accent-text: #7C3AED;
-
-  /* Category colors for tools grid */
-  --color-cat-automation: #8B5CF6;
-  --color-cat-ai: #3B82F6;
-  --color-cat-dev: #10B981;
-  --color-cat-tools: #F59E0B;
 }
 
 /* =========================================
@@ -130,53 +121,8 @@ a, button, input, textarea, select,
 }
 
 /* =========================================
-   SECTION BACKGROUNDS — dark & light
+   SECTION BACKGROUNDS — light-alt (used by FAQ, About)
    ======================================== */
-
-.section-dark {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-secondary);
-}
-
-.section-dark h1,
-.section-dark h2,
-.section-dark h3,
-.section-dark h4,
-.section-dark h5,
-.section-dark h6,
-.section-dark .text-heading {
-  color: var(--color-text-primary);
-}
-
-.section-surface {
-  background-color: var(--color-bg-surface);
-  color: var(--color-text-secondary);
-}
-
-.section-surface h1,
-.section-surface h2,
-.section-surface h3,
-.section-surface h4,
-.section-surface h5,
-.section-surface h6,
-.section-surface .text-heading {
-  color: var(--color-text-primary);
-}
-
-.section-light {
-  background-color: var(--color-bg-light);
-  color: var(--color-text-dark-secondary);
-}
-
-.section-light h1,
-.section-light h2,
-.section-light h3,
-.section-light h4,
-.section-light h5,
-.section-light h6,
-.section-light .text-heading {
-  color: var(--color-text-dark);
-}
 
 .section-light-alt {
   background-color: var(--color-bg-light-alt);
@@ -204,140 +150,10 @@ a, button, input, textarea, select,
   background-size: 40px 40px;
 }
 
-.grid-pattern-light {
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-.dot-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-.dot-pattern-light {
-  background-image: radial-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
 /* Grid fade masks */
 .grid-fade-center {
   mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
-}
-
-.grid-fade-top {
-  mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 80%);
-}
-
-.grid-fade-bottom {
-  mask-image: linear-gradient(to top, black 0%, transparent 80%);
-  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 80%);
-}
-
-/* =========================================
-   BUTTONS
-   ======================================== */
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--color-accent);
-  color: #FFFFFF;
-  border-radius: 8px;
-  font-weight: 600;
-  font-family: var(--font-body);
-  box-shadow: 0 1px 2px rgba(139, 92, 246, 0.2);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-primary:hover {
-  background-color: var(--color-accent-text);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: transparent;
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-weight: 500;
-  font-family: var(--font-body);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-secondary:hover {
-  border-color: var(--color-text-secondary);
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Light section button variants */
-.section-light .btn-primary,
-.section-light-alt .btn-primary {
-  background-color: var(--color-text-dark);
-  color: #FFFFFF;
-}
-
-.section-light .btn-primary:hover,
-.section-light-alt .btn-primary:hover {
-  background-color: #1a1a1a;
-}
-
-.section-light .btn-secondary,
-.section-light-alt .btn-secondary {
-  color: var(--color-text-dark);
-  border-color: var(--color-border-light);
-}
-
-.section-light .btn-secondary:hover,
-.section-light-alt .btn-secondary:hover {
-  border-color: var(--color-text-dark-secondary);
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-/* =========================================
-   CARDS — dark theme
-   ======================================== */
-
-.card-dark {
-  background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 12px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.card-dark:hover {
-  border-color: var(--color-border);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  transform: translateY(-2px);
-}
-
-/* Light cards (for light sections) */
-.card-light {
-  background-color: #FFFFFF;
-  border: 1px solid var(--color-border-light);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.card-light:hover {
-  border-color: #d4d4d4;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
 }
 
 /* =========================================
@@ -371,31 +187,6 @@ a, button, input, textarea, select,
 .card-spotlight > * {
   position: relative;
   z-index: 1;
-}
-
-/* Light section spotlight */
-.section-light .card-spotlight::before,
-.section-light-alt .card-spotlight::before {
-  background: radial-gradient(
-    300px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(139, 92, 246, 0.04) 0%,
-    transparent 100%
-  );
-}
-
-/* =========================================
-   BENTO CARDS
-   ======================================== */
-
-.card-bento {
-  background: #111111;
-  border: 1px solid #222222;
-  border-radius: 16px;
-}
-
-.card-bento-featured {
-  border-color: rgba(139, 92, 246, 0.35);
-  box-shadow: 0 0 0 0.5px rgba(139, 92, 246, 0.15), 0 0 20px rgba(139, 92, 246, 0.05);
 }
 
 /* =========================================
@@ -538,19 +329,6 @@ nav.scrolled {
 body.menu-open { overflow: hidden; }
 
 /* =========================================
-   TRUST LOGOS — horizontal scroll ticker
-   ======================================== */
-
-@keyframes scroll-x {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.animate-scroll-x {
-  animation: scroll-x 20s linear infinite;
-}
-
-/* =========================================
    SCROLLBAR HIDE
    ======================================== */
 
@@ -558,19 +336,6 @@ body.menu-open { overflow: hidden; }
   -ms-overflow-style: none;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
-}
-
-/* =========================================
-   ACCENT GLOW — for hero & CTA
-   ======================================== */
-
-.accent-glow {
-  box-shadow: 0 0 60px rgba(139, 92, 246, 0.15),
-              0 0 120px rgba(139, 92, 246, 0.05);
-}
-
-.accent-glow-text {
-  text-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
 }
 
 /* =========================================
@@ -588,9 +353,5 @@ body.menu-open { overflow: hidden; }
   }
   .card-spotlight::before {
     display: none;
-  }
-  .btn-primary:hover {
-    transform: none;
-    box-shadow: none;
   }
 }

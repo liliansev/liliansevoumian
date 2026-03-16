@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const NOTION_API_KEY = import.meta.env.NOTION_API_KEY;
-const DATABASE_ID = '2fb5d2efba7f80a582aee0f183952b87';
+const DATABASE_ID = import.meta.env.NOTION_DATABASE_ID || '2fb5d2efba7f80a582aee0f183952b87';
 const CACHE_DIR = '.cache';
 const CACHE_FILE = 'notion-case-studies.json';
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -172,12 +172,10 @@ export async function getCaseStudies(): Promise<CaseStudy[]> {
   const cache = readCache();
 
   if (cache && isCacheValid(cache)) {
-    console.log('[Notion] Using cached data');
     return cache.data;
   }
 
   // Fetch fresh data
-  console.log('[Notion] Fetching fresh data from API');
   return fetchFromNotion();
 }
 

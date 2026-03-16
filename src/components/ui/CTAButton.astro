@@ -39,11 +39,16 @@ const variantClasses = {
 
 const baseClasses = 'group inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out';
 const widthClass = fullWidth ? 'w-full' : '';
+const isExternal = href.startsWith('http://') || href.startsWith('https://');
 
 const classes = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${widthClass}`;
 ---
 
-<a href={href} class={classes}>
+<a
+  href={href}
+  class={classes}
+  {...isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+>
   {text}
   {showArrow && (
     <Icon

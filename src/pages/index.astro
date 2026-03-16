@@ -14,6 +14,25 @@ import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
 
+const faqSchema = [
+  {
+    question: "Comment se déroule une mission type ?",
+    answer: "Tout commence par un appel de 30 minutes gratuit où on identifie vos process les plus chronophages. Sous 48h, je vous envoie un plan d'action détaillé avec livrables, délais et budget fixe. Pas de surprise : vous validez chaque étape avant que je passe à la suivante.",
+  },
+  {
+    question: "Combien ça coûte et quel retour sur investissement attendre ?",
+    answer: "Un premier workflow d'automatisation démarre à partir de 1 500 €. La plupart de mes clients constatent un ROI dès le premier mois : quand vous économisez 15h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès l'audit.",
+  },
+  {
+    question: "Combien de temps faut-il pour voir des résultats ?",
+    answer: "Un workflow simple est déployé en 3 à 5 jours. Un projet complet (audit + plusieurs automatisations + formation) prend 4 à 8 semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
+  },
+  {
+    question: "Et si mes outils changent ou si j'ai besoin d'évolutions ?",
+    answer: "Les automatisations sont construites de façon modulaire : ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
+  },
+];
+
 /*
  * =============================================
  * INFORMATION ARCHITECTURE — AUDIT & RATIONALE
@@ -77,7 +96,7 @@ import Footer from '../components/Footer.astro';
  */
 ---
 
-<Layout>
+<Layout faqSchema={faqSchema}>
   <Navigation />
 
   <main id="main-content">
