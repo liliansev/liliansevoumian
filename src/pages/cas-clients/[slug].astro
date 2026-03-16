@@ -103,12 +103,12 @@ const combinedSchema = howToSchema
 
   <main id="main-content">
     <!-- Hero -->
-    <section class="px-6 bg-zinc-900 pt-32 pb-16 lg:pb-24">
+    <section class="px-6 bg-zinc-100 dark:bg-zinc-900 pt-32 pb-16 lg:pb-24">
       <div class="max-w-5xl mx-auto">
         <!-- Back link -->
         <a
           href="/cas-clients"
-          class="inline-flex items-center gap-2 text-zinc-400 hover:text-violet-400 text-sm font-medium mb-10 transition-colors group"
+          class="inline-flex items-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 text-sm font-medium mb-10 transition-colors group"
         >
           <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -124,15 +124,15 @@ const combinedSchema = howToSchema
             </span>
           )}
           {caseStudy.tags.map(tag => (
-            <span class="px-3 py-1.5 bg-zinc-800 text-zinc-200 text-sm font-medium rounded-full border border-zinc-600">
+            <span class="px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-sm font-medium rounded-full border border-zinc-300 dark:border-zinc-600">
               {tag}
             </span>
           ))}
           {caseStudy.tools.length > 0 && (
             <>
-              <span class="text-zinc-500 mx-1">•</span>
+              <span class="text-zinc-400 dark:text-zinc-500 mx-1">•</span>
               {caseStudy.tools.map(tool => (
-                <span class="px-3 py-1.5 text-sm text-zinc-300 bg-zinc-800/70 rounded-full border border-zinc-700/50">
+                <span class="px-3 py-1.5 text-sm text-zinc-600 dark:text-zinc-300 bg-zinc-200/70 dark:bg-zinc-800/70 rounded-full border border-zinc-300/50 dark:border-zinc-700/50">
                   {tool}
                 </span>
               ))}
@@ -141,7 +141,7 @@ const combinedSchema = howToSchema
         </div>
 
         <!-- Title -->
-        <h1 class="fluid-h1 font-semibold text-white mb-16 max-w-4xl leading-tight">
+        <h1 class="fluid-h1 font-semibold text-zinc-900 dark:text-white mb-16 max-w-4xl leading-tight">
           {caseStudy.title}
         </h1>
 
@@ -150,10 +150,10 @@ const combinedSchema = howToSchema
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 lg:gap-20 pt-12 border-t border-violet-500/30">
             {caseStudy.kpis.map(kpi => (
               <div>
-                <p class="text-6xl lg:text-7xl font-bold text-white tracking-tighter">
+                <p class="text-6xl lg:text-7xl font-bold text-zinc-900 dark:text-white tracking-tighter">
                   {kpi.value}
                 </p>
-                <p class="text-sm lg:text-base text-zinc-400 mt-3 uppercase tracking-wide">
+                <p class="text-sm lg:text-base text-zinc-500 dark:text-zinc-400 mt-3 uppercase tracking-wide">
                   {kpi.label}
                 </p>
               </div>
@@ -165,7 +165,7 @@ const combinedSchema = howToSchema
 
     <!-- Le contexte -->
     {caseStudy.entreprise && (
-      <section class="py-20 lg:py-32 px-6 bg-zinc-100">
+      <section class="py-20 lg:py-32 px-6 bg-white dark:bg-zinc-100">
         <div class="max-w-5xl mx-auto">
           <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
             <div>
@@ -186,7 +186,7 @@ const combinedSchema = howToSchema
 
     <!-- Le défi -->
     {caseStudy.probleme && (
-      <section class="py-20 lg:py-32 px-6 bg-white">
+      <section class="py-20 lg:py-32 px-6 bg-zinc-50 dark:bg-white">
         <div class="max-w-5xl mx-auto">
           <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
             <div>
@@ -207,20 +207,20 @@ const combinedSchema = howToSchema
 
     <!-- Témoignage -->
     {caseStudy.testimonial?.quote && (
-      <section class="py-24 lg:py-36 px-6 bg-zinc-900">
+      <section class="py-24 lg:py-36 px-6 bg-zinc-100 dark:bg-zinc-900">
         <div class="max-w-4xl mx-auto text-center">
           <svg class="w-12 h-12 text-violet-500/60 mx-auto mb-10" fill="currentColor" viewBox="0 0 24 24">
             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
           </svg>
           <blockquote>
-            <p class="text-xl lg:text-2xl font-medium text-white leading-relaxed mb-10">
+            <p class="text-xl lg:text-2xl font-medium text-zinc-900 dark:text-white leading-relaxed mb-10">
               {caseStudy.testimonial.quote}
             </p>
             {(caseStudy.testimonial.name || caseStudy.testimonial.role) && (
               <footer class="text-base lg:text-lg">
-                <span class="text-white font-semibold">{caseStudy.testimonial.name}</span>
+                <span class="text-zinc-900 dark:text-white font-semibold">{caseStudy.testimonial.name}</span>
                 {caseStudy.testimonial.role && (
-                  <span class="text-zinc-400"> · {caseStudy.testimonial.role}</span>
+                  <span class="text-zinc-500 dark:text-zinc-400"> · {caseStudy.testimonial.role}</span>
                 )}
               </footer>
             )}
@@ -231,7 +231,7 @@ const combinedSchema = howToSchema
 
     <!-- Ce qu'on a automatisé -->
     {caseStudy.solution && (
-      <section class="py-20 lg:py-32 px-6 bg-zinc-100">
+      <section class="py-20 lg:py-32 px-6 bg-white dark:bg-zinc-100">
         <div class="max-w-5xl mx-auto">
           <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
             <div>
@@ -252,7 +252,7 @@ const combinedSchema = howToSchema
 
     <!-- Les résultats -->
     {caseStudy.resultatsDetails && (
-      <section class="py-20 lg:py-32 px-6 bg-white">
+      <section class="py-20 lg:py-32 px-6 bg-zinc-50 dark:bg-white">
         <div class="max-w-5xl mx-auto">
           <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
             <div>
@@ -273,7 +273,7 @@ const combinedSchema = howToSchema
 
     <!-- Les étapes -->
     {caseStudy.etapes && (
-      <section class="py-20 lg:py-32 px-6 bg-zinc-100">
+      <section class="py-20 lg:py-32 px-6 bg-white dark:bg-zinc-100">
         <div class="max-w-5xl mx-auto">
           <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
             <div>
@@ -293,18 +293,18 @@ const combinedSchema = howToSchema
     )}
 
     <!-- CTA -->
-    <section class="py-28 lg:py-40 px-6 bg-zinc-900">
+    <section class="py-28 lg:py-40 px-6 bg-zinc-100 dark:bg-zinc-900">
       <div class="max-w-2xl mx-auto text-center">
-        <h2 class="text-3xl lg:text-4xl font-semibold text-white mb-5">
+        <h2 class="text-3xl lg:text-4xl font-semibold text-zinc-900 dark:text-white mb-5">
           Un projet similaire ?
         </h2>
-        <p class="text-lg lg:text-xl text-zinc-400 mb-12">
+        <p class="text-lg lg:text-xl text-zinc-500 dark:text-zinc-400 mb-12">
           Discutons de vos besoins en automatisation.
         </p>
         <CTAButton
           href="https://cal.com/lilian-sevoumian/20min"
           text="Prendre rendez-vous"
-          variant="inverted"
+          variant="primary"
           size="lg"
         />
       </div>

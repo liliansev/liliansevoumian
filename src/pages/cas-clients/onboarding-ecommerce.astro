@@ -28,28 +28,28 @@ const articleSchema = {
 <Layout title={title} description={description} ogType="article" breadcrumbs={breadcrumbs} articleSchema={articleSchema}>
   <Navigation />
 
-  <main id="main-content" class="bg-black pt-[56px]">
+  <main id="main-content" class="bg-[#F7F7F7] dark:bg-black pt-[56px]">
     <!-- Hero -->
     <section class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
       <div class="max-w-[800px] mx-auto">
-        <a href="/#cas-clients" class="inline-flex items-center gap-2 font-[var(--font-body)] text-sm text-[#888888] hover:text-[#EDEDED] transition-colors mb-8">
+        <a href="/#cas-clients" class="inline-flex items-center gap-2 font-[var(--font-body)] text-sm text-zinc-500 dark:text-[#888888] hover:text-zinc-900 dark:hover:text-[#EDEDED] transition-colors mb-8">
           &larr; Retour aux cas clients
         </a>
 
         <div class="flex flex-col gap-6 mb-12">
-          <span class="inline-block self-start rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase" style="background: #1A1028; border: 1px solid rgba(139,92,246,0.19); font-family: var(--font-mono); color: #8B5CF6;">
+          <span class="inline-block self-start rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase bg-[#F3F0FF] dark:bg-[#1A1028] border border-violet-500/20 font-[var(--font-mono)] text-[#8B5CF6]">
             E-COMMERCE
           </span>
-          <h1 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-[#EDEDED] leading-[1.15]">
+          <h1 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-zinc-900 dark:text-[#EDEDED] leading-[1.15]">
             Onboarding client : de 45min à 12min
           </h1>
-          <p class="font-[var(--font-body)] text-lg text-[#888888] leading-[1.6]">
+          <p class="font-[var(--font-body)] text-lg text-zinc-500 dark:text-[#888888] leading-[1.6]">
             Comment un e-commerce en forte croissance a automatisé l'intégralité de son processus d'onboarding client.
           </p>
         </div>
 
         <!-- Metric -->
-        <div class="flex items-center gap-8 mb-16 p-8 rounded-xl" style="background: #0A0A0A; border: 1px solid #1A1A1A;">
+        <div class="flex items-center gap-8 mb-16 p-8 rounded-xl bg-white dark:bg-[#0A0A0A] border border-zinc-200 dark:border-[#1A1A1A]">
           <div class="flex flex-col">
             <span class="font-[var(--font-mono)] text-5xl md:text-6xl font-bold text-[#8B5CF6]">-70%</span>
             <span class="font-[var(--font-body)] text-sm text-[#8B5CF6] tracking-[1px] uppercase mt-1">temps de traitement</span>
@@ -57,24 +57,24 @@ const articleSchema = {
         </div>
 
         <!-- Content -->
-        <div class="flex flex-col gap-10 font-[var(--font-body)] text-[#EDEDED] leading-[1.7]">
+        <div class="flex flex-col gap-10 font-[var(--font-body)] text-zinc-900 dark:text-[#EDEDED] leading-[1.7]">
           <div>
-            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">Le problème</h2>
-            <p class="text-[#888888]">
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">Le problème</h2>
+            <p class="text-zinc-500 dark:text-[#888888]">
               Un e-commerce en forte croissance intégrait chaque nouveau client manuellement : saisie dans le CRM, création de la facture, envoi des accès par email, ajout dans les listes de diffusion. Chaque onboarding prenait 45 minutes et mobilisait une personne à temps plein.
             </p>
           </div>
 
           <div>
-            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">La solution</h2>
-            <p class="text-[#888888]">
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">La solution</h2>
+            <p class="text-zinc-500 dark:text-[#888888]">
               Un workflow Make connectant Shopify, HubSpot CRM, Stripe et Gmail. Dès qu'une commande est validée, le scénario crée automatiquement le contact dans le CRM, génère la facture, envoie les accès personnalisés et ajoute le client dans les séquences email appropriées.
             </p>
           </div>
 
           <div>
-            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">Les résultats</h2>
-            <ul class="text-[#888888] space-y-3">
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">Les résultats</h2>
+            <ul class="text-zinc-500 dark:text-[#888888] space-y-3">
               <li class="flex items-start gap-3">
                 <span class="font-[var(--font-mono)] text-[#8B5CF6] font-bold shrink-0">→</span>
                 <span>Temps d'onboarding réduit de 45min à 12min (-70%)</span>
@@ -95,10 +95,10 @@ const articleSchema = {
           </div>
 
           <div>
-            <h2 class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED] mb-4">Outils utilisés</h2>
+            <h2 class="font-[var(--font-display)] text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">Outils utilisés</h2>
             <div class="flex flex-wrap gap-2">
               {["Make", "Shopify", "HubSpot", "Stripe", "Gmail"].map((tool) => (
-                <span class="rounded-md px-3 py-1.5 text-xs font-medium" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); color: #8B5CF6; font-family: var(--font-mono);">
+                <span class="rounded-md px-3 py-1.5 text-xs font-medium bg-violet-500/10 border border-violet-500/20 text-[#8B5CF6] font-[var(--font-mono)]">
                   {tool}
                 </span>
               ))}
@@ -107,9 +107,9 @@ const articleSchema = {
         </div>
 
         <!-- CTA -->
-        <div class="mt-16 p-8 rounded-xl text-center flex flex-col items-center gap-4" style="background: #0A0A0A; border: 1px solid #1A1A1A;">
-          <p class="font-[var(--font-display)] text-xl font-semibold text-[#EDEDED]">Un cas similaire ?</p>
-          <p class="font-[var(--font-body)] text-sm text-[#888888]">Parlons de votre situation — l'appel est gratuit.</p>
+        <div class="mt-16 p-8 rounded-xl text-center flex flex-col items-center gap-4 bg-white dark:bg-[#0A0A0A] border border-zinc-200 dark:border-[#1A1A1A]">
+          <p class="font-[var(--font-display)] text-xl font-semibold text-zinc-900 dark:text-[#EDEDED]">Un cas similaire ?</p>
+          <p class="font-[var(--font-body)] text-sm text-zinc-500 dark:text-[#888888]">Parlons de votre situation — l'appel est gratuit.</p>
           <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-[#8B5CF6] text-white font-[var(--font-body)] text-[15px] font-medium rounded-lg px-7 py-3.5 hover:bg-[#7C3AED] transition-colors">
             Parlons automatisations →
           </a>
