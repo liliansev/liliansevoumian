@@ -13,6 +13,8 @@ import Process from '../components/Process.astro';
 import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
+import LogosBandeau from '../components/LogosBandeau.astro';
+import ROICalculator from '../components/ROICalculator.tsx';
 
 const faqSchema = [
   {
@@ -21,11 +23,11 @@ const faqSchema = [
   },
   {
     question: "Combien ça coûte et quel retour sur investissement attendre ?",
-    answer: "Un premier workflow d'automatisation démarre à partir de 1 500 €. La plupart de mes clients constatent un ROI dès le premier mois : quand vous économisez 15h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès l'audit.",
+    answer: "Un premier workflow d'automatisation démarre à partir de 1 500 €. La plupart de mes clients constatent un ROI dès le premier mois : quand vous économisez 15h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès le premier appel.",
   },
   {
     question: "Combien de temps faut-il pour voir des résultats ?",
-    answer: "Un workflow simple est déployé en 3 à 5 jours. Un projet complet (audit + plusieurs automatisations + formation) prend 4 à 8 semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
+    answer: "Un workflow simple est déployé en 3 à 5 jours. Un projet complet (diagnostic + plusieurs automatisations + formation) prend 4 à 8 semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
   },
   {
     question: "Et si mes outils changent ou si j'ai besoin d'évolutions ?",
@@ -89,7 +91,7 @@ const faqSchema = [
  *   - Nav bar (persistent)
  *   - Hero section
  *   - CaseStudies "Un cas similaire ?" links (×3)
- *   - Process step 1 mentions "Audit gratuit"
+ *   - Process step 1 mentions "Appel stratégique"
  *   - Final CTA section
  *
  * =============================================
@@ -112,6 +114,9 @@ const faqSchema = [
     <!-- 4. DESIRE — Prove it works with real numbers -->
     <CaseStudies />
 
+    <!-- 4b. ROI Calculator — project your own gains -->
+    <ROICalculator client:visible />
+
     <!-- 5. DESIRE — Technical credibility (how I do it) -->
     <Tools />
 
@@ -120,6 +125,9 @@ const faqSchema = [
 
     <!-- 7. DESIRE — Conviction statement (now it has authority) -->
     <Manifeste />
+
+    <!-- 7b. Trust — Client logos -->
+    <LogosBandeau />
 
     <!-- 8. DESIRE — Social proof + clear method (reduces friction) -->
     <section id="temoignages" class="bg-white py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
@@ -132,8 +140,8 @@ const faqSchema = [
       </div>
     </section>
 
-    <!-- 9. OBJECTION HANDLING — Answer remaining doubts (hidden for now) -->
-    <!-- <FAQ /> -->
+    <!-- 9. OBJECTION HANDLING — Answer remaining doubts -->
+    <FAQ />
 
     <!-- 10. ACTION — Final conversion CTA -->
     <CTA />

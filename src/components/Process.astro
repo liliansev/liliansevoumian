@@ -5,8 +5,8 @@ const steps = [
   {
     number: "01",
     icon: "lucide:search",
-    title: "Audit gratuit (30\u00A0min)",
-    description: "On passe en revue vos process actuels ensemble. Je repère les tâches automatisables et vous livre un plan d'action chiffré sous 48\u00A0h.",
+    title: "Appel stratégique (30\u00A0min)",
+    description: "En 30\u00A0minutes, on identifie vos 3\u00A0process les plus chronophages. Vous repartez avec un plan d'action chiffré et priorisé sous 48\u00A0h — que vous travailliez avec moi ou non.",
   },
   {
     number: "02",
@@ -18,7 +18,8 @@ const steps = [
     number: "03",
     icon: "lucide:trending-up",
     title: "Suivi & autonomie",
-    description: "30\u00A0jours de suivi inclus après livraison. Je forme vos équipes et documente chaque workflow pour que vous soyez 100\u00A0% autonomes.",
+    description: "Après livraison, vous n'êtes pas seul\u00A0:",
+    bullets: ["30\u00A0jours de suivi inclus", "Formation de vos équipes", "Documentation complète de chaque workflow"],
   },
 ];
 ---
@@ -41,7 +42,7 @@ const steps = [
       Comment ça marche
     </h2>
     <p class="font-[var(--font-body)] text-[15px] md:text-lg text-[#888888] leading-[1.6] text-center max-w-[600px]">
-      De l'audit à l'autonomie, en 3&nbsp;étapes claires.
+      Du premier appel à l'autonomie, en 3&nbsp;étapes claires.
     </p>
   </div>
 
@@ -81,6 +82,17 @@ const steps = [
         <p class="font-[var(--font-body)] text-[15px] text-[#888888] leading-[1.6]">
           {step.description}
         </p>
+
+        {step.bullets && (
+          <ul class="flex flex-col gap-2 mt-1">
+            {step.bullets.map((bullet: string) => (
+              <li class="flex items-center gap-2.5 font-[var(--font-body)] text-[14px] text-[#AAAAAA]">
+                <span class="text-[#8B5CF6] text-sm">✓</span>
+                {bullet}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     ))}
   </div>
