@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-const HOURLY_COST = 30;
+const DEFAULT_HOURLY_COST = 30;
 const RECOVERY_RATE = 0.7;
 const WEEKS_PER_YEAR = 52;
 
@@ -42,9 +42,10 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
 export default function ROICalculator() {
   const [hours, setHours] = useState(10);
   const [people, setPeople] = useState(3);
+  const [hourlyCost, setHourlyCost] = useState(DEFAULT_HOURLY_COST);
 
   const hoursSaved = Math.round(hours * people * RECOVERY_RATE * WEEKS_PER_YEAR);
-  const moneySaved = hoursSaved * HOURLY_COST;
+  const moneySaved = hoursSaved * hourlyCost;
 
   return (
     <section
@@ -163,6 +164,54 @@ export default function ROICalculator() {
                   <span>20</span>
                 </div>
               </div>
+
+              {/* Hourly rate input */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="roi-rate"
+                    className="text-[15px] font-medium"
+                    style={{ color: '#AAAAAA', fontFamily: 'var(--font-body)' }}
+                  >
+                    Taux horaire (€ HT)
+                  </label>
+                  <div className="flex items-center gap-1">
+                    <input
+                      id="roi-rate"
+                      type="number"
+                      min={10}
+                      max={200}
+                      value={hourlyCost}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (v >= 10 && v <= 200) setHourlyCost(v);
+                      }}
+                      className="w-[60px] text-right text-lg font-bold tabular-nums bg-transparent border-b-2 border-[#E86A33] outline-none"
+                      style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
+                    />
+                    <span
+                      className="text-lg font-bold"
+                      style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
+                    >€</span>
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min={10}
+                  max={200}
+                  step={5}
+                  value={hourlyCost}
+                  onChange={(e) => setHourlyCost(Number(e.target.value))}
+                  className="roi-slider w-full"
+                />
+                <div
+                  className="flex justify-between text-[11px]"
+                  style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+                >
+                  <span>10€</span>
+                  <span>200€</span>
+                </div>
+              </div>
             </div>
 
             {/* Separator */}
@@ -214,7 +263,7 @@ export default function ROICalculator() {
               className="text-[12px] mb-8 text-center"
               style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
             >
-              Basé sur 70 % d'heures récupérables et un coût horaire moyen de 30 €
+              Basé sur 70 % d'heures récupérables et votre taux horaire de {hourlyCost} €
             </p>
 
             {/* CTA */}
