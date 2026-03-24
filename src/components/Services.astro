@@ -2,104 +2,75 @@
 const services = [
   {
     number: "01",
-    code: "// workflows",
     title: "Automatisation des workflows",
     description: "Vos outils (CRM, facturation, emails, Slack...) communiquent entre eux sans intervention humaine. Fini le copier-coller entre 5\u00A0outils.",
+    color: "#E86A33",
+    cardClass: "card-3d-light-orange",
   },
   {
     number: "02",
-    code: "// intelligence",
     title: "Intégration d'IA sur mesure",
     description: "Chatbot, tri automatique, extraction de données, génération de rapports — l'IA est branchée directement sur vos datas.",
+    color: "#9333EA",
+    cardClass: "card-3d-light-purple",
   },
   {
     number: "03",
-    code: "// process",
     title: "Diagnostic & refonte des process",
     description: "Je cartographie vos opérations, identifie ce qui peut être automatisé et propose un plan d'action chiffré avec ROI estimé.",
+    color: "#22D3EE",
+    cardClass: "card-3d-light-cyan",
   },
   {
     number: "04",
-    code: "// training",
     title: "Formation de vos équipes",
     description: "Vos collaborateurs apprennent à créer et maintenir leurs propres automatisations. Objectif\u00A0: autonomie totale en 4 à 6\u00A0semaines.",
+    color: "#F43F5E",
+    cardClass: "card-3d-light-rose",
   },
 ];
 ---
 
-<section id="services" class="relative" style="background-color: #111111;">
-  <!-- Top separator -->
-  <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #222222, transparent);"></div>
+<section id="services" class="relative bg-[#F2F2F2] overflow-hidden">
+  <!-- Dot grid -->
+  <div class="absolute inset-0 dot-grid opacity-50" aria-hidden="true"></div>
 
-  <div class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto">
+  <div class="relative z-[1] py-[80px] px-[120px] max-md:px-[var(--spacing-section-x)]">
+    <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-[48px]">
       <!-- Header -->
-      <div class="flex flex-col items-center gap-5 mb-12 fade-in-section">
-        <span
-          class="inline-block rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase"
-          style="background-color: #1A1A1A; border: 1px solid #222222; color: #999999; font-family: var(--font-mono);"
-        >
+      <div class="flex flex-col items-center gap-5 fade-in-section">
+        <span class="inline-block text-[12px] font-semibold tracking-[2px] uppercase text-[#9333EA] font-mono">
           CE QUE JE FAIS
         </span>
-        <h2
-          class="text-[length:var(--text-heading)] font-bold text-center"
-          style="color: #EDEDED; font-family: var(--font-display);"
-        >
+        <h2 class="text-[40px] font-bold text-center text-[#1A1A1A] font-display">
           4 leviers pour transformer vos opérations
         </h2>
-        <p
-          class="text-center max-w-[640px] text-[15px] md:text-[18px] leading-[1.6]"
-          style="color: #A3A3A3; font-family: var(--font-body);"
-        >
-          Du diagnostic initial au transfert de compétences, je prends en charge toute la chaîne.
-        </p>
       </div>
 
       <!-- Cards grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 reveal-stagger">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-[24px] reveal-stagger">
         {services.map((service) => (
-          <div
-            class="reveal-card card-spotlight flex flex-col gap-5 p-6 md:p-9 rounded-2xl"
-            style="background: #111111; border: 1px solid rgba(139,92,246,0.35); box-shadow: 0 0 20px rgba(139,92,246,0.05);"
-          >
+          <div class:list={["reveal-card flex flex-col gap-[16px] p-[32px_28px]", service.cardClass]}>
             <!-- Number -->
             <span
-              class="text-4xl md:text-[48px] font-bold leading-none"
-              style="color: rgba(139, 92, 246, 0.5); font-family: var(--font-mono);"
+              class="text-[48px] font-bold leading-none font-mono"
+              style={`color: ${service.color};`}
             >
               {service.number}
             </span>
 
-            <!-- Code tag -->
-            <span
-              class="text-xs leading-normal"
-              style="color: rgba(139, 92, 246, 0.55); font-family: var(--font-mono);"
-            >
-              {service.code}
-            </span>
-
             <!-- Title -->
-            <h3
-              class="text-lg md:text-xl font-semibold"
-              style="color: #EDEDED; font-family: var(--font-display);"
-            >
+            <h3 class="text-[22px] font-bold text-[#1A1A1A] font-display">
               {service.title}
             </h3>
 
             <!-- Description -->
-            <p
-              class="text-[15px] leading-[1.6]"
-              style="color: #AAAAAA; font-family: var(--font-body);"
-            >
+            <p class="text-[15px] leading-[1.5] text-[#666666] font-body">
               {service.description}
             </p>
-
           </div>
         ))}
       </div>
     </div>
   </div>
-
-  <!-- Bottom separator -->
-  <div class="h-px w-full" style="background: linear-gradient(90deg, transparent, #222222, transparent);"></div>
 </section>

@@ -58,6 +58,10 @@ const serviceSchema = {
   "provider": { "@type": "Person", "name": "Lilian Sevoumian" }
 };
 
+function safeJsonLd(obj: object): string {
+  return JSON.stringify(obj).replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
+}
+
 const websiteSchema = {
   "@context": "https://schema.org", "@type": "WebSite",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
@@ -91,7 +95,7 @@ const faqPageSchema = faqSchema ? {
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <meta name="author" content="Lilian Sevoumian" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#F8F8FA" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
@@ -99,7 +103,7 @@ const faqPageSchema = faqSchema ? {
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:site_name" content="Lilian Sevoumian" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={ogImage.toString()} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogImageAlt} />
@@ -109,15 +113,15 @@ const faqPageSchema = faqSchema ? {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={ogImage.toString()} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-    {breadcrumbSchema && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />}
-    {articleSchema && <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />}
-    {faqPageSchema && <script type="application/ld+json" set:html={JSON.stringify(faqPageSchema)} />}
+    <script type="application/ld+json" set:html={safeJsonLd(personSchema)} />
+    <script type="application/ld+json" set:html={safeJsonLd(serviceSchema)} />
+    <script type="application/ld+json" set:html={safeJsonLd(websiteSchema)} />
+    {breadcrumbSchema && <script type="application/ld+json" set:html={safeJsonLd(breadcrumbSchema)} />}
+    {articleSchema && <script type="application/ld+json" set:html={safeJsonLd(articleSchema)} />}
+    {faqPageSchema && <script type="application/ld+json" set:html={safeJsonLd(faqPageSchema)} />}
 
     <link rel="icon" type="image/svg+xml" href="/favicon_liliansevoumian.svg" />
     <link rel="apple-touch-icon" href="/favicon_liliansevoumian.svg" />
@@ -125,7 +129,7 @@ const faqPageSchema = faqSchema ? {
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <style is:global>
       @import "../styles/global.css";
@@ -134,12 +138,12 @@ const faqPageSchema = faqSchema ? {
   <body class="antialiased overflow-x-hidden m-0 p-0">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K46TZ5RV" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[var(--color-accent)] focus:text-white focus:rounded-lg focus:outline-none">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#9333EA] focus:text-white focus:rounded-lg focus:outline-none">
       Aller au contenu principal
     </a>
     <slot />
 
-    <script is:inline src="https://contact.liliansevoumian.fr/embed.js" data-form="mecontacter" data-button-color="#8B5CF6"></script>
+    <script is:inline src="https://contact.liliansevoumian.fr/embed.js" data-form="mecontacter" data-button-color="#7C3AED"></script>
 
     <script>
       function initAnimations(): void {
@@ -172,17 +176,6 @@ const faqPageSchema = faqSchema ? {
           obs.observe(el);
         });
 
-        const toolsWall = document.getElementById('tools-wall');
-        if (toolsWall) {
-          if (prefersReducedMotion) { toolsWall.classList.add('is-visible'); }
-          else {
-            const wallObs = new IntersectionObserver((entries) => {
-              entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-visible'); wallObs.unobserve(e.target); } });
-            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-            wallObs.observe(toolsWall);
-          }
-        }
-
         const nav = document.getElementById('main-nav');
         let ticking = false;
         window.addEventListener('scroll', () => {
@@ -196,20 +189,9 @@ const faqPageSchema = faqSchema ? {
         });
       }
 
-      function initSpotlight(): void {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        document.querySelectorAll<HTMLElement>('.card-spotlight').forEach(card => {
-          card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
-            card.style.setProperty('--my', `${e.clientY - rect.top}px`);
-          });
-        });
-      }
-
-      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => { initAnimations(); initSpotlight(); }); }
-      else { initAnimations(); initSpotlight(); }
-      document.addEventListener('astro:page-load', () => { initAnimations(); initSpotlight(); });
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => { initAnimations(); }); }
+      else { initAnimations(); }
+      document.addEventListener('astro:page-load', () => { initAnimations(); });
     </script>
   </body>
 </html>

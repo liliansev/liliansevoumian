@@ -1,99 +1,83 @@
 ---
-import { Icon } from 'astro-icon/components';
-
 const steps = [
   {
     number: "01",
-    icon: "lucide:search",
-    title: "Appel stratégique (30\u00A0min)",
+    title: "Appel stratégique",
     description: "En 30\u00A0minutes, on identifie vos 3\u00A0process les plus chronophages. Vous repartez avec un plan d'action chiffré et priorisé sous 48\u00A0h — que vous travailliez avec moi ou non.",
+    badge: "30 min · Gratuit",
+    color: "orange",
   },
   {
     number: "02",
-    icon: "lucide:code",
     title: "Construction & déploiement",
     description: "Je développe vos automatisations, les teste en conditions réelles et les déploie. Vous validez chaque étape avant la mise en production.",
+    badge: "3 à 8 semaines",
+    color: "purple",
   },
   {
     number: "03",
-    icon: "lucide:trending-up",
     title: "Suivi & autonomie",
-    description: "Après livraison, vous n'êtes pas seul\u00A0:",
-    bullets: ["30\u00A0jours de suivi inclus", "Formation de vos équipes", "Documentation complète de chaque workflow"],
+    description: "Après livraison, vous n'êtes pas seul\u00A0: 30\u00A0jours de suivi inclus, formation de vos équipes et documentation complète de chaque workflow.",
+    badge: "30j de suivi inclus",
+    color: "cyan",
   },
 ];
+
+const colorMap = {
+  orange: { card: 'card-3d-white-orange', number: '#E86A33', badgeBg: 'rgba(232, 106, 51, 0.15)', badgeText: '#E86A33' },
+  purple: { card: 'card-3d-white-purple', number: '#9333EA', badgeBg: 'rgba(147, 51, 234, 0.15)', badgeText: '#9333EA' },
+  cyan: { card: 'card-3d-white-cyan', number: '#22D3EE', badgeBg: 'rgba(34, 211, 238, 0.15)', badgeText: '#22D3EE' },
+};
 ---
 
 <!-- Process -->
-<div
-  id="methode"
-  class="rounded-2xl px-6 py-8 md:px-12 md:py-14"
-  style="background: #0A0A0A;"
->
+<div id="methode" class="flex flex-col items-center gap-12">
   <!-- Header -->
-  <div class="flex flex-col items-center gap-5 mb-12">
-    <span
-      class="inline-block rounded-full border px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase"
-      style="background: #1A1028; border-color: rgba(139,92,246,0.19); color: #8B5CF6;"
-    >
+  <div class="flex flex-col items-center gap-5">
+    <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#E86A33]">
       MÉTHODE
     </span>
-    <h2 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-[#EDEDED] text-center">
-      Comment ça marche
+    <h2 class="font-display text-[40px] font-bold text-[#1A1A1A] text-center">
+      Du premier appel à l'autonomie
     </h2>
-    <p class="font-[var(--font-body)] text-[15px] md:text-lg text-[#888888] leading-[1.6] text-center max-w-[600px]">
-      Du premier appel à l'autonomie, en 3&nbsp;étapes claires.
+    <p class="font-body text-[18px] font-normal text-[#666666] text-center max-w-[600px]">
+      3&nbsp;étapes claires. Pas de surprise.
     </p>
   </div>
 
   <!-- Step cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-    {steps.map((step) => (
-      <div
-        class="flex flex-col gap-5 p-6 md:p-9 rounded-2xl"
-        style="background: #111111; border: 1px solid #222222;"
-      >
-        <!-- Step number -->
-        <span class="font-[var(--font-mono)] text-4xl md:text-5xl font-bold text-[#8B5CF6]">
-          {step.number}
-        </span>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full reveal-stagger">
+    {steps.map((step) => {
+      const colors = colorMap[step.color as keyof typeof colorMap];
+      return (
+        <div class={`${colors.card} flex flex-col gap-4 p-[32px_28px] reveal-card`}>
+          {/* Step number */}
+          <span
+            class="font-mono text-[48px] font-bold leading-[1]"
+            style={`color: ${colors.number};`}
+          >
+            {step.number}
+          </span>
 
-        <!-- Gradient line -->
-        <div
-          class="h-0.5 w-20"
-          style="background: linear-gradient(to right, #8B5CF6, transparent);"
-          aria-hidden="true"
-        ></div>
+          {/* Title */}
+          <h3 class="font-display text-[22px] font-bold text-[#1A1A1A]">
+            {step.title}
+          </h3>
 
-        <!-- Icon circle -->
-        <div
-          class="flex items-center justify-center w-10 h-10 rounded-full"
-          style="background: rgba(139,92,246,0.08);"
-        >
-          <Icon name={step.icon} class="w-5 h-5 text-[#8B5CF6]" />
+          {/* Description */}
+          <p class="font-body text-[14px] font-normal text-[#666666] leading-[1.5] flex-1">
+            {step.description}
+          </p>
+
+          {/* Badge pill */}
+          <span
+            class="inline-flex items-center self-start rounded-full px-[12px] py-[6px] font-mono text-[11px] font-semibold"
+            style={`background: ${colors.badgeBg}; color: ${colors.badgeText};`}
+          >
+            {step.badge}
+          </span>
         </div>
-
-        <!-- Title -->
-        <h3 class="font-[var(--font-display)] text-base md:text-lg font-semibold text-[#EDEDED]">
-          {step.title}
-        </h3>
-
-        <!-- Description -->
-        <p class="font-[var(--font-body)] text-[15px] text-[#888888] leading-[1.6]">
-          {step.description}
-        </p>
-
-        {step.bullets && (
-          <ul class="flex flex-col gap-2 mt-1">
-            {step.bullets.map((bullet: string) => (
-              <li class="flex items-center gap-2.5 font-[var(--font-body)] text-[14px] text-[#AAAAAA]">
-                <span class="text-[#8B5CF6] text-sm">✓</span>
-                {bullet}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    ))}
+      );
+    })}
   </div>
 </div>

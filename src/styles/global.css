@@ -1,45 +1,45 @@
 @import "tailwindcss";
 
 /* =========================================
-   DESIGN SYSTEM — Dark-first with alternating sections
-   #000000 bg · #EDEDED text · #8B5CF6 accent
+   DESIGN SYSTEM — Soft 3D with colored shadows
+   Based on Pencil design: "Prop 4 — Soft 3D (ombres renforcées)"
+   3 accents: Orange #E86A33, Purple #9333EA, Cyan #22D3EE
    ======================================== */
 
 @theme {
   /* Font families */
-  --font-display: 'Geist', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Fluid typography tokens */
   --text-display: clamp(2rem, 4vw + 1rem, 3rem);
   --text-heading: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
   --text-subheading: clamp(1.125rem, 1.5vw + 0.5rem, 1.25rem);
-  --text-cta-heading: clamp(1.75rem, 3.5vw + 0.5rem, 3rem);
 
   /* Fluid spacing tokens */
-  --spacing-section: clamp(4rem, 6vw, 7.5rem);
-  --spacing-section-sm: clamp(3rem, 5vw, 5rem);
+  --spacing-section: clamp(4rem, 6vw, 5rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
 
-  /* Design colors */
-  --color-bg-dark: #000000;
-  --color-bg-surface: #111111;
-  --color-bg-light: #FFFFFF;
-  --color-bg-light-alt: #F7F7F7;
+  /* Backgrounds */
+  --color-bg-page: #F2F2F2;
+  --color-bg-dark: #1A1A1A;
+  --color-bg-dark-alt: #111111;
 
-  --color-border: #222222;
-  --color-border-subtle: #1A1A1A;
-  --color-border-light: #E5E5E5;
+  /* Text — light sections */
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
 
-  --color-text-primary: #EDEDED;
-  --color-text-secondary: #888888;
-  --color-text-dark: #0A0A0A;
-  --color-text-dark-secondary: #555555;
-  --color-text-muted: #777777;
+  /* Text — dark sections */
+  --color-text-light: #FFFFFF;
+  --color-text-light-secondary: #AAAAAA;
 
-  --color-accent: #8B5CF6;
-  --color-accent-text: #7C3AED;
+  /* 4 accent colors */
+  --color-orange: #E86A33;
+  --color-purple: #9333EA;
+  --color-cyan: #22D3EE;
+  --color-rose: #F43F5E;
 }
 
 /* =========================================
@@ -52,7 +52,7 @@ html {
 }
 
 body {
-  background: var(--color-bg-dark);
+  background: var(--color-bg-page);
   color: var(--color-text-primary);
   font-family: var(--font-body);
 }
@@ -69,7 +69,7 @@ h1, h2 {
 
 h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   text-wrap: balance;
 }
 
@@ -82,23 +82,23 @@ p, li, blockquote {
    ======================================== */
 
 ::selection {
-  background-color: var(--color-accent);
+  background-color: var(--color-orange);
   color: #FFFFFF;
 }
 
 /* =========================================
-   SCROLLBAR — dark theme
+   SCROLLBAR
    ======================================== */
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.2); }
 
 /* =========================================
    MICRO-INTERACTIONS
@@ -107,12 +107,12 @@ p, li, blockquote {
 a, button, input, textarea, select,
 [role="button"], [tabindex]:not([tabindex="-1"]) {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-duration: 150ms;
+  transition-timing-function: ease;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-orange);
   outline-offset: 2px;
 }
 
@@ -121,72 +121,269 @@ a, button, input, textarea, select,
 }
 
 /* =========================================
-   SECTION BACKGROUNDS — light-alt (used by FAQ, About)
+   DOT GRID BACKGROUNDS (pointillés gris)
    ======================================== */
 
-.section-light-alt {
-  background-color: var(--color-bg-light-alt);
-  color: var(--color-text-dark-secondary);
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-.section-light-alt h1,
-.section-light-alt h2,
-.section-light-alt h3,
-.section-light-alt h4,
-.section-light-alt h5,
-.section-light-alt h6,
-.section-light-alt .text-heading {
-  color: var(--color-text-dark);
+.dot-grid-dark {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 /* =========================================
-   GRID PATTERN BACKGROUNDS
+   SOFT 3D CARDS — colored shadow with blur
+   On dark bg: white card, colored border + shadow
+   On light bg: #F2F2F2 card, white border + colored shadow
    ======================================== */
 
-.grid-pattern {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* --- Cards on DARK backgrounds --- */
+.card-3d-orange {
+  background: #FFFFFF;
+  border: 1.5px solid #E86A33;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Grid fade masks */
-.grid-fade-center {
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 80%);
+.card-3d-orange:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(232, 106, 51, 0.25);
+}
+
+.card-3d-orange:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(232, 106, 51, 0.15);
+}
+
+/* --- Cards on LIGHT backgrounds (orange accent) --- */
+.card-3d-light-orange {
+  background: #F2F2F2;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-light-orange:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(232, 106, 51, 0.25);
+}
+
+.card-3d-light-orange:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(232, 106, 51, 0.15);
+}
+
+/* --- Cards on LIGHT backgrounds (purple accent) --- */
+.card-3d-light-purple {
+  background: #F2F2F2;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-light-purple:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(147, 51, 234, 0.25);
+}
+
+.card-3d-light-purple:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+}
+
+/* --- Cards on LIGHT backgrounds (cyan accent) --- */
+.card-3d-light-cyan {
+  background: #F2F2F2;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(34, 211, 238, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-light-cyan:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(34, 211, 238, 0.25);
+}
+
+.card-3d-light-cyan:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(34, 211, 238, 0.15);
+}
+
+/* --- Cards on LIGHT backgrounds (rose accent) --- */
+.card-3d-light-rose {
+  background: #F2F2F2;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-light-rose:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(244, 63, 94, 0.25);
+}
+
+.card-3d-light-rose:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(244, 63, 94, 0.15);
+}
+
+/* --- White cards with colored shadow (Results, Method on light bg) --- */
+.card-3d-white-orange {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-white-orange:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(232, 106, 51, 0.25);
+}
+
+.card-3d-white-orange:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(232, 106, 51, 0.15);
+}
+
+.card-3d-white-purple {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-white-purple:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(147, 51, 234, 0.25);
+}
+
+.card-3d-white-purple:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+}
+
+.card-3d-white-cyan {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(34, 211, 238, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-white-cyan:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(34, 211, 238, 0.25);
+}
+
+.card-3d-white-cyan:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(34, 211, 238, 0.15);
+}
+
+.card-3d-white-rose {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E5E5;
+  border-radius: 16px;
+  box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-white-rose:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(244, 63, 94, 0.25);
+}
+
+.card-3d-white-rose:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(244, 63, 94, 0.15);
 }
 
 /* =========================================
-   MOUSE-TRACKING SPOTLIGHT (cards)
+   3D BUTTONS — violet primary
    ======================================== */
 
-.card-spotlight {
-  position: relative;
-  overflow: hidden;
+/* Primary button — violet bg + violet shadow */
+.btn-3d {
+  background: #9333EA;
+  color: #FFFFFF;
+  border: none;
+  outline: 1.5px solid #9333EA;
+  outline-offset: 0px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.card-spotlight::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    300px circle at var(--mx, 50%) var(--my, 50%),
-    rgba(139, 92, 246, 0.06) 0%,
-    transparent 100%
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  z-index: 0;
+.btn-3d:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(147, 51, 234, 0.25);
 }
 
-.card-spotlight:hover::before {
-  opacity: 1;
+.btn-3d:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
 }
 
-.card-spotlight > * {
-  position: relative;
-  z-index: 1;
+/* Larger CTA variant (CTA section — radius 14, padding 18/40, font 18px) */
+.btn-3d-lg {
+  background: #9333EA;
+  color: #FFFFFF;
+  border: none;
+  outline: 1.5px solid #9333EA;
+  outline-offset: -1.5px;
+  border-radius: 14px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 18px 40px;
+  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-3d-lg:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(147, 51, 234, 0.25);
+}
+
+.btn-3d-lg:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+}
+
+/* Secondary button — lighter bg, violet border */
+.btn-secondary {
+  background: #F2F2F2;
+  color: #1A1A1A;
+  border: none;
+  outline: 1.5px solid #9333EA;
+  outline-offset: 0px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 6px 0 rgba(147, 51, 234, 0.25);
+}
+
+.btn-secondary:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
 }
 
 /* =========================================
@@ -213,9 +410,7 @@ a, button, input, textarea, select,
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal-card.is-visible {
@@ -227,8 +422,6 @@ a, button, input, textarea, select,
 .reveal-stagger > .reveal-card:nth-child(2) { transition-delay: 100ms; }
 .reveal-stagger > .reveal-card:nth-child(3) { transition-delay: 200ms; }
 .reveal-stagger > .reveal-card:nth-child(4) { transition-delay: 300ms; }
-.reveal-stagger > .reveal-card:nth-child(5) { transition-delay: 400ms; }
-.reveal-stagger > .reveal-card:nth-child(6) { transition-delay: 500ms; }
 
 /* =========================================
    STAT ITEMS — reveal
@@ -251,45 +444,14 @@ a, button, input, textarea, select,
 .stat-item.is-visible:nth-child(3) { transition-delay: 600ms; }
 
 /* =========================================
-   TOOLS GRID — fade in
-   ======================================== */
-
-.tool-cell {
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
-}
-
-.tool-cell svg {
-  transition: color 0.2s ease;
-}
-
-#tools-wall.is-visible .tool-cell {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.tool-cell:hover {
-  border-color: var(--color-border) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.tool-cell:hover svg {
-  color: var(--color-text-primary) !important;
-}
-
-/* =========================================
    NAV SCROLL STATE
    ======================================== */
 
 nav.scrolled {
-  background-color: rgba(0, 0, 0, 0.85) !important;
+  background-color: rgba(242, 242, 242, 0.9) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #222222 !important;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 /* =========================================
@@ -324,8 +486,6 @@ nav.scrolled {
 .mobile-menu.open .mobile-menu-link:nth-child(4) { transition-delay: 200ms; }
 .mobile-menu.open .mobile-menu-link:nth-child(5) { transition-delay: 250ms; }
 
-/* Hamburger icon toggle handled via SVG swap in Navigation.astro */
-
 body.menu-open { overflow: hidden; }
 
 /* =========================================
@@ -347,7 +507,7 @@ body.menu-open { overflow: hidden; }
   appearance: none;
   height: 6px;
   border-radius: 3px;
-  background: #222222;
+  background: #333333;
   outline: none;
   cursor: pointer;
 }
@@ -358,25 +518,25 @@ body.menu-open { overflow: hidden; }
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #8B5CF6;
-  border: 3px solid #111111;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+  background: #E86A33;
+  border: 3px solid #1A1A1A;
+  box-shadow: 0 0 8px rgba(232, 106, 51, 0.3);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .roi-slider::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  box-shadow: 0 0 14px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 14px rgba(232, 106, 51, 0.5);
 }
 
 .roi-slider::-moz-range-thumb {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #8B5CF6;
-  border: 3px solid #111111;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+  background: #E86A33;
+  border: 3px solid #1A1A1A;
+  box-shadow: 0 0 8px rgba(232, 106, 51, 0.3);
   cursor: pointer;
 }
 
@@ -389,11 +549,8 @@ body.menu-open { overflow: hidden; }
     animation: none !important;
     transition: none !important;
   }
-  .fade-in-section, .reveal-card, .stat-item, .tool-cell {
+  .fade-in-section, .reveal-card, .stat-item {
     opacity: 1;
     transform: none;
-  }
-  .card-spotlight::before {
-    display: none;
   }
 }

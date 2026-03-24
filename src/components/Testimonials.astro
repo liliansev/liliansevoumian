@@ -10,56 +10,80 @@ const testimonials = [
     name: "Ismail Landoulsi",
     role: "Co-Founder & COO @ CasanovaParis",
     image: ismailImg,
+    color: "orange",
   },
   {
     quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation et de sa volonté infaillible de servir un projet.",
     name: "Alexis Kovalenko",
     role: "Co-fondateur @ Contournement",
     image: alexisImg,
+    color: "purple",
   },
   {
     quote: "Il a une approche très professionnelle, un large spectre de connaissances, et un bon esprit de synthèse. Les projets qu'il prend en charge sont un succès.",
     name: "Benjamin Potet",
     role: "Solution Architect @ Customer Experience",
     image: benjaminImg,
+    color: "cyan",
   },
 ];
+
+const colorMap = {
+  orange: { shadow: 'card-3d-light-orange', quote: '#E86A33', separator: '#E86A33' },
+  purple: { shadow: 'card-3d-light-purple', quote: '#9333EA', separator: '#9333EA' },
+  cyan: { shadow: 'card-3d-light-cyan', quote: '#22D3EE', separator: '#22D3EE' },
+};
 ---
 
 <!-- Testimonials -->
 <div class="flex flex-col items-center gap-12">
   <!-- Header -->
   <div class="flex flex-col items-center gap-5">
-    <span
-      class="inline-block rounded-full border px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase"
-      style="background: #F3F0FF; border-color: rgba(139,92,246,0.19); color: #777777;"
-    >
+    <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#9333EA]">
       TÉMOIGNAGES
     </span>
-    <h2 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-[#0A0A0A] text-center">
+    <h2 class="font-display text-[40px] font-bold text-[#1A1A1A] text-center">
       Ce qu'ils en disent
     </h2>
   </div>
 
   <!-- Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 w-full">
-    {testimonials.map((t) => (
-      <div
-        class="flex flex-col gap-5 rounded-xl border p-6 md:p-8 bg-white"
-        style="border-color: #E5E5E5;"
-      >
-        <blockquote class="font-[var(--font-body)] text-[15px] md:text-base text-[#0A0A0A] leading-[1.6] flex-1">
-          &laquo;&nbsp;{t.quote}&nbsp;&raquo;
-        </blockquote>
-        <div class="h-px w-full" style="background: #E5E5E5;" aria-hidden="true"></div>
-        <div class="flex items-center gap-3">
-          <Image src={t.image} alt={t.name} width={40} height={40} class="w-10 h-10 rounded-full object-cover shrink-0" loading="lazy" />
-          <div class="flex flex-col gap-0.5">
-            <span class="font-[var(--font-body)] text-sm font-medium text-[#0A0A0A]">{t.name}</span>
-            <span class="font-[var(--font-body)] text-[13px] text-[#777777]">{t.role}</span>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full reveal-stagger">
+    {testimonials.map((t) => {
+      const colors = colorMap[t.color as keyof typeof colorMap];
+      return (
+        <div class={`${colors.shadow} flex flex-col gap-5 p-[28px_24px] reveal-card`}>
+          {/* Big colored quote mark */}
+          <span
+            class="font-display text-[64px] font-bold leading-[0.5] select-none"
+            style={`color: ${colors.quote};`}
+            aria-hidden="true"
+          >
+            &ldquo;
+          </span>
+
+          {/* Quote text */}
+          <blockquote class="font-body text-[15px] italic text-[var(--color-text-primary)] leading-[1.6] flex-1">
+            {t.quote}
+          </blockquote>
+
+          {/* Colored separator */}
+          <div
+            class="h-[3px] w-[40px]"
+            style={`background: ${colors.separator};`}
+            aria-hidden="true"
+          ></div>
+
+          {/* Author */}
+          <div class="flex items-center gap-3">
+            <Image src={t.image} alt={t.name} width={40} height={40} class="w-10 h-10 rounded-full object-cover shrink-0" loading="lazy" />
+            <div class="flex flex-col gap-1">
+              <span class="font-body text-[14px] font-bold text-[#1A1A1A]">{t.name}</span>
+              <span class="font-body text-[12px] text-[#666666]">{t.role}</span>
+            </div>
           </div>
         </div>
-      </div>
-    ))}
+      );
+    })}
   </div>
 </div>

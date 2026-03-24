@@ -3,182 +3,96 @@ const caseStudies = [
   {
     metric: "-70\u00A0%",
     metricLabel: "TEMPS DE TRAITEMENT",
-    code: "// e-commerce",
+    badgeText: "-70%",
     title: "Onboarding client\u00A0: de 45\u00A0min à 12\u00A0min",
     description: "Un e-commerce en forte croissance perdait 45\u00A0minutes par nouveau client sur la saisie CRM, la facturation et l'envoi des accès. Workflow Make déployé en 5\u00A0jours. Résultat\u00A0: tout est automatisé, zéro erreur.",
-    link: "Voir le détail",
-    href: "/cas-clients/onboarding-ecommerce",
+    color: "#E86A33",
+    cardClass: "card-3d-white-orange",
+    badgeTextColor: "text-white",
   },
   {
     metric: "3x",
     metricLabel: "CAPACITÉ DE TRAITEMENT",
-    code: "// SaaS B2B",
+    badgeText: "3x",
     title: "Support client\u00A0: 850\u00A0tickets/mois sans recrutement",
     description: "Un SaaS noyait son équipe support sous les demandes répétitives. Chatbot IA déployé en 3\u00A0semaines\u00A0: il résout le niveau\u00A01 et escalade les cas complexes avec tout le contexte.",
-    link: "Voir le détail",
-    href: "/cas-clients/chatbot-support-saas",
+    color: "#9333EA",
+    cardClass: "card-3d-white-purple",
+    badgeTextColor: "text-white",
   },
   {
     metric: "+15\u00A0h",
     metricLabel: "ÉCONOMISÉES PAR SEMAINE",
-    code: "// cabinet conseil",
+    badgeText: "+15h",
     title: "12 rapports manuels remplacés par des dashboards temps réel",
     description: "Un cabinet conseil passait 2\u00A0jours par semaine à compiler des rapports dans Excel. Dashboards automatisés avec alertes IA. ROI atteint en 3\u00A0semaines.",
-    link: "Voir le détail",
-    href: "/cas-clients/reporting-dashboards-ia",
+    color: "#22D3EE",
+    cardClass: "card-3d-white-cyan",
+    badgeTextColor: "text-[#1A1A1A]",
   },
 ];
 ---
 
-<section id="cas-clients" class="relative" style="background-color: #F7F7F7;">
-  <!-- Top separator -->
-  <div class="h-px w-full" style="background-color: #E5E5E5;"></div>
-
-  <div class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto">
+<section id="cas-clients" class="relative bg-white overflow-hidden">
+  <div class="relative z-[1] py-20 lg:py-[120px] px-[var(--spacing-section-x)]">
+    <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-12">
       <!-- Header -->
-      <div class="flex flex-col items-center gap-5 mb-12 fade-in-section">
-        <span
-          class="inline-block rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase"
-          style="background-color: #F3F0FF; border: 1px solid rgba(139, 92, 246, 0.19); color: #8B5CF6; font-family: var(--font-mono);"
-        >
+      <div class="flex flex-col items-center gap-5 fade-in-section">
+        <span class="inline-block text-[12px] font-semibold tracking-[2px] uppercase text-[#E86A33] font-mono">
           RÉSULTATS
         </span>
-        <h2
-          class="text-[length:var(--text-heading)] font-bold text-center"
-          style="color: #0A0A0A; font-family: var(--font-display);"
-        >
+        <h2 class="text-[40px] font-bold text-center text-[#1A1A1A] font-display w-full">
           Ce que l'automatisation change concrètement
         </h2>
-        <p
-          class="text-center max-w-[700px] text-[15px] md:text-[18px] leading-[1.6]"
-          style="color: #555555; font-family: var(--font-body);"
-        >
-          Des missions réelles, des chiffres vérifiables. Voici ce que l'automatisation a changé pour mes clients.
-        </p>
       </div>
 
       <!-- Desktop: 3 columns grid -->
-      <div class="hidden md:grid md:grid-cols-3 gap-4 md:gap-6 reveal-stagger">
+      <div class="hidden md:grid md:grid-cols-3 gap-6 reveal-stagger w-full">
         {caseStudies.map((study) => (
-          <div
-            class="reveal-card card-spotlight flex flex-col gap-5 p-6 md:p-8 rounded-xl"
-            style="background-color: #FFFFFF; border: 1px solid #E5E5E5;"
-          >
-            <!-- Metric -->
-            <div class="flex flex-col gap-1">
-              <span
-                class="text-[40px] lg:text-[56px] font-bold leading-none"
-                style="color: #8B5CF6; font-family: var(--font-mono);"
-              >
-                {study.metric}
-              </span>
-              <span
-                class="text-[13px] font-medium tracking-[1px] uppercase"
-                style="color: #8B5CF6; font-family: var(--font-mono);"
-              >
-                {study.metricLabel}
-              </span>
-            </div>
-
-            <!-- Separator -->
-            <div class="w-full h-px" style="background-color: #E5E5E5;"></div>
-
-            <!-- Code tag -->
+          <div class:list={["reveal-card flex flex-col gap-5 p-[28px_24px]", study.cardClass]}>
+            <!-- Badge pill -->
             <span
-              class="text-xs leading-normal"
-              style="color: rgba(139, 92, 246, 0.5); font-family: var(--font-mono);"
+              class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[14px] font-bold font-mono", study.badgeTextColor]}
+              style={`background: ${study.color};`}
             >
-              {study.code}
+              {study.badgeText}
             </span>
 
             <!-- Title -->
-            <h3
-              class="text-lg lg:text-xl font-semibold"
-              style="color: #0A0A0A; font-family: var(--font-display);"
-            >
+            <h3 class="text-[18px] font-bold text-[#1A1A1A] font-display">
               {study.title}
             </h3>
 
             <!-- Description -->
-            <p
-              class="text-[15px] leading-[1.6] flex-1"
-              style="color: #555555; font-family: var(--font-body);"
-            >
+            <p class="text-[14px] leading-[1.5] flex-1 text-[#666666] font-body">
               {study.description}
             </p>
-
-            <!-- Link -->
-            <a
-              href={study.href}
-              class="inline-flex items-center gap-1 text-sm mt-auto hover:opacity-80 transition-opacity min-h-[44px]"
-              style="color: #8B5CF6; font-family: var(--font-body);"
-            >
-              {study.link} &rarr;
-            </a>
           </div>
         ))}
       </div>
 
       <!-- Mobile: Horizontal scroll -->
-      <div class="md:hidden relative">
+      <div class="md:hidden relative w-full">
         <div class="reveal-stagger flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-0 pr-0">
           {caseStudies.map((study) => (
-            <div
-              class="reveal-card card-spotlight flex flex-col gap-5 p-6 rounded-xl snap-start shrink-0 w-[85vw] max-w-[340px]"
-              style="background-color: #FFFFFF; border: 1px solid #E5E5E5;"
-            >
-              <!-- Metric -->
-              <div class="flex flex-col gap-1">
-                <span
-                  class="text-[40px] font-bold leading-none"
-                  style="color: #8B5CF6; font-family: var(--font-mono);"
-                >
-                  {study.metric}
-                </span>
-                <span
-                  class="text-[13px] font-medium tracking-[1px] uppercase"
-                  style="color: #8B5CF6; font-family: var(--font-body);"
-                >
-                  {study.metricLabel}
-                </span>
-              </div>
-
-              <!-- Separator -->
-              <div class="w-full h-px" style="background-color: #E5E5E5;"></div>
-
-              <!-- Code tag -->
+            <div class:list={["reveal-card flex flex-col gap-5 p-6 snap-start shrink-0 w-[85vw] max-w-[340px]", study.cardClass]}>
+              <!-- Badge pill -->
               <span
-                class="text-xs leading-normal"
-                style="color: rgba(139, 92, 246, 0.5); font-family: var(--font-mono);"
+                class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[14px] font-bold font-mono", study.badgeTextColor]}
+                style={`background: ${study.color};`}
               >
-                {study.code}
+                {study.badgeText}
               </span>
 
               <!-- Title -->
-              <h3
-                class="text-lg font-semibold"
-                style="color: #0A0A0A; font-family: var(--font-display);"
-              >
+              <h3 class="text-[18px] font-bold text-[#1A1A1A] font-display">
                 {study.title}
               </h3>
 
               <!-- Description -->
-              <p
-                class="text-[15px] leading-[1.6] flex-1"
-                style="color: #555555; font-family: var(--font-body);"
-              >
+              <p class="text-[14px] leading-[1.5] flex-1 text-[#666666] font-body">
                 {study.description}
               </p>
-
-              <!-- Link -->
-              <a
-                href={study.href}
-                class="inline-flex items-center gap-1 text-sm mt-auto hover:opacity-80 transition-opacity min-h-[44px]"
-                style="color: #8B5CF6; font-family: var(--font-body);"
-              >
-                {study.link} &rarr;
-              </a>
             </div>
           ))}
 
@@ -189,13 +103,10 @@ const caseStudies = [
         <!-- Fade gradient on the right -->
         <div
           class="absolute top-0 right-0 bottom-0 w-12 pointer-events-none"
-          style="background: linear-gradient(to left, #F7F7F7, transparent);"
+          style="background: linear-gradient(to left, white, transparent);"
           aria-hidden="true"
         ></div>
       </div>
     </div>
   </div>
-
-  <!-- Bottom separator -->
-  <div class="h-px w-full" style="background-color: #E5E5E5;"></div>
 </section>
