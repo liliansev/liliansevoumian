@@ -79,9 +79,10 @@ const faqs = [
 </div>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
+  function initFaqAccordion() {
     const accordion = document.getElementById('faq-accordion');
-    if (!accordion) return;
+    if (!accordion || accordion.dataset.initialized) return;
+    accordion.dataset.initialized = 'true';
 
     accordion.addEventListener('click', (e) => {
       const trigger = (e.target as HTMLElement).closest('.faq-trigger') as HTMLButtonElement | null;
@@ -109,5 +110,13 @@ const faqs = [
         iconMinus.classList.remove('hidden');
       }
     });
-  });
+  }
+
+  // Initialize on all possible load events
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFaqAccordion);
+  } else {
+    initFaqAccordion();
+  }
+  document.addEventListener('astro:page-load', initFaqAccordion);
 </script>
