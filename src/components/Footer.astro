@@ -7,66 +7,55 @@ const navLinks = [
 ];
 
 const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/" },
-  { label: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian" },
-  { label: "Substack", href: "https://liliansevoumian.substack.com/" },
-];
-
-const legalLinks = [
-  { label: "Mentions légales", href: "/mentions-legales" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/", color: "#E86A33" },
+  { label: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian", color: "#9333EA" },
+  { label: "Substack", href: "https://liliansevoumian.substack.com/", color: "#22D3EE" },
 ];
 ---
 
-<!-- Footer -->
-<footer class="bg-[#000000]">
-  <!-- Gradient divider -->
-  <div class="h-px bg-gradient-to-r from-transparent via-[#222222] to-transparent" aria-hidden="true"></div>
+<!-- Footer — dark -->
+<footer class="bg-[var(--color-bg-dark)]">
+  <!-- Separator -->
+  <div class="h-[3px] bg-[#333333]" aria-hidden="true"></div>
 
-  <div class="py-[var(--spacing-section-sm)] px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto">
-    <!-- Main content -->
-    <div class="flex flex-col lg:flex-row lg:justify-between gap-12">
-      <!-- Left column -->
-      <div class="flex flex-col gap-4 lg:max-w-[380px]">
-        <span class="font-[var(--font-body)] text-base font-semibold text-[#EDEDED]">Lilian Sevoumian</span>
-        <p class="font-[var(--font-body)] text-sm text-[#777777] leading-[1.6]">
-          J'automatise les opérations des PME avec Make, n8n et l'IA.<br/>Moins de tâches manuelles, plus de croissance.
+  <!-- Main footer bar — 3-column horizontal -->
+  <div class="py-[40px] px-[var(--spacing-section-x)]">
+    <div class="max-w-[1200px] mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+      <!-- Left column: Name + Desc -->
+      <div class="flex flex-col gap-2">
+        <span class="font-display text-[18px] font-bold text-white">Lilian Sevoumian</span>
+        <p class="font-body text-[13px] text-[#888888] leading-[1.6]">
+          J'automatise les opérations des PME avec Make, n8n et l'IA.
         </p>
       </div>
 
-      <!-- Right side: 3 columns -->
-      <div class="flex flex-col md:flex-row gap-8 md:gap-20">
-        <!-- Navigation -->
-        <div class="flex flex-col gap-1">
-          <span class="font-[var(--font-mono)] text-[11px] font-medium text-[#777777] tracking-[2px] uppercase mb-1">NAVIGATION</span>
-          {navLinks.map((link) => (
-            <a href={link.href} class="font-[var(--font-body)] text-sm text-[#888888] hover:text-[#EDEDED] transition-colors duration-200 min-h-[44px] flex items-center">{link.label}</a>
-          ))}
-        </div>
+      <!-- Center column: Nav links — horizontal -->
+      <div class="flex flex-wrap items-center gap-6">
+        {navLinks.map((link) => (
+          <a href={link.href} class="font-body text-[13px] font-medium text-[#AAAAAA] hover:text-white transition-colors duration-200 min-h-[44px] flex items-center">{link.label}</a>
+        ))}
+      </div>
 
-        <!-- Social -->
-        <div class="flex flex-col gap-1">
-          <span class="font-[var(--font-mono)] text-[11px] font-medium text-[#777777] tracking-[2px] uppercase mb-1">SOCIAL</span>
-          {socialLinks.map((link) => (
-            <a
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-[var(--font-body)] text-sm text-[#888888] hover:text-[#EDEDED] transition-colors duration-200 min-h-[44px] flex items-center"
-            >{link.label}</a>
-          ))}
-        </div>
+      <!-- Right column: Social links — colored -->
+      <div class="flex items-center gap-4">
+        {socialLinks.map((link) => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-mono text-[12px] font-medium hover:opacity-80 transition-opacity duration-200 min-h-[44px] flex items-center"
+            style={`color: ${link.color}`}
+          >{link.label}</a>
+        ))}
       </div>
     </div>
+  </div>
 
-    <!-- Bottom divider -->
-    <div class="h-px bg-[#1A1A1A] mt-12 mb-6" aria-hidden="true"></div>
-
-    <!-- Bottom bar -->
-    <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-      <span class="font-[var(--font-body)] text-xs text-[#777777]">&copy; 2026 Lilian Sevoumian. Tous droits réservés.</span>
-      <a href="/mentions-legales" class="font-[var(--font-body)] text-xs text-[#777777] hover:text-[#EDEDED] transition-colors duration-200 min-h-[44px] flex items-center">Mentions légales</a>
-    </div>
+  <!-- Copyright bar -->
+  <div class="bg-[var(--color-bg-dark-alt)] py-[20px] px-[var(--spacing-section-x)]">
+    <div class="max-w-[1200px] mx-auto flex items-center justify-center gap-4">
+      <span class="font-body text-[12px] text-[#666666]">&copy; 2026 Lilian Sevoumian. Tous droits r&eacute;serv&eacute;s.</span>
+      <a href="/mentions-legales" class="font-body text-[12px] text-[#666666] hover:text-white transition-colors duration-200">Mentions l&eacute;gales</a>
     </div>
   </div>
 </footer>

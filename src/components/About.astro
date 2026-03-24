@@ -1,104 +1,66 @@
 ---
 import { Image } from 'astro:assets';
-import lilianPortrait from '../assets/lilian-portrait.png';
+import lilianPortrait from '../assets/profile-linkedin-lilian.jpeg';
 
-const stats = [
-  { number: "500+", label: "Automatisations déployées" },
-  { number: "200h+", label: "Économisées chaque mois" },
-  { number: "5ans", label: "D'expérience" },
+const tools = [
+  { name: "Make", textColor: "#E86A33", bgColor: "#E86A3320", borderColor: "#E86A33" },
+  { name: "n8n", textColor: "#9333EA", bgColor: "#9333EA20", borderColor: "#9333EA" },
+  { name: "Zapier", textColor: "#22D3EE", bgColor: "#22D3EE20", borderColor: "#22D3EE" },
+  { name: "Claude", textColor: "#E86A33", bgColor: "#E86A3320", borderColor: "#E86A33" },
+  { name: "Notion", textColor: "#FFFFFF", bgColor: "#FFFFFF10", borderColor: "rgba(255,255,255,0.25)" },
+  { name: "Airtable", textColor: "#22D3EE", bgColor: "#22D3EE20", borderColor: "#22D3EE" },
 ];
-
-const tags = ["Make", "n8n", "Claude", "Zapier", "Airtable", "Notion"];
 ---
 
-<section id="a-propos" class="section-light-alt py-[var(--spacing-section)] px-[var(--spacing-section-x)]" style="background-color: #F7F7F7;">
-  <div class="max-w-[1200px] mx-auto">
-    <!-- Mobile: photo first -->
-    <div class="md:hidden mb-8">
-      <div class="w-full h-[250px] rounded-xl overflow-hidden" style="border: 2px solid rgba(139,92,246,0.13);">
-        <Image src={lilianPortrait} alt="Lilian Sevoumian" width={600} height={400} class="w-full h-full object-cover object-top" style="transform: scaleX(-1);" loading="lazy" />
-      </div>
+<div id="expertise" class="flex flex-col items-center gap-12">
+  <!-- About card: photo + text -->
+  <div id="a-propos" class="flex flex-col md:flex-row items-center gap-8 md:gap-[40px] w-full">
+    <!-- Photo -->
+    <div class="shrink-0">
+      <Image
+        src={lilianPortrait}
+        alt="Lilian Sevoumian"
+        width={280}
+        height={280}
+        class="w-[180px] h-[180px] md:w-[240px] md:h-[240px] rounded-[16px] object-cover"
+        style="background: #333333; border: 3px solid #E86A33;"
+        loading="lazy"
+      />
     </div>
 
-    <!-- Desktop: horizontal layout -->
-    <div class="flex flex-col md:flex-row md:gap-16">
-      <!-- Left column: text content -->
-      <div class="flex-1 flex flex-col gap-8">
-        <!-- Badge -->
-        <div>
-          <span class="inline-block rounded-full px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase" style="background: #F3F0FF; border: 1px solid rgba(139,92,246,0.19); color: #777777;">
-            QUI JE SUIS
-          </span>
-        </div>
+    <!-- Text content -->
+    <div class="flex flex-col gap-4 text-center md:text-left flex-1">
+      <h3 class="font-display font-bold text-white text-[28px]">
+        Lilian Sevoumian
+      </h3>
+      <p class="font-body text-[16px]" style="color: #AAAAAA;">
+        Expert en automatisations & intelligence artificielle
+      </p>
+      <p class="font-body text-[14px] leading-[1.5]" style="color: #888888;">
+        Depuis plus de 5&nbsp;ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. Mon approche&nbsp;: je commence toujours par comprendre votre métier avant de toucher à un seul outil.
+      </p>
 
-        <!-- Code tag -->
-        <span style="font-family: var(--font-mono); font-size: 13px; color: rgba(139,92,246,0.5); margin-top: -16px;">
-          // à propos
+      <!-- Certifications -->
+      <div class="flex flex-wrap justify-center md:justify-start gap-3">
+        <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold" style="color: #E86A33; background: #E86A3320; border: 2px solid #E86A33;">
+          Make Partner Officiel
         </span>
-
-        <!-- Name -->
-        <h2 class="text-[length:var(--text-heading)]" style="font-family: var(--font-display); font-weight: 700; color: #0A0A0A; margin-top: -16px;">
-          Lilian Sevoumian
-        </h2>
-
-        <!-- Job title -->
-        <p style="font-family: var(--font-body); font-size: 18px; color: #555555; margin-top: -16px;">
-          Expert en automatisations &amp; Intelligence Artificielle
-        </p>
-
-        <!-- Bio -->
-        <p style="font-family: var(--font-body); font-size: 16px; color: #555555; line-height: 1.6;">
-          Depuis plus de 5&nbsp;ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. Mon approche&nbsp;: je commence toujours par comprendre votre métier et vos contraintes avant de toucher à un seul outil. Résultat&nbsp;: des automatisations qui tiennent dans la durée, pas des usines à gaz que personne ne maintient.
-        </p>
-
-        <!-- Stats row -->
-        <div class="grid grid-cols-3 gap-4 md:gap-10">
-          {stats.map((stat) => (
-            <div class="flex flex-col">
-              <span class="text-2xl md:text-[32px]" style="font-family: var(--font-mono); font-weight: 700; color: #8B5CF6; line-height: 1.2;">
-                {stat.number}
-              </span>
-              <span style="font-family: var(--font-body); font-size: 13px; color: #777777;">
-                {stat.label}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <!-- Certifications & Partner -->
-        <div class="flex flex-wrap items-center gap-2.5">
-          <span
-            class="inline-flex items-center gap-2 rounded-full px-4 py-1.5"
-            style="background: #8B5CF6; color: white; font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.5px;"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
-            Make Partner Officiel
-          </span>
-          <span
-            class="inline-flex items-center gap-2 rounded-full px-4 py-1.5"
-            style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); color: #8B5CF6; font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.5px;"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Certification Make Niveau 5
-          </span>
-        </div>
-
-        <!-- Tech tags -->
-        <div class="grid grid-cols-3 md:flex md:flex-wrap gap-2">
-          {tags.map((tag) => (
-            <span class="text-center" style="background: #F3F0FF; border: 1px solid rgba(139,92,246,0.13); border-radius: 6px; padding: 4px 12px; font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: #7C3AED;">
-              {tag}
-            </span>
-          ))}
-        </div>
+        <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold" style="color: #E86A33; background: #E86A3320; border: 2px solid #E86A33;">
+          Certification Make Niveau 5
+        </span>
       </div>
 
-      <!-- Right column: photo (desktop only) -->
-      <div class="hidden md:flex items-start">
-        <div class="rounded-xl overflow-hidden shrink-0" style="width: 420px; height: 500px; border: 2px solid rgba(139,92,246,0.13);">
-          <Image src={lilianPortrait} alt="Lilian Sevoumian" width={420} height={500} class="w-full h-full object-cover object-top" style="transform: scaleX(-1);" loading="lazy" />
-        </div>
+      <!-- Tool pills — intégrés ici au lieu d'une section séparée -->
+      <div class="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
+        {tools.map((tool) => (
+          <span
+            class="font-mono text-[12px] font-semibold rounded-[10px] px-3 py-2"
+            style={`color: ${tool.textColor}; background: ${tool.bgColor}; border: 2px solid ${tool.borderColor};`}
+          >
+            {tool.name}
+          </span>
+        ))}
       </div>
     </div>
   </div>
-</section>
+</div>

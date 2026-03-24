@@ -2,10 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Hero from '../components/Hero.astro';
-import Manifeste from '../components/Manifeste.astro';
 import Problem from '../components/Problem.astro';
 import About from '../components/About.astro';
-import Tools from '../components/Tools.astro';
 import Services from '../components/Services.astro';
 import CaseStudies from '../components/CaseStudies.astro';
 import Testimonials from '../components/Testimonials.astro';
@@ -13,7 +11,6 @@ import Process from '../components/Process.astro';
 import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
-import LogosBandeau from '../components/LogosBandeau.astro';
 import ROICalculator from '../components/ROICalculator.tsx';
 
 const faqSchema = [
@@ -37,62 +34,24 @@ const faqSchema = [
 
 /*
  * =============================================
- * INFORMATION ARCHITECTURE — AUDIT & RATIONALE
+ * INFORMATION ARCHITECTURE — Pencil Design
  * =============================================
  *
- * Section order follows the AIDA conversion funnel:
- *   Attention → Interest → Desire → Action
+ * Section order matches the Pencil design mockup:
  *
- * PREVIOUS ORDER:
- *   Hero → Manifeste → Problem → About → Tools → Services →
- *   CaseStudies → Testimonials+Process → FAQ → CTA
+ *  1. Navigation
+ *  2. Hero              (light bg-page)
+ *  3. Problem           (dark bg-dark)
+ *  4. Services          (light bg-page)
+ *  5. CaseStudies       (white #FFFFFF)
+ *  6. ROI Calculator    (dark bg-dark)
+ *  7. Tools + About     (SAME dark section bg-dark)
+ *  8. Testimonials      (light bg-page #F2F2F2)
+ *  9. Process + FAQ     (SAME white #FFFFFF)
+ * 10. CTA               (dark bg-dark)
+ * 11. Footer            (dark)
  *
- * PROBLEMS IDENTIFIED:
- *
- * 1. Manifeste too early (was #2).
- *    A personal conviction quote has no weight when the visitor
- *    doesn't know who Lilian is yet. Moved to #7 — after results
- *    and bio establish credibility, the manifeste becomes a
- *    compelling belief statement rather than an empty claim.
- *
- * 2. Problem was after Manifeste (was #3).
- *    The pain agitation should immediately follow the Hero promise.
- *    Moved to #2: "Here's what you promised to fix — now show me
- *    the pain is real." Classic problem-solution pairing.
- *
- * 3. Services came after Tools (was #6 after #5).
- *    WHAT you do should come before HOW (tools). The visitor needs
- *    to understand the offer before caring about the tech stack.
- *    Services moved to #3, Tools to #5.
- *
- * 4. About was too early (was #4).
- *    Bio before proof = unearned trust. Moved to #6 — after case
- *    studies prove results, the bio has authority.
- *
- * 5. Two dark-dark transitions (Hero+Manifeste, Tools+Services).
- *    The new order creates a strict dark/light alternation:
- *    dark → white → dark → light-gray → dark → light-gray →
- *    dark → white → light-gray → dark
- *    No consecutive same-tone sections.
- *
- * NEW ORDER (AIDA):
- *   1. Hero        (dark, #000)      — ATTENTION: promise + stats
- *   2. Problem     (white, #FFF)     — INTEREST: agitate the pain
- *   3. Services    (dark, #111)      — INTEREST→DESIRE: the solution
- *   4. CaseStudies (light-gray, #F7) — DESIRE: proof with numbers
- *   5. Tools       (dark, #000)      — DESIRE: technical credibility
- *   6. About       (light-gray, #F7) — DESIRE: personal credibility
- *   7. Manifeste   (dark, #000)      — DESIRE: conviction statement
- *   8. Testimonials+Process (white)  — DESIRE: social proof + method
- *   9. FAQ         (light-gray, #F7) — objection handling
- *  10. CTA         (dark, #000)      — ACTION: final conversion
- *
- * CTA TOUCHPOINTS (5 total — sufficient):
- *   - Nav bar (persistent)
- *   - Hero section
- *   - CaseStudies "Un cas similaire ?" links (×3)
- *   - Process step 1 mentions "Appel stratégique"
- *   - Final CTA section
+ * Removed: Manifeste, LogosBandeau
  *
  * =============================================
  */
@@ -102,48 +61,45 @@ const faqSchema = [
   <Navigation />
 
   <main id="main-content">
-    <!-- 1. ATTENTION — Promise + stats + primary CTA -->
+    <!-- 1. Hero (light bg-page) -->
     <Hero />
 
-    <!-- 2. INTEREST — Agitate the pain immediately after the promise -->
+    <!-- 2. Problem (dark bg-dark) -->
     <Problem />
 
-    <!-- 3. INTEREST→DESIRE — Present the solution (what I do) -->
+    <!-- 3. Services (light bg-page) -->
     <Services />
 
-    <!-- 4. DESIRE — Prove it works with real numbers -->
+    <!-- 4. Case Studies / Results (white #FFFFFF) -->
     <CaseStudies />
 
-    <!-- 4b. ROI Calculator — project your own gains -->
+    <!-- 5. ROI Calculator (dark bg-dark) -->
     <ROICalculator client:visible />
 
-    <!-- 5. DESIRE — Technical credibility (how I do it) -->
-    <Tools />
-
-    <!-- 6. DESIRE — Personal credibility (who I am) -->
-    <About />
-
-    <!-- 7. DESIRE — Conviction statement (now it has authority) -->
-    <Manifeste />
-
-    <!-- 7b. Trust — Client logos -->
-    <LogosBandeau />
-
-    <!-- 8. DESIRE — Social proof + clear method (reduces friction) -->
-    <section id="temoignages" class="bg-white py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-      <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-20">
-        <Testimonials />
-        <Process />
-      </div>
-      <div class="max-w-[1200px] mx-auto mt-[var(--spacing-section)]">
-        <div class="h-px bg-[#E5E5E5]" aria-hidden="true"></div>
+    <!-- 6. About + Stack (dark section) -->
+    <section class="relative bg-[#1A1A1A] py-[80px] px-6 md:px-[120px] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-dark opacity-30" aria-hidden="true"></div>
+      <div class="relative z-[1] max-w-[1200px] mx-auto">
+        <About />
       </div>
     </section>
 
-    <!-- 9. OBJECTION HANDLING — Answer remaining doubts -->
-    <FAQ />
+    <!-- 7. Testimonials (light bg-page) -->
+    <section id="temoignages" class="bg-[var(--color-bg-page)] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+      <div class="max-w-[1200px] mx-auto">
+        <Testimonials />
+      </div>
+    </section>
 
-    <!-- 10. ACTION — Final conversion CTA -->
+    <!-- 8. Process + FAQ (SAME white #FFFFFF section) -->
+    <section class="bg-white py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+      <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-20">
+        <Process />
+        <FAQ />
+      </div>
+    </section>
+
+    <!-- 9. CTA (dark bg-dark) -->
     <CTA />
   </main>
 

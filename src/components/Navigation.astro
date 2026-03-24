@@ -2,45 +2,45 @@
 const navLinks = [
   { href: "/#expertise", label: "Expertise" },
   { href: "/#methode", label: "Méthode" },
-  { href: "/#temoignages", label: "Témoignages" },
+  { href: "/#temoignages", label: "Résultats" },
   { href: "/#faq", label: "FAQ" },
 ];
 ---
 
 <!-- Nav -->
-<nav id="main-nav" class="fixed top-0 w-full z-50 bg-black/0 backdrop-blur-sm transition-all duration-300 border-b border-transparent">
-  <div class="flex h-[56px] max-w-[1200px] mx-auto px-[var(--spacing-section-x)] items-center justify-between">
-    <!-- Logo -->
-    <a href="/" class="font-[var(--font-body)] text-sm md:text-base font-semibold text-[#EDEDED]">
+<nav id="main-nav" class="fixed top-0 w-full z-50 bg-[var(--color-bg-page)] transition-all duration-300" style="border-bottom: 3px solid rgba(255,255,255,0.5);">
+  <div class="flex max-w-[1440px] mx-auto px-5 md:px-[80px] py-[16px] items-center justify-between">
+    <!-- Logo — Bricolage Grotesque 18px bold -->
+    <a href="/" class="font-display text-[18px] font-bold text-[#1A1A1A]">
       Lilian Sevoumian
     </a>
 
-    <!-- Nav Links (desktop) -->
+    <!-- Nav Links (desktop) — DM Sans 14px medium, gap 32px -->
     <div class="hidden md:flex items-center gap-8">
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class="font-[var(--font-body)] text-sm text-[#888888] hover:text-[#EDEDED] transition-colors"
+          class="font-body text-[14px] font-medium text-[#666666] hover:text-[#1A1A1A] transition-colors"
         >
           {link.label}
         </a>
       ))}
     </div>
 
-    <!-- CTA (desktop) -->
+    <!-- CTA (desktop) — padding [8, 20], DM Sans 14px semibold -->
     <div class="hidden md:block">
       <a
         href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-        class="inline-flex items-center justify-center font-[var(--font-body)] text-sm font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-6 py-2.5 transition-colors"
+        class="btn-3d inline-flex items-center justify-center font-body text-[14px] font-semibold px-5 py-2"
       >
-        Parlons automatisations
+        Parlons automatisations →
       </a>
     </div>
 
     <!-- Hamburger (mobile) -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-[#EDEDED]"
+      class="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-primary)]"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
     >
@@ -55,13 +55,13 @@ const navLinks = [
 </nav>
 
 <!-- Mobile Menu Overlay -->
-<div id="mobile-menu" class="mobile-menu fixed inset-0 top-[56px] z-[100] bg-black md:hidden">
+<div id="mobile-menu" class="mobile-menu fixed inset-0 top-[56px] z-[100] bg-white/95 backdrop-blur-lg md:hidden">
   <div class="mobile-menu-content h-full flex flex-col px-5 py-8">
     <div class="flex-1 space-y-2">
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class="mobile-menu-link block font-[var(--font-body)] text-lg font-medium text-[#EDEDED] py-3 border-b border-[#222222] min-h-[48px] flex items-center"
+          class="mobile-menu-link block font-body text-lg font-medium text-[var(--color-text-primary)] py-3 border-b border-[#E5E5E5] min-h-[48px] flex items-center"
         >
           {link.label}
         </a>
@@ -69,21 +69,12 @@ const navLinks = [
     </div>
     <a
       href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-      class="w-full inline-flex items-center justify-center font-[var(--font-body)] text-[15px] font-medium text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg px-7 py-3.5 min-h-[48px] transition-colors"
+      class="btn-3d w-full inline-flex items-center justify-center font-body text-[15px] font-semibold px-7 py-3.5 min-h-[48px]"
     >
-      Parlons automatisations
+      Parlons automatisations &rarr;
     </a>
   </div>
 </div>
-
-<style>
-  nav.scrolled {
-    background-color: rgba(0, 0, 0, 0.85) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom-color: #222222 !important;
-  }
-</style>
 
 <script>
   const menuBtn = document.getElementById('mobile-menu-btn');

@@ -5,81 +5,78 @@ const faqs = [
   {
     question: "Comment se déroule une mission type\u00a0?",
     answer: "Tout commence par un appel de 30\u00a0minutes gratuit où on identifie vos process les plus chronophages. Sous 48\u00a0h, je vous envoie un plan d'action détaillé avec livrables, délais et budget fixe. Pas de surprise\u00a0: vous validez chaque étape avant que je passe à la suivante.",
-    open: false,
+    color: "#E86A33",
   },
   {
     question: "Combien ça coûte et quel retour sur investissement attendre\u00a0?",
     answer: "Un premier workflow d'automatisation démarre à partir de 1\u00a0500\u00a0€. La plupart de mes clients constatent un ROI dès le premier mois\u00a0: quand vous économisez 15\u00a0h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès le premier appel.",
-    open: false,
+    color: "#9333EA",
   },
   {
     question: "Combien de temps faut-il pour voir des résultats\u00a0?",
     answer: "Un workflow simple est déployé en 3 à 5\u00a0jours. Un projet complet (diagnostic + plusieurs automatisations + formation) prend 4 à 8\u00a0semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
-    open: false,
+    color: "#22D3EE",
   },
   {
     question: "Et si mes outils changent ou si j'ai besoin d'évolutions\u00a0?",
     answer: "Les automatisations sont construites de façon modulaire\u00a0: ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
-    open: false,
+    color: "#F43F5E",
   },
 ];
 ---
 
-<!-- FAQ -->
-<section id="faq" class="section-light-alt py-[var(--spacing-section-sm)] px-[var(--spacing-section-x)]">
-  <div class="max-w-[1200px] mx-auto">
-    <!-- Header -->
-    <div class="flex flex-col items-center gap-5 mb-12">
-      <span
-        class="inline-block rounded-full border px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-medium tracking-[2px] uppercase"
-        style="background: #F3F0FF; border-color: rgba(139,92,246,0.19); color: #777777;"
-      >
-        QUESTIONS FRÉQUENTES
-      </span>
-      <h2 class="font-[var(--font-display)] text-[length:var(--text-heading)] font-bold text-[#0A0A0A] text-center">
-        Questions fréquentes
-      </h2>
-      <p class="font-[var(--font-body)] text-[15px] md:text-lg text-[#555555] leading-[1.6] text-center max-w-[600px]">
-        Tout ce qu'il faut savoir avant de démarrer.
-      </p>
-    </div>
-
-    <!-- Accordion -->
-    <div class="max-w-[800px] mx-auto border-t" style="border-color: #E5E5E5;" id="faq-accordion">
-      {faqs.map((faq, index) => (
-        <div class="faq-item border-b" style="border-color: #E5E5E5;">
-          <button
-            type="button"
-            class="faq-trigger w-full flex items-center justify-between py-5 md:py-6 text-left cursor-pointer min-h-[56px]"
-            aria-expanded={faq.open ? "true" : "false"}
-            aria-controls={`faq-answer-${index}`}
-            data-faq-index={index}
-          >
-            <span class="font-[var(--font-display)] text-base md:text-lg font-semibold text-[#0A0A0A] pr-4">
-              {faq.question}
-            </span>
-            <Icon
-              name="lucide:plus"
-              class:list={["faq-icon-plus w-5 h-5 text-[#8B5CF6] shrink-0 transition-opacity duration-200", faq.open ? "hidden" : ""]}
-            />
-            <Icon
-              name="lucide:minus"
-              class:list={["faq-icon-minus w-5 h-5 text-[#8B5CF6] shrink-0 transition-opacity duration-200", faq.open ? "" : "hidden"]}
-            />
-          </button>
-          <div
-            id={`faq-answer-${index}`}
-            class:list={["faq-answer overflow-hidden transition-all duration-300 ease-in-out", faq.open ? "max-h-96 pb-6" : "max-h-0"]}
-          >
-            <p class="font-[var(--font-body)] text-[15px] text-[#555555] leading-[1.6]">
-              {faq.answer}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
+<!-- FAQ Accordion -->
+<div id="faq" class="flex flex-col items-center gap-12 w-full">
+  <!-- Header -->
+  <div class="flex flex-col items-center gap-5">
+    <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#9333EA]">
+      FAQ
+    </span>
+    <h2 class="font-display text-[28px] md:text-[40px] font-bold text-[#1A1A1A] text-center">
+      Questions fréquentes
+    </h2>
   </div>
-</section>
+
+  <!-- Accordion -->
+  <div class="max-w-[800px] w-full mx-auto flex flex-col gap-4" id="faq-accordion">
+    {faqs.map((faq, index) => (
+      <div
+        class="faq-item rounded-[16px] overflow-hidden"
+        style={`background: #FFFFFF; border: 2px solid #EBEBEB; box-shadow: 5px 5px 10px 0 ${faq.color}35;`}
+      >
+        <button
+          type="button"
+          class="faq-trigger w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer min-h-[56px]"
+          aria-expanded="false"
+          aria-controls={`faq-answer-${index}`}
+          data-faq-index={index}
+        >
+          <span class="font-body text-[16px] font-bold text-[#1A1A1A] pr-4">
+            {faq.question}
+          </span>
+          <Icon
+            name="lucide:plus"
+            class="faq-icon-plus w-5 h-5 shrink-0 transition-transform duration-300"
+            style={`color: ${faq.color};`}
+          />
+          <Icon
+            name="lucide:minus"
+            class="faq-icon-minus w-5 h-5 shrink-0 transition-transform duration-300 hidden"
+            style={`color: ${faq.color};`}
+          />
+        </button>
+        <div
+          id={`faq-answer-${index}`}
+          class="faq-answer overflow-hidden transition-all duration-300 ease-in-out max-h-0"
+        >
+          <p class="font-body text-[14px] text-[#666666] leading-[1.6] px-5 md:px-6 pb-5 md:pb-6">
+            {faq.answer}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
 <script>
   document.addEventListener('astro:page-load', () => {
@@ -99,17 +96,15 @@ const faqs = [
       const iconMinus = item.querySelector('.faq-icon-minus') as HTMLElement;
 
       if (isExpanded) {
-        // Collapse
         trigger.setAttribute('aria-expanded', 'false');
         answer.classList.remove('max-h-96', 'pb-6');
         answer.classList.add('max-h-0');
         iconPlus.classList.remove('hidden');
         iconMinus.classList.add('hidden');
       } else {
-        // Expand
         trigger.setAttribute('aria-expanded', 'true');
         answer.classList.remove('max-h-0');
-        answer.classList.add('max-h-96', 'pb-6');
+        answer.classList.add('max-h-96');
         iconPlus.classList.add('hidden');
         iconMinus.classList.remove('hidden');
       }
