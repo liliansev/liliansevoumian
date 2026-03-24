@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import heroImage from '../assets/cube-3d-automatisation-ia-make.png';
+
 const stats = [
   { number: "500+", label: "automatisations déployées" },
   { number: "2\u00A0000\u00A0h+", label: "économisées chaque mois" },
@@ -11,55 +14,72 @@ const stats = [
   <!-- Dot grid background -->
   <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
 
-  <!-- Content -->
-  <div class="relative z-[1] max-w-[1440px] mx-auto w-full py-[80px] px-[80px] md:px-[120px]">
-    <div class="flex flex-col items-start text-left gap-10">
+  <!-- Content — 2 columns: text left, image right -->
+  <div class="relative z-[1] max-w-[1440px] mx-auto w-full py-[60px] md:py-[80px] px-6 md:px-[120px]">
+    <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
-      <!-- Badge — PURPLE per Pencil -->
-      <div class="inline-flex items-center rounded-full px-4 py-2" style="background: #9333EA20; border: 2px solid #9333EA;">
-        <span class="font-body text-[13px] font-semibold text-[#9333EA]">
-          Expert Automatisation & IA
-        </span>
+      <!-- Left column: text -->
+      <div class="flex flex-col items-start text-left gap-8 flex-1 min-w-0">
+
+        <!-- Badge -->
+        <div class="inline-flex items-center rounded-full px-4 py-2" style="background: #9333EA20; border: 2px solid #9333EA;">
+          <span class="font-body text-[13px] font-semibold text-[#9333EA]">
+            Expert Automatisation & IA
+          </span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="font-display font-bold text-[32px] md:text-[48px] lg:text-[56px] text-[var(--color-text-primary)] leading-[1.1]">
+          Vos process manuels vous coûtent des heures. <span class="text-[#9333EA]">Je les automatise.</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="font-body text-[16px] md:text-[18px] text-[#666666] leading-[1.5] max-w-[600px]">
+          Automatisations Make, n8n, Zapier et intégrations IA sur mesure. Vos équipes se concentrent sur ce qui compte.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row items-start gap-5">
+          <a
+            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+            class="btn-3d inline-flex items-center justify-center font-body text-[16px] font-semibold px-8 py-4"
+          >
+            Parlons automatisations →
+          </a>
+          <a
+            href="/#temoignages"
+            class="btn-secondary inline-flex items-center justify-center font-body text-[16px] font-semibold px-8 py-4"
+          >
+            Voir mes résultats
+          </a>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="flex flex-wrap items-start gap-4 md:gap-6">
+          {stats.map((stat) => (
+            <div class="stat-item flex flex-col items-center gap-1 rounded-[12px] px-5 py-4 md:px-6 md:py-5" style="background: #F2F2F2; border: 3px solid rgba(255,255,255,0.5); box-shadow: 2px 4px 12px rgba(147,51,234,0.30);">
+              <span class="font-display text-[22px] md:text-[32px] font-bold text-[#9333EA]">
+                {stat.number}
+              </span>
+              <span class="font-body text-[12px] md:text-[13px] text-[#666666] text-center">
+                {stat.label}
+              </span>
+            </div>
+          ))}
+        </div>
+
       </div>
 
-      <!-- Headline — 56px Bricolage Grotesque, lineHeight 1.1, max-w 900px -->
-      <h1 class="font-display font-bold text-[32px] md:text-[56px] text-[var(--color-text-primary)] leading-[1.1] max-w-[900px]">
-        Vos process manuels vous coûtent des heures. <span class="text-[#9333EA]">Je les automatise.</span>
-      </h1>
-
-      <!-- Subtitle — DM Sans 18px, max-w 700px -->
-      <p class="font-body text-[16px] md:text-[18px] text-[#666666] leading-[1.5] max-w-[700px]">
-        Automatisations Make, n8n, Zapier et intégrations IA sur mesure. Vos équipes se concentrent sur ce qui compte.
-      </p>
-
-      <!-- CTA Buttons — gap 20px, both with orange shadow -->
-      <div class="flex flex-col sm:flex-row items-start gap-5">
-        <a
-          href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-          class="btn-3d inline-flex items-center justify-center font-body text-[16px] font-semibold px-8 py-4"
-        >
-          Parlons automatisations →
-        </a>
-        <a
-          href="/#temoignages"
-          class="btn-secondary inline-flex items-center justify-center font-body text-[16px] font-semibold px-8 py-4"
-        >
-          Voir mes résultats
-        </a>
-      </div>
-
-      <!-- Stats Row — Bricolage Grotesque 36px numbers, bg #F2F2F2, purple shadow -->
-      <div class="flex flex-wrap items-start gap-6">
-        {stats.map((stat) => (
-          <div class="stat-item flex flex-col items-center gap-1 rounded-[12px] px-6 py-5" style="background: #F2F2F2; border: 3px solid rgba(255,255,255,0.5); box-shadow: 2px 4px 12px rgba(147,51,234,0.30);">
-            <span class="font-display text-[24px] md:text-[36px] font-bold text-[#9333EA]">
-              {stat.number}
-            </span>
-            <span class="font-body text-[13px] text-[#666666] text-center">
-              {stat.label}
-            </span>
-          </div>
-        ))}
+      <!-- Right column: 3D cube image -->
+      <div class="flex-shrink-0 w-[280px] md:w-[380px] lg:w-[480px]">
+        <Image
+          src={heroImage}
+          alt="Cube 3D automatisation IA Make n8n — expert freelance"
+          width={960}
+          height={960}
+          class="w-full h-auto drop-shadow-2xl"
+          loading="eager"
+        />
       </div>
 
     </div>
