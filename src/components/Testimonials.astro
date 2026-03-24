@@ -53,14 +53,17 @@ const colorMap = {
       const colors = colorMap[t.color as keyof typeof colorMap];
       return (
         <div class={`${colors.shadow} flex flex-col gap-5 p-[28px_24px] reveal-card`}>
-          {/* Big colored quote mark */}
-          <span
-            class="font-display text-[64px] font-bold leading-[0.5] select-none"
-            style={`color: ${colors.quote};`}
+          {/* Big colored quote mark with circle bg */}
+          <div
+            class="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+            style={`background: ${colors.quote}15;`}
             aria-hidden="true"
           >
-            &ldquo;
-          </span>
+            <span
+              class="font-display text-[36px] font-bold leading-[1] select-none mt-2"
+              style={`color: ${colors.quote};`}
+            >&ldquo;</span>
+          </div>
 
           {/* Quote text */}
           <blockquote class="font-body text-[15px] italic text-[var(--color-text-primary)] leading-[1.6] flex-1">
