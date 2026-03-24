@@ -123,7 +123,7 @@ export default function ROICalculator() {
                 />
                 <div
                   className="flex justify-between text-[11px]"
-                  style={{ color: '#8C8278', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#A89E94', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>1h</span>
                   <span>40h</span>
@@ -158,7 +158,7 @@ export default function ROICalculator() {
                 />
                 <div
                   className="flex justify-between text-[11px]"
-                  style={{ color: '#8C8278', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#A89E94', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>1</span>
                   <span>20</span>
@@ -206,7 +206,7 @@ export default function ROICalculator() {
                 />
                 <div
                   className="flex justify-between text-[11px]"
-                  style={{ color: '#8C8278', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#A89E94', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>10€</span>
                   <span>200€</span>
@@ -228,7 +228,7 @@ export default function ROICalculator() {
               >
                 <span
                   className="text-[12px] font-medium uppercase tracking-wider"
-                  style={{ color: '#9B9183', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
                 >
                   Heures économisées / an
                 </span>
@@ -245,7 +245,7 @@ export default function ROICalculator() {
               >
                 <span
                   className="text-[12px] font-medium uppercase tracking-wider"
-                  style={{ color: '#9B9183', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
                 >
                   Gains estimés / an
                 </span>
@@ -261,7 +261,7 @@ export default function ROICalculator() {
             {/* Methodology note */}
             <p
               className="text-[12px] mb-8 text-center"
-              style={{ color: '#9B9183', fontFamily: 'var(--font-mono)' }}
+              style={{ color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
             >
               Basé sur 70 % d'heures récupérables et votre taux horaire de {hourlyCost} €
             </p>
