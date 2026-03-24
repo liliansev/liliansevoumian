@@ -51,10 +51,10 @@ export default function ROICalculator() {
     <section
       id="calculateur-roi"
       className="relative overflow-hidden"
-      style={{ background: 'var(--color-bg-dark)' }}
+      style={{ background: '#FFFFFF' }}
     >
-      {/* Dot grid dark */}
-      <div className="absolute inset-0 dot-grid-dark opacity-50" aria-hidden="true" />
+      {/* Dot grid */}
+      <div className="absolute inset-0 dot-grid" aria-hidden="true" />
 
       <div className="relative z-[1] py-16 md:py-24 px-4 md:px-8 lg:px-[7.5rem]">
         <div className="max-w-[1200px] mx-auto">
@@ -71,26 +71,26 @@ export default function ROICalculator() {
             </span>
             <h2
               className="text-2xl md:text-4xl font-bold text-center"
-              style={{ color: '#FFFFFF', fontFamily: 'var(--font-display)' }}
+              style={{ color: '#1A1A1A', fontFamily: 'var(--font-display)' }}
             >
               Combien vous coûte le travail manuel ?
             </h2>
             <p
               className="text-center max-w-[600px] text-[15px] md:text-lg leading-relaxed"
-              style={{ color: 'var(--color-text-light-secondary)', fontFamily: 'var(--font-body)' }}
+              style={{ color: '#666666', fontFamily: 'var(--font-body)' }}
             >
               Estimez les heures et l'argent que l'automatisation peut vous faire économiser.
             </p>
           </div>
 
-          {/* Calculator card */}
+          {/* Calculator card — dark charcoal */}
           <div
             className="max-w-[700px] mx-auto p-6 md:p-10"
             style={{
-              background: '#222222',
-              border: '1.5px solid #333333',
+              background: '#352F29',
+              border: '1.5px solid #504840',
               borderRadius: '16px',
-              boxShadow: '5px 5px 5px 0 #E86A33',
+              boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 0 rgba(0, 0, 0, 0.3), 5px 5px 10px 0 rgba(232, 106, 51, 0.35)',
             }}
           >
             {/* Sliders */}
@@ -101,7 +101,7 @@ export default function ROICalculator() {
                   <label
                     htmlFor="roi-hours"
                     className="text-[15px] font-medium"
-                    style={{ color: '#AAAAAA', fontFamily: 'var(--font-body)' }}
+                    style={{ color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
                   >
                     Heures manuelles / semaine
                   </label>
@@ -123,7 +123,7 @@ export default function ROICalculator() {
                 />
                 <div
                   className="flex justify-between text-[11px]"
-                  style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#8C8278', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>1h</span>
                   <span>40h</span>
@@ -136,7 +136,7 @@ export default function ROICalculator() {
                   <label
                     htmlFor="roi-people"
                     className="text-[15px] font-medium"
-                    style={{ color: '#AAAAAA', fontFamily: 'var(--font-body)' }}
+                    style={{ color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
                   >
                     Personnes concernées
                   </label>
@@ -158,7 +158,7 @@ export default function ROICalculator() {
                 />
                 <div
                   className="flex justify-between text-[11px]"
-                  style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#8C8278', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>1</span>
                   <span>20</span>
@@ -171,7 +171,7 @@ export default function ROICalculator() {
                   <label
                     htmlFor="roi-rate"
                     className="text-[15px] font-medium"
-                    style={{ color: '#AAAAAA', fontFamily: 'var(--font-body)' }}
+                    style={{ color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
                   >
                     Taux horaire (€ HT)
                   </label>
@@ -206,7 +206,7 @@ export default function ROICalculator() {
                 />
                 <div
                   className="flex justify-between text-[11px]"
-                  style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#8C8278', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>10€</span>
                   <span>200€</span>
@@ -217,18 +217,18 @@ export default function ROICalculator() {
             {/* Separator */}
             <div
               className="h-px w-full mb-8"
-              style={{ background: '#333333' }}
+              style={{ background: '#5A5249' }}
             />
 
             {/* Results */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div
                 className="flex flex-col gap-2 p-5 rounded-xl"
-                style={{ background: 'rgba(232, 106, 51, 0.08)', border: '1px solid rgba(232, 106, 51, 0.19)' }}
+                style={{ background: '#2E2924', border: '1px solid #4A4239' }}
               >
                 <span
                   className="text-[12px] font-medium uppercase tracking-wider"
-                  style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#9B9183', fontFamily: 'var(--font-mono)' }}
                 >
                   Heures économisées / an
                 </span>
@@ -241,17 +241,17 @@ export default function ROICalculator() {
               </div>
               <div
                 className="flex flex-col gap-2 p-5 rounded-xl"
-                style={{ background: 'rgba(232, 106, 51, 0.08)', border: '1px solid rgba(232, 106, 51, 0.19)' }}
+                style={{ background: '#2E2924', border: '1px solid #4A4239' }}
               >
                 <span
                   className="text-[12px] font-medium uppercase tracking-wider"
-                  style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#9B9183', fontFamily: 'var(--font-mono)' }}
                 >
                   Gains estimés / an
                 </span>
                 <span
                   className="text-3xl md:text-4xl font-bold"
-                  style={{ color: '#FFFFFF', fontFamily: 'var(--font-mono)' }}
+                  style={{ color: '#F5EDE5', fontFamily: 'var(--font-mono)' }}
                 >
                   <AnimatedNumber value={moneySaved} suffix=" €" />
                 </span>
@@ -261,7 +261,7 @@ export default function ROICalculator() {
             {/* Methodology note */}
             <p
               className="text-[12px] mb-8 text-center"
-              style={{ color: '#666666', fontFamily: 'var(--font-mono)' }}
+              style={{ color: '#9B9183', fontFamily: 'var(--font-mono)' }}
             >
               Basé sur 70 % d'heures récupérables et votre taux horaire de {hourlyCost} €
             </p>

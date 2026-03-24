@@ -13,7 +13,16 @@ export default defineConfig({
     defaultStrategy: 'viewport'
   },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    server: {
+      watch: {
+        usePolling: true,
+        interval: 100
+      }
+    },
+    optimizeDeps: {
+      exclude: ['@tailwindcss/vite']
+    }
   },
   integrations: [
     icon({

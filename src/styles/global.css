@@ -22,18 +22,18 @@
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
 
   /* Backgrounds */
-  --color-bg-page: #F2F2F2;
-  --color-bg-dark: #1A1A1A;
-  --color-bg-dark-alt: #111111;
+  --color-bg-page: #FFFFFF;
+  --color-bg-dark: #F8F7F4;
+  --color-bg-dark-alt: #F3F2EF;
 
   /* Text — light sections */
   --color-text-primary: #1A1A1A;
   --color-text-secondary: #666666;
   --color-text-muted: #999999;
 
-  /* Text — dark sections */
-  --color-text-light: #FFFFFF;
-  --color-text-light-secondary: #AAAAAA;
+  /* Text — dark sections (cream bg → dark text) */
+  --color-text-light: #1A1A1A;
+  --color-text-light-secondary: #5A554D;
 
   /* 4 accent colors */
   --color-orange: #E86A33;
@@ -129,6 +129,11 @@ a, button, input, textarea, select,
   background-size: 24px 24px;
 }
 
+.dot-grid-cream {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
 .dot-grid-dark {
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
   background-size: 24px 24px;
@@ -137,7 +142,7 @@ a, button, input, textarea, select,
 /* =========================================
    SOFT 3D CARDS — colored shadow with blur
    On dark bg: white card, colored border + shadow
-   On light bg: #F2F2F2 card, white border + colored shadow
+   On white bg: #F8F7F4 (cream) card + colored shadow
    ======================================== */
 
 /* --- Cards on DARK backgrounds --- */
@@ -145,167 +150,68 @@ a, button, input, textarea, select,
   background: #FFFFFF;
   border: 2.5px solid #E86A33;
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 5px 5px 12px 0 rgba(232, 106, 51, 0.50);
 }
 
-.card-3d-orange:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(232, 106, 51, 0);
-}
-
-.card-3d-orange:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(232, 106, 51, 0.15);
-}
-
-/* --- Cards on LIGHT backgrounds (orange accent) --- */
+/* --- Cards on WHITE backgrounds (cream card, orange accent) --- */
 .card-3d-light-orange {
-  background: #F2F2F2;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: #F8F7F4;
+  border: 2px solid rgba(232, 106, 51, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 5px 5px 12px 0 rgba(232, 106, 51, 0.50);
 }
 
-.card-3d-light-orange:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(232, 106, 51, 0);
-}
-
-.card-3d-light-orange:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(232, 106, 51, 0.15);
-}
-
-/* --- Cards on LIGHT backgrounds (purple accent) --- */
+/* --- Cards on WHITE backgrounds (cream card, purple accent) --- */
 .card-3d-light-purple {
-  background: #F2F2F2;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: #F8F7F4;
+  border: 2px solid rgba(147, 51, 234, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
 }
 
-.card-3d-light-purple:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
-}
-
-.card-3d-light-purple:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
-}
-
-/* --- Cards on LIGHT backgrounds (cyan accent) --- */
+/* --- Cards on WHITE backgrounds (cream card, cyan accent) --- */
 .card-3d-light-cyan {
-  background: #F2F2F2;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: #F8F7F4;
+  border: 2px solid rgba(34, 211, 238, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(34, 211, 238, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 5px 5px 12px 0 rgba(34, 211, 238, 0.50);
 }
 
-.card-3d-light-cyan:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
-}
-
-.card-3d-light-cyan:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(34, 211, 238, 0.15);
-}
-
-/* --- Cards on LIGHT backgrounds (rose accent) --- */
+/* --- Cards on WHITE backgrounds (cream card, rose accent) --- */
 .card-3d-light-rose {
-  background: #F2F2F2;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: #F8F7F4;
+  border: 2px solid rgba(244, 63, 94, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-3d-light-rose:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
-}
-
-.card-3d-light-rose:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(244, 63, 94, 0.15);
+  box-shadow: 5px 5px 12px 0 rgba(244, 63, 94, 0.50);
 }
 
 /* --- White cards with colored shadow (Results, Method on light bg) --- */
 .card-3d-white-orange {
   background: #FFFFFF;
-  border: 2px solid #EBEBEB;
+  border: 2px solid rgba(232, 106, 51, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-3d-white-orange:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(232, 106, 51, 0);
-}
-
-.card-3d-white-orange:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(232, 106, 51, 0.15);
+  box-shadow: 5px 5px 12px 0 rgba(232, 106, 51, 0.50);
 }
 
 .card-3d-white-purple {
   background: #FFFFFF;
-  border: 2px solid #EBEBEB;
+  border: 2px solid rgba(147, 51, 234, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-3d-white-purple:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
-}
-
-.card-3d-white-purple:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+  box-shadow: 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
 }
 
 .card-3d-white-cyan {
   background: #FFFFFF;
-  border: 2px solid #EBEBEB;
+  border: 2px solid rgba(34, 211, 238, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(34, 211, 238, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-3d-white-cyan:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
-}
-
-.card-3d-white-cyan:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(34, 211, 238, 0.15);
+  box-shadow: 5px 5px 12px 0 rgba(34, 211, 238, 0.50);
 }
 
 .card-3d-white-rose {
   background: #FFFFFF;
-  border: 2px solid #EBEBEB;
+  border: 2px solid rgba(244, 63, 94, 0.20);
   border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-3d-white-rose:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
-}
-
-.card-3d-white-rose:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(244, 63, 94, 0.15);
+  box-shadow: 5px 5px 12px 0 rgba(244, 63, 94, 0.50);
 }
 
 /* =========================================
@@ -322,18 +228,18 @@ a, button, input, textarea, select,
   border-radius: 12px;
   font-family: var(--font-body);
   font-weight: 600;
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-3d:hover {
   transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 0 0 0 rgba(147, 51, 234, 0);
 }
 
 .btn-3d:active {
   transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
 }
 
 /* Larger CTA variant (CTA section — radius 14, padding 18/40, font 18px) */
@@ -348,23 +254,23 @@ a, button, input, textarea, select,
   font-size: 18px;
   font-weight: 600;
   padding: 18px 40px;
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-3d-lg:hover {
   transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 0 0 0 rgba(147, 51, 234, 0);
 }
 
 .btn-3d-lg:active {
   transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
 }
 
 /* Secondary button — lighter bg, violet border */
 .btn-secondary {
-  background: #F2F2F2;
+  background: #F8F7F4;
   color: #1A1A1A;
   border: none;
   outline: 1.5px solid #9333EA;
@@ -372,7 +278,7 @@ a, button, input, textarea, select,
   border-radius: 12px;
   font-family: var(--font-body);
   font-weight: 600;
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+  box-shadow: 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -444,18 +350,6 @@ a, button, input, textarea, select,
 .stat-item.is-visible:nth-child(3) { transition-delay: 600ms; }
 
 /* =========================================
-   CARD TITLE — subtle slide on hover
-   ======================================== */
-
-[class*="card-3d"] h3 {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-[class*="card-3d"]:hover h3 {
-  transform: translateX(4px);
-}
-
-/* =========================================
    PILL / BADGE — hover scale
    ======================================== */
 
@@ -495,14 +389,61 @@ a, button, input, textarea, select,
 }
 
 /* =========================================
-   NAV SCROLL STATE
+   FLOATING ISLAND NAV
    ======================================== */
 
-nav.scrolled {
-  background-color: rgba(242, 242, 242, 0.9) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 3px solid rgba(255, 255, 255, 0.3) !important;
+.nav-island {
+  background: rgba(248, 247, 244, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow:
+    /* Glass thickness */
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.03),
+    /* Warm layered depth (dark amber, geometric progression) */
+    0 0.5px 1px -0.5px rgba(30, 22, 8, 0.06),
+    0 3px 6px -2px rgba(30, 22, 8, 0.06),
+    0 8px 20px -4px rgba(30, 22, 8, 0.05),
+    0 20px 48px -8px rgba(30, 22, 8, 0.04);
+  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-island.scrolled {
+  height: 48px !important;
+  top: 12px !important;
+  max-width: 780px;
+  background: rgba(248, 247, 244, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow:
+    /* Glass thickness */
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.03),
+    /* Settled closer to page */
+    0 0.5px 1px -0.5px rgba(30, 22, 8, 0.07),
+    0 2px 5px -1.5px rgba(30, 22, 8, 0.06),
+    0 6px 16px -4px rgba(30, 22, 8, 0.05);
+}
+
+/* Mobile island menu */
+.mobile-island-menu {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+  max-height: 48px;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-height 400ms cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 300ms ease;
+}
+
+.mobile-island-menu.open {
+  max-height: 420px;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* =========================================
@@ -558,7 +499,7 @@ body.menu-open { overflow: hidden; }
   appearance: none;
   height: 6px;
   border-radius: 3px;
-  background: #333333;
+  background: #564E45;
   outline: none;
   cursor: pointer;
 }
@@ -570,7 +511,7 @@ body.menu-open { overflow: hidden; }
   height: 22px;
   border-radius: 50%;
   background: #E86A33;
-  border: 3px solid #1A1A1A;
+  border: 3px solid #2A2520;
   box-shadow: 0 0 8px rgba(232, 106, 51, 0.3);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -586,7 +527,7 @@ body.menu-open { overflow: hidden; }
   height: 22px;
   border-radius: 50%;
   background: #E86A33;
-  border: 3px solid #1A1A1A;
+  border: 3px solid #2A2520;
   box-shadow: 0 0 8px rgba(232, 106, 51, 0.3);
   cursor: pointer;
 }

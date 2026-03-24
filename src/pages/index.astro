@@ -34,24 +34,21 @@ const faqSchema = [
 
 /*
  * =============================================
- * INFORMATION ARCHITECTURE — Pencil Design
+ * INFORMATION ARCHITECTURE — Background scheme
  * =============================================
  *
- * Section order matches the Pencil design mockup:
+ * Strict alternation: White (#FFFFFF) ↔ Cream (#F8F7F4)
  *
- *  1. Navigation
- *  2. Hero              (light bg-page)
- *  3. Problem           (dark bg-dark)
- *  4. Services          (light bg-page)
- *  5. CaseStudies       (white #FFFFFF)
- *  6. ROI Calculator    (dark bg-dark)
- *  7. Tools + About     (SAME dark section bg-dark)
- *  8. Testimonials      (light bg-page #F2F2F2)
- *  9. Process + FAQ     (SAME white #FFFFFF)
- * 10. CTA               (dark bg-dark)
- * 11. Footer            (dark)
- *
- * Removed: Manifeste, LogosBandeau
+ *  1. Hero              WHITE
+ *  2. Problem           CREAM
+ *  3. Services          WHITE
+ *  4. CaseStudies       CREAM
+ *  5. ROI Calculator    WHITE
+ *  6. About + Testi.    CREAM (merged)
+ *  7. Process           WHITE
+ *  8. FAQ               CREAM
+ *  9. CTA               WHITE
+ * 10. Footer            DARK (#1A1A1A)
  *
  * =============================================
  */
@@ -61,45 +58,51 @@ const faqSchema = [
   <Navigation />
 
   <main id="main-content">
-    <!-- 1. Hero (light bg-page) -->
+    <!-- 1. Hero (WHITE) -->
     <Hero />
 
-    <!-- 2. Problem (dark bg-dark) -->
+    <!-- 2. Problem (CREAM) -->
     <Problem />
 
-    <!-- 3. Services (light bg-page) -->
+    <!-- 3. Services (WHITE) -->
     <Services />
 
-    <!-- 4. Case Studies / Results (white #FFFFFF) -->
+    <!-- 4. Case Studies (CREAM) -->
     <CaseStudies />
 
-    <!-- 5. ROI Calculator (dark bg-dark) -->
+    <!-- 5. ROI Calculator (WHITE) -->
     <ROICalculator client:visible />
 
-    <!-- 6. About + Stack (light section for contrast with dark ROI) -->
-    <section class="relative bg-[var(--color-bg-page)] py-[80px] px-6 md:px-[120px] overflow-hidden">
-      <div class="absolute inset-0 dot-grid opacity-30" aria-hidden="true"></div>
-      <div class="relative z-[1] max-w-[1200px] mx-auto">
-        <About />
+    <!-- 6. About + Testimonials (CREAM — merged) -->
+    <section class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1]">
+        <div class="py-[80px] px-6 md:px-[120px] max-w-[1200px] mx-auto">
+          <About />
+        </div>
+        <div id="temoignages" class="py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto">
+          <Testimonials />
+        </div>
       </div>
     </section>
 
-    <!-- 7. Testimonials (light bg-page) -->
-    <section id="temoignages" class="bg-[var(--color-bg-page)] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-      <div class="max-w-[1200px] mx-auto">
-        <Testimonials />
-      </div>
-    </section>
-
-    <!-- 8. Process + FAQ (SAME white #FFFFFF section) -->
-    <section class="bg-white py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-      <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-20">
+    <!-- 7. Process (WHITE) -->
+    <section class="relative bg-white overflow-hidden">
+      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto flex flex-col items-center">
         <Process />
+      </div>
+    </section>
+
+    <!-- 8. FAQ (CREAM) -->
+    <section class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto flex flex-col items-center">
         <FAQ />
       </div>
     </section>
 
-    <!-- 9. CTA (dark bg-dark) -->
+    <!-- 9. CTA (WHITE) -->
     <CTA />
   </main>
 
