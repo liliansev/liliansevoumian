@@ -108,12 +108,49 @@ const caseStudies = [
         ></div>
 
         <!-- Scroll indicator dots -->
-        <div class="flex justify-center gap-2 mt-4" aria-hidden="true">
-          <div class="w-2 h-2 rounded-full bg-[#E86A33]"></div>
-          <div class="w-2 h-2 rounded-full bg-[#E5E5E5]"></div>
-          <div class="w-2 h-2 rounded-full bg-[#E5E5E5]"></div>
+        <div id="case-dots" class="flex justify-center gap-2 mt-4" aria-hidden="true">
+          <div class="w-2 h-2 rounded-full bg-[#E86A33] transition-colors duration-200" data-dot="0"></div>
+          <div class="w-2 h-2 rounded-full bg-[#E5E5E5] transition-colors duration-200" data-dot="1"></div>
+          <div class="w-2 h-2 rounded-full bg-[#E5E5E5] transition-colors duration-200" data-dot="2"></div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  const colors = ['#E86A33', '#9333EA', '#22D3EE'];
+
+  function initScrollDots() {
+    const scroller = document.querySelector('#cas-clients .overflow-x-auto');
+    const dots = document.querySelectorAll('#case-dots [data-dot]');
+    if (!scroller || !dots.length) return;
+
+    scroller.addEventListener('scroll', () => {
+      const scrollLeft = scroller.scrollLeft;
+      const cardWidth = scroller.querySelector('.snap-start')?.clientWidth || 300;
+      const gap = 16;
+      const active = Math.round(scrollLeft / (cardWidth + gap));
+      const clamped = Math.min(Math.max(active, 0), 2);
+
+      dots.forEach((dot, i) => {
+        if (i === clamped) {
+          (dot as HTMLElement).style.backgroundColor = colors[i];
+          (dot as HTMLElement).style.width = '24px';
+          (dot as HTMLElement).style.borderRadius = '4px';
+        } else {
+          (dot as HTMLElement).style.backgroundColor = '#E5E5E5';
+          (dot as HTMLElement).style.width = '8px';
+          (dot as HTMLElement).style.borderRadius = '9999px';
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollDots);
+  } else {
+    initScrollDots();
+  }
+  document.addEventListener('astro:page-load', initScrollDots);
+</script>
