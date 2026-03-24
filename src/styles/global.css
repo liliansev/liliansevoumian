@@ -444,6 +444,57 @@ a, button, input, textarea, select,
 .stat-item.is-visible:nth-child(3) { transition-delay: 600ms; }
 
 /* =========================================
+   CARD TITLE — subtle slide on hover
+   ======================================== */
+
+[class*="card-3d"] h3 {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[class*="card-3d"]:hover h3 {
+  transform: translateX(4px);
+}
+
+/* =========================================
+   PILL / BADGE — hover scale
+   ======================================== */
+
+.pill-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pill-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================
+   NAV LINK — animated underline
+   ======================================== */
+
+.nav-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #9333EA;
+  border-radius: 1px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* =========================================
    NAV SCROLL STATE
    ======================================== */
 
