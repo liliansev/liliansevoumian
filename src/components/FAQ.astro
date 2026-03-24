@@ -1,51 +1,113 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 const faqs = [
   {
     question: "Comment se déroule une mission type\u00a0?",
     answer: "Tout commence par un appel de 30\u00a0minutes gratuit où on identifie vos process les plus chronophages. Sous 48\u00a0h, je vous envoie un plan d'action détaillé avec livrables, délais et budget fixe. Pas de surprise\u00a0: vous validez chaque étape avant que je passe à la suivante.",
-    cardClass: "card-3d-white-orange",
+    color: "#E86A33",
   },
   {
     question: "Combien ça coûte et quel retour sur investissement attendre\u00a0?",
     answer: "Un premier workflow d'automatisation démarre à partir de 1\u00a0500\u00a0€. La plupart de mes clients constatent un ROI dès le premier mois\u00a0: quand vous économisez 15\u00a0h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès le premier appel.",
-    cardClass: "card-3d-white-purple",
+    color: "#9333EA",
   },
   {
     question: "Combien de temps faut-il pour voir des résultats\u00a0?",
     answer: "Un workflow simple est déployé en 3 à 5\u00a0jours. Un projet complet (diagnostic + plusieurs automatisations + formation) prend 4 à 8\u00a0semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
-    cardClass: "card-3d-white-cyan",
+    color: "#22D3EE",
   },
   {
     question: "Et si mes outils changent ou si j'ai besoin d'évolutions\u00a0?",
     answer: "Les automatisations sont construites de façon modulaire\u00a0: ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
-    cardClass: "card-3d-white-rose",
+    color: "#F43F5E",
   },
 ];
 ---
 
-<!-- FAQ — vertical list of cards, all Q&A visible -->
+<!-- FAQ Accordion -->
 <div id="faq" class="flex flex-col items-center gap-12 w-full">
   <!-- Header -->
   <div class="flex flex-col items-center gap-5">
     <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#9333EA]">
       FAQ
     </span>
-    <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[#1A1A1A] text-center">
+    <h2 class="font-display text-[28px] md:text-[40px] font-bold text-[#1A1A1A] text-center">
       Questions fréquentes
     </h2>
   </div>
 
-  <!-- FAQ cards list -->
-  <div class="max-w-[800px] w-full mx-auto flex flex-col gap-4">
-    {faqs.map((faq) => (
-      <div class={`${faq.cardClass} p-[24px_28px] flex flex-col gap-4`}>
-        <h3 class="font-body text-[16px] font-bold text-[#1A1A1A]">
-          {faq.question}
-        </h3>
-        <p class="font-body text-[14px] font-normal text-[#666666] leading-[1.6]">
-          {faq.answer}
-        </p>
+  <!-- Accordion -->
+  <div class="max-w-[800px] w-full mx-auto flex flex-col gap-4" id="faq-accordion">
+    {faqs.map((faq, index) => (
+      <div
+        class="faq-item rounded-[16px] overflow-hidden"
+        style={`background: #FFFFFF; border: 2px solid #EBEBEB; box-shadow: 5px 5px 10px 0 ${faq.color}35;`}
+      >
+        <button
+          type="button"
+          class="faq-trigger w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer min-h-[56px]"
+          aria-expanded="false"
+          aria-controls={`faq-answer-${index}`}
+          data-faq-index={index}
+        >
+          <span class="font-body text-[16px] font-bold text-[#1A1A1A] pr-4">
+            {faq.question}
+          </span>
+          <Icon
+            name="lucide:plus"
+            class="faq-icon-plus w-5 h-5 shrink-0 transition-transform duration-300"
+            style={`color: ${faq.color};`}
+          />
+          <Icon
+            name="lucide:minus"
+            class="faq-icon-minus w-5 h-5 shrink-0 transition-transform duration-300 hidden"
+            style={`color: ${faq.color};`}
+          />
+        </button>
+        <div
+          id={`faq-answer-${index}`}
+          class="faq-answer overflow-hidden transition-all duration-300 ease-in-out max-h-0"
+        >
+          <p class="font-body text-[14px] text-[#666666] leading-[1.6] px-5 md:px-6 pb-5 md:pb-6">
+            {faq.answer}
+          </p>
+        </div>
       </div>
     ))}
   </div>
 </div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const accordion = document.getElementById('faq-accordion');
+    if (!accordion) return;
+
+    accordion.addEventListener('click', (e) => {
+      const trigger = (e.target as HTMLElement).closest('.faq-trigger') as HTMLButtonElement | null;
+      if (!trigger) return;
+
+      const item = trigger.closest('.faq-item');
+      if (!item) return;
+
+      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+      const answer = item.querySelector('.faq-answer') as HTMLElement;
+      const iconPlus = item.querySelector('.faq-icon-plus') as HTMLElement;
+      const iconMinus = item.querySelector('.faq-icon-minus') as HTMLElement;
+
+      if (isExpanded) {
+        trigger.setAttribute('aria-expanded', 'false');
+        answer.classList.remove('max-h-96', 'pb-6');
+        answer.classList.add('max-h-0');
+        iconPlus.classList.remove('hidden');
+        iconMinus.classList.add('hidden');
+      } else {
+        trigger.setAttribute('aria-expanded', 'true');
+        answer.classList.remove('max-h-0');
+        answer.classList.add('max-h-96');
+        iconPlus.classList.add('hidden');
+        iconMinus.classList.remove('hidden');
+      }
+    });
+  });
+</script>

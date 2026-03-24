@@ -1,47 +1,66 @@
 ---
 import { Image } from 'astro:assets';
 import lilianPortrait from '../assets/profile-linkedin-lilian.jpeg';
+
+const tools = [
+  { name: "Make", textColor: "#E86A33", bgColor: "#E86A3320", borderColor: "#E86A33" },
+  { name: "n8n", textColor: "#9333EA", bgColor: "#9333EA20", borderColor: "#9333EA" },
+  { name: "Zapier", textColor: "#22D3EE", bgColor: "#22D3EE20", borderColor: "#22D3EE" },
+  { name: "Claude", textColor: "#E86A33", bgColor: "#E86A3320", borderColor: "#E86A33" },
+  { name: "Notion", textColor: "#FFFFFF", bgColor: "#FFFFFF10", borderColor: "rgba(255,255,255,0.25)" },
+  { name: "Airtable", textColor: "#22D3EE", bgColor: "#22D3EE20", borderColor: "#22D3EE" },
+];
 ---
 
-<div id="a-propos" class="flex flex-col md:flex-row items-center gap-[40px]">
-  <!-- Photo -->
-  <div class="shrink-0">
-    <Image
-      src={lilianPortrait}
-      alt="Lilian Sevoumian"
-      width={280}
-      height={280}
-      class="w-[200px] h-[200px] md:w-[280px] md:h-[280px] rounded-[16px] object-cover"
-      style="background: #333333; border: 3px solid #E86A33;"
-      loading="lazy"
-    />
-  </div>
+<div id="expertise" class="flex flex-col items-center gap-12">
+  <!-- About card: photo + text -->
+  <div id="a-propos" class="flex flex-col md:flex-row items-center gap-8 md:gap-[40px] w-full">
+    <!-- Photo -->
+    <div class="shrink-0">
+      <Image
+        src={lilianPortrait}
+        alt="Lilian Sevoumian"
+        width={280}
+        height={280}
+        class="w-[180px] h-[180px] md:w-[240px] md:h-[240px] rounded-[16px] object-cover"
+        style="background: #333333; border: 3px solid #E86A33;"
+        loading="lazy"
+      />
+    </div>
 
-  <!-- Text content -->
-  <div class="flex flex-col gap-4 text-center md:text-left">
-    <!-- Name -->
-    <h3 class="font-display font-bold text-white text-[28px]">
-      Lilian Sevoumian
-    </h3>
+    <!-- Text content -->
+    <div class="flex flex-col gap-4 text-center md:text-left flex-1">
+      <h3 class="font-display font-bold text-white text-[28px]">
+        Lilian Sevoumian
+      </h3>
+      <p class="font-body text-[16px]" style="color: #AAAAAA;">
+        Expert en automatisations & intelligence artificielle
+      </p>
+      <p class="font-body text-[14px] leading-[1.5]" style="color: #888888;">
+        Depuis plus de 5&nbsp;ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. Mon approche&nbsp;: je commence toujours par comprendre votre métier avant de toucher à un seul outil.
+      </p>
 
-    <!-- Job title -->
-    <p class="font-body text-[16px]" style="color: #AAAAAA;">
-      Expert en automatisations &amp; intelligence artificielle
-    </p>
+      <!-- Certifications -->
+      <div class="flex flex-wrap justify-center md:justify-start gap-3">
+        <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold" style="color: #E86A33; background: #E86A3320; border: 2px solid #E86A33;">
+          Make Partner Officiel
+        </span>
+        <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold" style="color: #E86A33; background: #E86A3320; border: 2px solid #E86A33;">
+          Certification Make Niveau 5
+        </span>
+      </div>
 
-    <!-- Bio -->
-    <p class="font-body text-[14px] leading-[1.5]" style="color: #888888;">
-      Depuis plus de 5&nbsp;ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. Mon approche&nbsp;: je commence toujours par comprendre votre métier et vos contraintes avant de toucher à un seul outil. Résultat&nbsp;: des automatisations qui tiennent dans la durée, pas des usines à gaz que personne ne maintient.
-    </p>
-
-    <!-- Certifications -->
-    <div class="flex flex-wrap justify-center md:justify-start gap-3">
-      <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold" style="color: #E86A33; background: #E86A3320; border: 2px solid #E86A33;">
-        Make Partner Officiel
-      </span>
-      <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold" style="color: #E86A33; background: #E86A3320; border: 2px solid #E86A33;">
-        Certification Make Niveau 5
-      </span>
+      <!-- Tool pills — intégrés ici au lieu d'une section séparée -->
+      <div class="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
+        {tools.map((tool) => (
+          <span
+            class="font-mono text-[12px] font-semibold rounded-[10px] px-3 py-2"
+            style={`color: ${tool.textColor}; background: ${tool.bgColor}; border: 2px solid ${tool.borderColor};`}
+          >
+            {tool.name}
+          </span>
+        ))}
+      </div>
     </div>
   </div>
 </div>
