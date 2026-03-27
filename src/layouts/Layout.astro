@@ -1,4 +1,6 @@
 ---
+import Analytics from '@vercel/analytics/astro';
+
 interface Props {
   title?: string;
   description?: string;
@@ -88,13 +90,6 @@ const faqPageSchema = faqSchema ? {
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-K46TZ5RV');</script>
 
-    <!-- Privacy-friendly analytics by Plausible -->
-    <script is:inline async src="https://plausible.io/js/pa-nUu5r4ANEFPUU-8Ln9LNO.js"></script>
-    <script is:inline>
-      window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
-      plausible.init()
-    </script>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
@@ -142,6 +137,7 @@ const faqPageSchema = faqSchema ? {
     <style is:global>
       @import "../styles/global.css";
     </style>
+    <Analytics />
   </head>
   <body class="antialiased overflow-x-hidden m-0 p-0">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K46TZ5RV" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
