@@ -32,14 +32,14 @@ const cards = [
 
   <div class="relative z-[1] max-w-[1200px] mx-auto flex flex-col items-center gap-12">
     <!-- Header -->
-    <div class="flex flex-col items-center gap-5 text-center">
-      <!-- Badge -->
-      <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold text-[var(--color-purple-dark)] tracking-[2px] uppercase">
+    <div class="flex flex-col items-center text-center">
+      <!-- Badge — tight to title -->
+      <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold text-[var(--color-purple-dark)] tracking-[2px] uppercase mb-3">
         LE PROBLÈME
       </span>
 
-      <!-- Title -->
-      <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-light)] text-center">
+      <!-- Title — medium to subtitle -->
+      <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-light)] text-center mb-4">
         Pendant que vous lisez ceci...
       </h2>
 
@@ -52,12 +52,12 @@ const cards = [
     <!-- Cards -->
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 reveal-stagger">
       {cards.map((card) => (
-        <div class:list={["reveal-card card-3d-hover p-[28px_24px] flex flex-col gap-4", card.cardClass]}>
-          <!-- Icon -->
-          <Icon name={card.icon} class="w-7 h-7" style={`color: ${card.color};`} />
+        <div class:list={["reveal-card card-3d-hover p-[28px_24px] flex flex-col", card.cardClass]}>
+          <!-- Icon — tight with title -->
+          <Icon name={card.icon} class="w-7 h-7 mb-2" style={`color: ${card.color};`} />
 
-          <!-- Title -->
-          <h3 class="font-body text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A]">
+          <!-- Title — medium to description -->
+          <h3 class="font-body text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] mb-3">
             {card.title}
           </h3>
 

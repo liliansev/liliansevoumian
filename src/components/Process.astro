@@ -33,11 +33,11 @@ const colorMap = {
 <!-- Process -->
 <div id="methode" class="flex flex-col items-center gap-12">
   <!-- Header -->
-  <div class="flex flex-col items-center gap-5 fade-in-section">
-    <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[#E86A33]">
+  <div class="flex flex-col items-center fade-in-section">
+    <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[#E86A33] mb-3">
       MÉTHODE
     </span>
-    <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[#1A1A1A] text-center">
+    <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[#1A1A1A] text-center mb-4">
       Du premier appel à l'autonomie
     </h2>
     <p class="font-body text-[length:var(--text-body-lg)] font-normal text-[#666666] text-center max-w-[600px]">
@@ -50,22 +50,22 @@ const colorMap = {
     {steps.map((step) => {
       const colors = colorMap[step.color as keyof typeof colorMap];
       return (
-        <div class={`${colors.card} card-3d-hover flex flex-col gap-4 p-[28px_24px] reveal-card`}>
-          {/* Step number */}
+        <div class={`${colors.card} card-3d-hover flex flex-col p-[28px_24px] reveal-card`}>
+          {/* Step number — tight with title */}
           <span
-            class="font-mono text-[length:var(--text-decorative)] font-bold leading-[1]"
+            class="font-mono text-[length:var(--text-decorative)] font-bold leading-[1] mb-1"
             style={`color: ${colors.number};`}
           >
             {step.number}
           </span>
 
-          {/* Title */}
-          <h3 class="font-display text-[length:var(--text-subheading)] font-bold text-[#1A1A1A]">
+          {/* Title — medium to description */}
+          <h3 class="font-display text-[length:var(--text-subheading)] font-bold text-[#1A1A1A] mb-3">
             {step.title}
           </h3>
 
-          {/* Description */}
-          <p class="font-body text-[length:var(--text-body)] font-normal text-[#666666] leading-[1.5] flex-1">
+          {/* Description — breathing room to badge */}
+          <p class="font-body text-[length:var(--text-body)] font-normal text-[#666666] leading-[1.5] flex-1 mb-4">
             {step.description}
           </p>
 
@@ -82,8 +82,8 @@ const colorMap = {
   </div>
 
   <!-- CTA intermédiaire -->
-  <div class="flex flex-col items-center gap-4 mt-12 fade-in-section">
-    <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] text-center">
+  <div class="flex flex-col items-center mt-12 fade-in-section">
+    <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] text-center mb-5">
       L'étape&nbsp;1, c'est un appel de 30&nbsp;min. Sans engagement.
     </p>
     <a

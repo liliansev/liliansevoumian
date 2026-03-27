@@ -10,62 +10,49 @@ const stats = [
 ---
 
 <!-- Hero -->
-<section data-bg="white" class="relative w-full bg-white overflow-hidden pt-[80px]">
+<section data-bg="white" class="relative w-full bg-white overflow-hidden pt-[clamp(3.5rem,10svh,5rem)] min-h-[100svh] lg:min-h-0 flex flex-col pb-[env(safe-area-inset-bottom,0px)]">
   <!-- Dot grid background -->
   <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
 
   <!-- Content — 2 columns on desktop, stacked on mobile -->
-  <div class="relative z-[1] max-w-[1440px] mx-auto w-full py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-    <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+  <div class="relative z-[1] max-w-[1440px] mx-auto w-full lg:py-[var(--spacing-section)] px-[var(--spacing-section-x)] flex-1 flex flex-col justify-center">
+    <div class="flex flex-col lg:flex-row items-center lg:gap-16">
 
-      <!-- Left column: text -->
-      <div class="flex flex-col items-start text-left gap-8 flex-1 min-w-0 w-full lg:w-auto">
+      <!-- Left column: gradient d'espacement croissant -->
+      <div class="flex flex-col items-start text-left flex-1 min-w-0 w-full lg:w-auto">
 
-        <!-- Badge -->
-        <div class="inline-flex items-center rounded-full px-4 py-2" style="background: #E86A3318; border: 2px solid #E86A33;">
+        <!-- Badge — collé au titre -->
+        <div class="inline-flex items-center rounded-full px-4 py-2 mb-[clamp(0.5rem,1svh,0.75rem)] lg:mb-3" style="background: #E86A3318; border: 2px solid #E86A33;">
           <span class="font-body text-[length:var(--text-body-sm)] font-semibold text-[#E86A33]">
             Expert Automatisation & IA
           </span>
         </div>
 
-        <!-- Headline -->
-        <h1 class="font-display font-bold text-[length:var(--text-display)] text-[var(--color-text-primary)] leading-[1.08]">
+        <!-- Headline — serré avec subtitle -->
+        <h1 class="font-display font-bold text-[length:var(--text-display)] text-[var(--color-text-primary)] leading-[1.08] text-wrap-balance mb-[clamp(0.75rem,2svh,1.5rem)] lg:mb-5">
           Vos process manuels vous coûtent des heures. <span class="text-[#E86A33]">Je les automatise.</span>
         </h1>
 
-        <!-- Subtitle -->
-        <p class="font-body text-[length:var(--text-body-lg)] text-[#666666] leading-[1.6] max-w-[600px]">
+        <!-- Subtitle — respiration avant le CTA -->
+        <p class="font-body text-[length:var(--text-body-lg)] text-[#666666] leading-[1.6] max-w-[600px] text-wrap-balance mb-[clamp(1.25rem,3svh,2rem)] lg:mb-8">
           Automatisations Make, n8n et intégrations IA sur mesure. Vos équipes se concentrent sur ce qui compte.
         </p>
 
-        <!-- CTA Button -->
-        <div class="flex items-start">
+        <!-- CTA — plus grand gap avant les métriques -->
+        <div class="flex items-start mb-[clamp(2rem,5svh,3rem)] lg:mb-10">
           <a
             href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-            class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body-lg)] font-semibold px-8 py-4 group"
+            class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body-lg)] font-semibold px-6 py-3 lg:px-8 lg:py-4 group"
           >
             <span class="hidden sm:inline">Découvrir ce qu'on peut automatiser</span><span class="sm:hidden">Automatiser mes process</span> <span class="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
           </a>
         </div>
 
-        <!-- Cube image — MOBILE ONLY (between buttons and stats) -->
-        <div class="lg:hidden flex justify-center w-full">
-          <Image
-            src={heroImage}
-            alt="Cube 3D automatisation IA Make n8n — expert freelance"
-            width={480}
-            height={480}
-            format="png"
-            class="w-[220px] h-auto drop-shadow-2xl"
-            loading="eager"
-          />
-        </div>
-
-        <!-- Stats Row — always 3 in a row -->
+        <!-- Métriques — preuve sociale -->
         <div class="grid grid-cols-3 gap-3 md:gap-6 w-full lg:w-auto lg:flex">
           {stats.map((stat) => (
-            <div class="stat-item flex flex-col items-center gap-1 rounded-[var(--radius-md)] px-4 py-4 md:px-6 md:py-5 flex-1 md:flex-none" style="background: #F8F7F4; border: 3px solid rgba(255,255,255,0.5); box-shadow: 2px 4px 12px rgba(232,106,51,0.25);">
-              <span class="font-display text-[20px] md:text-[32px] font-bold text-[#E86A33] whitespace-nowrap">
+            <div class="stat-item flex flex-col items-center gap-1 rounded-[var(--radius-md)] px-3 py-[clamp(0.5rem,1.5svh,1.25rem)] md:px-6 md:py-5 flex-1 md:flex-none" style="background: #F8F7F4; border: 3px solid rgba(255,255,255,0.5); box-shadow: 2px 4px 12px rgba(232,106,51,0.25);">
+              <span class="font-display text-[clamp(1rem,2.5svh,2rem)] font-bold text-[#E86A33] whitespace-nowrap">
                 {stat.number}
               </span>
               <span class="font-body text-[length:var(--text-caption)] text-[#666666] text-center">

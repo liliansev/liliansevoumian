@@ -29,10 +29,10 @@ const services = [
   <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
 
   <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-[48px]">
+    <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-12 lg:gap-14">
       <!-- Header -->
-      <div class="flex flex-col items-center gap-5 fade-in-section">
-        <span class="inline-block text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] font-mono">
+      <div class="flex flex-col items-center fade-in-section">
+        <span class="inline-block text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] font-mono mb-3">
           CE QUE JE FAIS
         </span>
         <h2 class="text-[length:var(--text-heading)] font-bold text-center text-[#1A1A1A] font-display">
@@ -43,17 +43,17 @@ const services = [
       <!-- Cards grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-[24px] reveal-stagger">
         {services.map((service) => (
-          <div class:list={["reveal-card card-3d-hover flex flex-col gap-4 p-[28px_24px]", service.cardClass]}>
-            <!-- Number -->
+          <div class:list={["reveal-card card-3d-hover flex flex-col p-[28px_24px]", service.cardClass]}>
+            <!-- Number — tight with title -->
             <span
-              class="text-[length:var(--text-decorative)] font-bold leading-none font-mono"
+              class="text-[length:var(--text-decorative)] font-bold leading-none font-mono mb-1"
               style={`color: ${service.color};`}
             >
               {service.number}
             </span>
 
-            <!-- Title -->
-            <h3 class="text-[length:var(--text-subheading)] font-bold text-[#1A1A1A] font-display">
+            <!-- Title — medium gap to description -->
+            <h3 class="text-[length:var(--text-subheading)] font-bold text-[#1A1A1A] font-display mb-3">
               {service.title}
             </h3>
 
@@ -66,8 +66,8 @@ const services = [
       </div>
 
       <!-- CTA intermédiaire -->
-      <div class="flex flex-col items-center gap-4 mt-12 fade-in-section">
-        <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] text-center">
+      <div class="flex flex-col items-center fade-in-section">
+        <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] text-center mb-5">
           Vous vous demandez quel levier aurait le plus d'impact chez vous&nbsp;?
         </p>
         <a
