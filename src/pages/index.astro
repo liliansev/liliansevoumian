@@ -12,6 +12,7 @@ import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
 import ROICalculator from '../components/ROICalculator.tsx';
+import ContentEcosystem from '../components/ContentEcosystem.astro';
 
 const faqSchema = [
   {
@@ -29,6 +30,14 @@ const faqSchema = [
   {
     question: "Et si mes outils changent ou si j'ai besoin d'évolutions ?",
     answer: "Les automatisations sont construites de façon modulaire : ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
+  },
+  {
+    question: "Quels outils intégrez-vous ?",
+    answer: "Je travaille principalement avec Make et n8n comme moteurs d'automatisation, et j'intègre plus de 200 outils : CRM (HubSpot, Pipedrive, Salesforce), facturation (Stripe, Pennylane), bases de données (Airtable, Notion, Google Sheets), communication (Slack, Gmail, Teams) et IA (Claude, GPT, Mistral). Si votre outil a une API ou un webhook, il peut être connecté.",
+  },
+  {
+    question: "Mon équipe a-t-elle besoin de compétences techniques ?",
+    answer: "Non. Les automatisations tournent en arrière-plan, vos équipes n'ont rien à coder. À la livraison, je forme vos collaborateurs aux ajustements courants (modifier un filtre, ajouter un destinataire) via une documentation sur mesure et une session de formation incluse.",
   },
 ];
 
@@ -73,38 +82,48 @@ const faqSchema = [
     <!-- 5. ROI Calculator (WHITE) -->
     <ROICalculator client:visible />
 
-    <!-- 6. About + Testimonials (CREAM — merged) -->
-    <section class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+    <!-- 6. About (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
       <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1]">
-        <div class="py-[80px] px-6 md:px-[120px] max-w-[1200px] mx-auto">
-          <About />
-        </div>
-        <div id="temoignages" class="py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto">
-          <Testimonials />
-        </div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto">
+        <About />
       </div>
     </section>
 
-    <!-- 7. Process (WHITE) -->
-    <section class="relative bg-white overflow-hidden">
+    <!-- 7. Testimonials (WHITE) -->
+    <section data-bg="white" id="temoignages" class="relative bg-white overflow-hidden">
       <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto">
+        <Testimonials />
+      </div>
+    </section>
+
+    <!-- 8. Process (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
       <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto flex flex-col items-center">
         <Process />
       </div>
     </section>
 
-    <!-- 8. FAQ (CREAM) -->
-    <section class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+    <!-- 9. FAQ (WHITE) -->
+    <section data-bg="white" class="relative bg-white overflow-hidden">
+      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
       <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto flex flex-col items-center">
         <FAQ />
       </div>
     </section>
 
-    <!-- 9. CTA (WHITE) -->
+    <!-- 10. CTA (CREAM) -->
     <CTA />
   </main>
+
+  <!-- Content Ecosystem (DARK) — merges into footer -->
+  <div data-bg="dark" class="bg-[#1A1A1A] py-8 px-[var(--spacing-section-x)]">
+    <div class="max-w-[1200px] mx-auto">
+      <ContentEcosystem />
+    </div>
+  </div>
 
   <Footer />
 </Layout>

@@ -33,39 +33,39 @@ const caseStudies = [
 ];
 ---
 
-<section id="cas-clients" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+<section data-bg="cream" id="cas-clients" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
   <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-  <div class="relative z-[1] py-20 lg:py-[120px] px-[var(--spacing-section-x)]">
+  <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
     <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-12">
       <!-- Header -->
       <div class="flex flex-col items-center gap-5 fade-in-section">
-        <span class="inline-block text-[12px] font-semibold tracking-[2px] uppercase text-[#E86A33] font-mono">
+        <span class="inline-block text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[#E86A33] font-mono">
           RÉSULTATS
         </span>
-        <h2 class="text-[40px] font-bold tracking-[-0.02em] text-center text-[#1A1A1A] font-display w-full">
-          Ce que l'automatisation change concrètement
+        <h2 class="text-[length:var(--text-heading)] font-bold text-center text-[#1A1A1A] font-display w-full">
+          -70&nbsp;% de temps, 3x plus de capacité&nbsp;: résultats clients
         </h2>
       </div>
 
       <!-- Desktop: 3 columns grid -->
       <div class="hidden md:grid md:grid-cols-3 gap-6 reveal-stagger w-full">
         {caseStudies.map((study) => (
-          <div class:list={["reveal-card flex flex-col gap-5 p-[28px_24px]", study.cardClass]}>
+          <div class:list={["reveal-card card-3d-hover flex flex-col gap-4 p-[28px_24px]", study.cardClass]}>
             <!-- Badge pill -->
             <span
-              class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[14px] font-bold font-mono", study.badgeTextColor]}
+              class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[length:var(--text-body)] font-bold font-mono", study.badgeTextColor]}
               style={`background: ${study.color};`}
             >
               {study.badgeText}
             </span>
 
             <!-- Title -->
-            <h3 class="text-[18px] font-bold text-[#1A1A1A] font-display">
+            <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display">
               {study.title}
             </h3>
 
             <!-- Description -->
-            <p class="text-[14px] leading-[1.5] flex-1 text-[#666666] font-body">
+            <p class="text-[length:var(--text-body)] leading-[1.5] flex-1 text-[#666666] font-body">
               {study.description}
             </p>
           </div>
@@ -76,22 +76,22 @@ const caseStudies = [
       <div class="md:hidden relative w-full overflow-hidden">
         <div class="reveal-stagger flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 pl-0 pr-0">
           {caseStudies.map((study) => (
-            <div class:list={["reveal-card flex flex-col gap-5 p-6 snap-start shrink-0 w-[85vw] max-w-[340px]", study.cardClass]}>
+            <div class:list={["reveal-card flex flex-col gap-4 p-6 snap-start shrink-0 w-[85vw] max-w-[340px]", study.cardClass]}>
               <!-- Badge pill -->
               <span
-                class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[14px] font-bold font-mono", study.badgeTextColor]}
+                class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[length:var(--text-body)] font-bold font-mono", study.badgeTextColor]}
                 style={`background: ${study.color};`}
               >
                 {study.badgeText}
               </span>
 
               <!-- Title -->
-              <h3 class="text-[18px] font-bold text-[#1A1A1A] font-display">
+              <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display">
                 {study.title}
               </h3>
 
               <!-- Description -->
-              <p class="text-[14px] leading-[1.5] flex-1 text-[#666666] font-body">
+              <p class="text-[length:var(--text-body)] leading-[1.5] flex-1 text-[#666666] font-body">
                 {study.description}
               </p>
             </div>

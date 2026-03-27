@@ -49,6 +49,7 @@ export default function ROICalculator() {
 
   return (
     <section
+      data-bg="white"
       id="calculateur-roi"
       className="relative overflow-hidden"
       style={{ background: '#FFFFFF' }}
@@ -56,13 +57,14 @@ export default function ROICalculator() {
       {/* Dot grid */}
       <div className="absolute inset-0 dot-grid" aria-hidden="true" />
 
-      <div className="relative z-[1] py-16 md:py-24 px-4 md:px-8 lg:px-[7.5rem]">
+      <div className="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
         <div className="max-w-[1200px] mx-auto">
           {/* Header */}
           <div className="flex flex-col items-center gap-5 mb-12">
             <span
-              className="inline-block rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase"
+              className="inline-block rounded-full px-4 py-1.5 font-medium tracking-[2px] uppercase"
               style={{
+                fontSize: 'var(--text-caption)',
                 color: '#E86A33',
                 fontFamily: 'var(--font-mono)',
               }}
@@ -70,14 +72,14 @@ export default function ROICalculator() {
               CALCULATEUR ROI
             </span>
             <h2
-              className="text-2xl md:text-4xl font-bold text-center"
+              className="text-[length:var(--text-heading)] font-bold text-center"
               style={{ color: '#1A1A1A', fontFamily: 'var(--font-display)' }}
             >
               Combien vous coûte le travail manuel ?
             </h2>
             <p
-              className="text-center max-w-[600px] text-[15px] md:text-lg leading-relaxed"
-              style={{ color: '#666666', fontFamily: 'var(--font-body)' }}
+              className="text-center max-w-[600px] leading-relaxed"
+              style={{ fontSize: 'var(--text-body-lg)', color: '#666666', fontFamily: 'var(--font-body)' }}
             >
               Estimez les heures et l'argent que l'automatisation peut vous faire économiser.
             </p>
@@ -100,8 +102,8 @@ export default function ROICalculator() {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="roi-hours"
-                    className="text-[15px] font-medium"
-                    style={{ color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
+                    className="font-medium"
+                    style={{ fontSize: 'var(--text-body)', color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
                   >
                     Heures manuelles / semaine
                   </label>
@@ -122,8 +124,8 @@ export default function ROICalculator() {
                   className="roi-slider w-full"
                 />
                 <div
-                  className="flex justify-between text-[11px]"
-                  style={{ color: '#A89E94', fontFamily: 'var(--font-mono)' }}
+                  className="flex justify-between"
+                  style={{ fontSize: 'var(--text-micro)', color: '#A89E94', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>1h</span>
                   <span>40h</span>
@@ -135,8 +137,8 @@ export default function ROICalculator() {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="roi-people"
-                    className="text-[15px] font-medium"
-                    style={{ color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
+                    className="font-medium"
+                    style={{ fontSize: 'var(--text-body)', color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
                   >
                     Personnes concernées
                   </label>
@@ -157,8 +159,8 @@ export default function ROICalculator() {
                   className="roi-slider w-full"
                 />
                 <div
-                  className="flex justify-between text-[11px]"
-                  style={{ color: '#A89E94', fontFamily: 'var(--font-mono)' }}
+                  className="flex justify-between"
+                  style={{ fontSize: 'var(--text-micro)', color: '#A89E94', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>1</span>
                   <span>20</span>
@@ -170,8 +172,8 @@ export default function ROICalculator() {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="roi-rate"
-                    className="text-[15px] font-medium"
-                    style={{ color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
+                    className="font-medium"
+                    style={{ fontSize: 'var(--text-body)', color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
                   >
                     Taux horaire (€ HT)
                   </label>
@@ -205,8 +207,8 @@ export default function ROICalculator() {
                   className="roi-slider w-full"
                 />
                 <div
-                  className="flex justify-between text-[11px]"
-                  style={{ color: '#A89E94', fontFamily: 'var(--font-mono)' }}
+                  className="flex justify-between"
+                  style={{ fontSize: 'var(--text-micro)', color: '#A89E94', fontFamily: 'var(--font-mono)' }}
                 >
                   <span>10€</span>
                   <span>200€</span>
@@ -227,14 +229,14 @@ export default function ROICalculator() {
                 style={{ background: '#2E2924', border: '1px solid #4A4239' }}
               >
                 <span
-                  className="text-[12px] font-medium uppercase tracking-wider"
-                  style={{ color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
+                  className="font-medium uppercase tracking-wider"
+                  style={{ fontSize: 'var(--text-caption)', color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
                 >
                   Heures économisées / an
                 </span>
                 <span
-                  className="text-3xl md:text-4xl font-bold"
-                  style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
+                  className="font-bold"
+                  style={{ fontSize: 'var(--text-heading)', color: '#E86A33', fontFamily: 'var(--font-mono)' }}
                 >
                   <AnimatedNumber value={hoursSaved} suffix="h" />
                 </span>
@@ -244,14 +246,14 @@ export default function ROICalculator() {
                 style={{ background: '#2E2924', border: '1px solid #4A4239' }}
               >
                 <span
-                  className="text-[12px] font-medium uppercase tracking-wider"
-                  style={{ color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
+                  className="font-medium uppercase tracking-wider"
+                  style={{ fontSize: 'var(--text-caption)', color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
                 >
                   Gains estimés / an
                 </span>
                 <span
-                  className="text-3xl md:text-4xl font-bold"
-                  style={{ color: '#F5EDE5', fontFamily: 'var(--font-mono)' }}
+                  className="font-bold"
+                  style={{ fontSize: 'var(--text-heading)', color: '#F5EDE5', fontFamily: 'var(--font-mono)' }}
                 >
                   <AnimatedNumber value={moneySaved} suffix=" €" />
                 </span>
@@ -260,8 +262,8 @@ export default function ROICalculator() {
 
             {/* Methodology note */}
             <p
-              className="text-[12px] mb-8 text-center"
-              style={{ color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
+              className="mb-8 text-center"
+              style={{ fontSize: 'var(--text-caption)', color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
             >
               Basé sur 70 % d'heures récupérables et votre taux horaire de {hourlyCost} €
             </p>
@@ -272,10 +274,11 @@ export default function ROICalculator() {
                 href="https://cal.com/lilian-sevoumian/20min"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-3d inline-flex items-center justify-center text-[15px] font-semibold px-7 py-3.5 min-h-[48px] w-full md:w-auto"
-                style={{ fontFamily: 'var(--font-body)' }}
+                className="group inline-flex items-center justify-center font-semibold px-7 py-3.5 min-h-[48px] w-full md:w-auto rounded-full bg-white text-[#2A2520] shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.06),5px_5px_12px_0_rgba(0,0,0,0.25)] hover:translate-x-[5px] hover:translate-y-[5px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-[1px_1px_3px_rgba(0,0,0,0.1)] transition-all duration-[250ms]"
+                style={{ fontSize: 'var(--text-body)', fontFamily: 'var(--font-body)' }}
               >
-                Récupérer ces heures &rarr;
+                Récupérer mes {hoursSaved.toLocaleString('fr-FR')}h
+                <span className="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
               </a>
             </div>
           </div>

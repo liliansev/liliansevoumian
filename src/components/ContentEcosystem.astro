@@ -1,0 +1,47 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const channels = [
+  {
+    icon: "lucide:youtube",
+    label: "YouTube",
+    metric: "120+ vidéos",
+    href: "https://www.youtube.com/@lilian.sevoumian",
+  },
+  {
+    icon: "lucide:mail",
+    label: "Newsletter",
+    metric: "Chaque semaine",
+    href: "https://liliansevoumian.substack.com/",
+  },
+  {
+    icon: "lucide:linkedin",
+    label: "LinkedIn",
+    metric: "11 000+ abonnés",
+    href: "https://www.linkedin.com/in/liliansevoumian/",
+  },
+];
+---
+
+<!-- Compact resource links on dark bg — merges with footer -->
+<div class="flex flex-col items-center gap-4">
+  <p class="font-body text-[length:var(--text-body-sm)] text-[#999999]">
+    Retrouvez aussi mes ressources gratuites
+  </p>
+  <div class="flex flex-wrap items-center justify-center gap-3">
+    {channels.map((ch) => (
+      <a
+        href={ch.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] font-body text-[length:var(--text-body-sm)] font-medium text-[#AAAAAA] hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.08] transition-all duration-200 group"
+      >
+        <Icon name={ch.icon} class="w-4 h-4 shrink-0" />
+        <span class="font-semibold">{ch.label}</span>
+        <span class="text-[#666666]">·</span>
+        <span>{ch.metric}</span>
+        <Icon name="lucide:arrow-up-right" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 -ml-0.5 transition-opacity duration-200" />
+      </a>
+    ))}
+  </div>
+</div>

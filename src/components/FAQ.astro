@@ -22,6 +22,16 @@ const faqs = [
     answer: "Les automatisations sont construites de façon modulaire\u00a0: ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
     color: "#F43F5E",
   },
+  {
+    question: "Quels outils intégrez-vous\u00a0?",
+    answer: "Je travaille principalement avec Make et n8n comme moteurs d'automatisation, et j'intègre plus de 200\u00a0outils\u00a0: CRM (HubSpot, Pipedrive, Salesforce), facturation (Stripe, Pennylane), bases de données (Airtable, Notion, Google Sheets), communication (Slack, Gmail, Teams) et IA (Claude, GPT, Mistral). Si votre outil a une API ou un webhook, il peut être connecté.",
+    color: "#22D3EE",
+  },
+  {
+    question: "Mon équipe a-t-elle besoin de compétences techniques\u00a0?",
+    answer: "Non. Les automatisations tournent en arrière-plan, vos équipes n'ont rien à coder. À la livraison, je forme vos collaborateurs aux ajustements courants (modifier un filtre, ajouter un destinataire) via une documentation sur mesure et une session de formation incluse.",
+    color: "#E86A33",
+  },
 ];
 ---
 
@@ -29,11 +39,11 @@ const faqs = [
 <div id="faq" class="flex flex-col items-center gap-12 w-full">
   <!-- Header -->
   <div class="flex flex-col items-center gap-5 fade-in-section">
-    <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#7928CA]">
+    <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)]">
       FAQ
     </span>
-    <h2 class="font-display text-[28px] md:text-[40px] font-bold tracking-[-0.02em] text-[#1A1A1A] text-center">
-      Questions fréquentes
+    <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[#1A1A1A] text-center">
+      Tout ce qu'il faut savoir avant de se lancer
     </h2>
   </div>
 
@@ -41,8 +51,8 @@ const faqs = [
   <div class="max-w-[800px] w-full mx-auto flex flex-col gap-4" id="faq-accordion">
     {faqs.map((faq, index) => (
       <div
-        class="faq-item rounded-[16px] overflow-hidden"
-        style={`background: #FFFFFF; border: 2px solid #EBEBEB; box-shadow: 5px 5px 10px 0 ${faq.color}35;`}
+        class="faq-item rounded-[var(--radius-lg)] overflow-hidden"
+        style={`background: #F8F7F4; border: 2px solid rgba(255,255,255,0.6); box-shadow: 5px 5px 10px 0 ${faq.color}35;`}
       >
         <button
           type="button"
@@ -51,7 +61,7 @@ const faqs = [
           aria-controls={`faq-answer-${index}`}
           data-faq-index={index}
         >
-          <span class="font-body text-[16px] font-bold text-[#1A1A1A] pr-4">
+          <span class="font-body text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] pr-4">
             {faq.question}
           </span>
           <Icon
@@ -69,7 +79,7 @@ const faqs = [
           id={`faq-answer-${index}`}
           class="faq-answer overflow-hidden transition-all duration-300 ease-in-out max-h-0"
         >
-          <p class="font-body text-[14px] text-[#666666] leading-[1.6] px-5 md:px-6 pb-5 md:pb-6">
+          <p class="font-body text-[length:var(--text-body)] text-[#666666] leading-[1.6] px-5 md:px-6 pb-5 md:pb-6">
             {faq.answer}
           </p>
         </div>

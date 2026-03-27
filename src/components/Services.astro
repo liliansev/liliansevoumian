@@ -31,18 +31,18 @@ const services = [
 ];
 ---
 
-<section id="services" class="relative bg-white overflow-hidden">
+<section data-bg="white" id="services" class="relative bg-white overflow-hidden">
   <!-- Dot grid -->
   <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
 
-  <div class="relative z-[1] py-[80px] px-[120px] max-md:px-[var(--spacing-section-x)]">
+  <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
     <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-[48px]">
       <!-- Header -->
       <div class="flex flex-col items-center gap-5 fade-in-section">
-        <span class="inline-block text-[12px] font-semibold tracking-[2px] uppercase text-[#7928CA] font-mono">
+        <span class="inline-block text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] font-mono">
           CE QUE JE FAIS
         </span>
-        <h2 class="text-[40px] font-bold tracking-[-0.02em] text-center text-[#1A1A1A] font-display">
+        <h2 class="text-[length:var(--text-heading)] font-bold text-center text-[#1A1A1A] font-display">
           4 leviers pour transformer vos opérations
         </h2>
       </div>
@@ -50,26 +50,39 @@ const services = [
       <!-- Cards grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-[24px] reveal-stagger">
         {services.map((service) => (
-          <div class:list={["reveal-card flex flex-col gap-[16px] p-[32px_28px]", service.cardClass]}>
+          <div class:list={["reveal-card card-3d-hover flex flex-col gap-4 p-[28px_24px]", service.cardClass]}>
             <!-- Number -->
             <span
-              class="text-[48px] font-bold tracking-[-0.03em] leading-none font-mono"
+              class="text-[length:var(--text-decorative)] font-bold leading-none font-mono"
               style={`color: ${service.color};`}
             >
               {service.number}
             </span>
 
             <!-- Title -->
-            <h3 class="text-[22px] font-bold text-[#1A1A1A] font-display">
+            <h3 class="text-[length:var(--text-subheading)] font-bold text-[#1A1A1A] font-display">
               {service.title}
             </h3>
 
             <!-- Description -->
-            <p class="text-[15px] leading-[1.5] text-[#666666] font-body">
+            <p class="text-[length:var(--text-body)] leading-[1.5] text-[#666666] font-body">
               {service.description}
             </p>
           </div>
         ))}
+      </div>
+
+      <!-- CTA intermédiaire -->
+      <div class="flex flex-col items-center gap-4 mt-12 fade-in-section">
+        <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] text-center">
+          Vous vous demandez quel levier aurait le plus d'impact chez vous&nbsp;?
+        </p>
+        <a
+          href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+          class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body)] font-semibold px-7 py-3.5 group"
+        >
+          Identifier mes gains <span class="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
+        </a>
       </div>
     </div>
   </div>

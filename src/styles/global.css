@@ -12,24 +12,37 @@
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Fluid typography tokens */
-  --text-display: clamp(2rem, 4vw + 1rem, 3rem);
+  /* Fluid typography — 9 tokens (was 16 hardcoded sizes) */
+  --text-display: clamp(2rem, 4vw + 1rem, 3.5rem);
   --text-heading: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
-  --text-subheading: clamp(1.125rem, 1.5vw + 0.5rem, 1.25rem);
+  --text-subheading: clamp(1.25rem, 1vw + 0.875rem, 1.375rem);
+  --text-body-lg: clamp(1rem, 0.5vw + 0.875rem, 1.125rem);
+  --text-body: clamp(0.875rem, 0.25vw + 0.8125rem, 0.9375rem);
+  --text-body-sm: 0.8125rem;
+  --text-caption: 0.75rem;
+  --text-micro: 0.6875rem;
+  --text-decorative: clamp(2rem, 3vw + 0.5rem, 3rem);
 
   /* Fluid spacing tokens */
   --spacing-section: clamp(4rem, 6vw, 5rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
+
+  /* Border radius — 4 semantic levels */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
 
   /* Backgrounds */
   --color-bg-page: #FFFFFF;
   --color-bg-dark: #F8F7F4;
   --color-bg-dark-alt: #F3F2EF;
 
-  /* Text — light sections */
+  /* Text — 4 grays + 1 warm brown */
   --color-text-primary: #1A1A1A;
   --color-text-secondary: #666666;
   --color-text-muted: #999999;
+  --color-text-faint: #AAAAAA;
 
   /* Text — dark sections (cream bg → dark text) */
   --color-text-light: #1A1A1A;
@@ -40,6 +53,10 @@
   --color-purple: #9333EA;
   --color-cyan: #22D3EE;
   --color-rose: #F43F5E;
+
+  /* Accent dark variants (AA-compliant for small text on white) */
+  --color-purple-dark: #7928CA;
+  --color-cyan-dark: #0B7F94;
 }
 
 /* =========================================
@@ -61,16 +78,28 @@ body {
    TYPOGRAPHY
    ======================================== */
 
-h1, h2 {
+h1 {
   font-family: var(--font-display);
   font-weight: 700;
   text-wrap: balance;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 700;
   text-wrap: balance;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 
 p, li, blockquote {
@@ -149,7 +178,7 @@ a, button, input, textarea, select,
 .card-3d-orange {
   background: #F8F7F4;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
 }
 
@@ -157,28 +186,28 @@ a, button, input, textarea, select,
 .card-3d-light-orange {
   background: #FFFFFF;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
 }
 
 .card-3d-light-purple {
   background: #FFFFFF;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
 }
 
 .card-3d-light-cyan {
   background: #FFFFFF;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(34, 211, 238, 0.35);
+  border-radius: var(--radius-lg);
+  box-shadow: 5px 5px 10px 0 rgba(13, 148, 136, 0.35);
 }
 
 .card-3d-light-rose {
   background: #FFFFFF;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
 }
 
@@ -186,83 +215,67 @@ a, button, input, textarea, select,
 .card-3d-white-orange {
   background: #F8F7F4;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
 }
 
 .card-3d-white-purple {
   background: #F8F7F4;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
 }
 
 .card-3d-white-cyan {
   background: #F8F7F4;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  box-shadow: 5px 5px 10px 0 rgba(34, 211, 238, 0.35);
+  border-radius: var(--radius-lg);
+  box-shadow: 5px 5px 10px 0 rgba(13, 148, 136, 0.35);
 }
 
 .card-3d-white-rose {
   background: #F8F7F4;
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
 }
 
+/* Card hover — subtle 3D lift (inverse of button press) */
+.card-3d-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-hover:hover {
+  transform: translate(-2px, -2px);
+}
+
 /* =========================================
-   3D BUTTONS — violet primary
+   3D BUTTONS — emerald primary
    ======================================== */
 
-/* Primary button — violet bg + violet shadow */
+/* Primary button — warm charcoal bg + warm shadow */
 .btn-3d {
-  background: #9333EA;
+  background: #2A2520;
   color: #FFFFFF;
   border: none;
-  outline: 1.5px solid #9333EA;
+  outline: 1.5px solid #2A2520;
   outline-offset: 0px;
-  border-radius: 12px;
+  border-radius: var(--radius-full);
   font-family: var(--font-body);
   font-weight: 600;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 5px 5px 12px 0 rgba(42, 37, 32, 0.45);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-3d:hover {
   transform: translate(5px, 5px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 0 0 0 rgba(147, 51, 234, 0);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(42, 37, 32, 0);
 }
 
 .btn-3d:active {
   transform: translate(4px, 4px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
-}
-
-/* Larger CTA variant (CTA section — radius 14, padding 18/40, font 18px) */
-.btn-3d-lg {
-  background: #9333EA;
-  color: #FFFFFF;
-  border: none;
-  outline: 1.5px solid #9333EA;
-  outline-offset: -1.5px;
-  border-radius: 14px;
-  font-family: var(--font-body);
-  font-size: 18px;
-  font-weight: 600;
-  padding: 18px 40px;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-3d-lg:hover {
-  transform: translate(5px, 5px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 0 0 0 rgba(147, 51, 234, 0);
-}
-
-.btn-3d-lg:active {
-  transform: translate(4px, 4px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 1px 1px 3px 0 rgba(42, 37, 32, 0.15);
 }
 
 /* Secondary button — lighter bg, violet border */
@@ -272,7 +285,7 @@ a, button, input, textarea, select,
   border: none;
   outline: 1.5px solid #9333EA;
   outline-offset: 0px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-family: var(--font-body);
   font-weight: 600;
   box-shadow: 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
@@ -391,7 +404,7 @@ a, button, input, textarea, select,
 
 .nav-island {
   background: rgba(248, 247, 244, 0.75);
-  border: 1px solid #352F29;
+  border: 1px solid #E8E4DE;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   box-shadow:
@@ -406,6 +419,16 @@ a, button, input, textarea, select,
   transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Nav border adapts to section background */
+.nav-island.on-white {
+  border-color: #E8E4DE;
+}
+
+.nav-island.on-cream,
+.nav-island.on-dark {
+  border-color: #FFFFFF;
+}
+
 .nav-island.scrolled {
   height: 48px !important;
   top: 12px !important;
@@ -413,7 +436,7 @@ a, button, input, textarea, select,
   background: rgba(248, 247, 244, 0.92);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-color: rgba(0, 0, 0, 0.06);
+  /* border-color inherited from on-white/on-cream classes */
   box-shadow:
     /* Glass thickness */
     inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
@@ -538,7 +561,7 @@ body.menu-open { overflow: hidden; }
     animation: none !important;
     transition: none !important;
   }
-  .fade-in-section, .reveal-card, .stat-item {
+  .fade-in-section, .reveal-card, .stat-item, .card-3d-hover {
     opacity: 1;
     transform: none;
   }

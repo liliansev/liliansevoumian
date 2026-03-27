@@ -3,18 +3,18 @@ import { Image } from 'astro:assets';
 import lilianPortrait from '../assets/profile-linkedin-lilian.jpeg';
 
 const tools = [
-  { name: "Make", textColor: "#E86A33", bgColor: "#E86A3315", borderColor: "#E86A33" },
-  { name: "n8n", textColor: "#9333EA", bgColor: "#9333EA15", borderColor: "#9333EA" },
-  { name: "Claude", textColor: "#22D3EE", bgColor: "#22D3EE15", borderColor: "#22D3EE" },
-  { name: "Notion", textColor: "#1A1A1A", bgColor: "#1A1A1A08", borderColor: "#1A1A1A30" },
-  { name: "Airtable", textColor: "#F43F5E", bgColor: "#F43F5E15", borderColor: "#F43F5E" },
+  { name: "Make" },
+  { name: "n8n" },
+  { name: "Claude" },
+  { name: "Notion" },
+  { name: "Airtable" },
 ];
 ---
 
 <div id="expertise" class="flex flex-col items-center gap-12 fade-in-section">
   <!-- Section badge -->
   <div class="flex flex-col items-center gap-5">
-    <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#E86A33]">
+    <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[#E86A33]">
       QUI SUIS-JE
     </span>
   </div>
@@ -28,39 +28,66 @@ const tools = [
         alt="Lilian Sevoumian"
         width={280}
         height={280}
-        class="w-[180px] h-[180px] md:w-[240px] md:h-[240px] rounded-[16px] object-cover shadow-lg"
+        class="w-[180px] h-[180px] md:w-[240px] md:h-[240px] rounded-[var(--radius-lg)] object-cover shadow-lg"
         loading="lazy"
       />
     </div>
 
     <!-- Text content — dark text for light bg -->
     <div class="flex flex-col gap-4 text-center md:text-left flex-1">
-      <h3 class="font-display font-bold text-[#1A1A1A] text-[28px] tracking-[-0.01em]">
+      <h3 class="font-display font-bold text-[#1A1A1A] text-[length:var(--text-heading)]">
         Lilian Sevoumian
       </h3>
-      <p class="font-body text-[16px] text-[#666666]">
+      <p class="font-body text-[length:var(--text-body-lg)] text-[#666666]">
         Expert en automatisations & intelligence artificielle
       </p>
-      <p class="font-body text-[14px] leading-[1.5] text-[#777777]">
-        Depuis plus de 5&nbsp;ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. Mon approche&nbsp;: je commence toujours par comprendre votre métier avant de toucher à un seul outil.
+      <!-- Social links — monochrome charcoal -->
+      <div class="flex items-center justify-center md:justify-start gap-3 mt-1">
+        <a href="https://www.linkedin.com/in/liliansevoumian/" target="_blank" rel="noopener noreferrer"
+           class="w-9 h-9 rounded-[var(--radius-sm)] flex items-center justify-center pill-hover"
+           style="background: rgba(26, 26, 26, 0.06); border: 1.5px solid rgba(26, 26, 26, 0.15);"
+           aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D3D3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@lilian.sevoumian" target="_blank" rel="noopener noreferrer"
+           class="w-9 h-9 rounded-[var(--radius-sm)] flex items-center justify-center pill-hover"
+           style="background: rgba(26, 26, 26, 0.06); border: 1.5px solid rgba(26, 26, 26, 0.15);"
+           aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D3D3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+        </a>
+        <a href="https://liliansevoumian.substack.com/" target="_blank" rel="noopener noreferrer"
+           class="w-9 h-9 rounded-[var(--radius-sm)] flex items-center justify-center pill-hover"
+           style="background: rgba(26, 26, 26, 0.06); border: 1.5px solid rgba(26, 26, 26, 0.15);"
+           aria-label="Substack">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D3D3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16"/><path d="M4 8h16"/><path d="m4 12 8 6 8-6"/></svg>
+        </a>
+      </div>
+      <p class="font-body text-[length:var(--text-body)] leading-[1.6] text-[var(--color-text-secondary)]">
+        Depuis plus de 5&nbsp;ans, j'aide les dirigeants de PME à supprimer le travail manuel qui freine leur croissance. <strong class="text-[var(--color-text-primary)]">500+&nbsp;automatisations déployées</strong>, des milliers d'heures rendues aux équipes.
+      </p>
+      <p class="font-body text-[length:var(--text-body)] leading-[1.6] text-[var(--color-text-secondary)]">
+        Avant d'être automaticien, <strong class="text-[var(--color-text-primary)]">j'ai été opérationnel</strong>. Je sais ce que c'est de perdre des soirées sur des tâches qu'un workflow fait en 10&nbsp;secondes. C'est pour ça que je ne commence jamais par l'outil&nbsp;: <strong class="text-[var(--color-text-primary)]">je commence par comprendre votre métier</strong>.
+      </p>
+      <p class="font-body text-[length:var(--text-body)] leading-[1.6] text-[var(--color-text-secondary)]">
+        <strong class="text-[var(--color-text-primary)]">Premier Français certifié Make niveau&nbsp;5</strong>, partenaire officiel Make. Je ne suis pas un généraliste qui "fait aussi de l'automatisation" — c'est tout ce que je fais, tous les jours.
       </p>
 
-      <!-- Certifications -->
+      <!-- Certifications — monochrome charcoal -->
       <div class="flex flex-wrap justify-center md:justify-start gap-3">
-        <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold pill-hover" style="color: #E86A33; background: #E86A3315; border: 2px solid #E86A33;">
+        <span class="inline-block rounded-[var(--radius-sm)] px-4 py-2 font-mono text-[length:var(--text-body-sm)] font-semibold pill-hover" style="color: #2A2520; background: rgba(42, 37, 32, 0.06); border: 2px solid rgba(42, 37, 32, 0.18);">
           Make Partner Officiel
         </span>
-        <span class="inline-block rounded-[8px] px-3 py-1.5 font-mono text-[12px] font-semibold pill-hover" style="color: #9333EA; background: #9333EA15; border: 2px solid #9333EA;">
+        <span class="inline-block rounded-[var(--radius-sm)] px-4 py-2 font-mono text-[length:var(--text-body-sm)] font-semibold pill-hover" style="color: #2A2520; background: rgba(42, 37, 32, 0.06); border: 2px solid rgba(42, 37, 32, 0.18);">
           Certification Make Niveau 5
         </span>
       </div>
 
-      <!-- Tool pills -->
+      <!-- Tool pills — monochrome charcoal -->
       <div class="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
         {tools.map((tool) => (
           <span
-            class="font-mono text-[12px] font-semibold rounded-[10px] px-3 py-2 pill-hover"
-            style={`color: ${tool.textColor}; background: ${tool.bgColor}; border: 2px solid ${tool.borderColor};`}
+            class="font-mono text-[length:var(--text-caption)] font-semibold rounded-[var(--radius-sm)] px-3 py-1.5 pill-hover"
+            style="color: #5A554D; background: rgba(42, 37, 32, 0.04); border: 1.5px solid rgba(42, 37, 32, 0.12);"
           >
             {tool.name}
           </span>

@@ -8,30 +8,33 @@ const testimonials = [
   {
     quote: "Un Champion du no code d'Airtable et de Make avéré\u00A0! Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.",
     name: "Ismail Landoulsi",
-    role: "Co-Founder & COO @ CasanovaParis",
+    roleTitle: "Co-Founder & COO",
+    company: "CasanovaParis",
     image: ismailImg,
     color: "orange",
   },
   {
     quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation et de sa volonté infaillible de servir un projet.",
     name: "Alexis Kovalenko",
-    role: "Co-fondateur @ Contournement",
+    roleTitle: "Co-fondateur",
+    company: "Contournement",
     image: alexisImg,
     color: "purple",
   },
   {
     quote: "Il a une approche très professionnelle, un large spectre de connaissances, et un bon esprit de synthèse. Les projets qu'il prend en charge sont un succès.",
     name: "Benjamin Potet",
-    role: "Solution Architect @ Customer Experience",
+    roleTitle: "Solution Architect",
+    company: "Customer Experience",
     image: benjaminImg,
     color: "cyan",
   },
 ];
 
 const colorMap = {
-  orange: { shadow: 'card-3d-white-orange', quote: '#E86A33', separator: '#E86A33' },
-  purple: { shadow: 'card-3d-white-purple', quote: '#9333EA', separator: '#9333EA' },
-  cyan: { shadow: 'card-3d-white-cyan', quote: '#22D3EE', separator: '#22D3EE' },
+  orange: { shadow: 'card-3d-light-orange', quote: '#E86A33', separator: '#E86A33' },
+  purple: { shadow: 'card-3d-light-purple', quote: '#9333EA', separator: '#9333EA' },
+  cyan: { shadow: 'card-3d-light-cyan', quote: '#0D9488', separator: '#0D9488' },
 };
 ---
 
@@ -39,12 +42,15 @@ const colorMap = {
 <div class="flex flex-col items-center gap-12">
   <!-- Header -->
   <div class="flex flex-col items-center gap-5">
-    <span class="inline-block font-mono text-[12px] font-semibold tracking-[2px] uppercase text-[#7928CA]">
+    <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)]">
       TÉMOIGNAGES
     </span>
-    <h2 class="font-display text-[40px] font-bold tracking-[-0.02em] text-[#1A1A1A] text-center">
-      Ce qu'ils en disent
+    <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[#1A1A1A] text-center">
+      Ils ont automatisé. Voici leur verdict.
     </h2>
+    <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] text-center max-w-[600px]">
+      Les chiffres sont dans les études de cas. Ici, ce sont les mots de ceux qui vivent l'automatisation au quotidien.
+    </p>
   </div>
 
   <!-- Cards -->
@@ -52,7 +58,7 @@ const colorMap = {
     {testimonials.map((t) => {
       const colors = colorMap[t.color as keyof typeof colorMap];
       return (
-        <div class={`${colors.shadow} flex flex-col gap-5 p-[28px_24px] reveal-card`}>
+        <div class={`${colors.shadow} card-3d-hover flex flex-col gap-4 p-[28px_24px] reveal-card`}>
           {/* Big colored quote mark with circle bg */}
           <div
             class="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
@@ -66,7 +72,7 @@ const colorMap = {
           </div>
 
           {/* Quote text */}
-          <blockquote class="font-body text-[15px] italic text-[var(--color-text-primary)] leading-[1.6] flex-1">
+          <blockquote class="font-body text-[length:var(--text-body)] italic text-[var(--color-text-primary)] leading-[1.6] flex-1">
             {t.quote}
           </blockquote>
 
@@ -79,10 +85,12 @@ const colorMap = {
 
           {/* Author */}
           <div class="flex items-center gap-3">
-            <Image src={t.image} alt={t.name} width={40} height={40} class="w-10 h-10 rounded-full object-cover shrink-0" loading="lazy" />
+            <Image src={t.image} alt={t.name} width={40} height={40} class="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-white" loading="lazy" />
             <div class="flex flex-col gap-1">
-              <span class="font-body text-[14px] font-bold text-[#1A1A1A]">{t.name}</span>
-              <span class="font-body text-[12px] text-[#666666]">{t.role}</span>
+              <span class="font-body text-[length:var(--text-body)] font-bold text-[#1A1A1A]">{t.name}</span>
+              <span class="font-body text-[length:var(--text-caption)] text-[#666666]">
+                {t.roleTitle} <span class="font-mono text-[length:var(--text-micro)] font-semibold" style={`color: ${colors.quote};`}>@ {t.company}</span>
+              </span>
             </div>
           </div>
         </div>

@@ -7,14 +7,14 @@ const navLinks = [
 ];
 
 const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/", color: "#E86A33" },
-  { label: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian", color: "#B47AFF" },
-  { label: "Substack", href: "https://liliansevoumian.substack.com/", color: "#22D3EE" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/", color: "#0A66C2" },
+  { label: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian", color: "#FF0000" },
+  { label: "Substack", href: "https://liliansevoumian.substack.com/", color: "#FF6719" },
 ];
 ---
 
 <!-- Footer — dark -->
-<footer class="bg-[#1A1A1A]">
+<footer data-bg="dark" class="bg-[#1A1A1A]">
   <!-- Gradient separator -->
   <div class="h-[3px]" style="background: linear-gradient(90deg, #E86A33, #9333EA, #22D3EE, #F43F5E);" aria-hidden="true"></div>
 
@@ -23,8 +23,8 @@ const socialLinks = [
     <div class="max-w-[1200px] mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
       <!-- Left column: Name + Desc -->
       <div class="flex flex-col gap-2">
-        <span class="font-display text-[18px] font-bold text-white">Lilian Sevoumian</span>
-        <p class="font-body text-[13px] text-[#999999] leading-[1.6]">
+        <span class="font-display text-[length:var(--text-body-lg)] font-bold text-white">Lilian Sevoumian</span>
+        <p class="font-body text-[length:var(--text-body-sm)] text-[#999999] leading-[1.6]">
           J'automatise les opérations des PME avec Make, n8n et l'IA.
         </p>
       </div>
@@ -32,7 +32,7 @@ const socialLinks = [
       <!-- Center column: Nav links — horizontal -->
       <div class="flex flex-wrap items-center gap-6">
         {navLinks.map((link) => (
-          <a href={link.href} class="font-body text-[13px] font-medium text-[#AAAAAA] hover:text-white transition-colors duration-200 min-h-[44px] flex items-center">{link.label}</a>
+          <a href={link.href} class="font-body text-[length:var(--text-body-sm)] font-medium text-[var(--color-text-faint)] hover:text-white transition-colors duration-200 min-h-[44px] flex items-center">{link.label}</a>
         ))}
       </div>
 
@@ -43,7 +43,7 @@ const socialLinks = [
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            class="font-mono text-[12px] font-medium hover:opacity-80 transition-opacity duration-200 min-h-[44px] flex items-center"
+            class="font-mono text-[length:var(--text-caption)] font-medium hover:opacity-80 transition-opacity duration-200 min-h-[44px] flex items-center"
             style={`color: ${link.color}`}
           >{link.label}</a>
         ))}
@@ -54,8 +54,8 @@ const socialLinks = [
   <!-- Copyright bar -->
   <div class="bg-[#111111] py-[20px] px-[var(--spacing-section-x)]">
     <div class="max-w-[1200px] mx-auto flex items-center justify-center gap-4">
-      <span class="font-body text-[12px] text-[#888888]">&copy; 2026 Lilian Sevoumian. Tous droits r&eacute;serv&eacute;s.</span>
-      <a href="/mentions-legales" class="font-body text-[12px] text-[#888888] hover:text-white transition-colors duration-200">Mentions l&eacute;gales</a>
+      <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-faint)]">&copy; 2026 Lilian Sevoumian. Tous droits r&eacute;serv&eacute;s.</span>
+      <a href="/mentions-legales" class="font-body text-[length:var(--text-caption)] text-[var(--color-text-faint)] hover:text-white transition-colors duration-200">Mentions l&eacute;gales</a>
     </div>
   </div>
 </footer>
