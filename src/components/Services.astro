@@ -1,21 +1,23 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 const services = [
   {
-    number: "01",
+    icon: "lucide:workflow",
     title: "Automatisation des workflows",
     description: "Vos outils (CRM, facturation, emails, Slack...) communiquent entre eux sans intervention humaine. Fini le copier-coller entre 5\u00A0outils.",
     color: "#E86A33",
     cardClass: "card-3d-light-orange",
   },
   {
-    number: "02",
+    icon: "lucide:brain",
     title: "Intégration d'IA sur mesure",
     description: "Chatbot, tri automatique, extraction de données, génération de rapports — l'IA est branchée directement sur vos datas.",
     color: "#9333EA",
     cardClass: "card-3d-light-purple",
   },
   {
-    number: "03",
+    icon: "lucide:graduation-cap",
     title: "Formation de vos équipes",
     description: "Vos collaborateurs apprennent à créer et maintenir leurs propres automatisations. Objectif\u00A0: autonomie totale en 4 à 6\u00A0semaines.",
     color: "#F43F5E",
@@ -44,13 +46,8 @@ const services = [
       <div class="grid grid-cols-1 md:grid-cols-3 gap-[24px] reveal-stagger">
         {services.map((service) => (
           <div class:list={["reveal-card card-3d-hover flex flex-col p-[28px_24px]", service.cardClass]}>
-            <!-- Number — tight with title -->
-            <span
-              class="text-[length:var(--text-decorative)] font-bold leading-none font-mono mb-1"
-              style={`color: ${service.color};`}
-            >
-              {service.number}
-            </span>
+            <!-- Icon -->
+            <Icon name={service.icon} class="w-7 h-7 mb-3" style={`color: ${service.color};`} />
 
             <!-- Title — medium gap to description -->
             <h3 class="text-[length:var(--text-subheading)] font-bold text-[#1A1A1A] font-display mb-3">
