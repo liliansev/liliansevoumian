@@ -9,6 +9,7 @@ const caseStudies = [
     color: "#E86A33",
     cardClass: "card-3d-white-orange",
     badgeTextColor: "text-white",
+    btnTextColor: "text-white",
     href: "/cas-clients/onboarding-ecommerce",
   },
   {
@@ -20,6 +21,7 @@ const caseStudies = [
     color: "#9333EA",
     cardClass: "card-3d-white-purple",
     badgeTextColor: "text-white",
+    btnTextColor: "text-white",
     href: "/cas-clients/chatbot-support-saas",
   },
   {
@@ -31,6 +33,7 @@ const caseStudies = [
     color: "#22D3EE",
     cardClass: "card-3d-white-cyan",
     badgeTextColor: "text-[#1A1A1A]",
+    btnTextColor: "text-[#1A1A1A]",
     href: "/cas-clients/reporting-dashboards-ia",
   },
 ];
@@ -42,7 +45,7 @@ const caseStudies = [
     <div class="max-w-[1200px] mx-auto flex flex-col items-center gap-12">
       <!-- Header -->
       <div class="flex flex-col items-center fade-in-section">
-        <span class="inline-block text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] font-mono mb-3">
+        <span class="inline-block text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[#1A1A1A] font-mono mb-3">
           RÉSULTATS
         </span>
         <h2 class="text-[length:var(--text-heading)] font-bold text-center text-[#1A1A1A] font-display w-full">
@@ -73,9 +76,8 @@ const caseStudies = [
             </p>
 
             <!-- Read more -->
-            <span class="inline-flex items-center gap-1 mt-4 text-sm font-medium font-body transition-colors" style={`color: ${study.color};`}>
-              Voir l'étude de cas
-              <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
+            <span class:list={["inline-flex items-center justify-center self-start rounded-lg px-5 py-2.5 mt-4 text-sm font-semibold font-body transition-all group-hover:opacity-90", study.btnTextColor]} style={`background: ${study.color};`}>
+              Voir l'étude de cas <span class="inline-block ml-1 transition-transform group-hover:translate-x-1">&rarr;</span>
             </span>
           </a>
         ))}
@@ -125,9 +127,9 @@ const caseStudies = [
 
         <!-- Scroll indicator dots -->
         <div id="case-dots" class="flex justify-center gap-2 mt-4" aria-hidden="true">
-          <div class="w-2 h-2 rounded-full bg-[#E86A33] transition-colors duration-200" data-dot="0"></div>
-          <div class="w-2 h-2 rounded-full bg-[#C5C2BC] transition-colors duration-200" data-dot="1"></div>
-          <div class="w-2 h-2 rounded-full bg-[#C5C2BC] transition-colors duration-200" data-dot="2"></div>
+          <div class="w-6 h-2 rounded-[4px] bg-[#1A1A1A] transition-all duration-200" data-dot="0"></div>
+          <div class="w-2 h-2 rounded-full bg-[#D4D4D8] transition-all duration-200" data-dot="1"></div>
+          <div class="w-2 h-2 rounded-full bg-[#D4D4D8] transition-all duration-200" data-dot="2"></div>
         </div>
       </div>
 
@@ -141,8 +143,6 @@ const caseStudies = [
 </section>
 
 <script>
-  const colors = ['#E86A33', '#9333EA', '#22D3EE'];
-
   function initScrollDots() {
     const scroller = document.querySelector('#cas-clients .overflow-x-auto');
     const dots = document.querySelectorAll('#case-dots [data-dot]');
@@ -157,11 +157,11 @@ const caseStudies = [
 
       dots.forEach((dot, i) => {
         if (i === clamped) {
-          (dot as HTMLElement).style.backgroundColor = colors[i];
+          (dot as HTMLElement).style.backgroundColor = '#1A1A1A';
           (dot as HTMLElement).style.width = '24px';
           (dot as HTMLElement).style.borderRadius = '4px';
         } else {
-          (dot as HTMLElement).style.backgroundColor = '#C5C2BC';
+          (dot as HTMLElement).style.backgroundColor = '#D4D4D8';
           (dot as HTMLElement).style.width = '8px';
           (dot as HTMLElement).style.borderRadius = '9999px';
         }
