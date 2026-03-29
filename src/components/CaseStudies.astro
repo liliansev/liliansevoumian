@@ -1,39 +1,30 @@
 ---
 const caseStudies = [
   {
-    metric: "-70\u00A0%",
-    metricLabel: "TEMPS DE TRAITEMENT",
     badgeText: "-70%",
     title: "Onboarding client\u00A0: de 45\u00A0min à 12\u00A0min",
     description: "Un e-commerce en forte croissance perdait 45\u00A0minutes par nouveau client sur la saisie CRM, la facturation et l'envoi des accès. Workflow Make déployé en 5\u00A0jours. Résultat\u00A0: tout est automatisé, zéro erreur.",
     color: "#E86A33",
-    cardClass: "card-3d-white-orange",
+    colorRgb: "232, 106, 51",
     badgeTextColor: "text-white",
-    btnTextColor: "text-white",
     href: "/cas-clients/onboarding-ecommerce",
   },
   {
-    metric: "3x",
-    metricLabel: "CAPACITÉ DE TRAITEMENT",
     badgeText: "3x",
     title: "Support client\u00A0: 850\u00A0tickets/mois sans recrutement",
     description: "Un SaaS noyait son équipe support sous les demandes répétitives. Chatbot IA déployé en 3\u00A0semaines\u00A0: il résout le niveau\u00A01 et escalade les cas complexes avec tout le contexte.",
     color: "#9333EA",
-    cardClass: "card-3d-white-purple",
+    colorRgb: "147, 51, 234",
     badgeTextColor: "text-white",
-    btnTextColor: "text-white",
     href: "/cas-clients/chatbot-support-saas",
   },
   {
-    metric: "+15\u00A0h",
-    metricLabel: "ÉCONOMISÉES PAR SEMAINE",
     badgeText: "+15h",
     title: "12 rapports manuels remplacés par des dashboards temps réel",
     description: "Un cabinet conseil passait 2\u00A0jours par semaine à compiler des rapports dans Excel. Dashboards automatisés avec alertes IA. ROI atteint en 3\u00A0semaines.",
     color: "#22D3EE",
-    cardClass: "card-3d-white-cyan",
+    colorRgb: "34, 211, 238",
     badgeTextColor: "text-[#1A1A1A]",
-    btnTextColor: "text-[#1A1A1A]",
     href: "/cas-clients/reporting-dashboards-ia",
   },
 ];
@@ -56,17 +47,21 @@ const caseStudies = [
       <!-- Desktop: 3 columns grid -->
       <div class="hidden md:grid md:grid-cols-3 gap-6 reveal-stagger w-full">
         {caseStudies.map((study) => (
-          <a href={study.href} class:list={["reveal-card card-3d-hover flex flex-col p-[28px_24px] no-underline group", study.cardClass]}>
+          <a
+            href={study.href}
+            class="reveal-card flex flex-col p-[28px_24px] no-underline group rounded-[var(--radius-lg)] transition-all duration-250"
+            style={`background: #F8F7F4; border: 2px solid rgba(${study.colorRgb}, 0.15); box-shadow: 5px 5px 10px 0 rgba(${study.colorRgb}, 0.25);`}
+          >
             <!-- Badge pill -->
             <span
               class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[length:var(--text-body)] font-bold font-mono", study.badgeTextColor]}
-              style={`background: ${study.color};`}
+              style={`background: ${study.color}; box-shadow: 0 2px 6px rgba(${study.colorRgb}, 0.35);`}
             >
               {study.badgeText}
             </span>
 
             <!-- Title -->
-            <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display mt-3 mb-3">
+            <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display mt-4 mb-3">
               {study.title}
             </h3>
 
@@ -75,9 +70,12 @@ const caseStudies = [
               {study.description}
             </p>
 
-            <!-- Read more -->
-            <span class:list={["inline-flex items-center justify-center self-start rounded-lg px-5 py-2.5 mt-4 text-sm font-semibold font-body transition-all group-hover:opacity-90", study.btnTextColor]} style={`background: ${study.color};`}>
-              Voir l'étude de cas <span class="inline-block ml-1 transition-transform group-hover:translate-x-1">&rarr;</span>
+            <!-- CTA button — 3D style -->
+            <span
+              class="inline-flex items-center justify-center self-start rounded-full px-5 py-2.5 mt-5 text-[length:var(--text-body-sm)] font-semibold font-body transition-all duration-250 group-hover:translate-x-[3px] group-hover:translate-y-[3px] group-hover:shadow-none"
+              style={`background: ${study.color}; color: ${study.badgeTextColor === 'text-white' ? '#fff' : '#1A1A1A'}; outline: 1.5px solid ${study.color}; outline-offset: 0px; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.18), 3px 3px 8px 0 rgba(${study.colorRgb}, 0.40);`}
+            >
+              Voir l'étude de cas <span class="inline-block ml-1.5 transition-transform group-hover:translate-x-1">&rarr;</span>
             </span>
           </a>
         ))}
@@ -87,17 +85,21 @@ const caseStudies = [
       <div class="md:hidden relative w-full overflow-hidden">
         <div class="reveal-stagger flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 pl-0 pr-0">
           {caseStudies.map((study) => (
-            <a href={study.href} class:list={["reveal-card flex flex-col p-6 snap-start shrink-0 w-[85vw] max-w-[340px] no-underline group", study.cardClass]}>
+            <a
+              href={study.href}
+              class="reveal-card flex flex-col p-6 snap-start shrink-0 w-[85vw] max-w-[340px] no-underline group rounded-[var(--radius-lg)]"
+              style={`background: #F8F7F4; border: 2px solid rgba(${study.colorRgb}, 0.15); box-shadow: 5px 5px 10px 0 rgba(${study.colorRgb}, 0.25);`}
+            >
               <!-- Badge pill -->
               <span
                 class:list={["inline-flex items-center justify-center self-start rounded-full px-[14px] py-[6px] text-[length:var(--text-body)] font-bold font-mono", study.badgeTextColor]}
-                style={`background: ${study.color};`}
+                style={`background: ${study.color}; box-shadow: 0 2px 6px rgba(${study.colorRgb}, 0.35);`}
               >
                 {study.badgeText}
               </span>
 
               <!-- Title -->
-              <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display mt-3 mb-3">
+              <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display mt-4 mb-3">
                 {study.title}
               </h3>
 
@@ -106,8 +108,11 @@ const caseStudies = [
                 {study.description}
               </p>
 
-              <!-- Read more -->
-              <span class="inline-flex items-center gap-1 mt-4 text-sm font-medium font-body transition-colors" style={`color: ${study.color};`}>
+              <!-- CTA link — accent color -->
+              <span
+                class="inline-flex items-center gap-1.5 mt-5 text-[length:var(--text-body-sm)] font-semibold font-body transition-colors"
+                style={`color: ${study.color};`}
+              >
                 Voir l'étude de cas
                 <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
               </span>
