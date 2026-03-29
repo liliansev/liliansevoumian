@@ -1,7 +1,7 @@
 ---
 const navLinks = [
   { href: "/#expertise", label: "Expertise" },
-  { href: "/#temoignages", label: "Résultats" },
+  { href: "/#cas-clients", label: "Résultats" },
   { href: "/#methode", label: "Méthode" },
   { href: "/#faq", label: "FAQ" },
 ];
@@ -144,9 +144,10 @@ const roiLink = { href: "/#calculateur-roi", label: "ROI Calculateur" };
   const closeIcon = menuBtn?.querySelector('.hamburger-close');
 
   function toggleMenu() {
-    const isOpen = mobileMenu?.classList.toggle('open');
-    menuBtn?.setAttribute('aria-expanded', String(isOpen));
-    document.body.classList.toggle('menu-open', isOpen ?? false);
+    if (!mobileMenu || !menuBtn) return;
+    const isOpen = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(!!isOpen));
+    document.body.classList.toggle('menu-open', !!isOpen);
 
     if (isOpen) {
       openIcon?.classList.add('hidden');

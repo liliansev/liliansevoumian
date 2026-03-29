@@ -38,7 +38,7 @@ const howToSchema = {
 };
 ---
 
-<Layout title={title} description={description} ogType="article" breadcrumbs={breadcrumbs} articleSchema={articleSchema}>
+<Layout title={title} description={description} ogType="article" breadcrumbs={breadcrumbs} articleSchema={{ ...articleSchema, hasPart: howToSchema }}>
   <Navigation />
 
   <main id="main-content">
@@ -230,5 +230,3 @@ const howToSchema = {
 
   <Footer />
 </Layout>
-
-<script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />

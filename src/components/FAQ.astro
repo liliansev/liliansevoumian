@@ -102,20 +102,21 @@ const faqs = [
       if (!item) return;
 
       const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-      const answer = item.querySelector('.faq-answer') as HTMLElement;
-      const iconPlus = item.querySelector('.faq-icon-plus') as HTMLElement;
-      const iconMinus = item.querySelector('.faq-icon-minus') as HTMLElement;
+      const answer = item.querySelector('.faq-answer') as HTMLElement | null;
+      const iconPlus = item.querySelector('.faq-icon-plus') as HTMLElement | null;
+      const iconMinus = item.querySelector('.faq-icon-minus') as HTMLElement | null;
+      if (!answer || !iconPlus || !iconMinus) return;
 
       if (isExpanded) {
         trigger.setAttribute('aria-expanded', 'false');
-        answer.classList.remove('max-h-96', 'pb-6');
+        answer.classList.remove('max-h-[1000px]', 'pb-6');
         answer.classList.add('max-h-0');
         iconPlus.classList.remove('hidden');
         iconMinus.classList.add('hidden');
       } else {
         trigger.setAttribute('aria-expanded', 'true');
         answer.classList.remove('max-h-0');
-        answer.classList.add('max-h-96');
+        answer.classList.add('max-h-[1000px]');
         iconPlus.classList.add('hidden');
         iconMinus.classList.remove('hidden');
       }

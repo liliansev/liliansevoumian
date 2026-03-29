@@ -6,10 +6,11 @@ const WEEKS_PER_YEAR = 52;
 
 function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
   const [displayed, setDisplayed] = useState(0);
-  const ref = useRef<number | null>(null);
+  const displayedRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const start = displayed;
+    const start = displayedRef.current;
     const diff = value - start;
     if (diff === 0) return;
 
@@ -20,15 +21,17 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayed(Math.round(start + diff * eased));
+      const current = Math.round(start + diff * eased);
+      displayedRef.current = current;
+      setDisplayed(current);
       if (progress < 1) {
-        ref.current = requestAnimationFrame(animate);
+        rafRef.current = requestAnimationFrame(animate);
       }
     }
 
-    ref.current = requestAnimationFrame(animate);
+    rafRef.current = requestAnimationFrame(animate);
     return () => {
-      if (ref.current) cancelAnimationFrame(ref.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [value]);
 
@@ -185,8 +188,13 @@ export default function ROICalculator() {
                       max={200}
                       value={hourlyCost}
                       onChange={(e) => {
-                        const v = Number(e.target.value);
-                        if (v >= 10 && v <= 200) setHourlyCost(v);
+                        const raw = e.target.value;
+                        if (raw === '') return;
+                        const v = Number(raw);
+                        if (!isNaN(v) && v >= 1 && v <= 200) setHourlyCost(v);
+                      }}
+                      onBlur={() => {
+                        if (hourlyCost < 10) setHourlyCost(10);
                       }}
                       className="w-[60px] text-right text-lg font-bold tabular-nums bg-transparent border-b-2 border-[#E86A33] outline-none"
                       style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}

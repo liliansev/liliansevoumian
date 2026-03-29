@@ -133,11 +133,6 @@ const caseStudies = [
         </div>
       </div>
 
-      <!-- Link to all case studies -->
-      <a href="/cas-clients" class="inline-flex items-center gap-2 text-[length:var(--text-body)] font-medium font-body text-[#666666] hover:text-[#1A1A1A] transition-colors group">
-        Voir tous les cas clients
-        <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
-      </a>
     </div>
   </div>
 </section>
@@ -153,7 +148,7 @@ const caseStudies = [
       const cardWidth = scroller.querySelector('.snap-start')?.clientWidth || 300;
       const gap = 16;
       const active = Math.round(scrollLeft / (cardWidth + gap));
-      const clamped = Math.min(Math.max(active, 0), 2);
+      const clamped = Math.min(Math.max(active, 0), dots.length - 1);
 
       dots.forEach((dot, i) => {
         if (i === clamped) {

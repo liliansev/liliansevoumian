@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import CTAButton from '../../components/ui/CTAButton.astro';
 import { getCaseStudies, getCaseStudyBySlug } from '../../lib/notion';
 
 export async function getStaticPaths() {
@@ -21,74 +20,41 @@ if (!caseStudy) {
   return Astro.redirect('/cas-clients');
 }
 
-// SEO: Build optimized meta description
 const seoDescription = `${caseStudy.title}. ${caseStudy.kpis.length > 0 ? `Résultats : ${caseStudy.kpis.map(k => `${k.value} ${k.label}`).join(', ')}. ` : ''}Découvrez comment l'automatisation ${caseStudy.tools.length > 0 ? `avec ${caseStudy.tools.join(', ')} ` : ''}a transformé ${caseStudy.secteur ? `ce projet ${caseStudy.secteur}` : 'cette entreprise'}.`.substring(0, 160);
 
-// SEO: Breadcrumbs
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
   { name: 'Cas clients', url: '/cas-clients' },
   { name: caseStudy.title, url: `/cas-clients/${caseStudy.slug}` }
 ];
 
-// SEO: Article Schema (Case Study)
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": caseStudy.title,
   "description": seoDescription,
-  "author": {
-    "@type": "Person",
-    "name": "Lilian Sevoumian",
-    "url": "https://liliansevoumian.fr"
-  },
-  "publisher": {
-    "@type": "Person",
-    "name": "Lilian Sevoumian",
-    "url": "https://liliansevoumian.fr"
-  },
+  "author": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+  "publisher": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
   "datePublished": caseStudy.date || new Date().toISOString(),
   "dateModified": caseStudy.date || new Date().toISOString(),
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": `https://liliansevoumian.fr/cas-clients/${caseStudy.slug}`
-  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://liliansevoumian.fr/cas-clients/${caseStudy.slug}` },
   "articleSection": "Cas client",
-  "keywords": [
-    "automatisation",
-    "cas client",
-    caseStudy.secteur,
-    ...caseStudy.tags,
-    ...caseStudy.tools
-  ].filter(Boolean).join(", "),
-  "about": {
-    "@type": "Thing",
-    "name": "Automatisation No-Code",
-    "description": "Automatisation de processus métier avec Make, n8n et Airtable"
-  }
+  "keywords": ["automatisation", "cas client", caseStudy.secteur, ...caseStudy.tags, ...caseStudy.tools].filter(Boolean).join(", "),
 };
 
-// SEO: HowTo Schema for the steps section
 const howToSchema = caseStudy.etapes ? {
   "@context": "https://schema.org",
   "@type": "HowTo",
   "name": `Comment automatiser : ${caseStudy.title}`,
   "description": caseStudy.probleme?.substring(0, 200),
-  "tool": caseStudy.tools.map(tool => ({
-    "@type": "HowToTool",
-    "name": tool
-  })),
-  "totalTime": "P5W",
-  "estimatedCost": {
-    "@type": "MonetaryAmount",
-    "currency": "EUR"
-  }
+  "tool": caseStudy.tools.map(tool => ({ "@type": "HowToTool", "name": tool })),
 } : null;
 
-// Combine schemas
 const combinedSchema = howToSchema
   ? { ...articleSchema, hasPart: howToSchema }
   : articleSchema;
+
+const accentColors = ['#E86A33', '#9333EA', '#22D3EE'];
 ---
 
 <Layout
@@ -102,211 +68,205 @@ const combinedSchema = howToSchema
   <Navigation />
 
   <main id="main-content">
-    <!-- Hero -->
-    <section class="px-6 bg-zinc-100 dark:bg-zinc-900 pt-32 pb-16 lg:pb-24">
-      <div class="max-w-5xl mx-auto">
-        <!-- Back link -->
-        <a
-          href="/cas-clients"
-          class="inline-flex items-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 text-sm font-medium mb-10 transition-colors group"
-        >
-          <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-          Retour aux cas clients
-        </a>
+    <!-- Hero (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden pt-28 pb-0">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto">
+          <a href="/cas-clients" class="inline-flex items-center gap-2 font-body text-[length:var(--text-body-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 group">
+            <span class="transition-transform group-hover:-translate-x-1">&larr;</span>
+            Retour aux cas clients
+          </a>
 
-        <!-- Tags + Stack ensemble -->
-        <div class="flex flex-wrap items-center gap-3 mb-8">
-          {caseStudy.secteur && (
-            <span class="px-3 py-1.5 bg-violet-500 text-white text-sm font-medium rounded-full">
-              {caseStudy.secteur}
-            </span>
-          )}
-          {caseStudy.tags.map(tag => (
-            <span class="px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 text-sm font-medium rounded-full border border-zinc-300 dark:border-zinc-600">
-              {tag}
-            </span>
-          ))}
-          {caseStudy.tools.length > 0 && (
-            <>
-              <span class="text-zinc-400 dark:text-zinc-500 mx-1">•</span>
-              {caseStudy.tools.map(tool => (
-                <span class="px-3 py-1.5 text-sm text-zinc-600 dark:text-zinc-300 bg-zinc-200/70 dark:bg-zinc-800/70 rounded-full border border-zinc-300/50 dark:border-zinc-700/50">
-                  {tool}
+          <div class="flex flex-col gap-5 fade-in-section">
+            <div class="flex flex-wrap items-center gap-3">
+              {caseStudy.secteur && (
+                <span class="inline-block rounded-full px-4 py-1.5 text-[length:var(--text-micro)] font-semibold tracking-[2px] uppercase font-mono text-[var(--color-orange)]" style="background: rgba(232, 106, 51, 0.12);">
+                  {caseStudy.secteur}
+                </span>
+              )}
+              {caseStudy.tags.map((tag: string) => (
+                <span class="rounded-full px-3 py-1 text-[length:var(--text-caption)] font-medium font-mono" style="background: rgba(147, 51, 234, 0.08); color: var(--color-purple-dark);">
+                  {tag}
                 </span>
               ))}
-            </>
-          )}
-        </div>
+            </div>
 
-        <!-- Title -->
-        <h1 class="fluid-h1 font-semibold text-zinc-900 dark:text-white mb-16 max-w-4xl leading-tight">
-          {caseStudy.title}
-        </h1>
-
-        <!-- KPIs -->
-        {caseStudy.kpis.length > 0 && (
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 lg:gap-20 pt-12 border-t border-violet-500/30">
-            {caseStudy.kpis.map(kpi => (
-              <div>
-                <p class="text-6xl lg:text-7xl font-bold text-zinc-900 dark:text-white tracking-tighter">
-                  {kpi.value}
-                </p>
-                <p class="text-sm lg:text-base text-zinc-500 dark:text-zinc-400 mt-3 uppercase tracking-wide">
-                  {kpi.label}
-                </p>
-              </div>
-            ))}
+            <h1 class="font-display text-[length:var(--text-display)] font-bold text-[var(--color-text-primary)] leading-[1.08]">
+              {caseStudy.title}
+            </h1>
           </div>
-        )}
+        </div>
       </div>
     </section>
 
-    <!-- Le contexte -->
+    <!-- KPIs (CREAM) -->
+    {caseStudy.kpis.length > 0 && (
+      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+        <div class="relative z-[1] py-12 px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto">
+            <div class="grid grid-cols-3 gap-4 fade-in-section">
+              {caseStudy.kpis.map((kpi: { value: string; label: string }, i: number) => (
+                <div class="card-3d-white-orange p-6 flex flex-col items-center text-center">
+                  <span class="font-mono text-3xl md:text-4xl font-bold" style={`color: ${accentColors[i % 3]};`}>{kpi.value}</span>
+                  <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-secondary)] uppercase tracking-[1px] mt-1">{kpi.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Entreprise (WHITE) -->
     {caseStudy.entreprise && (
-      <section class="py-20 lg:py-32 px-6 bg-white dark:bg-zinc-100">
-        <div class="max-w-5xl mx-auto">
-          <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
-            <div>
-              <p class="text-xs text-violet-500 uppercase tracking-widest font-medium mb-3">01</p>
-              <h2 class="text-2xl lg:text-3xl font-semibold text-zinc-900 leading-tight">
-                L'entreprise
-              </h2>
-            </div>
-            <div>
-              <p class="text-lg lg:text-xl text-zinc-600 leading-relaxed whitespace-pre-line">
-                {caseStudy.entreprise}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    )}
-
-    <!-- Le défi -->
-    {caseStudy.probleme && (
-      <section class="py-20 lg:py-32 px-6 bg-zinc-50 dark:bg-white">
-        <div class="max-w-5xl mx-auto">
-          <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
-            <div>
-              <p class="text-xs text-violet-500 uppercase tracking-widest font-medium mb-3">02</p>
-              <h2 class="text-2xl lg:text-3xl font-semibold text-zinc-900 leading-tight">
-                Le défi
-              </h2>
-            </div>
-            <div class="space-y-6">
-              <p class="text-lg lg:text-xl text-zinc-600 leading-relaxed whitespace-pre-line">
-                {caseStudy.probleme}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-    )}
-
-    <!-- Témoignage -->
-    {caseStudy.testimonial?.quote && (
-      <section class="py-24 lg:py-36 px-6 bg-zinc-100 dark:bg-zinc-900">
-        <div class="max-w-4xl mx-auto text-center">
-          <svg class="w-12 h-12 text-violet-500/60 mx-auto mb-10" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-          </svg>
-          <blockquote>
-            <p class="text-xl lg:text-2xl font-medium text-zinc-900 dark:text-white leading-relaxed mb-10">
-              {caseStudy.testimonial.quote}
+      <section data-bg="white" class="relative bg-white overflow-hidden">
+        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto fade-in-section">
+            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] mb-3">
+              L'ENTREPRISE
+            </span>
+            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+              {caseStudy.entreprise}
             </p>
-            {(caseStudy.testimonial.name || caseStudy.testimonial.role) && (
-              <footer class="text-base lg:text-lg">
-                <span class="text-zinc-900 dark:text-white font-semibold">{caseStudy.testimonial.name}</span>
-                {caseStudy.testimonial.role && (
-                  <span class="text-zinc-500 dark:text-zinc-400"> · {caseStudy.testimonial.role}</span>
-                )}
-              </footer>
-            )}
-          </blockquote>
+          </div>
         </div>
       </section>
     )}
 
-    <!-- Ce qu'on a automatisé -->
+    <!-- Le défi (CREAM) -->
+    {caseStudy.probleme && (
+      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto fade-in-section">
+            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
+              LE DÉFI
+            </span>
+            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+              {caseStudy.probleme}
+            </p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Témoignage (WHITE) -->
+    {caseStudy.testimonial?.quote && (
+      <section data-bg="white" class="relative bg-white overflow-hidden">
+        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[700px] mx-auto text-center fade-in-section">
+            <blockquote>
+              <p class="font-body text-[length:var(--text-subheading)] font-medium text-[var(--color-text-primary)] leading-[1.5] mb-6 italic">
+                "{caseStudy.testimonial.quote}"
+              </p>
+              {(caseStudy.testimonial.name || caseStudy.testimonial.role) && (
+                <footer class="font-body text-[length:var(--text-body)]">
+                  <span class="font-semibold text-[var(--color-text-primary)]">{caseStudy.testimonial.name}</span>
+                  {caseStudy.testimonial.role && (
+                    <span class="text-[var(--color-text-secondary)]"> · {caseStudy.testimonial.role}</span>
+                  )}
+                </footer>
+              )}
+            </blockquote>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- La solution (CREAM) -->
     {caseStudy.solution && (
-      <section class="py-20 lg:py-32 px-6 bg-white dark:bg-zinc-100">
-        <div class="max-w-5xl mx-auto">
-          <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
-            <div>
-              <p class="text-xs text-violet-500 uppercase tracking-widest font-medium mb-3">03</p>
-              <h2 class="text-2xl lg:text-3xl font-semibold text-zinc-900 leading-tight">
-                Ce qu'on a<br class="hidden lg:block" /> automatisé
-              </h2>
-            </div>
-            <div class="prose prose-zinc prose-lg max-w-none">
-              <div class="text-lg lg:text-xl text-zinc-600 leading-relaxed whitespace-pre-line [&>strong]:text-zinc-900 [&>strong]:font-semibold [&>strong]:block [&>strong]:mt-10 [&>strong]:mb-4 first:[&>strong]:mt-0">
-                {caseStudy.solution}
-              </div>
-            </div>
+      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto fade-in-section">
+            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-cyan-dark)] mb-3">
+              LA SOLUTION
+            </span>
+            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+              {caseStudy.solution}
+            </p>
           </div>
         </div>
       </section>
     )}
 
-    <!-- Les résultats -->
+    <!-- Résultats détaillés (WHITE) -->
     {caseStudy.resultatsDetails && (
-      <section class="py-20 lg:py-32 px-6 bg-zinc-50 dark:bg-white">
-        <div class="max-w-5xl mx-auto">
-          <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
-            <div>
-              <p class="text-xs text-violet-500 uppercase tracking-widest font-medium mb-3">04</p>
-              <h2 class="text-2xl lg:text-3xl font-semibold text-zinc-900 leading-tight">
-                Les résultats
-              </h2>
-            </div>
-            <div class="prose prose-zinc prose-lg max-w-none">
-              <div class="text-lg lg:text-xl text-zinc-600 leading-relaxed whitespace-pre-line [&>strong]:text-zinc-900 [&>strong]:font-semibold [&>strong]:block [&>strong]:mt-10 [&>strong]:mb-4 first:[&>strong]:mt-0">
-                {caseStudy.resultatsDetails}
-              </div>
-            </div>
+      <section data-bg="white" class="relative bg-white overflow-hidden">
+        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto fade-in-section">
+            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
+              LES RÉSULTATS
+            </span>
+            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+              {caseStudy.resultatsDetails}
+            </p>
           </div>
         </div>
       </section>
     )}
 
-    <!-- Les étapes -->
+    <!-- Étapes (CREAM) -->
     {caseStudy.etapes && (
-      <section class="py-20 lg:py-32 px-6 bg-white dark:bg-zinc-100">
-        <div class="max-w-5xl mx-auto">
-          <div class="grid lg:grid-cols-[280px_1fr] gap-8 lg:gap-24">
-            <div>
-              <p class="text-xs text-violet-500 uppercase tracking-widest font-medium mb-3">05</p>
-              <h2 class="text-2xl lg:text-3xl font-semibold text-zinc-900 leading-tight">
-                Les étapes
-              </h2>
-            </div>
-            <div class="prose prose-zinc prose-lg max-w-none">
-              <div class="text-lg lg:text-xl text-zinc-600 leading-relaxed whitespace-pre-line [&>strong]:text-zinc-900 [&>strong]:font-semibold [&>strong]:block [&>strong]:mt-10 [&>strong]:mb-4 first:[&>strong]:mt-0">
-                {caseStudy.etapes}
-              </div>
+      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto fade-in-section">
+            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] mb-3">
+              LES ÉTAPES
+            </span>
+            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+              {caseStudy.etapes}
+            </p>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Outils (WHITE) -->
+    {caseStudy.tools.length > 0 && (
+      <section data-bg="white" class="relative bg-white overflow-hidden">
+        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+          <div class="max-w-[800px] mx-auto fade-in-section">
+            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
+              STACK TECHNIQUE
+            </span>
+            <div class="flex flex-wrap gap-3">
+              {caseStudy.tools.map((tool: string) => (
+                <span class="rounded-full px-4 py-2 text-[length:var(--text-body-sm)] font-medium font-mono" style="background: rgba(232, 106, 51, 0.1); color: var(--color-orange);">
+                  {tool}
+                </span>
+              ))}
             </div>
           </div>
         </div>
       </section>
     )}
 
-    <!-- CTA -->
-    <section class="py-28 lg:py-40 px-6 bg-zinc-100 dark:bg-zinc-900">
-      <div class="max-w-2xl mx-auto text-center">
-        <h2 class="text-3xl lg:text-4xl font-semibold text-zinc-900 dark:text-white mb-5">
-          Un projet similaire ?
-        </h2>
-        <p class="text-lg lg:text-xl text-zinc-500 dark:text-zinc-400 mb-12">
-          Discutons de vos besoins en automatisation.
-        </p>
-        <CTAButton
-          href="https://cal.com/lilian-sevoumian/20min"
-          text="Prendre rendez-vous"
-          variant="primary"
-          size="lg"
-        />
+    <!-- CTA (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+        <div class="max-w-[600px] mx-auto text-center flex flex-col items-center gap-4 fade-in-section">
+          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)]">
+            Un projet similaire&nbsp;?
+          </h2>
+          <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)]">
+            Parlons de votre situation — l'appel est gratuit, 30&nbsp;min, sans engagement.
+          </p>
+          <a
+            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+            class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body)] font-semibold px-7 py-3.5 mt-2 group"
+          >
+            Réserver mon appel stratégique <span class="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
+          </a>
+        </div>
       </div>
     </section>
   </main>
