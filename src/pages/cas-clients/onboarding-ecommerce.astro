@@ -3,8 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 
-const title = "Onboarding client : de 45min à 12min | Lilian Sevoumian";
-const description = "Comment un e-commerce en forte croissance a réduit son onboarding client de 70% grâce à l'automatisation Make.";
+const title = "Onboarding client e-commerce : de 45min à 12min grâce à Make | Lilian Sevoumian";
+const description = "Étude de cas : comment un e-commerce en forte croissance a réduit de 70% son temps d'onboarding client grâce à un workflow Make connectant Shopify, HubSpot, Stripe et Gmail. ROI atteint dès le premier mois.";
 
 const breadcrumbs = [
   { name: "Accueil", url: "/" },
@@ -15,103 +15,213 @@ const breadcrumbs = [
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Onboarding client : de 45min à 12min",
+  "headline": "Onboarding client e-commerce : de 45min à 12min grâce à Make",
   "description": description,
   "author": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
   "publisher": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
   "mainEntityOfPage": { "@type": "WebPage", "@id": "https://liliansevoumian.fr/cas-clients/onboarding-ecommerce" },
   "articleSection": "Cas client",
-  "keywords": "automatisation, Make, e-commerce, onboarding, Shopify, HubSpot, Stripe",
+  "keywords": ["automatisation Make", "onboarding client", "e-commerce", "Shopify", "HubSpot", "Stripe", "workflow automatisé", "gain de temps", "no-code"],
+};
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Automatiser l'onboarding client e-commerce avec Make",
+  "description": "Les étapes pour automatiser un processus d'onboarding client e-commerce avec Make, Shopify, HubSpot et Stripe.",
+  "step": [
+    { "@type": "HowToStep", "position": 1, "name": "Audit du processus existant", "text": "Cartographie des étapes manuelles : saisie CRM, création facture, envoi des accès, ajout listes de diffusion." },
+    { "@type": "HowToStep", "position": 2, "name": "Design du workflow Make", "text": "Conception du scénario Make connectant Shopify (commande) → HubSpot (CRM) → Stripe (facture) → Gmail (accès)." },
+    { "@type": "HowToStep", "position": 3, "name": "Développement et tests", "text": "Développement du workflow, tests avec données réelles, gestion des cas limites." },
+    { "@type": "HowToStep", "position": 4, "name": "Déploiement et formation", "text": "Mise en production, formation de l'équipe et documentation complète." },
+  ],
 };
 ---
 
 <Layout title={title} description={description} ogType="article" breadcrumbs={breadcrumbs} articleSchema={articleSchema}>
   <Navigation />
 
-  <main id="main-content" class="bg-[#F7F7F7] dark:bg-black pt-[56px]">
-    <!-- Hero -->
-    <section class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-      <div class="max-w-[800px] mx-auto">
-        <a href="/#cas-clients" class="inline-flex items-center gap-2 font-body text-sm text-zinc-500 dark:text-[#888888] hover:text-zinc-900 dark:hover:text-[#EDEDED] transition-colors mb-8">
-          &larr; Retour aux cas clients
-        </a>
+  <main id="main-content">
+    <!-- Hero (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden pt-28 pb-0">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto">
+          <a href="/cas-clients" class="inline-flex items-center gap-2 font-body text-[length:var(--text-body-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 group">
+            <span class="transition-transform group-hover:-translate-x-1">&larr;</span>
+            Retour aux cas clients
+          </a>
 
-        <div class="flex flex-col gap-6 mb-12">
-          <span class="inline-block self-start rounded-full px-4 py-1.5 text-[11px] font-medium tracking-[2px] uppercase bg-[#F3F0FF] dark:bg-[#1A1028] border border-violet-500/20 font-mono text-[#8B5CF6]">
-            E-COMMERCE
-          </span>
-          <h1 class="font-display text-[length:var(--text-heading)] font-bold text-zinc-900 dark:text-[#EDEDED] leading-[1.15]">
-            Onboarding client : de 45min à 12min
-          </h1>
-          <p class="font-body text-lg text-zinc-500 dark:text-[#888888] leading-[1.6]">
-            Comment un e-commerce en forte croissance a automatisé l'intégralité de son processus d'onboarding client.
-          </p>
-        </div>
-
-        <!-- Metric -->
-        <div class="flex items-center gap-8 mb-16 p-8 rounded-xl bg-white dark:bg-[#0A0A0A] border border-zinc-200 dark:border-[#1A1A1A]">
-          <div class="flex flex-col">
-            <span class="font-mono text-5xl md:text-6xl font-bold text-[#8B5CF6]">-70%</span>
-            <span class="font-body text-sm text-[#8B5CF6] tracking-[1px] uppercase mt-1">temps de traitement</span>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="flex flex-col gap-10 font-body text-zinc-900 dark:text-[#EDEDED] leading-[1.7]">
-          <div>
-            <h2 class="font-display text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">Le problème</h2>
-            <p class="text-zinc-500 dark:text-[#888888]">
-              Un e-commerce en forte croissance intégrait chaque nouveau client manuellement : saisie dans le CRM, création de la facture, envoi des accès par email, ajout dans les listes de diffusion. Chaque onboarding prenait 45 minutes et mobilisait une personne à temps plein.
+          <div class="flex flex-col gap-5 fade-in-section">
+            <span class="inline-block self-start rounded-full px-4 py-1.5 text-[length:var(--text-micro)] font-semibold tracking-[2px] uppercase font-mono text-[var(--color-orange)]" style="background: rgba(232, 106, 51, 0.12);">
+              E-COMMERCE
+            </span>
+            <h1 class="font-display text-[length:var(--text-display)] font-bold text-[var(--color-text-primary)] leading-[1.08]">
+              Onboarding client&nbsp;: de 45&nbsp;min à 12&nbsp;min
+            </h1>
+            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.6] max-w-[640px]">
+              Comment un e-commerce en forte croissance a <strong>automatisé l'intégralité de son processus d'onboarding</strong> et divisé son temps de traitement par&nbsp;3.
             </p>
           </div>
+        </div>
+      </div>
+    </section>
 
-          <div>
-            <h2 class="font-display text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">La solution</h2>
-            <p class="text-zinc-500 dark:text-[#888888]">
-              Un workflow Make connectant Shopify, HubSpot CRM, Stripe et Gmail. Dès qu'une commande est validée, le scénario crée automatiquement le contact dans le CRM, génère la facture, envoie les accès personnalisés et ajoute le client dans les séquences email appropriées.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">Les résultats</h2>
-            <ul class="text-zinc-500 dark:text-[#888888] space-y-3">
-              <li class="flex items-start gap-3">
-                <span class="font-mono text-[#8B5CF6] font-bold shrink-0">→</span>
-                <span>Temps d'onboarding réduit de 45min à 12min (-70%)</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="font-mono text-[#8B5CF6] font-bold shrink-0">→</span>
-                <span>Zéro erreur de saisie (plus de doublons, plus d'oublis)</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="font-mono text-[#8B5CF6] font-bold shrink-0">→</span>
-                <span>Déploiement en 5 jours</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="font-mono text-[#8B5CF6] font-bold shrink-0">→</span>
-                <span>ROI atteint dès le premier mois</span>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-zinc-900 dark:text-[#EDEDED] mb-4">Outils utilisés</h2>
-            <div class="flex flex-wrap gap-2">
-              {["Make", "Shopify", "HubSpot", "Stripe", "Gmail"].map((tool) => (
-                <span class="rounded-md px-3 py-1.5 text-xs font-medium bg-violet-500/10 border border-violet-500/20 text-[#8B5CF6] font-mono">
-                  {tool}
-                </span>
-              ))}
+    <!-- KPIs (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] py-12 px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto">
+          <div class="grid grid-cols-3 gap-4 fade-in-section">
+            <div class="card-3d-white-orange p-6 flex flex-col items-center text-center">
+              <span class="font-mono text-3xl md:text-4xl font-bold text-[var(--color-orange)]">-70%</span>
+              <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-secondary)] uppercase tracking-[1px] mt-1">temps de traitement</span>
+            </div>
+            <div class="card-3d-white-orange p-6 flex flex-col items-center text-center">
+              <span class="font-mono text-3xl md:text-4xl font-bold text-[var(--color-orange)]">0</span>
+              <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-secondary)] uppercase tracking-[1px] mt-1">erreur de saisie</span>
+            </div>
+            <div class="card-3d-white-orange p-6 flex flex-col items-center text-center">
+              <span class="font-mono text-3xl md:text-4xl font-bold text-[var(--color-orange)]">5j</span>
+              <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-secondary)] uppercase tracking-[1px] mt-1">de déploiement</span>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- CTA -->
-        <div class="mt-16 p-8 rounded-xl text-center flex flex-col items-center gap-4 bg-white dark:bg-[#0A0A0A] border border-zinc-200 dark:border-[#1A1A1A]">
-          <p class="font-display text-xl font-semibold text-zinc-900 dark:text-[#EDEDED]">Un cas similaire ?</p>
-          <p class="font-body text-sm text-zinc-500 dark:text-[#888888]">Parlons de votre situation — l'appel est gratuit.</p>
-          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-[#8B5CF6] text-white font-body text-[15px] font-medium rounded-lg px-7 py-3.5 hover:bg-[#7C3AED] transition-colors">
-            Parlons automatisations →
+    <!-- Le problème (WHITE) -->
+    <section data-bg="white" class="relative bg-white overflow-hidden">
+      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto fade-in-section">
+          <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
+            LE PROBLÈME
+          </span>
+          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)] mb-6">
+            45 minutes par client, une personne à temps plein
+          </h2>
+          <div class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] space-y-4">
+            <p>
+              Cet e-commerce en forte croissance intégrait chaque nouveau client <strong>manuellement</strong>&nbsp;: saisie dans le CRM, création de la facture, envoi des accès par email, ajout dans les listes de diffusion.
+            </p>
+            <p>
+              Chaque onboarding prenait <strong>45&nbsp;minutes</strong> et mobilisait une personne à temps plein. Avec <strong>l'augmentation du volume de commandes</strong>, le processus devenait un goulot d'étranglement qui freinait la croissance.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- La solution (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto fade-in-section">
+          <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] mb-3">
+            LA SOLUTION
+          </span>
+          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)] mb-6">
+            Un workflow Make qui gère tout, de la commande à l'accès client
+          </h2>
+          <div class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] space-y-4">
+            <p>
+              J'ai conçu un <strong>workflow Make connectant Shopify, HubSpot CRM, Stripe et Gmail</strong>. Dès qu'une commande est validée sur Shopify, le scénario se déclenche automatiquement&nbsp;:
+            </p>
+            <ul class="space-y-3 ml-1">
+              <li class="flex items-start gap-3">
+                <span class="font-mono text-[var(--color-orange)] font-bold shrink-0 mt-0.5">→</span>
+                <span><strong>Création du contact</strong> dans HubSpot avec toutes les données de commande</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-mono text-[var(--color-orange)] font-bold shrink-0 mt-0.5">→</span>
+                <span><strong>Génération automatique de la facture</strong> via Stripe</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-mono text-[var(--color-orange)] font-bold shrink-0 mt-0.5">→</span>
+                <span><strong>Envoi des accès personnalisés</strong> par email (identifiants, liens, documentation)</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-mono text-[var(--color-orange)] font-bold shrink-0 mt-0.5">→</span>
+                <span><strong>Ajout dans les séquences email</strong> appropriées selon le type de commande</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Les résultats (WHITE) -->
+    <section data-bg="white" class="relative bg-white overflow-hidden">
+      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto fade-in-section">
+          <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-cyan-dark)] mb-3">
+            LES RÉSULTATS
+          </span>
+          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)] mb-6">
+            -70% de temps, zéro erreur, ROI immédiat
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card-3d-light-orange p-6">
+              <span class="font-mono text-2xl font-bold text-[var(--color-orange)]">12 min</span>
+              <p class="font-body text-[length:var(--text-body)] text-[var(--color-text-secondary)] mt-1">au lieu de 45&nbsp;min par onboarding (<strong>-70%</strong>)</p>
+            </div>
+            <div class="card-3d-light-orange p-6">
+              <span class="font-mono text-2xl font-bold text-[var(--color-orange)]">0 erreur</span>
+              <p class="font-body text-[length:var(--text-body)] text-[var(--color-text-secondary)] mt-1">plus de doublons, plus d'oublis de factures</p>
+            </div>
+            <div class="card-3d-light-orange p-6">
+              <span class="font-mono text-2xl font-bold text-[var(--color-orange)]">5 jours</span>
+              <p class="font-body text-[length:var(--text-body)] text-[var(--color-text-secondary)] mt-1">de la conception au déploiement en production</p>
+            </div>
+            <div class="card-3d-light-orange p-6">
+              <span class="font-mono text-2xl font-bold text-[var(--color-orange)]">1 mois</span>
+              <p class="font-body text-[length:var(--text-body)] text-[var(--color-text-secondary)] mt-1">pour atteindre le <strong>retour sur investissement</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Outils (CREAM) -->
+    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
+      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+        <div class="max-w-[800px] mx-auto fade-in-section">
+          <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
+            STACK TECHNIQUE
+          </span>
+          <h2 class="font-display text-[length:var(--text-subheading)] font-bold text-[var(--color-text-primary)] mb-6">
+            Outils utilisés pour cette automatisation
+          </h2>
+          <div class="flex flex-wrap gap-3">
+            {["Make", "Shopify", "HubSpot CRM", "Stripe", "Gmail"].map((tool) => (
+              <span class="rounded-full px-4 py-2 text-[length:var(--text-body-sm)] font-medium font-mono" style="background: rgba(232, 106, 51, 0.1); color: var(--color-orange);">
+                {tool}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA (WHITE) -->
+    <section data-bg="white" class="relative bg-white overflow-hidden">
+      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
+      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
+        <div class="max-w-[600px] mx-auto text-center flex flex-col items-center gap-4 fade-in-section">
+          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)]">
+            Un onboarding à automatiser&nbsp;?
+          </h2>
+          <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)]">
+            Parlons de votre situation — l'appel est gratuit, 30&nbsp;min, sans engagement.
+          </p>
+          <a
+            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+            class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body)] font-semibold px-7 py-3.5 mt-2 group"
+          >
+            Réserver mon appel stratégique <span class="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">→</span>
           </a>
         </div>
       </div>
@@ -120,3 +230,5 @@ const articleSchema = {
 
   <Footer />
 </Layout>
+
+<script type="application/ld+json" set:html={JSON.stringify(howToSchema)} />
