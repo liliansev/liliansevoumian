@@ -306,14 +306,15 @@ a, button, input, textarea, select,
    SCROLL FADE-IN
    ======================================== */
 
-.fade-in-section {
+/* Animations only activate once JS has loaded and added .js-ready to <html> */
+.js-ready .fade-in-section {
   opacity: 0;
   translate: 0 12px;
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
               translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.fade-in-section.is-visible {
+.js-ready .fade-in-section.is-visible {
   opacity: 1;
   translate: 0 0;
 }
@@ -322,14 +323,14 @@ a, button, input, textarea, select,
    CARD — staggered reveal
    ======================================== */
 
-.reveal-card {
+.js-ready .reveal-card {
   opacity: 0;
   translate: 0 12px;
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               translate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.reveal-card.is-visible {
+.js-ready .reveal-card.is-visible {
   opacity: 1;
   translate: 0 0;
 }
@@ -343,14 +344,14 @@ a, button, input, textarea, select,
    STAT ITEMS — reveal
    ======================================== */
 
-.stat-item {
+.js-ready .stat-item {
   opacity: 0;
   translate: 0 8px;
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
               translate 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.stat-item.is-visible {
+.js-ready .stat-item.is-visible {
   opacity: 1;
   translate: 0 0;
 }
