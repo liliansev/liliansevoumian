@@ -108,13 +108,12 @@ const caseStudies = [
                 {study.description}
               </p>
 
-              <!-- CTA link — accent color -->
+              <!-- CTA button — 3D style -->
               <span
-                class="inline-flex items-center gap-1.5 mt-5 text-[length:var(--text-body-sm)] font-semibold font-body transition-colors"
-                style={`color: ${study.color};`}
+                class="inline-flex items-center justify-center self-start rounded-full px-5 py-2.5 mt-5 text-[length:var(--text-body-sm)] font-semibold font-body transition-all duration-250"
+                style={`background: ${study.color}; color: ${study.badgeTextColor === 'text-white' ? '#fff' : '#1A1A1A'}; outline: 1.5px solid ${study.color}; outline-offset: 0px; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.18), 3px 3px 8px 0 rgba(${study.colorRgb}, 0.40);`}
               >
-                Voir l'étude de cas
-                <span class="transition-transform group-hover:translate-x-1">&rarr;</span>
+                Voir l'étude de cas <span class="inline-block ml-1.5">&rarr;</span>
               </span>
             </a>
           ))}
