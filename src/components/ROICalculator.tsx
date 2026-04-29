@@ -1,12 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 
-const DEFAULT_HOURLY_COST = 30;
-const RECOVERY_RATE = 0.7;
-const WEEKS_PER_YEAR = 52;
+// Tarif de référence pour calcul ROI : milieu de la fourchette Mission Complète (8K-25K€).
+// Si le coût se rapproche de ce tarif, on bascule sur "Workflow simple" (1.5K€).
+const PROJECT_PRICE_MID = 12000;
+const PROJECT_PRICE_LOW = 1500;
+const RECOVERY_RATE = 0.55; // 55% au lieu de 70% — plus conservateur, défendable en audit
+const WEEKS_PER_YEAR = 48; // 48 sem. effectives (vacances, fériés)
+const MAX_REASONABLE_HOURS = 20; // à partir de ce seuil, on capote l'estimation
+const MAX_REASONABLE_PEOPLE = 10;
+
+// Format français avec NBSP standard (U+00A0) au lieu de narrow NBSP (U+202F)
+// qui se rend cassé en Geist 600 large size. Le replace cible   →  .
+function formatFR(n: number): string {
+  return n.toLocaleString('fr-FR').replace(/ /g, ' ');
+}
 
 function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
-  const [displayed, setDisplayed] = useState(0);
-  const displayedRef = useRef(0);
+  const [displayed, setDisplayed] = useState(value);
+  const displayedRef = useRef(value);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -14,19 +25,17 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
     const diff = value - start;
     if (diff === 0) return;
 
-    const duration = 400;
+    const duration = 350;
     const startTime = performance.now();
 
     function animate(now: number) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - Math.pow(1 - progress, 4);
       const current = Math.round(start + diff * eased);
       displayedRef.current = current;
       setDisplayed(current);
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(animate);
-      }
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
     }
 
     rafRef.current = requestAnimationFrame(animate);
@@ -37,258 +46,251 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
 
   return (
     <span>
-      {displayed.toLocaleString('fr-FR')}{suffix}
+      {formatFR(displayed)}
+      {suffix}
     </span>
   );
 }
 
-export default function ROICalculator() {
-  const [hours, setHours] = useState(10);
-  const [people, setPeople] = useState(3);
-  const [hourlyCost, setHourlyCost] = useState(DEFAULT_HOURLY_COST);
+interface SliderProps {
+  id: string;
+  label: string;
+  unit?: string;
+  min: number;
+  max: number;
+  step?: number;
+  value: number;
+  onChange: (v: number) => void;
+}
 
-  const hoursSaved = Math.round(hours * people * RECOVERY_RATE * WEEKS_PER_YEAR);
+function MonoSlider({ id, label, unit = '', min, max, step = 1, value, onChange }: SliderProps) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-baseline justify-between">
+        <label
+          htmlFor={id}
+          className="mono-caption"
+          style={{ color: 'var(--color-ink-low)' }}
+        >
+          {label}
+        </label>
+        <span
+          className="font-display font-semibold tabular-nums text-2xl tracking-[-0.02em]"
+          style={{ color: 'var(--color-ink)' }}
+        >
+          {formatFR(value)}
+          <span className="mono-caption ml-1" style={{ color: 'var(--color-ink-low)' }}>
+            {unit}
+          </span>
+        </span>
+      </div>
+      <input
+        id={id}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        aria-valuetext={`${value}${unit ? ' ' + unit : ''}`}
+        className="roi-slider"
+      />
+      <div className="flex justify-between mono-caption" style={{ color: 'var(--color-ink-faint)' }}>
+        <span>
+          {formatFR(min)}
+          {unit}
+        </span>
+        <span>
+          {formatFR(max)}
+          {unit}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export default function ROICalculator() {
+  const [hours, setHours] = useState(8);
+  const [people, setPeople] = useState(3);
+  const [hourlyCost, setHourlyCost] = useState(55);
+
+  // Estimation conservatrice : 55% des heures réellement récupérables, 48 sem. effectives.
+  // Capote l'estimation au-delà de seuils défendables (30h/sem, 15 personnes).
+  const cappedHours = Math.min(hours, MAX_REASONABLE_HOURS);
+  const cappedPeople = Math.min(people, MAX_REASONABLE_PEOPLE);
+  const isCapped = hours >= MAX_REASONABLE_HOURS || people >= MAX_REASONABLE_PEOPLE;
+
+  const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
   const moneySaved = hoursSaved * hourlyCost;
+
+  // ROI dynamique : on choisit le tarif réaliste selon l'ampleur de l'économie.
+  // Si économie annuelle < 20K€ → on assume Workflow (1500€). Sinon Mission Complète (12K€ médian).
+  const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
+  const monthsToROI =
+    moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
 
   return (
     <section
-      data-bg="white"
-      id="calculateur-roi"
-      className="relative overflow-hidden"
-      style={{ background: '#FFFFFF' }}
+      id="roi"
+      data-section
+      className="relative"
+      style={{
+        background: 'var(--color-paper)',
+        paddingTop: 'var(--spacing-section-y)',
+        paddingBottom: 'var(--spacing-section-y)',
+        paddingLeft: 'var(--spacing-section-x)',
+        paddingRight: 'var(--spacing-section-x)',
+      }}
     >
-      {/* Dot grid */}
-      <div className="absolute inset-0 dot-grid" aria-hidden="true" />
-
-      <div className="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-        <div className="max-w-[1200px] mx-auto">
-          {/* Header */}
-          <div className="flex flex-col items-center gap-5 mb-12">
-            <span
-              className="inline-block rounded-full px-4 py-1.5 font-medium tracking-[2px] uppercase"
+      <div className="relative max-w-[1200px] mx-auto">
+        {/* Header — bg-paper sans border (pattern minimaliste light) */}
+        <div className="reveal mb-12 md:mb-16">
+          <div
+            className="inline-block py-2 pr-2"
+            style={{ background: 'var(--color-paper)' }}
+          >
+            <div className="section-number" style={{ marginBottom: '0.5rem' }}>
+              04 — ROI
+            </div>
+            <h2
+              className="font-display font-semibold leading-[1.05] tracking-[-0.035em] m-0"
               style={{
-                fontSize: 'var(--text-caption)',
-                color: '#E86A33',
-                fontFamily: 'var(--font-mono)',
+                fontSize: 'var(--text-headline)',
+                color: 'var(--color-ink)',
+                maxWidth: '20ch',
               }}
             >
-              CALCULATEUR ROI
-            </span>
-            <h2
-              className="text-[length:var(--text-heading)] font-bold text-center"
-              style={{ color: '#1A1A1A', fontFamily: 'var(--font-display)' }}
-            >
-              Combien vous coûte le travail manuel ?
+              Combien votre temps coûte-t-il ?
             </h2>
-            <p
-              className="text-center max-w-[600px] leading-relaxed"
-              style={{ fontSize: 'var(--text-body-lg)', color: '#666666', fontFamily: 'var(--font-body)' }}
-            >
-              Estimez les heures et l'argent que l'automatisation peut vous faire économiser.
-            </p>
           </div>
-
-          {/* Calculator card — dark charcoal */}
           <div
-            className="max-w-[700px] mx-auto p-6 md:p-10"
+            className="mt-4 py-2 pr-2"
             style={{
-              background: '#352F29',
-              border: '1.5px solid #504840',
-              borderRadius: '16px',
-              boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 0 rgba(0, 0, 0, 0.3), 5px 5px 10px 0 rgba(232, 106, 51, 0.35)',
+              background: 'var(--color-paper)',
+              maxWidth: '60ch',
             }}
           >
-            {/* Sliders */}
-            <div className="flex flex-col gap-8 mb-10">
-              {/* Hours slider */}
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="roi-hours"
-                    className="font-medium"
-                    style={{ fontSize: 'var(--text-body)', color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
-                  >
-                    Heures manuelles / semaine
-                  </label>
-                  <span
-                    className="text-lg font-bold tabular-nums"
-                    style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
-                  >
-                    {hours}h
-                  </span>
-                </div>
-                <input
-                  id="roi-hours"
-                  type="range"
-                  min={1}
-                  max={40}
-                  value={hours}
-                  onChange={(e) => setHours(Number(e.target.value))}
-                  className="roi-slider w-full"
-                />
-                <div
-                  className="flex justify-between"
-                  style={{ fontSize: 'var(--text-micro)', color: '#A89E94', fontFamily: 'var(--font-mono)' }}
-                >
-                  <span>1h</span>
-                  <span>40h</span>
-                </div>
-              </div>
-
-              {/* People slider */}
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="roi-people"
-                    className="font-medium"
-                    style={{ fontSize: 'var(--text-body)', color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
-                  >
-                    Personnes concernées
-                  </label>
-                  <span
-                    className="text-lg font-bold tabular-nums"
-                    style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
-                  >
-                    {people}
-                  </span>
-                </div>
-                <input
-                  id="roi-people"
-                  type="range"
-                  min={1}
-                  max={20}
-                  value={people}
-                  onChange={(e) => setPeople(Number(e.target.value))}
-                  className="roi-slider w-full"
-                />
-                <div
-                  className="flex justify-between"
-                  style={{ fontSize: 'var(--text-micro)', color: '#A89E94', fontFamily: 'var(--font-mono)' }}
-                >
-                  <span>1</span>
-                  <span>20</span>
-                </div>
-              </div>
-
-              {/* Hourly rate input */}
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="roi-rate"
-                    className="font-medium"
-                    style={{ fontSize: 'var(--text-body)', color: '#C8BFB3', fontFamily: 'var(--font-body)' }}
-                  >
-                    Taux horaire (€ HT)
-                  </label>
-                  <div className="flex items-center gap-1">
-                    <input
-                      id="roi-rate"
-                      type="number"
-                      min={10}
-                      max={200}
-                      value={hourlyCost}
-                      onChange={(e) => {
-                        const raw = e.target.value;
-                        if (raw === '') return;
-                        const v = Number(raw);
-                        if (!isNaN(v) && v >= 1 && v <= 200) setHourlyCost(v);
-                      }}
-                      onBlur={() => {
-                        if (hourlyCost < 10) setHourlyCost(10);
-                      }}
-                      className="w-[60px] text-right text-lg font-bold tabular-nums bg-transparent border-b-2 border-[#E86A33] outline-none"
-                      style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
-                    />
-                    <span
-                      className="text-lg font-bold"
-                      style={{ color: '#E86A33', fontFamily: 'var(--font-mono)' }}
-                    >€</span>
-                  </div>
-                </div>
-                <input
-                  type="range"
-                  min={10}
-                  max={200}
-                  step={5}
-                  value={hourlyCost}
-                  onChange={(e) => setHourlyCost(Number(e.target.value))}
-                  className="roi-slider w-full"
-                />
-                <div
-                  className="flex justify-between"
-                  style={{ fontSize: 'var(--text-micro)', color: '#A89E94', fontFamily: 'var(--font-mono)' }}
-                >
-                  <span>10€</span>
-                  <span>200€</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Separator */}
-            <div
-              className="h-px w-full mb-8"
-              style={{ background: '#5A5249' }}
-            />
-
-            {/* Results */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div
-                className="flex flex-col gap-2 p-5 rounded-xl"
-                style={{ background: '#2E2924', border: '1px solid #4A4239' }}
-              >
-                <span
-                  className="font-medium uppercase tracking-wider"
-                  style={{ fontSize: 'var(--text-caption)', color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
-                >
-                  Heures économisées / an
-                </span>
-                <span
-                  className="font-bold"
-                  style={{ fontSize: 'var(--text-heading)', color: '#E86A33', fontFamily: 'var(--font-mono)' }}
-                >
-                  <AnimatedNumber value={hoursSaved} suffix="h" />
-                </span>
-              </div>
-              <div
-                className="flex flex-col gap-2 p-5 rounded-xl"
-                style={{ background: '#2E2924', border: '1px solid #4A4239' }}
-              >
-                <span
-                  className="font-medium uppercase tracking-wider"
-                  style={{ fontSize: 'var(--text-caption)', color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
-                >
-                  Gains estimés / an
-                </span>
-                <span
-                  className="font-bold"
-                  style={{ fontSize: 'var(--text-heading)', color: '#F5EDE5', fontFamily: 'var(--font-mono)' }}
-                >
-                  <AnimatedNumber value={moneySaved} suffix=" €" />
-                </span>
-              </div>
-            </div>
-
-            {/* Methodology note */}
             <p
-              className="mb-8 text-center"
-              style={{ fontSize: 'var(--text-caption)', color: '#B5AA9E', fontFamily: 'var(--font-mono)' }}
+              className="m-0"
+              style={{
+                fontSize: 'var(--text-body-large)',
+                color: 'var(--color-ink-mid)',
+                lineHeight: '1.5',
+              }}
             >
-              Basé sur 70 % d'heures récupérables et votre taux horaire de {hourlyCost} €
+              Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée — l'audit réel descend dans le détail.
             </p>
+          </div>
+        </div>
 
-            {/* CTA */}
-            <div className="flex flex-col items-center gap-3">
-              <a
-                href="https://cal.com/lilian-sevoumian/20min"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center font-semibold px-7 py-3.5 min-h-[48px] w-full md:w-auto rounded-full bg-white text-[#2A2520] shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.06),5px_5px_12px_0_rgba(0,0,0,0.25)] hover:translate-x-[5px] hover:translate-y-[5px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-[1px_1px_3px_rgba(0,0,0,0.1)] transition-all duration-[250ms]"
-                style={{ fontSize: 'var(--text-body)', fontFamily: 'var(--font-body)' }}
-              >
-                Récupérer mes {hoursSaved.toLocaleString('fr-FR')}h
-                <span className="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
-              </a>
+        {/* Calculator grid — light : sliders sur paper, output sur surface-low pour différenciation */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal">
+          {/* Sliders panel */}
+          <fieldset className="bg-[var(--color-paper)] p-8 md:p-10 flex flex-col gap-8 border-0 m-0">
+            <legend className="sr-only">Paramètres d'estimation ROI</legend>
+            <MonoSlider
+              id="roi-hours"
+              label="HEURES /SEM PERDUES SUR PROCESS RÉPÉTITIFS"
+              unit="H"
+              min={1}
+              max={30}
+              value={hours}
+              onChange={setHours}
+            />
+            <MonoSlider
+              id="roi-people"
+              label="EMPLOYÉS CONCERNÉS"
+              min={1}
+              max={15}
+              value={people}
+              onChange={setPeople}
+            />
+            <MonoSlider
+              id="roi-rate"
+              label="COÛT HORAIRE INTERNE"
+              unit="€"
+              min={25}
+              max={120}
+              step={5}
+              value={hourlyCost}
+              onChange={setHourlyCost}
+            />
+          </fieldset>
+
+          {/* Output panel — surface-low pour différenciation latérale */}
+          <div className="bg-[var(--color-surface-low)] p-8 md:p-10 flex flex-col">
+            <div className="mono-caption mb-2" style={{ color: 'var(--color-ink-low)' }}>
+              ÉCONOMIE ESTIMÉE
             </div>
+            <div
+              className="font-display font-semibold leading-[0.98] tracking-[-0.045em] mb-6"
+              style={{
+                fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                color: 'var(--color-ink)',
+              }}
+            >
+              <AnimatedNumber value={moneySaved} suffix=" €" />
+              <span className="mono-caption ml-2 align-middle" style={{ color: 'var(--color-ink-low)' }}>
+                /AN
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 pb-6 border-b border-[var(--color-divider)] mb-6">
+              <div>
+                <div className="mono-caption mb-1" style={{ color: 'var(--color-ink-low)' }}>
+                  HEURES /AN
+                </div>
+                <div
+                  className="font-display font-semibold tabular-nums tracking-[-0.025em]"
+                  style={{
+                    fontSize: '1.5rem',
+                    color: 'var(--color-ink)',
+                  }}
+                >
+                  <AnimatedNumber value={hoursSaved} suffix=" H" />
+                </div>
+              </div>
+              <div>
+                <div className="mono-caption mb-1" style={{ color: 'var(--color-ink-low)' }}>
+                  ROI EN
+                </div>
+                <div
+                  className="font-display font-semibold tabular-nums tracking-[-0.025em]"
+                  style={{
+                    fontSize: '1.5rem',
+                    color: 'var(--color-violet)',
+                  }}
+                >
+                  ~{monthsToROI} MOIS
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="mono-caption mb-6 leading-[1.6] flex flex-col gap-1"
+              style={{ color: 'var(--color-ink-low)' }}
+            >
+              <span>
+                FORMULE : {cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {hourlyCost}€
+              </span>
+              <span>
+                COÛT PROJET RÉFÉRENCE : {formatFR(projectPrice)} € ({moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'})
+              </span>
+              {isCapped && (
+                <span style={{ color: 'var(--color-ember-deep)' }}>
+                  ⚠ ESTIMATION PLAFONNÉE — L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
+                </span>
+              )}
+            </div>
+
+            <a
+              href="https://cal.com/lilian-sevoumian/20min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary justify-center mt-auto"
+            >
+              Discuter de mon cas · 30 min
+            </a>
           </div>
         </div>
       </div>

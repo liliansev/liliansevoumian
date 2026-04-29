@@ -1,0 +1,76 @@
+---
+import SectionHeader from './SectionHeader.astro';
+
+const steps = [
+  {
+    num: "01",
+    label: "DIAGNOSTIC",
+    duration: "30 MIN · GRATUIT",
+    title: "On isole 3 bottlenecks.",
+    body: "Appel de cadrage. On scanne vos opérations, on isole les process qui consomment 80 % du temps humain.",
+  },
+  {
+    num: "02",
+    label: "CONCEPTION",
+    duration: "48 H · DEVIS FIXE",
+    title: "Plan d'action chiffré.",
+    body: "Architecture détaillée, intégrations nommées, livrables, calendrier, budget fixe. Vous validez avant qu'on attaque.",
+  },
+  {
+    num: "03",
+    label: "MISE EN PROD",
+    duration: "3 J – 6 SEM",
+    title: "Je code. Vous validez.",
+    body: "Workflows construits, testés, documentés. Vous voyez chaque étape, vous validez chaque déclencheur, chaque action.",
+  },
+  {
+    num: "04",
+    label: "TRANSFERT",
+    duration: "1 SESSION + 30 J SLA",
+    title: "Formation + SLA.",
+    body: "Documentation custom, formation équipe (2 h max), 30 jours de support inclus. Vous gardez la main, je reste joignable.",
+  },
+];
+---
+
+<section
+  id="methode"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      number="01"
+      label="MÉTHODE"
+      title="Quatre étapes. Pas plus."
+      body="Pas de méthode propriétaire à 12 phases. Quatre étapes claires, chacune avec un livrable mesurable."
+      bodyMaxWidth="55ch"
+    />
+
+    <!-- Steps grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 reveal-stagger">
+      {steps.map((step, i) => (
+        <article class={`reveal relative card card-interactive ${i > 0 ? 'lg:-ml-px' : ''} ${i > 0 ? 'md:-mt-px lg:mt-0' : ''} rounded-none`}>
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          <div class="flex items-baseline justify-between mb-5">
+            <span class="mono-caption text-[var(--color-ink-low)]">{step.num}</span>
+            <span class="mono-caption text-[var(--color-violet)]">{step.duration}</span>
+          </div>
+          <div class="mono-label text-[var(--color-ink-low)] mb-3">{step.label}</div>
+          <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] mb-3 leading-[1.2]">
+            {step.title}
+          </h3>
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55]">
+            {step.body}
+          </p>
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>

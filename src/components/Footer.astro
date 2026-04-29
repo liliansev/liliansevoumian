@@ -1,61 +1,112 @@
 ---
-const navLinks = [
-  { label: "Expertise", href: "/#expertise" },
-  { label: "Méthode", href: "/#methode" },
-  { label: "Témoignages", href: "/#temoignages" },
-  { label: "FAQ", href: "/#faq" },
+const year = new Date().getFullYear();
+
+const channels = [
+  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/" },
+  { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian" },
+  { label: "Newsletter", metric: "HEBDO · GRATUIT", href: "https://liliansevoumian.substack.com/" },
 ];
 
-const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/liliansevoumian/", color: "#0A66C2" },
-  { label: "YouTube", href: "https://www.youtube.com/@lilian.sevoumian", color: "#FF0000" },
-  { label: "Substack", href: "https://liliansevoumian.substack.com/", color: "#FF6719" },
+const navColumns = [
+  {
+    title: "NAVIGATION",
+    links: [
+      { label: "Méthode", href: "#methode" },
+      { label: "Cas d'étude", href: "#cas" },
+      { label: "Stack", href: "#stack" },
+      { label: "ROI", href: "#roi" },
+      { label: "Tarifs", href: "#tarifs" },
+      { label: "FAQ", href: "#faq" },
+    ],
+  },
+  {
+    title: "CONTACT",
+    links: [
+      { label: "Réserver · 30 min", href: "https://cal.com/lilian-sevoumian/20min", external: true },
+      { label: "bonjour@liliansevoumian.fr", href: "mailto:bonjour@liliansevoumian.fr" },
+    ],
+  },
+  {
+    title: "LÉGAL",
+    links: [
+      { label: "Mentions légales", href: "/mentions-legales" },
+    ],
+  },
 ];
 ---
 
-<!-- Footer — dark -->
-<footer data-bg="dark" class="bg-[#1A1A1A]">
-  <!-- Gradient separator -->
-  <div class="h-[3px]" style="background: linear-gradient(90deg, #E86A33, #9333EA, #22D3EE, #F43F5E);" aria-hidden="true"></div>
+<footer class="relative bg-[var(--color-paper)] border-t border-[var(--color-divider)]">
+  <div class="max-w-[1200px] mx-auto px-[var(--spacing-section-x)] py-16 md:py-20">
 
-  <!-- Main footer bar — 3-column horizontal -->
-  <div class="py-[40px] px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
-      <!-- Left column: Name + Desc -->
-      <div class="flex flex-col gap-2">
-        <span class="font-display text-[length:var(--text-body-lg)] font-bold text-white">Lilian Sevoumian</span>
-        <p class="font-body text-[length:var(--text-body-sm)] text-[#999999] leading-[1.6]">
-          J'automatise les opérations des PME avec Make, n8n et l'IA.
+    <!-- Top: brand + content channels -->
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-16 pb-12 border-b border-[var(--color-divider)]">
+      <div>
+        <div class="flex items-center gap-2.5 mb-5 text-[var(--color-ink)]">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <rect x="0.5" y="0.5" width="21" height="21" stroke="currentColor" stroke-width="1"/>
+            <line x1="11" y1="0" x2="11" y2="22" stroke="currentColor" stroke-width="1"/>
+            <line x1="0" y1="11" x2="22" y2="11" stroke="currentColor" stroke-width="1"/>
+            <circle cx="11" cy="11" r="3" fill="currentColor"/>
+          </svg>
+          <span class="mono-label">LILIAN SEVOUMIAN</span>
+        </div>
+        <p class="text-[var(--color-ink-mid)] max-w-md">
+          Expert no-code freelance. Automatisations Make, n8n, Airtable + IA pour Heads of Ops, fondateurs et PME.
         </p>
       </div>
 
-      <!-- Center column: Nav links — horizontal -->
-      <div class="flex flex-wrap items-center gap-6">
-        {navLinks.map((link) => (
-          <a href={link.href} class="font-body text-[length:var(--text-body-sm)] font-medium text-[var(--color-text-faint)] hover:text-white transition-colors duration-200 min-h-[44px] flex items-center">{link.label}</a>
-        ))}
-      </div>
-
-      <!-- Right column: Social links — colored -->
-      <div class="flex items-center gap-4">
-        {socialLinks.map((link) => (
-          <a
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="font-mono text-[length:var(--text-caption)] font-medium hover:opacity-80 transition-opacity duration-200 min-h-[44px] flex items-center"
-            style={`color: ${link.color}`}
-          >{link.label}</a>
-        ))}
+      <div>
+        <div class="mono-caption text-[var(--color-ink-low)] mb-4">CONTENU</div>
+        <ul class="space-y-2">
+          {channels.map((ch) => (
+            <li>
+              <a
+                href={ch.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group inline-flex items-baseline gap-3 text-[var(--color-ink)] hover:text-[var(--color-violet)] transition-colors"
+              >
+                <span class="mono-label">{ch.label}</span>
+                <span class="mono-caption text-[var(--color-ink-low)]">{ch.metric}</span>
+                <span class="mono-label opacity-40 group-hover:opacity-100 transition-opacity">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
-  </div>
 
-  <!-- Copyright bar -->
-  <div class="bg-[#111111] py-[20px] px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto flex items-center justify-center gap-4">
-      <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-faint)]">&copy; 2026 Lilian Sevoumian. Tous droits r&eacute;serv&eacute;s.</span>
-      <a href="/mentions-legales" class="font-body text-[length:var(--text-caption)] text-[var(--color-text-faint)] hover:text-white transition-colors duration-200">Mentions l&eacute;gales</a>
+    <!-- Middle: nav columns -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 py-12">
+      {navColumns.map((col) => (
+        <div>
+          <div class="mono-caption text-[var(--color-ink-low)] mb-4">{col.title}</div>
+          <ul class="space-y-2.5">
+            {col.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  class="text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[var(--text-body-sm)] break-all"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- Bottom: legal + meta -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-8 border-t border-[var(--color-divider)]">
+      <p class="mono-caption text-[var(--color-ink-low)]">
+        © {year} · LILIAN SEVOUMIAN · TOUS DROITS RÉSERVÉS
+      </p>
+      <p class="mono-caption text-[var(--color-ink-low)]">
+        BUILT WITH ASTRO + TAILWIND
+      </p>
     </div>
   </div>
 </footer>

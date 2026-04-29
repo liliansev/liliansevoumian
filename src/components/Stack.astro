@@ -1,0 +1,110 @@
+---
+import SectionHeader from './SectionHeader.astro';
+
+const workflow = [
+  { name: "Make", useCase: "Workflows multi-app rapides", bottleneck: "Sync HubSpot ↔ Stripe ↔ Slack" },
+  { name: "n8n", useCase: "Logique métier custom + self-host", bottleneck: "Branchements API non standards" },
+  { name: "Airtable", useCase: "Base de données + interfaces ops", bottleneck: "Source de vérité ops sans dev" },
+];
+
+const ai = [
+  { name: "Claude", useCase: "Tri + classification + rédaction", bottleneck: "Volumes texte à qualifier" },
+  { name: "GPT-4", useCase: "Function calling + agents structurés", bottleneck: "Process décisionnels avec outils" },
+  { name: "Whisper", useCase: "Transcription + extraction réunions", bottleneck: "Audio → données structurées" },
+];
+
+const glue = ["HubSpot", "Stripe", "Slack", "Pennylane", "Notion", "Pipedrive"];
+---
+
+<section
+  id="stack"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      number="03"
+      label="STACK"
+      title="Trois outils maîtrisés. 200+ accessibles."
+      body="Pas une grille générique d'icônes. Les outils que j'utilise tous les jours — le reste passe par API ou webhook quand le besoin est là."
+      titleMaxWidth="20ch"
+      bodyMaxWidth="55ch"
+    />
+
+    <!-- Two-column stack avec mini-tableau monospace par voie -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
+
+      <!-- Voie 1 — Workflow (violet) -->
+      <div class="bg-[var(--color-paper)] p-8 md:p-10 reveal flex flex-col">
+        <div class="flex items-baseline justify-between mb-6 pb-4 border-b border-[var(--color-divider)]">
+          <div>
+            <div class="mono-caption text-[var(--color-ink-low)] mb-1">VOIE 1</div>
+            <h3 class="font-display font-semibold text-xl md:text-2xl tracking-[-0.02em] text-[var(--color-ink)]">
+              Workflow
+            </h3>
+          </div>
+          <span class="mono-caption text-[var(--color-violet)]">CŒUR DE STACK</span>
+        </div>
+
+        <div class="flex flex-col gap-px bg-[var(--color-divider)] -mx-1">
+          {workflow.map((tool) => (
+            <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 px-1 py-3">
+              <span class="chip chip-violet self-start">{tool.name}</span>
+              <div class="flex flex-col gap-1 min-w-0">
+                <span class="text-[var(--color-ink)] text-[length:var(--text-body-sm)] leading-[1.4]">{tool.useCase}</span>
+                <span class="mono-caption text-[var(--color-ink-low)] break-words">→ {tool.bottleneck}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Voie 2 — Intelligence (ember) -->
+      <div class="bg-[var(--color-paper)] p-8 md:p-10 reveal flex flex-col">
+        <div class="flex items-baseline justify-between mb-6 pb-4 border-b border-[var(--color-divider)]">
+          <div>
+            <div class="mono-caption text-[var(--color-ink-low)] mb-1">VOIE 2</div>
+            <h3 class="font-display font-semibold text-xl md:text-2xl tracking-[-0.02em] text-[var(--color-ink)]">
+              Intelligence
+            </h3>
+          </div>
+          <span class="mono-caption text-[var(--color-ember-deep)]">CŒUR DE STACK</span>
+        </div>
+
+        <div class="flex flex-col gap-px bg-[var(--color-divider)] -mx-1">
+          {ai.map((tool) => (
+            <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 px-1 py-3">
+              <span class="chip chip-ember self-start">{tool.name}</span>
+              <div class="flex flex-col gap-1 min-w-0">
+                <span class="text-[var(--color-ink)] text-[length:var(--text-body-sm)] leading-[1.4]">{tool.useCase}</span>
+                <span class="mono-caption text-[var(--color-ink-low)] break-words">→ {tool.bottleneck}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Voie 3 — Glue connecteurs courants -->
+    <div class="reveal mt-px bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
+      <div class="p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-baseline gap-4 flex-wrap">
+          <span class="mono-caption text-[var(--color-ink-low)]">VOIE 3</span>
+          <h3 class="font-display font-semibold text-lg md:text-xl tracking-[-0.02em] text-[var(--color-ink)]">
+            Glue connecteurs
+          </h3>
+          <span class="mono-caption text-[var(--color-ink-low)] hidden md:inline">CONNECTÉS À LA DEMANDE</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          {glue.map((tool) => (
+            <span class="chip">{tool}</span>
+          ))}
+          <span class="chip" style="border-style: dashed; color: var(--color-ink-low);">+ 200 AUTRES</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
