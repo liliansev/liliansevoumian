@@ -1,133 +1,63 @@
 ---
-import { Icon } from 'astro-icon/components';
+import SectionHeader from './SectionHeader.astro';
 
 const faqs = [
   {
-    question: "Comment se déroule une mission type\u00a0?",
-    answer: "Tout commence par un appel de 30\u00a0minutes gratuit où on identifie vos process les plus chronophages. Sous 48\u00a0h, je vous envoie un plan d'action détaillé avec livrables, délais et budget fixe. Pas de surprise\u00a0: vous validez chaque étape avant que je passe à la suivante.",
-    color: "#E86A33",
+    q: "Quel ROI réel ?",
+    a: "Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. À 50 € de coût horaire interne, un workflow à 1 500 € se rembourse en moins de deux semaines. Sur une mission complète à 15 000 €, le ROI est positif à partir du 4e mois — souvent avant. J'envoie une estimation chiffrée dès le premier appel, basée sur vos vrais process.",
   },
   {
-    question: "Combien ça coûte et quel retour sur investissement attendre\u00a0?",
-    answer: "Un premier workflow d'automatisation démarre à partir de 1\u00a0500\u00a0€. La plupart de mes clients constatent un ROI dès le premier mois\u00a0: quand vous économisez 15\u00a0h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès le premier appel.",
-    color: "#9333EA",
+    q: "Et si l'API d'un de mes outils change ?",
+    a: "Tous mes workflows incluent une couche d'erreur explicite (try/catch + Slack alert) et sont versionnés en JSON exportable. Si Make ou n8n bloque sur un changement d'API tiers, vous voyez l'erreur, vous savez ce qu'il s'est passé. Pendant les 30 j de SLA, je corrige sans surcoût. Au-delà, c'est un forfait à la séance — la plupart des évolutions courantes prennent moins d'1 h.",
   },
   {
-    question: "Combien de temps faut-il pour voir des résultats\u00a0?",
-    answer: "Un workflow simple est déployé en 3 à 5\u00a0jours. Un projet complet (diagnostic + plusieurs automatisations + formation) prend 4 à 8\u00a0semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
-    color: "#22D3EE",
+    q: "Mes équipes ont-elles besoin de skills tech ?",
+    a: "Non. Les automatisations tournent en arrière-plan. À la livraison, je forme vos équipes aux ajustements courants (modifier un filtre, ajouter un destinataire, dupliquer un scenario) via une documentation custom + 1 session live. Si un changement plus profond est requis, je suis joignable.",
   },
   {
-    question: "Et si mes outils changent ou si j'ai besoin d'évolutions\u00a0?",
-    answer: "Les automatisations sont construites de façon modulaire\u00a0: ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
-    color: "#F43F5E",
+    q: "Make ou n8n ? Lequel et pourquoi ?",
+    a: "Make est plus rapide à apprendre, plus visuel, idéal pour des PME qui veulent maintenir elles-mêmes. n8n est self-hostable, plus puissant pour le data-heavy ou les contraintes de souveraineté (RGPD strict, données sensibles). Je propose celui qui fait sens pour vous, pas mon préféré. Si vous êtes déjà sur l'un, on continue dessus.",
   },
   {
-    question: "Quels outils intégrez-vous\u00a0?",
-    answer: "Je travaille principalement avec Make et n8n comme moteurs d'automatisation, et j'intègre plus de 200\u00a0outils\u00a0: CRM (HubSpot, Pipedrive, Salesforce), facturation (Stripe, Pennylane), bases de données (Airtable, Notion, Google Sheets), communication (Slack, Gmail, Teams) et IA (Claude, GPT, Mistral). Si votre outil a une API ou un webhook, il peut être connecté.",
-    color: "#22D3EE",
+    q: "Remote ou sur site ?",
+    a: "100 % remote sur les missions courtes (workflow seul). Pour les missions complètes, 1 ou 2 jours sur site en kick-off + en formation, le reste en remote. Basé Paris, je peux me déplacer ailleurs en France ou en Europe sur demande.",
   },
   {
-    question: "Mon équipe a-t-elle besoin de compétences techniques\u00a0?",
-    answer: "Non. Les automatisations tournent en arrière-plan, vos équipes n'ont rien à coder. À la livraison, je forme vos collaborateurs aux ajustements courants (modifier un filtre, ajouter un destinataire) via une documentation sur mesure et une session de formation incluse.",
-    color: "#E86A33",
+    q: "Comment je suis sûr que vous comprenez mon métier ?",
+    a: "Je ne le suis pas. C'est exactement ce que la phase 1 (diagnostic 30 min) sert à valider. Si après l'appel je sens que je ne suis pas le bon — secteur trop spécialisé, contraintes que je ne maîtrise pas — je le dis et je vous oriente. Mieux que de prendre un projet que je ne sais pas livrer.",
   },
 ];
 ---
 
-<!-- FAQ Accordion -->
-<div id="faq" class="flex flex-col items-center gap-12 w-full">
-  <!-- Header -->
-  <div class="flex flex-col items-center fade-in-section">
-    <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] mb-3">
-      FAQ
-    </span>
-    <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[#1A1A1A] text-center">
-      Tout ce qu'il faut savoir avant de se lancer
-    </h2>
+<section
+  id="faq"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      number="06"
+      label="FAQ"
+      title="Six questions. Réponses tranchées."
+      titleMaxWidth="22ch"
+    />
+
+    <!-- Accordion -->
+    <div class="reveal max-w-[820px]">
+      {faqs.map((faq, i) => (
+        <details class="faq-item group" open={i === 0}>
+          <summary class="faq-summary">
+            <span class="faq-num">Q0{i + 1}</span>
+            <span class="faq-question">{faq.q}</span>
+            <span class="faq-caret" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>{faq.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+
   </div>
-
-  <!-- Accordion -->
-  <div class="max-w-[800px] w-full mx-auto flex flex-col gap-4" id="faq-accordion">
-    {faqs.map((faq, index) => (
-      <div
-        class="faq-item rounded-[var(--radius-lg)] overflow-hidden"
-        style={`background: #F8F7F4; border: 2px solid rgba(255,255,255,0.6); box-shadow: 5px 5px 10px 0 ${faq.color}35;`}
-      >
-        <button
-          type="button"
-          class="faq-trigger w-full flex items-center justify-between p-5 md:p-6 text-left cursor-pointer min-h-[56px]"
-          aria-expanded="false"
-          aria-controls={`faq-answer-${index}`}
-          data-faq-index={index}
-        >
-          <span class="font-body text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] pr-4">
-            {faq.question}
-          </span>
-          <Icon
-            name="lucide:plus"
-            class="faq-icon-plus w-5 h-5 shrink-0 transition-transform duration-300"
-            style={`color: ${faq.color};`}
-          />
-          <Icon
-            name="lucide:minus"
-            class="faq-icon-minus w-5 h-5 shrink-0 transition-transform duration-300 hidden"
-            style={`color: ${faq.color};`}
-          />
-        </button>
-        <div
-          id={`faq-answer-${index}`}
-          class="faq-answer overflow-hidden transition-all duration-300 ease-in-out max-h-0"
-        >
-          <p class="font-body text-[length:var(--text-body)] text-[#666666] leading-[1.6] px-5 md:px-6 pb-5 md:pb-6">
-            {faq.answer}
-          </p>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
-
-<script>
-  function initFaqAccordion() {
-    const accordion = document.getElementById('faq-accordion');
-    if (!accordion || accordion.dataset.initialized) return;
-    accordion.dataset.initialized = 'true';
-
-    accordion.addEventListener('click', (e) => {
-      const trigger = (e.target as HTMLElement).closest('.faq-trigger') as HTMLButtonElement | null;
-      if (!trigger) return;
-
-      const item = trigger.closest('.faq-item');
-      if (!item) return;
-
-      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-      const answer = item.querySelector('.faq-answer') as HTMLElement | null;
-      const iconPlus = item.querySelector('.faq-icon-plus') as HTMLElement | null;
-      const iconMinus = item.querySelector('.faq-icon-minus') as HTMLElement | null;
-      if (!answer || !iconPlus || !iconMinus) return;
-
-      if (isExpanded) {
-        trigger.setAttribute('aria-expanded', 'false');
-        answer.classList.remove('max-h-[1000px]', 'pb-6');
-        answer.classList.add('max-h-0');
-        iconPlus.classList.remove('hidden');
-        iconMinus.classList.add('hidden');
-      } else {
-        trigger.setAttribute('aria-expanded', 'true');
-        answer.classList.remove('max-h-0');
-        answer.classList.add('max-h-[1000px]');
-        iconPlus.classList.add('hidden');
-        iconMinus.classList.remove('hidden');
-      }
-    });
-  }
-
-  // Initialize on all possible load events
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFaqAccordion);
-  } else {
-    initFaqAccordion();
-  }
-  document.addEventListener('astro:page-load', initFaqAccordion);
-</script>
+</section>

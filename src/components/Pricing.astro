@@ -1,0 +1,105 @@
+---
+import SectionHeader from './SectionHeader.astro';
+
+const tiers = [
+  {
+    label: "WORKFLOW",
+    anchor: "À PARTIR DE",
+    price: "1 500 €",
+    duration: "1 PROCESS · 3-5 JOURS",
+    description: "Une automatisation ciblée, déployée vite. Idéal pour une douleur ops précise.",
+    features: [
+      "Cadrage 30 min + plan d'action",
+      "1 workflow Make ou n8n complet",
+      "Documentation technique",
+      "Formation équipe (1 h)",
+    ],
+    cta: { label: "Réserver un appel", href: "https://cal.com/lilian-sevoumian/20min" },
+    primary: false,
+  },
+  {
+    label: "MISSION COMPLÈTE",
+    anchor: "4-8 SEMAINES",
+    price: "8 K – 25 K €",
+    duration: "DIAGNOSTIC + 3-5 WORKFLOWS + FORMATION + SLA",
+    description: "Transformation complète d'un pôle ops. 3 à 5 workflows interconnectés + transfert.",
+    features: [
+      "Audit ops complet (process map)",
+      "3-5 workflows interconnectés",
+      "Intégrations IA (Claude, GPT, embeddings)",
+      "Formation équipe + 30 j SLA",
+    ],
+    cta: { label: "Discuter du périmètre", href: "https://cal.com/lilian-sevoumian/20min" },
+    primary: true,
+  },
+];
+---
+
+<section
+  id="tarifs"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      number="05"
+      label="TARIFS"
+      title="Tarifs publics. Pas de surprise."
+      body="La plupart des freelances cachent leurs tarifs. Moi non. Si on est hors budget, autant le savoir avant le call."
+      titleMaxWidth="22ch"
+      bodyMaxWidth="55ch"
+    />
+
+    <!-- Two-tier grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal-stagger">
+      {tiers.map((tier) => (
+        <article
+          class={`reveal relative p-8 md:p-10 ${tier.primary ? 'lg:bg-[var(--color-surface-low)]' : ''}`}
+        >
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          <div class="mono-label text-[var(--color-ink-low)] mb-6">{tier.label}</div>
+
+          <div class="mb-6 pb-6 border-b border-[var(--color-divider)]">
+            <div class="mono-caption text-[var(--color-ink-low)] mb-1">{tier.anchor}</div>
+            <div class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)]">
+              {tier.price}
+            </div>
+            <div class="mono-caption text-[var(--color-ink-low)] mt-2">{tier.duration}</div>
+          </div>
+
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.55] mb-6 max-w-[44ch]">
+            {tier.description}
+          </p>
+
+          <ul class="flex flex-col gap-2.5 mb-8">
+            {tier.features.map((feat) => (
+              <li class="flex items-baseline gap-3 text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)]">
+                <span class="mono-caption text-[var(--color-violet)] shrink-0">+</span>
+                <span>{feat}</span>
+              </li>
+            ))}
+          </ul>
+
+          <a
+            href={tier.cta.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class={tier.primary ? "btn-primary justify-center w-full" : "btn-ghost justify-center w-full"}
+          >
+            {tier.cta.label}
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <p class="reveal mono-caption text-[var(--color-ink-low)] mt-8 text-center">
+      BUDGET DIFFÉRENT ? CAS PARTICULIER ? PARLONS-EN PENDANT L'APPEL.
+    </p>
+
+  </div>
+</section>

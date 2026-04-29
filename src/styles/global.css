@@ -1,509 +1,890 @@
 @import "tailwindcss";
 
-/* =========================================
-   DESIGN SYSTEM — Soft 3D with colored shadows
-   Based on Pencil design: "Prop 4 — Soft 3D (ombres renforcées)"
-   3 accents: Orange #E86A33, Purple #9333EA, Cyan #22D3EE
-   ======================================== */
+/* =========================================================================
+   DESIGN SYSTEM — "The Operator's Console"
+   Refonte avril 2026 — Vercel-grade grid, two-voice palette, no elevation.
+   Source: DESIGN.md / DESIGN.json
+   ========================================================================= */
 
 @theme {
-  /* Font families */
-  --font-display: 'Bricolage Grotesque', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
-  --font-mono: 'DM Sans', sans-serif;
+  /* ===== Fonts ===== */
+  --font-display: 'Geist', system-ui, -apple-system, sans-serif;
+  --font-body: 'Geist', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Fluid typography — 9 tokens (was 16 hardcoded sizes) */
-  --text-display: clamp(2rem, 4vw + 1rem, 3.5rem);
-  --text-heading: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
-  --text-subheading: clamp(1.25rem, 1vw + 0.875rem, 1.375rem);
-  --text-body-lg: clamp(1rem, 0.5vw + 0.875rem, 1.125rem);
-  --text-body: clamp(0.875rem, 0.25vw + 0.8125rem, 0.9375rem);
-  --text-body-sm: 0.8125rem;
-  --text-caption: 0.75rem;
-  --text-micro: 0.6875rem;
-  --text-decorative: clamp(2rem, 3vw + 0.5rem, 3rem);
+  /* ===== Typography scale (fluide) ===== */
+  --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
+  --text-title: clamp(1.25rem, 1vw + 0.875rem, 1.5rem);
+  --text-body-large: clamp(1.0625rem, 0.5vw + 0.875rem, 1.25rem);
+  --text-body: clamp(0.9375rem, 0.25vw + 0.875rem, 1rem);
+  --text-body-sm: 0.875rem;
+  --text-mono-label: 0.75rem;
+  --text-mono-body: 0.8125rem;
+  --text-mono-caption: 0.6875rem;
 
-  /* Fluid spacing tokens */
-  --spacing-section: clamp(4rem, 6vw, 5rem);
+  /* ===== Spacing fluide ===== */
+  --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
+  --spacing-grid-cell: 96px;
 
-  /* Border radius — 4 semantic levels */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* ===== Border radius (max 8px sauf chips) ===== */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --radius-full: 9999px;
 
-  /* Backgrounds */
-  --color-bg-page: #FFFFFF;
-  --color-bg-dark: #F8F7F4;
-  --color-bg-dark-alt: #F3F2EF;
+  /* ===== Colors (OKLCH-first) ===== */
+  /* Surfaces */
+  --color-paper: oklch(0.995 0.002 290);
+  --color-surface-low: oklch(0.975 0.003 290);
+  --color-surface-high: oklch(1 0 0);
 
-  /* Text — 4 grays + 1 warm brown */
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #666666;
-  --color-text-muted: #999999;
-  --color-text-faint: #AAAAAA;
+  /* Ink (neutrals tinted violet hue 290) */
+  --color-ink: oklch(0.16 0.008 290);
+  --color-ink-soft: oklch(0.22 0.008 290);
+  --color-ink-mid: oklch(0.40 0.006 290);
+  --color-ink-low: oklch(0.55 0.005 290);
+  --color-ink-faint: oklch(0.78 0.004 290);
 
-  /* Text — dark sections (cream bg → dark text) */
-  --color-text-light: #1A1A1A;
-  --color-text-light-secondary: #5A554D;
+  /* Lines */
+  --color-divider: oklch(0.92 0.004 290);
+  --color-grid-line: oklch(0.86 0.005 290);
+  --color-grid-line-active: oklch(0.72 0.005 290);
 
-  /* 4 accent colors */
-  --color-orange: #E86A33;
-  --color-purple: #9333EA;
-  --color-cyan: #22D3EE;
-  --color-rose: #F43F5E;
+  /* Dark mode tokens (sections en bg-ink) */
+  --color-text-on-dark: oklch(0.97 0.003 290);
+  --color-text-on-dark-mid: oklch(0.78 0.005 290);
+  --color-text-on-dark-low: oklch(0.66 0.006 290);
+  --color-text-on-dark-faint: oklch(0.48 0.008 290);
+  --color-divider-dark: oklch(0.28 0.008 290);
+  --color-grid-line-dark: oklch(0.30 0.008 290);
+  --color-surface-on-dark: oklch(0.20 0.008 290);
 
-  /* Accent dark variants (AA-compliant for small text on white) */
-  --color-purple-dark: #7928CA;
-  --color-cyan-dark: #0B7F94;
+  /* Accents — Two-Voice */
+  --color-violet: oklch(0.55 0.22 290);
+  --color-violet-deep: oklch(0.45 0.22 290);
+  --color-violet-soft: oklch(0.96 0.04 290);
+  --color-ember: oklch(0.66 0.14 45);
+  --color-ember-deep: oklch(0.55 0.14 45);
+  --color-ember-soft: oklch(0.96 0.03 50);
+
+  /* Error */
+  --color-error: oklch(0.55 0.22 25);
+
+  /* ===== Motion ===== */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-quick: 150ms;
+  --duration-default: 200ms;
+  --duration-reveal: 600ms;
+  --duration-mount: 700ms;
 }
 
-/* =========================================
-   BASE STYLES
-   ======================================== */
+/* =========================================================================
+   BASE
+   ========================================================================= */
 
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+  background: var(--color-paper);
 }
 
 body {
-  background: var(--color-bg-page);
-  color: var(--color-text-primary);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* =========================================
+/* Selection */
+::selection {
+  background-color: var(--color-violet);
+  color: var(--color-paper);
+}
+
+/* =========================================================================
    TYPOGRAPHY
-   ======================================== */
+   ========================================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-wrap: balance;
+  color: var(--color-ink);
+}
 
 h1 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  text-wrap: balance;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
+  font-size: var(--text-display);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
 }
 
 h2 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  text-wrap: balance;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-size: var(--text-headline);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
 }
 
-h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  text-wrap: balance;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+h3 {
+  font-size: var(--text-title);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h4, h5, h6 {
+  font-size: var(--text-body-large);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
 }
 
 p, li, blockquote {
   text-wrap: pretty;
+  max-width: 72ch;
 }
 
-/* =========================================
-   SELECTION
-   ======================================== */
-
-::selection {
-  background-color: var(--color-orange);
-  color: #FFFFFF;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* =========================================
-   SCROLLBAR
-   ======================================== */
+/* =========================================================================
+   FOCUS — outline-based, NEVER box-shadow
+   ========================================================================= */
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
-}
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.2); }
-
-/* =========================================
-   MICRO-INTERACTIONS
-   ======================================== */
-
-a, button, input, textarea, select,
-[role="button"], [tabindex]:not([tabindex="-1"]) {
-  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
-  transition-duration: 150ms;
-  transition-timing-function: ease;
+:focus {
+  outline: none;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-orange);
+  outline: 2px solid var(--color-violet);
   outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 @media (forced-colors: active) {
   :focus-visible { outline: 2px solid CanvasText; }
 }
 
-/* =========================================
-   DOT GRID BACKGROUNDS (pointillés gris)
-   ======================================== */
+/* =========================================================================
+   SCROLLBAR — discret, tinted
+   ========================================================================= */
 
-.dot-grid {
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-faint) transparent;
 }
 
-.dot-grid-cream {
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-faint);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-mid); }
+
+/* =========================================================================
+   MICRO-INTERACTIONS — transitions par défaut
+   ========================================================================= */
+
+a, button, input, textarea, select,
+[role="button"], [tabindex]:not([tabindex="-1"]) {
+  transition-property: color, background-color, border-color, transform, opacity;
+  transition-duration: var(--duration-default);
+  transition-timing-function: var(--ease-out-quint);
 }
 
-.dot-grid-dark {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 24px 24px;
+/* =========================================================================
+   MONO TEXT UTILITIES
+   ========================================================================= */
+
+.mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-/* =========================================
-   SOFT 3D CARDS — colored shadow with blur
-   On dark bg: white card, colored border + shadow
-   On white bg: #F8F7F4 (cream) card + colored shadow
-   ======================================== */
-
-/* --- Cards on CREAM sections (bg matches section, white border) --- */
-.card-3d-orange {
-  background: #F8F7F4;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
+.mono-body {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-body);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
 }
 
-/* --- Cards on WHITE sections (bg matches section, white border) --- */
-.card-3d-light-orange {
-  background: #FFFFFF;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
+.mono-caption {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-caption);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.card-3d-light-purple {
-  background: #FFFFFF;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+/* =========================================================================
+   TECHNICAL GRID — signature element
+   Posée globalement par <TechnicalGrid />, lignes 1px tous les 96px.
+   Les + aux intersections sont gérés par chaque section (corner markers).
+   ========================================================================= */
+
+.technical-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
+  background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
+  background-position: 0 64px;
+  mask-image: linear-gradient(to bottom, transparent 0, black 96px, black calc(100% - 96px), transparent 100%);
 }
 
-.card-3d-light-cyan {
-  background: #FFFFFF;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(13, 148, 136, 0.35);
+/* Dark mode grid — pour sections en bg-ink, grille claire visible sur fond sombre */
+.technical-grid-dark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, var(--color-grid-line-dark) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid-line-dark) 1px, transparent 1px);
+  background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
+  background-position: 0 0;
+  mask-image: linear-gradient(to bottom, transparent 0, black 64px, black calc(100% - 64px), transparent 100%);
 }
 
-.card-3d-light-rose {
-  background: #FFFFFF;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
+/* Section dark wrapper — applique bg ink + heritage de couleur générique */
+.section-dark {
+  background: var(--color-ink);
+  color: var(--color-text-on-dark);
 }
 
-/* --- Cards on CREAM sections (bg matches section, white border) --- */
-.card-3d-white-orange {
-  background: #F8F7F4;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(232, 106, 51, 0.35);
+/* Sur fond dark, .paper-island réinjecte color ink pour les blocs paper.
+   À cumuler avec bg-[var(--color-paper)] sur les containers concernés. */
+.section-dark .paper-island {
+  color: var(--color-ink);
 }
 
-.card-3d-white-purple {
-  background: #F8F7F4;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(147, 51, 234, 0.35);
+/* Sur fond dark, la grille corner ressort en clair, sauf si déjà override */
+.section-dark .grid-corner {
+  color: var(--color-text-on-dark-mid);
 }
 
-.card-3d-white-cyan {
-  background: #F8F7F4;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(13, 148, 136, 0.35);
+.section-dark.section-active .grid-corner,
+.section-dark.section-active .section-number {
+  color: var(--color-violet);
 }
 
-.card-3d-white-rose {
-  background: #F8F7F4;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-lg);
-  box-shadow: 5px 5px 10px 0 rgba(244, 63, 94, 0.35);
+/* Corner markers (+) sur les sections — 4 par section, aux 4 coins */
+.grid-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  color: var(--color-ink-mid);
+  transition: color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-reveal) var(--ease-out-expo);
 }
 
-/* Card hover — subtle 3D lift (inverse of button press) */
-.card-3d-hover {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+.grid-corner::before,
+.grid-corner::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
 }
 
-.card-3d-hover:hover {
-  transform: translate(-2px, -2px);
+.grid-corner::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-50%);
 }
 
-/* =========================================
-   3D BUTTONS — emerald primary
-   ======================================== */
+.grid-corner::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+}
 
-/* Primary button — warm charcoal bg + warm shadow */
-.btn-3d {
-  background: #2A2520;
-  color: #FFFFFF;
+.grid-corner.tl { top: -4px; left: -4px; }
+.grid-corner.tr { top: -4px; right: -4px; }
+.grid-corner.bl { bottom: -4px; left: -4px; }
+.grid-corner.br { bottom: -4px; right: -4px; }
+
+/* Section in-viewport state: + virent violet */
+.section-active .grid-corner {
+  color: var(--color-violet);
+}
+
+/* =========================================================================
+   SECTION NUMBER — 01 — APPROCHE
+   ========================================================================= */
+
+.section-number {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-caption);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-low);
+  margin-bottom: 1.5rem;
+  transition: color var(--duration-default) var(--ease-out-quint);
+}
+
+.section-active .section-number {
+  color: var(--color-violet);
+}
+
+/* =========================================================================
+   BUTTONS — no shadow, ever
+   ========================================================================= */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 11px 18px;
   border: none;
-  outline: 1.5px solid #2A2520;
-  outline-offset: 0px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--duration-default) var(--ease-out-quint),
+              transform 100ms var(--ease-out-quint);
+}
+
+.btn-primary:hover {
+  background: var(--color-ink-soft);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 11px 18px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--duration-default) var(--ease-out-quint),
+              border-color var(--duration-default) var(--ease-out-quint);
+}
+
+.btn-ghost:hover {
+  background: var(--color-surface-low);
+  border-color: var(--color-ink-faint);
+}
+
+.btn-ghost:active {
+  transform: scale(0.98);
+}
+
+/* Dark variants — bouton primary inversé sur fond ink */
+.section-dark .btn-primary {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.section-dark .btn-primary:hover {
+  background: oklch(0.92 0.003 290);
+}
+
+.section-dark .btn-ghost {
+  color: var(--color-text-on-dark);
+  border-color: var(--color-text-on-dark-faint);
+  border-width: 1.5px;
+  background: oklch(0.18 0.008 290);
+}
+
+.section-dark .btn-ghost:hover {
+  background: var(--color-surface-on-dark);
+  border-color: var(--color-text-on-dark-mid);
+  color: var(--color-paper);
+}
+
+/* =========================================================================
+   CHIPS — Two-Voice
+   ========================================================================= */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  color: var(--color-ink-mid);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-caption);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--color-divider);
   border-radius: var(--radius-full);
-  font-family: var(--font-body);
-  font-weight: 600;
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 5px 5px 12px 0 rgba(42, 37, 32, 0.45);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color var(--duration-default) var(--ease-out-quint),
+              border-color var(--duration-default) var(--ease-out-quint);
 }
 
-.btn-3d:hover {
-  transform: translate(5px, 5px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 0 0 0 rgba(42, 37, 32, 0);
+.chip:hover {
+  color: var(--color-ink);
+  border-color: var(--color-ink-faint);
 }
 
-.btn-3d:active {
-  transform: translate(4px, 4px);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 1px 1px 3px 0 rgba(42, 37, 32, 0.15);
+.chip-violet {
+  background: var(--color-violet-soft);
+  color: var(--color-violet-deep);
+  border-color: transparent;
 }
 
-/* Secondary button — lighter bg, violet border */
-.btn-secondary {
-  background: #F8F7F4;
-  color: #1A1A1A;
-  border: none;
-  outline: 1.5px solid #9333EA;
-  outline-offset: 0px;
+.chip-ember {
+  background: var(--color-ember-soft);
+  color: var(--color-ember-deep);
+  border-color: transparent;
+}
+
+/* Chip dark variants — sur fond ink */
+.section-dark .chip {
+  color: var(--color-text-on-dark-mid);
+  border-color: var(--color-divider-dark);
+}
+
+.section-dark .chip:hover {
+  color: var(--color-text-on-dark);
+  border-color: var(--color-text-on-dark-faint);
+}
+
+.section-dark .chip-violet {
+  background: oklch(0.30 0.10 290);
+  color: oklch(0.85 0.12 290);
+  border-color: transparent;
+}
+
+.section-dark .chip-ember {
+  background: oklch(0.32 0.08 45);
+  color: oklch(0.85 0.10 45);
+  border-color: transparent;
+}
+
+/* =========================================================================
+   CARDS — flat, bordered, hover = grid claims the cell
+   ========================================================================= */
+
+.card {
+  position: relative;
+  background: var(--color-paper);
+  border: 1px solid var(--color-divider);
   border-radius: var(--radius-md);
+  padding: 24px;
+  transition: border-color var(--duration-default) var(--ease-out-quint);
+}
+
+.card-elevated {
+  padding: 32px;
+}
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  border-color: var(--color-ink-faint);
+}
+
+.card-interactive:hover .grid-corner {
+  color: var(--color-violet);
+}
+
+/* Card dark variants — adapte les cards sur fond ink */
+.section-dark .card {
+  background: var(--color-surface-on-dark);
+  border-color: var(--color-divider-dark);
+  color: var(--color-text-on-dark);
+}
+
+.section-dark .card-interactive:hover {
+  border-color: var(--color-text-on-dark-faint);
+}
+
+/* =========================================================================
+   CODE BLOCK
+   ========================================================================= */
+
+.code-block {
+  background: var(--color-surface-low);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-body);
+  font-weight: 400;
+  line-height: 1.6;
+  padding: 16px 20px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin: 0;
+}
+
+.code-key { color: var(--color-violet); }
+.code-string { color: var(--color-ember-deep); }
+.code-number { color: var(--color-ink-mid); }
+.code-comment { color: var(--color-ink-faint); font-style: italic; }
+
+/* =========================================================================
+   INPUTS
+   ========================================================================= */
+
+.input-text {
+  width: 100%;
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-body);
-  font-weight: 600;
-  box-shadow: 5px 5px 12px 0 rgba(147, 51, 234, 0.50);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  padding: 10px 14px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-default) var(--ease-out-quint);
 }
 
-.btn-secondary:hover {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+.input-text::placeholder {
+  color: var(--color-ink-faint);
 }
 
-.btn-secondary:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 3px 0 rgba(147, 51, 234, 0.15);
+.input-text:hover {
+  border-color: var(--color-ink-faint);
 }
 
-/* =========================================
-   SCROLL FADE-IN
-   ======================================== */
+.input-text:focus {
+  border-color: var(--color-violet);
+  outline: 2px solid var(--color-violet);
+  outline-offset: 2px;
+}
 
-/* Animations only activate once JS has loaded and added .js-ready to <html> */
-.js-ready .fade-in-section {
+/* =========================================================================
+   ROI CALCULATOR — range slider mono-style
+   ========================================================================= */
+
+.roi-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--color-divider);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: background var(--duration-default);
+}
+
+.roi-slider:hover { background: var(--color-ink-faint); }
+
+.roi-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-paper);
+  border: 2px solid var(--color-ink);
+  cursor: pointer;
+  transition: border-color var(--duration-quick), transform var(--duration-quick);
+}
+
+.roi-slider::-webkit-slider-thumb:hover {
+  border-color: var(--color-violet);
+  transform: scale(1.1);
+}
+
+.roi-slider:focus::-webkit-slider-thumb {
+  border-color: var(--color-violet);
+  outline: 2px solid var(--color-violet);
+  outline-offset: 2px;
+}
+
+.roi-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--color-paper);
+  border: 2px solid var(--color-ink);
+  cursor: pointer;
+}
+
+/* ROI slider dark variant — track plus contrastée, thumb signal violet */
+.section-dark .roi-slider {
+  background: var(--color-text-on-dark-faint);
+  height: 6px;
+}
+
+.section-dark .roi-slider:hover { background: var(--color-text-on-dark-low); }
+
+.section-dark .roi-slider::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--color-violet);
+  border: 3px solid var(--color-paper);
+}
+
+.section-dark .roi-slider::-webkit-slider-thumb:hover {
+  background: var(--color-paper);
+  border-color: var(--color-violet);
+  transform: scale(1.15);
+}
+
+.section-dark .roi-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--color-violet);
+  border: 3px solid var(--color-paper);
+}
+
+/* =========================================================================
+   MOTION — scroll-driven reveals
+   ========================================================================= */
+
+.reveal {
+  transition: opacity var(--duration-mount) var(--ease-out-quint),
+              transform var(--duration-mount) var(--ease-out-quint);
+}
+
+/* JS-only cloak: once .js-ready is set, hide reveals until they're marked visible.
+   This way the no-JS / pre-hydration baseline keeps content fully painted. */
+.js-ready .reveal:not(.is-visible) {
   opacity: 0;
-  translate: 0 12px;
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(12px);
 }
 
-.js-ready .fade-in-section.is-visible {
+.js-ready .reveal.is-visible {
   opacity: 1;
-  translate: 0 0;
+  transform: translateY(0);
 }
 
-/* =========================================
-   CARD — staggered reveal
-   ======================================== */
+/* Stagger delays */
+.reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger > .reveal:nth-child(2) { transition-delay: 80ms; }
+.reveal-stagger > .reveal:nth-child(3) { transition-delay: 160ms; }
+.reveal-stagger > .reveal:nth-child(4) { transition-delay: 240ms; }
+.reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
+.reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
 
-.js-ready .reveal-card {
-  opacity: 0;
-  translate: 0 12px;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-              translate 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+/* + corner pulse on viewport-center crossing */
+.js-ready .grid-corner-pulse {
+  animation: grid-pulse 600ms var(--ease-out-expo) both;
 }
 
-.js-ready .reveal-card.is-visible {
-  opacity: 1;
-  translate: 0 0;
+@keyframes grid-pulse {
+  0% { opacity: 0.4; transform: scale(0.7) rotate(-90deg); }
+  60% { opacity: 1; transform: scale(1.1) rotate(0deg); }
+  100% { opacity: 0.85; transform: scale(1) rotate(0deg); }
 }
 
-.reveal-stagger > .reveal-card:nth-child(1) { transition-delay: 0ms; }
-.reveal-stagger > .reveal-card:nth-child(2) { transition-delay: 100ms; }
-.reveal-stagger > .reveal-card:nth-child(3) { transition-delay: 200ms; }
-.reveal-stagger > .reveal-card:nth-child(4) { transition-delay: 300ms; }
+/* =========================================================================
+   NAV — fixed top, no shadow, border-bottom shifts on scroll
+   ========================================================================= */
 
-/* =========================================
-   STAT ITEMS — reveal
-   ======================================== */
-
-.js-ready .stat-item {
-  opacity: 0;
-  translate: 0 8px;
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-              translate 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+.nav-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: oklch(0.995 0.002 290 / 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-divider);
+  height: 64px;
+  transition: border-color var(--duration-default) var(--ease-out-quint);
 }
 
-.js-ready .stat-item.is-visible {
-  opacity: 1;
-  translate: 0 0;
+.nav-root.scrolled {
+  border-bottom-color: var(--color-ink-faint);
 }
-
-.stat-item.is-visible:nth-child(1) { transition-delay: 200ms; }
-.stat-item.is-visible:nth-child(2) { transition-delay: 400ms; }
-.stat-item.is-visible:nth-child(3) { transition-delay: 600ms; }
-
-/* =========================================
-   PILL / BADGE — hover scale
-   ======================================== */
-
-.pill-hover {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.pill-hover:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* =========================================
-   NAV LINK — animated underline
-   ======================================== */
 
 .nav-link {
   position: relative;
-  transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink-mid);
+  padding: 8px 12px 8px 16px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
 }
 
-.nav-link::after {
-  content: '';
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--color-ink);
+}
+
+.nav-link::before {
+  content: '+';
   position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #9333EA;
-  border-radius: 1px;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-/* =========================================
-   FLOATING ISLAND NAV
-   ======================================== */
-
-.nav-island {
-  background: rgba(248, 247, 244, 0.75);
-  border: 1px solid #E8E4DE;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow:
-    /* Glass thickness */
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.03),
-    /* Warm layered depth (dark amber, geometric progression) */
-    0 0.5px 1px -0.5px rgba(30, 22, 8, 0.06),
-    0 3px 6px -2px rgba(30, 22, 8, 0.06),
-    0 8px 20px -4px rgba(30, 22, 8, 0.05),
-    0 20px 48px -8px rgba(30, 22, 8, 0.04);
-  transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Nav border adapts to section background */
-.nav-island.on-white {
-  border-color: #E8E4DE;
-}
-
-.nav-island.on-cream,
-.nav-island.on-dark {
-  border-color: #FFFFFF;
-}
-
-.nav-island.scrolled {
-  height: 48px !important;
-  top: 12px !important;
-  max-width: 780px;
-  background: rgba(248, 247, 244, 0.92);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  /* border-color inherited from on-white/on-cream classes */
-  box-shadow:
-    /* Glass thickness */
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.03),
-    /* Settled closer to page */
-    0 0.5px 1px -0.5px rgba(30, 22, 8, 0.07),
-    0 2px 5px -1.5px rgba(30, 22, 8, 0.06),
-    0 6px 16px -4px rgba(30, 22, 8, 0.05);
-}
-
-/* Mobile island menu */
-.mobile-island-menu {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-  max-height: 48px;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-violet);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
   opacity: 0;
-  pointer-events: none;
-  transition: max-height 400ms cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 300ms ease;
+  transition: opacity var(--duration-quick) var(--ease-out-quint);
 }
 
-.mobile-island-menu.open {
-  max-height: 420px;
+.nav-link.is-active::before,
+.nav-link:hover::before {
   opacity: 1;
-  pointer-events: auto;
 }
 
-/* =========================================
-   MOBILE MENU
-   ======================================== */
+/* =========================================================================
+   TOUCH TARGETS — WCAG 2.5.5 / Apple HIG / Google MD 44px minimum
+   ========================================================================= */
 
-.mobile-menu {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+.mobile-link {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
-.mobile-menu.open {
-  opacity: 1;
-  visibility: visible;
+footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
 }
 
-.mobile-menu .mobile-menu-link {
-  opacity: 0;
-  transform: translateX(-12px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+@media (max-width: 768px) {
+  footer a {
+    min-height: 44px;
+    padding: 4px 0;
+  }
 }
 
-.mobile-menu.open .mobile-menu-link {
-  opacity: 1;
-  transform: translateX(0);
+/* =========================================================================
+   FAQ — accordion native style
+   ========================================================================= */
+
+.faq-item {
+  border-bottom: 1px solid var(--color-divider);
 }
 
-.mobile-menu.open .mobile-menu-link:nth-child(1) { transition-delay: 50ms; }
-.mobile-menu.open .mobile-menu-link:nth-child(2) { transition-delay: 100ms; }
-.mobile-menu.open .mobile-menu-link:nth-child(3) { transition-delay: 150ms; }
-.mobile-menu.open .mobile-menu-link:nth-child(4) { transition-delay: 200ms; }
-.mobile-menu.open .mobile-menu-link:nth-child(5) { transition-delay: 250ms; }
+.faq-item:first-child {
+  border-top: 1px solid var(--color-divider);
+}
 
-body.menu-open { overflow: hidden; }
+.faq-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 20px 0;
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--duration-default);
+}
 
-/* =========================================
-   SCROLLBAR HIDE
-   ======================================== */
+.faq-summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-summary:hover {
+  color: var(--color-violet);
+}
+
+.faq-num {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-caption);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-low);
+  min-width: 36px;
+}
+
+.faq-question {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--text-body-large);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+}
+
+.faq-caret {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  color: var(--color-ink-mid);
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+
+.faq-item[open] .faq-caret {
+  transform: rotate(45deg);
+}
+
+.faq-answer {
+  padding: 0 0 24px 52px;
+  color: var(--color-ink-mid);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  max-width: 72ch;
+}
+
+/* =========================================================================
+   SR-ONLY — visually hidden mais lisible par screen readers
+   ========================================================================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================================================
+   SCROLLBAR HIDE UTILITY
+   ========================================================================= */
 
 @utility scrollbar-hide {
   -ms-overflow-style: none;
@@ -511,59 +892,17 @@ body.menu-open { overflow: hidden; }
   &::-webkit-scrollbar { display: none; }
 }
 
-/* =========================================
-   ROI CALCULATOR — range slider
-   ======================================== */
-
-.roi-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: #564E45;
-  outline: none;
-  cursor: pointer;
-}
-
-.roi-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #E86A33;
-  border: 3px solid #2A2520;
-  box-shadow: 0 0 8px rgba(232, 106, 51, 0.3);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.roi-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 14px rgba(232, 106, 51, 0.5);
-}
-
-.roi-slider::-moz-range-thumb {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #E86A33;
-  border: 3px solid #2A2520;
-  box-shadow: 0 0 8px rgba(232, 106, 51, 0.3);
-  cursor: pointer;
-}
-
-/* =========================================
+/* =========================================================================
    REDUCED MOTION
-   ======================================== */
+   ========================================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  .fade-in-section, .reveal-card, .stat-item, .card-3d-hover {
-    opacity: 1;
-    transform: none;
-  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .grid-corner { transform: none !important; }
 }

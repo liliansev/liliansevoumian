@@ -2,129 +2,38 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Hero from '../components/Hero.astro';
-import Problem from '../components/Problem.astro';
-import About from '../components/About.astro';
-import Services from '../components/Services.astro';
-import CaseStudies from '../components/CaseStudies.astro';
-import Testimonials from '../components/Testimonials.astro';
-import Process from '../components/Process.astro';
+import Methode from '../components/Methode.astro';
+import CaseStudy from '../components/CaseStudy.astro';
+import Stack from '../components/Stack.astro';
+import Pricing from '../components/Pricing.astro';
 import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
 import ROICalculator from '../components/ROICalculator.tsx';
-import ContentEcosystem from '../components/ContentEcosystem.astro';
 
 const faqSchema = [
-  {
-    question: "Comment se déroule une mission type ?",
-    answer: "Tout commence par un appel de 30 minutes gratuit où on identifie vos process les plus chronophages. Sous 48h, je vous envoie un plan d'action détaillé avec livrables, délais et budget fixe. Pas de surprise : vous validez chaque étape avant que je passe à la suivante.",
-  },
-  {
-    question: "Combien ça coûte et quel retour sur investissement attendre ?",
-    answer: "Un premier workflow d'automatisation démarre à partir de 1 500 €. La plupart de mes clients constatent un ROI dès le premier mois : quand vous économisez 15h par semaine de travail manuel, le budget est amorti en quelques semaines. Je vous fournis une estimation du ROI dès le premier appel.",
-  },
-  {
-    question: "Combien de temps faut-il pour voir des résultats ?",
-    answer: "Un workflow simple est déployé en 3 à 5 jours. Un projet complet (diagnostic + plusieurs automatisations + formation) prend 4 à 8 semaines. Dans tous les cas, les premiers gains de temps sont visibles dès la première semaine de déploiement.",
-  },
-  {
-    question: "Et si mes outils changent ou si j'ai besoin d'évolutions ?",
-    answer: "Les automatisations sont construites de façon modulaire : ajouter un outil ou modifier un flux ne nécessite pas de tout reconstruire. Je forme vos équipes à faire les ajustements courants, et je reste disponible pour les évolutions majeures.",
-  },
-  {
-    question: "Quels outils intégrez-vous ?",
-    answer: "Je travaille principalement avec Make et n8n comme moteurs d'automatisation, et j'intègre plus de 200 outils : CRM (HubSpot, Pipedrive, Salesforce), facturation (Stripe, Pennylane), bases de données (Airtable, Notion, Google Sheets), communication (Slack, Gmail, Teams) et IA (Claude, GPT, Mistral). Si votre outil a une API ou un webhook, il peut être connecté.",
-  },
-  {
-    question: "Mon équipe a-t-elle besoin de compétences techniques ?",
-    answer: "Non. Les automatisations tournent en arrière-plan, vos équipes n'ont rien à coder. À la livraison, je forme vos collaborateurs aux ajustements courants (modifier un filtre, ajouter un destinataire) via une documentation sur mesure et une session de formation incluse.",
-  },
+  { question: "Quel ROI réel ?", answer: "Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. À 50 € de coût horaire interne, un workflow à 1 500 € se rembourse en moins de deux semaines. Sur une mission complète à 15 000 €, le ROI est positif à partir du 4e mois." },
+  { question: "Et si l'API d'un de mes outils change ?", answer: "Tous mes workflows incluent une couche d'erreur explicite (try/catch + Slack alert) et sont versionnés en JSON exportable. Pendant les 30 j de SLA, je corrige sans surcoût." },
+  { question: "Mes équipes ont-elles besoin de skills tech ?", answer: "Non. Les automatisations tournent en arrière-plan. À la livraison, je forme vos équipes aux ajustements courants via une documentation custom + 1 session live." },
+  { question: "Make ou n8n ? Lequel et pourquoi ?", answer: "Make est plus rapide à apprendre, plus visuel. n8n est self-hostable, plus puissant pour le data-heavy ou les contraintes de souveraineté. Je propose celui qui fait sens pour vous." },
+  { question: "Remote ou sur site ?", answer: "100 % remote sur les missions courtes. Pour les missions complètes, 1 ou 2 jours sur site en kick-off + en formation, le reste en remote. Basé Paris." },
+  { question: "Comment je suis sûr que vous comprenez mon métier ?", answer: "C'est exactement ce que la phase 1 (diagnostic 30 min) sert à valider. Si je ne suis pas le bon, je le dis et je vous oriente." },
 ];
-
-/*
- * =============================================
- * INFORMATION ARCHITECTURE — Background scheme
- * =============================================
- *
- * Strict alternation: White (#FFFFFF) ↔ Cream (#F8F7F4)
- *
- *  1. Hero              WHITE
- *  2. Problem           CREAM
- *  3. ROI Calculator    WHITE
- *  4. CaseStudies       CREAM
- *  5. Services          WHITE
- *  6. About             CREAM
- *  7. Testimonials      WHITE
- *  8. Process           CREAM
- *  9. FAQ               WHITE
- * 10. CTA               CREAM
- * 11. Footer            DARK (#1A1A1A)
- *
- * =============================================
- */
 ---
 
 <Layout faqSchema={faqSchema}>
   <Navigation />
 
   <main id="main-content">
-    <!-- 1. Hero (WHITE) -->
     <Hero />
-
-    <!-- 2. Problem (CREAM) -->
-    <Problem />
-
-    <!-- 3. ROI Calculator (WHITE) -->
+    <Methode />
+    <CaseStudy />
+    <Stack />
     <ROICalculator client:visible />
-
-    <!-- 4. Case Studies (CREAM) -->
-    <CaseStudies />
-
-    <!-- 5. Services (WHITE) -->
-    <Services />
-
-    <!-- 6. About (CREAM) -->
-    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto">
-        <About />
-      </div>
-    </section>
-
-    <!-- 7. Testimonials (WHITE) -->
-    <section data-bg="white" id="temoignages" class="relative bg-white overflow-hidden">
-      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto">
-        <Testimonials />
-      </div>
-    </section>
-
-    <!-- 8. Process (CREAM) -->
-    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto flex flex-col items-center">
-        <Process />
-      </div>
-    </section>
-
-    <!-- 9. FAQ (WHITE) -->
-    <section data-bg="white" class="relative bg-white overflow-hidden">
-      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)] max-w-[1200px] mx-auto flex flex-col items-center">
-        <FAQ />
-      </div>
-    </section>
-
-    <!-- 10. CTA (CREAM) -->
+    <Pricing />
+    <FAQ />
     <CTA />
   </main>
-
-  <!-- Content Ecosystem (DARK) — merges into footer -->
-  <div data-bg="dark" class="bg-[#1A1A1A] py-8 px-[var(--spacing-section-x)]">
-    <div class="max-w-[1200px] mx-auto">
-      <ContentEcosystem />
-    </div>
-  </div>
 
   <Footer />
 </Layout>

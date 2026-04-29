@@ -1,0 +1,315 @@
+---
+import SectionHeader from './SectionHeader.astro';
+
+const main = {
+  client: "STARTUP B2B SAAS · 22 EMPLOYÉS",
+  sector: "SECTEUR · MARTECH",
+  duration: "DURÉE · 6 SEMAINES",
+  stack: ["n8n", "HubSpot", "Slack"],
+  ai: ["Claude"],
+  title: "15 h /sem économisées sur le pipeline ventes.",
+  context: "Le revenu ops re-saisissait à la main les leads HubSpot dans 3 outils différents. Erreurs, oublis, demi-journée perdue chaque jour à recoller les morceaux.",
+  solution: "Workflow n8n unique : webhook HubSpot → enrichissement Claude (scoring + qualif) → push Stripe (provisioning) + Slack (alerte sales) + Airtable (rapport hebdo). Documentation + 30 j SLA.",
+  metrics: [
+    { value: "15 h", label: "ÉCONOMISÉES /SEMAINE" },
+    { value: "€42 K", label: "ÉCONOMIE ANNUELLE" },
+    { value: "0", label: "ERREUR /MOIS" },
+  ],
+  quote: "« Le ROI s'est payé en 2 semaines. Lilian a aussi documenté chaque flux, on peut maintenir nous-mêmes. »",
+  quoteAuthor: "— RAPHAËL B., HEAD OF OPS",
+};
+
+const minor = [
+  {
+    label: "FACTURATION",
+    metric: "8 H /MOIS",
+    title: "Génération + relance auto",
+    body: "Stripe → Pennylane → Make. Factures émises, relancées et lettrées sans intervention.",
+    stack: ["Make", "Pennylane"],
+  },
+  {
+    label: "ONBOARDING CLIENT",
+    metric: "−4 J",
+    title: "Délai d'activation divisé par 3",
+    body: "Workflow Notion + n8n + Slack. Comptes provisionnés, ressources livrées, premier message automatique.",
+    stack: ["n8n", "Notion"],
+  },
+];
+---
+
+<section
+  id="cas"
+  data-section
+  class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      number="02"
+      label="CAS D'ÉTUDES"
+      title="Un workflow à 15 h économisées par semaine."
+      titleMaxWidth="22ch"
+    />
+
+    <!-- Main deep-dive card -->
+    <article class="reveal relative card card-elevated bg-[var(--color-paper)] mb-6">
+      <span class="grid-corner tl" aria-hidden="true"></span>
+      <span class="grid-corner tr" aria-hidden="true"></span>
+      <span class="grid-corner bl" aria-hidden="true"></span>
+      <span class="grid-corner br" aria-hidden="true"></span>
+
+      <!-- Meta header -->
+      <div class="flex flex-wrap gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-8 pb-6 border-b border-[var(--color-divider)]">
+        <span>{main.client}</span>
+        <span>·</span>
+        <span>{main.sector}</span>
+        <span>·</span>
+        <span>{main.duration}</span>
+      </div>
+
+      <!-- Title + body -->
+      <h3 class="font-display font-semibold text-2xl md:text-3xl tracking-[-0.025em] text-[var(--color-ink)] mb-6 leading-[1.15] max-w-[24ch]">
+        {main.title}
+      </h3>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 mb-10">
+        <div class="space-y-4 max-w-[60ch]">
+          <p class="text-[var(--color-ink-mid)] leading-[1.6]">
+            <span class="mono-caption text-[var(--color-ink-low)] mr-1">CONTEXTE</span>
+            {main.context}
+          </p>
+          <p class="text-[var(--color-ink-mid)] leading-[1.6]">
+            <span class="mono-caption text-[var(--color-ink-low)] mr-1">SOLUTION</span>
+            {main.solution}
+          </p>
+        </div>
+
+        <!-- Workflow visualisation — 4 nodes animés en séquence -->
+        <div class="lg:max-w-[380px] w-full">
+          <div class="mono-caption text-[var(--color-ink-low)] mb-3">WORKFLOW</div>
+          <div class="bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6">
+            <div class="workflow-flow flex items-stretch justify-between gap-1" data-workflow>
+              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
+                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
+                    <path d="M3 12h6M21 12h-6M9 9v6M15 9v6M9 12h6"/>
+                  </svg>
+                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
+                </div>
+                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">LEAD</span>
+              </div>
+
+              <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
+                <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+              </div>
+
+              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
+                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-ember-soft)] flex items-center justify-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ember-deep)]" aria-hidden="true">
+                    <path d="M12 2 L2 7 L12 12 L22 7 Z"/>
+                    <path d="M2 17 L12 22 L22 17"/>
+                  </svg>
+                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-ember)] opacity-0"></span>
+                </div>
+                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">SCORE</span>
+              </div>
+
+              <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
+                <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+              </div>
+
+              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
+                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-violet-soft)] flex items-center justify-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-violet-deep)]" aria-hidden="true">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                  </svg>
+                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
+                </div>
+                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">ALERTE</span>
+              </div>
+
+              <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
+                <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+              </div>
+
+              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
+                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18M9 21V9"/>
+                  </svg>
+                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
+                </div>
+                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">LOG</span>
+              </div>
+            </div>
+            <div class="mt-5 pt-4 border-t border-[var(--color-divider)] flex items-center justify-between">
+              <span class="mono-caption text-[var(--color-ink-low)]">EXÉCUTION</span>
+              <span class="mono-caption text-[var(--color-violet)]" data-workflow-time>~ 2.4 S</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metrics row -->
+      <div class="grid grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden mb-8">
+        {main.metrics.map((m) => (
+          <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
+            <div class="font-display font-semibold text-2xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none">
+              {m.value}
+            </div>
+            <div class="mono-caption text-[var(--color-ink-low)]">{m.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Stack chips + quote -->
+      <div class="flex flex-col lg:flex-row gap-6 lg:items-end lg:justify-between">
+        <div class="flex flex-wrap gap-2">
+          {main.stack.map((tool) => (
+            <span class="chip chip-violet">{tool}</span>
+          ))}
+          {main.ai.map((tool) => (
+            <span class="chip chip-ember">{tool}</span>
+          ))}
+        </div>
+        <blockquote class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] max-w-[44ch] border-l-0 pl-0">
+          <p>{main.quote}</p>
+          <footer class="mono-caption text-[var(--color-ink-low)] mt-2">{main.quoteAuthor}</footer>
+        </blockquote>
+      </div>
+    </article>
+
+    <!-- Mini cards row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal-stagger">
+      {minor.map((m) => (
+        <article class="reveal relative card card-interactive">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          <div class="flex items-baseline justify-between mb-4">
+            <span class="mono-caption text-[var(--color-ink-low)]">{m.label}</span>
+            <span class="font-display font-semibold text-2xl tracking-[-0.025em] text-[var(--color-ink)]">{m.metric}</span>
+          </div>
+          <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] mb-3 leading-[1.2]">
+            {m.title}
+          </h3>
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] mb-5">
+            {m.body}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            {m.stack.map((tool) => (
+              <span class="chip chip-violet">{tool}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Footer link — signal de récurrence -->
+    <div class="reveal mt-8 flex items-center gap-3">
+      <span class="mono-caption text-[var(--color-ink-low)]">+ 12 MISSIONS LIVRÉES DEPUIS 2021</span>
+      <span class="text-[var(--color-ink-faint)]">·</span>
+      <a
+        href="https://www.linkedin.com/in/liliansevoumian/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mono-caption text-[var(--color-violet)] hover:text-[var(--color-violet-deep)] transition-colors inline-flex items-center gap-1.5"
+      >
+        VOIR LE DÉTAIL SUR LINKEDIN
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  @keyframes workflow-pulse-frame {
+    0% { opacity: 0; transform: scale(1); }
+    40% { opacity: 1; transform: scale(1.4); }
+    100% { opacity: 0; transform: scale(1.6); }
+  }
+  .workflow-pulse.is-pulsing {
+    animation: workflow-pulse-frame 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .workflow-dot.is-active {
+    border-color: var(--color-violet);
+  }
+</style>
+
+<script>
+  function startWorkflowAnim(root: HTMLElement) {
+    if (root.dataset.workflowRunning) return;
+    root.dataset.workflowRunning = '1';
+
+    const dots = root.querySelectorAll<HTMLElement>('.workflow-dot');
+    const pulses = root.querySelectorAll<HTMLElement>('.workflow-pulse');
+    const links = root.querySelectorAll<HTMLElement>('.workflow-link-fill');
+
+    const stepDelay = 600;
+    const linkFillTime = 500;
+
+    const runOnce = () => {
+      dots.forEach((d) => d.classList.remove('is-active'));
+      links.forEach((l) => (l.style.width = '0%'));
+      pulses.forEach((p) => p.classList.remove('is-pulsing'));
+
+      const triggerStep = (i: number) => {
+        if (i >= dots.length) return;
+        const dot = dots[i];
+        const pulse = pulses[i];
+        dot.classList.add('is-active');
+        // Force reflow to restart animation
+        if (pulse) {
+          pulse.classList.remove('is-pulsing');
+          void pulse.offsetWidth;
+          pulse.classList.add('is-pulsing');
+        }
+        if (i < links.length) {
+          window.setTimeout(() => {
+            links[i].style.width = '100%';
+          }, 200);
+        }
+        window.setTimeout(() => triggerStep(i + 1), stepDelay + linkFillTime);
+      };
+
+      triggerStep(0);
+    };
+
+    runOnce();
+    const interval = window.setInterval(runOnce, dots.length * (stepDelay + linkFillTime) + 1500);
+    root.dataset.workflowInterval = String(interval);
+  }
+
+  function initWorkflows() {
+    const flows = document.querySelectorAll<HTMLElement>('[data-workflow]');
+    if (flows.length === 0) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      flows.forEach((root) => {
+        root.querySelectorAll<HTMLElement>('.workflow-dot').forEach((d) => d.classList.add('is-active'));
+        root.querySelectorAll<HTMLElement>('.workflow-link-fill').forEach((l) => (l.style.width = '100%'));
+      });
+      return;
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          startWorkflowAnim(e.target as HTMLElement);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    flows.forEach((flow) => obs.observe(flow));
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initWorkflows);
+  else initWorkflows();
+  document.addEventListener('astro:page-load', initWorkflows);
+</script>

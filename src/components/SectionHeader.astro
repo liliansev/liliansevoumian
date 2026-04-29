@@ -1,0 +1,59 @@
+---
+interface Props {
+  number: string;
+  label: string;
+  title: string;
+  body?: string;
+  bodyMaxWidth?: string;
+  titleMaxWidth?: string;
+  dark?: boolean;
+  class?: string;
+}
+
+const {
+  number,
+  label,
+  title,
+  body,
+  bodyMaxWidth = '60ch',
+  titleMaxWidth = '18ch',
+  dark = false,
+  class: className = '',
+} = Astro.props;
+
+// Dark mode = box paper opaque + border (le titre tranche sur fond ink)
+// Light mode = bg-paper sans border (le pattern minimaliste validé en v2)
+// paper-island = reset color heritage dans .section-dark
+const titleBlockClasses = dark
+  ? 'paper-island inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6'
+  : 'inline-block bg-[var(--color-paper)] py-2 pr-2';
+
+const bodyBlockClasses = dark
+  ? 'paper-island bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3'
+  : 'bg-[var(--color-paper)] py-2 pr-2 mt-4';
+
+const titleColor = 'text-[var(--color-ink)]';
+const bodyColor = 'text-[var(--color-ink-mid)]';
+---
+
+<div class={`reveal mb-12 md:mb-16 ${className}`}>
+  <div class={titleBlockClasses}>
+    <div class="section-number" style={dark ? 'margin-bottom: 0.625rem;' : 'margin-bottom: 0.5rem;'}>
+      {number} — {label}
+    </div>
+    <h2
+      class={`font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 ${titleColor}`}
+      style={`max-width: ${titleMaxWidth};`}
+    >
+      {title}
+    </h2>
+  </div>
+
+  {body && (
+    <div class={bodyBlockClasses} style={`max-width: ${bodyMaxWidth};`}>
+      <p class={`text-[length:var(--text-body-large)] ${bodyColor} leading-[1.5] m-0`}>
+        {body}
+      </p>
+    </div>
+  )}
+</div>
