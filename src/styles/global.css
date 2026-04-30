@@ -40,7 +40,7 @@
   /* Surfaces */
   --color-paper: oklch(0.995 0.002 290);
   --color-surface-low: oklch(0.975 0.003 290);
-  --color-surface-high: oklch(1 0 0);
+  --color-surface-high: oklch(1 0.002 290);
 
   /* Ink (neutrals tinted violet hue 290) */
   --color-ink: oklch(0.16 0.008 290);
@@ -885,6 +885,32 @@ footer a {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Skip-link — caché par défaut, visible au focus.
+   Classe dédiée plutôt que sr-only + focus:not-sr-only pour
+   éviter la cascade qui empêchait le révèle au focus. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 1rem;
+  z-index: 100;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: 1rem;
+  padding: 8px 16px;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--color-violet);
+  outline-offset: 2px;
 }
 
 /* =========================================================================

@@ -95,7 +95,7 @@ function MonoSlider({ id, label, unit = '', min, max, step = 1, value, onChange 
         aria-valuetext={`${value}${unit ? ' ' + unit : ''}`}
         className="roi-slider"
       />
-      <div className="flex justify-between mono-caption" style={{ color: 'var(--color-ink-faint)' }}>
+      <div className="flex justify-between mono-caption" style={{ color: 'var(--color-ink-low)' }}>
         <span>
           {formatFR(min)}
           {unit}
@@ -279,8 +279,8 @@ export default function ROICalculator() {
                 COÛT PROJET RÉFÉRENCE : {formatFR(projectPrice)} € ({moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'})
               </span>
               {isCapped && (
-                <span style={{ color: 'var(--color-ember-deep)' }}>
-                  [!] ESTIMATION PLAFONNÉE — L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
+                <span style={{ color: 'var(--color-error)' }}>
+                  [!] ESTIMATION PLAFONNÉE. L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
                 </span>
               )}
             </div>

@@ -155,7 +155,7 @@ const minor = [
       <div class="grid grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden mb-8">
         {main.metrics.map((m) => (
           <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
-            <div class="font-display font-semibold text-2xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none">
+            <div class="font-display font-semibold text-2xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none whitespace-nowrap">
               {m.value}
             </div>
             <div class="mono-caption text-[var(--color-ink-low)]">{m.label}</div>
@@ -163,15 +163,21 @@ const minor = [
         ))}
       </div>
 
-      <!-- Stack chips + quote -->
+      <!-- Stack chips + quote — Two-Voice : workflow (violet) et IA (ember) explicitement séparés par labels mono -->
       <div class="flex flex-col lg:flex-row gap-6 lg:items-end lg:justify-between">
-        <div class="flex flex-wrap gap-2">
-          {main.stack.map((tool) => (
-            <span class="chip chip-violet">{tool}</span>
-          ))}
-          {main.ai.map((tool) => (
-            <span class="chip chip-ember">{tool}</span>
-          ))}
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span class="mono-caption text-[var(--color-ink-low)]">STACK</span>
+          <div class="flex flex-wrap gap-2">
+            {main.stack.map((tool) => (
+              <span class="chip chip-violet">{tool}</span>
+            ))}
+          </div>
+          <span class="mono-caption text-[var(--color-ink-low)] ml-2">+ IA</span>
+          <div class="flex flex-wrap gap-2">
+            {main.ai.map((tool) => (
+              <span class="chip chip-ember">{tool}</span>
+            ))}
+          </div>
         </div>
         <blockquote class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] max-w-[44ch] border-l-0 pl-0">
           <p>{main.quote}</p>
