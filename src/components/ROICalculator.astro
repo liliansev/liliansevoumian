@@ -193,6 +193,16 @@ function formatFR(n: number): string {
     return { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPrice, monthsToROI };
   }
 
+  // Met à jour la CSS custom property --slider-progress qui pilote
+  // le linear-gradient de fill du track (entre min et current value).
+  function updateSliderProgress(input: HTMLInputElement) {
+    const min = Number(input.min);
+    const max = Number(input.max);
+    const val = Number(input.value);
+    const progress = max > min ? ((val - min) / (max - min)) * 100 : 0;
+    input.style.setProperty('--slider-progress', progress + '%');
+  }
+
   // Animated number — easing rAF, identique au comportement React précédent.
   // Un seul rAF actif par élément ; setTarget annule l'ancien et repart du current.
   class AnimatedValue {
@@ -299,6 +309,11 @@ function formatFR(n: number): string {
     inputPeople.value = String(initPeople);
     inputRate.value = String(initRate);
 
+    // Initialise le fill violet du track avec les valeurs effectives
+    updateSliderProgress(inputHours);
+    updateSliderProgress(inputPeople);
+    updateSliderProgress(inputRate);
+
     const initialComputed = compute(initHours, initPeople, initRate);
 
     // Initialise les displays sliders avec les valeurs effectives
@@ -332,6 +347,10 @@ function formatFR(n: number): string {
       inputHours!.setAttribute('aria-valuetext', `${hours} H`);
       inputPeople!.setAttribute('aria-valuetext', `${people}`);
       inputRate!.setAttribute('aria-valuetext', `${hourlyCost} €`);
+
+      updateSliderProgress(inputHours!);
+      updateSliderProgress(inputPeople!);
+      updateSliderProgress(inputRate!);
 
       const c = compute(hours, people, hourlyCost);
       const reducedMotion = motionQuery.matches;

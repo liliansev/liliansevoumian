@@ -652,14 +652,30 @@ a, button, input, textarea, select,
   appearance: none;
   width: 100%;
   height: 4px;
-  background: var(--color-divider);
+  /* Track avec fill violet entre min et current value, via --slider-progress
+     mis à jour par le JS du composant ROI à chaque input event. */
+  background: linear-gradient(
+    to right,
+    var(--color-violet) 0%,
+    var(--color-violet) var(--slider-progress, 0%),
+    var(--color-divider) var(--slider-progress, 0%),
+    var(--color-divider) 100%
+  );
   border-radius: 2px;
   outline: none;
   cursor: pointer;
-  transition: background var(--duration-default);
+  transition: background-color var(--duration-default);
 }
 
-.roi-slider:hover { background: var(--color-ink-faint); }
+.roi-slider:hover {
+  background: linear-gradient(
+    to right,
+    var(--color-violet-deep) 0%,
+    var(--color-violet-deep) var(--slider-progress, 0%),
+    var(--color-ink-faint) var(--slider-progress, 0%),
+    var(--color-ink-faint) 100%
+  );
+}
 
 .roi-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -780,6 +796,23 @@ a, button, input, textarea, select,
   opacity: 1;
   transform: translateY(0);
   filter: blur(0);
+}
+
+/* Grille technique — fade-in subtil au page-load (signature respiration). */
+.js-ready .technical-grid {
+  animation: grid-fade-in 1.2s var(--ease-out-expo) both;
+}
+
+@keyframes grid-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-ready .technical-grid {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 /* + corner pulse on viewport-center crossing */
