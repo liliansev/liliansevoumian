@@ -720,6 +720,41 @@ a, button, input, textarea, select,
   100% { opacity: 0.85; transform: scale(1) rotate(0deg); }
 }
 
+/* Living grid — section-active state choreography.
+   Quand une section entre en viewport, ses 4 grid-corners revendiquent
+   la cellule en cascade tl→tr→bl→br, et le section-number flash violet. */
+.js-ready .section-active .grid-corner {
+  animation: section-corner-claim 700ms var(--ease-out-expo) both;
+}
+.js-ready .section-active .grid-corner.tl { animation-delay: 0ms; }
+.js-ready .section-active .grid-corner.tr { animation-delay: 80ms; }
+.js-ready .section-active .grid-corner.bl { animation-delay: 160ms; }
+.js-ready .section-active .grid-corner.br { animation-delay: 240ms; }
+
+@keyframes section-corner-claim {
+  0% { transform: scale(1); color: var(--color-ink-mid); }
+  40% { transform: scale(1.3); color: var(--color-violet); }
+  100% { transform: scale(1); color: var(--color-violet); }
+}
+
+.js-ready .section-active .section-number {
+  animation: section-num-flash 500ms var(--ease-out-expo) both;
+}
+
+@keyframes section-num-flash {
+  0% { opacity: 1; color: var(--color-ink-low); }
+  20% { opacity: 0.3; color: var(--color-violet); }
+  60% { opacity: 1; color: var(--color-violet); }
+  100% { opacity: 1; color: var(--color-ink-low); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-ready .section-active .grid-corner,
+  .js-ready .section-active .section-number {
+    animation: none !important;
+  }
+}
+
 /* =========================================================================
    NAV — fixed top, no shadow, border-bottom shifts on scroll
    ========================================================================= */
