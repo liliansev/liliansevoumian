@@ -232,20 +232,6 @@ const minor = [
   </div>
 </section>
 
-<style>
-  @keyframes workflow-pulse-frame {
-    0% { opacity: 0; transform: scale(1); }
-    40% { opacity: 1; transform: scale(1.4); }
-    100% { opacity: 0; transform: scale(1.6); }
-  }
-  .workflow-pulse.is-pulsing {
-    animation: workflow-pulse-frame 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .workflow-dot.is-active {
-    border-color: var(--color-violet);
-  }
-</style>
-
 <script>
   function startWorkflowAnim(root: HTMLElement) {
     if (root.dataset.workflowRunning === '1') return;

@@ -793,6 +793,20 @@ a, button, input, textarea, select,
   100% { opacity: 0.85; transform: scale(1) rotate(0deg); }
 }
 
+/* Workflow live — animation node-by-node, init via [data-workflow] selector
+   (CaseStudy.astro script). Réutilisé par HeroManifesto + CaseStudy. */
+@keyframes workflow-pulse-frame {
+  0% { opacity: 0; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.4); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+.workflow-pulse.is-pulsing {
+  animation: workflow-pulse-frame 900ms var(--ease-out-expo) forwards;
+}
+.workflow-dot.is-active {
+  border-color: var(--color-violet);
+}
+
 /* Living grid — section-active state choreography.
    Quand une section entre en viewport, ses 4 grid-corners revendiquent
    la cellule en cascade tl→tr→bl→br, et le section-number flash violet. */
