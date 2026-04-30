@@ -82,7 +82,23 @@ const faqPageSchema = faqSchema ? {
 <!doctype html>
 <html lang="fr" class="scroll-smooth">
   <head>
-    <script is:inline>document.documentElement.classList.add('js-ready')</script>
+    <script is:inline>
+      // Anti-FOUC theme : pose .dark / .light AVANT render.
+      // Priorité : choix utilisateur (localStorage) > prefers-color-scheme OS.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = stored === 'dark' || (!stored && systemDark);
+          var root = document.documentElement;
+          root.classList.toggle('dark', isDark);
+          if (stored === 'light') root.classList.add('light');
+          root.classList.add('js-ready');
+        } catch (e) {
+          document.documentElement.classList.add('js-ready');
+        }
+      })();
+    </script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -91,7 +107,8 @@ const faqPageSchema = faqSchema ? {
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <meta name="author" content="Lilian Sevoumian" />
-    <meta name="theme-color" content="#FCFCFD" />
+    <meta name="theme-color" content="#FCFCFD" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1F1E26" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />

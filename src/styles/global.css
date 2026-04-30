@@ -14,8 +14,13 @@
 
   /* ===== Typography scale (fluide) ===== */
   --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-display-hero: clamp(2.5rem, 6vw + 0.5rem, 5.75rem);
+  --text-display-hero-lg: clamp(2.5rem, 5vw + 0.5rem, 4.75rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
+  --text-signature: clamp(2rem, 3vw + 0.5rem, 2.75rem);
   --text-metric: clamp(1.5rem, 2vw + 0.75rem, 2.25rem);
+  --text-roi-money: clamp(2.5rem, 5vw, 4rem);
+  --text-roi-output: 1.5rem;
   --text-title-lg: clamp(1.5rem, 1.5vw + 0.75rem, 1.875rem);
   --text-title: clamp(1.25rem, 1vw + 0.875rem, 1.5rem);
   --text-title-sm: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);
@@ -87,6 +92,56 @@
 }
 
 /* =========================================================================
+   DARK THEME — Sobre tech (Vercel/Linear night).
+   Active via html.dark (toggle utilisateur, persisté dans localStorage).
+   Fallback no-JS via @media (prefers-color-scheme: dark) sauf opt-out html.light.
+   ========================================================================= */
+
+html.dark {
+  --color-paper: oklch(0.13 0.008 290);
+  --color-surface-low: var(--color-surface-on-dark);
+  --color-surface-high: oklch(0.16 0.008 290);
+
+  --color-ink: var(--color-text-on-dark);
+  --color-ink-soft: var(--color-text-on-dark-mid);
+  --color-ink-mid: var(--color-text-on-dark-low);
+  --color-ink-low: oklch(0.55 0.008 290);
+  --color-ink-faint: var(--color-text-on-dark-faint);
+
+  --color-divider: var(--color-divider-dark);
+  --color-grid-line: var(--color-grid-line-dark);
+  --color-grid-line-active: oklch(0.50 0.008 290);
+
+  --color-violet-soft: oklch(0.30 0.10 290);
+  --color-violet-deep: oklch(0.85 0.12 290);
+  --color-ember-soft: oklch(0.30 0.08 45);
+  --color-ember-deep: oklch(0.85 0.10 45);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    --color-paper: oklch(0.13 0.008 290);
+    --color-surface-low: var(--color-surface-on-dark);
+    --color-surface-high: oklch(0.16 0.008 290);
+
+    --color-ink: var(--color-text-on-dark);
+    --color-ink-soft: var(--color-text-on-dark-mid);
+    --color-ink-mid: var(--color-text-on-dark-low);
+    --color-ink-low: oklch(0.55 0.008 290);
+    --color-ink-faint: var(--color-text-on-dark-faint);
+
+    --color-divider: var(--color-divider-dark);
+    --color-grid-line: var(--color-grid-line-dark);
+    --color-grid-line-active: oklch(0.50 0.008 290);
+
+    --color-violet-soft: oklch(0.30 0.10 290);
+    --color-violet-deep: oklch(0.85 0.12 290);
+    --color-ember-soft: oklch(0.30 0.08 45);
+    --color-ember-deep: oklch(0.85 0.10 45);
+  }
+}
+
+/* =========================================================================
    BASE
    ========================================================================= */
 
@@ -94,6 +149,7 @@ html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
   background: var(--color-paper);
+  transition: background-color var(--duration-default) var(--ease-out-quint);
 }
 
 body {
@@ -105,6 +161,8 @@ body {
   letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--duration-default) var(--ease-out-quint),
+              color var(--duration-default) var(--ease-out-quint);
 }
 
 /* Selection */
@@ -255,42 +313,6 @@ a, button, input, textarea, select,
   mask-image: linear-gradient(to bottom, transparent 0, black 96px, black calc(100% - 96px), transparent 100%);
 }
 
-/* Dark mode grid — pour sections en bg-ink, grille claire visible sur fond sombre */
-.technical-grid-dark {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    linear-gradient(to right, var(--color-grid-line-dark) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-grid-line-dark) 1px, transparent 1px);
-  background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
-  background-position: 0 0;
-  mask-image: linear-gradient(to bottom, transparent 0, black 64px, black calc(100% - 64px), transparent 100%);
-}
-
-/* Section dark wrapper — applique bg ink + heritage de couleur générique */
-.section-dark {
-  background: var(--color-ink);
-  color: var(--color-text-on-dark);
-}
-
-/* Sur fond dark, .paper-island réinjecte color ink pour les blocs paper.
-   À cumuler avec bg-[var(--color-paper)] sur les containers concernés. */
-.section-dark .paper-island {
-  color: var(--color-ink);
-}
-
-/* Sur fond dark, la grille corner ressort en clair, sauf si déjà override */
-.section-dark .grid-corner {
-  color: var(--color-text-on-dark-mid);
-}
-
-.section-dark.section-active .grid-corner,
-.section-dark.section-active .section-number {
-  color: var(--color-violet);
-}
-
 /* Corner markers (+) sur les sections — 4 par section, aux 4 coins */
 .grid-corner {
   position: absolute;
@@ -418,29 +440,6 @@ a, button, input, textarea, select,
   transform: scale(0.98);
 }
 
-/* Dark variants — bouton primary inversé sur fond ink */
-.section-dark .btn-primary {
-  background: var(--color-paper);
-  color: var(--color-ink);
-}
-
-.section-dark .btn-primary:hover {
-  background: oklch(0.92 0.003 290);
-}
-
-.section-dark .btn-ghost {
-  color: var(--color-text-on-dark);
-  border-color: var(--color-text-on-dark-faint);
-  border-width: 1.5px;
-  background: oklch(0.18 0.008 290);
-}
-
-.section-dark .btn-ghost:hover {
-  background: var(--color-surface-on-dark);
-  border-color: var(--color-text-on-dark-mid);
-  color: var(--color-paper);
-}
-
 /* =========================================================================
    CHIPS — Two-Voice
    ========================================================================= */
@@ -461,13 +460,14 @@ a, button, input, textarea, select,
   border-radius: var(--radius-full);
   transition: color var(--duration-default) var(--ease-out-quint),
               border-color var(--duration-default) var(--ease-out-quint),
-              transform var(--duration-default) var(--ease-out-quint);
+              background-color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-quick) var(--ease-out-quint);
 }
 
 .chip:hover {
   color: var(--color-ink);
   border-color: var(--color-ink-faint);
-  transform: scale(1.03);
+  background-color: var(--color-surface-low);
 }
 
 .chip:active {
@@ -490,29 +490,6 @@ a, button, input, textarea, select,
 .chip-dashed {
   border-style: dashed;
   color: var(--color-ink-low);
-}
-
-/* Chip dark variants — sur fond ink */
-.section-dark .chip {
-  color: var(--color-text-on-dark-mid);
-  border-color: var(--color-divider-dark);
-}
-
-.section-dark .chip:hover {
-  color: var(--color-text-on-dark);
-  border-color: var(--color-text-on-dark-faint);
-}
-
-.section-dark .chip-violet {
-  background: oklch(0.30 0.10 290);
-  color: oklch(0.85 0.12 290);
-  border-color: transparent;
-}
-
-.section-dark .chip-ember {
-  background: oklch(0.32 0.08 45);
-  color: oklch(0.85 0.10 45);
-  border-color: transparent;
 }
 
 /* =========================================================================
@@ -576,17 +553,6 @@ a, button, input, textarea, select,
   .card-interactive:hover::after {
     animation: none;
   }
-}
-
-/* Card dark variants — adapte les cards sur fond ink */
-.section-dark .card {
-  background: var(--color-surface-on-dark);
-  border-color: var(--color-divider-dark);
-  color: var(--color-text-on-dark);
-}
-
-.section-dark .card-interactive:hover {
-  border-color: var(--color-text-on-dark-faint);
 }
 
 /* =========================================================================
@@ -707,34 +673,6 @@ a, button, input, textarea, select,
   background: var(--color-paper);
   border: 2px solid var(--color-ink);
   cursor: pointer;
-}
-
-/* ROI slider dark variant — track plus contrastée, thumb signal violet */
-.section-dark .roi-slider {
-  background: var(--color-text-on-dark-faint);
-  height: 6px;
-}
-
-.section-dark .roi-slider:hover { background: var(--color-text-on-dark-low); }
-
-.section-dark .roi-slider::-webkit-slider-thumb {
-  width: 18px;
-  height: 18px;
-  background: var(--color-violet);
-  border: 3px solid var(--color-paper);
-}
-
-.section-dark .roi-slider::-webkit-slider-thumb:hover {
-  background: var(--color-paper);
-  border-color: var(--color-violet);
-  transform: scale(1.15);
-}
-
-.section-dark .roi-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  background: var(--color-violet);
-  border: 3px solid var(--color-paper);
 }
 
 /* =========================================================================
@@ -885,12 +823,13 @@ a, button, input, textarea, select,
   left: 0;
   right: 0;
   z-index: 50;
-  background: oklch(0.995 0.002 290 / 0.92);
+  background: color-mix(in oklch, var(--color-paper) 92%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-divider);
   height: 64px;
-  transition: border-color var(--duration-default) var(--ease-out-quint);
+  transition: border-color var(--duration-default) var(--ease-out-quint),
+              background-color var(--duration-default) var(--ease-out-quint);
 }
 
 .nav-root.scrolled {
@@ -950,14 +889,8 @@ a, button, input, textarea, select,
 footer a {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-}
-
-@media (max-width: 768px) {
-  footer a {
-    min-height: 44px;
-    padding: 4px 0;
-  }
+  min-height: 44px;
+  padding: 4px 0;
 }
 
 /* =========================================================================

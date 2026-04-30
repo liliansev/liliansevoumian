@@ -12,6 +12,7 @@ export default defineConfig({
     defaultStrategy: 'viewport'
   },
   vite: {
+    // @ts-expect-error -- type mismatch entre @tailwindcss/vite (Plugin<any>[]) et la version Vite embarquée par Astro (PluginOption). Compatible runtime.
     plugins: [tailwindcss()],
     server: {
       watch: {

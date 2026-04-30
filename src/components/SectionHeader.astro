@@ -6,7 +6,6 @@ interface Props {
   body?: string;
   bodyMaxWidth?: string;
   titleMaxWidth?: string;
-  dark?: boolean;
   class?: string;
 }
 
@@ -17,38 +16,22 @@ const {
   body,
   bodyMaxWidth = '60ch',
   titleMaxWidth = '18ch',
-  dark = false,
   class: className = '',
 } = Astro.props;
-
-// Dans les deux modes, le bloc titre revendique sa cellule sur la grille :
-// bordure 1px divider + paper opaque + grid-corner aux 4 angles.
-// paper-island reset le color heritage dans .section-dark.
-// position:relative requis pour ancrer les grid-corner absolute -4px.
-const titleBlockClasses = dark
-  ? 'paper-island relative inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6'
-  : 'relative inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6';
-
-const bodyBlockClasses = dark
-  ? 'paper-island relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3'
-  : 'relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3';
-
-const titleColor = 'text-[var(--color-ink)]';
-const bodyColor = 'text-[var(--color-ink-mid)]';
 ---
 
 <div class={`reveal mb-12 md:mb-16 ${className}`}>
-  <div class={titleBlockClasses}>
+  <div class="relative inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6">
     <span class="grid-corner tl" aria-hidden="true"></span>
     <span class="grid-corner tr" aria-hidden="true"></span>
     <span class="grid-corner bl" aria-hidden="true"></span>
     <span class="grid-corner br" aria-hidden="true"></span>
 
-    <div class="section-number" style={dark ? 'margin-bottom: 0.625rem;' : 'margin-bottom: 0.5rem;'}>
+    <div class="section-number" style="margin-bottom: 0.5rem;">
       {number} — {label}
     </div>
     <h2
-      class={`font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 ${titleColor}`}
+      class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]"
       style={`max-width: ${titleMaxWidth};`}
     >
       {title}
@@ -56,15 +39,11 @@ const bodyColor = 'text-[var(--color-ink-mid)]';
   </div>
 
   {body && (
-    <div class={bodyBlockClasses} style={`max-width: ${bodyMaxWidth};`}>
-      <span class="grid-corner tl" aria-hidden="true"></span>
-      <span class="grid-corner tr" aria-hidden="true"></span>
-      <span class="grid-corner bl" aria-hidden="true"></span>
-      <span class="grid-corner br" aria-hidden="true"></span>
-
-      <p class={`text-[length:var(--text-body-large)] ${bodyColor} leading-[1.5] m-0`}>
-        {body}
-      </p>
-    </div>
+    <p
+      class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0"
+      style={`max-width: ${bodyMaxWidth};`}
+    >
+      {body}
+    </p>
   )}
 </div>

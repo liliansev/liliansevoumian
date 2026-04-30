@@ -48,7 +48,7 @@ function formatFR(n: number): string {
 >
   <div class="relative max-w-[1200px] mx-auto">
     <SectionHeader
-      number="04"
+      number="02"
       label="ROI"
       title="Combien votre temps coûte-t-il ?"
       body="Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée. L'audit réel descend dans le détail."
@@ -107,7 +107,7 @@ function formatFR(n: number): string {
         <div class="mono-caption mb-2 text-[var(--color-ink-low)]">ÉCONOMIE ESTIMÉE</div>
         <div
           class="font-display font-semibold leading-[0.98] tracking-[-0.045em] mb-6 text-[var(--color-ink)]"
-          style="font-size: clamp(2.5rem, 5vw, 4rem);"
+          style="font-size: var(--text-roi-money);"
         >
           <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span>
           <span> €</span>
@@ -119,7 +119,7 @@ function formatFR(n: number): string {
             <div class="mono-caption mb-1 text-[var(--color-ink-low)]">HEURES /AN</div>
             <div
               class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-ink)]"
-              style="font-size: 1.5rem;"
+              style="font-size: var(--text-roi-output);"
             >
               <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
               <span> H</span>
@@ -129,7 +129,7 @@ function formatFR(n: number): string {
             <div class="mono-caption mb-1 text-[var(--color-ink-low)]">ROI EN</div>
             <div
               class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-violet)]"
-              style="font-size: 1.5rem;"
+              style="font-size: var(--text-roi-output);"
             >
               ~<span data-roi-output="monthsToROI">{monthsToROI}</span> MOIS
             </div>
