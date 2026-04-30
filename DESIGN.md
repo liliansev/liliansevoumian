@@ -4,15 +4,18 @@ description: Opinionated no-code expert — site as proof-of-work. Vercel-grade 
 colors:
   paper: "oklch(0.995 0.002 290)"
   ink: "oklch(0.16 0.008 290)"
-  ink-mid: "oklch(0.45 0.006 290)"
-  ink-low: "oklch(0.65 0.005 290)"
-  ink-faint: "oklch(0.80 0.004 290)"
-  divider: "oklch(0.93 0.004 290)"
+  ink-soft: "oklch(0.22 0.008 290)"
+  ink-mid: "oklch(0.40 0.006 290)"
+  ink-low: "oklch(0.48 0.005 290)"
+  ink-faint: "oklch(0.78 0.004 290)"
+  divider: "oklch(0.92 0.004 290)"
   surface-low: "oklch(0.975 0.003 290)"
-  grid-line: "oklch(0.91 0.005 290)"
+  grid-line: "oklch(0.93 0.005 290)"
   violet: "oklch(0.55 0.22 290)"
+  violet-deep: "oklch(0.45 0.22 290)"
   violet-soft: "oklch(0.96 0.04 290)"
   ember: "oklch(0.66 0.14 45)"
+  ember-deep: "oklch(0.50 0.14 45)"
   ember-soft: "oklch(0.96 0.03 50)"
 typography:
   display:
@@ -171,23 +174,26 @@ Palette restreinte de neutres tintés violet et de deux accents stricts. Tout ne
 
 ### Primary
 
-- **Violet Electric** (`oklch(0.55 0.22 290)`): l'accent n8n. Réservé aux : tags d'outils n8n, état hover/focus rings, points d'intersection actifs sur la grille, marqueurs de sélection dans la nav. Chiffres-clés en hover. Jamais en aplat de fond > 8 % d'une vue.
+- **Violet Electric** (`oklch(0.55 0.22 290)`): l'accent n8n. Réservé aux : focus rings, borders d'état actif, fonds de dots/markers décoratifs, peaks d'animation. Chroma haut, contraste insuffisant (≈3.8:1) pour le **texte** — pour ce dernier usage, prendre `violet-deep`. Jamais en aplat de fond > 8 % d'une vue.
+- **Violet Deep** (`oklch(0.45 0.22 290)`): la version texte du violet. Pour tout label/chiffre/marker `+` qui doit passer WCAG AA sur paper (≈5.3:1). Aussi utilisé comme color sur fond `violet-soft` (chips). En dark mode, flippe à `oklch(0.85 0.12 290)` pour rester lisible sur ink-deep.
 - **Violet Soft** (`oklch(0.96 0.04 290)`): wash de fond pour les chips d'outils actifs et les sections "highlight" rares. Discret, jamais central.
 
 ### Secondary
 
-- **Ember** (`oklch(0.66 0.14 45)`): l'accent Anthropic / Claude. Réservé aux : tags d'outils IA (Claude, GPT, Mistral), CTA secondaire ponctuel, soulignements de chiffres ROI. Complémentaire au violet — *jamais* avec lui dans le même composant.
+- **Ember** (`oklch(0.66 0.14 45)`): l'accent Anthropic / Claude. Réservé aux : dots/icônes décoratives IA, fond de chip `ember-soft`. Complémentaire au violet — *jamais* avec lui dans le même composant.
+- **Ember Deep** (`oklch(0.50 0.14 45)`): la version texte de l'ember. Pour tout label/chiffre IA qui doit passer WCAG AA sur paper. Aussi utilisé comme color sur fond `ember-soft` (chips IA).
 - **Ember Soft** (`oklch(0.96 0.03 50)`): wash chaleureux pour zones IA-related (case study sur l'IA, badge "AI"). Encore plus rare que violet-soft.
 
 ### Neutral
 
 - **Paper** (`oklch(0.995 0.002 290)`): surface de fond principale. Près du blanc pur, infime tint violet pour cohérence avec l'encre.
 - **Ink** (`oklch(0.16 0.008 290)`): texte principal et fond des sections sombres ponctuelles. Près du noir, tinted violet — à 0.16 lightness c'est presque indiscernable mais résolument pas industriel.
-- **Ink Mid** (`oklch(0.45 0.006 290)`): texte secondaire, labels mono, intitulés de section.
-- **Ink Low** (`oklch(0.65 0.005 290)`): texte tertiaire, métadonnées, timestamps, captions.
-- **Ink Faint** (`oklch(0.80 0.004 290)`): texte décoratif, watermarks, placeholder.
-- **Divider** (`oklch(0.93 0.004 290)`): bordures de cards, séparateurs entre sections, lignes 1px structurantes les plus discrètes.
-- **Grid Line** (`oklch(0.91 0.005 290)`): lignes de la grille technique signature. Légèrement plus visible que `divider` parce qu'elle traverse de bord à bord.
+- **Ink Soft** (`oklch(0.22 0.008 290)`): hover state du `btn-primary`, légèrement plus clair que ink.
+- **Ink Mid** (`oklch(0.40 0.006 290)`): texte secondaire, labels mono, intitulés de section. (WCAG AA sur paper.)
+- **Ink Low** (`oklch(0.48 0.005 290)`): texte tertiaire, métadonnées, timestamps, captions. (WCAG AA sur paper.)
+- **Ink Faint** (`oklch(0.78 0.004 290)`): texte décoratif, watermarks, placeholder. **Decoratif uniquement** — ne pas utiliser pour du texte porteur de sens (sous WCAG AA).
+- **Divider** (`oklch(0.92 0.004 290)`): bordures de cards, séparateurs entre sections, lignes 1px structurantes les plus discrètes.
+- **Grid Line** (`oklch(0.93 0.005 290)`): lignes de la grille technique signature. Très proche de `divider` — niveau d'intensité quasi identique.
 - **Surface Low** (`oklch(0.975 0.003 290)`): fonds différenciés (code-blocks, sections paires alternées si besoin), barely-visible.
 
 ### Named Rules

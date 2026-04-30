@@ -102,8 +102,13 @@ function formatFR(n: number): string {
         ))}
       </fieldset>
 
-      <!-- Output panel -->
-      <div class="bg-[var(--color-surface-low)] p-8 md:p-10 flex flex-col">
+      <!-- Output panel — region live pour annonce AT des changements de slider -->
+      <div
+        class="bg-[var(--color-surface-low)] p-8 md:p-10 flex flex-col"
+        role="status"
+        aria-live="polite"
+        aria-atomic="false"
+      >
         <div class="mono-caption mb-2 text-[var(--color-ink-low)]">ÉCONOMIE ESTIMÉE</div>
         <div
           class="font-display font-semibold leading-[0.98] tracking-[-0.045em] mb-6 text-[var(--color-ink)]"
@@ -128,7 +133,7 @@ function formatFR(n: number): string {
           <div>
             <div class="mono-caption mb-1 text-[var(--color-ink-low)]">ROI EN</div>
             <div
-              class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-violet)]"
+              class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-violet-deep)]"
               style="font-size: var(--text-roi-output);"
             >
               ~<span data-roi-output="monthsToROI">{monthsToROI}</span> MOIS
