@@ -65,10 +65,14 @@
         </div>
       </div>
 
-      <!-- Workflow live — preuve visuelle, 4 nodes pulse en boucle -->
+      <!-- Workflow live — version hero universelle, 3 nodes (TRIGGER → IA → ACTION),
+           cadence rapide via data-step-delay + data-link-fill (~1s par cycle).
+           Le case study en bas a sa version 4-nodes spécifique au cas client (~2.4s). -->
       <div
         class="relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6 flex flex-col"
         data-workflow
+        data-step-delay="200"
+        data-link-fill="150"
       >
         <span class="grid-corner tl" aria-hidden="true"></span>
         <span class="grid-corner tr" aria-hidden="true"></span>
@@ -78,69 +82,54 @@
         <div class="mono-caption text-[var(--color-ink-low)] mb-4">WORKFLOW LIVE</div>
 
         <div class="workflow-flow flex items-stretch justify-between gap-1 my-auto">
-          <!-- Node 1 — LEAD (violet, trigger) -->
+          <!-- Node 1 — TRIGGER (violet, input/event) -->
           <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
             <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
-                <path d="M3 12h6M21 12h-6M9 9v6M15 9v6M9 12h6"/>
+                <path d="M5 12h14M13 5l7 7-7 7"/>
               </svg>
               <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
             </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">LEAD</span>
+            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">TRIGGER</span>
           </div>
 
           <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-150 ease-out"></span>
           </div>
 
-          <!-- Node 2 — SCORE (ember, IA) -->
+          <!-- Node 2 — IA (ember, intelligence) -->
           <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
             <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-ember-soft)] flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ember-deep)]" aria-hidden="true">
                 <path d="M12 2 L2 7 L12 12 L22 7 Z"/>
                 <path d="M2 17 L12 22 L22 17"/>
+                <path d="M2 12 L12 17 L22 12"/>
               </svg>
               <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-ember)] opacity-0"></span>
             </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">SCORE</span>
+            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">IA</span>
           </div>
 
           <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-150 ease-out"></span>
           </div>
 
-          <!-- Node 3 — ALERTE (violet) -->
+          <!-- Node 3 — ACTION (violet, output) -->
           <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
             <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-violet-soft)] flex items-center justify-center">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-violet-deep)]" aria-hidden="true">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
               </svg>
               <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
             </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">ALERTE</span>
-          </div>
-
-          <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
-          </div>
-
-          <!-- Node 4 — LOG (violet, persistence) -->
-          <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-            <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M3 9h18M9 21V9"/>
-              </svg>
-              <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
-            </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">LOG</span>
+            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">ACTION</span>
           </div>
         </div>
 
-        <!-- Bottom row — exécution time -->
+        <!-- Bottom row — exécution time, plus rapide que le case study -->
         <div class="mt-5 pt-4 border-t border-[var(--color-divider)] flex items-center justify-between">
           <span class="mono-caption text-[var(--color-ink-low)]">EXÉCUTION</span>
-          <span class="mono-caption text-[var(--color-violet)]">~ 2.4 S</span>
+          <span class="mono-caption text-[var(--color-violet)]">~ 1 S</span>
         </div>
       </div>
 

@@ -241,8 +241,11 @@ const minor = [
     const pulses = root.querySelectorAll<HTMLElement>('.workflow-pulse');
     const links = root.querySelectorAll<HTMLElement>('.workflow-link-fill');
 
-    const stepDelay = 600;
-    const linkFillTime = 500;
+    // Cadence configurable via data-attributes pour distinguer les variantes
+    // (ex: hero veut une boucle plus rapide que le case study).
+    // Defaults : 600/500 = ~2.4s pour 4 nodes (case study).
+    const stepDelay = Number(root.dataset.stepDelay) || 600;
+    const linkFillTime = Number(root.dataset.linkFill) || 500;
 
     const runOnce = () => {
       dots.forEach((d) => d.classList.remove('is-active'));
