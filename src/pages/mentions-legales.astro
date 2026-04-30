@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 
 const title = "Mentions légales | Lilian Sevoumian";
 const description = "Mentions légales du site liliansevoumian.fr — Expert Automatisation Make & n8n.";
@@ -10,70 +11,114 @@ const breadcrumbs = [
   { name: "Accueil", url: "/" },
   { name: "Mentions légales", url: "/mentions-legales" },
 ];
+
+const sections = [
+  {
+    label: "01",
+    title: "Éditeur du site",
+    body: [
+      ["Identité", "Lilian Sevoumian — Entrepreneur individuel"],
+      ["Contact", "lilian.sevoumian@gmail.com"],
+      ["Site", "https://liliansevoumian.fr"],
+    ],
+  },
+  {
+    label: "02",
+    title: "Hébergement",
+    body: [
+      ["Hébergeur", "Vercel Inc."],
+      ["Adresse", "440 N Barranca Ave #4133, Covina, CA 91723, États-Unis"],
+      ["Site", "https://vercel.com"],
+    ],
+  },
+  {
+    label: "03",
+    title: "Propriété intellectuelle",
+    text: "L'ensemble du contenu de ce site (textes, graphismes, logo, icônes, code) est la propriété exclusive de Lilian Sevoumian, sauf mention contraire. Toute reproduction, distribution, modification ou utilisation sans autorisation préalable est interdite.",
+  },
+  {
+    label: "04",
+    title: "Données personnelles",
+    text: "Ce site n'utilise pas de cookies tiers. Les outils d'analyse (taap.it et DataFast) sont configurés en mode cookieless : aucune donnée personnelle identifiante n'est collectée, aucun cookie n'est déposé. Pour exercer vos droits RGPD (accès, rectification, suppression), contactez lilian.sevoumian@gmail.com.",
+  },
+  {
+    label: "05",
+    title: "Analytics",
+    body: [
+      ["taap.it", "Analytics cookieless. Mesure d'audience anonymisée, pas de fingerprinting."],
+      ["DataFast", "Analytics cookieless via proxy Vercel. Pas de cookie tiers, pas de tracker cross-site."],
+    ],
+  },
+  {
+    label: "06",
+    title: "Responsabilité",
+    text: "Les informations fournies sur ce site le sont à titre indicatif. Lilian Sevoumian ne saurait être tenu responsable des erreurs, d'une absence de disponibilité des informations ou de la présence de virus sur le site.",
+  },
+];
 ---
 
 <Layout title={title} description={description} breadcrumbs={breadcrumbs} noindex={true}>
   <Navigation />
 
-  <main id="main-content" class="bg-[#1A1A1A] pt-[56px]">
-    <section class="py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-      <div class="max-w-[800px] mx-auto">
-        <a href="/" class="inline-flex items-center gap-2 font-body text-sm text-[#888888] hover:text-[#EDEDED] transition-colors mb-8">
-          &larr; Retour à l'accueil
+  <main id="main-content">
+    <section class="relative pt-[80px] md:pt-[88px]">
+      <div class="relative max-w-[820px] mx-auto px-[var(--spacing-section-x)] pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+        >
+          <span aria-hidden="true">←</span>
+          RETOUR À L'ACCUEIL
         </a>
 
-        <h1 class="font-display text-[length:var(--text-heading)] font-bold text-[#EDEDED] leading-[1.15] mb-12">
-          Mentions légales
-        </h1>
-
-        <div class="flex flex-col gap-10 font-body text-[#888888] leading-[1.7]">
-          <div>
-            <h2 class="font-display text-xl font-semibold text-[#EDEDED] mb-4">Éditeur du site</h2>
-            <p>
-              Lilian Sevoumian<br />
-              Entrepreneur individuel<br />
-              Email : lilian.sevoumian@gmail.com<br />
-              Site web : https://liliansevoumian.fr
-            </p>
+        <div class="reveal mb-10 md:mb-12 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+          <div class="section-number" style="margin-bottom: 0.5rem;">
+            00 — LÉGAL
           </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-[#EDEDED] mb-4">Hébergement</h2>
-            <p>
-              Ce site est hébergé par Vercel Inc.<br />
-              440 N Barranca Ave #4133, Covina, CA 91723, États-Unis<br />
-              Site web : https://vercel.com
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-[#EDEDED] mb-4">Propriété intellectuelle</h2>
-            <p>
-              L'ensemble du contenu de ce site (textes, images, graphismes, logo, icônes) est la propriété exclusive de Lilian Sevoumian, sauf mention contraire. Toute reproduction, distribution, modification ou utilisation de ces contenus sans autorisation préalable est interdite.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-[#EDEDED] mb-4">Données personnelles</h2>
-            <p>
-              Ce site ne collecte pas de données personnelles directement. L'utilisation de Google Tag Manager peut impliquer le dépôt de cookies à des fins d'analyse. Pour exercer vos droits (accès, rectification, suppression) conformément au RGPD, contactez : lilian.sevoumian@gmail.com.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-[#EDEDED] mb-4">Cookies</h2>
-            <p>
-              Ce site utilise Google Tag Manager pour mesurer l'audience. Vous pouvez configurer votre navigateur pour refuser les cookies ou être averti lorsqu'un cookie est envoyé.
-            </p>
-          </div>
-
-          <div>
-            <h2 class="font-display text-xl font-semibold text-[#EDEDED] mb-4">Responsabilité</h2>
-            <p>
-              Les informations fournies sur ce site le sont à titre indicatif. Lilian Sevoumian ne saurait être tenu responsable des erreurs, d'une absence de disponibilité des informations ou de la présence de virus sur le site.
-            </p>
-          </div>
+          <h1 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0">
+            Mentions légales
+          </h1>
         </div>
+
+        <div class="flex flex-col gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal-stagger">
+          {sections.map((section) => (
+            <article class="reveal bg-[var(--color-paper)] p-6 md:p-8">
+              <div class="flex items-baseline gap-4 mb-4">
+                <span class="mono-caption text-[var(--color-ink-low)] shrink-0 min-w-[24px]">{section.label}</span>
+                <h2 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
+                  {section.title}
+                </h2>
+              </div>
+
+              {section.text && (
+                <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] max-w-[64ch] ml-[40px]">
+                  {section.text}
+                </p>
+              )}
+
+              {section.body && (
+                <dl class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-6 gap-y-2 ml-[40px]">
+                  {section.body.map(([k, v]) => (
+                    <>
+                      <dt class="mono-caption text-[var(--color-ink-low)] sm:pt-0.5">{k}</dt>
+                      <dd class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.55] m-0">{v}</dd>
+                    </>
+                  ))}
+                </dl>
+              )}
+            </article>
+          ))}
+        </div>
+
+        <p class="reveal mono-caption text-[var(--color-ink-low)] mt-10">
+          DERNIÈRE MISE À JOUR · AVRIL 2026
+        </p>
+
       </div>
     </section>
   </main>

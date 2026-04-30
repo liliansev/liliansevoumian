@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useDeferredValue } from 'react';
 
 // Tarif de référence pour calcul ROI : milieu de la fourchette Mission Complète (8K-25K€).
 // Si le coût se rapproche de ce tarif, on bascule sur "Workflow simple" (1.5K€).
@@ -114,17 +114,19 @@ export default function ROICalculator() {
   const [people, setPeople] = useState(3);
   const [hourlyCost, setHourlyCost] = useState(55);
 
-  // Estimation conservatrice : 55% des heures réellement récupérables, 48 sem. effectives.
-  // Capote l'estimation au-delà de seuils défendables (30h/sem, 15 personnes).
-  const cappedHours = Math.min(hours, MAX_REASONABLE_HOURS);
-  const cappedPeople = Math.min(people, MAX_REASONABLE_PEOPLE);
-  const isCapped = hours >= MAX_REASONABLE_HOURS || people >= MAX_REASONABLE_PEOPLE;
+  // useDeferredValue → React peint les sliders en priorité, défère le calcul/animation
+  // des outputs derrière. Évite l'empilement de rAF sur drag rapide.
+  const dHours = useDeferredValue(hours);
+  const dPeople = useDeferredValue(people);
+  const dHourlyCost = useDeferredValue(hourlyCost);
+
+  const cappedHours = Math.min(dHours, MAX_REASONABLE_HOURS);
+  const cappedPeople = Math.min(dPeople, MAX_REASONABLE_PEOPLE);
+  const isCapped = dHours >= MAX_REASONABLE_HOURS || dPeople >= MAX_REASONABLE_PEOPLE;
 
   const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
-  const moneySaved = hoursSaved * hourlyCost;
+  const moneySaved = hoursSaved * dHourlyCost;
 
-  // ROI dynamique : on choisit le tarif réaliste selon l'ampleur de l'économie.
-  // Si économie annuelle < 20K€ → on assume Workflow (1500€). Sinon Mission Complète (12K€ médian).
   const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
   const monthsToROI =
     moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
@@ -271,14 +273,14 @@ export default function ROICalculator() {
               style={{ color: 'var(--color-ink-low)' }}
             >
               <span>
-                FORMULE : {cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {hourlyCost}€
+                FORMULE : {cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {dHourlyCost}€
               </span>
               <span>
                 COÛT PROJET RÉFÉRENCE : {formatFR(projectPrice)} € ({moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'})
               </span>
               {isCapped && (
                 <span style={{ color: 'var(--color-ember-deep)' }}>
-                  ⚠ ESTIMATION PLAFONNÉE — L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
+                  [!] ESTIMATION PLAFONNÉE — L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
                 </span>
               )}
             </div>

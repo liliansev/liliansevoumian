@@ -2,46 +2,31 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
 import { getCaseStudies } from '../../lib/notion';
+import type { CaseStudy } from '../../types/case-study';
 
 const notionStudies = await getCaseStudies();
 
-const staticStudies = [
+// Fallback minimal — aligné sur le système Operator's Console (pas de palette legacy).
+// Sert uniquement quand l'API Notion est indisponible au build.
+const fallbackStudies: Pick<CaseStudy, 'title' | 'slug' | 'tags' | 'kpis' | 'tools' | 'secteur'>[] = [
   {
-    title: "Onboarding client\u00A0: de 45\u00A0min à 12\u00A0min",
-    slug: "onboarding-ecommerce",
-    description: "Un e-commerce en forte croissance perdait 45\u00A0minutes par nouveau client. Workflow Make déployé en 5\u00A0jours.",
-    kpis: [{ value: "-70%", label: "temps de traitement" }, { value: "0", label: "erreur de saisie" }, { value: "5j", label: "de déploiement" }],
-    tools: ["Make", "Shopify", "HubSpot", "Stripe"],
-    tags: ["E-commerce"],
-    color: "#E86A33",
-    colorRgb: "232, 106, 51",
-  },
-  {
-    title: "Support client\u00A0: 850\u00A0tickets/mois sans recrutement",
-    slug: "chatbot-support-saas",
-    description: "Un SaaS noyait son équipe support sous les demandes répétitives. Chatbot IA déployé en 3\u00A0semaines.",
-    kpis: [{ value: "3x", label: "capacité" }, { value: "2min", label: "temps de réponse" }, { value: "3 sem.", label: "de déploiement" }],
-    tools: ["Make", "Claude", "Intercom"],
-    tags: ["SaaS B2B"],
-    color: "#9333EA",
-    colorRgb: "147, 51, 234",
-  },
-  {
-    title: "12 rapports manuels remplacés par des dashboards temps réel",
-    slug: "reporting-dashboards-ia",
-    description: "Un cabinet conseil passait 2\u00A0jours par semaine à compiler des rapports dans Excel. ROI atteint en 3\u00A0semaines.",
-    kpis: [{ value: "+15h", label: "économisées/sem." }, { value: "12→0", label: "rapports manuels" }, { value: "3 sem.", label: "ROI atteint" }],
-    tools: ["Make", "Airtable", "Google Sheets"],
-    tags: ["Cabinet conseil"],
-    color: "#22D3EE",
-    colorRgb: "34, 211, 238",
+    title: "Pipeline ventes : 15 h économisées par semaine",
+    slug: "pipeline-ventes-saas",
+    secteur: "STARTUP B2B SAAS",
+    tags: ["n8n", "Claude"],
+    kpis: [
+      { value: "15 h", label: "ÉCONOMISÉES /SEM" },
+      { value: "€42 K", label: "ÉCONOMIE /AN" },
+      { value: "0", label: "ERREUR /MOIS" },
+    ],
+    tools: ["n8n", "HubSpot", "Slack", "Claude"],
   },
 ];
 
-// Use Notion data if available, otherwise fall back to static studies
-const hasNotion = notionStudies.length > 0;
-const displayStudies = hasNotion ? notionStudies : staticStudies;
+const displayStudies: Array<Pick<CaseStudy, 'title' | 'slug' | 'tags' | 'kpis' | 'tools' | 'secteur'>> =
+  notionStudies.length > 0 ? notionStudies : fallbackStudies;
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
@@ -52,7 +37,7 @@ const collectionSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "name": "Cas clients Automatisation - Lilian Sevoumian",
-  "description": "Découvrez mes réalisations en automatisation Make, n8n et Airtable. Des cas concrets avec résultats mesurables.",
+  "description": "Cas clients d'automatisation Make, n8n et Airtable. Workflows réels, métriques mesurées, contexte chiffré.",
   "url": "https://liliansevoumian.fr/cas-clients",
   "mainEntity": {
     "@type": "ItemList",
@@ -65,118 +50,160 @@ const collectionSchema = {
   },
   "author": { "@type": "Person", "name": "Lilian Sevoumian" }
 };
+
+const total = displayStudies.length;
+
+// Catégorisation des outils chip pour la voie violet (workflow) ou ember (IA).
+const AI_TOOLS = new Set(['claude', 'gpt', 'gpt-4', 'gpt-5', 'mistral', 'whisper', 'openai', 'anthropic', 'embeddings']);
+function chipClass(tool: string): string {
+  return AI_TOOLS.has(tool.toLowerCase()) ? 'chip chip-ember' : 'chip chip-violet';
+}
 ---
 
 <Layout
   title="Cas clients Automatisation Make & n8n | Lilian Sevoumian"
-  description="Découvrez mes réalisations en automatisation Make, n8n et Airtable. Des cas concrets avec résultats mesurables : gain de temps, réduction des erreurs, workflows optimisés."
+  description="Cas clients d'automatisation Make, n8n et Airtable. Workflows réels, métriques mesurées, contexte chiffré."
   breadcrumbs={breadcrumbs}
   articleSchema={collectionSchema}
 >
   <Navigation />
 
   <main id="main-content">
-    <!-- Header (CREAM) -->
-    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden pt-28 pb-0">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1] px-[var(--spacing-section-x)]">
-        <div class="max-w-[1200px] mx-auto">
-          <a href="/" class="inline-flex items-center gap-2 font-body text-[length:var(--text-body-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 group">
-            <span class="transition-transform group-hover:-translate-x-1">&larr;</span>
-            Retour à l'accueil
-          </a>
+    <section
+      data-section
+      class="relative pt-[80px] md:pt-[88px]"
+    >
+      <div class="relative max-w-[1200px] mx-auto px-[var(--spacing-section-x)] pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
 
-          <div class="flex flex-col gap-5 fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)]">
-              CAS CLIENTS
-            </span>
-            <h1 class="font-display text-[length:var(--text-display)] font-bold text-[var(--color-text-primary)] leading-[1.08]">
-              Des automatisations<br />qui font la différence.
-            </h1>
-            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.6] max-w-[640px]">
-              Chaque projet est unique. Découvrez comment j'ai aidé mes clients à gagner du temps et à réduire leurs erreurs grâce à l'automatisation.
-            </p>
-          </div>
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+        >
+          <span aria-hidden="true">←</span>
+          RETOUR À L'ACCUEIL
+        </a>
+
+        <div class="reveal mb-6 md:mb-8 inline-block bg-[var(--color-paper)] py-1.5 pr-2">
+          <span class="mono-caption text-[var(--color-ink-low)]">
+            CAS CLIENTS · {total} WORKFLOW{total > 1 ? 'S' : ''} DOCUMENTÉ{total > 1 ? 'S' : ''}
+          </span>
         </div>
-      </div>
-    </section>
 
-    <!-- Case Studies Grid (CREAM) -->
-    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1] py-12 px-[var(--spacing-section-x)]">
-        <div class="max-w-[1200px] mx-auto">
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
+        <div class="reveal mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[18ch]">
+            Pas de slides. Des workflows.
+          </h1>
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-5 max-w-[60ch]">
+            Chaque cas est documenté avec son contexte, son architecture, ses métriques mesurées. Pas de témoignage générique : le contexte chiffré et l'outil utilisé.
+          </p>
+        </div>
+
+        {displayStudies.length === 0 ? (
+          <div class="reveal card p-10 text-center">
+            <p class="mono-caption text-[var(--color-ink-low)] mb-3">CAS EN COURS DE PUBLICATION</p>
+            <p class="text-[var(--color-ink-mid)] mb-6 max-w-[44ch] mx-auto">
+              Pour discuter d'un cas similaire au vôtre, le plus efficace est l'appel direct.
+            </p>
+            <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary">
+              Réserver un appel · 30 min
+            </a>
+          </div>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
             {displayStudies.map((cs) => {
-              const color = (cs as any).color || '#E86A33';
-              const colorRgb = (cs as any).colorRgb || '232, 106, 51';
-              const tags = cs.tags || [];
-              const kpis = cs.kpis || [];
               const tools = cs.tools || [];
+              const kpis = cs.kpis || [];
+              const tags = cs.tags || [];
               return (
                 <a
                   href={`/cas-clients/${cs.slug}`}
-                  class="reveal-card flex flex-col p-[28px_24px] no-underline group rounded-[var(--radius-lg)] transition-all duration-250"
-                  style={`background: #F8F7F4; border: 2px solid rgba(${colorRgb}, 0.15); box-shadow: 5px 5px 10px 0 rgba(${colorRgb}, 0.25);`}
+                  class="reveal relative card card-interactive bg-[var(--color-paper)] flex flex-col gap-5"
                 >
-                  {tags.length > 0 && (
-                    <div class="flex flex-wrap gap-2 mb-3">
-                      {tags.map((tag: string) => (
-                        <span
-                          class="rounded-full px-3 py-1 text-[length:var(--text-caption)] font-medium font-mono"
-                          style={`background: rgba(${colorRgb}, 0.1); color: ${color};`}
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                  <span class="grid-corner tl" aria-hidden="true"></span>
+                  <span class="grid-corner tr" aria-hidden="true"></span>
+                  <span class="grid-corner bl" aria-hidden="true"></span>
+                  <span class="grid-corner br" aria-hidden="true"></span>
+
+                  {(cs.secteur || tags.length > 0) && (
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mono-caption text-[var(--color-ink-low)]">
+                      {cs.secteur && <span>{cs.secteur.toUpperCase()}</span>}
+                      {cs.secteur && tags.length > 0 && <span aria-hidden="true">·</span>}
+                      {tags.length > 0 && <span>{tags.join(' · ').toUpperCase()}</span>}
                     </div>
                   )}
-                  <h3 class="text-[length:var(--text-body-lg)] font-bold text-[#1A1A1A] font-display mb-3 transition-colors" style={`--hover-color: ${color};`}>
+
+                  <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
                     {cs.title}
                   </h3>
+
                   {kpis.length > 0 && (
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-                      {kpis.map((kpi: { value: string; label: string }) => (
-                        <div class="text-center p-2 rounded-[var(--radius-sm)]" style={`background: rgba(${colorRgb}, 0.06);`}>
-                          <p class="font-mono text-sm font-bold" style={`color: ${color};`}>{kpi.value}</p>
-                          <p class="text-[length:var(--text-micro)] text-[var(--color-text-muted)] leading-tight">{kpi.label}</p>
+                    <div class="grid grid-cols-3 gap-px bg-[var(--color-divider)] mt-auto">
+                      {kpis.slice(0, 3).map((kpi: { value: string; label: string }) => (
+                        <div class="bg-[var(--color-paper)] py-3 flex flex-col gap-1">
+                          <span class="font-display font-semibold tabular-nums text-xl tracking-[-0.025em] text-[var(--color-ink)] leading-none">
+                            {kpi.value}
+                          </span>
+                          <span class="mono-caption text-[var(--color-ink-low)] leading-tight">{kpi.label}</span>
                         </div>
                       ))}
                     </div>
                   )}
+
                   {tools.length > 0 && (
-                    <div class="flex flex-wrap gap-2 pt-3 mt-auto border-t border-black/[0.06]">
-                      {tools.map((tool: string) => (
-                        <span class="font-mono text-[length:var(--text-micro)] text-[var(--color-text-muted)] px-2 py-1 rounded-[var(--radius-sm)]" style="background: rgba(26, 26, 26, 0.04);">
-                          {tool}
-                        </span>
+                    <div class="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-divider)]">
+                      {tools.slice(0, 4).map((tool: string) => (
+                        <span class={chipClass(tool)}>{tool}</span>
                       ))}
+                      {tools.length > 4 && (
+                        <span class="chip chip-dashed">+ {tools.length - 4}</span>
+                      )}
                     </div>
                   )}
+
+                  <span class="mono-caption text-[var(--color-violet)] inline-flex items-center gap-1.5 mt-2">
+                    LIRE LE DÉTAIL
+                    <span aria-hidden="true">→</span>
+                  </span>
                 </a>
               );
             })}
           </div>
-        </div>
+        )}
+
       </div>
     </section>
 
-    <!-- CTA (WHITE) -->
-    <section data-bg="white" class="relative bg-white overflow-hidden">
-      <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-        <div class="max-w-[600px] mx-auto text-center flex flex-col items-center gap-4 fade-in-section">
-          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)]">
-            Un projet similaire&nbsp;?
-          </h2>
-          <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)]">
-            Discutons de vos besoins en automatisation — l'appel est gratuit, 30&nbsp;min, sans engagement.
-          </p>
+    <!-- CTA section -->
+    <section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <SectionHeader
+          number="↦"
+          label="APPEL"
+          title="Un projet qui ressemble à l'un de ceux-là ?"
+          body="30 min pour décider si on travaille ensemble. Format identique à chaque fois : 5 min de contexte, 15 min sur vos process, 10 min de plan d'action chiffré."
+          titleMaxWidth="22ch"
+          bodyMaxWidth="60ch"
+          class="!mb-0"
+        />
+
+        <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <a
-            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-            class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body)] font-semibold px-7 py-3.5 mt-2 group"
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary justify-center"
           >
-            Réserver mon appel stratégique <span class="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
+            Réserver maintenant
+          </a>
+          <a
+            href="mailto:bonjour@liliansevoumian.fr"
+            class="btn-ghost justify-center"
+          >
+            ou écrire un mail
           </a>
         </div>
       </div>

@@ -20,7 +20,7 @@ if (!caseStudy) {
   return Astro.redirect('/cas-clients');
 }
 
-const seoDescription = `${caseStudy.title}. ${caseStudy.kpis.length > 0 ? `Résultats : ${caseStudy.kpis.map(k => `${k.value} ${k.label}`).join(', ')}. ` : ''}Découvrez comment l'automatisation ${caseStudy.tools.length > 0 ? `avec ${caseStudy.tools.join(', ')} ` : ''}a transformé ${caseStudy.secteur ? `ce projet ${caseStudy.secteur}` : 'cette entreprise'}.`.substring(0, 160);
+const seoDescription = `${caseStudy.title}. ${caseStudy.kpis.length > 0 ? `Résultats : ${caseStudy.kpis.map(k => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${caseStudy.tools.length > 0 ? `avec ${caseStudy.tools.join(', ')} ` : ''}${caseStudy.secteur ? `pour un projet ${caseStudy.secteur}` : ''}.`.substring(0, 160);
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
@@ -54,7 +54,10 @@ const combinedSchema = howToSchema
   ? { ...articleSchema, hasPart: howToSchema }
   : articleSchema;
 
-const accentColors = ['#E86A33', '#9333EA', '#22D3EE'];
+const AI_TOOLS = new Set(['claude', 'gpt', 'gpt-4', 'gpt-5', 'mistral', 'whisper', 'openai', 'anthropic', 'embeddings']);
+function chipClass(tool: string): string {
+  return AI_TOOLS.has(tool.toLowerCase()) ? 'chip chip-ember' : 'chip chip-violet';
+}
 ---
 
 <Layout
@@ -68,125 +71,117 @@ const accentColors = ['#E86A33', '#9333EA', '#22D3EE'];
   <Navigation />
 
   <main id="main-content">
-    <!-- Hero (CREAM) -->
-    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden pt-28 pb-0">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1] px-[var(--spacing-section-x)]">
-        <div class="max-w-[800px] mx-auto">
-          <a href="/cas-clients" class="inline-flex items-center gap-2 font-body text-[length:var(--text-body-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-8 group">
-            <span class="transition-transform group-hover:-translate-x-1">&larr;</span>
-            Retour aux cas clients
-          </a>
 
-          <div class="flex flex-col gap-5 fade-in-section">
-            <div class="flex flex-wrap items-center gap-3">
-              {caseStudy.secteur && (
-                <span class="inline-block rounded-full px-4 py-1.5 text-[length:var(--text-micro)] font-semibold tracking-[2px] uppercase font-mono text-[var(--color-orange)]" style="background: rgba(232, 106, 51, 0.12);">
-                  {caseStudy.secteur}
-                </span>
-              )}
-              {caseStudy.tags.map((tag: string) => (
-                <span class="rounded-full px-3 py-1 text-[length:var(--text-caption)] font-medium font-mono" style="background: rgba(147, 51, 234, 0.08); color: var(--color-purple-dark);">
-                  {tag}
-                </span>
-              ))}
-            </div>
+    <!-- HERO -->
+    <section data-section class="relative pt-[80px] md:pt-[88px]">
+      <div class="relative max-w-[1200px] mx-auto px-[var(--spacing-section-x)] pt-12 md:pt-20 pb-12">
 
-            <h1 class="font-display text-[length:var(--text-display)] font-bold text-[var(--color-text-primary)] leading-[1.08]">
-              {caseStudy.title}
-            </h1>
-          </div>
+        <a
+          href="/cas-clients"
+          class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+        >
+          <span aria-hidden="true">←</span>
+          RETOUR AUX CAS
+        </a>
+
+        <!-- Meta header -->
+        <div class="reveal flex flex-wrap items-center gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-6 md:mb-8">
+          {caseStudy.secteur && <span>{caseStudy.secteur.toUpperCase()}</span>}
+          {caseStudy.tags.length > 0 && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{caseStudy.tags.join(' · ').toUpperCase()}</span>
+            </>
+          )}
+          {caseStudy.date && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{new Date(caseStudy.date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }).toUpperCase()}</span>
+            </>
+          )}
         </div>
+
+        <!-- Title -->
+        <div class="reveal mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0">
+            {caseStudy.title}
+          </h1>
+        </div>
+
+        <!-- KPIs row -->
+        {caseStudy.kpis.length > 0 && (
+          <div class="reveal grid grid-cols-1 sm:grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden max-w-3xl">
+            {caseStudy.kpis.map((kpi: { value: string; label: string }) => (
+              <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
+                <div class="font-display font-semibold tabular-nums text-3xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none">
+                  {kpi.value}
+                </div>
+                <div class="mono-caption text-[var(--color-ink-low)]">{kpi.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
       </div>
     </section>
 
-    <!-- KPIs (CREAM) -->
-    {caseStudy.kpis.length > 0 && (
-      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-        <div class="relative z-[1] py-12 px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto">
-            <div class="grid grid-cols-3 gap-4 fade-in-section">
-              {caseStudy.kpis.map((kpi: { value: string; label: string }, i: number) => (
-                <div class="card-3d-white-orange p-6 flex flex-col items-center text-center">
-                  <span class="font-mono text-3xl md:text-4xl font-bold" style={`color: ${accentColors[i % 3]};`}>{kpi.value}</span>
-                  <span class="font-body text-[length:var(--text-caption)] text-[var(--color-text-secondary)] uppercase tracking-[1px] mt-1">{kpi.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    )}
+    <!-- CONTEXTE / SOLUTION GRID -->
+    <section
+      data-section
+      class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+    >
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
 
-    <!-- Entreprise (WHITE) -->
-    {caseStudy.entreprise && (
-      <section data-bg="white" class="relative bg-white overflow-hidden">
-        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] mb-3">
-              L'ENTREPRISE
-            </span>
-            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+        {caseStudy.entreprise && (
+          <article class="reveal bg-[var(--color-paper)] p-8 md:p-10 relative">
+            <span class="grid-corner tl" aria-hidden="true"></span>
+            <span class="grid-corner tr" aria-hidden="true"></span>
+            <span class="grid-corner bl" aria-hidden="true"></span>
+            <span class="grid-corner br" aria-hidden="true"></span>
+            <div class="mono-caption text-[var(--color-ink-low)] mb-4">01 — L'ENTREPRISE</div>
+            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.65] whitespace-pre-line max-w-[58ch]">
               {caseStudy.entreprise}
             </p>
-          </div>
-        </div>
-      </section>
-    )}
+          </article>
+        )}
 
-    <!-- Le défi (CREAM) -->
-    {caseStudy.probleme && (
-      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
-              LE DÉFI
-            </span>
-            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+        {caseStudy.probleme && (
+          <article class="reveal bg-[var(--color-paper)] p-8 md:p-10 relative">
+            <span class="grid-corner tl" aria-hidden="true"></span>
+            <span class="grid-corner tr" aria-hidden="true"></span>
+            <span class="grid-corner bl" aria-hidden="true"></span>
+            <span class="grid-corner br" aria-hidden="true"></span>
+            <div class="mono-caption text-[var(--color-ink-low)] mb-4">02 — LE PROBLÈME</div>
+            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.65] whitespace-pre-line max-w-[58ch]">
               {caseStudy.probleme}
             </p>
-          </div>
-        </div>
-      </section>
-    )}
+          </article>
+        )}
 
-    <!-- Témoignage (WHITE) -->
-    {caseStudy.testimonial?.quote && (
-      <section data-bg="white" class="relative bg-white overflow-hidden">
-        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[700px] mx-auto text-center fade-in-section">
-            <blockquote>
-              <p class="font-body text-[length:var(--text-subheading)] font-medium text-[var(--color-text-primary)] leading-[1.5] mb-6 italic">
-                "{caseStudy.testimonial.quote}"
-              </p>
-              {(caseStudy.testimonial.name || caseStudy.testimonial.role) && (
-                <footer class="font-body text-[length:var(--text-body)]">
-                  <span class="font-semibold text-[var(--color-text-primary)]">{caseStudy.testimonial.name}</span>
-                  {caseStudy.testimonial.role && (
-                    <span class="text-[var(--color-text-secondary)]"> · {caseStudy.testimonial.role}</span>
-                  )}
-                </footer>
-              )}
-            </blockquote>
-          </div>
-        </div>
-      </section>
-    )}
+      </div>
+    </section>
 
-    <!-- La solution (CREAM) -->
+    <!-- SOLUTION -->
     {caseStudy.solution && (
-      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-cyan-dark)] mb-3">
-              LA SOLUTION
-            </span>
-            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+        <div class="relative max-w-[1200px] mx-auto">
+          <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
+            <span class="grid-corner tl" aria-hidden="true"></span>
+            <span class="grid-corner tr" aria-hidden="true"></span>
+            <span class="grid-corner bl" aria-hidden="true"></span>
+            <span class="grid-corner br" aria-hidden="true"></span>
+            <div class="section-number" style="margin-bottom: 0.5rem;">03 — LA SOLUTION</div>
+            <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[20ch]">
+              Le workflow déployé.
+            </h2>
+          </div>
+
+          <div class="reveal max-w-[64ch]">
+            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-large)] leading-[1.6] whitespace-pre-line m-0">
               {caseStudy.solution}
             </p>
           </div>
@@ -194,33 +189,30 @@ const accentColors = ['#E86A33', '#9333EA', '#22D3EE'];
       </section>
     )}
 
-    <!-- Résultats détaillés (WHITE) -->
-    {caseStudy.resultatsDetails && (
-      <section data-bg="white" class="relative bg-white overflow-hidden">
-        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
-              LES RÉSULTATS
-            </span>
-            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
-              {caseStudy.resultatsDetails}
-            </p>
-          </div>
-        </div>
-      </section>
-    )}
-
-    <!-- Étapes (CREAM) -->
+    <!-- ÉTAPES -->
     {caseStudy.etapes && (
-      <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-        <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-purple-dark)] mb-3">
-              LES ÉTAPES
-            </span>
-            <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)] leading-[1.7] whitespace-pre-line">
+      <section
+        data-section
+        class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+      >
+        <div class="relative max-w-[1200px] mx-auto">
+          <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-surface-low)] py-2 pr-2 relative">
+            <span class="grid-corner tl" aria-hidden="true"></span>
+            <span class="grid-corner tr" aria-hidden="true"></span>
+            <span class="grid-corner bl" aria-hidden="true"></span>
+            <span class="grid-corner br" aria-hidden="true"></span>
+            <div class="section-number" style="margin-bottom: 0.5rem;">04 — LES ÉTAPES</div>
+            <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
+              Comment c'est arrivé en prod.
+            </h2>
+          </div>
+
+          <div class="reveal max-w-[64ch] card card-elevated bg-[var(--color-paper)] relative">
+            <span class="grid-corner tl" aria-hidden="true"></span>
+            <span class="grid-corner tr" aria-hidden="true"></span>
+            <span class="grid-corner bl" aria-hidden="true"></span>
+            <span class="grid-corner br" aria-hidden="true"></span>
+            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.7] whitespace-pre-line m-0">
               {caseStudy.etapes}
             </p>
           </div>
@@ -228,47 +220,106 @@ const accentColors = ['#E86A33', '#9333EA', '#22D3EE'];
       </section>
     )}
 
-    <!-- Outils (WHITE) -->
-    {caseStudy.tools.length > 0 && (
-      <section data-bg="white" class="relative bg-white overflow-hidden">
-        <div class="absolute inset-0 dot-grid" aria-hidden="true"></div>
-        <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-          <div class="max-w-[800px] mx-auto fade-in-section">
-            <span class="inline-block font-mono text-[length:var(--text-caption)] font-semibold tracking-[2px] uppercase text-[var(--color-orange)] mb-3">
-              STACK TECHNIQUE
-            </span>
-            <div class="flex flex-wrap gap-3">
-              {caseStudy.tools.map((tool: string) => (
-                <span class="rounded-full px-4 py-2 text-[length:var(--text-body-sm)] font-medium font-mono" style="background: rgba(232, 106, 51, 0.1); color: var(--color-orange);">
-                  {tool}
-                </span>
-              ))}
-            </div>
+    <!-- RÉSULTATS DÉTAILLÉS -->
+    {caseStudy.resultatsDetails && (
+      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+        <div class="relative max-w-[1200px] mx-auto">
+          <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
+            <span class="grid-corner tl" aria-hidden="true"></span>
+            <span class="grid-corner tr" aria-hidden="true"></span>
+            <span class="grid-corner bl" aria-hidden="true"></span>
+            <span class="grid-corner br" aria-hidden="true"></span>
+            <div class="section-number" style="margin-bottom: 0.5rem;">05 — LES RÉSULTATS</div>
+            <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
+              Ce qui a vraiment changé.
+            </h2>
+          </div>
+
+          <div class="reveal max-w-[64ch]">
+            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-large)] leading-[1.6] whitespace-pre-line m-0">
+              {caseStudy.resultatsDetails}
+            </p>
           </div>
         </div>
       </section>
     )}
 
-    <!-- CTA (CREAM) -->
-    <section data-bg="cream" class="relative bg-[var(--color-bg-dark)] overflow-hidden">
-      <div class="absolute inset-0 dot-grid-cream" aria-hidden="true"></div>
-      <div class="relative z-[1] py-[var(--spacing-section)] px-[var(--spacing-section-x)]">
-        <div class="max-w-[600px] mx-auto text-center flex flex-col items-center gap-4 fade-in-section">
-          <h2 class="font-display text-[length:var(--text-heading)] font-bold text-[var(--color-text-primary)]">
-            Un projet similaire&nbsp;?
+    <!-- TÉMOIGNAGE + STACK -->
+    {(caseStudy.testimonial?.quote || caseStudy.tools.length > 0) && (
+      <section
+        data-section
+        class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+      >
+        <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-start">
+
+          {caseStudy.testimonial?.quote && (
+            <blockquote class="reveal max-w-[60ch] m-0 p-0">
+              <div class="mono-caption text-[var(--color-ink-low)] mb-4">06 — TÉMOIGNAGE</div>
+              <p class="font-display font-semibold text-2xl md:text-3xl tracking-[-0.025em] text-[var(--color-ink)] leading-[1.25] m-0">
+                « {caseStudy.testimonial.quote} »
+              </p>
+              {(caseStudy.testimonial.name || caseStudy.testimonial.role) && (
+                <footer class="mono-caption text-[var(--color-ink-low)] mt-5 not-italic">
+                  — {caseStudy.testimonial.name}
+                  {caseStudy.testimonial.role && (
+                    <span> · {caseStudy.testimonial.role}</span>
+                  )}
+                </footer>
+              )}
+            </blockquote>
+          )}
+
+          {caseStudy.tools.length > 0 && (
+            <div class="reveal lg:max-w-[300px] w-full">
+              <div class="mono-caption text-[var(--color-ink-low)] mb-4">STACK</div>
+              <div class="flex flex-wrap gap-2">
+                {caseStudy.tools.map((tool: string) => (
+                  <span class={chipClass(tool)}>{tool}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </section>
+    )}
+
+    <!-- CTA -->
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+          <div class="section-number" style="margin-bottom: 0.5rem;">↦ APPEL</div>
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
+            Un projet similaire ?
           </h2>
-          <p class="font-body text-[length:var(--text-body-lg)] text-[var(--color-text-secondary)]">
-            Parlons de votre situation — l'appel est gratuit, 30&nbsp;min, sans engagement.
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-3 max-w-[55ch]">
+            30 min pour décider si on travaille ensemble. Sans engagement, plan d'action chiffré sous 48 h.
           </p>
+        </div>
+
+        <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <a
-            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-            class="btn-3d inline-flex items-center justify-center font-body text-[length:var(--text-body)] font-semibold px-7 py-3.5 mt-2 group"
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary justify-center"
           >
-            Réserver mon appel stratégique <span class="inline-block ml-1 group-hover:translate-x-1.5 transition-transform duration-300">&rarr;</span>
+            Réserver maintenant
+          </a>
+          <a
+            href="mailto:bonjour@liliansevoumian.fr"
+            class="btn-ghost justify-center"
+          >
+            ou écrire un mail
           </a>
         </div>
       </div>
     </section>
+
   </main>
 
   <Footer />
