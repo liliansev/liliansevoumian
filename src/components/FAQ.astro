@@ -46,7 +46,7 @@ const faqs = [
     <!-- Accordion -->
     <div class="reveal max-w-[820px]">
       {faqs.map((faq, i) => (
-        <details class="faq-item group" open={i === 0}>
+        <details class="faq-item group">
           <summary class="faq-summary">
             <span class="faq-num">Q0{i + 1}</span>
             <span class="faq-question">{faq.q}</span>
@@ -57,6 +57,17 @@ const faqs = [
           </div>
         </details>
       ))}
+
+      <!-- 7e row : sortie de l'accordion, lien direct mailto -->
+      <p class="mono-caption text-[var(--color-ink-low)] mt-8 pt-6 border-t border-[var(--color-divider)]">
+        UNE QUESTION PAS LISTÉE ?
+        <a
+          href="mailto:bonjour@liliansevoumian.fr"
+          class="text-[var(--color-violet)] hover:text-[var(--color-violet-deep)] transition-colors ml-1"
+        >
+          BONJOUR@LILIANSEVOUMIAN.FR
+        </a>
+      </p>
     </div>
 
   </div>
