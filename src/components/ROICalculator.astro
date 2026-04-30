@@ -148,14 +148,23 @@ function formatFR(n: number): string {
           </span>
         </div>
 
-        <a
-          href="https://cal.com/lilian-sevoumian/20min"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn-primary justify-center mt-auto"
-        >
-          Discuter de mon cas · 30 min
-        </a>
+        <div class="mt-auto flex flex-col gap-3">
+          <a
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary justify-center"
+          >
+            Discuter de mon cas · 30 min
+          </a>
+          <button
+            type="button"
+            data-roi-share
+            class="mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-violet)] transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
+          >
+            <span data-roi-share-label>COPIER LE LIEN DE CE CALCUL</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -229,6 +238,27 @@ function formatFR(n: number): string {
     }
   }
 
+  // Lit un param URL en l'élageant aux bornes du slider, fallback sur défaut.
+  function readParam(name: string, min: number, max: number, fallback: number): number {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get(name);
+    if (raw === null) return fallback;
+    const n = Number(raw);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(Math.max(n, min), max);
+  }
+
+  // Met à jour l'URL sans navigation. On retire les params si on est revenu aux valeurs par défaut.
+  function syncUrl(hours: number, people: number, hourlyCost: number, defaults: { hours: number; people: number; hourlyCost: number }) {
+    const params = new URLSearchParams(window.location.search);
+    if (hours === defaults.hours) params.delete('h'); else params.set('h', String(hours));
+    if (people === defaults.people) params.delete('emp'); else params.set('emp', String(people));
+    if (hourlyCost === defaults.hourlyCost) params.delete('rate'); else params.set('rate', String(hourlyCost));
+    const search = params.toString();
+    const url = `${window.location.pathname}${search ? '?' + search : ''}${window.location.hash}`;
+    history.replaceState(null, '', url);
+  }
+
   function initROICalc() {
     const root = document.querySelector<HTMLElement>('[data-roi-calc]');
     if (!root || root.dataset.roiInit === '1') return;
@@ -252,10 +282,38 @@ function formatFR(n: number): string {
     const projectLabelEl = root.querySelector<HTMLElement>('[data-roi-project-label]')!;
     const warningEl = root.querySelector<HTMLElement>('[data-roi-warning]')!;
 
-    const initialHours = Number(inputHours.value);
-    const initialPeople = Number(inputPeople.value);
-    const initialRate = Number(inputRate.value);
-    const initialComputed = compute(initialHours, initialPeople, initialRate);
+    const shareBtn = root.querySelector<HTMLButtonElement>('[data-roi-share]');
+    const shareLabel = root.querySelector<HTMLElement>('[data-roi-share-label]');
+
+    const defaults = {
+      hours: Number(inputHours.value),
+      people: Number(inputPeople.value),
+      hourlyCost: Number(inputRate.value),
+    };
+
+    // Préinitialise depuis URL si params présents
+    const initHours = readParam('h', Number(inputHours.min), Number(inputHours.max), defaults.hours);
+    const initPeople = readParam('emp', Number(inputPeople.min), Number(inputPeople.max), defaults.people);
+    const initRate = readParam('rate', Number(inputRate.min), Number(inputRate.max), defaults.hourlyCost);
+    inputHours.value = String(initHours);
+    inputPeople.value = String(initPeople);
+    inputRate.value = String(initRate);
+
+    const initialComputed = compute(initHours, initPeople, initRate);
+
+    // Initialise les displays sliders avec les valeurs effectives
+    dispHours.textContent = formatFR(initHours);
+    dispPeople.textContent = formatFR(initPeople);
+    dispRate.textContent = formatFR(initRate);
+
+    // Initialise les outputs avec les valeurs computed (snap, pas d'animation au load)
+    outMoney.textContent = formatFR(initialComputed.moneySaved);
+    outHours.textContent = formatFR(initialComputed.hoursSaved);
+    outMonths.textContent = String(initialComputed.monthsToROI);
+    formulaEl.textContent = `${initialComputed.cappedHours}H × ${initialComputed.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${initRate}€`;
+    projectPriceEl.textContent = formatFR(initialComputed.projectPrice);
+    projectLabelEl.textContent = initialComputed.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
+    warningEl.hidden = !initialComputed.isCapped;
 
     const animMoney = new AnimatedValue(outMoney, initialComputed.moneySaved);
     const animHours = new AnimatedValue(outHours, initialComputed.hoursSaved);
@@ -286,11 +344,30 @@ function formatFR(n: number): string {
       projectPriceEl.textContent = formatFR(c.projectPrice);
       projectLabelEl.textContent = c.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
       warningEl.hidden = !c.isCapped;
+
+      syncUrl(hours, people, hourlyCost, defaults);
     }
 
     inputHours.addEventListener('input', update);
     inputPeople.addEventListener('input', update);
     inputRate.addEventListener('input', update);
+
+    // Bouton « Copier le lien »
+    if (shareBtn && shareLabel) {
+      let resetTimer: number | null = null;
+      shareBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          shareLabel.textContent = 'LIEN COPIÉ ✓';
+          if (resetTimer !== null) window.clearTimeout(resetTimer);
+          resetTimer = window.setTimeout(() => {
+            shareLabel.textContent = 'COPIER LE LIEN DE CE CALCUL';
+          }, 1500);
+        } catch (err) {
+          shareLabel.textContent = 'COPIE IMPOSSIBLE — SÉLECTIONNEZ L\'URL';
+        }
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
