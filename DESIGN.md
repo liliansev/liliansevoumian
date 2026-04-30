@@ -108,7 +108,7 @@ components:
     padding: "4px 10px"
   chip-tool-active:
     backgroundColor: "{colors.violet-soft}"
-    textColor: "{colors.violet}"
+    textColor: "{colors.violet-deep}"
   card-default:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink}"
@@ -270,8 +270,8 @@ La profondeur et la hiérarchie passent par **trois autres mécanismes**, dans c
 ### Chips (Outils, tags)
 
 - **Style:** fond transparent, texte `ink-mid`, typo `mono-caption`, bordure `1px solid divider`, radius `9999px` (full pill). Padding `4px 10px`.
-- **State n8n / Make / workflow tools:** active = fond `violet-soft`, texte `violet`, bordure `transparent`.
-- **State Claude / GPT / Mistral / IA:** active = fond `ember-soft`, texte `ember`, bordure `transparent`.
+- **State n8n / Make / workflow tools:** active = fond `violet-soft`, texte `violet-deep` (≥4.5:1 WCAG AA), bordure `transparent`.
+- **State Claude / GPT / Mistral / IA:** active = fond `ember-soft`, texte `ember-deep` (≥4.5:1 WCAG AA), bordure `transparent`.
 - **Hover (non-actif):** texte `ink`, bordure `ink-faint`. Pas de fond.
 
 ### Cards / Containers
