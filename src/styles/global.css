@@ -460,12 +460,19 @@ a, button, input, textarea, select,
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-full);
   transition: color var(--duration-default) var(--ease-out-quint),
-              border-color var(--duration-default) var(--ease-out-quint);
+              border-color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-default) var(--ease-out-quint);
 }
 
 .chip:hover {
   color: var(--color-ink);
   border-color: var(--color-ink-faint);
+  transform: scale(1.03);
+}
+
+.chip:active {
+  transform: scale(0.98);
+  transition-duration: var(--duration-quick);
 }
 
 .chip-violet {
@@ -527,6 +534,8 @@ a, button, input, textarea, select,
 
 .card-interactive {
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
 .card-interactive:hover {
@@ -535,6 +544,38 @@ a, button, input, textarea, select,
 
 .card-interactive:hover .grid-corner {
   color: var(--color-violet);
+}
+
+/* Scan line — au hover, une ligne 1px violet glisse du top au bottom de la card.
+   Signature "le système te scanne", subtle mais reconnaissable. */
+.card-interactive::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-violet) 50%, transparent);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(0);
+}
+
+.card-interactive:hover::after {
+  animation: card-scan 1100ms var(--ease-out-quint);
+}
+
+@keyframes card-scan {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(2000%); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-interactive:hover::after {
+    animation: none;
+  }
 }
 
 /* Card dark variants — adapte les cards sur fond ink */
@@ -767,17 +808,19 @@ a, button, input, textarea, select,
   position: absolute;
   left: 4px;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-8px, -50%);
   color: var(--color-violet);
   font-family: var(--font-mono);
   font-size: var(--text-mono-label);
   opacity: 0;
-  transition: opacity var(--duration-quick) var(--ease-out-quint);
+  transition: opacity var(--duration-default) var(--ease-out-expo),
+              transform var(--duration-default) var(--ease-out-expo);
 }
 
 .nav-link.is-active::before,
 .nav-link:hover::before {
   opacity: 1;
+  transform: translate(0, -50%);
 }
 
 /* =========================================================================
