@@ -709,6 +709,38 @@ a, button, input, textarea, select,
 .reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
 
+/* Hero choreography — page-load orchestrée pour le manifesto.
+   Stagger plus long, translation plus dramatique, transition ease-out-expo. */
+.js-ready [data-hero-stagger] .reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(24px);
+}
+[data-hero-stagger] .reveal {
+  transition-duration: 1000ms;
+  transition-timing-function: var(--ease-out-expo);
+}
+[data-hero-stagger] > div > .reveal:nth-child(1) { transition-delay: 0ms; }     /* eyebrow */
+[data-hero-stagger] > div > .reveal:nth-child(2) { transition-delay: 150ms; }   /* hero block */
+[data-hero-stagger] > div > .reveal:nth-child(3) { transition-delay: 600ms; }   /* CTA */
+[data-hero-stagger] > div > .reveal:nth-child(4) { transition-delay: 800ms; }   /* microdata */
+
+/* H1 manifesto rise plus marqué — sépare le H1 du bloc paper qui révèle */
+.js-ready [data-hero-stagger] .reveal:not(.is-visible) .hero-manifesto-h1 {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(3px);
+}
+[data-hero-stagger] .hero-manifesto-h1 {
+  transition: opacity 1100ms var(--ease-out-expo) 300ms,
+              transform 1100ms var(--ease-out-expo) 300ms,
+              filter 800ms var(--ease-out-quint) 300ms;
+}
+[data-hero-stagger] .reveal.is-visible .hero-manifesto-h1 {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
 /* + corner pulse on viewport-center crossing */
 .js-ready .grid-corner-pulse {
   animation: grid-pulse 600ms var(--ease-out-expo) both;
