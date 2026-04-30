@@ -80,10 +80,15 @@ const principes = [
           bodyMaxWidth="60ch"
         />
 
-        <!-- Liste principes -->
-        <ol class="reveal-stagger flex flex-col gap-12 md:gap-16 list-none m-0 p-0">
+        <!-- Liste principes — chaque principe revendique sa cellule de grille (paper-island bordé) -->
+        <ol class="reveal-stagger flex flex-col gap-4 md:gap-6 list-none m-0 p-0">
           {principes.map((p, i) => (
-            <li class="reveal grid grid-cols-1 md:grid-cols-[6rem_1fr] gap-x-6 gap-y-3">
+            <li class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 grid grid-cols-1 md:grid-cols-[7rem_1fr] gap-x-6 gap-y-3">
+              <span class="grid-corner tl" aria-hidden="true"></span>
+              <span class="grid-corner tr" aria-hidden="true"></span>
+              <span class="grid-corner bl" aria-hidden="true"></span>
+              <span class="grid-corner br" aria-hidden="true"></span>
+
               <div class="flex flex-col gap-1">
                 <span class="mono-caption text-[var(--color-violet)]">{String(i + 1).padStart(2, '0')}</span>
                 <span class="mono-caption text-[var(--color-ink-low)]">{p.label}</span>
