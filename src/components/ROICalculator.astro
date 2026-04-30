@@ -1,0 +1,302 @@
+---
+/*
+ * ROI Calculator — version vanilla JS (Astro <script>).
+ *
+ * Reprend la logique du composant React précédent (sliders, animation
+ * rAF des outputs, capping) sans dépendance React. Économise ~55 KB gz
+ * post-scroll.
+ *
+ * Le header passe désormais par <SectionHeader> au lieu d'une copie
+ * inline (fin du drift TSX/Astro flaggué dans l'audit).
+ */
+import SectionHeader from './SectionHeader.astro';
+
+const PROJECT_PRICE_MID = 12000;
+const PROJECT_PRICE_LOW = 1500;
+const RECOVERY_RATE = 0.55;
+const WEEKS_PER_YEAR = 48;
+const MAX_REASONABLE_HOURS = 20;
+const MAX_REASONABLE_PEOPLE = 10;
+
+const initial = { hours: 8, people: 3, hourlyCost: 55 };
+
+const sliders = [
+  { id: 'roi-hours',  label: 'HEURES /SEM PERDUES SUR PROCESS RÉPÉTITIFS', unit: 'H', min: 1,  max: 30,  step: 1, value: initial.hours },
+  { id: 'roi-people', label: 'EMPLOYÉS CONCERNÉS',                          unit: '',  min: 1,  max: 15,  step: 1, value: initial.people },
+  { id: 'roi-rate',   label: 'COÛT HORAIRE INTERNE',                        unit: '€', min: 25, max: 120, step: 5, value: initial.hourlyCost },
+];
+
+const cappedHours = Math.min(initial.hours, MAX_REASONABLE_HOURS);
+const cappedPeople = Math.min(initial.people, MAX_REASONABLE_PEOPLE);
+const isCapped = initial.hours >= MAX_REASONABLE_HOURS || initial.people >= MAX_REASONABLE_PEOPLE;
+const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
+const moneySaved = hoursSaved * initial.hourlyCost;
+const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
+const monthsToROI = moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
+
+function formatFR(n: number): string {
+  // Format français avec NBSP standard (U+00A0) au lieu de narrow NBSP (U+202F)
+  // qui se rend cassé en Geist 600 large size.
+  return n.toLocaleString('fr-FR').replace(/ /g, ' ');
+}
+---
+
+<section
+  id="roi"
+  data-section
+  class="relative bg-[var(--color-paper)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      number="04"
+      label="ROI"
+      title="Combien votre temps coûte-t-il ?"
+      body="Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée. L'audit réel descend dans le détail."
+      titleMaxWidth="20ch"
+      bodyMaxWidth="60ch"
+    />
+
+    <!-- Calculator grid : sliders sur paper, output sur surface-low -->
+    <div
+      class="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal"
+      data-roi-calc
+    >
+      <span class="grid-corner tl" aria-hidden="true"></span>
+      <span class="grid-corner tr" aria-hidden="true"></span>
+      <span class="grid-corner bl" aria-hidden="true"></span>
+      <span class="grid-corner br" aria-hidden="true"></span>
+
+      <!-- Sliders panel -->
+      <fieldset class="bg-[var(--color-paper)] p-8 md:p-10 flex flex-col gap-8 border-0 m-0">
+        <legend class="sr-only">Paramètres d'estimation ROI</legend>
+        {sliders.map((s) => (
+          <div class="flex flex-col gap-3">
+            <div class="flex items-baseline justify-between">
+              <label for={s.id} class="mono-caption text-[var(--color-ink-low)]">
+                {s.label}
+              </label>
+              <span
+                class="font-display font-semibold tabular-nums tracking-[-0.02em] text-[var(--color-ink)]"
+                style="font-size: var(--text-title-lg);"
+              >
+                <span data-roi-display={s.id}>{formatFR(s.value)}</span>
+                {s.unit && <span class="mono-caption ml-1 text-[var(--color-ink-low)]">{s.unit}</span>}
+              </span>
+            </div>
+            <input
+              id={s.id}
+              type="range"
+              min={s.min}
+              max={s.max}
+              step={s.step}
+              value={s.value}
+              aria-valuetext={`${s.value}${s.unit ? ' ' + s.unit : ''}`}
+              class="roi-slider"
+              data-roi-input={s.id}
+            />
+            <div class="flex justify-between mono-caption text-[var(--color-ink-low)]">
+              <span>{formatFR(s.min)}{s.unit}</span>
+              <span>{formatFR(s.max)}{s.unit}</span>
+            </div>
+          </div>
+        ))}
+      </fieldset>
+
+      <!-- Output panel -->
+      <div class="bg-[var(--color-surface-low)] p-8 md:p-10 flex flex-col">
+        <div class="mono-caption mb-2 text-[var(--color-ink-low)]">ÉCONOMIE ESTIMÉE</div>
+        <div
+          class="font-display font-semibold leading-[0.98] tracking-[-0.045em] mb-6 text-[var(--color-ink)]"
+          style="font-size: clamp(2.5rem, 5vw, 4rem);"
+        >
+          <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span>
+          <span> €</span>
+          <span class="mono-caption ml-2 align-middle text-[var(--color-ink-low)]">/AN</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 pb-6 border-b border-[var(--color-divider)] mb-6">
+          <div>
+            <div class="mono-caption mb-1 text-[var(--color-ink-low)]">HEURES /AN</div>
+            <div
+              class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-ink)]"
+              style="font-size: 1.5rem;"
+            >
+              <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
+              <span> H</span>
+            </div>
+          </div>
+          <div>
+            <div class="mono-caption mb-1 text-[var(--color-ink-low)]">ROI EN</div>
+            <div
+              class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-violet)]"
+              style="font-size: 1.5rem;"
+            >
+              ~<span data-roi-output="monthsToROI">{monthsToROI}</span> MOIS
+            </div>
+          </div>
+        </div>
+
+        <div class="mono-caption mb-6 leading-[1.6] flex flex-col gap-1 text-[var(--color-ink-low)]">
+          <span>
+            FORMULE : <span data-roi-formula>{cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {initial.hourlyCost}€</span>
+          </span>
+          <span>
+            COÛT PROJET RÉFÉRENCE : <span data-roi-project-price>{formatFR(projectPrice)}</span> € (<span data-roi-project-label>{moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'}</span>)
+          </span>
+          <span data-roi-warning class="text-[var(--color-error)]" hidden={!isCapped}>
+            [!] ESTIMATION PLAFONNÉE. L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
+          </span>
+        </div>
+
+        <a
+          href="https://cal.com/lilian-sevoumian/20min"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary justify-center mt-auto"
+        >
+          Discuter de mon cas · 30 min
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const PROJECT_PRICE_MID = 12000;
+  const PROJECT_PRICE_LOW = 1500;
+  const RECOVERY_RATE = 0.55;
+  const WEEKS_PER_YEAR = 48;
+  const MAX_REASONABLE_HOURS = 20;
+  const MAX_REASONABLE_PEOPLE = 10;
+
+  function formatFR(n: number): string {
+    return n.toLocaleString('fr-FR').replace(/ /g, ' ');
+  }
+
+  function compute(hours: number, people: number, hourlyCost: number) {
+    const cappedHours = Math.min(hours, MAX_REASONABLE_HOURS);
+    const cappedPeople = Math.min(people, MAX_REASONABLE_PEOPLE);
+    const isCapped = hours >= MAX_REASONABLE_HOURS || people >= MAX_REASONABLE_PEOPLE;
+    const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
+    const moneySaved = hoursSaved * hourlyCost;
+    const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
+    const monthsToROI = moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
+    return { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPrice, monthsToROI };
+  }
+
+  // Animated number — easing rAF, identique au comportement React précédent.
+  // Un seul rAF actif par élément ; setTarget annule l'ancien et repart du current.
+  class AnimatedValue {
+    private current: number;
+    private rafId: number | null = null;
+    private duration = 350;
+    private element: HTMLElement;
+    private formatter: (n: number) => string;
+
+    constructor(element: HTMLElement, initial: number, formatter: (n: number) => string = formatFR) {
+      this.element = element;
+      this.current = initial;
+      this.formatter = formatter;
+    }
+
+    setTarget(value: number, prefersReducedMotion: boolean) {
+      if (value === this.current) return;
+      if (prefersReducedMotion) {
+        this.current = value;
+        this.element.textContent = this.formatter(value);
+        return;
+      }
+      const start = this.current;
+      const diff = value - start;
+      const startTime = performance.now();
+      if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+
+      const animate = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / this.duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        this.current = Math.round(start + diff * eased);
+        this.element.textContent = this.formatter(this.current);
+        if (progress < 1) {
+          this.rafId = requestAnimationFrame(animate);
+        } else {
+          this.current = value;
+          this.element.textContent = this.formatter(value);
+          this.rafId = null;
+        }
+      };
+      this.rafId = requestAnimationFrame(animate);
+    }
+  }
+
+  function initROICalc() {
+    const root = document.querySelector<HTMLElement>('[data-roi-calc]');
+    if (!root || root.dataset.roiInit === '1') return;
+    root.dataset.roiInit = '1';
+
+    const inputHours = root.querySelector<HTMLInputElement>('[data-roi-input="roi-hours"]');
+    const inputPeople = root.querySelector<HTMLInputElement>('[data-roi-input="roi-people"]');
+    const inputRate = root.querySelector<HTMLInputElement>('[data-roi-input="roi-rate"]');
+    if (!inputHours || !inputPeople || !inputRate) return;
+
+    const dispHours = root.querySelector<HTMLElement>('[data-roi-display="roi-hours"]')!;
+    const dispPeople = root.querySelector<HTMLElement>('[data-roi-display="roi-people"]')!;
+    const dispRate = root.querySelector<HTMLElement>('[data-roi-display="roi-rate"]')!;
+
+    const outMoney = root.querySelector<HTMLElement>('[data-roi-output="moneySaved"]')!;
+    const outHours = root.querySelector<HTMLElement>('[data-roi-output="hoursSaved"]')!;
+    const outMonths = root.querySelector<HTMLElement>('[data-roi-output="monthsToROI"]')!;
+
+    const formulaEl = root.querySelector<HTMLElement>('[data-roi-formula]')!;
+    const projectPriceEl = root.querySelector<HTMLElement>('[data-roi-project-price]')!;
+    const projectLabelEl = root.querySelector<HTMLElement>('[data-roi-project-label]')!;
+    const warningEl = root.querySelector<HTMLElement>('[data-roi-warning]')!;
+
+    const initialHours = Number(inputHours.value);
+    const initialPeople = Number(inputPeople.value);
+    const initialRate = Number(inputRate.value);
+    const initialComputed = compute(initialHours, initialPeople, initialRate);
+
+    const animMoney = new AnimatedValue(outMoney, initialComputed.moneySaved);
+    const animHours = new AnimatedValue(outHours, initialComputed.hoursSaved);
+    const animMonths = new AnimatedValue(outMonths, initialComputed.monthsToROI, (n) => String(n));
+
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function update() {
+      const hours = Number(inputHours!.value);
+      const people = Number(inputPeople!.value);
+      const hourlyCost = Number(inputRate!.value);
+
+      dispHours.textContent = formatFR(hours);
+      dispPeople.textContent = formatFR(people);
+      dispRate.textContent = formatFR(hourlyCost);
+      inputHours!.setAttribute('aria-valuetext', `${hours} H`);
+      inputPeople!.setAttribute('aria-valuetext', `${people}`);
+      inputRate!.setAttribute('aria-valuetext', `${hourlyCost} €`);
+
+      const c = compute(hours, people, hourlyCost);
+      const reducedMotion = motionQuery.matches;
+
+      animMoney.setTarget(c.moneySaved, reducedMotion);
+      animHours.setTarget(c.hoursSaved, reducedMotion);
+      animMonths.setTarget(c.monthsToROI, reducedMotion);
+
+      formulaEl.textContent = `${c.cappedHours}H × ${c.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${hourlyCost}€`;
+      projectPriceEl.textContent = formatFR(c.projectPrice);
+      projectLabelEl.textContent = c.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
+      warningEl.hidden = !c.isCapped;
+    }
+
+    inputHours.addEventListener('input', update);
+    inputPeople.addEventListener('input', update);
+    inputRate.addEventListener('input', update);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initROICalc);
+  } else {
+    initROICalc();
+  }
+  document.addEventListener('astro:page-load', initROICalc);
+</script>
