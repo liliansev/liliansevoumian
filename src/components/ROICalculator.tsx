@@ -75,8 +75,8 @@ function MonoSlider({ id, label, unit = '', min, max, step = 1, value, onChange 
           {label}
         </label>
         <span
-          className="font-display font-semibold tabular-nums text-2xl tracking-[-0.02em]"
-          style={{ color: 'var(--color-ink)' }}
+          className="font-display font-semibold tabular-nums tracking-[-0.02em]"
+          style={{ color: 'var(--color-ink)', fontSize: 'var(--text-title-lg)' }}
         >
           {formatFR(value)}
           <span className="mono-caption ml-1" style={{ color: 'var(--color-ink-low)' }}>
