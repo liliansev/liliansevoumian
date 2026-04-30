@@ -21,16 +21,16 @@ const {
   class: className = '',
 } = Astro.props;
 
-// Dark mode = box paper opaque + border (le titre tranche sur fond ink)
-// Light mode = bg-paper sans border (le pattern minimaliste validé en v2)
-// paper-island = reset color heritage dans .section-dark
+// Dans les deux modes, le bloc titre revendique sa cellule sur la grille :
+// bordure 1px divider + paper opaque + grid-corner aux 4 angles (rendus côté section).
+// paper-island reset le color heritage dans .section-dark.
 const titleBlockClasses = dark
   ? 'paper-island inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6'
-  : 'inline-block bg-[var(--color-paper)] py-2 pr-2';
+  : 'inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6';
 
 const bodyBlockClasses = dark
   ? 'paper-island bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3'
-  : 'bg-[var(--color-paper)] py-2 pr-2 mt-4';
+  : 'bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3';
 
 const titleColor = 'text-[var(--color-ink)]';
 const bodyColor = 'text-[var(--color-ink-mid)]';
