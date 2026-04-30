@@ -535,7 +535,6 @@ a, button, input, textarea, select,
 .card-interactive {
   cursor: pointer;
   position: relative;
-  overflow: hidden;
 }
 
 .card-interactive:hover {
@@ -547,18 +546,19 @@ a, button, input, textarea, select,
 }
 
 /* Scan line — au hover, une ligne 1px violet glisse du top au bottom de la card.
-   Signature "le système te scanne", subtle mais reconnaissable. */
+   Background-position animé (vs transform translateY) pour ne pas avoir besoin
+   d'overflow:hidden sur la card (sinon clip les grid-corners à -4px). */
 .card-interactive::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--color-violet) 50%, transparent);
+  inset: 0;
+  background-image: linear-gradient(to right, transparent, var(--color-violet) 50%, transparent);
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(0);
+  border-radius: inherit;
 }
 
 .card-interactive:hover::after {
@@ -566,10 +566,10 @@ a, button, input, textarea, select,
 }
 
 @keyframes card-scan {
-  0% { transform: translateY(0); opacity: 0; }
+  0% { background-position: 0 0; opacity: 0; }
   10% { opacity: 1; }
   90% { opacity: 1; }
-  100% { transform: translateY(2000%); opacity: 0; }
+  100% { background-position: 0 100%; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

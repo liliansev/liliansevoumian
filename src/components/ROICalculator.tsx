@@ -185,8 +185,13 @@ export default function ROICalculator() {
           </div>
         </div>
 
-        {/* Calculator grid — light : sliders sur paper, output sur surface-low pour différenciation */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal">
+        {/* Calculator grid — light : sliders sur paper, output sur surface-low pour différenciation.
+            relative + grid-corners pour aligner avec le pattern des autres sections. */}
+        <div className="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal">
+          <span className="grid-corner tl" aria-hidden="true"></span>
+          <span className="grid-corner tr" aria-hidden="true"></span>
+          <span className="grid-corner bl" aria-hidden="true"></span>
+          <span className="grid-corner br" aria-hidden="true"></span>
           {/* Sliders panel */}
           <fieldset className="bg-[var(--color-paper)] p-8 md:p-10 flex flex-col gap-8 border-0 m-0">
             <legend className="sr-only">Paramètres d'estimation ROI</legend>

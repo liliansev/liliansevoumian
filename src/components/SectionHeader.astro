@@ -22,15 +22,16 @@ const {
 } = Astro.props;
 
 // Dans les deux modes, le bloc titre revendique sa cellule sur la grille :
-// bordure 1px divider + paper opaque + grid-corner aux 4 angles (rendus côté section).
+// bordure 1px divider + paper opaque + grid-corner aux 4 angles.
 // paper-island reset le color heritage dans .section-dark.
+// position:relative requis pour ancrer les grid-corner absolute -4px.
 const titleBlockClasses = dark
-  ? 'paper-island inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6'
-  : 'inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6';
+  ? 'paper-island relative inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6'
+  : 'relative inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6';
 
 const bodyBlockClasses = dark
-  ? 'paper-island bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3'
-  : 'bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3';
+  ? 'paper-island relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3'
+  : 'relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-sm)] p-5 md:p-6 mt-3';
 
 const titleColor = 'text-[var(--color-ink)]';
 const bodyColor = 'text-[var(--color-ink-mid)]';
@@ -38,6 +39,11 @@ const bodyColor = 'text-[var(--color-ink-mid)]';
 
 <div class={`reveal mb-12 md:mb-16 ${className}`}>
   <div class={titleBlockClasses}>
+    <span class="grid-corner tl" aria-hidden="true"></span>
+    <span class="grid-corner tr" aria-hidden="true"></span>
+    <span class="grid-corner bl" aria-hidden="true"></span>
+    <span class="grid-corner br" aria-hidden="true"></span>
+
     <div class="section-number" style={dark ? 'margin-bottom: 0.625rem;' : 'margin-bottom: 0.5rem;'}>
       {number} — {label}
     </div>
@@ -51,6 +57,11 @@ const bodyColor = 'text-[var(--color-ink-mid)]';
 
   {body && (
     <div class={bodyBlockClasses} style={`max-width: ${bodyMaxWidth};`}>
+      <span class="grid-corner tl" aria-hidden="true"></span>
+      <span class="grid-corner tr" aria-hidden="true"></span>
+      <span class="grid-corner bl" aria-hidden="true"></span>
+      <span class="grid-corner br" aria-hidden="true"></span>
+
       <p class={`text-[length:var(--text-body-large)] ${bodyColor} leading-[1.5] m-0`}>
         {body}
       </p>
