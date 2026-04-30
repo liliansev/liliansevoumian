@@ -43,23 +43,30 @@ const faqs = [
       titleMaxWidth="22ch"
     />
 
-    <!-- Accordion -->
-    <div class="reveal max-w-[820px]">
+    <!-- Accordion — chaque item est une paper-island bordée qui revendique sa cellule -->
+    <div class="reveal max-w-[820px] flex flex-col gap-3">
       {faqs.map((faq, i) => (
-        <details class="faq-item group">
-          <summary class="faq-summary">
-            <span class="faq-num">Q0{i + 1}</span>
-            <span class="faq-question">{faq.q}</span>
-            <span class="faq-caret" aria-hidden="true">+</span>
-          </summary>
-          <div class="faq-answer">
-            <p>{faq.a}</p>
-          </div>
-        </details>
+        <div class="faq-item">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          <details class="faq-details group">
+            <summary class="faq-summary">
+              <span class="faq-num">Q0{i + 1}</span>
+              <span class="faq-question">{faq.q}</span>
+              <span class="faq-caret" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-answer">
+              <p>{faq.a}</p>
+            </div>
+          </details>
+        </div>
       ))}
 
       <!-- 7e row : sortie de l'accordion, lien direct mailto -->
-      <p class="mono-caption text-[var(--color-ink-low)] mt-8 pt-6 border-t border-[var(--color-divider)]">
+      <p class="mono-caption text-[var(--color-ink-low)] mt-5 pt-6 border-t border-[var(--color-divider)]">
         UNE QUESTION PAS LISTÉE ?
         <a
           href="mailto:bonjour@liliansevoumian.fr"
