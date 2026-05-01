@@ -1,0 +1,143 @@
+---
+/*
+ * Offres.astro — section §04
+ *
+ * Remplace Methode (4 étapes process) ET Pricing (CTA seul) par une section
+ * unique avec 4 cards-services + prix publics HT. Pattern transparence radicale
+ * aligné brand voice opinionated/technique/premium.
+ *
+ * Two-Voice : violet pour les engagements workflow (Vibe Coder régie, Mission
+ * one-shot), ember pour les engagements IA-flavored (Mentoring 3 mois, Coaching).
+ */
+import SectionHeader from './SectionHeader.astro';
+
+interface Offre {
+  num: string;
+  accent: 'violet' | 'ember';
+  title: string;
+  format: string;
+  price: string;
+  description: string;
+  cta: string;
+  href: string;
+}
+
+const offres: Offre[] = [
+  {
+    num: '01',
+    accent: 'violet',
+    title: 'Vibe Coder as a service',
+    format: 'RÉGIE · 1–2 J/SEM',
+    price: '650 €/JOUR',
+    description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
+    cta: 'Réserver un appel',
+    href: 'https://cal.com/lilian-sevoumian/20min',
+  },
+  {
+    num: '02',
+    accent: 'ember',
+    title: 'Mentoring 3 mois',
+    format: 'FORFAIT · ACCOMPAGNEMENT',
+    price: '2 500 €/MOIS',
+    description: "Formation, mentoring et aide à la réalisation de vos projets internes sur 3 mois.",
+    cta: 'Discuter du programme',
+    href: 'https://cal.com/lilian-sevoumian/20min',
+  },
+  {
+    num: '03',
+    accent: 'violet',
+    title: 'Mission perso',
+    format: 'ONE-SHOT · CADRÉ',
+    price: 'À PARTIR DE 1 000 €',
+    description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
+    cta: 'Cadrer la mission',
+    href: 'https://cal.com/lilian-sevoumian/20min',
+  },
+  {
+    num: '04',
+    accent: 'ember',
+    title: 'Coaching ponctuel',
+    format: '1H · CIBLÉ',
+    price: '150 €/H',
+    description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
+    cta: 'Réserver un coaching',
+    href: 'https://cal.com/lilian-sevoumian/20min',
+  },
+];
+---
+
+<section
+  id="offres"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      number="04"
+      label="OFFRES"
+      title="Quatre formats. Prix publics."
+      body="Le bon format dépend de votre besoin : régie longue, mentoring équipe, mission ciblée, ou conseil rapide. Tous les prix sont en HT."
+      titleMaxWidth="22ch"
+      bodyMaxWidth="60ch"
+    />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
+      {offres.map((o) => (
+        <article class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          {/* Header : num + format chip */}
+          <div class="flex items-baseline justify-between gap-3 flex-wrap">
+            <span class="mono-caption text-[var(--color-ink-low)]">{o.num} — OFFRE</span>
+            <span class={`chip ${o.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>
+              {o.format}
+            </span>
+          </div>
+
+          {/* Title */}
+          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
+            {o.title}
+          </h3>
+
+          {/* Prix mono large */}
+          <div
+            class="font-mono font-medium tracking-[0.02em] text-[var(--color-ink)] tabular-nums"
+            style="font-size: var(--text-metric);"
+          >
+            {o.price}
+          </div>
+
+          {/* Description */}
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0 flex-1">
+            {o.description}
+          </p>
+
+          {/* CTA */}
+          <a
+            href={o.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary w-full justify-center"
+          >
+            {o.cta}
+          </a>
+        </article>
+      ))}
+    </div>
+
+    {/* Footer note : prix HT + engagement + délai devis */}
+    <div class="reveal mt-8 mono-caption text-[var(--color-ink-low)] flex flex-wrap items-center gap-x-3 gap-y-2">
+      <span class="inline-flex items-center gap-1.5">
+        <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
+        TOUS LES PRIX SONT EN HT
+      </span>
+      <span aria-hidden="true">·</span>
+      <span>PAS D'ENGAGEMENT</span>
+      <span aria-hidden="true">·</span>
+      <span>DEVIS SOUS 48 H</span>
+    </div>
+  </div>
+</section>

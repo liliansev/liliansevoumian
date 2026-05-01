@@ -1,19 +1,56 @@
 ---
+/*
+ * Stack.astro — section §03 (refonte 2026)
+ *
+ * Stack réelle 2026 : 5 outils, dichotomie Two-Voice :
+ *   Workflow (violet) : n8n, Make, NoCode (Notion/Airtable/Zite)
+ *   IA (ember)        : Claude Code, Claude Cowork
+ *
+ * Layout : single card paper-bordée englobant 5 rows séparées par dividers.
+ * Pattern visuel inspiré du ROI Calculator (sliders panel) — gap-px avec
+ * background divider pour les séparateurs internes propres.
+ */
 import SectionHeader from './SectionHeader.astro';
 
-const workflow = [
-  { name: "Make", useCase: "Workflows multi-app rapides", bottleneck: "Sync HubSpot ↔ Stripe ↔ Slack" },
-  { name: "n8n", useCase: "Logique métier custom + self-host", bottleneck: "Branchements API non standards" },
-  { name: "Airtable", useCase: "Vue ops sans écrire une ligne de SQL", bottleneck: "Source de vérité ops sans dev" },
-];
+interface Tool {
+  name: string;
+  accent: 'violet' | 'ember';
+  description: string;
+  category: string;
+}
 
-const ai = [
-  { name: "Claude", useCase: "Tri + classification + rédaction", bottleneck: "Volumes texte à qualifier" },
-  { name: "GPT-4", useCase: "Function calling + agents structurés", bottleneck: "Scoring, routage, actions conditionnelles en boucle" },
-  { name: "Whisper", useCase: "Transcription + extraction réunions", bottleneck: "Audio → données structurées" },
+const stack: Tool[] = [
+  {
+    name: 'n8n',
+    accent: 'violet',
+    description: 'Automatisations et Agents IA (Cloud ou Self Host).',
+    category: 'WORKFLOW · IA',
+  },
+  {
+    name: 'Make',
+    accent: 'violet',
+    description: 'Automatisations des processus métiers.',
+    category: 'WORKFLOW',
+  },
+  {
+    name: 'NoCode',
+    accent: 'violet',
+    description: "Création d'outils métiers sur Notion, Airtable ou Zite.",
+    category: 'OUTIL MÉTIER',
+  },
+  {
+    name: 'Claude Code',
+    accent: 'ember',
+    description: 'Développement de logiciels internes uniquement.',
+    category: 'IA · DEV',
+  },
+  {
+    name: 'Claude Cowork',
+    accent: 'ember',
+    description: "Mentoring et coaching pour l'utilisation et l'installation des skills.",
+    category: 'IA · COACHING',
+  },
 ];
-
-const glue = ["HubSpot", "Stripe", "Slack", "Pennylane", "Notion", "Pipedrive"];
 ---
 
 <section
@@ -24,97 +61,45 @@ const glue = ["HubSpot", "Stripe", "Slack", "Pennylane", "Notion", "Pipedrive"];
   <div class="relative max-w-[1200px] mx-auto">
 
     <SectionHeader
-      number="04"
+      number="03"
       label="STACK"
-      title="Six outils. Aucun en plus par défaut."
-      body="Pas une grille générique d'icônes. Les outils que j'utilise tous les jours. Le reste passe par API ou webhook quand le besoin est là."
-      titleMaxWidth="20ch"
-      bodyMaxWidth="55ch"
+      title="La stack 2026."
+      body="Cinq outils, choisis pour leur fit avec votre besoin. Pas une checklist exhaustive, ce que j'utilise tous les jours."
+      titleMaxWidth="18ch"
+      bodyMaxWidth="60ch"
     />
 
-    <!-- Two-column stack — chaque voie est une cellule autonome (Two-Voice : pas de wrapper unifié) -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-
-      <!-- Voie 1 — Workflow (violet) — frame autonome -->
-      <div class="relative bg-[var(--color-paper)] p-8 md:p-10 reveal flex flex-col border border-[var(--color-divider)] rounded-[var(--radius-md)]">
-        <span class="grid-corner tl" aria-hidden="true"></span>
-        <span class="grid-corner tr" aria-hidden="true"></span>
-        <span class="grid-corner bl" aria-hidden="true"></span>
-        <span class="grid-corner br" aria-hidden="true"></span>
-        <div class="flex items-baseline justify-between mb-6 pb-4 border-b border-[var(--color-divider)]">
-          <div>
-            <div class="mono-caption text-[var(--color-ink-low)] mb-1">VOIE 1</div>
-            <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">
-              Workflow
-            </h3>
-          </div>
-          <span class="mono-caption text-[var(--color-violet-deep)]">CŒUR DE STACK</span>
-        </div>
-
-        <div class="flex flex-col gap-px bg-[var(--color-divider)] -mx-1">
-          {workflow.map((tool) => (
-            <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 px-1 py-3">
-              <span class="chip chip-violet self-start">{tool.name}</span>
-              <div class="flex flex-col gap-1 min-w-0">
-                <span class="text-[var(--color-ink)] text-[length:var(--text-body-sm)] leading-[1.4]">{tool.useCase}</span>
-                <span class="mono-caption text-[var(--color-ink-low)] break-words">→ {tool.bottleneck}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <!-- Voie 2 — Intelligence (ember) — frame autonome -->
-      <div class="relative bg-[var(--color-paper)] p-8 md:p-10 reveal flex flex-col border border-[var(--color-divider)] rounded-[var(--radius-md)]">
-        <span class="grid-corner tl" aria-hidden="true"></span>
-        <span class="grid-corner tr" aria-hidden="true"></span>
-        <span class="grid-corner bl" aria-hidden="true"></span>
-        <span class="grid-corner br" aria-hidden="true"></span>
-        <div class="flex items-baseline justify-between mb-6 pb-4 border-b border-[var(--color-divider)]">
-          <div>
-            <div class="mono-caption text-[var(--color-ink-low)] mb-1">VOIE 2</div>
-            <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">
-              IA opérationnelle
-            </h3>
-          </div>
-          <span class="mono-caption text-[var(--color-ember-deep)]">CŒUR DE STACK</span>
-        </div>
-
-        <div class="flex flex-col gap-px bg-[var(--color-divider)] -mx-1">
-          {ai.map((tool) => (
-            <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 px-1 py-3">
-              <span class="chip chip-ember self-start">{tool.name}</span>
-              <div class="flex flex-col gap-1 min-w-0">
-                <span class="text-[var(--color-ink)] text-[length:var(--text-body-sm)] leading-[1.4]">{tool.useCase}</span>
-                <span class="mono-caption text-[var(--color-ink-low)] break-words">→ {tool.bottleneck}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Voie 3 — Glue connecteurs courants -->
-    <div class="relative reveal mt-3 bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)]">
+    {/* Card unique paper-bordée englobant les 5 rows */}
+    <div class="relative reveal bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
       <span class="grid-corner tl" aria-hidden="true"></span>
       <span class="grid-corner tr" aria-hidden="true"></span>
       <span class="grid-corner bl" aria-hidden="true"></span>
       <span class="grid-corner br" aria-hidden="true"></span>
-      <div class="p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex items-baseline gap-4 flex-wrap">
-          <span class="mono-caption text-[var(--color-ink-low)]">VOIE 3</span>
-          <h3 class="font-display font-semibold text-[length:var(--text-title-sm)] tracking-[-0.02em] text-[var(--color-ink)]">
-            Glue connecteurs
-          </h3>
-          <span class="mono-caption text-[var(--color-ink-low)] hidden md:inline">CONNECTÉS À LA DEMANDE</span>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          {glue.map((tool) => (
-            <span class="chip">{tool}</span>
-          ))}
-          <span class="chip chip-dashed">+ 200 AUTRES</span>
-        </div>
+
+      <div class="flex flex-col gap-px bg-[var(--color-divider)]">
+        {stack.map((tool) => (
+          <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto] gap-x-5 gap-y-2 items-baseline px-6 md:px-8 py-5 md:py-6">
+            {/* Chip outil — violet ou ember selon Two-Voice */}
+            <span class={`chip ${tool.accent === 'violet' ? 'chip-violet' : 'chip-ember'} self-start whitespace-nowrap`}>
+              {tool.name}
+            </span>
+
+            {/* Description */}
+            <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] min-w-0">
+              {tool.description}
+            </span>
+
+            {/* Catégorie label, mono-caption à droite (desktop only) */}
+            <span class="hidden md:inline-block mono-caption text-[var(--color-ink-low)] whitespace-nowrap self-center text-right">
+              {tool.category}
+            </span>
+
+            {/* Sur mobile : catégorie en row dessous, span 2 cols */}
+            <span class="md:hidden col-span-2 mono-caption text-[var(--color-ink-low)] -mt-1">
+              {tool.category}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
 
