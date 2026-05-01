@@ -26,10 +26,10 @@ const offres: Offre[] = [
   {
     num: '01',
     accent: 'violet',
-    title: 'Régie dev IA · Claude Code',
+    title: 'Vibe Coder as a service',
     format: 'RÉGIE · 1–2 J/SEM',
     price: '650 €/JOUR',
-    description: "Je rejoins votre équipe pour livrer des automations et des applications web internes. Claude Code en main, vos process en sortie.",
+    description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
     href: 'https://cal.com/lilian-sevoumian/20min',
   },
@@ -49,7 +49,7 @@ const offres: Offre[] = [
     title: 'Mission perso',
     format: 'ONE-SHOT · CADRÉ',
     price: 'À PARTIR DE 1 000 €',
-    description: "Un workflow précis, livré en 2 à 6 semaines. Diagnostic gratuit, devis chiffré, livraison documentée + 30 j SLA.",
+    description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
     cta: 'Cadrer la mission',
     href: 'https://cal.com/lilian-sevoumian/20min',
   },
@@ -84,7 +84,7 @@ const offres: Offre[] = [
          lit le format + prix à droite. Lisible debout entre 2 meetings. -->
     <div class="reveal mb-10 md:mb-12 mono-caption max-w-[760px] grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 items-baseline">
       <span class="text-[var(--color-ink-low)]">RÉGIE LONGUE</span>
-      <span class="text-[var(--color-ink)]">→ RÉGIE DEV IA · 650 €/JOUR</span>
+      <span class="text-[var(--color-ink)]">→ VIBE CODER · 650 €/JOUR</span>
 
       <span class="text-[var(--color-ink-low)]">ÉQUIPE À FORMER</span>
       <span class="text-[var(--color-ink)]">→ MENTORING 3 MOIS · 2 500 €/MOIS</span>
@@ -96,58 +96,51 @@ const offres: Offre[] = [
       <span class="text-[var(--color-ink)]">→ COACHING PONCTUEL · 150 €/H</span>
     </div>
 
-    {/* Grid 12-col alternance 7+5 / 5+7 — rythme visuel zigzag, pas de
-        privilege d'une offre, la grosse card alterne col gauche/droite par ligne. */}
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 lg:gap-4">
-      {offres.map((o, i) => {
-        const wide = i === 0 || i === 3; // Vibe Coder + Coaching = wide
-        const span = wide ? 'md:col-span-7' : 'md:col-span-5';
-        return (
-          <article class={`reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5 ${span}`}>
-            <span class="grid-corner tl" aria-hidden="true"></span>
-            <span class="grid-corner tr" aria-hidden="true"></span>
-            <span class="grid-corner bl" aria-hidden="true"></span>
-            <span class="grid-corner br" aria-hidden="true"></span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
+      {offres.map((o) => (
+        <article class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
 
-            {/* Header : num + format chip */}
-            <div class="flex items-baseline justify-between gap-3 flex-wrap">
-              <span class="mono-caption text-[var(--color-ink-low)]">{o.num} — OFFRE</span>
-              <span class={`chip ${o.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>
-                {o.format}
-              </span>
-            </div>
+          {/* Header : num + format chip */}
+          <div class="flex items-baseline justify-between gap-3 flex-wrap">
+            <span class="mono-caption text-[var(--color-ink-low)]">{o.num} — OFFRE</span>
+            <span class={`chip ${o.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>
+              {o.format}
+            </span>
+          </div>
 
-            {/* Title */}
-            <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
-              {o.title}
-            </h3>
+          {/* Title */}
+          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
+            {o.title}
+          </h3>
 
-            {/* Sur les wide cards, prix + description en row pour exploiter la largeur supplémentaire */}
-            <div class={wide ? 'md:grid md:grid-cols-[auto_1fr] md:gap-x-8 md:items-baseline flex flex-col gap-5' : 'flex flex-col gap-5 flex-1'}>
-              <div
-                class="font-mono font-medium tracking-[0.02em] text-[var(--color-ink)] tabular-nums whitespace-nowrap"
-                style="font-size: var(--text-metric);"
-              >
-                {o.price}
-              </div>
+          {/* Prix mono large */}
+          <div
+            class="font-mono font-medium tracking-[0.02em] text-[var(--color-ink)] tabular-nums"
+            style="font-size: var(--text-metric);"
+          >
+            {o.price}
+          </div>
 
-              <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
-                {o.description}
-              </p>
-            </div>
+          {/* Description */}
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0 flex-1">
+            {o.description}
+          </p>
 
-            {/* CTA — push to bottom */}
-            <a
-              href={o.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-primary w-full sm:w-auto sm:self-start justify-center mt-auto"
-            >
-              {o.cta}
-            </a>
-          </article>
-        );
-      })}
+          {/* CTA */}
+          <a
+            href={o.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary w-full justify-center"
+          >
+            {o.cta}
+          </a>
+        </article>
+      ))}
     </div>
 
     {/* Footer note : prix HT + engagement + délai devis */}
