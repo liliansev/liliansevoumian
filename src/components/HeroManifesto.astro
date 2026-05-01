@@ -37,11 +37,14 @@
       </span>
     </div>
 
-    <!-- Split layout : hero block gauche + workflow live droite -->
-    <div class="reveal grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-8 mb-10 md:mb-12">
+    <!-- Split asymétrique : hero block gauche autonome (statement complet) +
+         workflow live droite alignée bottom (flotte sur la moitié basse).
+         L'asymétrie verticale crée le rythme — le hero block "ancre", le
+         workflow "ponctue". -->
+    <div class="reveal grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 lg:gap-10 lg:items-end mb-10 md:mb-16">
 
-      <!-- Hero block — H1 + sous-titre + mono-signature -->
-      <div class="hero-manifesto-block relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8">
+      <!-- Hero block — statement autonome : H1 + sous-titre + microdata + CTA -->
+      <div class="hero-manifesto-block relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-6 md:gap-7">
         <span class="grid-corner tl" aria-hidden="true"></span>
         <span class="grid-corner tr" aria-hidden="true"></span>
         <span class="grid-corner bl" aria-hidden="true"></span>
@@ -53,7 +56,7 @@
           Automatisez 15 h par semaine grâce à l'IA et l'automation.
         </h1>
 
-        <div class="border-t border-[var(--color-divider)] mt-6 md:mt-7 pt-5 md:pt-6">
+        <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6">
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[60ch]">
             Je réalise des workflows n8n, Make et j'utilise Claude Code
             pour créer des applications métiers.
@@ -63,12 +66,22 @@
             500+ WORKFLOWS · 2 000 H /MOIS · 8 ANS
           </div>
         </div>
+
+        <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+          <a
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary w-full sm:w-auto"
+          >
+            Cadrer un premier sprint
+          </a>
+          <span class="mono-caption text-[var(--color-ink-low)]">BASÉ À PARIS · REMOTE-FIRST</span>
+        </div>
       </div>
 
-      <!-- Workflow live — graphe SVG 2D, cycle d'orchestration ~2.4s
-           Trigger → IA central (ember) → 3 actions parallèles (violet)
-           Lignes courbes Bezier, dots qui voyagent via offset-path,
-           subtle glow drop-shadow sur l'état actif. -->
+      <!-- Workflow live — aligné bottom (lg), démarre à mi-hauteur sur desktop.
+           Le décalage vertical crée l'asymétrie sans casser la grille. -->
       <div
         class="hero-workflow relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6 flex flex-col"
         data-hero-workflow
@@ -123,27 +136,6 @@
         </svg>
       </div>
 
-    </div>
-
-    <!-- CTA unique -->
-    <div class="reveal mb-16 md:mb-20">
-      <a
-        href="https://cal.com/lilian-sevoumian/20min"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn-primary w-full sm:w-auto"
-      >
-        Cadrer un premier sprint
-      </a>
-    </div>
-
-    <!-- Microdata strip -->
-    <div class="reveal flex flex-wrap items-center gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)]">
-      <span>BASÉ À PARIS</span>
-      <span aria-hidden="true">·</span>
-      <span>500+ WORKFLOWS</span>
-      <span aria-hidden="true">·</span>
-      <span>2 000 H /MOIS</span>
     </div>
 
   </div>

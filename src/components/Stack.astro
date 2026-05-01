@@ -1,55 +1,31 @@
 ---
 /*
- * Stack.astro — section §03 (refonte 2026)
+ * Stack.astro — section §03
  *
- * Stack réelle 2026 : 5 outils, dichotomie Two-Voice :
- *   Workflow (violet) : n8n, Make, NoCode (Notion/Airtable/Zite)
- *   IA (ember)        : Claude Code, Claude Cowork
+ * Layout 2 colonnes Two-Voice : workflow/ (violet, 3 outils) à gauche,
+ * ai/ (ember, 2 outils) à droite. La Two-Voice Rule devient une partition
+ * spatiale littérale. Mobile : stacked vertical avec headers catégorie.
  *
- * Layout : single card paper-bordée englobant 5 rows séparées par dividers.
- * Pattern visuel inspiré du ROI Calculator (sliders panel) — gap-px avec
- * background divider pour les séparateurs internes propres.
+ * Card unique englobante avec dividers internes (gap-px + bg-divider).
+ * Pattern hérité du ROI Calculator (sliders panel).
  */
 import SectionHeader from './SectionHeader.astro';
 
 interface Tool {
   name: string;
-  accent: 'violet' | 'ember';
   description: string;
   category: string;
 }
 
-const stack: Tool[] = [
-  {
-    name: 'n8n',
-    accent: 'violet',
-    description: 'Automatisations et Agents IA (Cloud ou Self Host).',
-    category: 'WORKFLOW · IA',
-  },
-  {
-    name: 'Make',
-    accent: 'violet',
-    description: 'Automatisations des processus métiers.',
-    category: 'WORKFLOW',
-  },
-  {
-    name: 'NoCode',
-    accent: 'violet',
-    description: "Création d'outils métiers sur Notion, Airtable ou Zite.",
-    category: 'OUTIL MÉTIER',
-  },
-  {
-    name: 'Claude Code',
-    accent: 'ember',
-    description: 'Développement de logiciels internes uniquement.',
-    category: 'IA · DEV',
-  },
-  {
-    name: 'Claude Cowork',
-    accent: 'ember',
-    description: "Mentoring et coaching pour l'utilisation et l'installation des skills.",
-    category: 'IA · COACHING',
-  },
+const workflowTools: Tool[] = [
+  { name: 'n8n',    description: 'Automatisations et Agents IA (Cloud ou Self Host).',                   category: 'WORKFLOW · IA'   },
+  { name: 'Make',   description: 'Automatisations des processus métiers.',                                category: 'WORKFLOW'        },
+  { name: 'NoCode', description: "Création d'outils métiers sur Notion, Airtable ou Zite.",              category: 'OUTIL MÉTIER'    },
+];
+
+const aiTools: Tool[] = [
+  { name: 'Claude Code',   description: 'Développement de logiciels internes uniquement.',                  category: 'IA · DEV'      },
+  { name: 'Claude Cowork', description: "Mentoring et coaching pour l'utilisation et l'installation des skills.", category: 'IA · COACHING' },
 ];
 ---
 
@@ -69,37 +45,57 @@ const stack: Tool[] = [
       bodyMaxWidth="60ch"
     />
 
-    {/* Card unique paper-bordée englobant les 5 rows */}
+    {/* Card unique englobante — split 2 colonnes Two-Voice via gap-px sur fond divider */}
     <div class="relative reveal bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
       <span class="grid-corner tl" aria-hidden="true"></span>
       <span class="grid-corner tr" aria-hidden="true"></span>
       <span class="grid-corner bl" aria-hidden="true"></span>
       <span class="grid-corner br" aria-hidden="true"></span>
 
-      <div class="flex flex-col gap-px bg-[var(--color-divider)]">
-        {stack.map((tool) => (
-          <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto] gap-x-5 gap-y-2 items-baseline px-6 md:px-8 py-5 md:py-6">
-            {/* Chip outil — violet ou ember selon Two-Voice */}
-            <span class={`chip ${tool.accent === 'violet' ? 'chip-violet' : 'chip-ember'} self-start whitespace-nowrap`}>
-              {tool.name}
-            </span>
+      <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-px bg-[var(--color-divider)]">
 
-            {/* Description */}
-            <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] min-w-0 max-w-[60ch]">
-              {tool.description}
-            </span>
-
-            {/* Catégorie label, mono-caption à droite (desktop only) */}
-            <span class="hidden md:inline-block mono-caption text-[var(--color-ink-low)] whitespace-nowrap self-center text-right">
-              {tool.category}
-            </span>
-
-            {/* Sur mobile : catégorie en row dessous, span 2 cols */}
-            <span class="md:hidden col-span-2 mono-caption text-[var(--color-ink-low)] -mt-1">
-              {tool.category}
-            </span>
+        {/* Colonne WORKFLOW (violet) — 3 tools */}
+        <div class="bg-[var(--color-paper)] flex flex-col">
+          <div class="flex items-baseline justify-between gap-3 px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
+            <span class="mono-label text-[var(--color-violet-deep)]">WORKFLOW</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">3 OUTILS</span>
           </div>
-        ))}
+          <div class="flex flex-col gap-px bg-[var(--color-divider)]">
+            {workflowTools.map((tool) => (
+              <div class="bg-[var(--color-paper)] flex flex-col gap-2 px-6 md:px-8 py-5 md:py-6">
+                <div class="flex items-baseline justify-between gap-3 flex-wrap">
+                  <span class="chip chip-violet self-start whitespace-nowrap">{tool.name}</span>
+                  <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{tool.category}</span>
+                </div>
+                <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] max-w-[58ch]">
+                  {tool.description}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Colonne IA (ember) — 2 tools */}
+        <div class="bg-[var(--color-paper)] flex flex-col">
+          <div class="flex items-baseline justify-between gap-3 px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
+            <span class="mono-label text-[var(--color-ember-deep)]">IA</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">2 OUTILS</span>
+          </div>
+          <div class="flex flex-col gap-px bg-[var(--color-divider)] flex-1">
+            {aiTools.map((tool) => (
+              <div class="bg-[var(--color-paper)] flex flex-col gap-2 px-6 md:px-8 py-5 md:py-6 flex-1">
+                <div class="flex items-baseline justify-between gap-3 flex-wrap">
+                  <span class="chip chip-ember self-start whitespace-nowrap">{tool.name}</span>
+                  <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{tool.category}</span>
+                </div>
+                <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] max-w-[58ch]">
+                  {tool.description}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
 
