@@ -76,10 +76,25 @@ const offres: Offre[] = [
       number="04"
       label="OFFRES"
       title="Quatre formats. Pas une plaquette. Pas de revente."
-      body="Le bon format dépend de votre besoin : régie longue, mentoring équipe, mission ciblée, ou conseil rapide. Tous les prix sont en HT."
       titleMaxWidth="26ch"
-      bodyMaxWidth="60ch"
     />
+
+    <!-- Selector : besoin → format. Transforme le catalogue en guide de
+         décision. Le visiteur identifie son cas en mono-caption à gauche,
+         lit le format + prix à droite. Lisible debout entre 2 meetings. -->
+    <div class="reveal mb-10 md:mb-12 mono-caption max-w-[760px] grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 items-baseline">
+      <span class="text-[var(--color-ink-low)]">RÉGIE LONGUE</span>
+      <span class="text-[var(--color-ink)]">→ VIBE CODER · 650 €/JOUR</span>
+
+      <span class="text-[var(--color-ink-low)]">ÉQUIPE À FORMER</span>
+      <span class="text-[var(--color-ink)]">→ MENTORING 3 MOIS · 2 500 €/MOIS</span>
+
+      <span class="text-[var(--color-ink-low)]">MISSION CADRÉE</span>
+      <span class="text-[var(--color-ink)]">→ MISSION PERSO · DÈS 1 000 €</span>
+
+      <span class="text-[var(--color-ink-low)]">QUESTION RAPIDE</span>
+      <span class="text-[var(--color-ink)]">→ COACHING PONCTUEL · 150 €/H</span>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
       {offres.map((o) => (
