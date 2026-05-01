@@ -85,15 +85,30 @@ const faqPageSchema = faqSchema ? {
     <script is:inline>
       // Anti-FOUC theme : pose .dark / .light AVANT render.
       // Priorité : choix utilisateur (localStorage) > prefers-color-scheme OS.
+      // Listener matchMedia : si pas de choix user, suit les changements OS en live.
       (function () {
         try {
           var stored = localStorage.getItem('theme');
-          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var mql = window.matchMedia('(prefers-color-scheme: dark)');
+          var systemDark = mql.matches;
           var isDark = stored === 'dark' || (!stored && systemDark);
           var root = document.documentElement;
           root.classList.toggle('dark', isDark);
           if (stored === 'light') root.classList.add('light');
           root.classList.add('js-ready');
+
+          // Suit l'OS en live (changements pendant la session) sauf si user override
+          mql.addEventListener('change', function (e) {
+            if (localStorage.getItem('theme')) return; // override actif → ignore
+            root.classList.toggle('dark', e.matches);
+            document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+              btn.setAttribute('aria-pressed', String(e.matches));
+              btn.setAttribute(
+                'aria-label',
+                e.matches ? 'Activer le mode clair' : 'Activer le mode sombre'
+              );
+            });
+          });
         } catch (e) {
           document.documentElement.classList.add('js-ready');
         }

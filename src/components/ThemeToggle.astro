@@ -72,10 +72,20 @@ const { class: className = '' } = Astro.props;
 
   function setTheme(next: 'light' | 'dark') {
     const root = document.documentElement;
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const matchesOS = (next === 'dark' && systemDark) || (next === 'light' && !systemDark);
+
     root.classList.toggle('dark', next === 'dark');
-    root.classList.toggle('light', next === 'light');
+    // .light n'est posée que pour override OS=dark vers light explicite
+    root.classList.toggle('light', next === 'light' && systemDark);
+
     try {
-      localStorage.setItem('theme', next);
+      if (matchesOS) {
+        // Le choix coïncide avec l'OS : on retire l'override pour repasser en mode auto
+        localStorage.removeItem('theme');
+      } else {
+        localStorage.setItem('theme', next);
+      }
     } catch (e) {
       console.error('[theme] localStorage write failed', e);
     }
