@@ -1,22 +1,29 @@
 ---
 /*
- * Offres.astro — section §04
+ * Offres.astro — section §04 (overdrive E.1)
  *
- * Remplace Methode (4 étapes process) ET Pricing (CTA seul) par une section
- * unique avec 4 cards-services + prix publics HT. Pattern transparence radicale
- * aligné brand voice opinionated/technique/premium.
+ * Refonte complète : la grille de 4 cards pricing devient un activity log
+ * filtrable. Chaque ligne a un timestamp [HH:MM:SS], une catégorie color-
+ * coded ([WORKFLOW]/[MENTORING]/[MISSION]/[COACHING]), un identifiant, prix,
+ * format. Click sur une ligne = expand inline avec description + CTA.
  *
- * Two-Voice : violet pour les engagements workflow (Vibe Coder régie, Mission
- * one-shot), ember pour les engagements IA-flavored (Mentoring 3 mois, Coaching).
+ * Filter chips multi-select. Lignes filtrées = opacity 0.3 (pas hidden,
+ * restent lisibles).
+ *
+ * Apparition typewriter scroll-driven via IntersectionObserver, cohérence
+ * visuelle avec Stack section (.typewriter-line + .terminal-cursor).
  */
 import SectionHeader from './SectionHeader.astro';
 
 interface Offre {
   num: string;
-  accent: 'violet' | 'ember';
-  title: string;
-  format: string;
+  ts: string;       // timestamp display [HH:MM:SS]
+  cat: 'workflow' | 'mentoring' | 'mission' | 'coaching';
+  catLabel: string; // [WORKFLOW] etc.
+  id: string;       // vibe_coder
   price: string;
+  format: string;
+  title: string;
   description: string;
   cta: string;
   href: string;
@@ -25,44 +32,63 @@ interface Offre {
 const offres: Offre[] = [
   {
     num: '01',
-    accent: 'violet',
+    ts: '14:32:08',
+    cat: 'workflow',
+    catLabel: 'WORKFLOW',
+    id: 'vibe_coder',
+    price: '650 €/jour',
+    format: 'régie 1-2j/sem',
     title: 'Vibe Coder as a service',
-    format: 'RÉGIE · 1–2 J/SEM',
-    price: '650 €/JOUR',
     description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
     href: 'https://cal.com/lilian-sevoumian/20min',
   },
   {
     num: '02',
-    accent: 'ember',
+    ts: '14:32:09',
+    cat: 'mentoring',
+    catLabel: 'MENTORING',
+    id: 'mentoring_3m',
+    price: '2 500 €/mois',
+    format: '3 mois forfait',
     title: 'Mentoring 3 mois',
-    format: 'FORFAIT · ACCOMPAGNEMENT',
-    price: '2 500 €/MOIS',
     description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
     cta: 'Discuter du programme',
     href: 'https://cal.com/lilian-sevoumian/20min',
   },
   {
     num: '03',
-    accent: 'violet',
+    ts: '14:32:10',
+    cat: 'mission',
+    catLabel: 'MISSION',
+    id: 'mission_perso',
+    price: 'dès 1 000 €',
+    format: 'one-shot cadré',
     title: 'Mission perso',
-    format: 'ONE-SHOT · CADRÉ',
-    price: 'À PARTIR DE 1 000 €',
     description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
     cta: 'Cadrer la mission',
     href: 'https://cal.com/lilian-sevoumian/20min',
   },
   {
     num: '04',
-    accent: 'ember',
+    ts: '14:32:11',
+    cat: 'coaching',
+    catLabel: 'COACHING',
+    id: 'coaching_1h',
+    price: '150 €/h',
+    format: 'ponctuel ciblé',
     title: 'Coaching ponctuel',
-    format: '1H · CIBLÉ',
-    price: '150 €/H',
     description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
     cta: 'Réserver un coaching',
     href: 'https://cal.com/lilian-sevoumian/20min',
   },
+];
+
+const categories: Array<{ key: Offre['cat']; label: string }> = [
+  { key: 'workflow',  label: 'WORKFLOW' },
+  { key: 'mentoring', label: 'MENTORING' },
+  { key: 'mission',   label: 'MISSION' },
+  { key: 'coaching',  label: 'COACHING' },
 ];
 ---
 
@@ -79,80 +105,174 @@ const offres: Offre[] = [
       titleMaxWidth="26ch"
     />
 
-    <!-- Selector : besoin → format. Transforme le catalogue en guide de
-         décision. Le visiteur identifie son cas en mono-caption à gauche,
-         lit le format + prix à droite. Lisible debout entre 2 meetings. -->
-    <div class="reveal mb-10 md:mb-12 mono-caption max-w-[760px] grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 items-baseline">
-      <span class="text-[var(--color-ink-low)]">RÉGIE LONGUE</span>
-      <span class="text-[var(--color-ink)]">→ VIBE CODER · 650 €/JOUR</span>
+    <div class="reveal" data-offres-terminal>
 
-      <span class="text-[var(--color-ink-low)]">ÉQUIPE À FORMER</span>
-      <span class="text-[var(--color-ink)]">→ MENTORING 3 MOIS · 2 500 €/MOIS</span>
+      {/* Header bar : log title + filter chips */}
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
+        <div class="mono-caption text-[var(--color-ink-low)]">
+          [ system.lilian.offerings.log ]
+        </div>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrer les offres par catégorie">
+          {categories.map((c) => (
+            <button
+              type="button"
+              class="log-filter mono-caption"
+              data-filter
+              data-cat={c.key}
+              aria-pressed="false"
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      <span class="text-[var(--color-ink-low)]">MISSION CADRÉE</span>
-      <span class="text-[var(--color-ink)]">→ MISSION PERSO · DÈS 1 000 €</span>
-
-      <span class="text-[var(--color-ink-low)]">QUESTION RAPIDE</span>
-      <span class="text-[var(--color-ink)]">→ COACHING PONCTUEL · 150 €/H</span>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
-      {offres.map((o) => (
-        <article class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5">
-          <span class="grid-corner tl" aria-hidden="true"></span>
-          <span class="grid-corner tr" aria-hidden="true"></span>
-          <span class="grid-corner bl" aria-hidden="true"></span>
-          <span class="grid-corner br" aria-hidden="true"></span>
-
-          {/* Header : num + format chip */}
-          <div class="flex items-baseline justify-between gap-3 flex-wrap">
-            <span class="mono-caption text-[var(--color-ink-low)]">{o.num} — OFFRE</span>
-            <span class={`chip ${o.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>
-              {o.format}
-            </span>
+      {/* Activity log rows */}
+      <div class="font-mono text-[length:0.875rem] leading-[1.55] divide-y divide-[var(--color-divider)] border-y border-[var(--color-divider)]" data-log-rows>
+        {offres.map((o) => (
+          <div class="typewriter-line" data-row data-cat={o.cat}>
+            <button
+              type="button"
+              class="log-line w-full"
+              data-row-trigger
+              aria-expanded="false"
+              aria-controls={`offre-detail-${o.num}`}
+            >
+              <span class="log-timestamp hidden md:inline">[{o.ts}]</span>
+              <span class={o.cat === 'mentoring' || o.cat === 'coaching' ? 'log-category-ai' : 'log-category-workflow'}>
+                [{o.catLabel}]
+              </span>
+              <span class="flex flex-wrap items-baseline gap-x-2">
+                <span class="log-id">{o.id}</span>
+                <span class="log-dot">·</span>
+                <span class="log-id">{o.price}</span>
+                <span class="log-dot">·</span>
+                <span class="log-detail">{o.format}</span>
+              </span>
+            </button>
+            <div class="log-detail-panel" id={`offre-detail-${o.num}`}>
+              <div class="log-detail-inner px-3 pt-2 pb-4 grid md:grid-cols-[1fr_auto] gap-4 items-start">
+                <div>
+                  <div class="font-display font-semibold text-[var(--color-ink)] text-[length:var(--text-title)] mb-2 leading-tight">
+                    {o.title}
+                  </div>
+                  <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0 max-w-[58ch] font-sans">
+                    {o.description}
+                  </p>
+                </div>
+                <a
+                  href={o.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-primary justify-center whitespace-nowrap shrink-0"
+                >
+                  {o.cta}
+                </a>
+              </div>
+            </div>
           </div>
+        ))}
+      </div>
 
-          {/* Title */}
-          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
-            {o.title}
-          </h3>
+      {/* Footer + cursor */}
+      <div class="mt-4 flex items-baseline gap-2 mono-caption text-[var(--color-ink-low)] typewriter-line">
+        <span>4 offerings · click any line to expand</span>
+        <span class="terminal-cursor text-[var(--color-ink)]" aria-hidden="true">█</span>
+      </div>
 
-          {/* Prix mono large */}
-          <div
-            class="font-mono font-medium tracking-[0.02em] text-[var(--color-ink)] tabular-nums"
-            style="font-size: var(--text-metric);"
-          >
-            {o.price}
-          </div>
-
-          {/* Description */}
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0 flex-1">
-            {o.description}
-          </p>
-
-          {/* CTA */}
-          <a
-            href={o.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-primary w-full justify-center"
-          >
-            {o.cta}
-          </a>
-        </article>
-      ))}
-    </div>
-
-    {/* Footer note : prix HT + engagement + délai devis */}
-    <div class="reveal mt-8 mono-caption text-[var(--color-ink-low)] flex flex-wrap items-center gap-x-3 gap-y-2">
-      <span class="inline-flex items-center gap-1.5">
-        <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
-        TOUS LES PRIX SONT EN HT
-      </span>
-      <span aria-hidden="true">·</span>
-      <span>PAS D'ENGAGEMENT</span>
-      <span aria-hidden="true">·</span>
-      <span>DEVIS SOUS 48 H</span>
+      {/* Conditions générales */}
+      <div class="mt-6 mono-caption text-[var(--color-ink-low)] flex flex-wrap items-center gap-x-3 gap-y-2">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
+          TOUS LES PRIX SONT EN HT
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>PAS D'ENGAGEMENT</span>
+        <span aria-hidden="true">·</span>
+        <span>DEVIS SOUS 48 H</span>
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  function initOffresTerminal() {
+    const root = document.querySelector<HTMLElement>('[data-offres-terminal]');
+    if (!root) return;
+
+    const lines = root.querySelectorAll<HTMLElement>('.typewriter-line');
+    const rows = root.querySelectorAll<HTMLElement>('[data-row]');
+    const triggers = root.querySelectorAll<HTMLButtonElement>('[data-row-trigger]');
+    const filters = root.querySelectorAll<HTMLButtonElement>('[data-filter]');
+
+    // === Reveal cascade ===
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      lines.forEach((l) => l.classList.add('is-revealed'));
+    } else {
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              lines.forEach((line, i) => {
+                window.setTimeout(() => line.classList.add('is-revealed'), i * 130);
+              });
+              obs.disconnect();
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
+      obs.observe(root);
+    }
+
+    // === Expand inline d'une ligne ===
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const row = trigger.closest<HTMLElement>('[data-row]');
+        const panel = row?.querySelector<HTMLElement>('.log-detail-panel');
+        if (!row || !panel) return;
+        const isOpen = panel.classList.contains('is-open');
+
+        // Ferme tous les autres panels (single-expand pour clarté)
+        rows.forEach((r) => {
+          const p = r.querySelector<HTMLElement>('.log-detail-panel');
+          const t = r.querySelector<HTMLButtonElement>('[data-row-trigger]');
+          if (p !== panel) {
+            p?.classList.remove('is-open');
+            t?.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        panel.classList.toggle('is-open', !isOpen);
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+      });
+    });
+
+    // === Filter chips multi-select ===
+    const activeCats = new Set<string>();
+    filters.forEach((filter) => {
+      filter.addEventListener('click', () => {
+        const cat = filter.dataset.cat ?? '';
+        const wasPressed = filter.getAttribute('aria-pressed') === 'true';
+        filter.setAttribute('aria-pressed', String(!wasPressed));
+        if (wasPressed) activeCats.delete(cat);
+        else activeCats.add(cat);
+
+        // Si aucun filtre actif → tout visible. Sinon → seulement les catégories actives.
+        rows.forEach((row) => {
+          const rowCat = row.dataset.cat ?? '';
+          const isVisible = activeCats.size === 0 || activeCats.has(rowCat);
+          row.classList.toggle('is-filtered', !isVisible);
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOffresTerminal);
+  } else {
+    initOffresTerminal();
+  }
+  document.addEventListener('astro:page-load', initOffresTerminal);
+</script>
