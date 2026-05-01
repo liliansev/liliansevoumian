@@ -29,11 +29,13 @@
 >
   <div class="relative max-w-[1200px] mx-auto px-[var(--spacing-section-x)] pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
 
-    <!-- Eyebrow chip — version courte mobile, longue desktop -->
+    <!-- Eyebrow chip — version courte mobile, longue desktop. Make Niveau 5
+         remonté ici (était enterré en §06) — c'est le seul credential
+         objectivement vérifiable, il doit signaler statut dès l'ouverture. -->
     <div class="reveal mb-6 md:mb-8 inline-block bg-[var(--color-paper)] py-1.5 pr-2">
       <span class="mono-caption text-[var(--color-ink-low)]">
-        <span class="md:hidden">LEAD OPS FREELANCE · IA & AUTOMATION</span>
-        <span class="hidden md:inline">LEAD OPS FREELANCE DEPUIS 2020 · EXPERT IA & AUTOMATION</span>
+        <span class="md:hidden">MAKE NIVEAU 5 · 1ER FRANCE</span>
+        <span class="hidden md:inline">MAKE NIVEAU 5 · 1ER CERTIFIÉ FRANCE · EXPERT IA & AUTOMATION DEPUIS 2020</span>
       </span>
     </div>
 
@@ -51,20 +53,16 @@
         <span class="grid-corner br" aria-hidden="true"></span>
 
         <h1
-          class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[18ch]"
+          class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[22ch]"
         >
-          Automatisez 15 h par semaine grâce à l'IA et l'automation.
+          15 h /sem économisées sur le pipeline ventes. n8n + HubSpot + Claude, en 6 semaines.
         </h1>
 
         <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6">
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[60ch]">
-            Je réalise des workflows n8n, Make et j'utilise Claude Code
-            pour créer des applications métiers.
+            Workflows n8n, automatisations Make, applications métiers avec
+            Claude Code. Pour Heads of Ops, fondateurs et PME en croissance.
           </p>
-
-          <div class="mono-caption text-[var(--color-ink-low)] mt-4 md:mt-5">
-            500+ WORKFLOWS · 2 000 H /MOIS · 8 ANS
-          </div>
         </div>
 
         <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
@@ -76,7 +74,7 @@
           >
             Cadrer un premier sprint
           </a>
-          <span class="mono-caption text-[var(--color-ink-low)]">BASÉ À PARIS · REMOTE-FIRST</span>
+          <span class="mono-caption text-[var(--color-ink-low)]">500+ WORKFLOWS · 2 000 H /MOIS · BASÉ À PARIS</span>
         </div>
       </div>
 
@@ -94,9 +92,9 @@
         <svg class="hero-workflow-svg" viewBox="0 0 500 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <!-- Lignes connectives (état repos = divider, actif = violet) -->
           <path class="hwf-line" data-line="trigger-ia" d="M 70 110 L 175 110" />
-          <path class="hwf-line" data-line="ia-out1" d="M 305 92 Q 360 60 410 30" />
-          <path class="hwf-line" data-line="ia-out2" d="M 305 110 L 410 110" />
-          <path class="hwf-line" data-line="ia-out3" d="M 305 128 Q 360 160 410 190" />
+          <path class="hwf-line" data-line="ia-out1" d="M 305 92 Q 345 60 388 30" />
+          <path class="hwf-line" data-line="ia-out2" d="M 305 110 L 388 110" />
+          <path class="hwf-line" data-line="ia-out3" d="M 305 128 Q 345 160 388 190" />
 
           <!-- Dots qui voyagent le long des paths via offset-path -->
           <circle class="hwf-dot" data-line="trigger-ia" r="3.5" />
@@ -120,18 +118,20 @@
             <text class="hwf-text hwf-text-ia" x="80" y="33" text-anchor="middle">IA AGENT</text>
           </g>
 
-          <!-- Output nodes (3 actions) -->
-          <g class="hwf-node hwf-node-out" data-node="out1" transform="translate(410, 12)">
-            <rect class="hwf-rect" width="82" height="36" rx="18" />
-            <text class="hwf-text" x="41" y="22" text-anchor="middle">SLACK</text>
+          <!-- Output nodes (3 actions) — outils métier spécifiques pour
+               signaler la profondeur de stack (Pennylane facturation,
+               Notion ops, Google Sheets reporting). -->
+          <g class="hwf-node hwf-node-out" data-node="out1" transform="translate(388, 12)">
+            <rect class="hwf-rect" width="104" height="36" rx="18" />
+            <text class="hwf-text" x="52" y="22" text-anchor="middle">PENNYLANE</text>
           </g>
-          <g class="hwf-node hwf-node-out" data-node="out2" transform="translate(410, 92)">
-            <rect class="hwf-rect" width="82" height="36" rx="18" />
-            <text class="hwf-text" x="41" y="22" text-anchor="middle">AIRTABLE</text>
+          <g class="hwf-node hwf-node-out" data-node="out2" transform="translate(388, 92)">
+            <rect class="hwf-rect" width="104" height="36" rx="18" />
+            <text class="hwf-text" x="52" y="22" text-anchor="middle">NOTION</text>
           </g>
-          <g class="hwf-node hwf-node-out" data-node="out3" transform="translate(410, 172)">
-            <rect class="hwf-rect" width="82" height="36" rx="18" />
-            <text class="hwf-text" x="41" y="22" text-anchor="middle">EMAIL</text>
+          <g class="hwf-node hwf-node-out" data-node="out3" transform="translate(388, 172)">
+            <rect class="hwf-rect" width="104" height="36" rx="18" />
+            <text class="hwf-text" x="52" y="22" text-anchor="middle">GOOGLE SHEETS</text>
           </g>
         </svg>
       </div>

@@ -21,17 +21,16 @@ const {
 ---
 
 <div class={`reveal mb-12 md:mb-16 ${className}`}>
-  <div class="relative inline-block bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6">
-    <span class="grid-corner tl" aria-hidden="true"></span>
-    <span class="grid-corner tr" aria-hidden="true"></span>
-    <span class="grid-corner bl" aria-hidden="true"></span>
-    <span class="grid-corner br" aria-hidden="true"></span>
-
-    <div class="section-number" style="margin-bottom: 0.5rem;">
+  {/* Header en flow naturel (block, full-width) plutôt qu'une card flottante
+      en coin. Le section-number devient le repère visuel à gauche, le title
+      respire avec son max-width. Pas de border outer ni corners — la grille
+      technique 1px en background suffit comme structure. */}
+  <div class="section-header-row">
+    <div class="section-number">
       {number} — {label}
     </div>
     <h2
-      class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]"
+      class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"
       style={`max-width: ${titleMaxWidth};`}
     >
       {title}
@@ -47,3 +46,11 @@ const {
     </p>
   )}
 </div>
+
+<style>
+  .section-header-row {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-divider);
+  }
+</style>
