@@ -65,71 +65,75 @@
         </div>
       </div>
 
-      <!-- Workflow live — version hero universelle, 3 nodes (TRIGGER → IA → ACTION),
-           cadence rapide via data-step-delay + data-link-fill (~1s par cycle).
-           Le case study en bas a sa version 4-nodes spécifique au cas client (~2.4s). -->
+      <!-- Workflow live — graphe SVG 2D, cycle d'orchestration ~2.4s
+           Trigger → IA central (ember) → 3 actions parallèles (violet)
+           Lignes courbes Bezier, dots qui voyagent via offset-path,
+           subtle glow drop-shadow sur l'état actif. -->
       <div
-        class="relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6 flex flex-col"
-        data-workflow
-        data-step-delay="200"
-        data-link-fill="150"
+        class="hero-workflow relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6 flex flex-col"
+        data-hero-workflow
       >
         <span class="grid-corner tl" aria-hidden="true"></span>
         <span class="grid-corner tr" aria-hidden="true"></span>
         <span class="grid-corner bl" aria-hidden="true"></span>
         <span class="grid-corner br" aria-hidden="true"></span>
 
-        <div class="mono-caption text-[var(--color-ink-low)] mb-4">WORKFLOW LIVE</div>
-
-        <div class="workflow-flow flex items-stretch justify-between gap-1 my-auto">
-          <!-- Node 1 — TRIGGER (violet, input/event) -->
-          <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-            <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
-                <path d="M5 12h14M13 5l7 7-7 7"/>
-              </svg>
-              <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
-            </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight whitespace-nowrap">TRIGGER</span>
-          </div>
-
-          <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-150 ease-out"></span>
-          </div>
-
-          <!-- Node 2 — IA (ember, intelligence) -->
-          <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-            <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-ember-soft)] flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ember-deep)]" aria-hidden="true">
-                <path d="M12 2 L2 7 L12 12 L22 7 Z"/>
-                <path d="M2 17 L12 22 L22 17"/>
-                <path d="M2 12 L12 17 L22 12"/>
-              </svg>
-              <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-ember)] opacity-0"></span>
-            </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight whitespace-nowrap">IA</span>
-          </div>
-
-          <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-            <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-150 ease-out"></span>
-          </div>
-
-          <!-- Node 3 — ACTION (violet, output) -->
-          <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-            <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-violet-soft)] flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-violet-deep)]" aria-hidden="true">
-                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-              </svg>
-              <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
-            </div>
-            <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight whitespace-nowrap">ACTION</span>
-          </div>
+        <div class="mono-caption text-[var(--color-ink-low)] mb-4 flex items-center justify-between">
+          <span>WORKFLOW LIVE</span>
+          <span class="hwf-status flex items-center gap-1.5">
+            <span class="hwf-pulse w-1.5 h-1.5 rounded-full bg-[var(--color-violet)] inline-block"></span>
+            <span class="text-[var(--color-ink-low)]">ORCHESTRATION</span>
+          </span>
         </div>
 
-        <!-- Bottom row — exécution time, plus rapide que le case study -->
-        <div class="mt-5 pt-4 border-t border-[var(--color-divider)] flex items-center justify-between">
-          <span class="mono-caption text-[var(--color-ink-low)]">EXÉCUTION</span>
-          <span class="mono-caption text-[var(--color-violet-deep)]">~ 1 S</span>
+        <svg class="hero-workflow-svg" viewBox="0 0 500 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <!-- Lignes connectives (état repos = divider, actif = violet) -->
+          <path class="hwf-line" data-line="trigger-ia" d="M 70 110 L 175 110" />
+          <path class="hwf-line" data-line="ia-out1" d="M 305 92 Q 360 60 410 30" />
+          <path class="hwf-line" data-line="ia-out2" d="M 305 110 L 410 110" />
+          <path class="hwf-line" data-line="ia-out3" d="M 305 128 Q 360 160 410 190" />
+
+          <!-- Dots qui voyagent le long des paths via offset-path -->
+          <circle class="hwf-dot" data-line="trigger-ia" r="3.5" />
+          <circle class="hwf-dot" data-line="ia-out1" r="3.5" />
+          <circle class="hwf-dot" data-line="ia-out2" r="3.5" />
+          <circle class="hwf-dot" data-line="ia-out3" r="3.5" />
+
+          <!-- Trigger node (input) -->
+          <g class="hwf-node hwf-node-trigger" data-node="trigger" transform="translate(8, 92)">
+            <rect class="hwf-rect" width="62" height="36" rx="18" />
+            <text class="hwf-text" x="31" y="22" text-anchor="middle">TRIGGER</text>
+          </g>
+
+          <!-- IA central node (gros pill ember) -->
+          <g class="hwf-node hwf-node-ia" data-node="ia" transform="translate(175, 85)">
+            <rect class="hwf-rect" width="130" height="50" rx="25" />
+            <g class="hwf-ia-icon" transform="translate(18, 18)">
+              <path d="M7 2 L1 5 L7 8 L13 5 Z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+              <path d="M1 10 L7 13 L13 10" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+            </g>
+            <text class="hwf-text hwf-text-ia" x="80" y="33" text-anchor="middle">IA AGENT</text>
+          </g>
+
+          <!-- Output nodes (3 actions) -->
+          <g class="hwf-node hwf-node-out" data-node="out1" transform="translate(410, 12)">
+            <rect class="hwf-rect" width="82" height="36" rx="18" />
+            <text class="hwf-text" x="41" y="22" text-anchor="middle">SLACK</text>
+          </g>
+          <g class="hwf-node hwf-node-out" data-node="out2" transform="translate(410, 92)">
+            <rect class="hwf-rect" width="82" height="36" rx="18" />
+            <text class="hwf-text" x="41" y="22" text-anchor="middle">AIRTABLE</text>
+          </g>
+          <g class="hwf-node hwf-node-out" data-node="out3" transform="translate(410, 172)">
+            <rect class="hwf-rect" width="82" height="36" rx="18" />
+            <text class="hwf-text" x="41" y="22" text-anchor="middle">EMAIL</text>
+          </g>
+        </svg>
+
+        <!-- Bottom row — meta orchestration -->
+        <div class="mt-3 pt-3 border-t border-[var(--color-divider)] flex items-center justify-between">
+          <span class="mono-caption text-[var(--color-ink-low)]">EXÉCUTION PARALLÈLE</span>
+          <span class="mono-caption text-[var(--color-violet-deep)]">~ 2,4 S</span>
         </div>
       </div>
 
@@ -171,4 +175,260 @@
       font-size: var(--text-display-hero-lg);
     }
   }
+
+  /* =========================================================================
+     HERO WORKFLOW — graphe SVG 2D avec animation séquentielle premium.
+     Pattern : trigger → IA central → 3 outputs en parallèle. Lignes courbes,
+     dots qui voyagent (offset-path), nodes destination qui pulsent.
+     ========================================================================= */
+
+  .hero-workflow {
+    overflow: hidden;
+  }
+
+  .hero-workflow-svg {
+    width: 100%;
+    height: auto;
+    flex: 1;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  /* Status pulse — petit dot violet qui respire en haut à droite */
+  .hwf-pulse {
+    animation: hwf-pulse-breath 1.6s var(--ease-out-quint) infinite;
+  }
+  @keyframes hwf-pulse-breath {
+    0%, 100% { opacity: 0.45; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  /* Lignes connectives — état repos */
+  .hwf-line {
+    fill: none;
+    stroke: var(--color-divider);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    transition: stroke 280ms var(--ease-out-quint);
+  }
+  /* Lignes — actif (durant le cycle) */
+  .hwf-line.is-active {
+    stroke: var(--color-violet);
+  }
+
+  /* Dots qui voyagent le long des paths */
+  .hwf-dot {
+    fill: var(--color-violet);
+    filter: drop-shadow(0 0 5px var(--color-violet));
+    opacity: 0;
+    offset-distance: 0%;
+    /* offset-path est assigné en JS depuis le d= du path associé pour rester DRY */
+  }
+  .hwf-dot.is-traveling {
+    opacity: 1;
+    offset-distance: 100%;
+    transition:
+      offset-distance 720ms var(--ease-out-expo),
+      opacity 100ms ease-out;
+  }
+
+  /* Nodes — repos */
+  .hwf-rect {
+    fill: var(--color-paper);
+    stroke: var(--color-divider);
+    stroke-width: 1;
+    transition:
+      stroke 240ms var(--ease-out-quint),
+      stroke-width 240ms var(--ease-out-quint),
+      filter 320ms var(--ease-out-quint);
+  }
+  .hwf-text {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    fill: var(--color-ink-mid);
+    transition: fill 240ms var(--ease-out-quint);
+  }
+
+  /* IA central — toujours emphasis ember en repos */
+  .hwf-node-ia .hwf-rect {
+    fill: var(--color-ember-soft);
+    stroke: var(--color-ember-deep);
+    stroke-width: 1.5;
+  }
+  .hwf-node-ia .hwf-text-ia {
+    fill: var(--color-ember-deep);
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .hwf-ia-icon {
+    color: var(--color-ember-deep);
+    transition: color 240ms var(--ease-out-quint);
+  }
+
+  /* Active state — node pulse violet */
+  .hwf-node.is-active .hwf-rect {
+    stroke: var(--color-violet);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 8px oklch(0.55 0.22 290 / 0.45));
+  }
+  .hwf-node.is-active .hwf-text {
+    fill: var(--color-violet-deep);
+  }
+  /* IA active — ember pulse renforcé */
+  .hwf-node-ia.is-active .hwf-rect {
+    stroke: var(--color-ember);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px oklch(0.66 0.14 45 / 0.55));
+  }
+  .hwf-node-ia.is-active .hwf-text-ia {
+    fill: var(--color-ember);
+  }
+  .hwf-node-ia.is-active .hwf-ia-icon {
+    color: var(--color-ember);
+  }
+
+  /* Reduced motion : pas d'anim, état lisible */
+  @media (prefers-reduced-motion: reduce) {
+    .hwf-pulse { animation: none; opacity: 0.6; }
+    .hwf-line { stroke: var(--color-divider) !important; }
+    .hwf-dot { display: none; }
+    .hwf-node.is-active .hwf-rect { filter: none !important; }
+    .hwf-rect, .hwf-text, .hwf-line { transition: none !important; }
+  }
 </style>
+
+<script>
+  (function () {
+    const root = document.querySelector<HTMLElement>('[data-hero-workflow]');
+    if (!root) return;
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return; // bail — état statique lisible
+
+    // Sync offset-path des dots depuis le d= des lignes (DRY)
+    const dotEls = Array.from(root.querySelectorAll<SVGCircleElement>('.hwf-dot'));
+    const lineEls = Array.from(root.querySelectorAll<SVGPathElement>('.hwf-line'));
+
+    dotEls.forEach((dot) => {
+      const lineKey = dot.getAttribute('data-line');
+      const line = lineEls.find((l) => l.getAttribute('data-line') === lineKey);
+      if (!line) return;
+      const d = line.getAttribute('d');
+      if (d) (dot.style as any).offsetPath = `path("${d}")`;
+    });
+
+    const lineByKey = (key: string) =>
+      lineEls.find((l) => l.getAttribute('data-line') === key) || null;
+    const dotByKey = (key: string) =>
+      dotEls.find((d) => d.getAttribute('data-line') === key) || null;
+    const nodeByKey = (key: string) =>
+      root.querySelector<SVGGElement>(`.hwf-node[data-node="${key}"]`);
+
+    // Timing en ms — orchestration ~2400ms, pause ~600ms = cycle 3s
+    const TIMING = {
+      triggerArm: 0,
+      triggerToIA: 220,
+      iaPulse: 880,
+      out1: 1080,
+      out2: 1380,
+      out3: 1680,
+      cleanup: 2400,
+      cycleEnd: 3000,
+    };
+
+    let timeouts: number[] = [];
+
+    function clearTimeouts() {
+      timeouts.forEach((id) => window.clearTimeout(id));
+      timeouts = [];
+    }
+
+    function reset() {
+      lineEls.forEach((l) => l.classList.remove('is-active'));
+      dotEls.forEach((d) => {
+        d.classList.remove('is-traveling');
+        // Force reflow pour que la prochaine activation transitionne bien
+        void (d as unknown as HTMLElement).getBoundingClientRect();
+      });
+      root!
+        .querySelectorAll<SVGGElement>('.hwf-node')
+        .forEach((n) => n.classList.remove('is-active'));
+    }
+
+    function fireSegment(lineKey: string, destNodeKey: string, atMs: number) {
+      timeouts.push(
+        window.setTimeout(() => {
+          lineByKey(lineKey)?.classList.add('is-active');
+          dotByKey(lineKey)?.classList.add('is-traveling');
+          // Le node destination s'allume environ à mi-trajet du dot
+          timeouts.push(
+            window.setTimeout(() => {
+              nodeByKey(destNodeKey)?.classList.add('is-active');
+            }, 360),
+          );
+        }, atMs),
+      );
+    }
+
+    function cycle() {
+      reset();
+
+      // T=0 : trigger s'allume (état armé)
+      timeouts.push(
+        window.setTimeout(() => {
+          nodeByKey('trigger')?.classList.add('is-active');
+        }, TIMING.triggerArm),
+      );
+
+      // T=220 : trigger → IA, IA pulse à mi-trajet
+      fireSegment('trigger-ia', 'ia', TIMING.triggerToIA);
+
+      // T=1080-1680 : IA broadcast vers les 3 outputs en cascade
+      fireSegment('ia-out1', 'out1', TIMING.out1);
+      fireSegment('ia-out2', 'out2', TIMING.out2);
+      fireSegment('ia-out3', 'out3', TIMING.out3);
+
+      // T=2400 : pause avant prochain cycle (laisse les outputs respirer "completed")
+      timeouts.push(window.setTimeout(reset, TIMING.cleanup));
+    }
+
+    // Démarre le cycle quand la card entre en viewport, stop quand elle sort
+    let intervalId: number | null = null;
+    let started = false;
+
+    function start() {
+      if (started) return;
+      started = true;
+      cycle();
+      intervalId = window.setInterval(cycle, TIMING.cycleEnd);
+    }
+
+    function stop() {
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
+        intervalId = null;
+      }
+      clearTimeouts();
+      reset();
+      started = false;
+    }
+
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) start();
+            else stop();
+          });
+        },
+        { threshold: 0.25 },
+      );
+      obs.observe(root);
+    } else {
+      start();
+    }
+  })();
+</script>
