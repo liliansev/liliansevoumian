@@ -1,55 +1,25 @@
 ---
 /*
- * Stack.astro — section §03 (refonte 2026)
+ * Stack.astro — section §03 (overdrive E.2)
  *
- * Stack réelle 2026 : 5 outils, dichotomie Two-Voice :
- *   Workflow (violet) : n8n, Make, NoCode (Notion/Airtable/Zite)
- *   IA (ember)        : Claude Code, Claude Cowork
+ * Refonte complète : la stack devient l'output d'une commande Unix `tree`.
+ * Two-Voice Rule devient une hiérarchie spatiale visible (workflow/ vs ai/).
+ * Apparition typewriter scroll-driven via IntersectionObserver + clip-path.
  *
- * Layout : single card paper-bordée englobant 5 rows séparées par dividers.
- * Pattern visuel inspiré du ROI Calculator (sliders panel) — gap-px avec
- * background divider pour les séparateurs internes propres.
+ * Layout : CSS grid pour l'alignement des colonnes (prefix · name · dot · desc).
+ * On ne s'appuie PAS sur whitespace-pre car HTML collapse les espaces multiples.
  */
 import SectionHeader from './SectionHeader.astro';
 
-interface Tool {
-  name: string;
-  accent: 'violet' | 'ember';
-  description: string;
-  category: string;
-}
+const workflowFiles = [
+  { name: 'n8n',    desc: 'automatisations + agents IA · cloud ou self-host', last: false },
+  { name: 'make',   desc: 'process métiers · visuel',                          last: false },
+  { name: 'nocode', desc: 'notion · airtable · zite · outils métier',         last: true  },
+];
 
-const stack: Tool[] = [
-  {
-    name: 'n8n',
-    accent: 'violet',
-    description: 'Automatisations et Agents IA (Cloud ou Self Host).',
-    category: 'WORKFLOW · IA',
-  },
-  {
-    name: 'Make',
-    accent: 'violet',
-    description: 'Automatisations des processus métiers.',
-    category: 'WORKFLOW',
-  },
-  {
-    name: 'NoCode',
-    accent: 'violet',
-    description: "Création d'outils métiers sur Notion, Airtable ou Zite.",
-    category: 'OUTIL MÉTIER',
-  },
-  {
-    name: 'Claude Code',
-    accent: 'ember',
-    description: 'Développement de logiciels internes uniquement.',
-    category: 'IA · DEV',
-  },
-  {
-    name: 'Claude Cowork',
-    accent: 'ember',
-    description: "Mentoring et coaching pour l'utilisation et l'installation des skills.",
-    category: 'IA · COACHING',
-  },
+const aiFiles = [
+  { name: 'claude-code',   desc: 'dev logiciels internes uniquement', last: false },
+  { name: 'claude-cowork', desc: 'mentoring · coaching · skills',     last: true  },
 ];
 ---
 
@@ -69,39 +39,102 @@ const stack: Tool[] = [
       bodyMaxWidth="60ch"
     />
 
-    {/* Card unique paper-bordée englobant les 5 rows */}
-    <div class="relative reveal bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
-      <span class="grid-corner tl" aria-hidden="true"></span>
-      <span class="grid-corner tr" aria-hidden="true"></span>
-      <span class="grid-corner bl" aria-hidden="true"></span>
-      <span class="grid-corner br" aria-hidden="true"></span>
+    <div class="reveal max-w-[760px] font-mono text-[length:0.875rem] leading-[1.85] text-[var(--color-ink)]" data-stack-terminal>
 
-      <div class="flex flex-col gap-px bg-[var(--color-divider)]">
-        {stack.map((tool) => (
-          <div class="bg-[var(--color-paper)] grid grid-cols-[auto_1fr] md:grid-cols-[auto_1fr_auto] gap-x-5 gap-y-2 items-baseline px-6 md:px-8 py-5 md:py-6">
-            {/* Chip outil — violet ou ember selon Two-Voice */}
-            <span class={`chip ${tool.accent === 'violet' ? 'chip-violet' : 'chip-ember'} self-start whitespace-nowrap`}>
-              {tool.name}
-            </span>
+      {/* Prompt header */}
+      <div class="mono-caption text-[var(--color-ink-low)] mb-4">
+        $ tree /lilian/stack/
+      </div>
 
-            {/* Description */}
-            <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] min-w-0 max-w-[60ch]">
-              {tool.description}
-            </span>
+      {/* Root */}
+      <div class="typewriter-line stack-tree-name">/lilian/stack/</div>
 
-            {/* Catégorie label, mono-caption à droite (desktop only) */}
-            <span class="hidden md:inline-block mono-caption text-[var(--color-ink-low)] whitespace-nowrap self-center text-right">
-              {tool.category}
-            </span>
+      {/* workflow/ directory */}
+      <div class="typewriter-line">
+        <div class="stack-tree-row-dir">
+          <span class="stack-tree-char">├──</span>
+          <span class="stack-tree-dir-workflow">workflow/</span>
+        </div>
+      </div>
 
-            {/* Sur mobile : catégorie en row dessous, span 2 cols */}
-            <span class="md:hidden col-span-2 mono-caption text-[var(--color-ink-low)] -mt-1">
-              {tool.category}
-            </span>
+      {/* workflow/ files */}
+      {workflowFiles.map((f) => (
+        <div class="typewriter-line">
+          <div class="stack-tree-row stack-tree-leaf">
+            <span class="stack-tree-char">{f.last ? '│   └──' : '│   ├──'}</span>
+            <span class="stack-tree-name">{f.name}</span>
+            <span class="stack-tree-dot">·</span>
+            <span class="stack-tree-desc">{f.desc}</span>
           </div>
-        ))}
+        </div>
+      ))}
+
+      {/* ai/ directory */}
+      <div class="typewriter-line">
+        <div class="stack-tree-row-dir">
+          <span class="stack-tree-char">└──</span>
+          <span class="stack-tree-dir-ai">ai/</span>
+        </div>
+      </div>
+
+      {/* ai/ files */}
+      {aiFiles.map((f) => (
+        <div class="typewriter-line">
+          <div class="stack-tree-row stack-tree-leaf">
+            <span class="stack-tree-char">{f.last ? '    └──' : '    ├──'}</span>
+            <span class="stack-tree-name">{f.name}</span>
+            <span class="stack-tree-dot">·</span>
+            <span class="stack-tree-desc">{f.desc}</span>
+          </div>
+        </div>
+      ))}
+
+      {/* Footer + cursor */}
+      <div class="mt-4 flex items-baseline gap-2 mono-caption text-[var(--color-ink-low)] typewriter-line">
+        <span>2 directories scanned · 5 files</span>
+        <span class="terminal-cursor text-[var(--color-ink)]" aria-hidden="true">█</span>
       </div>
     </div>
 
   </div>
 </section>
+
+<script>
+  function initStackTerminal() {
+    const root = document.querySelector<HTMLElement>('[data-stack-terminal]');
+    if (!root) return;
+
+    const lines = root.querySelectorAll<HTMLElement>('.typewriter-line');
+    if (lines.length === 0) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      lines.forEach((l) => l.classList.add('is-revealed'));
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            // Cascade reveal : 130ms par ligne pour un rythme "lu calmement".
+            lines.forEach((line, i) => {
+              window.setTimeout(() => line.classList.add('is-revealed'), i * 130);
+            });
+            obs.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25 },
+    );
+
+    obs.observe(root);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStackTerminal);
+  } else {
+    initStackTerminal();
+  }
+  document.addEventListener('astro:page-load', initStackTerminal);
+</script>
