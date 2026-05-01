@@ -100,7 +100,7 @@ const minor = [
               </div>
 
               <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-                <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+                <span class="workflow-link-fill absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[var(--color-violet)] transition-transform duration-500 ease-out"></span>
               </div>
 
               <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
@@ -115,7 +115,7 @@ const minor = [
               </div>
 
               <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-                <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+                <span class="workflow-link-fill absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[var(--color-violet)] transition-transform duration-500 ease-out"></span>
               </div>
 
               <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
@@ -129,7 +129,7 @@ const minor = [
               </div>
 
               <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-                <span class="workflow-link-fill absolute inset-y-0 left-0 w-0 bg-[var(--color-violet)] transition-[width] duration-500 ease-out"></span>
+                <span class="workflow-link-fill absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[var(--color-violet)] transition-transform duration-500 ease-out"></span>
               </div>
 
               <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
@@ -249,7 +249,7 @@ const minor = [
 
     const runOnce = () => {
       dots.forEach((d) => d.classList.remove('is-active'));
-      links.forEach((l) => (l.style.width = '0%'));
+      links.forEach((l) => (l.style.transform = 'scaleX(0)'));
       pulses.forEach((p) => p.classList.remove('is-pulsing'));
 
       const triggerStep = (i: number) => {
@@ -264,7 +264,7 @@ const minor = [
         }
         if (i < links.length) {
           window.setTimeout(() => {
-            links[i].style.width = '100%';
+            links[i].style.transform = 'scaleX(1)';
           }, 200);
         }
         window.setTimeout(() => triggerStep(i + 1), stepDelay + linkFillTime);
@@ -294,7 +294,7 @@ const minor = [
     if (prefersReducedMotion) {
       flows.forEach((root) => {
         root.querySelectorAll<HTMLElement>('.workflow-dot').forEach((d) => d.classList.add('is-active'));
-        root.querySelectorAll<HTMLElement>('.workflow-link-fill').forEach((l) => (l.style.width = '100%'));
+        root.querySelectorAll<HTMLElement>('.workflow-link-fill').forEach((l) => (l.style.transform = 'scaleX(1)'));
       });
       return;
     }

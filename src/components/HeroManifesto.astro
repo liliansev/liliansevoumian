@@ -203,7 +203,6 @@
   /* Dots qui voyagent le long des paths */
   .hwf-dot {
     fill: var(--color-violet);
-    filter: drop-shadow(0 0 5px var(--color-violet));
     opacity: 0;
     offset-distance: 0%;
     /* offset-path est assigné en JS depuis le d= du path associé pour rester DRY */
@@ -256,19 +255,18 @@
   .hwf-node.is-active .hwf-rect {
     stroke: var(--color-violet);
     stroke-width: 2;
-    filter: drop-shadow(0 0 8px oklch(0.55 0.22 290 / 0.45));
+    fill: var(--color-violet-soft);
   }
   .hwf-node.is-active .hwf-text {
     fill: var(--color-violet-deep);
   }
   /* IA active — ember pulse renforcé */
   .hwf-node-ia.is-active .hwf-rect {
-    stroke: var(--color-ember);
-    stroke-width: 2;
-    filter: drop-shadow(0 0 10px oklch(0.66 0.14 45 / 0.55));
+    stroke: var(--color-ember-deep);
+    stroke-width: 2.5;
   }
   .hwf-node-ia.is-active .hwf-text-ia {
-    fill: var(--color-ember);
+    fill: var(--color-ember-deep);
   }
   .hwf-node-ia.is-active .hwf-ia-icon {
     color: var(--color-ember);
