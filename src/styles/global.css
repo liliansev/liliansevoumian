@@ -1055,7 +1055,7 @@ footer a {
    CSS plutôt que via espaces préservés (HTML collapse les whitespace). */
 .stack-tree-row {
   display: grid;
-  grid-template-columns: 8ch 14ch auto minmax(0, 1fr);
+  grid-template-columns: 8ch 14ch auto 1fr;
   align-items: baseline;
   font-feature-settings: "tnum" 1;
 }
@@ -1072,7 +1072,7 @@ footer a {
 .stack-tree-dir-ai { color: var(--color-ember-deep); font-weight: 500; }
 .stack-tree-name { color: var(--color-ink); font-weight: 500; }
 .stack-tree-dot { color: var(--color-ink-faint); padding: 0 0.6ch; }
-.stack-tree-desc { color: var(--color-ink-low); min-width: 0; word-wrap: break-word; }
+.stack-tree-desc { color: var(--color-ink-low); }
 
 /* Hover light-up : la branche entière s'intensifie au survol d'une feuille. */
 .stack-tree-leaf {
@@ -1111,8 +1111,7 @@ footer a {
   outline: 2px solid var(--color-violet);
   outline-offset: 2px;
 }
-.log-line.is-filtered,
-[data-row].is-filtered { opacity: 0.3; }
+.log-line.is-filtered { opacity: 0.3; }
 .log-timestamp { color: var(--color-ink-faint); }
 .log-category-workflow { color: var(--color-violet-deep); font-weight: 500; }
 .log-category-ai { color: var(--color-ember-deep); font-weight: 500; }
@@ -1149,19 +1148,17 @@ footer a {
   color: var(--color-ember-deep);
 }
 
-/* Expand inline d'une ligne log — pattern grid-template-rows.
-   Critical : minmax(0, ?fr) force le track à pouvoir collapse à 0px,
-   sinon `0fr` résout à min-content (~24px) et le panel reste visible. */
+/* Expand inline d'une ligne log */
 .log-detail-panel {
+  overflow: hidden;
   display: grid;
-  grid-template-rows: minmax(0, 0fr);
+  grid-template-rows: 0fr;
   transition: grid-template-rows 280ms var(--ease-out-quint);
 }
 .log-detail-panel.is-open {
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: 1fr;
 }
 .log-detail-panel > .log-detail-inner {
-  overflow: hidden;
   min-height: 0;
 }
 
