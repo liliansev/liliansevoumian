@@ -162,13 +162,23 @@ function formatFR(n: number): string {
           >
             Démarrer · diagnostic 30 min
           </a>
-          <button
-            type="button"
-            data-roi-share
-            class="mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-violet-deep)] transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
-          >
-            <span data-roi-share-label>COPIER LE LIEN DE CE CALCUL</span>
-          </button>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <button
+              type="button"
+              data-roi-share
+              class="mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-violet-deep)] transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
+            >
+              <span data-roi-share-label>COPIER LE LIEN DE CE CALCUL</span>
+            </button>
+            <span class="mono-caption text-[var(--color-ink-faint)]" aria-hidden="true">·</span>
+            <button
+              type="button"
+              data-roi-reset
+              class="mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-violet-deep)] transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
+            >
+              RÉINITIALISER
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -299,6 +309,7 @@ function formatFR(n: number): string {
 
     const shareBtn = root.querySelector<HTMLButtonElement>('[data-roi-share]');
     const shareLabel = root.querySelector<HTMLElement>('[data-roi-share-label]');
+    const resetBtn = root.querySelector<HTMLButtonElement>('[data-roi-reset]');
 
     const defaults = {
       hours: Number(inputHours.value),
@@ -390,6 +401,20 @@ function formatFR(n: number): string {
         } catch (err) {
           shareLabel.textContent = 'COPIE IMPOSSIBLE — SÉLECTIONNEZ L\'URL';
         }
+      });
+    }
+
+    // Bouton « Réinitialiser » : remet les sliders à leurs valeurs par défaut
+    // et nettoie l'URL des query params.
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        inputHours.value = String(defaults.hours);
+        inputPeople.value = String(defaults.people);
+        inputRate.value = String(defaults.hourlyCost);
+        update();
+        const url = new URL(window.location.href);
+        url.search = '';
+        window.history.replaceState(null, '', url.toString());
       });
     }
   }
