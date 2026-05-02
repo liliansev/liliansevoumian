@@ -147,14 +147,9 @@ html.dark {
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
   background: var(--color-paper);
   transition: background-color var(--duration-default) var(--ease-out-quint);
-}
-
-@media (min-width: 1024px) {
-  html {
-    scrollbar-gutter: stable;
-  }
 }
 
 body {
@@ -235,6 +230,12 @@ a {
   outline: 2px solid var(--color-violet);
   outline-offset: 2px;
   border-radius: var(--radius-xs);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  :focus-visible {
+    outline: none;
+  }
 }
 
 @media (forced-colors: active) {

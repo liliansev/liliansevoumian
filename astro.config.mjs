@@ -8,8 +8,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://liliansevoumian.fr',
   prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'viewport'
+    defaultStrategy: 'hover'
   },
   vite: {
     // @ts-expect-error -- type mismatch entre @tailwindcss/vite (Plugin<any>[]) et la version Vite embarquée par Astro (PluginOption). Compatible runtime.
