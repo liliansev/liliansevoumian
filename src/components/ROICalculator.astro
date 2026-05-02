@@ -51,7 +51,7 @@ function formatFR(n: number): string {
       number="01"
       label="ROI"
       title="Votre temps coûte plus que vous ne pensez."
-      body="Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée. L'audit réel descend dans le détail."
+      body="Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée. L'audit réel descend dans le détail."
       titleMaxWidth="20ch"
       bodyMaxWidth="60ch"
     />
@@ -141,10 +141,10 @@ function formatFR(n: number): string {
 
         <div class="mono-caption mb-6 leading-[1.6] flex flex-col gap-1 text-[var(--color-ink-low)]">
           <span>
-            FORMULE : <span data-roi-formula>{cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {initial.hourlyCost}€</span>
+            FORMULE : <span data-roi-formula>{cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {initial.hourlyCost}€</span>
           </span>
           <span>
-            COÛT PROJET RÉFÉRENCE : <span data-roi-project-price>{formatFR(projectPrice)}</span> € (<span data-roi-project-label>{moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'}</span>)
+            COÛT PROJET RÉFÉRENCE : <span data-roi-project-price>{formatFR(projectPrice)}</span> € (<span data-roi-project-label>{moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'}</span>)
           </span>
           <span data-roi-warning class="text-[var(--color-error)]" hidden={!isCapped}>
             [!] ESTIMATION PLAFONNÉE. L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
@@ -158,7 +158,7 @@ function formatFR(n: number): string {
             rel="noopener noreferrer"
             class="btn-primary justify-center w-full"
           >
-            Démarrer · diagnostic 20 min
+            Démarrer · diagnostic 20 min
           </a>
           <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
             <button
@@ -326,7 +326,7 @@ function formatFR(n: number): string {
     // Sync aria-valuetext avec les valeurs effectives (URL params), sinon AT lit la valeur SSR figee
     inputHours.setAttribute('aria-valuetext', `${initHours} H`);
     inputPeople.setAttribute('aria-valuetext', `${initPeople}`);
-    inputRate.setAttribute('aria-valuetext', `${initRate} €`);
+    inputRate.setAttribute('aria-valuetext', `${initRate} €`);
 
     // Initialise le fill violet du track avec les valeurs effectives
     updateSliderProgress(inputHours);
@@ -344,7 +344,7 @@ function formatFR(n: number): string {
     outMoney.textContent = formatFR(initialComputed.moneySaved);
     outHours.textContent = formatFR(initialComputed.hoursSaved);
     outMonths.textContent = String(initialComputed.monthsToROI);
-    formulaEl.textContent = `${initialComputed.cappedHours}H × ${initialComputed.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${initRate}€`;
+    formulaEl.textContent = `${initialComputed.cappedHours}H × ${initialComputed.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${initRate}€`;
     projectPriceEl.textContent = formatFR(initialComputed.projectPrice);
     projectLabelEl.textContent = initialComputed.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
     warningEl.hidden = !initialComputed.isCapped;
@@ -365,7 +365,7 @@ function formatFR(n: number): string {
       dispRate.textContent = formatFR(hourlyCost);
       inputHours!.setAttribute('aria-valuetext', `${hours} H`);
       inputPeople!.setAttribute('aria-valuetext', `${people}`);
-      inputRate!.setAttribute('aria-valuetext', `${hourlyCost} €`);
+      inputRate!.setAttribute('aria-valuetext', `${hourlyCost} €`);
 
       updateSliderProgress(inputHours!);
       updateSliderProgress(inputPeople!);
@@ -378,7 +378,7 @@ function formatFR(n: number): string {
       animHours.setTarget(c.hoursSaved, reducedMotion);
       animMonths.setTarget(c.monthsToROI, reducedMotion);
 
-      formulaEl.textContent = `${c.cappedHours}H × ${c.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${hourlyCost}€`;
+      formulaEl.textContent = `${c.cappedHours}H × ${c.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${hourlyCost}€`;
       projectPriceEl.textContent = formatFR(c.projectPrice);
       projectLabelEl.textContent = c.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
       warningEl.hidden = !c.isCapped;
