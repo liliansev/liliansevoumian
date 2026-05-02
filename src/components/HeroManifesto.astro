@@ -6,7 +6,13 @@
  *
  * Mobile (<lg) : single column, photo stack en dessous.
  * Desktop (lg+) : split 1.5fr/1fr, items-stretch pour hauteur égale.
+ *
+ * Photo via <Image> d'astro:assets pour optimisation auto (WebP/AVIF +
+ * srcset multi-widths). L'asset vit dans src/assets/ (pas public/) pour
+ * traverser le pipeline d'optimisation.
  */
+import { Image } from 'astro:assets';
+import lilianPhoto from '../assets/lilian-photo.jpg';
 ---
 
 <section
@@ -72,14 +78,13 @@
         <span class="grid-corner bl" aria-hidden="true"></span>
         <span class="grid-corner br" aria-hidden="true"></span>
 
-        <img
-          src="/images/lilian-photo.jpg"
+        <Image
+          src={lilianPhoto}
           alt="Lilian Sevoumian, expert no-code freelance"
           class="hero-portrait-img block w-full h-full object-cover"
-          width="1024"
-          height="1041"
           loading="eager"
-          decoding="async"
+          widths={[480, 768, 1024]}
+          sizes="(min-width: 1024px) 40vw, 100vw"
         />
       </div>
 
