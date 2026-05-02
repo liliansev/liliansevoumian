@@ -53,11 +53,7 @@ const collectionSchema = {
 
 const total = displayStudies.length;
 
-// Catégorisation des outils chip pour la voie violet (workflow) ou ember (IA).
-const AI_TOOLS = new Set(['claude', 'gpt', 'gpt-4', 'gpt-5', 'mistral', 'whisper', 'openai', 'anthropic', 'embeddings']);
-function chipClass(tool: string): string {
-  return AI_TOOLS.has(tool.toLowerCase()) ? 'chip chip-ember' : 'chip chip-violet';
-}
+import { chipClass } from '../../lib/tool-chip';
 ---
 
 <Layout

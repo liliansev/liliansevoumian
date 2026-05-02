@@ -102,17 +102,15 @@ function formatFR(n: number): string {
         ))}
       </fieldset>
 
-      <!-- Output panel — region live pour annonce AT des changements de slider -->
-      <div
-        class="bg-[var(--color-surface-low)] p-8 md:p-10 flex flex-col"
-        role="status"
-        aria-live="polite"
-        aria-atomic="false"
-      >
+      <!-- Output panel — aria-live ciblé sur le montant principal pour eviter de chunker tout le panel -->
+      <div class="bg-[var(--color-surface-low)] p-8 md:p-10 flex flex-col">
         <div class="mono-caption mb-2 text-[var(--color-ink-low)]">ÉCONOMIE ESTIMÉE</div>
         <div
           class="font-display font-semibold leading-[0.98] tracking-[-0.045em] mb-6 text-[var(--color-ink)]"
           style="font-size: var(--text-roi-money);"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
         >
           <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span>
           <span> €</span>
@@ -324,6 +322,11 @@ function formatFR(n: number): string {
     inputHours.value = String(initHours);
     inputPeople.value = String(initPeople);
     inputRate.value = String(initRate);
+
+    // Sync aria-valuetext avec les valeurs effectives (URL params), sinon AT lit la valeur SSR figee
+    inputHours.setAttribute('aria-valuetext', `${initHours} H`);
+    inputPeople.setAttribute('aria-valuetext', `${initPeople}`);
+    inputRate.setAttribute('aria-valuetext', `${initRate} €`);
 
     // Initialise le fill violet du track avec les valeurs effectives
     updateSliderProgress(inputHours);

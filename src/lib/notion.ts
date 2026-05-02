@@ -183,8 +183,3 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | unde
   const caseStudies = await getCaseStudies();
   return caseStudies.find(cs => cs.slug === slug);
 }
-
-export async function getAllSlugs(): Promise<string[]> {
-  const caseStudies = await getCaseStudies();
-  return caseStudies.map(cs => cs.slug).filter(Boolean);
-}
