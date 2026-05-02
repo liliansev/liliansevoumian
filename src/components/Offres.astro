@@ -75,7 +75,7 @@ const offres: Offre[] = [
     <SectionHeader
       number="04"
       label="OFFRES"
-      title="Quatre formats. Pas une plaquette. Pas de revente."
+      title="Comment on peut travailler ensemble ?"
       titleMaxWidth="26ch"
     />
 
@@ -96,9 +96,14 @@ const offres: Offre[] = [
       <span class="text-[var(--color-ink)]">→ COACHING PONCTUEL · 150 €/H</span>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4">
-      {offres.map((o) => (
-        <article class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5">
+    {/* Grid 12-col alternance 7+5 / 5+7 — rythme zigzag, cards uniformément
+        verticales (pas de prix+desc en row sur les wide). */}
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 lg:gap-4">
+      {offres.map((o, i) => {
+        const wide = i === 0 || i === 3;
+        const span = wide ? 'md:col-span-7' : 'md:col-span-5';
+        return (
+        <article class={`reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5 ${span}`}>
           <span class="grid-corner tl" aria-hidden="true"></span>
           <span class="grid-corner tr" aria-hidden="true"></span>
           <span class="grid-corner bl" aria-hidden="true"></span>
@@ -135,12 +140,13 @@ const offres: Offre[] = [
             href={o.href}
             target="_blank"
             rel="noopener noreferrer"
-            class="btn-primary w-full justify-center"
+            class="btn-primary w-full sm:w-auto sm:self-start justify-center"
           >
             {o.cta}
           </a>
         </article>
-      ))}
+        );
+      })}
     </div>
 
     {/* Footer note : prix HT + engagement + délai devis */}

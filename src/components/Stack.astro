@@ -6,26 +6,27 @@
  * ai/ (ember, 2 outils) à droite. La Two-Voice Rule devient une partition
  * spatiale littérale. Mobile : stacked vertical avec headers catégorie.
  *
- * Card unique englobante avec dividers internes (gap-px + bg-divider).
- * Pattern hérité du ROI Calculator (sliders panel).
+ * Chips affichent le vrai logo de l'outil (simple-icons via astro-icon).
  */
 import SectionHeader from './SectionHeader.astro';
+import { Icon } from 'astro-icon/components';
 
 interface Tool {
   name: string;
+  icon: string;
   description: string;
   category: string;
 }
 
 const workflowTools: Tool[] = [
-  { name: 'n8n',    description: 'Automatisations et Agents IA (Cloud ou Self Host).',                   category: 'WORKFLOW · IA'   },
-  { name: 'Make',   description: 'Automatisations des processus métiers.',                                category: 'WORKFLOW'        },
-  { name: 'NoCode', description: "Création d'outils métiers sur Notion, Airtable ou Zite.",              category: 'OUTIL MÉTIER'    },
+  { name: 'n8n',    icon: 'simple-icons:n8n',     description: 'Automatisations et Agents IA (Cloud ou Self Host).',                category: 'WORKFLOW · IA'   },
+  { name: 'Make',   icon: 'simple-icons:make',    description: 'Automatisations des processus métiers.',                            category: 'WORKFLOW'        },
+  { name: 'Notion', icon: 'simple-icons:notion',  description: "Création d'outils métiers sur Notion, Airtable et plus.",          category: 'OUTIL MÉTIER'    },
 ];
 
 const aiTools: Tool[] = [
-  { name: 'Claude Code',   description: 'Développement de logiciels internes uniquement.',                  category: 'IA · DEV'      },
-  { name: 'Claude Cowork', description: "Mentoring et coaching pour l'utilisation et l'installation des skills.", category: 'IA · COACHING' },
+  { name: 'Claude Code',   icon: 'simple-icons:anthropic', description: 'Développement de logiciels internes uniquement.',                                                       category: 'IA · DEV'      },
+  { name: 'Claude Cowork', icon: 'simple-icons:anthropic', description: "Skill Claude pour piloter vos workflows par dialogue. J'accompagne l'installation et le mentoring de vos équipes.", category: 'IA · COACHING' },
 ];
 ---
 
@@ -39,9 +40,9 @@ const aiTools: Tool[] = [
     <SectionHeader
       number="03"
       label="STACK"
-      title="La stack 2026."
+      title="La meilleure stack IA & automation en 2026"
       body="Cinq outils, choisis pour leur fit avec votre besoin. Pas une checklist exhaustive, ce que j'utilise tous les jours."
-      titleMaxWidth="18ch"
+      titleMaxWidth="22ch"
       bodyMaxWidth="60ch"
     />
 
@@ -62,12 +63,21 @@ const aiTools: Tool[] = [
           </div>
           <div class="flex flex-col gap-px bg-[var(--color-divider)]">
             {workflowTools.map((tool) => (
-              <div class="bg-[var(--color-paper)] flex flex-col gap-2 px-6 md:px-8 py-5 md:py-6">
-                <div class="flex items-baseline justify-between gap-3 flex-wrap">
-                  <span class="chip chip-violet self-start whitespace-nowrap">{tool.name}</span>
+              <div class="bg-[var(--color-paper)] flex flex-col gap-3 px-6 md:px-8 py-5 md:py-6">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                  <div class="inline-flex items-center gap-2.5">
+                    <Icon
+                      name={tool.icon}
+                      class="stack-logo stack-logo-violet"
+                      aria-hidden="true"
+                    />
+                    <span class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">
+                      {tool.name}
+                    </span>
+                  </div>
                   <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{tool.category}</span>
                 </div>
-                <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] max-w-[58ch]">
+                <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5] max-w-[58ch]">
                   {tool.description}
                 </span>
               </div>
@@ -83,12 +93,21 @@ const aiTools: Tool[] = [
           </div>
           <div class="flex flex-col gap-px bg-[var(--color-divider)]">
             {aiTools.map((tool) => (
-              <div class="bg-[var(--color-paper)] flex flex-col gap-2 px-6 md:px-8 py-5 md:py-6">
-                <div class="flex items-baseline justify-between gap-3 flex-wrap">
-                  <span class="chip chip-ember self-start whitespace-nowrap">{tool.name}</span>
+              <div class="bg-[var(--color-paper)] flex flex-col gap-3 px-6 md:px-8 py-5 md:py-6">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                  <div class="inline-flex items-center gap-2.5">
+                    <Icon
+                      name={tool.icon}
+                      class="stack-logo stack-logo-ember"
+                      aria-hidden="true"
+                    />
+                    <span class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">
+                      {tool.name}
+                    </span>
+                  </div>
                   <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{tool.category}</span>
                 </div>
-                <span class="text-[var(--color-ink)] text-[length:var(--text-body)] leading-[1.45] max-w-[58ch]">
+                <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5] max-w-[58ch]">
                   {tool.description}
                 </span>
               </div>
@@ -101,3 +120,17 @@ const aiTools: Tool[] = [
 
   </div>
 </section>
+
+<style>
+  .stack-logo {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .stack-logo-violet {
+    color: var(--color-violet-deep);
+  }
+  .stack-logo-ember {
+    color: var(--color-ember-deep);
+  }
+</style>
