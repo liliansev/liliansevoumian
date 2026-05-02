@@ -158,7 +158,14 @@ const navLinks = [
     mobileMenu.style.visibility = willOpen ? 'visible' : 'hidden';
     mobileMenu.setAttribute('aria-hidden', String(!willOpen));
     menuBtn.setAttribute('aria-expanded', String(willOpen));
-    document.body.style.overflow = willOpen ? 'hidden' : '';
+    if (willOpen) {
+      const sbw = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (sbw > 0) document.body.style.paddingRight = `${sbw}px`;
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
 
     if (burgerLines) {
       const [l1, l2, l3] = Array.from(burgerLines);
