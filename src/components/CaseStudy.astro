@@ -1,5 +1,18 @@
 ---
 import SectionHeader from './SectionHeader.astro';
+import { Icon } from 'astro-icon/components';
+
+// Mapping nom outil -> simple-icons. Pennylane absent du set, fallback text.
+const TOOL_ICONS: Record<string, string> = {
+  'n8n':       'simple-icons:n8n',
+  'Make':      'simple-icons:make',
+  'HubSpot':   'simple-icons:hubspot',
+  'Slack':     'simple-icons:slack',
+  'Notion':    'simple-icons:notion',
+  'Claude':    'simple-icons:anthropic',
+  'Stripe':    'simple-icons:stripe',
+  'Airtable':  'simple-icons:airtable',
+};
 
 const main = {
   client: "STARTUP B2B SAAS · 22 EMPLOYÉS",
@@ -169,13 +182,19 @@ const minor = [
           <span class="mono-caption text-[var(--color-ink-low)]">STACK</span>
           <div class="flex flex-wrap gap-2">
             {main.stack.map((tool) => (
-              <span class="chip chip-violet">{tool}</span>
+              <span class="chip chip-violet inline-flex items-center gap-1.5">
+                {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
+                {tool}
+              </span>
             ))}
           </div>
           <span class="mono-caption text-[var(--color-ink-low)] ml-2">+ IA</span>
           <div class="flex flex-wrap gap-2">
             {main.ai.map((tool) => (
-              <span class="chip chip-ember">{tool}</span>
+              <span class="chip chip-ember inline-flex items-center gap-1.5">
+                {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
+                {tool}
+              </span>
             ))}
           </div>
         </div>
@@ -207,7 +226,10 @@ const minor = [
           </p>
           <div class="flex flex-wrap gap-2">
             {m.stack.map((tool) => (
-              <span class="chip chip-violet">{tool}</span>
+              <span class="chip chip-violet inline-flex items-center gap-1.5">
+                {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
+                {tool}
+              </span>
             ))}
           </div>
         </article>
@@ -315,3 +337,11 @@ const minor = [
   else initWorkflows();
   document.addEventListener('astro:page-load', initWorkflows);
 </script>
+
+<style>
+  .case-tool-logo {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+</style>

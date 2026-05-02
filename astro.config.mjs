@@ -28,7 +28,7 @@ export default defineConfig({
     icon({
       include: {
         mdi: ['headphones', 'gamepad-variant', 'airplane'],
-        'simple-icons': ['n8n', 'make', 'notion', 'airtable', 'anthropic', 'claude', 'googlesheets']
+        'simple-icons': ['n8n', 'make', 'notion', 'airtable', 'anthropic', 'claude', 'googlesheets', 'hubspot', 'slack', 'stripe']
       }
     }),
     sitemap()
