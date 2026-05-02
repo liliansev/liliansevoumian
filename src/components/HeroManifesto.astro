@@ -44,7 +44,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
         <h1
           class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[18ch]"
         >
-          Automatisez 15 h par semaine grâce à l'IA et l'automation.
+          Automatisez 15&nbsp;h par semaine grâce à l'IA et l'automation.
         </h1>
 
         <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6">
@@ -125,5 +125,10 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
   /* Mirror horizontal pour que Lilian regarde vers le titre à gauche. */
   .hero-portrait-img {
     transform: scaleX(-1);
+  }
+
+  /* Dark mode : bordure plus visible pour materialiser le crop de la photo (sinon se fond dans le bg). */
+  :global(html.dark) .hero-portrait {
+    border-color: var(--color-grid-line-active);
   }
 </style>
