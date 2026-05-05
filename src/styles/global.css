@@ -147,10 +147,13 @@ html.dark {
 
 html {
   scroll-behavior: smooth;
-  scrollbar-gutter: stable;
   background: var(--color-paper);
   overflow-x: hidden;
   transition: background-color var(--duration-default) var(--ease-out-quint);
+}
+
+@media (min-width: 1024px) {
+  html { scrollbar-gutter: stable; }
 }
 
 body {
@@ -162,6 +165,7 @@ body {
   letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
   transition: background-color var(--duration-default) var(--ease-out-quint),
               color var(--duration-default) var(--ease-out-quint);
 }
