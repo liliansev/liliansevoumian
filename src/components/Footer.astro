@@ -1,13 +1,32 @@
 ---
 const year = new Date().getFullYear();
 
-const channels = [
+interface Channel {
+  label: string;
+  metric: string;
+  href: string;
+  goal?: string;
+}
+
+interface NavLink {
+  label: string;
+  href: string;
+  external?: boolean;
+  goal?: string;
+}
+
+interface NavColumn {
+  title: string;
+  links: NavLink[];
+}
+
+const channels: Channel[] = [
   { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/" },
   { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian" },
-  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/" },
+  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", goal: "click_newsletter" },
 ];
 
-const navColumns = [
+const navColumns: NavColumn[] = [
   {
     title: "NAVIGATION",
     links: [
@@ -21,8 +40,8 @@ const navColumns = [
   {
     title: "CONTACT",
     links: [
-      { label: "Réserver", href: "https://cal.com/lilian-sevoumian/20min", external: true },
-      { label: "bonjour@liliansevoumian.fr", href: "mailto:bonjour@liliansevoumian.fr" },
+      { label: "Réserver", href: "https://cal.com/lilian-sevoumian/20min", external: true, goal: "click_cta_footer" },
+      { label: "bonjour@liliansevoumian.fr", href: "mailto:bonjour@liliansevoumian.fr", goal: "click_email_footer" },
     ],
   },
   {
@@ -68,6 +87,7 @@ const navColumns = [
                 href={ch.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-fast-goal={ch.goal}
                 class="group inline-flex items-baseline gap-3 text-[var(--color-ink)] hover:text-[var(--color-violet-deep)] transition-colors min-h-[44px] py-2"
               >
                 <span class="mono-label">{ch.label}</span>
@@ -92,6 +112,7 @@ const navColumns = [
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
+                  data-fast-goal={link.goal}
                   class="text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[var(--text-body-sm)] break-all"
                 >
                   {link.label}

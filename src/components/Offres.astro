@@ -20,6 +20,7 @@ interface Offre {
   description: string;
   cta: string;
   href: string;
+  goal: string;
 }
 
 const offres: Offre[] = [
@@ -32,6 +33,7 @@ const offres: Offre[] = [
     description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
     href: 'https://cal.com/lilian-sevoumian/20min',
+    goal: 'click_offre_vibe_coder',
   },
   {
     num: '02',
@@ -42,6 +44,7 @@ const offres: Offre[] = [
     description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
     cta: 'Discuter du programme',
     href: 'https://cal.com/lilian-sevoumian/20min',
+    goal: 'click_offre_mentoring',
   },
   {
     num: '03',
@@ -52,6 +55,7 @@ const offres: Offre[] = [
     description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
     cta: 'Cadrer la mission',
     href: 'https://cal.com/lilian-sevoumian/20min',
+    goal: 'click_offre_mission',
   },
   {
     num: '04',
@@ -62,6 +66,7 @@ const offres: Offre[] = [
     description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
     cta: 'Réserver un coaching',
     href: 'https://go.liliansevoumian.fr/coaching',
+    goal: 'click_offre_coaching',
   },
 ];
 ---
@@ -69,6 +74,7 @@ const offres: Offre[] = [
 <section
   id="offres"
   data-section
+  data-fast-scroll="scroll_to_section_offres"
   class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
@@ -124,6 +130,7 @@ const offres: Offre[] = [
             target="_blank"
             rel="noopener noreferrer"
             class="btn-primary w-full sm:w-auto sm:self-start justify-center"
+            data-fast-goal={o.goal}
           >
             {o.cta}
           </a>
