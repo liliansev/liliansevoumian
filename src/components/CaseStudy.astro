@@ -1,51 +1,58 @@
 ---
+/*
+ * CaseStudy.astro — section §02 (refonte).
+ *
+ * Grille de cartes ÉGALES, toutes cliquables (chaque carte = un lien vers le
+ * détail du cas), avec un CTA « Voir le cas ». Plus de carte héro surdimensionnée,
+ * plus d'animation workflow. Cas clients réels 2026 — aucune métrique inventée.
+ *
+ * `href` : destination du « Voir le cas ». Par défaut /cas-clients ; à pointer
+ * vers une page de détail dédiée (ou un post LinkedIn) par cas quand elles existent.
+ */
 import SectionHeader from './SectionHeader.astro';
 import { Icon } from 'astro-icon/components';
 
-// Mapping nom outil -> simple-icons. Pennylane absent du set, fallback text.
 const TOOL_ICONS: Record<string, string> = {
-  'n8n':       'simple-icons:n8n',
-  'Make':      'simple-icons:make',
-  'HubSpot':   'simple-icons:hubspot',
-  'Slack':     'simple-icons:slack',
-  'Notion':    'simple-icons:notion',
-  'Claude':    'simple-icons:anthropic',
-  'Stripe':    'simple-icons:stripe',
-  'Airtable':  'simple-icons:airtable',
+  'n8n':    'simple-icons:n8n',
+  'Make':   'simple-icons:make',
+  'Notion': 'simple-icons:notion',
 };
 
-const main = {
-  client: "STARTUP B2B SAAS · 22 EMPLOYÉS",
-  sector: "SECTEUR · MARTECH",
-  duration: "DURÉE · 6 SEMAINES",
-  stack: ["n8n", "HubSpot", "Slack"],
-  ai: ["Claude"],
-  title: "15 h /sem économisées sur le pipeline ventes.",
-  context: "Le revenu ops re-saisissait à la main les leads HubSpot dans 3 outils différents. Erreurs, oublis, demi-journée perdue chaque jour à recoller les morceaux.",
-  solution: "Workflow n8n unique : webhook HubSpot → enrichissement Claude (scoring + qualif) → push Stripe (provisioning) + Slack (alerte sales) + Airtable (rapport hebdo). Documentation + 30 j SLA.",
-  metrics: [
-    { value: "15 h", label: "ÉCONOMISÉES /SEMAINE" },
-    { value: "42 K€", label: "ÉCONOMIE ANNUELLE" },
-    { value: "0", label: "ERREUR /MOIS" },
-  ],
-  quote: "« Le ROI s'est payé en 2 semaines. Lilian a aussi documenté chaque flux, on peut maintenir nous-mêmes. »",
-  quoteAuthor: "— RAPHAËL B., HEAD OF OPS",
-};
+interface Case {
+  client: string;
+  sector: string;
+  title: string;
+  description: string;
+  stack: string[];
+  ai?: string[];
+  href: string;
+}
 
-const minor = [
+const cases: Case[] = [
   {
-    label: "FACTURATION",
-    metric: "8 H /MOIS",
-    title: "Génération + relance auto",
-    body: "Stripe → Pennylane → Make. Factures émises, relancées et lettrées sans intervention.",
-    stack: ["Make", "Pennylane"],
+    client: 'Fraich Touch',
+    sector: 'AGENCE DE STAFFING',
+    title: '33 scénarios Make → 3. Zéro facture bloquée.',
+    description: 'Refonte d\'un système de facturation refait trois fois : 3 scénarios documentés, tableau de bord Notion en temps réel et alertes d\'erreur. Maintenance allégée de moitié.',
+    stack: ['Make', 'Notion'],
+    href: '/cas-clients',
   },
   {
-    label: "ONBOARDING CLIENT",
-    metric: "−4 J",
-    title: "Délai d'activation divisé par 3",
-    body: "Workflow Notion + n8n + Slack. Comptes provisionnés, ressources livrées, premier message automatique.",
-    stack: ["n8n", "Notion"],
+    client: 'M Partners',
+    sector: 'EXECUTIVE SEARCH',
+    title: 'Un agent IA qui qualifie la prospection recrutement.',
+    description: 'Pipeline n8n : import Specter → Loxo, enrichissement, puis un agent IA qui repère le bon poste (CEO/Founder de la cible) et trie les contacts en listes « Validés » / « À vérifier ».',
+    stack: ['n8n', 'Loxo', 'Specter'],
+    ai: ['Agent IA'],
+    href: '/cas-clients',
+  },
+  {
+    client: 'Celeris',
+    sector: 'DISTRIBUTION IT · ODOO',
+    title: 'Mentoring n8n + catalogue HPE synchronisé dans Odoo.',
+    description: 'Mentoring 3 mois pour rendre l\'équipe autonome sur n8n. Première mission : fin du copier-coller des produits HPE, récupérés via l\'API et injectés directement dans Odoo.',
+    stack: ['n8n', 'Odoo', 'API HPE'],
+    href: '/cas-clients',
   },
 ];
 ---
@@ -60,180 +67,58 @@ const minor = [
 
     <SectionHeader
       number="02"
-      label="CAS D'ÉTUDES"
-      title={"Un workflow à 15 h économisées par semaine."}
+      label="CAS CLIENTS"
+      title="Des projets livrés, documentés."
       titleMaxWidth="22ch"
     />
 
-    <!-- Main deep-dive card -->
-    <article class="reveal relative card card-elevated bg-[var(--color-paper)] mb-6">
-      <span class="grid-corner tl" aria-hidden="true"></span>
-      <span class="grid-corner tr" aria-hidden="true"></span>
-      <span class="grid-corner bl" aria-hidden="true"></span>
-      <span class="grid-corner br" aria-hidden="true"></span>
-
-      <!-- Meta header -->
-      <div class="flex flex-wrap gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-8 pb-6 border-b border-[var(--color-divider)]">
-        <span>{main.client}</span>
-        <span>·</span>
-        <span>{main.sector}</span>
-        <span>·</span>
-        <span>{main.duration}</span>
-      </div>
-
-      <!-- Title + body -->
-      <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] mb-6 leading-[1.15] max-w-[24ch]">
-        {main.title}
-      </h3>
-
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-12 mb-10">
-        <div class="space-y-4 max-w-[60ch]">
-          <p class="text-[var(--color-ink-mid)] leading-[1.6]">
-            <span class="mono-caption text-[var(--color-ink-low)] mr-1">CONTEXTE</span>
-            {main.context}
-          </p>
-          <p class="text-[var(--color-ink-mid)] leading-[1.6]">
-            <span class="mono-caption text-[var(--color-ink-low)] mr-1">SOLUTION</span>
-            {main.solution}
-          </p>
-        </div>
-
-        <!-- Workflow visualisation — 4 nodes animés en séquence -->
-        <div class="lg:max-w-[380px] w-full">
-          <div class="mono-caption text-[var(--color-ink-low)] mb-3">WORKFLOW</div>
-          <div class="bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-5 md:p-6">
-            <div class="workflow-flow flex items-stretch justify-between gap-1" data-workflow>
-              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
-                    <path d="M3 12h6M21 12h-6M9 9v6M15 9v6M9 12h6"/>
-                  </svg>
-                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
-                </div>
-                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">LEAD</span>
-              </div>
-
-              <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-                <span class="workflow-link-fill absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[var(--color-violet)] transition-transform duration-500 ease-out"></span>
-              </div>
-
-              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-ember-soft)] flex items-center justify-center">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ember-deep)]" aria-hidden="true">
-                    <path d="M12 2 L2 7 L12 12 L22 7 Z"/>
-                    <path d="M2 17 L12 22 L22 17"/>
-                  </svg>
-                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-ember)] opacity-0"></span>
-                </div>
-                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">SCORE</span>
-              </div>
-
-              <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-                <span class="workflow-link-fill absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[var(--color-violet)] transition-transform duration-500 ease-out"></span>
-              </div>
-
-              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-violet-soft)] flex items-center justify-center">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-violet-deep)]" aria-hidden="true">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                  </svg>
-                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
-                </div>
-                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">ALERTE</span>
-              </div>
-
-              <div class="workflow-link flex-1 self-center h-px bg-[var(--color-divider)] relative overflow-hidden -mt-5">
-                <span class="workflow-link-fill absolute inset-y-0 left-0 w-full origin-left scale-x-0 bg-[var(--color-violet)] transition-transform duration-500 ease-out"></span>
-              </div>
-
-              <div class="workflow-node flex flex-col items-center gap-2 flex-1 min-w-0">
-                <div class="workflow-dot relative w-9 h-9 rounded-full border border-[var(--color-divider)] bg-[var(--color-paper)] flex items-center justify-center">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-[var(--color-ink-mid)]" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <path d="M3 9h18M9 21V9"/>
-                  </svg>
-                  <span class="workflow-pulse absolute inset-0 rounded-full border border-[var(--color-violet)] opacity-0"></span>
-                </div>
-                <span class="mono-caption text-[var(--color-ink-low)] text-center leading-tight">LOG</span>
-              </div>
-            </div>
-            <div class="mt-5 pt-4 border-t border-[var(--color-divider)] flex items-center justify-between">
-              <span class="mono-caption text-[var(--color-ink-low)]">EXÉCUTION</span>
-              <span class="mono-caption text-[var(--color-violet-deep)]" data-workflow-time>~ 2.4 S</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Metrics row -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden mb-8">
-        {main.metrics.map((m) => (
-          <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
-            <div class="font-display font-semibold text-[length:var(--text-metric)] tracking-[-0.035em] text-[var(--color-ink)] leading-none whitespace-nowrap">
-              {m.value}
-            </div>
-            <div class="mono-caption text-[var(--color-ink-low)]">{m.label}</div>
-          </div>
-        ))}
-      </div>
-
-      <!-- Stack chips + quote — Two-Voice : workflow (violet) et IA (ember) explicitement séparés par labels mono -->
-      <div class="flex flex-col lg:flex-row gap-6 lg:items-end lg:justify-between">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span class="mono-caption text-[var(--color-ink-low)]">STACK</span>
-          <div class="flex flex-wrap gap-2">
-            {main.stack.map((tool) => (
-              <span class="chip chip-violet inline-flex items-center gap-1.5">
-                {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
-                {tool}
-              </span>
-            ))}
-          </div>
-          <span class="mono-caption text-[var(--color-ink-low)] ml-2">+ IA</span>
-          <div class="flex flex-wrap gap-2">
-            {main.ai.map((tool) => (
-              <span class="chip chip-ember inline-flex items-center gap-1.5">
-                {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
-                {tool}
-              </span>
-            ))}
-          </div>
-        </div>
-        <blockquote class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] max-w-[44ch] border-l-0 pl-0">
-          <p>{main.quote}</p>
-          <footer class="mono-caption text-[var(--color-ink-low)] mt-2">{main.quoteAuthor}</footer>
-        </blockquote>
-      </div>
-    </article>
-
-    <!-- Mini cards row -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal-stagger">
-      {minor.map((m) => (
-        <article class="reveal relative card card-interactive">
+    <!-- Grille de cartes égales, toutes cliquables -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 reveal-stagger">
+      {cases.map((c) => (
+        <a
+          href={c.href}
+          class="case-card reveal relative card card-interactive flex flex-col gap-5 h-full group no-underline"
+        >
           <span class="grid-corner tl" aria-hidden="true"></span>
           <span class="grid-corner tr" aria-hidden="true"></span>
           <span class="grid-corner bl" aria-hidden="true"></span>
           <span class="grid-corner br" aria-hidden="true"></span>
 
-          <div class="flex items-baseline justify-between mb-4">
-            <span class="mono-caption text-[var(--color-ink-low)]">{m.label}</span>
-            <span class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)]">{m.metric}</span>
+          {/* Header : client + secteur */}
+          <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pb-4 border-b border-[var(--color-divider)]">
+            <span class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{c.client}</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">{c.sector}</span>
           </div>
-          <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] mb-3 leading-[1.2]">
-            {m.title}
+
+          {/* Titre — le résultat */}
+          <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0 max-w-[26ch]">
+            {c.title}
           </h3>
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] mb-5 max-w-[72ch]">
-            {m.body}
+
+          {/* Description */}
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
+            {c.description}
           </p>
-          <div class="flex flex-wrap gap-2">
-            {m.stack.map((tool) => (
+
+          {/* Stack — workflow (violet) + IA (ember) */}
+          <div class="flex flex-wrap items-center gap-2">
+            {c.stack.map((tool) => (
               <span class="chip chip-violet inline-flex items-center gap-1.5">
                 {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
                 {tool}
               </span>
             ))}
+            {c.ai?.map((tool) => (
+              <span class="chip chip-ember inline-flex items-center gap-1.5">{tool}</span>
+            ))}
           </div>
-        </article>
+
+          {/* CTA — pinned bottom */}
+          <span class="mt-auto pt-4 border-t border-[var(--color-divider)] inline-flex items-center gap-1.5 mono-label text-[var(--color-violet-deep)]">
+            VOIR LE CAS
+            <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
+          </span>
+        </a>
       ))}
     </div>
 
@@ -255,94 +140,15 @@ const minor = [
   </div>
 </section>
 
-<script>
-  function startWorkflowAnim(root: HTMLElement) {
-    if (root.dataset.workflowRunning === '1') return;
-    root.dataset.workflowRunning = '1';
-
-    const dots = root.querySelectorAll<HTMLElement>('.workflow-dot');
-    const pulses = root.querySelectorAll<HTMLElement>('.workflow-pulse');
-    const links = root.querySelectorAll<HTMLElement>('.workflow-link-fill');
-
-    // Cadence configurable via data-attributes pour distinguer les variantes
-    // (ex: hero veut une boucle plus rapide que le case study).
-    // Defaults : 600/500 = ~2.4s pour 4 nodes (case study).
-    const stepDelay = Number(root.dataset.stepDelay) || 600;
-    const linkFillTime = Number(root.dataset.linkFill) || 500;
-
-    const runOnce = () => {
-      dots.forEach((d) => d.classList.remove('is-active'));
-      links.forEach((l) => (l.style.transform = 'scaleX(0)'));
-      pulses.forEach((p) => p.classList.remove('is-pulsing'));
-
-      const triggerStep = (i: number) => {
-        if (i >= dots.length) return;
-        const dot = dots[i];
-        const pulse = pulses[i];
-        dot.classList.add('is-active');
-        if (pulse) {
-          pulse.classList.remove('is-pulsing');
-          void pulse.offsetWidth;
-          pulse.classList.add('is-pulsing');
-        }
-        if (i < links.length) {
-          window.setTimeout(() => {
-            links[i].style.transform = 'scaleX(1)';
-          }, 200);
-        }
-        window.setTimeout(() => triggerStep(i + 1), stepDelay + linkFillTime);
-      };
-
-      triggerStep(0);
-    };
-
-    runOnce();
-    const interval = window.setInterval(runOnce, dots.length * (stepDelay + linkFillTime) + 1500);
-    root.dataset.workflowInterval = String(interval);
-  }
-
-  function stopWorkflowAnim(root: HTMLElement) {
-    if (root.dataset.workflowRunning !== '1') return;
-    const intervalId = Number(root.dataset.workflowInterval);
-    if (intervalId) window.clearInterval(intervalId);
-    root.dataset.workflowRunning = '0';
-    root.dataset.workflowInterval = '';
-  }
-
-  function initWorkflows() {
-    const flows = document.querySelectorAll<HTMLElement>('[data-workflow]');
-    if (flows.length === 0) return;
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) {
-      flows.forEach((root) => {
-        root.querySelectorAll<HTMLElement>('.workflow-dot').forEach((d) => d.classList.add('is-active'));
-        root.querySelectorAll<HTMLElement>('.workflow-link-fill').forEach((l) => (l.style.transform = 'scaleX(1)'));
-      });
-      return;
-    }
-
-    // Observe en continu : start quand visible, stop quand sorti.
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        const root = e.target as HTMLElement;
-        if (e.isIntersecting) startWorkflowAnim(root);
-        else stopWorkflowAnim(root);
-      });
-    }, { threshold: 0.4 });
-
-    flows.forEach((flow) => obs.observe(flow));
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initWorkflows);
-  else initWorkflows();
-  document.addEventListener('astro:page-load', initWorkflows);
-</script>
-
 <style>
   .case-tool-logo {
     width: 13px;
     height: 13px;
     flex-shrink: 0;
+  }
+  /* La carte est un lien : pas de soulignement, couleur de texte héritée. */
+  .case-card,
+  .case-card:hover {
+    text-decoration: none;
   }
 </style>
