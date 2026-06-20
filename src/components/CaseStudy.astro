@@ -63,11 +63,11 @@ const cases: Case[] = [
     />
 
     <!-- Grille de cartes égales, toutes cliquables -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 reveal-stagger">
+    <div role="group" aria-label="Cas clients" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 lg:gap-4 md:overflow-visible md:pb-0 reveal-stagger">
       {cases.map((c) => (
         <a
           href={c.href}
-          class="case-card reveal relative card card-interactive flex flex-col gap-5 h-full group no-underline"
+          class="case-card reveal relative card card-interactive flex flex-col gap-5 h-full group no-underline snap-start shrink-0 basis-[80%] sm:basis-[55%] md:basis-auto"
         >
           <span class="grid-corner tl" aria-hidden="true"></span>
           <span class="grid-corner tr" aria-hidden="true"></span>
