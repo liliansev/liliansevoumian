@@ -183,6 +183,18 @@ import SectionHeader from './SectionHeader.astro';
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Envoyer ma demande'; }
       }
     });
+
+    // Pré-remplissage depuis les CTA d'offres (data-prefill) : le message reflète
+    // l'offre cliquée. Délégation sur document, n'écrase jamais une saisie en cours.
+    const messageEl = form.elements.namedItem('message') as HTMLTextAreaElement | null;
+    document.addEventListener('click', (e) => {
+      const trigger = (e.target as HTMLElement).closest('[data-prefill]');
+      if (!trigger || !messageEl) return;
+      const offer = trigger.getAttribute('data-prefill');
+      if (offer && !messageEl.value.trim()) {
+        messageEl.value = `Bonjour, je suis intéressé par l'offre « ${offer} ».`;
+      }
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initContactForm);

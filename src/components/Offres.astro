@@ -27,6 +27,8 @@ interface Offre {
   goal: string;
   goalType?: 'call';
   goalSource?: string;
+  /** Pré-remplit le message du formulaire de contact (offres mission → #contact). */
+  prefill?: string;
 }
 
 const offres: Offre[] = [
@@ -38,10 +40,10 @@ const offres: Offre[] = [
     price: `${eur(PRICING.regieDayRate)} €/JOUR`,
     description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
-    href: 'https://cal.com/lilian-sevoumian/20min',
-    goal: 'contact_lead',
-    goalType: 'call',
+    href: '#contact',
+    goal: 'cta_contact_click',
     goalSource: 'offre_regie',
+    prefill: 'Régie automation & apps internes',
   },
   {
     num: '02',
@@ -51,10 +53,10 @@ const offres: Offre[] = [
     price: `${eur(PRICING.mentoringMonthly)} €/MOIS`,
     description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
     cta: 'Discuter du programme',
-    href: 'https://cal.com/lilian-sevoumian/20min',
-    goal: 'contact_lead',
-    goalType: 'call',
+    href: '#contact',
+    goal: 'cta_contact_click',
     goalSource: 'offre_mentoring',
+    prefill: 'Mentoring 3 mois',
   },
   {
     num: '03',
@@ -64,10 +66,10 @@ const offres: Offre[] = [
     price: `À PARTIR DE ${eur(PRICING.missionFloor)} €`,
     description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
     cta: 'Cadrer la mission',
-    href: 'https://cal.com/lilian-sevoumian/20min',
-    goal: 'contact_lead',
-    goalType: 'call',
+    href: '#contact',
+    goal: 'cta_contact_click',
     goalSource: 'offre_mission',
+    prefill: 'Mission perso',
   },
   {
     num: '04',
@@ -103,6 +105,7 @@ const offres: Offre[] = [
       {offres.map((o, i) => {
         const wide = i === 0 || i === 3;
         const span = wide ? 'md:col-span-7' : 'md:col-span-5';
+        const isExternal = o.href.startsWith('http');
         return (
         <article class={`reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-5 ${span}`}>
           <span class="grid-corner tl" aria-hidden="true"></span>
@@ -139,12 +142,13 @@ const offres: Offre[] = [
           {/* CTA */}
           <a
             href={o.href}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
             class="btn-primary w-full sm:w-auto sm:self-start justify-center"
             data-fast-goal={o.goal}
             data-fast-goal-type={o.goalType}
             data-fast-goal-source={o.goalSource}
+            data-prefill={o.prefill}
           >
             {o.cta}
           </a>
