@@ -7,6 +7,8 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://liliansevoumian.fr',
+  // Barre d'outils Astro masquée en dev (gêne le picker impeccable live). Aucun impact prod.
+  devToolbar: { enabled: false },
   prefetch: {
     defaultStrategy: 'hover'
   },
