@@ -261,33 +261,9 @@ const faqPageSchema = faqSchema ? {
       document.addEventListener('astro:page-load', initMotion);
     </script>
 
-    <!-- DataFast scroll-depth — fire un goal une fois/session quand une section
-         clé atteint 30% de visibilité. Lit data-fast-scroll sur les <section>. -->
-    <script is:inline>
-      (function () {
-        function initFastScroll() {
-          if (document.body.dataset.fastScrollInit) return;
-          var nodes = document.querySelectorAll('[data-fast-scroll]');
-          if (!nodes.length) return;
-          document.body.dataset.fastScrollInit = 'true';
-          var tracked = {};
-          var obs = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-              var goal = entry.target.getAttribute('data-fast-scroll');
-              if (entry.isIntersecting && goal && !tracked[goal]) {
-                tracked[goal] = true;
-                if (typeof window.datafast === 'function') window.datafast(goal);
-              }
-            });
-          }, { threshold: 0.3 });
-          nodes.forEach(function (n) { obs.observe(n); });
-        }
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initFastScroll);
-        } else {
-          initFastScroll();
-        }
-      })();
-    </script>
+    <!-- DataFast scroll-depth : géré NATIVEMENT par le script DataFast via
+         l'attribut data-fast-scroll sur les <section> (seuil 0.5 par défaut,
+         override possible via data-fast-scroll-threshold). Pas de handler JS
+         custom ici — il doublait le tracking natif (events comptés 2×). -->
   </body>
 </html>

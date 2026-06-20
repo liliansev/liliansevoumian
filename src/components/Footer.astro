@@ -6,6 +6,7 @@ interface Channel {
   metric: string;
   href: string;
   goal?: string;
+  goalSource?: string;
 }
 
 interface NavLink {
@@ -13,6 +14,8 @@ interface NavLink {
   href: string;
   external?: boolean;
   goal?: string;
+  goalType?: 'call' | 'email';
+  goalSource?: string;
 }
 
 interface NavColumn {
@@ -23,7 +26,7 @@ interface NavColumn {
 const channels: Channel[] = [
   { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/" },
   { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian" },
-  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", goal: "click_newsletter" },
+  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", goal: "newsletter_click", goalSource: "footer" },
 ];
 
 const navColumns: NavColumn[] = [
@@ -40,8 +43,8 @@ const navColumns: NavColumn[] = [
   {
     title: "CONTACT",
     links: [
-      { label: "Réserver", href: "https://cal.com/lilian-sevoumian/20min", external: true, goal: "click_cta_footer" },
-      { label: "bonjour@liliansevoumian.fr", href: "mailto:bonjour@liliansevoumian.fr", goal: "click_email_footer" },
+      { label: "Réserver", href: "https://cal.com/lilian-sevoumian/20min", external: true, goal: "contact_lead", goalType: "call", goalSource: "footer" },
+      { label: "bonjour@liliansevoumian.fr", href: "mailto:bonjour@liliansevoumian.fr", goal: "contact_lead", goalType: "email", goalSource: "footer" },
     ],
   },
   {
@@ -88,6 +91,7 @@ const navColumns: NavColumn[] = [
                 target="_blank"
                 rel="noopener noreferrer"
                 data-fast-goal={ch.goal}
+                data-fast-goal-source={ch.goalSource}
                 class="group inline-flex items-baseline gap-3 text-[var(--color-ink)] hover:text-[var(--color-violet-deep)] transition-colors min-h-[44px] py-2"
               >
                 <span class="mono-label">{ch.label}</span>
@@ -113,6 +117,8 @@ const navColumns: NavColumn[] = [
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
                   data-fast-goal={link.goal}
+                  data-fast-goal-type={link.goalType}
+                  data-fast-goal-source={link.goalSource}
                   class="text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[var(--text-body-sm)] break-all"
                 >
                   {link.label}
