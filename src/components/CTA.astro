@@ -72,12 +72,12 @@ import SectionHeader from './SectionHeader.astro';
       </div>
     </div>
 
-    <!-- Zone d'action — formulaire on-site (primaire, = canal "formulaire rempli")
-         + alternatives appel/mail. Le form poste sur /api/contact (Resend) avec
-         fallback mailto si l'API échoue, pour ne jamais bloquer un lead. -->
-    <div class="reveal mt-12 md:mt-16 pt-10 border-t border-[var(--color-divider)] grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-12">
+    <!-- Zone d'action — formulaire on-site (= canal "formulaire rempli").
+         Poste sur /api/contact (Resend) avec fallback mailto si l'API échoue,
+         pour ne jamais bloquer un lead. -->
+    <div class="reveal mt-12 md:mt-16 pt-10 border-t border-[var(--color-divider)] max-w-[600px]">
 
-      <!-- Formulaire (primaire) -->
+      <!-- Formulaire -->
       <form id="contact-form" class="flex flex-col gap-4 scroll-mt-24" novalidate>
         <div class="flex flex-col sm:flex-row gap-4">
           <label class="flex-1 flex flex-col gap-1.5">
@@ -100,32 +100,6 @@ import SectionHeader from './SectionHeader.astro';
           RÉPONSE SOUS 48 H · SANS ENGAGEMENT · JE LIS CHAQUE DEMANDE
         </p>
       </form>
-
-      <!-- Alternatives (secondaire) -->
-      <div class="flex flex-col gap-3 lg:border-l lg:border-[var(--color-divider)] lg:pl-12">
-        <span class="mono-caption text-[var(--color-ink-low)]">OU, PLUS DIRECT</span>
-        <a
-          href="https://cal.com/lilian-sevoumian/20min"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn-ghost justify-center"
-          data-fast-goal="contact_lead"
-          data-fast-goal-type="call"
-          data-fast-goal-source="contact"
-        >
-          Réserver un appel · 20 min
-        </a>
-        <a
-          href="mailto:bonjour@liliansevoumian.fr"
-          class="btn-ghost justify-center"
-          data-fast-goal="contact_lead"
-          data-fast-goal-type="email"
-          data-fast-goal-source="contact"
-        >
-          Écrire à bonjour@…
-        </a>
-        <p class="mono-caption text-[var(--color-ink-low)] mt-1 leading-[1.5]">20 MIN · GRATUIT · SANS ENGAGEMENT</p>
-      </div>
     </div>
 
   </div>
@@ -151,7 +125,7 @@ import SectionHeader from './SectionHeader.astro';
       };
 
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Envoi…'; }
-      if (statusEl) statusEl.textContent = 'ENVOI EN COURS…';
+      if (statusEl) { statusEl.style.color = ''; statusEl.textContent = 'ENVOI EN COURS…'; }
 
       try {
         const res = await fetch('/api/contact', {
@@ -161,7 +135,7 @@ import SectionHeader from './SectionHeader.astro';
         });
         if (!res.ok) throw new Error(String(res.status));
 
-        if (statusEl) statusEl.textContent = '✓ ENVOYÉ — JE RÉPONDS SOUS 48 H.';
+        if (statusEl) { statusEl.style.color = 'var(--color-success)'; statusEl.textContent = '✓ ENVOYÉ — JE RÉPONDS SOUS 48 H.'; }
         form.reset();
         // Conversion réelle (form soumis) → goal DataFast le plus fiable.
         const df = (window as unknown as { datafast?: (g: string, p?: Record<string, string>) => void }).datafast;
@@ -172,6 +146,7 @@ import SectionHeader from './SectionHeader.astro';
         const subject = encodeURIComponent(`Demande — ${data.name}`);
         const body = encodeURIComponent(`${data.message}\n\n— ${data.name} (${data.email})`);
         if (statusEl) {
+          statusEl.style.color = 'var(--color-error)';
           statusEl.textContent = "L'ENVOI A ÉCHOUÉ. ";
           const link = document.createElement('a');
           link.href = `mailto:bonjour@liliansevoumian.fr?subject=${subject}&body=${body}`;
