@@ -1,10 +1,11 @@
 ---
 import SectionHeader from './SectionHeader.astro';
+import { PRICING, eur } from '../data/pricing';
 
 const faqs = [
   {
     q: "Quel ROI réel ?",
-    a: "Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. À 50 € de coût horaire interne, un workflow à 1 500 € se rembourse en moins de deux semaines. Sur une mission complète à 15 000 €, le ROI est positif à partir du 4e mois, souvent avant. J'envoie une estimation chiffrée dès le premier appel, basée sur vos vrais process.",
+    a: `Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. À 50 € de coût horaire interne, un workflow à ${eur(PRICING.workflowRef)} € se rembourse en moins de deux semaines. Sur une mission complète à ${eur(PRICING.missionCompleteRef)} €, le ROI est positif à partir du 4e mois, souvent avant. J'envoie une estimation chiffrée dès le premier appel, basée sur vos vrais process.`,
   },
   {
     q: "Et si l'API d'un de mes outils change ?",
@@ -72,9 +73,27 @@ const faqs = [
         <a
           href="mailto:bonjour@liliansevoumian.fr"
           class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
-          data-fast-goal="click_email_faq"
+          data-fast-goal="contact_lead"
+          data-fast-goal-type="email"
+          data-fast-goal-source="faq"
         >
           BONJOUR@LILIANSEVOUMIAN.FR
+        </a>
+      </p>
+
+      {/* Pont augmentes.fr — sortie pour l'intention « apprendre soi-même » /
+          budget formation, distincte de la demande de mission. Lien secondaire. */}
+      <p class="mono-caption text-[var(--color-ink-low)] mt-3">
+        BUDGET SERRÉ OU ENVIE D'APPRENDRE VOUS-MÊME ?
+        <a
+          href="https://augmentes.fr"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[var(--color-ember-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
+          data-fast-goal="augmentes_click"
+          data-fast-goal-source="faq"
+        >
+          MES FORMATIONS MAKE &amp; N8N ↗
         </a>
       </p>
     </div>

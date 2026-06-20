@@ -10,9 +10,10 @@
  * inline (fin du drift TSX/Astro flaggué dans l'audit).
  */
 import SectionHeader from './SectionHeader.astro';
+import { PRICING } from '../data/pricing';
 
-const PROJECT_PRICE_MID = 12000;
-const PROJECT_PRICE_LOW = 1500;
+const PROJECT_PRICE_MID = PRICING.missionCompleteRef;
+const PROJECT_PRICE_LOW = PRICING.workflowRef;
 const RECOVERY_RATE = 0.55;
 const WEEKS_PER_YEAR = 48;
 const MAX_REASONABLE_HOURS = 20;
@@ -158,7 +159,9 @@ function formatFR(n: number): string {
             target="_blank"
             rel="noopener noreferrer"
             class="btn-primary justify-center w-full"
-            data-fast-goal="click_cta_roi"
+            data-fast-goal="contact_lead"
+            data-fast-goal-type="call"
+            data-fast-goal-source="roi"
           >
             Démarrer · diagnostic 20 min
           </a>
@@ -186,8 +189,10 @@ function formatFR(n: number): string {
 </section>
 
 <script>
-  const PROJECT_PRICE_MID = 12000;
-  const PROJECT_PRICE_LOW = 1500;
+  import { PRICING } from '../data/pricing';
+
+  const PROJECT_PRICE_MID = PRICING.missionCompleteRef;
+  const PROJECT_PRICE_LOW = PRICING.workflowRef;
   const RECOVERY_RATE = 0.55;
   const WEEKS_PER_YEAR = 48;
   const MAX_REASONABLE_HOURS = 20;

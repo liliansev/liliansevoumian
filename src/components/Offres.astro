@@ -10,6 +10,7 @@
  * one-shot), ember pour les engagements IA-flavored (Mentoring 3 mois, Coaching).
  */
 import SectionHeader from './SectionHeader.astro';
+import { PRICING, eur } from '../data/pricing';
 
 interface Offre {
   num: string;
@@ -20,53 +21,64 @@ interface Offre {
   description: string;
   cta: string;
   href: string;
+  /* Tracking DataFast : goal natif + params optionnels (type/source).
+     Les 3 offres "mission" partagent le goal `contact_lead` (étape unique
+     du funnel) ; le coaching est une micro-conversion distincte. */
   goal: string;
+  goalType?: 'call';
+  goalSource?: string;
 }
 
 const offres: Offre[] = [
   {
     num: '01',
     accent: 'violet',
-    title: 'Vibe Coder as a service',
+    title: 'Régie automation & apps internes',
     format: 'RÉGIE · 1–2 J/SEM',
-    price: '650 €/JOUR',
+    price: `${eur(PRICING.regieDayRate)} €/JOUR`,
     description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
     href: 'https://cal.com/lilian-sevoumian/20min',
-    goal: 'click_offre_vibe_coder',
+    goal: 'contact_lead',
+    goalType: 'call',
+    goalSource: 'offre_regie',
   },
   {
     num: '02',
     accent: 'ember',
     title: 'Mentoring 3 mois',
     format: 'FORFAIT · ACCOMPAGNEMENT',
-    price: '2 500 €/MOIS',
+    price: `${eur(PRICING.mentoringMonthly)} €/MOIS`,
     description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
     cta: 'Discuter du programme',
     href: 'https://cal.com/lilian-sevoumian/20min',
-    goal: 'click_offre_mentoring',
+    goal: 'contact_lead',
+    goalType: 'call',
+    goalSource: 'offre_mentoring',
   },
   {
     num: '03',
     accent: 'violet',
     title: 'Mission perso',
     format: 'ONE-SHOT · CADRÉ',
-    price: 'À PARTIR DE 1 000 €',
+    price: `À PARTIR DE ${eur(PRICING.missionFloor)} €`,
     description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
     cta: 'Cadrer la mission',
     href: 'https://cal.com/lilian-sevoumian/20min',
-    goal: 'click_offre_mission',
+    goal: 'contact_lead',
+    goalType: 'call',
+    goalSource: 'offre_mission',
   },
   {
     num: '04',
     accent: 'ember',
     title: 'Coaching ponctuel',
     format: '1H · CIBLÉ',
-    price: '150 €/H',
+    price: `${eur(PRICING.coachingHourly)} €/H`,
     description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
     cta: 'Réserver un coaching',
     href: 'https://go.liliansevoumian.fr/coaching',
-    goal: 'click_offre_coaching',
+    goal: 'book_coaching',
   },
 ];
 ---
@@ -131,6 +143,8 @@ const offres: Offre[] = [
             rel="noopener noreferrer"
             class="btn-primary w-full sm:w-auto sm:self-start justify-center"
             data-fast-goal={o.goal}
+            data-fast-goal-type={o.goalType}
+            data-fast-goal-source={o.goalSource}
           >
             {o.cta}
           </a>
@@ -150,5 +164,21 @@ const offres: Offre[] = [
       <span aria-hidden="true">·</span>
       <span>DEVIS SOUS 48 H</span>
     </div>
+
+    {/* Pont augmentes.fr — route l'intention « apprendre soi-même » (≠ déléguer
+        une mission) vers la plateforme formations. Lien secondaire, jamais primaire. */}
+    <p class="reveal mt-4 mono-caption text-[var(--color-ink-low)]">
+      VOUS PRÉFÉREZ APPRENDRE À LE FAIRE VOUS-MÊME&nbsp;?
+      <a
+        href="https://augmentes.fr"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-fast-goal="augmentes_click"
+        data-fast-goal-source="offres"
+        class="text-[var(--color-ember-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
+      >
+        FORMATIONS MAKE &amp; N8N SUR AUGMENTES.FR&nbsp;↗
+      </a>
+    </p>
   </div>
 </section>
