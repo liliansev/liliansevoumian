@@ -1,12 +1,11 @@
 ---
 /*
- * Stack.astro — section §03
+ * Stack.astro — section §03 (refonte).
  *
- * Layout 2 colonnes Two-Voice : workflow/ (violet, 3 outils) à gauche,
- * ai/ (ember, 2 outils) à droite. La Two-Voice Rule devient une partition
- * spatiale littérale. Mobile : stacked vertical avec headers catégorie.
- *
- * Chips affichent le vrai logo de l'outil (simple-icons via astro-icon).
+ * Deux couches empilées plutôt qu'un split côte-à-côte : la couche AUTOMATION
+ * (violet, 3 outils) puis la couche IA (ember, 2 outils). Chaque outil est
+ * décrit par CE QU'IL LIVRE au client (proposition de valeur), pas par une
+ * définition. Two-Voice porté par la couleur des chips, plus par les colonnes.
  */
 import SectionHeader from './SectionHeader.astro';
 import { Icon } from 'astro-icon/components';
@@ -14,19 +13,62 @@ import { Icon } from 'astro-icon/components';
 interface Tool {
   name: string;
   icon: string;
-  description: string;
-  category: string;
+  role: string;
+  value: string;
 }
 
-const workflowTools: Tool[] = [
-  { name: 'n8n',    icon: 'simple-icons:n8n',     description: 'Automatisations et Agents IA (Cloud ou Self Host).',                category: 'WORKFLOW · IA'   },
-  { name: 'Make',   icon: 'simple-icons:make',    description: 'Automatisations des processus métiers.',                            category: 'WORKFLOW'        },
-  { name: 'Notion', icon: 'simple-icons:notion',  description: "Création d'outils métiers sur Notion, Airtable et plus.",          category: 'OUTIL MÉTIER'    },
-];
+interface Layer {
+  label: string;
+  accent: 'violet' | 'ember';
+  caption: string;
+  tools: Tool[];
+}
 
-const aiTools: Tool[] = [
-  { name: 'Claude Code',   icon: 'simple-icons:anthropic', description: 'Développement de logiciels internes uniquement.',                                                       category: 'IA · DEV'      },
-  { name: 'Claude Cowork', icon: 'simple-icons:anthropic', description: "Skill Claude pour piloter vos workflows par dialogue. J'accompagne l'installation et le mentoring de vos équipes.", category: 'IA · COACHING' },
+const layers: Layer[] = [
+  {
+    label: 'AUTOMATION',
+    accent: 'violet',
+    caption: 'LE SOCLE QUI EXÉCUTE',
+    tools: [
+      {
+        name: 'n8n',
+        icon: 'simple-icons:n8n',
+        role: 'WORKFLOW · IA',
+        value: 'Le moteur de vos workflows et de vos agents IA — cloud, ou hébergé chez vous quand les données sont sensibles.',
+      },
+      {
+        name: 'Make',
+        icon: 'simple-icons:make',
+        role: 'WORKFLOW',
+        value: 'Pour connecter vite vos outils métiers et orchestrer les process visuels que votre équipe peut suivre.',
+      },
+      {
+        name: 'Notion',
+        icon: 'simple-icons:notion',
+        role: 'OUTIL MÉTIER',
+        value: 'Vos CRM, ERP et bases sur-mesure (Notion, Airtable…), là où votre équipe travaille déjà.',
+      },
+    ],
+  },
+  {
+    label: 'IA',
+    accent: 'ember',
+    caption: 'LA COUCHE QUI DÉCIDE & CONSTRUIT',
+    tools: [
+      {
+        name: 'Claude Code',
+        icon: 'simple-icons:anthropic',
+        role: 'IA · DEV',
+        value: 'Des logiciels internes développés sur-mesure, à la vitesse de l\'IA.',
+      },
+      {
+        name: 'Claude Cowork',
+        icon: 'simple-icons:anthropic',
+        role: 'IA · COACHING',
+        value: 'Vos équipes pilotent leurs workflows par simple dialogue. J\'installe, je forme, je transmets.',
+      },
+    ],
+  },
 ];
 ---
 
@@ -41,82 +83,56 @@ const aiTools: Tool[] = [
     <SectionHeader
       number="03"
       label="STACK"
-      title="La meilleure stack IA & automation en 2026"
-      body="Cinq outils, choisis pour leur fit avec votre besoin. Pas une checklist exhaustive, ce que j'utilise tous les jours."
+      title="Automation + IA : la stack qui livre."
+      body="Cinq outils que j'utilise tous les jours, gardés chacun pour ce qu'il fait de mieux — du workflow no-code à l'agent IA sur-mesure."
       titleMaxWidth="22ch"
       bodyMaxWidth="60ch"
     />
 
-    {/* Card unique englobante — split 2 colonnes Two-Voice via gap-px sur fond divider */}
-    <div class="relative reveal bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
-      <span class="grid-corner tl" aria-hidden="true"></span>
-      <span class="grid-corner tr" aria-hidden="true"></span>
-      <span class="grid-corner bl" aria-hidden="true"></span>
-      <span class="grid-corner br" aria-hidden="true"></span>
+    <div class="reveal flex flex-col gap-3 lg:gap-4">
+      {layers.map((layer) => (
+        <div class="relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
 
-      <div class="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-px bg-[var(--color-divider)]">
-
-        {/* Colonne WORKFLOW (violet) — 3 tools */}
-        <div class="bg-[var(--color-paper)] flex flex-col">
+          {/* Layer header — label accent + caption valeur + compte */}
           <div class="flex items-baseline justify-between gap-3 px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
-            <span class="mono-label text-[var(--color-violet-deep)]">WORKFLOW</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">3 OUTILS</span>
+            <div class="flex items-baseline gap-3 flex-wrap">
+              <span class={`mono-label ${layer.accent === 'violet' ? 'text-[var(--color-violet-deep)]' : 'text-[var(--color-ember-deep)]'}`}>
+                {layer.label}
+              </span>
+              <span class="mono-caption text-[var(--color-ink-low)]">{layer.caption}</span>
+            </div>
+            <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{layer.tools.length} OUTILS</span>
           </div>
-          <div class="flex flex-col gap-px bg-[var(--color-divider)]">
-            {workflowTools.map((tool) => (
+
+          {/* Tools — grid responsive, colonnes = nombre d'outils (pas de cellule vide) */}
+          <div class={`grid grid-cols-1 ${layer.tools.length >= 3 ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'} gap-px bg-[var(--color-divider)]`}>
+            {layer.tools.map((tool) => (
               <div class="bg-[var(--color-paper)] flex flex-col gap-3 px-6 md:px-8 py-5 md:py-6">
                 <div class="flex items-center justify-between gap-3 flex-wrap">
                   <div class="inline-flex items-center gap-2.5">
                     <Icon
                       name={tool.icon}
-                      class="stack-logo stack-logo-violet"
+                      class={`stack-logo ${layer.accent === 'violet' ? 'stack-logo-violet' : 'stack-logo-ember'}`}
                       aria-hidden="true"
                     />
                     <span class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">
                       {tool.name}
                     </span>
                   </div>
-                  <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{tool.category}</span>
+                  <span class={`chip ${layer.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>{tool.role}</span>
                 </div>
-                <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5] max-w-[58ch]">
-                  {tool.description}
+                <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] max-w-[46ch]">
+                  {tool.value}
                 </span>
               </div>
             ))}
           </div>
         </div>
-
-        {/* Colonne IA (ember) — 2 tools */}
-        <div class="bg-[var(--color-paper)] flex flex-col">
-          <div class="flex items-baseline justify-between gap-3 px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
-            <span class="mono-label text-[var(--color-ember-deep)]">IA</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">2 OUTILS</span>
-          </div>
-          <div class="flex flex-col gap-px bg-[var(--color-divider)]">
-            {aiTools.map((tool) => (
-              <div class="bg-[var(--color-paper)] flex flex-col gap-3 px-6 md:px-8 py-5 md:py-6">
-                <div class="flex items-center justify-between gap-3 flex-wrap">
-                  <div class="inline-flex items-center gap-2.5">
-                    <Icon
-                      name={tool.icon}
-                      class="stack-logo stack-logo-ember"
-                      aria-hidden="true"
-                    />
-                    <span class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">
-                      {tool.name}
-                    </span>
-                  </div>
-                  <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{tool.category}</span>
-                </div>
-                <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5] max-w-[58ch]">
-                  {tool.description}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </div>
+      ))}
     </div>
 
   </div>
@@ -124,8 +140,8 @@ const aiTools: Tool[] = [
 
 <style>
   .stack-logo {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
   }
   .stack-logo-violet {
