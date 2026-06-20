@@ -32,9 +32,11 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
     </div>
 
     <!-- Split 2 cards même hauteur (lg:items-stretch) -->
-    <div class="reveal grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 lg:gap-8 lg:items-stretch mb-10 md:mb-16">
+    <!-- Split asymétrique (choisi via impeccable live) : statement dominant 2fr,
+         photo en colonne étroite 1fr. Stacked sur mobile, items-stretch en lg. -->
+    <div class="reveal grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 lg:items-stretch mb-10 md:mb-16">
 
-      <!-- Hero block — statement autonome : H1 + sous-titre + microdata + CTA -->
+      <!-- Hero block — statement : H1 + sous-titre + microdata + CTA -->
       <div class="hero-manifesto-block relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-6 md:gap-7">
         <span class="grid-corner tl" aria-hidden="true"></span>
         <span class="grid-corner tr" aria-hidden="true"></span>
@@ -42,9 +44,9 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
         <span class="grid-corner br" aria-hidden="true"></span>
 
         <h1
-          class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[18ch]"
+          class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[20ch]"
         >
-          Automatisez 15&nbsp;h par semaine grâce à l'IA et l'automation.
+          Freelance et formateur en <span class="hero-h1-accent">IA et automation</span>
         </h1>
 
         <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6">
@@ -54,7 +56,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
           </p>
 
           <div class="mono-caption text-[var(--color-ink-low)] mt-4 md:mt-5">
-            500+ WORKFLOWS · 2 000 H AUTOMATISÉES /MOIS · MAKE CERTIFIÉ N5
+            500+ WORKFLOWS · 2&nbsp;000&nbsp;H AUTOMATISÉES /MOIS · MAKE CERTIFIÉ N5
           </div>
         </div>
 
@@ -71,7 +73,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
         </div>
       </div>
 
-      <!-- Portrait Lilian — card paper-bordée même hauteur, photo cover -->
+      <!-- Portrait Lilian — colonne étroite, photo cover -->
       <div class="hero-portrait relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
         <span class="grid-corner tl" aria-hidden="true"></span>
         <span class="grid-corner tr" aria-hidden="true"></span>
@@ -86,7 +88,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
           fetchpriority="high"
           formats={['avif', 'webp']}
           widths={[480, 768, 1024]}
-          sizes="(min-width: 1024px) 40vw, 100vw"
+          sizes="(min-width: 1024px) 30vw, 100vw"
         />
       </div>
 
@@ -99,10 +101,16 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
   .hero-manifesto-h1 {
     font-size: var(--text-display-hero);
     line-height: 0.95;
-    letter-spacing: -0.05em;
+    letter-spacing: -0.035em;
     text-wrap: balance;
     overflow-wrap: break-word;
     hyphens: auto;
+  }
+
+  /* Accepté via impeccable live : le domaine « IA et automation » passe en accent
+     violet (emphasis par couleur, No-Italic Rule respectée). */
+  .hero-manifesto-h1 .hero-h1-accent {
+    color: var(--color-violet-deep);
   }
 
   /* À partir de lg, on resserre légèrement le H1 pour respirer face à la photo */
