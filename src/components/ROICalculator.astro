@@ -10,14 +10,7 @@
  * inline (fin du drift TSX/Astro flaggué dans l'audit).
  */
 import SectionHeader from './SectionHeader.astro';
-import { PRICING } from '../data/pricing';
-
-const PROJECT_PRICE_MID = PRICING.missionCompleteRef;
-const PROJECT_PRICE_LOW = PRICING.workflowRef;
-const RECOVERY_RATE = 0.55;
-const WEEKS_PER_YEAR = 48;
-const MAX_REASONABLE_HOURS = 20;
-const MAX_REASONABLE_PEOPLE = 10;
+import { compute, formatFR, formatFormula } from '../lib/roi';
 
 const initial = { hours: 8, people: 3, hourlyCost: 55 };
 
@@ -27,19 +20,8 @@ const sliders = [
   { id: 'roi-rate',   label: 'COÛT HORAIRE INTERNE',                        unit: '€', min: 25, max: 120, step: 5, value: initial.hourlyCost },
 ];
 
-const cappedHours = Math.min(initial.hours, MAX_REASONABLE_HOURS);
-const cappedPeople = Math.min(initial.people, MAX_REASONABLE_PEOPLE);
-const isCapped = initial.hours >= MAX_REASONABLE_HOURS || initial.people >= MAX_REASONABLE_PEOPLE;
-const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
-const moneySaved = hoursSaved * initial.hourlyCost;
-const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
-const monthsToROI = moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
-
-function formatFR(n: number): string {
-  // Format français avec NBSP standard (U+00A0) au lieu de narrow NBSP (U+202F)
-  // qui se rend cassé en Geist 600 large size.
-  return n.toLocaleString('fr-FR').replace(/ /g, ' ');
-}
+const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPrice, monthsToROI } =
+  compute(initial.hours, initial.people, initial.hourlyCost);
 ---
 
 <section
@@ -143,7 +125,7 @@ function formatFR(n: number): string {
 
         <div class="mono-caption mb-6 leading-[1.6] flex flex-col gap-1 text-[var(--color-ink-low)]">
           <span>
-            FORMULE : <span data-roi-formula>{cappedHours}H × {cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × {initial.hourlyCost}€</span>
+            FORMULE : <span data-roi-formula>{formatFormula(cappedHours, cappedPeople, initial.hourlyCost)}</span>
           </span>
           <span>
             COÛT PROJET RÉFÉRENCE : <span data-roi-project-price>{formatFR(projectPrice)}</span> € (<span data-roi-project-label>{moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'}</span>)
@@ -186,29 +168,7 @@ function formatFR(n: number): string {
 </section>
 
 <script>
-  import { PRICING } from '../data/pricing';
-
-  const PROJECT_PRICE_MID = PRICING.missionCompleteRef;
-  const PROJECT_PRICE_LOW = PRICING.workflowRef;
-  const RECOVERY_RATE = 0.55;
-  const WEEKS_PER_YEAR = 48;
-  const MAX_REASONABLE_HOURS = 20;
-  const MAX_REASONABLE_PEOPLE = 10;
-
-  function formatFR(n: number): string {
-    return n.toLocaleString('fr-FR').replace(/ /g, ' ');
-  }
-
-  function compute(hours: number, people: number, hourlyCost: number) {
-    const cappedHours = Math.min(hours, MAX_REASONABLE_HOURS);
-    const cappedPeople = Math.min(people, MAX_REASONABLE_PEOPLE);
-    const isCapped = hours >= MAX_REASONABLE_HOURS || people >= MAX_REASONABLE_PEOPLE;
-    const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
-    const moneySaved = hoursSaved * hourlyCost;
-    const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
-    const monthsToROI = moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
-    return { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPrice, monthsToROI };
-  }
+  import { compute, formatFR, formatFormula } from '../lib/roi';
 
   // Met à jour la CSS custom property --slider-progress qui pilote
   // le linear-gradient de fill du track (entre min et current value).
@@ -348,7 +308,7 @@ function formatFR(n: number): string {
     outMoney.textContent = formatFR(initialComputed.moneySaved);
     outHours.textContent = formatFR(initialComputed.hoursSaved);
     outMonths.textContent = String(initialComputed.monthsToROI);
-    formulaEl.textContent = `${initialComputed.cappedHours}H × ${initialComputed.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${initRate}€`;
+    formulaEl.textContent = formatFormula(initialComputed.cappedHours, initialComputed.cappedPeople, initRate);
     projectPriceEl.textContent = formatFR(initialComputed.projectPrice);
     projectLabelEl.textContent = initialComputed.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
     warningEl.hidden = !initialComputed.isCapped;
@@ -382,7 +342,7 @@ function formatFR(n: number): string {
       animHours.setTarget(c.hoursSaved, reducedMotion);
       animMonths.setTarget(c.monthsToROI, reducedMotion);
 
-      formulaEl.textContent = `${c.cappedHours}H × ${c.cappedPeople} EMP × 0,55 RÉCUP × 48 SEM × ${hourlyCost}€`;
+      formulaEl.textContent = formatFormula(c.cappedHours, c.cappedPeople, hourlyCost);
       projectPriceEl.textContent = formatFR(c.projectPrice);
       projectLabelEl.textContent = c.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
       warningEl.hidden = !c.isCapped;

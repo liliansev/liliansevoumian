@@ -144,7 +144,7 @@ const offres: Offre[] = [
             href={o.href}
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
-            class="btn-primary w-full sm:w-auto sm:self-start justify-center"
+            class="btn-ghost w-full sm:w-auto sm:self-start justify-center"
             data-fast-goal={o.goal}
             data-fast-goal-type={o.goalType}
             data-fast-goal-source={o.goalSource}
@@ -155,6 +155,26 @@ const offres: Offre[] = [
         </article>
         );
       })}
+    </div>
+
+    {/* CTA principal de la section : après les offres, l'action la plus chaude
+        est de réserver un appel. Les CTA par carte sont secondaires (ghost) ;
+        celui-ci est LE primaire de la section. */}
+    <div class="reveal mt-8 md:mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+      <a
+        href="https://cal.com/lilian-sevoumian/20min"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary w-full sm:w-auto justify-center"
+        data-fast-goal="contact_lead"
+        data-fast-goal-type="call"
+        data-fast-goal-source="offres"
+      >
+        Réserver un appel · 20 min
+      </a>
+      <span class="mono-caption text-[var(--color-ink-low)] leading-[1.5] max-w-[42ch]">
+        PAS SÛR DE L'OFFRE QUI COLLE ? ON EN PARLE 20 MIN.
+      </span>
     </div>
 
     {/* Footer note : prix HT + engagement + délai devis */}
