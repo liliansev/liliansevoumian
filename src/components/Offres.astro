@@ -10,14 +10,12 @@
  * one-shot), ember pour les engagements IA-flavored (Mentoring 3 mois, Coaching).
  */
 import SectionHeader from './SectionHeader.astro';
-import { PRICING, eur } from '../data/pricing';
 
 interface Offre {
   num: string;
   accent: 'violet' | 'ember';
   title: string;
   format: string;
-  price: string;
   description: string;
   cta: string;
   href: string;
@@ -37,7 +35,6 @@ const offres: Offre[] = [
     accent: 'violet',
     title: 'Régie automation & apps internes',
     format: 'RÉGIE · 1–2 J/SEM',
-    price: `${eur(PRICING.regieDayRate)} €/JOUR`,
     description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
     href: '#contact-form',
@@ -50,7 +47,6 @@ const offres: Offre[] = [
     accent: 'ember',
     title: 'Mentoring 3 mois',
     format: 'FORFAIT · ACCOMPAGNEMENT',
-    price: `${eur(PRICING.mentoringMonthly)} €/MOIS`,
     description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
     cta: 'Discuter du programme',
     href: '#contact-form',
@@ -61,10 +57,9 @@ const offres: Offre[] = [
   {
     num: '03',
     accent: 'violet',
-    title: 'Mission perso',
+    title: 'Mission cadrée',
     format: 'ONE-SHOT · CADRÉ',
-    price: `À PARTIR DE ${eur(PRICING.missionFloor)} €`,
-    description: "Mission ponctuelle selon votre besoin. Diagnostic, plan d'action chiffré, livraison.",
+    description: "Mission ponctuelle selon votre besoin. Cadrage, conception, livraison.",
     cta: 'Cadrer la mission',
     href: '#contact-form',
     goal: 'cta_contact_click',
@@ -76,7 +71,6 @@ const offres: Offre[] = [
     accent: 'ember',
     title: 'Coaching ponctuel',
     format: '1H · CIBLÉ',
-    price: `${eur(PRICING.coachingHourly)} €/H`,
     description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
     cta: 'Réserver un coaching',
     href: 'https://go.liliansevoumian.fr/coaching',
@@ -95,7 +89,7 @@ const offres: Offre[] = [
     <SectionHeader
       number="04"
       label="OFFRES"
-      title="Comment on peut travailler ensemble ?"
+      title="Comment je peux vous aider."
       titleMaxWidth="26ch"
     />
 
@@ -123,14 +117,6 @@ const offres: Offre[] = [
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
             {o.title}
           </h3>
-
-          {/* Prix mono large */}
-          <div
-            class="font-mono font-medium tracking-[0.02em] text-[var(--color-ink)] tabular-nums"
-            style="font-size: var(--text-metric);"
-          >
-            {o.price}
-          </div>
 
           {/* Description */}
           <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0 flex-1 max-w-[72ch]">
@@ -175,16 +161,14 @@ const offres: Offre[] = [
       </span>
     </div>
 
-    {/* Footer note : prix HT + engagement + délai devis */}
+    {/* Footer note : engagement + délai de réponse (sans pricing). */}
     <div class="reveal mt-8 mono-caption text-[var(--color-ink-low)] flex flex-wrap items-center gap-x-3 gap-y-2">
       <span class="inline-flex items-center gap-1.5">
         <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
-        TOUS LES PRIX SONT EN HT
+        VOUS RESTEZ LIBRE
       </span>
       <span aria-hidden="true">·</span>
-      <span>VOUS RESTEZ LIBRE</span>
-      <span aria-hidden="true">·</span>
-      <span>DEVIS SOUS 48 H</span>
+      <span>RÉPONSE SOUS 48 H</span>
     </div>
 
     {/* Pont augmentes.fr — route l'intention « apprendre soi-même » (≠ déléguer

@@ -6,9 +6,7 @@
  * différente du visible → risque vis-à-vis des guidelines Google (le structured
  * data doit refléter le contenu visible). Désormais un seul texte, dérivé ici.
  *
- * Prix interpolés depuis pricing.ts (source unique des montants).
  */
-import { PRICING, eur } from './pricing';
 
 export interface FaqItem {
   /** Question affichée. */
@@ -20,11 +18,11 @@ export interface FaqItem {
 export const faqs: FaqItem[] = [
   {
     q: "Quel ROI réel ?",
-    a: `Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. À 50 € de coût horaire interne, un workflow à ${eur(PRICING.workflowRef)} € se rembourse en moins de deux semaines. Sur une mission complète à ${eur(PRICING.missionCompleteRef)} €, le ROI est positif à partir du 4e mois, souvent avant. J'envoie une estimation chiffrée dès le premier appel, basée sur vos vrais process.`,
+    a: "Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. Sur un workflow ciblé, c'est rentabilisé en quelques semaines ; sur une mission complète, en quelques mois. On regarde vos vrais process ensemble au premier échange.",
   },
   {
     q: "Et si l'API d'un de mes outils change ?",
-    a: "Tous mes workflows incluent une couche d'erreur explicite (try/catch + Slack alert) et sont versionnés en JSON exportable. Si Make ou n8n bloque sur un changement d'API tiers, vous voyez l'erreur, vous savez ce qu'il s'est passé. Pendant les 30 j de SLA, je corrige sans surcoût. Au-delà, c'est un forfait à la séance. La plupart des évolutions courantes prennent moins d'1 h.",
+    a: "Tous mes workflows incluent une couche d'erreur explicite (try/catch + Slack alert) et sont versionnés en JSON exportable. Si Make ou n8n bloque sur un changement d'API tiers, vous voyez l'erreur, vous savez ce qu'il s'est passé. Pendant les 30 j de SLA, je corrige sans surcoût. Au-delà, on cale ça ensemble. La plupart des évolutions courantes prennent moins d'1 h.",
   },
   {
     q: "Mes équipes ont-elles besoin de skills tech ?",
@@ -40,6 +38,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Comment je suis sûr que vous comprenez mon métier ?",
-    a: "Je ne le suis pas. C'est exactement ce que la phase 1 (diagnostic 20 min) sert à valider. Si après l'appel je sens que je ne suis pas le bon (secteur trop spécialisé, contraintes que je ne maîtrise pas), je le dis et je vous oriente. Mieux que de prendre un projet que je ne sais pas livrer.",
+    a: "Je ne le suis pas. C'est exactement ce que sert à valider le premier appel. Si après l'appel je sens que je ne suis pas le bon (secteur trop spécialisé, contraintes que je ne maîtrise pas), je le dis et je vous oriente. Mieux que de prendre un projet que je ne sais pas livrer.",
   },
 ];

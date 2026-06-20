@@ -20,7 +20,7 @@ const sliders = [
   { id: 'roi-rate',   label: 'COÛT HORAIRE INTERNE',                        unit: '€', min: 25, max: 120, step: 5, value: initial.hourlyCost },
 ];
 
-const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPrice, monthsToROI } =
+const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
   compute(initial.hours, initial.people, initial.hourlyCost);
 ---
 
@@ -34,7 +34,7 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPric
     <SectionHeader
       number="01"
       label="ROI"
-      title="Votre temps coûte plus que vous ne pensez."
+      title="Le vrai coût de vos tâches manuelles."
       body="Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée. L'audit réel descend dans le détail."
       titleMaxWidth="20ch"
       bodyMaxWidth="60ch"
@@ -101,34 +101,20 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPric
           <span class="mono-caption ml-2 align-middle text-[var(--color-ink-low)]">/AN</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-6 pb-6 border-b border-[var(--color-divider)] mb-6">
-          <div>
-            <div class="mono-caption mb-1 text-[var(--color-ink-low)]">HEURES /AN</div>
-            <div
-              class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-ink)]"
-              style="font-size: var(--text-roi-output);"
-            >
-              <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
-              <span> H</span>
-            </div>
-          </div>
-          <div>
-            <div class="mono-caption mb-1 text-[var(--color-ink-low)]">ROI EN</div>
-            <div
-              class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-violet-deep)]"
-              style="font-size: var(--text-roi-output);"
-            >
-              ~<span data-roi-output="monthsToROI">{monthsToROI}</span> MOIS
-            </div>
+        <div class="pb-6 border-b border-[var(--color-divider)] mb-6">
+          <div class="mono-caption mb-1 text-[var(--color-ink-low)]">HEURES /AN</div>
+          <div
+            class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-ink)]"
+            style="font-size: var(--text-roi-output);"
+          >
+            <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
+            <span> H</span>
           </div>
         </div>
 
         <div class="mono-caption mb-6 leading-[1.6] flex flex-col gap-1 text-[var(--color-ink-low)]">
           <span>
             FORMULE : <span data-roi-formula>{formatFormula(cappedHours, cappedPeople, initial.hourlyCost)}</span>
-          </span>
-          <span>
-            COÛT PROJET RÉFÉRENCE : <span data-roi-project-price>{formatFR(projectPrice)}</span> € (<span data-roi-project-label>{moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE'}</span>)
           </span>
           <span data-roi-warning class="text-[var(--color-error)]" role="status" aria-live="polite" hidden={!isCapped}>
             [!] ESTIMATION PLAFONNÉE · L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
@@ -262,11 +248,8 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPric
 
     const outMoney = root.querySelector<HTMLElement>('[data-roi-output="moneySaved"]')!;
     const outHours = root.querySelector<HTMLElement>('[data-roi-output="hoursSaved"]')!;
-    const outMonths = root.querySelector<HTMLElement>('[data-roi-output="monthsToROI"]')!;
 
     const formulaEl = root.querySelector<HTMLElement>('[data-roi-formula]')!;
-    const projectPriceEl = root.querySelector<HTMLElement>('[data-roi-project-price]')!;
-    const projectLabelEl = root.querySelector<HTMLElement>('[data-roi-project-label]')!;
     const warningEl = root.querySelector<HTMLElement>('[data-roi-warning]')!;
 
     const shareBtn = root.querySelector<HTMLButtonElement>('[data-roi-share]');
@@ -307,15 +290,11 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPric
     // Initialise les outputs avec les valeurs computed (snap, pas d'animation au load)
     outMoney.textContent = formatFR(initialComputed.moneySaved);
     outHours.textContent = formatFR(initialComputed.hoursSaved);
-    outMonths.textContent = String(initialComputed.monthsToROI);
     formulaEl.textContent = formatFormula(initialComputed.cappedHours, initialComputed.cappedPeople, initRate);
-    projectPriceEl.textContent = formatFR(initialComputed.projectPrice);
-    projectLabelEl.textContent = initialComputed.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
     warningEl.hidden = !initialComputed.isCapped;
 
     const animMoney = new AnimatedValue(outMoney, initialComputed.moneySaved);
     const animHours = new AnimatedValue(outHours, initialComputed.hoursSaved);
-    const animMonths = new AnimatedValue(outMonths, initialComputed.monthsToROI, (n) => String(n));
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -340,11 +319,8 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPric
 
       animMoney.setTarget(c.moneySaved, reducedMotion);
       animHours.setTarget(c.hoursSaved, reducedMotion);
-      animMonths.setTarget(c.monthsToROI, reducedMotion);
 
       formulaEl.textContent = formatFormula(c.cappedHours, c.cappedPeople, hourlyCost);
-      projectPriceEl.textContent = formatFR(c.projectPrice);
-      projectLabelEl.textContent = c.moneySaved < 20000 ? 'WORKFLOW' : 'MISSION COMPLÈTE';
       warningEl.hidden = !c.isCapped;
 
       syncUrl(hours, people, hourlyCost, defaults);

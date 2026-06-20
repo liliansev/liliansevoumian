@@ -6,14 +6,10 @@
  * ET le <script> client (recalcul live). Risque de divergence SSR/JS à chaque
  * édition. Désormais une seule définition importée des deux côtés.
  *
- * Modèle de style : data/pricing.ts.
+ * Estimateur d'économies pur : économie €/an + heures/an. Aucune référence de
+ * prix de projet (le calculateur ne chiffre pas la mission).
  */
-import { PRICING } from '../data/pricing';
 
-/** Coût projet référence "mission complète" (tier haut) — € */
-export const PROJECT_PRICE_MID = PRICING.missionCompleteRef;
-/** Coût projet référence "workflow" (tier bas) — € */
-export const PROJECT_PRICE_LOW = PRICING.workflowRef;
 /** Part des heures manuelles récupérées via automatisation (estimation conservatrice) */
 export const RECOVERY_RATE = 0.55;
 /** Semaines effectives par an */
@@ -35,9 +31,7 @@ export function compute(hours: number, people: number, hourlyCost: number) {
   const isCapped = hours >= MAX_REASONABLE_HOURS || people >= MAX_REASONABLE_PEOPLE;
   const hoursSaved = Math.round(cappedHours * cappedPeople * RECOVERY_RATE * WEEKS_PER_YEAR);
   const moneySaved = hoursSaved * hourlyCost;
-  const projectPrice = moneySaved < 20000 ? PROJECT_PRICE_LOW : PROJECT_PRICE_MID;
-  const monthsToROI = moneySaved > 0 ? Math.max(1, Math.ceil((projectPrice * 12) / moneySaved)) : 99;
-  return { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved, projectPrice, monthsToROI };
+  return { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved };
 }
 
 // Affichage du taux de récup en décimale FR ("0,55") piloté par la constante,
