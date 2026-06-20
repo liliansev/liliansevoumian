@@ -37,6 +37,16 @@ export default async function handler(req, res) {
   const email = (body?.email || '').toString().trim();
   const message = (body?.message || '').toString().trim();
 
+  // Anti-spam : honeypot rempli (bot) OU soumission quasi instantanée (<1,5 s).
+  // On renvoie 200 (succès simulé) SANS envoyer de mail — on ne donne aucun signal au bot.
+  // Le timing n'est appliqué que s'il est présent (client à jour), pour ne pas
+  // bloquer un client en cache pendant un déploiement.
+  const honeypot = (body?.company || '').toString().trim();
+  const elapsed = Number(body?.elapsed) || 0;
+  if (honeypot !== '' || (elapsed > 0 && elapsed < 1500)) {
+    return res.status(200).json({ ok: true });
+  }
+
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Champs manquants' });
   }

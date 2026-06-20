@@ -118,6 +118,7 @@ html.dark {
   --color-ember-soft: oklch(0.30 0.08 45);
   --color-ember-deep: oklch(0.85 0.10 45);
   --color-success: oklch(0.80 0.16 148);
+  --color-error: oklch(0.78 0.16 25);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -141,6 +142,7 @@ html.dark {
     --color-ember-soft: oklch(0.30 0.08 45);
     --color-ember-deep: oklch(0.85 0.10 45);
     --color-success: oklch(0.80 0.16 148);
+    --color-error: oklch(0.78 0.16 25);
   }
 }
 
@@ -237,17 +239,19 @@ a {
 :focus-visible {
   outline: 2px solid var(--color-violet);
   outline-offset: 2px;
-  border-radius: var(--radius-xs);
-}
-
-@media (hover: none) and (pointer: coarse) {
-  :focus-visible {
-    outline: none;
-  }
 }
 
 @media (forced-colors: active) {
   :focus-visible { outline: 2px solid CanvasText; }
+}
+
+/* Cibles tactiles >=44px sur pointeur grossier, sans alourdir le rythme desktop. */
+@media (hover: none) and (pointer: coarse) {
+  .tap-44 {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 }
 
 /* =========================================================================
@@ -424,6 +428,15 @@ a, button, input, textarea, select,
   transform: scale(0.98);
 }
 
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary:disabled:active {
+  transform: none;
+}
+
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -536,6 +549,15 @@ a, button, input, textarea, select,
   color: var(--color-violet-deep);
 }
 
+/* Clavier : le focus revendique sa cellule comme le hover (Grid-Claims-the-Cell). */
+.card-interactive:focus-visible {
+  border-color: var(--color-ink-faint);
+}
+
+.card-interactive:focus-visible .grid-corner {
+  color: var(--color-violet-deep);
+}
+
 /* Scan line — au hover, une ligne 1px violet glisse du top au bottom de la card.
    Background-position animé (vs transform translateY) pour ne pas avoir besoin
    d'overflow:hidden sur la card (sinon clip les grid-corners à -4px). */
@@ -552,7 +574,8 @@ a, button, input, textarea, select,
   border-radius: inherit;
 }
 
-.card-interactive:hover::after {
+.card-interactive:hover::after,
+.card-interactive:focus-visible::after {
   animation: card-scan 1100ms var(--ease-out-quint);
 }
 
@@ -564,7 +587,8 @@ a, button, input, textarea, select,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card-interactive:hover::after {
+  .card-interactive:hover::after,
+  .card-interactive:focus-visible::after {
     animation: none;
   }
 }
@@ -601,7 +625,8 @@ a, button, input, textarea, select,
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-body);
-  font-size: var(--text-body);
+  /* >=16px : évite le zoom auto iOS Safari au focus d'un champ. */
+  font-size: max(16px, var(--text-body));
   line-height: 1.55;
   padding: 10px 14px;
   border: 1px solid var(--color-divider);
@@ -610,7 +635,16 @@ a, button, input, textarea, select,
 }
 
 .input-text::placeholder {
-  color: var(--color-ink-faint);
+  color: var(--color-ink-low);
+}
+
+/* Honeypot anti-spam : hors-écran, invisible aux humains et aux lecteurs d'écran. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .input-text:hover {
@@ -641,7 +675,7 @@ a, button, input, textarea, select,
     var(--color-divider) var(--slider-progress, 0%),
     var(--color-divider) 100%
   );
-  border-radius: 2px;
+  border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
   transition: background-color var(--duration-default);
@@ -687,6 +721,18 @@ a, button, input, textarea, select,
   background: var(--color-paper);
   border: 2px solid var(--color-ink);
   cursor: pointer;
+  transition: border-color var(--duration-quick), transform var(--duration-quick);
+}
+
+.roi-slider::-moz-range-thumb:hover {
+  border-color: var(--color-violet);
+  transform: scale(1.1);
+}
+
+.roi-slider:focus-visible::-moz-range-thumb {
+  border-color: var(--color-violet);
+  outline: 2px solid var(--color-violet);
+  outline-offset: 2px;
 }
 
 /* =========================================================================
@@ -773,20 +819,6 @@ a, button, input, textarea, select,
   0% { opacity: 0.4; transform: scale(0.7) rotate(-90deg); }
   60% { opacity: 1; transform: scale(1.1) rotate(0deg); }
   100% { opacity: 0.85; transform: scale(1) rotate(0deg); }
-}
-
-/* Workflow live — animation node-by-node, init via [data-workflow] selector
-   (CaseStudy.astro script). Réutilisé par HeroManifesto + CaseStudy. */
-@keyframes workflow-pulse-frame {
-  0% { opacity: 0; transform: scale(1); }
-  40% { opacity: 1; transform: scale(1.4); }
-  100% { opacity: 0; transform: scale(1.6); }
-}
-.workflow-pulse.is-pulsing {
-  animation: workflow-pulse-frame 900ms var(--ease-out-expo) forwards;
-}
-.workflow-dot.is-active {
-  border-color: var(--color-violet);
 }
 
 /* Living grid — section-active state choreography.
@@ -920,7 +952,8 @@ a[href^="mailto:"] {
   border-radius: var(--radius-md);
 }
 
-.faq-item:hover {
+.faq-item:hover,
+.faq-item:focus-within {
   border-color: var(--color-ink-low);
 }
 

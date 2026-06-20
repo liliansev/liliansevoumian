@@ -32,7 +32,7 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Make ou n8n ? Lequel et pourquoi ?",
-    a: "n8n par défaut sur 80 % des cas : self-hostable (RGPD strict, données sensibles), plus puissant data-heavy, code natif quand on en a besoin. Make uniquement si votre équipe maintient elle-même et veut le plus visuel possible. Si vous êtes déjà sur l'un, on continue dessus, je migre rarement pour migrer.",
+    a: "n8n par défaut sur 80 % des cas : self-hostable (RGPD strict, données sensibles), plus puissant data-heavy, code natif quand on en a besoin. Make uniquement si votre équipe maintient elle-même et veut le plus visuel possible. Si vous êtes déjà sur l'un, on continue dessus, je migre rarement pour migrer.",
   },
   {
     q: "Remote ou sur site ?",
