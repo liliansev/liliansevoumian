@@ -1,57 +1,47 @@
 ---
 /*
- * CaseStudy.astro — section §02 (refonte).
+ * CaseStudy.astro — section §02.
  *
  * Grille de cartes ÉGALES, toutes cliquables (chaque carte = un lien vers le
- * détail du cas), avec un CTA « Voir le cas ». Plus de carte héro surdimensionnée,
- * plus d'animation workflow. Cas clients réels 2026 — aucune métrique inventée.
+ * détail du cas), avec un CTA « Voir le cas ». Cartes orientées EXPERTISE
+ * MÉTIER + présentation succincte du client — pas de métriques internes ni de
+ * liste d'outils (sans valeur pour un prospect, et parfois confidentielles).
+ * Les plateformes restent nommées ailleurs (hero, section Stack) où elles
+ * signalent la compétence sans exposer le détail des missions.
  *
  * `href` : destination du « Voir le cas ». Par défaut /cas-clients ; à pointer
- * vers une page de détail dédiée (ou un post LinkedIn) par cas quand elles existent.
+ * vers une page de détail dédiée par cas quand elles existent.
  */
 import SectionHeader from './SectionHeader.astro';
-import { Icon } from 'astro-icon/components';
-
-const TOOL_ICONS: Record<string, string> = {
-  'n8n':    'simple-icons:n8n',
-  'Make':   'simple-icons:make',
-  'Notion': 'simple-icons:notion',
-};
 
 interface Case {
   client: string;
   sector: string;
   title: string;
   description: string;
-  stack: string[];
-  ai?: string[];
   href: string;
 }
 
 const cases: Case[] = [
   {
     client: 'Fraich Touch',
-    sector: 'AGENCE DE STAFFING',
-    title: '33 scénarios Make → 3. Zéro facture bloquée.',
-    description: 'Refonte d\'un système de facturation refait trois fois : 3 scénarios documentés, tableau de bord Notion en temps réel et alertes d\'erreur. Maintenance allégée de moitié.',
-    stack: ['Make', 'Notion'],
+    sector: 'AGENCE DE GESTION DE TALENTS',
+    title: 'Une facturation qui tourne seule, sans erreur.',
+    description: 'Agence de gestion de talents (santé, sport, entreprenariat) qui pilote les partenariats marques de ses créateurs. J\'ai repensé et fiabilisé tout leur système de facturation — automatisé de bout en bout, documenté et surveillé — pour que l\'équipe arrête de courir après les paiements et se concentre sur ses talents.',
     href: '/cas-clients',
   },
   {
     client: 'M Partners',
-    sector: 'EXECUTIVE SEARCH',
-    title: 'Un agent IA qui qualifie la prospection recrutement.',
-    description: 'Pipeline n8n : import Specter → Loxo, enrichissement, puis un agent IA qui repère le bon poste (CEO/Founder de la cible) et trie les contacts en listes « Validés » / « À vérifier ».',
-    stack: ['n8n', 'Loxo', 'Specter'],
-    ai: ['Agent IA'],
+    sector: 'EXECUTIVE SEARCH · TECH & VC',
+    title: 'Une prospection qualifiée par l\'IA.',
+    description: 'Cabinet de chasse de têtes spécialisé sur l\'écosystème startup et capital-risque. J\'ai industrialisé leur prospection : la collecte et l\'enrichissement des cibles sont automatisés, puis un agent IA qualifie les bons dirigeants à approcher — l\'équipe se concentre sur la relation, plus sur la recherche manuelle.',
     href: '/cas-clients',
   },
   {
     client: 'Celeris',
-    sector: 'DISTRIBUTION IT · ODOO',
-    title: 'Mentoring n8n + catalogue HPE synchronisé dans Odoo.',
-    description: 'Mentoring 3 mois pour rendre l\'équipe autonome sur n8n. Première mission : fin du copier-coller des produits HPE, récupérés via l\'API et injectés directement dans Odoo.',
-    stack: ['n8n', 'Odoo', 'API HPE'],
+    sector: 'DISTRIBUTEUR IT B2B',
+    title: 'Un catalogue produits qui s\'enrichit tout seul.',
+    description: 'Distributeur IT B2B, acteur établi du marché français. J\'accompagne leurs équipes dans leur montée en compétence sur l\'automatisation, et j\'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP — pensé pour tourner en interne, avec une exigence forte de souveraineté des données.',
     href: '/cas-clients',
   },
 ];
@@ -90,28 +80,15 @@ const cases: Case[] = [
             <span class="mono-caption text-[var(--color-ink-low)]">{c.sector}</span>
           </div>
 
-          {/* Titre — le résultat */}
+          {/* Titre — l'angle expertise métier */}
           <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0 max-w-[26ch]">
             {c.title}
           </h3>
 
-          {/* Description */}
+          {/* Description — société succincte + valeur métier */}
           <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
             {c.description}
           </p>
-
-          {/* Stack — workflow (violet) + IA (ember) */}
-          <div class="flex flex-wrap items-center gap-2">
-            {c.stack.map((tool) => (
-              <span class="chip chip-violet inline-flex items-center gap-1.5">
-                {TOOL_ICONS[tool] && <Icon name={TOOL_ICONS[tool]} class="case-tool-logo" aria-hidden="true" />}
-                {tool}
-              </span>
-            ))}
-            {c.ai?.map((tool) => (
-              <span class="chip chip-ember inline-flex items-center gap-1.5">{tool}</span>
-            ))}
-          </div>
 
           {/* CTA — pinned bottom */}
           <span class="mt-auto pt-4 border-t border-[var(--color-divider)] inline-flex items-center gap-1.5 mono-label text-[var(--color-violet-deep)]">
@@ -124,7 +101,7 @@ const cases: Case[] = [
 
     <!-- Footer link — signal de récurrence -->
     <div class="reveal mt-8 flex items-center gap-3">
-      <span class="mono-caption text-[var(--color-ink-low)]">+ 12 WORKFLOWS EN PROD DEPUIS 2021</span>
+      <span class="mono-caption text-[var(--color-ink-low)]">+ DES WORKFLOWS EN PRODUCTION DEPUIS 2021</span>
       <span class="text-[var(--color-ink-faint)]">·</span>
       <a
         href="https://www.linkedin.com/in/liliansevoumian/"
@@ -141,11 +118,6 @@ const cases: Case[] = [
 </section>
 
 <style>
-  .case-tool-logo {
-    width: 13px;
-    height: 13px;
-    flex-shrink: 0;
-  }
   /* La carte est un lien : pas de soulignement, couleur de texte héritée. */
   .case-card,
   .case-card:hover {
