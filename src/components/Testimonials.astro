@@ -1,0 +1,115 @@
+---
+/*
+ * Testimonials.astro — bande de preuve sociale (3 témoignages clients réels).
+ *
+ * Placée après CaseStudy, dans la zone de preuve. Volontairement SANS numéro de
+ * section (≠ étape numérotée) : c'est une bande de réassurance, pas un chapitre
+ * du parcours — ça évite de renuméroter Stack/Offres/FAQ/Contact + la nav.
+ *
+ * Contenu restauré depuis l'ancien composant (commit 48577f1~1) : vrais clients,
+ * pas d'invention. Avatars dans src/assets/testimonials/.
+ */
+import { Image } from 'astro:assets';
+import ismailImg from '../assets/testimonials/ismail.jpeg';
+import alexisImg from '../assets/testimonials/alexis.jpeg';
+import benjaminImg from '../assets/testimonials/benjamin.png';
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  image: ImageMetadata;
+}
+
+const testimonials: Testimonial[] = [
+  {
+    quote: "Un Champion du no-code d'Airtable et de Make avéré ! Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.",
+    name: 'Ismail Landoulsi',
+    role: 'Co-Founder & COO · CasanovaParis',
+    image: ismailImg,
+  },
+  {
+    quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation et de sa volonté infaillible de servir un projet.",
+    name: 'Alexis Kovalenko',
+    role: 'Co-fondateur · Contournement',
+    image: alexisImg,
+  },
+  {
+    quote: 'Il a une approche très professionnelle, un large spectre de connaissances, et un bon esprit de synthèse. Les projets qu\'il prend en charge sont un succès.',
+    name: 'Benjamin Potet',
+    role: 'Solution Architect · Customer Experience',
+    image: benjaminImg,
+  },
+];
+---
+
+<section
+  id="temoignages"
+  data-section
+  data-fast-scroll="scroll_to_section_temoignages"
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    {/* Header sans numéro — bande de preuve, pas une étape numérotée */}
+    <div class="reveal mb-12 md:mb-16">
+      <div class="testi-header-row">
+        <div class="section-number">TÉMOIGNAGES</div>
+        <h2
+          class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"
+          style="max-width: 22ch;"
+        >
+          Ils ont délégué. Voici leur verdict.
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 reveal-stagger">
+      {testimonials.map((t) => (
+        <article class="reveal relative card flex flex-col gap-5">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          <blockquote class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.6] m-0 flex-1">
+            {t.quote}
+          </blockquote>
+
+          <div class="flex items-center gap-3 pt-4 border-t border-[var(--color-divider)]">
+            <Image
+              src={t.image}
+              alt={`Photo de ${t.name}`}
+              width={80}
+              height={80}
+              format="webp"
+              quality={82}
+              class="testi-avatar"
+              loading="lazy"
+            />
+            <div class="flex flex-col gap-0.5 min-w-0">
+              <span class="font-display font-semibold text-[var(--color-ink)] leading-tight">{t.name}</span>
+              <span class="mono-caption text-[var(--color-ink-low)]">{t.role}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .testi-header-row {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .testi-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--color-divider);
+  }
+</style>
