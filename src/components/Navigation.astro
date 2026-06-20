@@ -42,7 +42,7 @@ const navLinks = [
     <div class="hidden md:flex items-center gap-2">
       <ThemeToggle />
       <a
-        href="#contact"
+        href="#contact-form"
         class="btn-primary"
         data-fast-goal="cta_contact_click"
         data-fast-goal-source="nav"
@@ -97,7 +97,7 @@ const navLinks = [
         <ThemeToggle />
       </div>
       <a
-        href="#contact"
+        href="#contact-form"
         class="btn-primary justify-center w-full"
         data-mobile-link
         data-fast-goal="cta_contact_click"
@@ -205,7 +205,10 @@ const navLinks = [
 
   mobileMenu?.querySelectorAll('[data-mobile-link]').forEach((link) => {
     link.addEventListener('click', () => {
-      setTimeout(() => toggleMenu(true), 100);
+      // Fermer le menu SYNCHRONE (restaure body.overflow) AVANT que le navigateur
+      // exécute le scroll d'ancre — sinon body{overflow:hidden} (menu ouvert) bloque
+      // le scroll vers #contact-form et le CTA mobile "n'emmène pas au formulaire".
+      toggleMenu(true);
     });
   });
 
