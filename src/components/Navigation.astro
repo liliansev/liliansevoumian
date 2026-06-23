@@ -8,6 +8,10 @@ const navLinks = [
   { href: "#offres", label: "Offres", num: "04" },
   { href: "#faq", label: "FAQ", num: "05" },
 ];
+
+// Ancres relatives à la home : sur une sous-page, préfixer par "/" pour y revenir
+// (le « Me contacter » du header doit marcher depuis /expert-make, /cas-clients, etc.).
+const prefix = Astro.url.pathname === '/' ? '' : '/';
 ---
 
 <nav id="main-nav" class="nav-root px-[var(--spacing-section-x)]" aria-label="Navigation principale">
@@ -32,7 +36,7 @@ const navLinks = [
     <!-- Desktop links -->
     <div class="hidden lg:flex items-center gap-1">
       {navLinks.map((link) => (
-        <a href={link.href} class="nav-link" data-nav-link>
+        <a href={`${prefix}${link.href}`} class="nav-link" data-nav-link>
           {link.label}
         </a>
       ))}
@@ -42,7 +46,7 @@ const navLinks = [
     <div class="hidden lg:flex items-center gap-2">
       <ThemeToggle />
       <a
-        href="#contact-form"
+        href={`${prefix}#contact-form`}
         class="btn-primary"
         data-fast-goal="cta_contact_click"
         data-fast-goal-source="nav"
@@ -80,7 +84,7 @@ const navLinks = [
     <div class="flex-1 flex flex-col justify-center gap-6">
       {navLinks.map((link) => (
         <a
-          href={link.href}
+          href={`${prefix}${link.href}`}
           class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
           data-mobile-link
         >
@@ -97,7 +101,7 @@ const navLinks = [
         <ThemeToggle />
       </div>
       <a
-        href="#contact-form"
+        href={`${prefix}#contact-form`}
         class="btn-primary justify-center w-full"
         data-mobile-link
         data-fast-goal="cta_contact_click"
