@@ -1,0 +1,289 @@
+---
+/*
+ * /expert-make — landing SEO ciblée « expert Make » (ex-Integromat).
+ * Angle propre à Make : visuel, maintenable par l'équipe, certification Niveau 5.
+ * Réutilise le design system « Operator's Console ». Contenu distinct de /expert-n8n
+ * (pas de page doublon — angles, cas d'usage et FAQ différents).
+ */
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { Icon } from 'astro-icon/components';
+
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: 'Expert Make', url: '/expert-make' },
+];
+
+// Ce que je fais avec Make — props de valeur (angle Make : visuel + maintenable).
+const valeur = [
+  {
+    titre: 'Des scénarios visuels que votre équipe lit',
+    texte: "Make rend chaque automatisation lisible étape par étape. Votre équipe voit ce qui se passe, repère une erreur, ajuste un filtre, sans dépendre de moi pour le moindre changement.",
+  },
+  {
+    titre: '1 500+ applications connectées',
+    texte: "HubSpot, Pipedrive, Notion, Airtable, Slack, Google Workspace, Stripe, Pennylane… Si vos outils ont une API, je les branche entre eux et fais circuler la donnée au bon endroit.",
+  },
+  {
+    titre: 'Une couche d’erreur sur chaque scénario',
+    texte: "try/catch, alertes Slack, reprise propre. Quand une API tierce bouge, vous le voyez et vous savez quoi faire. Pas de scénario qui casse en silence un dimanche soir.",
+  },
+  {
+    titre: 'Du premier scénario au transfert',
+    texte: "Je conçois, je documente (doc custom, pas un README générique), je forme. L'objectif : à la livraison, vos équipes sont autonomes sur les modifications courantes.",
+  },
+];
+
+// Ce qu'on peut automatiser avec Make — cas d'usage (SEO + concret).
+const casUsage = [
+  'Synchroniser votre CRM avec vos autres outils (lead → CRM → facturation → Slack)',
+  'Automatiser les relances commerciales et l’onboarding client',
+  'Consolider votre reporting (Google Sheets, Notion, tableaux de bord)',
+  'Générer devis, factures et documents à partir d’un formulaire',
+  'Router les demandes entrantes vers la bonne personne, sans tri manuel',
+  'Connecter vos formulaires, paiements et e-mails en un flux unique',
+];
+
+const faqs = [
+  {
+    q: 'Make ou n8n, lequel choisir ?',
+    a: "Make si vous voulez du visuel, maintenable par votre équipe, et une connexion rapide à des outils SaaS courants. n8n si vous avez des contraintes de souveraineté (données sensibles, RGPD strict), du volume de données important, ou besoin d’agents IA et de code sur-mesure. Je travaille les deux et je vous dis lequel colle à votre cas.",
+  },
+  {
+    q: 'Mon équipe pourra-t-elle maintenir les scénarios sans moi ?',
+    a: "Oui, c’est le but. Make est visuel par nature, et je livre une documentation custom + une session de formation. Modifier un filtre, ajouter un destinataire, dupliquer un scénario : votre équipe le fait seule. Pour les évolutions profondes, une séance à la carte suffit.",
+  },
+  {
+    q: 'Combien de temps pour un premier scénario ?',
+    a: "Quelques jours pour un cas simple et cadré. Une automatisation plus large (plusieurs outils, logique métier) se compte en semaines. On valide le périmètre au premier appel, avant de lancer quoi que ce soit.",
+  },
+  {
+    q: 'Make est-il assez puissant pour mon besoin ?',
+    a: "Pour la grande majorité des automatisations métiers (connecter des outils, faire circuler la donnée, déclencher des actions), oui, largement. Si votre besoin tire vers du traitement de gros volumes de données ou de l’hébergement maîtrisé, je bascule sur n8n, et je vous le dis franchement.",
+  },
+];
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Expert Make freelance · Lilian Sevoumian",
+  "description": "Expert Make (ex-Integromat) freelance, certifié Niveau 5. Automatisation des processus métier, intégration d’outils et scénarios no-code maintenables.",
+  "url": "https://liliansevoumian.fr/expert-make",
+  "areaServed": "France",
+  "serviceType": ["Automatisation Make", "Intégration Make", "Conseil no-code", "Formation Make"],
+  "knowsAbout": ["Make", "Integromat", "Automatisation des processus", "Intégration API", "No-Code", "Workflow"],
+  "provider": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+};
+---
+
+<Layout
+  title="Expert Make freelance · automatisation no-code | Lilian Sevoumian"
+  description="Expert Make (ex-Integromat) freelance, certifié Niveau 5, le premier en France. J'automatise vos processus métier et connecte vos outils en scénarios visuels maintenables. Réponse sous 48 h."
+  breadcrumbs={breadcrumbs}
+  faqSchema={faqs.map((f) => ({ question: f.q, answer: f.a }))}
+  articleSchema={serviceSchema}
+>
+  <Navigation />
+
+  <main id="main-content">
+
+    {/* ===== HERO ===== */}
+    <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+
+        <a href="/" class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8">
+          <span aria-hidden="true">←</span> RETOUR À L'ACCUEIL
+        </a>
+
+        <div class="reveal mb-6 md:mb-8 inline-flex items-center gap-2.5 bg-[var(--color-paper)] py-1.5 pr-2">
+          <Icon name="simple-icons:make" class="expert-hero-logo" aria-hidden="true" />
+          <span class="mono-caption text-[var(--color-ink-low)]">EXPERT MAKE · CERTIFIÉ NIVEAU 5</span>
+        </div>
+
+        <div class="reveal relative bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[16ch]" style="text-wrap: balance;">
+            Expert <span class="text-[var(--color-violet-deep)]">Make</span> freelance.
+          </h1>
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
+            Certifié Niveau 5, le premier en France. J'automatise vos processus métier et connecte vos outils en scénarios visuels que votre équipe peut lire, suivre et maintenir.
+          </p>
+        </div>
+
+        <div class="reveal mt-8 md:mt-10 flex flex-col sm:flex-row sm:items-center gap-4">
+          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+             class="btn-primary justify-center" data-fast-goal="contact_lead" data-fast-goal-type="call" data-fast-goal-source="expert-make">
+            Réserver un appel · 20 min
+          </a>
+          <a href="mailto:bonjour@liliansevoumian.fr" class="btn-ghost justify-center"
+             data-fast-goal="contact_lead" data-fast-goal-type="email" data-fast-goal-source="expert-make">
+            Ou écrire un mail
+          </a>
+        </div>
+
+        <div class="reveal mono-caption text-[var(--color-ink-low)] mt-7">
+          <span class="text-[var(--color-violet-deep)]">MAKE CERTIFIÉ N5</span> · 500+ WORKFLOWS EN PROD · RÉPONSE SOUS 48&nbsp;H
+        </div>
+      </div>
+    </section>
+
+    {/* ===== CE QUE JE FAIS AVEC MAKE ===== */}
+    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-12 md:mb-16 pb-6 border-b border-[var(--color-divider)]">
+          <div class="mono-caption text-[var(--color-ink-low)] mb-3">CE QUE JE FAIS AVEC MAKE</div>
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
+            Du visuel, du robuste, du maintenable.
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 reveal-stagger">
+          {valeur.map((v) => (
+            <div class="reveal relative card flex flex-col gap-3">
+              <span class="grid-corner tl" aria-hidden="true"></span>
+              <span class="grid-corner tr" aria-hidden="true"></span>
+              <span class="grid-corner bl" aria-hidden="true"></span>
+              <span class="grid-corner br" aria-hidden="true"></span>
+              <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
+                {v.titre}
+              </h3>
+              <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
+                {v.texte}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ===== CE QU'ON PEUT AUTOMATISER ===== */}
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-10 md:mb-12">
+          <div class="mono-caption text-[var(--color-ink-low)] mb-3">CAS D'USAGE</div>
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
+            Ce qu'on peut automatiser avec Make.
+          </h2>
+        </div>
+
+        <ul class="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-0 max-w-[1000px]">
+          {casUsage.map((c) => (
+            <li class="reveal flex items-start gap-3 py-4 border-b border-[var(--color-divider)]">
+              <span class="mono-label text-[var(--color-violet-deep)] leading-[1.6] shrink-0" aria-hidden="true">+</span>
+              <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5]">{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    {/* ===== POURQUOI MOI ===== */}
+    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
+        <div class="reveal max-w-[55ch]">
+          <div class="mono-caption text-[var(--color-ink-low)] mb-3">POURQUOI MOI</div>
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mb-6 max-w-[20ch]">
+            Le premier certifié Make Niveau 5 en France.
+          </h2>
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
+            500+ workflows en production depuis 2021, pour des Heads of Ops, fondateurs et PME. Des automatisations qui tiennent dans le temps, documentées, avec une couche d'erreur sur chacune. Pas de scénario fragile livré et oublié.
+          </p>
+        </div>
+        <dl class="reveal grid grid-cols-1 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden min-w-[200px]">
+          <div class="bg-[var(--color-paper)] px-6 py-5">
+            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">CERTIFICATION</dt>
+            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-violet-deep)] m-0">Make Niveau 5</dd>
+          </div>
+          <div class="bg-[var(--color-paper)] px-6 py-5">
+            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">EN PRODUCTION</dt>
+            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">500+ workflows</dd>
+          </div>
+          <div class="bg-[var(--color-paper)] px-6 py-5">
+            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">FIABILITÉ</dt>
+            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">0 incident /SLA</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    {/* ===== FAQ ===== */}
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-10 md:mb-12">
+          <div class="mono-caption text-[var(--color-ink-low)] mb-3">FAQ MAKE</div>
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
+            Les questions qui reviennent sur Make.
+          </h2>
+        </div>
+
+        <div class="reveal max-w-[820px] flex flex-col gap-3">
+          {faqs.map((faq, i) => (
+            <div class="faq-item">
+              <span class="grid-corner tl" aria-hidden="true"></span>
+              <span class="grid-corner tr" aria-hidden="true"></span>
+              <span class="grid-corner bl" aria-hidden="true"></span>
+              <span class="grid-corner br" aria-hidden="true"></span>
+              <details class="faq-details group">
+                <summary class="faq-summary">
+                  <span class="faq-num">Q0{i + 1}</span>
+                  <span class="faq-question">{faq.q}</span>
+                  <span class="faq-caret" aria-hidden="true">+</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>{faq.a}</p>
+                </div>
+              </details>
+            </div>
+          ))}
+        </div>
+
+        <p class="reveal mono-caption text-[var(--color-ink-low)] mt-5">
+          BESOIN PLUTÔT DE n8n&nbsp;?
+          <a href="/expert-n8n" class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors ml-1">
+            VOIR LA PAGE EXPERT N8N <span aria-hidden="true">→</span>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    {/* ===== CTA FINAL ===== */}
+    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal max-w-[40ch] mb-10 md:mb-12">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]">
+            Un scénario Make en tête&nbsp;?
+          </h2>
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 m-0">
+            20 min pour décider si on travaille ensemble. Sans engagement, je réponds clairement.
+          </p>
+        </div>
+        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
+          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+             class="btn-primary justify-center" data-fast-goal="contact_lead" data-fast-goal-type="call" data-fast-goal-source="expert-make-bottom">
+            Réserver un appel · 20 min
+          </a>
+          <a href="mailto:bonjour@liliansevoumian.fr" class="btn-ghost justify-center"
+             data-fast-goal="contact_lead" data-fast-goal-type="email" data-fast-goal-source="expert-make-bottom">
+            Ou écrire un mail
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .expert-hero-logo {
+    width: 18px;
+    height: 18px;
+    color: var(--color-violet-deep);
+    flex-shrink: 0;
+  }
+</style>
