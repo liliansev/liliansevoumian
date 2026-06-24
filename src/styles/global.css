@@ -34,7 +34,6 @@
   /* ===== Spacing fluide ===== */
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
-  --spacing-grid-cell: 96px;
 
   /* ===== Border radius =====
      Refonte juin 2026 (réf. vercel.com) : angles francs partout.
@@ -456,8 +455,40 @@ a, button, input, textarea, select,
   background: transparent;
 }
 
+/* Cartes cliquables : l'affordance (perdue avec la bordure) revient via un
+   léger lift + le titre qui passe en violet + la flèche qui glisse. Pas de
+   fond ni de padding → aucun impact sur la grille. */
 .card-interactive {
   cursor: pointer;
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+
+.card-interactive h3 {
+  transition: color var(--duration-default) var(--ease-out-quint);
+}
+
+.card-interactive:hover,
+.card-interactive:focus-visible {
+  transform: translateY(-3px);
+}
+
+.card-interactive:hover h3,
+.card-interactive:focus-visible h3 {
+  color: var(--color-violet-deep);
+}
+
+/* Focus clavier : outline net sur la carte entière (l'outline global suffit
+   mais on resserre l'offset pour ne pas être rogné par les voisins). */
+.card-interactive:focus-visible {
+  outline: 2px solid var(--color-violet);
+  outline-offset: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-interactive:hover,
+  .card-interactive:focus-visible {
+    transform: none;
+  }
 }
 
 /* =========================================================================
@@ -630,35 +661,6 @@ a, button, input, textarea, select,
 .reveal-stagger > .reveal:nth-child(4) { transition-delay: 240ms; }
 .reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
-
-/* Hero choreography — page-load orchestrée pour le manifesto.
-   Stagger plus long, translation plus dramatique, transition ease-out-expo. */
-.js-ready [data-hero-stagger] .reveal:not(.is-visible) {
-  opacity: 0;
-  transform: translateY(24px);
-}
-[data-hero-stagger] .reveal {
-  transition-duration: 1000ms;
-  transition-timing-function: var(--ease-out-expo);
-}
-[data-hero-stagger] > div > .reveal:nth-child(1) { transition-delay: 0ms; }     /* eyebrow */
-[data-hero-stagger] > div > .reveal:nth-child(2) { transition-delay: 150ms; }   /* hero block */
-[data-hero-stagger] > div > .reveal:nth-child(3) { transition-delay: 600ms; }   /* CTA */
-[data-hero-stagger] > div > .reveal:nth-child(4) { transition-delay: 800ms; }   /* microdata */
-
-/* H1 manifesto rise plus marqué — sépare le H1 du bloc paper qui révèle */
-.js-ready [data-hero-stagger] .reveal:not(.is-visible) .hero-manifesto-h1 {
-  opacity: 0;
-  transform: translateY(32px);
-}
-[data-hero-stagger] .hero-manifesto-h1 {
-  transition: opacity 1100ms var(--ease-out-expo) 300ms,
-              transform 1100ms var(--ease-out-expo) 300ms;
-}
-[data-hero-stagger] .reveal.is-visible .hero-manifesto-h1 {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Section-active : le section-number flash violet quand la section entre en vue. */
 .js-ready .section-active .section-number {
