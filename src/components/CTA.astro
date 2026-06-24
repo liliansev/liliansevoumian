@@ -4,9 +4,7 @@ import SectionHeader from './SectionHeader.astro';
 
 <section
   id="contact"
-  data-section
-  data-fast-scroll="scroll_to_section_contact"
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  data-section  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
 
@@ -67,7 +65,7 @@ import SectionHeader from './SectionHeader.astro';
           <span class="text-[var(--color-ink-faint)]" aria-hidden="true">·</span>
           <a href="https://www.youtube.com/@lilian.sevoumian" target="_blank" rel="noopener noreferrer" class="tap-44 inline-flex items-center gap-1 hover:text-[var(--color-ink)] transition-colors">YOUTUBE <span class="text-[var(--color-violet-deep)]" aria-hidden="true">↗</span></a>
           <span class="text-[var(--color-ink-faint)]" aria-hidden="true">·</span>
-          <a href="https://liliansevoumian.substack.com/" target="_blank" rel="noopener noreferrer" data-fast-goal="newsletter_click" data-fast-goal-source="contact" class="tap-44 inline-flex items-center gap-1 hover:text-[var(--color-ink)] transition-colors">NEWSLETTER <span class="text-[var(--color-violet-deep)]" aria-hidden="true">↗</span></a>
+          <a href="https://liliansevoumian.substack.com/" target="_blank" rel="noopener noreferrer" class="tap-44 inline-flex items-center gap-1 hover:text-[var(--color-ink)] transition-colors">NEWSLETTER <span class="text-[var(--color-violet-deep)]" aria-hidden="true">↗</span></a>
         </div>
       </div>
     </div>
@@ -151,7 +149,7 @@ import SectionHeader from './SectionHeader.astro';
         form.reset();
         // Conversion réelle (form soumis) → goal DataFast le plus fiable.
         const df = (window as unknown as { datafast?: (g: string, p?: Record<string, string>) => void }).datafast;
-        if (typeof df === 'function') df('contact_lead', { type: 'form', source: 'contact' });
+        if (typeof df === 'function') df('lead_form', { source: 'contact' });
       } catch {
         // Fallback : pré-remplir un mailto pour ne jamais bloquer le lead.
         // Construction DOM sûre (textContent + href), pas d'innerHTML.

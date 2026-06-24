@@ -19,12 +19,6 @@ interface Offre {
   description: string;
   cta: string;
   href: string;
-  /* Tracking DataFast : goal natif + params optionnels (type/source).
-     Les 3 offres "mission" partagent le goal `contact_lead` (étape unique
-     du funnel) ; le coaching est une micro-conversion distincte. */
-  goal: string;
-  goalType?: 'call';
-  goalSource?: string;
   /** Pré-remplit le message du formulaire de contact (offres mission → #contact). */
   prefill?: string;
 }
@@ -38,8 +32,6 @@ const offres: Offre[] = [
     description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
     cta: 'Lancer la régie',
     href: '#contact-form',
-    goal: 'cta_contact_click',
-    goalSource: 'offre_regie',
     prefill: 'Régie automation & apps internes',
   },
   {
@@ -50,8 +42,6 @@ const offres: Offre[] = [
     description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
     cta: 'Discuter du programme',
     href: '#contact-form',
-    goal: 'cta_contact_click',
-    goalSource: 'offre_mentoring',
     prefill: 'Mentoring 3 mois',
   },
   {
@@ -62,8 +52,6 @@ const offres: Offre[] = [
     description: "Mission ponctuelle selon votre besoin. Cadrage, conception, livraison.",
     cta: 'Cadrer la mission',
     href: '#contact-form',
-    goal: 'cta_contact_click',
-    goalSource: 'offre_mission',
     prefill: 'Mission perso',
   },
   {
@@ -74,16 +62,13 @@ const offres: Offre[] = [
     description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
     cta: 'Réserver un coaching',
     href: 'https://go.liliansevoumian.fr/coaching',
-    goal: 'book_coaching',
   },
 ];
 ---
 
 <section
   id="offres"
-  data-section
-  data-fast-scroll="scroll_to_section_offres"
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+  data-section  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
     <SectionHeader
@@ -129,9 +114,6 @@ const offres: Offre[] = [
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
             class="btn-ghost w-full sm:w-auto sm:self-start justify-center"
-            data-fast-goal={o.goal}
-            data-fast-goal-type={o.goalType}
-            data-fast-goal-source={o.goalSource}
             data-prefill={o.prefill}
           >
             {o.cta}
@@ -150,8 +132,7 @@ const offres: Offre[] = [
         target="_blank"
         rel="noopener noreferrer"
         class="btn-primary w-full sm:w-auto justify-center"
-        data-fast-goal="contact_lead"
-        data-fast-goal-type="call"
+        data-fast-goal="lead_call"
         data-fast-goal-source="offres"
       >
         Réserver un appel · 20 min
@@ -179,8 +160,6 @@ const offres: Offre[] = [
         href="https://augmentes.fr"
         target="_blank"
         rel="noopener noreferrer"
-        data-fast-goal="augmentes_click"
-        data-fast-goal-source="offres"
         class="text-[var(--color-ember-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
       >
         FORMATIONS MAKE &amp; N8N SUR AUGMENTES.FR&nbsp;<span aria-hidden="true">↗</span>
