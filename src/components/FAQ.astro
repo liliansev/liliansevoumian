@@ -17,7 +17,7 @@ import { faqs } from '../data/faq';
     />
 
     <!-- Accordion — chaque item est une paper-island bordée qui revendique sa cellule -->
-    <div class="reveal max-w-[820px] flex flex-col gap-3">
+    <div class="reveal max-w-[820px] flex flex-col">
       {faqs.map((faq, i) => (
         <div class="faq-item">
           <details class="faq-details group">
@@ -33,28 +33,14 @@ import { faqs } from '../data/faq';
         </div>
       ))}
 
-      <!-- 7e row : sortie de l'accordion, lien direct mailto -->
-      <p class="mono-caption text-[var(--color-ink-low)] mt-5 pt-6 border-t border-[var(--color-divider)]">
-        UNE QUESTION PAS LISTÉE ?
+      <!-- Sortie de l'accordion : lien direct mailto -->
+      <p class="mono-caption text-[var(--color-ink-low)] mt-8">
+        UNE QUESTION PAS LISTÉE ?
         <a
           href="mailto:bonjour@liliansevoumian.fr"
           class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
         >
           BONJOUR@LILIANSEVOUMIAN.FR
-        </a>
-      </p>
-
-      {/* Pont augmentes.fr — sortie pour l'intention « apprendre soi-même » /
-          budget formation, distincte de la demande de mission. Lien secondaire. */}
-      <p class="mono-caption text-[var(--color-ink-low)] mt-3">
-        BUDGET SERRÉ OU ENVIE D'APPRENDRE VOUS-MÊME ?
-        <a
-          href="https://augmentes.fr"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-[var(--color-ember-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
-        >
-          MES FORMATIONS MAKE &amp; N8N <span aria-hidden="true">↗</span>
         </a>
       </p>
     </div>

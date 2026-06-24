@@ -422,116 +422,42 @@ a, button, input, textarea, select,
    CHIPS — Two-Voice
    ========================================================================= */
 
+/* Chips réduits à de simples labels mono (sans cadre ni fond) pour calmer
+   la page. La couleur seule porte la Two-Voice (violet / ember). */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   background: transparent;
-  color: var(--color-ink-mid);
+  color: var(--color-ink-low);
   font-family: var(--font-mono);
   font-size: var(--text-mono-caption);
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-none);
-  transition: color var(--duration-default) var(--ease-out-quint),
-              border-color var(--duration-default) var(--ease-out-quint),
-              background-color var(--duration-default) var(--ease-out-quint),
-              transform var(--duration-quick) var(--ease-out-quint);
-}
-
-.chip:hover {
-  color: var(--color-ink);
-  border-color: var(--color-ink-faint);
-  background-color: var(--color-surface-low);
-}
-
-.chip:active {
-  transform: scale(0.98);
-  transition-duration: var(--duration-quick);
+  border: none;
+  padding: 0;
 }
 
 .chip-violet {
-  background: var(--color-violet-soft);
   color: var(--color-violet-deep);
-  border-color: transparent;
 }
 
 .chip-ember {
-  background: var(--color-ember-soft);
   color: var(--color-ember-deep);
-  border-color: transparent;
-}
-
-.chip-dashed {
-  border-style: dashed;
-  color: var(--color-ink-low);
 }
 
 /* =========================================================================
-   CARDS — flat, bordered, hover = grid claims the cell
+   CARDS — borderless, structure par le vide (réf. hero airy)
    ========================================================================= */
 
 .card {
   position: relative;
-  background: var(--color-paper);
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  transition: border-color var(--duration-default) var(--ease-out-quint);
-}
-
-.card-elevated {
-  padding: 32px;
+  background: transparent;
 }
 
 .card-interactive {
   cursor: pointer;
-  position: relative;
-}
-
-.card-interactive:hover {
-  border-color: var(--color-ink-faint);
-}
-
-/* Clavier : le focus revendique sa cellule comme le hover. */
-.card-interactive:focus-visible {
-  border-color: var(--color-ink-faint);
-}
-
-/* Scan line — au hover, une ligne 1px violet glisse du top au bottom de la card. */
-.card-interactive::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(to right, transparent, var(--color-violet) 50%, transparent);
-  background-size: 100% 1px;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  pointer-events: none;
-  opacity: 0;
-  border-radius: inherit;
-}
-
-.card-interactive:hover::after,
-.card-interactive:focus-visible::after {
-  animation: card-scan 1100ms var(--ease-out-quint);
-}
-
-@keyframes card-scan {
-  0% { background-position: 0 0; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { background-position: 0 100%; opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card-interactive:hover::after,
-  .card-interactive:focus-visible::after {
-    animation: none;
-  }
 }
 
 /* =========================================================================
@@ -840,17 +766,15 @@ a[href^="mailto:"] {
    FAQ — accordion native style
    ========================================================================= */
 
+/* Liste borderless : chaque item séparé par un simple filet bas, façon Vercel. */
 .faq-item {
   position: relative;
-  background: var(--color-paper);
-  /* border-strong : >=3:1 vs paper (WCAG 1.4.11 non-text), vs ink-faint 1.97:1. */
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
+  background: transparent;
+  border-bottom: 1px solid var(--color-divider);
 }
 
-.faq-item:hover,
-.faq-item:focus-within {
-  border-color: var(--color-ink-low);
+.faq-item:first-child {
+  border-top: 1px solid var(--color-divider);
 }
 
 .faq-details {
@@ -861,7 +785,7 @@ a[href^="mailto:"] {
   display: flex;
   align-items: baseline;
   gap: 16px;
-  padding: 20px 24px;
+  padding: 22px 0;
   cursor: pointer;
   list-style: none;
   transition: color var(--duration-default);
@@ -910,7 +834,7 @@ a[href^="mailto:"] {
 }
 
 .faq-answer {
-  padding: 0 24px 20px 76px;
+  padding: 0 0 22px 52px;
   color: var(--color-ink-mid);
   font-size: var(--text-body);
   line-height: 1.65;
