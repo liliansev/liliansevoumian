@@ -10,7 +10,7 @@
  * inline (fin du drift TSX/Astro flaggué dans l'audit).
  */
 import SectionHeader from './SectionHeader.astro';
-import { compute, formatFR, formatFormula } from '../lib/roi';
+import { compute, formatFR } from '../lib/roi';
 
 const initial = { hours: 8, people: 3, hourlyCost: 55 };
 
@@ -20,7 +20,7 @@ const sliders = [
   { id: 'roi-rate',   label: 'COÛT HORAIRE INTERNE',                        unit: '€', min: 25, max: 120, step: 5, value: initial.hourlyCost },
 ];
 
-const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
+const { isCapped, hoursSaved, moneySaved } =
   compute(initial.hours, initial.people, initial.hourlyCost);
 ---
 
@@ -40,14 +40,9 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
 
     <!-- Calculator grid : sliders sur paper, output sur surface-low -->
     <div
-      class="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal"
+      class="relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] overflow-hidden reveal"
       data-roi-calc
     >
-      <span class="grid-corner tl" aria-hidden="true"></span>
-      <span class="grid-corner tr" aria-hidden="true"></span>
-      <span class="grid-corner bl" aria-hidden="true"></span>
-      <span class="grid-corner br" aria-hidden="true"></span>
-
       <!-- Sliders panel -->
       <fieldset class="bg-[var(--color-paper)] p-8 md:p-10 flex flex-col gap-8 border-0 m-0">
         <legend class="sr-only">Paramètres d'estimation ROI</legend>
@@ -110,13 +105,14 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
           </div>
         </div>
 
-        <div class="mono-caption mb-6 leading-[1.6] flex flex-col gap-1 text-[var(--color-ink-low)]">
-          <span>
-            FORMULE : <span data-roi-formula>{formatFormula(cappedHours, cappedPeople, initial.hourlyCost)}</span>
-          </span>
-          <span data-roi-warning class="text-[var(--color-error)]" role="status" aria-live="polite" hidden={!isCapped}>
-            [!] ESTIMATION PLAFONNÉE · L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
-          </span>
+        <div
+          data-roi-warning
+          class="mono-caption mb-6 leading-[1.6] text-[var(--color-error)]"
+          role="status"
+          aria-live="polite"
+          hidden={!isCapped}
+        >
+          [!] ESTIMATION PLAFONNÉE · L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
         </div>
 
         <div class="mt-auto flex flex-col gap-3">
@@ -150,7 +146,7 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
 </section>
 
 <script>
-  import { compute, formatFR, formatFormula } from '../lib/roi';
+  import { compute, formatFR } from '../lib/roi';
 
   // Met à jour la CSS custom property --slider-progress qui pilote
   // le linear-gradient de fill du track (entre min et current value).
@@ -245,7 +241,6 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
     const outMoney = root.querySelector<HTMLElement>('[data-roi-output="moneySaved"]')!;
     const outHours = root.querySelector<HTMLElement>('[data-roi-output="hoursSaved"]')!;
 
-    const formulaEl = root.querySelector<HTMLElement>('[data-roi-formula]')!;
     const warningEl = root.querySelector<HTMLElement>('[data-roi-warning]')!;
 
     const shareBtn = root.querySelector<HTMLButtonElement>('[data-roi-share]');
@@ -286,7 +281,6 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
     // Initialise les outputs avec les valeurs computed (snap, pas d'animation au load)
     outMoney.textContent = formatFR(initialComputed.moneySaved);
     outHours.textContent = formatFR(initialComputed.hoursSaved);
-    formulaEl.textContent = formatFormula(initialComputed.cappedHours, initialComputed.cappedPeople, initRate);
     warningEl.hidden = !initialComputed.isCapped;
 
     const animMoney = new AnimatedValue(outMoney, initialComputed.moneySaved);
@@ -316,7 +310,6 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
       animMoney.setTarget(c.moneySaved, reducedMotion);
       animHours.setTarget(c.hoursSaved, reducedMotion);
 
-      formulaEl.textContent = formatFormula(c.cappedHours, c.cappedPeople, hourlyCost);
       warningEl.hidden = !c.isCapped;
 
       syncUrl(hours, people, hourlyCost, defaults);
