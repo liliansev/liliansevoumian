@@ -49,6 +49,16 @@
   /* CTA uniquement : pilule pleine. */
   --radius-cta: 9999px;
 
+  /* ===== Ombres — très subtiles (cartes de contenu). =====
+     Assouplissement assumé de la règle no-shadow : relief minimal façon
+     Vercel/Linear. Invisibles en dark → remplacées par un filet (cf. html.dark). */
+  --shadow-card:
+    0 1px 2px oklch(0.16 0.008 290 / 0.05),
+    0 8px 20px oklch(0.16 0.008 290 / 0.045);
+  --shadow-card-hover:
+    0 2px 4px oklch(0.16 0.008 290 / 0.06),
+    0 14px 32px oklch(0.16 0.008 290 / 0.08);
+
   /* ===== Colors (OKLCH-first) ===== */
   /* Surfaces */
   --color-paper: oklch(0.995 0.002 290);
@@ -506,6 +516,86 @@ a, button, input, textarea, select,
   .card-interactive:hover,
   .card-interactive:focus-visible {
     transform: none;
+  }
+}
+
+/* Cartes pleines — fond + ombre très douce, angles francs (réf. cartes Vercel).
+   .card-fill        : fond gris,  pour les sections BLANCHES (Offres, Témoignages).
+   .card-fill-invert : fond blanc, pour la section GRISE (Cas clients).
+   Padding interne fluide. En dark, l'ombre est invisible → filet 1px à la place. */
+.card-fill,
+.card-fill-invert {
+  padding: clamp(20px, 1.5vw, 28px);
+  border-radius: var(--radius-none);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--duration-default) var(--ease-out-quint),
+              border-color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-default) var(--ease-out-quint);
+}
+
+.card-fill {
+  background: var(--color-surface-low);
+}
+
+.card-fill-invert {
+  background: var(--color-surface-high);
+}
+
+/* Cartes pleines cliquables : l'ombre se renforce au hover/focus (en plus du lift). */
+.card-interactive.card-fill:hover,
+.card-interactive.card-fill:focus-visible,
+.card-interactive.card-fill-invert:hover,
+.card-interactive.card-fill-invert:focus-visible {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Dark mode : pas d'ombre (invisible) → filet pour matérialiser la carte. */
+html.dark .card-fill,
+html.dark .card-fill-invert {
+  box-shadow: none;
+  border: 1px solid var(--color-divider);
+}
+
+html.dark .card-interactive.card-fill:hover,
+html.dark .card-interactive.card-fill:focus-visible,
+html.dark .card-interactive.card-fill-invert:hover,
+html.dark .card-interactive.card-fill-invert:focus-visible {
+  box-shadow: none;
+  border-color: var(--color-ink-faint);
+}
+
+/* Fallback dark sans JS (prefers-color-scheme) : même swap ombre → filet. */
+@media (prefers-color-scheme: dark) {
+  html:not(.light) .card-fill,
+  html:not(.light) .card-fill-invert {
+    box-shadow: none;
+    border: 1px solid var(--color-divider);
+  }
+}
+
+/* Élévation seule (ombre, sans fond ni padding) — ex. calculateur ROI dont les
+   2 panneaux ont déjà leur fond ; il lit alors comme une seule carte surélevée. */
+.is-elevated {
+  box-shadow: var(--shadow-card);
+}
+
+html.dark .is-elevated {
+  box-shadow: none;
+  border: 1px solid var(--color-divider);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) .is-elevated {
+    box-shadow: none;
+    border: 1px solid var(--color-divider);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-fill,
+  .card-fill-invert {
+    transition: box-shadow var(--duration-default) var(--ease-out-quint),
+                border-color var(--duration-default) var(--ease-out-quint);
   }
 }
 

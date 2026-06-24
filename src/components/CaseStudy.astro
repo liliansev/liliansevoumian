@@ -65,12 +65,13 @@ const cases: Case[] = [
       {cases.map((c) => (
         <a
           href={c.href}
-          class="case-card reveal relative card card-interactive flex flex-col gap-5 h-full group no-underline snap-start shrink-0 basis-[80%] sm:basis-[55%] md:basis-auto"
+          class="case-card reveal relative card card-interactive card-fill-invert flex flex-col gap-5 h-full group no-underline snap-start shrink-0 basis-[80%] sm:basis-[55%] md:basis-auto"
         >
-          {/* Header : client + secteur */}
-          <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pb-4 border-b border-[var(--color-divider)]">
-            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{c.client}</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">{c.sector}</span>
+          {/* Header : secteur (eyebrow) au-dessus du nom client → hauteur
+              constante d'une carte à l'autre, donc filet aligné. */}
+          <div class="pb-4 border-b border-[var(--color-divider)]">
+            <span class="mono-caption text-[var(--color-ink-low)] block mb-1.5">{c.sector}</span>
+            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] block leading-tight">{c.client}</span>
           </div>
 
           {/* Titre — l'angle expertise métier */}
