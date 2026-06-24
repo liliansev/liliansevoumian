@@ -116,6 +116,17 @@ const faqPageSchema = faqSchema ? {
         } catch (e) {
           document.documentElement.classList.add('js-ready');
         }
+
+        // Failsafe garanti, indépendant du module de reveal (fin de <body>).
+        // .js-ready (posé ci-dessus) arme le cloak `opacity:0` des .reveal.
+        // Si le module échoue (erreur JS, chunk bloqué, CSP), il ne dé-cloake
+        // jamais → page blanche. Ce timer s'exécute depuis le script inline du
+        // <head>, qui tourne toujours : le contenu réapparaît quoi qu'il arrive.
+        window.setTimeout(function () {
+          document.querySelectorAll('.reveal:not(.is-visible)').forEach(function (el) {
+            el.classList.add('is-visible');
+          });
+        }, 2500);
       })();
     </script>
 
@@ -218,12 +229,9 @@ const faqPageSchema = faqSchema ? {
             if (!el.classList.contains('is-visible')) revealObs.observe(el);
           });
 
-          // 3. Fail-safe — after 2.5s, force-reveal anything still hidden
-          window.setTimeout(() => {
-            document.querySelectorAll<HTMLElement>('.reveal:not(.is-visible)').forEach((el) => {
-              el.classList.add('is-visible');
-            });
-          }, 2500);
+          // 3. Fail-safe — déplacé dans le script inline du <head> (Layout),
+          //    qui s'exécute toujours. Garantit le dé-cloak même si ce module
+          //    ne tourne pas (erreur JS / chunk bloqué). Ne pas le dupliquer ici.
         }
 
         // Section-active state — section-number vire violet, grid corners virent violet
@@ -261,9 +269,10 @@ const faqPageSchema = faqSchema ? {
       document.addEventListener('astro:page-load', initMotion);
     </script>
 
-    <!-- DataFast scroll-depth : géré NATIVEMENT par le script DataFast via
-         l'attribut data-fast-scroll sur les <section> (seuil 0.5 par défaut,
-         override possible via data-fast-scroll-threshold). Pas de handler JS
-         custom ici — il doublait le tracking natif (events comptés 2×). -->
+    <!-- Tracking DataFast : 2 conversions UNIQUEMENT (noms distincts pour les funnels).
+         1) Formulaire soumis    → goal "lead_form", émis en JS dans CTA.astro.
+         2) Appel 20 min réservé  → goal "lead_call" sur les liens cal.com
+            (Offres, pages expert, footer).
+         Pas de scroll-depth ni de goals d'engagement intermédiaires. -->
   </body>
 </html>
