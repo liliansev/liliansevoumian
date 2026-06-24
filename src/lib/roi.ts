@@ -33,3 +33,18 @@ export function compute(hours: number, people: number, hourlyCost: number) {
   const moneySaved = hoursSaved * hourlyCost;
   return { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved };
 }
+
+// Affichage du taux de récup en décimale FR ("0,55") piloté par la constante,
+// pour qu'une source unique alimente calcul ET formule affichée.
+const RECOVERY_RATE_FR = String(RECOVERY_RATE).replace('.', ',');
+
+/**
+ * Construit la string de formule affichée, p.ex. :
+ *   "8H × 3 EMP × 0,55 RÉCUP × 48 SEM × 55€"
+ * Les nombres magiques 0,55 (RECOVERY_RATE) et 48 (WEEKS_PER_YEAR) viennent des
+ * constantes : une seule source pilote affichage ET calcul. Format (NBSP, ×, etc.)
+ * préservé à l'identique du rendu historique.
+ */
+export function formatFormula(cappedHours: number, cappedPeople: number, hourlyCost: number): string {
+  return `${cappedHours}H × ${cappedPeople} EMP × ${RECOVERY_RATE_FR} RÉCUP × ${WEEKS_PER_YEAR} SEM × ${hourlyCost}€`;
+}
