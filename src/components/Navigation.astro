@@ -2,11 +2,11 @@
 import ThemeToggle from './ThemeToggle.astro';
 
 const navLinks = [
-  { href: "#roi", label: "ROI" },
-  { href: "#cas", label: "Cas clients" },
-  { href: "#stack", label: "Stack" },
-  { href: "#offres", label: "Offres" },
-  { href: "#faq", label: "FAQ" },
+  { href: "#roi", label: "ROI", num: "01" },
+  { href: "#cas", label: "Cas clients", num: "02" },
+  { href: "#stack", label: "Stack", num: "03" },
+  { href: "#offres", label: "Offres", num: "04" },
+  { href: "#faq", label: "FAQ", num: "05" },
 ];
 
 // Ancres relatives à la home : sur une sous-page, préfixer par "/" pour y revenir
@@ -86,6 +86,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
           class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
           data-mobile-link
         >
+          <span class="mono-caption text-[var(--color-ink-low)] w-8">{link.num}</span>
           <span class="font-display font-semibold text-[var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)]">
             {link.label}
           </span>

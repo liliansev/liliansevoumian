@@ -190,6 +190,7 @@ const faqPageSchema = faqSchema ? {
     <a href="#main-content" class="skip-link">
       Aller au contenu principal
     </a>
+    <div class="technical-grid" aria-hidden="true"></div>
     <slot />
 
 <script>
@@ -246,6 +247,20 @@ const faqPageSchema = faqSchema ? {
             });
           }, { threshold: [0.4], rootMargin: '-20% 0px -20% 0px' });
           sections.forEach((s) => sectionObs.observe(s));
+        }
+
+        // Grid corner pulse — when a corner enters viewport center, it animates
+        const corners = document.querySelectorAll<HTMLElement>('.grid-corner');
+        if (corners.length > 0 && !prefersReducedMotion) {
+          const cornerObs = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                (e.target as HTMLElement).classList.add('grid-corner-pulse');
+                cornerObs.unobserve(e.target);
+              }
+            });
+          }, { threshold: 0.5, rootMargin: '-30% 0px -30% 0px' });
+          corners.forEach((c) => cornerObs.observe(c));
         }
       }
 

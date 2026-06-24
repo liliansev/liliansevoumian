@@ -16,7 +16,7 @@
   --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
   --text-display-hero: clamp(2.5rem, 6vw + 0.5rem, 5.75rem);
   --text-display-hero-lg: clamp(2.5rem, 5vw + 0.5rem, 4.75rem);
-  --text-headline: clamp(2.25rem, 3.5vw + 0.5rem, 3.5rem);
+  --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
   --text-signature: clamp(2rem, 3vw + 0.5rem, 2.75rem);
   --text-metric: clamp(1.5rem, 2vw + 0.75rem, 2.25rem);
   --text-roi-money: clamp(2.5rem, 5vw, 4rem);
@@ -34,20 +34,15 @@
   /* ===== Spacing fluide ===== */
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
+  --spacing-grid-cell: 96px;
 
-  /* ===== Border radius =====
-     Refonte juin 2026 (réf. vercel.com) : angles francs partout.
-     Seuls les CTA gardent un arrondi — en pilule pleine, comme Vercel.
-     --radius-full reste pour les éléments fonctionnellement ronds
-     (thumb de slider, scrollbar, puces décoratives), pas pour le contenu. */
+  /* ===== Border radius (max 8px sauf chips) ===== */
   --radius-none: 0px;
-  --radius-xs: 0px;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --radius-full: 9999px;
-  /* CTA uniquement : pilule pleine. */
-  --radius-cta: 9999px;
 
   /* ===== Colors (OKLCH-first) ===== */
   /* Surfaces */
@@ -326,6 +321,69 @@ a, button, input, textarea, select,
 }
 
 /* =========================================================================
+   TECHNICAL GRID — signature element
+   Posée globalement par <TechnicalGrid />, lignes 1px tous les 96px.
+   Les + aux intersections sont gérés par chaque section (corner markers).
+   ========================================================================= */
+
+.technical-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
+  background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
+  background-position: 0 64px;
+  mask-image: linear-gradient(to bottom, transparent 0, black 96px, black calc(100% - 96px), transparent 100%);
+}
+
+/* Corner markers (+) sur les sections — 4 par section, aux 4 coins */
+.grid-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  color: var(--color-ink-mid);
+  transition: color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-reveal) var(--ease-out-expo);
+}
+
+.grid-corner::before,
+.grid-corner::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+
+.grid-corner::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.grid-corner::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+.grid-corner.tl { top: -4px; left: -4px; }
+.grid-corner.tr { top: -4px; right: -4px; }
+.grid-corner.bl { bottom: -4px; left: -4px; }
+.grid-corner.br { bottom: -4px; right: -4px; }
+
+/* Section in-viewport state: + virent violet (deep pour passer WCAG AA) */
+.section-active .grid-corner {
+  color: var(--color-violet-deep);
+}
+
+/* =========================================================================
    SECTION NUMBER — 01 — APPROCHE
    ========================================================================= */
 
@@ -362,9 +420,9 @@ a, button, input, textarea, select,
   font-weight: 500;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  padding: 11px 20px;
+  padding: 11px 18px;
   border: none;
-  border-radius: var(--radius-cta);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background var(--duration-default) var(--ease-out-quint),
               transform 100ms var(--ease-out-quint);
@@ -400,9 +458,9 @@ a, button, input, textarea, select,
   font-weight: 500;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  padding: 11px 20px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-cta);
+  padding: 11px 18px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background var(--duration-default) var(--ease-out-quint),
               border-color var(--duration-default) var(--ease-out-quint);
@@ -421,73 +479,125 @@ a, button, input, textarea, select,
    CHIPS — Two-Voice
    ========================================================================= */
 
-/* Chips réduits à de simples labels mono (sans cadre ni fond) pour calmer
-   la page. La couleur seule porte la Two-Voice (violet / ember). */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   background: transparent;
-  color: var(--color-ink-low);
+  color: var(--color-ink-mid);
   font-family: var(--font-mono);
   font-size: var(--text-mono-caption);
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  border: none;
-  padding: 0;
+  padding: 4px 10px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-full);
+  transition: color var(--duration-default) var(--ease-out-quint),
+              border-color var(--duration-default) var(--ease-out-quint),
+              background-color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-quick) var(--ease-out-quint);
+}
+
+.chip:hover {
+  color: var(--color-ink);
+  border-color: var(--color-ink-faint);
+  background-color: var(--color-surface-low);
+}
+
+.chip:active {
+  transform: scale(0.98);
+  transition-duration: var(--duration-quick);
 }
 
 .chip-violet {
+  background: var(--color-violet-soft);
   color: var(--color-violet-deep);
+  border-color: transparent;
 }
 
 .chip-ember {
+  background: var(--color-ember-soft);
   color: var(--color-ember-deep);
+  border-color: transparent;
+}
+
+.chip-dashed {
+  border-style: dashed;
+  color: var(--color-ink-low);
 }
 
 /* =========================================================================
-   CARDS — borderless, structure par le vide (réf. hero airy)
+   CARDS — flat, bordered, hover = grid claims the cell
    ========================================================================= */
 
 .card {
   position: relative;
-  background: transparent;
+  background: var(--color-paper);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: border-color var(--duration-default) var(--ease-out-quint);
 }
 
-/* Cartes cliquables : l'affordance (perdue avec la bordure) revient via un
-   léger lift + le titre qui passe en violet + la flèche qui glisse. Pas de
-   fond ni de padding → aucun impact sur la grille. */
+.card-elevated {
+  padding: 32px;
+}
+
 .card-interactive {
   cursor: pointer;
-  transition: transform var(--duration-default) var(--ease-out-quint);
+  position: relative;
 }
 
-.card-interactive h3 {
-  transition: color var(--duration-default) var(--ease-out-quint);
+.card-interactive:hover {
+  border-color: var(--color-ink-faint);
 }
 
-.card-interactive:hover,
-.card-interactive:focus-visible {
-  transform: translateY(-3px);
-}
-
-.card-interactive:hover h3,
-.card-interactive:focus-visible h3 {
+.card-interactive:hover .grid-corner {
   color: var(--color-violet-deep);
 }
 
-/* Focus clavier : outline net sur la carte entière (l'outline global suffit
-   mais on resserre l'offset pour ne pas être rogné par les voisins). */
+/* Clavier : le focus revendique sa cellule comme le hover (Grid-Claims-the-Cell). */
 .card-interactive:focus-visible {
-  outline: 2px solid var(--color-violet);
-  outline-offset: 6px;
+  border-color: var(--color-ink-faint);
+}
+
+.card-interactive:focus-visible .grid-corner {
+  color: var(--color-violet-deep);
+}
+
+/* Scan line — au hover, une ligne 1px violet glisse du top au bottom de la card.
+   Background-position animé (vs transform translateY) pour ne pas avoir besoin
+   d'overflow:hidden sur la card (sinon clip les grid-corners à -4px). */
+.card-interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, transparent, var(--color-violet) 50%, transparent);
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: inherit;
+}
+
+.card-interactive:hover::after,
+.card-interactive:focus-visible::after {
+  animation: card-scan 1100ms var(--ease-out-quint);
+}
+
+@keyframes card-scan {
+  0% { background-position: 0 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { background-position: 0 100%; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card-interactive:hover,
-  .card-interactive:focus-visible {
-    transform: none;
+  .card-interactive:hover::after,
+  .card-interactive:focus-visible::after {
+    animation: none;
   }
 }
 
@@ -662,7 +772,80 @@ a, button, input, textarea, select,
 .reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
 
-/* Section-active : le section-number flash violet quand la section entre en vue. */
+/* Hero choreography — page-load orchestrée pour le manifesto.
+   Stagger plus long, translation plus dramatique, transition ease-out-expo. */
+.js-ready [data-hero-stagger] .reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(24px);
+}
+[data-hero-stagger] .reveal {
+  transition-duration: 1000ms;
+  transition-timing-function: var(--ease-out-expo);
+}
+[data-hero-stagger] > div > .reveal:nth-child(1) { transition-delay: 0ms; }     /* eyebrow */
+[data-hero-stagger] > div > .reveal:nth-child(2) { transition-delay: 150ms; }   /* hero block */
+[data-hero-stagger] > div > .reveal:nth-child(3) { transition-delay: 600ms; }   /* CTA */
+[data-hero-stagger] > div > .reveal:nth-child(4) { transition-delay: 800ms; }   /* microdata */
+
+/* H1 manifesto rise plus marqué — sépare le H1 du bloc paper qui révèle */
+.js-ready [data-hero-stagger] .reveal:not(.is-visible) .hero-manifesto-h1 {
+  opacity: 0;
+  transform: translateY(32px);
+}
+[data-hero-stagger] .hero-manifesto-h1 {
+  transition: opacity 1100ms var(--ease-out-expo) 300ms,
+              transform 1100ms var(--ease-out-expo) 300ms;
+}
+[data-hero-stagger] .reveal.is-visible .hero-manifesto-h1 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Grille technique — fade-in subtil au page-load (signature respiration). */
+.js-ready .technical-grid {
+  animation: grid-fade-in 1.2s var(--ease-out-expo) both;
+}
+
+@keyframes grid-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-ready .technical-grid {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* + corner pulse on viewport-center crossing */
+.js-ready .grid-corner-pulse {
+  animation: grid-pulse 600ms var(--ease-out-expo) both;
+}
+
+@keyframes grid-pulse {
+  0% { opacity: 0.4; transform: scale(0.7) rotate(-90deg); }
+  60% { opacity: 1; transform: scale(1.1) rotate(0deg); }
+  100% { opacity: 0.85; transform: scale(1) rotate(0deg); }
+}
+
+/* Living grid — section-active state choreography.
+   Quand une section entre en viewport, ses 4 grid-corners revendiquent
+   la cellule en cascade tl→tr→bl→br, et le section-number flash violet. */
+.js-ready .section-active .grid-corner {
+  animation: section-corner-claim 700ms var(--ease-out-expo) both;
+}
+.js-ready .section-active .grid-corner.tl { animation-delay: 0ms; }
+.js-ready .section-active .grid-corner.tr { animation-delay: 80ms; }
+.js-ready .section-active .grid-corner.bl { animation-delay: 160ms; }
+.js-ready .section-active .grid-corner.br { animation-delay: 240ms; }
+
+@keyframes section-corner-claim {
+  0% { transform: scale(1); color: var(--color-ink-mid); }
+  40% { transform: scale(1.3); color: var(--color-violet); }
+  100% { transform: scale(1); color: var(--color-violet-deep); }
+}
+
 .js-ready .section-active .section-number {
   animation: section-num-flash 500ms var(--ease-out-expo) both;
 }
@@ -675,6 +858,7 @@ a, button, input, textarea, select,
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .js-ready .section-active .grid-corner,
   .js-ready .section-active .section-number {
     animation: none !important;
   }
@@ -713,7 +897,7 @@ a, button, input, textarea, select,
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--color-ink-mid);
-  padding: 8px 12px;
+  padding: 8px 12px 8px 16px;
   border-radius: var(--radius-sm);
   text-decoration: none;
 }
@@ -723,23 +907,24 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
-/* Soulignement discret comme repère d'état actif (remplace l'ancien marqueur +). */
-.nav-link::after {
-  content: '';
+.nav-link::before {
+  content: '+';
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 2px;
-  height: 1px;
-  background: var(--color-violet-deep);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform var(--duration-default) var(--ease-out-expo);
+  left: 4px;
+  top: 50%;
+  transform: translate(-8px, -50%);
+  color: var(--color-violet-deep);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  opacity: 0;
+  transition: opacity var(--duration-default) var(--ease-out-expo),
+              transform var(--duration-default) var(--ease-out-expo);
 }
 
-.nav-link.is-active::after,
-.nav-link:hover::after {
-  transform: scaleX(1);
+.nav-link.is-active::before,
+.nav-link:hover::before {
+  opacity: 1;
+  transform: translate(0, -50%);
 }
 
 /* =========================================================================
@@ -768,15 +953,17 @@ a[href^="mailto:"] {
    FAQ — accordion native style
    ========================================================================= */
 
-/* Liste borderless : chaque item séparé par un simple filet bas, façon Vercel. */
 .faq-item {
   position: relative;
-  background: transparent;
-  border-bottom: 1px solid var(--color-divider);
+  background: var(--color-paper);
+  /* border-strong : >=3:1 vs paper (WCAG 1.4.11 non-text), vs ink-faint 1.97:1. */
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
 }
 
-.faq-item:first-child {
-  border-top: 1px solid var(--color-divider);
+.faq-item:hover,
+.faq-item:focus-within {
+  border-color: var(--color-ink-low);
 }
 
 .faq-details {
@@ -787,7 +974,7 @@ a[href^="mailto:"] {
   display: flex;
   align-items: baseline;
   gap: 16px;
-  padding: 22px 0;
+  padding: 20px 24px;
   cursor: pointer;
   list-style: none;
   transition: color var(--duration-default);
@@ -836,7 +1023,7 @@ a[href^="mailto:"] {
 }
 
 .faq-answer {
-  padding: 0 0 22px 52px;
+  padding: 0 24px 20px 76px;
   color: var(--color-ink-mid);
   font-size: var(--text-body);
   line-height: 1.65;
@@ -907,4 +1094,5 @@ a[href^="mailto:"] {
     scroll-behavior: auto !important;
   }
   .reveal { opacity: 1 !important; transform: none !important; }
+  .grid-corner { transform: none !important; }
 }

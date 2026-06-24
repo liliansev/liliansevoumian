@@ -20,6 +20,7 @@ interface Tool {
 interface Layer {
   label: string;
   accent: 'violet' | 'ember';
+  caption: string;
   tools: Tool[];
 }
 
@@ -27,6 +28,7 @@ const layers: Layer[] = [
   {
     label: 'AUTOMATION',
     accent: 'violet',
+    caption: 'LE SOCLE QUI EXÉCUTE',
     tools: [
       {
         name: 'n8n',
@@ -51,6 +53,7 @@ const layers: Layer[] = [
   {
     label: 'IA',
     accent: 'ember',
+    caption: 'LA COUCHE QUI DÉCIDE & CONSTRUIT',
     tools: [
       {
         name: 'Claude Code',
@@ -77,6 +80,7 @@ const layers: Layer[] = [
   <div class="relative max-w-[1200px] mx-auto">
 
     <SectionHeader
+      number="03"
       label="STACK"
       title="Les outils, et la valeur qu'ils apportent."
       body="Cinq outils que j'utilise tous les jours, gardés chacun pour ce qu'il fait de mieux, du workflow no-code à l'agent IA sur-mesure."
@@ -84,14 +88,23 @@ const layers: Layer[] = [
       bodyMaxWidth="60ch"
     />
 
-    <div class="reveal-stagger flex flex-col gap-3 lg:gap-4">
+    <div class="reveal flex flex-col gap-3 lg:gap-4">
       {layers.map((layer) => (
-        <div class="reveal relative">
-          {/* Layer header — label accent seul (caption + compteur retirés) */}
-          <div class="px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
-            <span class={`mono-label ${layer.accent === 'violet' ? 'text-[var(--color-violet-deep)]' : 'text-[var(--color-ember-deep)]'}`}>
-              {layer.label}
-            </span>
+        <div class="relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
+          <span class="grid-corner tl" aria-hidden="true"></span>
+          <span class="grid-corner tr" aria-hidden="true"></span>
+          <span class="grid-corner bl" aria-hidden="true"></span>
+          <span class="grid-corner br" aria-hidden="true"></span>
+
+          {/* Layer header — label accent + caption valeur + compte */}
+          <div class="flex items-baseline justify-between gap-3 px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
+            <div class="flex items-baseline gap-3 flex-wrap">
+              <span class={`mono-label ${layer.accent === 'violet' ? 'text-[var(--color-violet-deep)]' : 'text-[var(--color-ember-deep)]'}`}>
+                {layer.label}
+              </span>
+              <span class="mono-caption text-[var(--color-ink-low)]">{layer.caption}</span>
+            </div>
+            <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{layer.tools.length} OUTILS</span>
           </div>
 
           {/* Tools — grid responsive, colonnes = nombre d'outils (pas de cellule vide) */}
@@ -120,6 +133,14 @@ const layers: Layer[] = [
         </div>
       ))}
     </div>
+
+    {/* Liens internes vers les pages outil-spécifiques (SEO + découverte). */}
+    <p class="reveal mt-8 mono-caption text-[var(--color-ink-low)]">
+      UN BESOIN POINTU SUR UN OUTIL&nbsp;?
+      <a href="/expert-make" class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors ml-1">EXPERT MAKE</a>
+      <span class="text-[var(--color-ink-faint)] mx-1" aria-hidden="true">·</span>
+      <a href="/expert-n8n" class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors">EXPERT N8N <span aria-hidden="true">→</span></a>
+    </p>
 
   </div>
 </section>

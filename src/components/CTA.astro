@@ -4,12 +4,12 @@ import SectionHeader from './SectionHeader.astro';
 
 <section
   id="contact"
-  data-section
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  data-section  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
 
     <SectionHeader
+      number="06"
       label="CONTACT"
       title="Parlons de votre projet."
       body="Je lis chaque demande et je réponds sous 48 h, avec un premier regard concret sur ce qu'on peut automatiser chez vous."
@@ -22,6 +22,11 @@ import SectionHeader from './SectionHeader.astro';
          précéder le bouton, sinon un visiteur qui ne scrolle pas jusqu'en bas
          clique sans avoir vu la rassurance. -->
     <div class="relative reveal mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-x-8 gap-y-6">
+      <span class="grid-corner tl" aria-hidden="true"></span>
+      <span class="grid-corner tr" aria-hidden="true"></span>
+      <span class="grid-corner bl" aria-hidden="true"></span>
+      <span class="grid-corner br" aria-hidden="true"></span>
+
       <!-- Colonne gauche : signature stamp -->
       <div class="flex flex-col gap-2">
         <div class="mono-caption text-[var(--color-ink-low)]">SIGNÉ</div>
@@ -40,6 +45,19 @@ import SectionHeader from './SectionHeader.astro';
           500+ workflows en production pour des Heads of Ops, fondateurs et PME.
           Paris, remote-first.
         </p>
+
+        <!-- Stamps techniques inline — focus sur ce qui n'est PAS dans
+             le hero (incidents, SLA, lieu remote) pour éviter duplication. -->
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mono-caption pt-4 text-[var(--color-ink-low)]">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
+            0 INCIDENT NON RÉSOLU /SLA
+          </span>
+          <span>·</span>
+          <span>30 J SLA INCLUS</span>
+          <span>·</span>
+          <span>REMOTE-FIRST</span>
+        </div>
 
         <!-- Liens externes -->
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mono-caption text-[var(--color-ink-mid)]">

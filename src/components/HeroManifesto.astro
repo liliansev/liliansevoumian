@@ -1,13 +1,15 @@
 ---
 /*
- * HeroManifesto — version "airy" (réf. nouveau vercel.com).
+ * HeroManifesto — split 2 cards same-height :
+ *   gauche  : statement (eyebrow + H1 + sous-titre + microdata + CTA)
+ *   droite  : photo de Lilian (no animation, static portrait)
  *
- * Plus de cards bordées ni de filets : la structure vient de l'échelle et du
- * vide. Statement géant à gauche, portrait qui flotte à droite (sans cadre,
- * posé sur le papier avec une lueur violette douce). Double CTA en pilule.
+ * Mobile (<lg) : single column, photo stack en dessous.
+ * Desktop (lg+) : split 1.5fr/1fr, items-stretch pour hauteur égale.
  *
- * Mobile (<lg) : single column, portrait sous le statement.
- * Desktop (lg+) : split asymétrique 1.15fr / 0.85fr, vertical-center.
+ * Photo via <Image> d'astro:assets pour optimisation auto (WebP/AVIF +
+ * srcset multi-widths). L'asset vit dans src/assets/ (pas public/) pour
+ * traverser le pipeline d'optimisation.
  */
 import { Picture } from 'astro:assets';
 import lilianPhoto from '../assets/lilian-photo.jpg';
@@ -16,65 +18,79 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
 <section
   id="hero"
   data-section
-  class="relative px-[var(--spacing-section-x)] pt-[120px] md:pt-[160px] pb-[var(--spacing-section-y)] overflow-hidden"
+  data-hero-stagger
+  class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-20 items-center">
+  <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
 
-      <!-- Statement — entrée en stagger (eyebrow → titre → texte → CTA → preuve) -->
-      <div class="reveal-stagger flex flex-col gap-7 md:gap-9 order-2 lg:order-1">
-        <span class="reveal mono-caption text-[var(--color-ink-low)]">
-          LEAD OPS FREELANCE · IA &amp; AUTOMATION DEPUIS 2020
-        </span>
+    <!-- Eyebrow chip — version courte mobile, longue desktop -->
+    <div class="reveal mb-6 md:mb-8 inline-block bg-[var(--color-paper)] py-1.5 pr-2">
+      <span class="mono-caption text-[var(--color-ink-low)]">
+        <span class="md:hidden">LEAD OPS FREELANCE · IA & AUTOMATION</span>
+        <span class="hidden md:inline">LEAD OPS FREELANCE DEPUIS 2020 · EXPERT IA & AUTOMATION</span>
+      </span>
+    </div>
 
-        <h1 class="reveal hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[15ch]">
+    <!-- Split 2 cards même hauteur (lg:items-stretch) -->
+    <!-- Split asymétrique (choisi via impeccable live) : statement dominant 2fr,
+         photo en colonne étroite 1fr. Stacked sur mobile, items-stretch en lg. -->
+    <div class="reveal grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8 lg:items-stretch mb-10 md:mb-16">
+
+      <!-- Hero block — statement : H1 + sous-titre + microdata + CTA -->
+      <div class="hero-manifesto-block relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 flex flex-col gap-6 md:gap-7">
+        <span class="grid-corner tl" aria-hidden="true"></span>
+        <span class="grid-corner tr" aria-hidden="true"></span>
+        <span class="grid-corner bl" aria-hidden="true"></span>
+        <span class="grid-corner br" aria-hidden="true"></span>
+
+        <h1
+          class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0 max-w-[20ch]"
+        >
           Freelance et formateur en <span class="hero-h1-accent">IA et automation</span>
         </h1>
 
-        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[46ch]">
-          J'automatise vos processus avec des workflows n8n, Make et des agents IA,
-          et je crée vos outils métiers avec Claude Code.
-        </p>
+        <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6">
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[60ch]">
+            J'automatise vos processus avec des workflows n8n, Make et des agents IA,
+            et je crée vos outils métiers avec Claude Code.
+          </p>
 
-        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-          <a href="#contact-form" class="btn-primary w-full sm:w-auto">
-            Me contacter
-          </a>
-          <a
-            href="https://cal.com/lilian-sevoumian/20min"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-ghost w-full sm:w-auto"
-            data-fast-goal="lead_call"
-            data-fast-goal-source="hero"
-          >
-            Réserver un appel · 20 min
-          </a>
+          <div class="mono-caption text-[var(--color-ink-low)] mt-4 md:mt-5">
+            <span class="text-[var(--color-violet-deep)]">500+</span> WORKFLOWS · <span class="text-[var(--color-violet-deep)]">2&nbsp;000&nbsp;H</span> AUTOMATISÉES /MOIS · MAKE CERTIFIÉ N5
+          </div>
         </div>
 
-        <div class="reveal mono-caption text-[var(--color-ink-low)] leading-[1.7]">
-          <span class="text-[var(--color-violet-deep)]">500+</span> WORKFLOWS ·
-          <span class="text-[var(--color-violet-deep)]">2&nbsp;000&nbsp;H</span> AUTOMATISÉES /MOIS ·
-          MAKE CERTIFIÉ N5
+        <div class="border-t border-[var(--color-divider)] pt-5 md:pt-6 mt-auto flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+          <a
+            href="#contact-form"
+            class="btn-primary w-full sm:w-auto"
+          >
+            Me contacter
+          </a>
         </div>
       </div>
 
-      <!-- Portrait — flotte sur le papier, sans cadre, lueur violette douce -->
-      <div class="reveal hero-portrait relative order-1 lg:order-2 mx-auto lg:mx-0">
-        <div class="hero-portrait-glow" aria-hidden="true"></div>
+      <!-- Portrait Lilian — colonne étroite, photo cover -->
+      <div class="hero-portrait relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
+        <span class="grid-corner tl" aria-hidden="true"></span>
+        <span class="grid-corner tr" aria-hidden="true"></span>
+        <span class="grid-corner bl" aria-hidden="true"></span>
+        <span class="grid-corner br" aria-hidden="true"></span>
+
         <Picture
           src={lilianPhoto}
           alt="Lilian Sevoumian, freelance automatisation et IA (n8n, Make)"
-          class="hero-portrait-img"
+          class="hero-portrait-img block w-full h-full object-cover"
           loading="eager"
           fetchpriority="high"
           formats={['avif', 'webp']}
           widths={[480, 768, 1024]}
-          sizes="(min-width: 1024px) 40vw, 80vw"
+          sizes="(min-width: 1024px) 30vw, 100vw"
         />
       </div>
 
     </div>
+
   </div>
 </section>
 
@@ -82,75 +98,44 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
   .hero-manifesto-h1 {
     font-size: var(--text-display-hero);
     line-height: 0.95;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.035em;
     text-wrap: balance;
     overflow-wrap: break-word;
+    hyphens: auto;
   }
+
+  /* Accepté via impeccable live : le domaine « IA et automation » passe en accent
+     violet (emphasis par couleur, No-Italic Rule respectée). */
+  .hero-manifesto-h1 .hero-h1-accent {
+    color: var(--color-violet-deep);
+  }
+
+  /* À partir de lg, on resserre légèrement le H1 pour respirer face à la photo */
   @media (min-width: 1024px) {
     .hero-manifesto-h1 {
       font-size: var(--text-display-hero-lg);
     }
   }
 
-  /* Emphasis par couleur (No-Italic Rule respectée). */
-  .hero-manifesto-h1 .hero-h1-accent {
-    color: var(--color-violet-deep);
-  }
-
-  /* Portrait sans cadre : ratio portrait, coins francs, miroir pour regarder
-     vers le statement à gauche. Pas de bordure ni d'ombre (no-shadow rule). */
+  /* Portrait card : la photo couvre toute la card sur desktop, hauteur
+     dictée par hero-manifesto-block. Sur mobile, hauteur fixe pour ne
+     pas déborder. */
   .hero-portrait {
-    width: 100%;
-    max-width: 300px;
-    aspect-ratio: 4 / 5;
+    min-height: 320px;
   }
   @media (min-width: 1024px) {
     .hero-portrait {
-      max-width: none;
+      min-height: 0;
     }
   }
 
+  /* Mirror horizontal pour que Lilian regarde vers le titre à gauche. */
   .hero-portrait-img {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
     transform: scaleX(-1);
   }
 
-  /* Lueur violette diffuse derrière le portrait — présence "hero visual" façon
-     Vercel (leur triangle a un halo), sans box-shadow. */
-  .hero-portrait-glow {
-    position: absolute;
-    inset: -22% -26%;
-    z-index: 0;
-    background: radial-gradient(
-      ellipse at 50% 42%,
-      var(--color-violet-soft) 0%,
-      color-mix(in oklch, var(--color-violet-soft) 55%, transparent) 38%,
-      transparent 72%
-    );
-    filter: blur(48px);
-    opacity: 1;
-    pointer-events: none;
-    animation: hero-glow-breathe 8s ease-in-out infinite;
-  }
-
-  /* Respiration lente du halo — présence "hero visual" façon Vercel, très discrète. */
-  @keyframes hero-glow-breathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
-  }
-
-  :global(html.dark) .hero-portrait-glow {
-    opacity: 0.5;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-portrait-glow {
-      animation: none;
-    }
+  /* Dark mode : bordure plus visible pour materialiser le crop de la photo (sinon se fond dans le bg). */
+  :global(html.dark) .hero-portrait {
+    border-color: var(--color-grid-line-active);
   }
 </style>
