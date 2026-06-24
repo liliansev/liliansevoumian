@@ -237,6 +237,22 @@ a {
   text-decoration: none;
 }
 
+/* Lien texte inline : underline qui grandit de gauche à droite au hover/focus
+   (signature Vercel/Linear). Appliqué aux liens d'accent dans le corps. */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size var(--duration-default) var(--ease-out-quint),
+              color var(--duration-default) var(--ease-out-quint);
+}
+
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
 /* =========================================================================
    FOCUS — outline-based, NEVER box-shadow
    ========================================================================= */
@@ -372,10 +388,11 @@ a, button, input, textarea, select,
 
 .btn-primary:hover {
   background: var(--color-ink-soft);
+  transform: translateY(-1px);
 }
 
 .btn-primary:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-primary:disabled {
@@ -411,10 +428,11 @@ a, button, input, textarea, select,
 .btn-ghost:hover {
   background: var(--color-surface-low);
   border-color: var(--color-ink-faint);
+  transform: translateY(-1px);
 }
 
 .btn-ghost:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
 }
 
 /* =========================================================================

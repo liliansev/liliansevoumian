@@ -18,12 +18,13 @@ const {
 } = Astro.props;
 ---
 
-<div class={`reveal mb-12 md:mb-16 ${className}`}>
+<div class={`reveal-stagger mb-12 md:mb-16 ${className}`}>
   {/* Borderless : structure par l'échelle et le vide. Petit label mono
-      (catégorie) puis grand titre dominant, sans numéro ni filet. */}
-  <div class="mono-caption text-[var(--color-ink-low)]">{label}</div>
+      (catégorie) puis grand titre dominant, sans numéro ni filet.
+      Entrée en stagger label → titre → texte. */}
+  <div class="reveal mono-caption text-[var(--color-ink-low)]">{label}</div>
   <h2
-    class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-4"
+    class="reveal font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-4"
     style={`max-width: ${titleMaxWidth};`}
   >
     {title}
@@ -31,7 +32,7 @@ const {
 
   {body && (
     <p
-      class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 md:mt-6 mb-0"
+      class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 md:mt-6 mb-0"
       style={`max-width: ${bodyMaxWidth};`}
     >
       {body}
