@@ -84,14 +84,11 @@ const offres: Offre[] = [
       {offres.map((o) => {
         const isExternal = o.href.startsWith('http');
         return (
-        <article class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] p-6 md:p-8 flex flex-col gap-5">
-          {/* Header : num + format chip */}
-          <div class="flex items-baseline justify-between gap-3 flex-wrap">
-            <span class="mono-caption text-[var(--color-ink-low)]">{o.num} — OFFRE</span>
-            <span class={`chip ${o.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>
-              {o.format}
-            </span>
-          </div>
+        <article class="reveal relative flex flex-col gap-5 pt-6 border-t border-[var(--color-divider)]">
+          {/* Header : format chip seul */}
+          <span class={`chip ${o.accent === 'violet' ? 'chip-violet' : 'chip-ember'}`}>
+            {o.format}
+          </span>
 
           {/* Title */}
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
@@ -137,19 +134,9 @@ const offres: Offre[] = [
       </span>
     </div>
 
-    {/* Footer note : engagement + délai de réponse (sans pricing). */}
-    <div class="reveal mt-8 mono-caption text-[var(--color-ink-low)] flex flex-wrap items-center gap-x-3 gap-y-2">
-      <span class="inline-flex items-center gap-1.5">
-        <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
-        VOUS RESTEZ LIBRE
-      </span>
-      <span aria-hidden="true">·</span>
-      <span>RÉPONSE SOUS 48 H</span>
-    </div>
-
     {/* Pont augmentes.fr — route l'intention « apprendre soi-même » (≠ déléguer
         une mission) vers la plateforme formations. Lien secondaire, jamais primaire. */}
-    <p class="reveal mt-4 mono-caption text-[var(--color-ink-low)]">
+    <p class="reveal mt-8 mono-caption text-[var(--color-ink-low)]">
       VOUS PRÉFÉREZ APPRENDRE À LE FAIRE VOUS-MÊME&nbsp;?
       <a
         href="https://augmentes.fr"

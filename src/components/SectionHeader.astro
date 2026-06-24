@@ -1,6 +1,6 @@
 ---
 interface Props {
-  number: string;
+  number?: string;
   label: string;
   title: string;
   body?: string;
@@ -10,7 +10,6 @@ interface Props {
 }
 
 const {
-  number,
   label,
   title,
   body,
@@ -21,35 +20,22 @@ const {
 ---
 
 <div class={`reveal mb-12 md:mb-16 ${className}`}>
-  {/* Header en flow naturel (block, full-width). Le section-number sert
-      d'eyebrow (catégorie), le title domine avec son max-width, et le
-      filet 1px sous le bloc donne la structure (angles francs, sans grille). */}
-  <div class="section-header-row">
-    <div class="section-number">
-      {number} — {label}
-    </div>
-    <h2
-      class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"
-      style={`max-width: ${titleMaxWidth};`}
-    >
-      {title}
-    </h2>
-  </div>
+  {/* Borderless : structure par l'échelle et le vide. Petit label mono
+      (catégorie) puis grand titre dominant, sans numéro ni filet. */}
+  <div class="mono-caption text-[var(--color-ink-low)]">{label}</div>
+  <h2
+    class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-4"
+    style={`max-width: ${titleMaxWidth};`}
+  >
+    {title}
+  </h2>
 
   {body && (
     <p
-      class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0"
+      class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 md:mt-6 mb-0"
       style={`max-width: ${bodyMaxWidth};`}
     >
       {body}
     </p>
   )}
 </div>
-
-<style>
-  .section-header-row {
-    position: relative;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-divider);
-  }
-</style>

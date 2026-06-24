@@ -90,16 +90,12 @@ const layers: Layer[] = [
 
     <div class="reveal flex flex-col gap-3 lg:gap-4">
       {layers.map((layer) => (
-        <div class="relative bg-[var(--color-paper)] border border-[var(--color-divider)] overflow-hidden">
-          {/* Layer header — label accent + caption valeur + compte */}
-          <div class="flex items-baseline justify-between gap-3 px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
-            <div class="flex items-baseline gap-3 flex-wrap">
-              <span class={`mono-label ${layer.accent === 'violet' ? 'text-[var(--color-violet-deep)]' : 'text-[var(--color-ember-deep)]'}`}>
-                {layer.label}
-              </span>
-              <span class="mono-caption text-[var(--color-ink-low)]">{layer.caption}</span>
-            </div>
-            <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">{layer.tools.length} OUTILS</span>
+        <div class="relative">
+          {/* Layer header — label accent seul (caption + compteur retirés) */}
+          <div class="px-6 md:px-8 py-4 border-b border-[var(--color-divider)]">
+            <span class={`mono-label ${layer.accent === 'violet' ? 'text-[var(--color-violet-deep)]' : 'text-[var(--color-ember-deep)]'}`}>
+              {layer.label}
+            </span>
           </div>
 
           {/* Tools — grid responsive, colonnes = nombre d'outils (pas de cellule vide) */}
@@ -128,14 +124,6 @@ const layers: Layer[] = [
         </div>
       ))}
     </div>
-
-    {/* Liens internes vers les pages outil-spécifiques (SEO + découverte). */}
-    <p class="reveal mt-8 mono-caption text-[var(--color-ink-low)]">
-      UN BESOIN POINTU SUR UN OUTIL&nbsp;?
-      <a href="/expert-make" class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors ml-1">EXPERT MAKE</a>
-      <span class="text-[var(--color-ink-faint)] mx-1" aria-hidden="true">·</span>
-      <a href="/expert-n8n" class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors">EXPERT N8N <span aria-hidden="true">→</span></a>
-    </p>
 
   </div>
 </section>
