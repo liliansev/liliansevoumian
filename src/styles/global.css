@@ -73,17 +73,13 @@
   --color-grid-line-dark: oklch(0.30 0.008 290);
   --color-surface-on-dark: oklch(0.20 0.008 290);
 
-  /* Accents — NEUTRALISÉS (direction monochrome "Vercel", juin 2026).
-     Les noms violet/ember sont conservés le temps de l'itération, mais leurs
-     valeurs pointent vers l'encre / surface neutres : plus aucun accent coloré
-     sur le site. Pour réintroduire UN signal unique plus tard, redéfinir un
-     seul de ces tokens avec une vraie valeur OKLCH. */
-  --color-violet: var(--color-ink);
-  --color-violet-deep: var(--color-ink);
-  --color-violet-soft: var(--color-surface-low);
-  --color-ember: var(--color-ink);
-  --color-ember-deep: var(--color-ink);
-  --color-ember-soft: var(--color-surface-low);
+  /* Accent — MONOCHROME scellé (juin 2026). Plus de tokens violet/ember : un
+     seul hook neutre. Aujourd'hui = encre / surface (zéro couleur). Dérive de
+     --color-ink / --color-surface-low qui sont déjà theme-aware → aucun override
+     dark nécessaire. Pour réintroduire UN accent coloré un jour : donner une
+     vraie valeur OKLCH à --color-accent (et --color-accent-soft) ici uniquement. */
+  --color-accent: var(--color-ink);
+  --color-accent-soft: var(--color-surface-low);
 
   /* Error / Success */
   --color-error: oklch(0.55 0.22 25);
@@ -126,11 +122,7 @@ html.dark {
   --color-grid-line-active: oklch(0.50 0.008 290);
   --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-  /* Accents neutralisés en dark (cf. note en :root) */
-  --color-violet-soft: var(--color-surface-low);
-  --color-violet-deep: var(--color-ink);
-  --color-ember-soft: var(--color-surface-low);
-  --color-ember-deep: var(--color-ink);
+  /* --color-accent dérive de --color-ink (theme-aware) : aucun override dark. */
   --color-success: oklch(0.80 0.16 148);
   --color-error: oklch(0.78 0.16 25);
 }
@@ -152,11 +144,7 @@ html.dark {
     --color-grid-line-active: oklch(0.50 0.008 290);
     --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-    /* Accents neutralisés en dark (cf. note en :root) */
-    --color-violet-soft: var(--color-surface-low);
-    --color-violet-deep: var(--color-ink);
-    --color-ember-soft: var(--color-surface-low);
-    --color-ember-deep: var(--color-ink);
+    /* --color-accent dérive de --color-ink (theme-aware) : aucun override dark. */
     --color-success: oklch(0.80 0.16 148);
     --color-error: oklch(0.78 0.16 25);
   }
@@ -193,7 +181,7 @@ body {
 
 /* Selection */
 ::selection {
-  background-color: var(--color-violet);
+  background-color: var(--color-accent);
   color: var(--color-paper);
 }
 
@@ -253,7 +241,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-violet);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -533,15 +521,9 @@ a, button, input, textarea, select,
   transition-duration: var(--duration-quick);
 }
 
-.chip-violet {
-  background: var(--color-violet-soft);
-  color: var(--color-violet-deep);
-  border-color: transparent;
-}
-
-.chip-ember {
-  background: var(--color-ember-soft);
-  color: var(--color-ember-deep);
+.chip-accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
   border-color: transparent;
 }
 
@@ -602,7 +584,7 @@ a, button, input, textarea, select,
   content: '';
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(to right, transparent, var(--color-violet) 50%, transparent);
+  background-image: linear-gradient(to right, transparent, var(--color-accent) 50%, transparent);
   background-size: 100% 1px;
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -648,8 +630,8 @@ a, button, input, textarea, select,
   margin: 0;
 }
 
-.code-key { color: var(--color-violet-deep); }
-.code-string { color: var(--color-ember-deep); }
+.code-key { color: var(--color-accent); }
+.code-string { color: var(--color-accent); }
 .code-number { color: var(--color-ink-mid); }
 .code-comment { color: var(--color-ink-faint); font-style: italic; }
 
@@ -689,8 +671,8 @@ a, button, input, textarea, select,
 }
 
 .input-text:focus {
-  border-color: var(--color-violet);
-  outline: 2px solid var(--color-violet);
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -707,8 +689,8 @@ a, button, input, textarea, select,
      mis à jour par le JS du composant ROI à chaque input event. */
   background: linear-gradient(
     to right,
-    var(--color-violet) 0%,
-    var(--color-violet) var(--slider-progress, 0%),
+    var(--color-accent) 0%,
+    var(--color-accent) var(--slider-progress, 0%),
     var(--color-divider) var(--slider-progress, 0%),
     var(--color-divider) 100%
   );
@@ -721,8 +703,8 @@ a, button, input, textarea, select,
 .roi-slider:hover {
   background: linear-gradient(
     to right,
-    var(--color-violet-deep) 0%,
-    var(--color-violet-deep) var(--slider-progress, 0%),
+    var(--color-accent) 0%,
+    var(--color-accent) var(--slider-progress, 0%),
     var(--color-ink-faint) var(--slider-progress, 0%),
     var(--color-ink-faint) 100%
   );
@@ -741,13 +723,13 @@ a, button, input, textarea, select,
 }
 
 .roi-slider::-webkit-slider-thumb:hover {
-  border-color: var(--color-violet);
+  border-color: var(--color-accent);
   transform: scale(1.1);
 }
 
 .roi-slider:focus-visible::-webkit-slider-thumb {
-  border-color: var(--color-violet);
-  outline: 2px solid var(--color-violet);
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -762,13 +744,13 @@ a, button, input, textarea, select,
 }
 
 .roi-slider::-moz-range-thumb:hover {
-  border-color: var(--color-violet);
+  border-color: var(--color-accent);
   transform: scale(1.1);
 }
 
 .roi-slider:focus-visible::-moz-range-thumb {
-  border-color: var(--color-violet);
-  outline: 2px solid var(--color-violet);
+  border-color: var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -985,7 +967,7 @@ a[href^="mailto:"] {
 }
 
 .faq-summary:hover {
-  color: var(--color-violet-deep);
+  color: var(--color-accent);
 }
 
 .faq-num {
@@ -995,7 +977,7 @@ a[href^="mailto:"] {
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-violet-deep);
+  color: var(--color-accent);
   min-width: 36px;
 }
 
@@ -1019,7 +1001,7 @@ a[href^="mailto:"] {
 
 .faq-details[open] .faq-caret {
   transform: rotate(45deg);
-  color: var(--color-violet-deep);
+  color: var(--color-accent);
 }
 
 .faq-answer {
@@ -1068,7 +1050,7 @@ a[href^="mailto:"] {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   border-radius: var(--radius-sm);
-  outline: 2px solid var(--color-violet);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
