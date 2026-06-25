@@ -1,6 +1,7 @@
 ---
 interface Props {
-  number: string;
+  /** Conservé pour compat. d'appel ; n'est plus rendu (refonte "Vercel"). */
+  number?: string;
   label: string;
   title: string;
   body?: string;
@@ -10,7 +11,6 @@ interface Props {
 }
 
 const {
-  number,
   label,
   title,
   body,
@@ -27,7 +27,7 @@ const {
       technique 1px en background suffit comme structure. */}
   <div class="section-header-row">
     <div class="section-number">
-      {number} — {label}
+      {label}
     </div>
     <h2
       class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"

@@ -58,7 +58,7 @@
   --color-ink-faint: oklch(0.78 0.004 290);
 
   /* Lines */
-  --color-divider: oklch(0.92 0.004 290);
+  --color-divider: oklch(0.94 0.004 290);
   --color-grid-line: oklch(0.93 0.005 290);
   --color-grid-line-active: oklch(0.72 0.005 290);
   /* Bordure d'élément interactif au repos : >=3:1 vs paper (WCAG 1.4.11). */
@@ -73,13 +73,17 @@
   --color-grid-line-dark: oklch(0.30 0.008 290);
   --color-surface-on-dark: oklch(0.20 0.008 290);
 
-  /* Accents — Two-Voice */
-  --color-violet: oklch(0.55 0.22 290);
-  --color-violet-deep: oklch(0.45 0.22 290);
-  --color-violet-soft: oklch(0.96 0.04 290);
-  --color-ember: oklch(0.66 0.14 45);
-  --color-ember-deep: oklch(0.50 0.14 45);
-  --color-ember-soft: oklch(0.96 0.03 50);
+  /* Accents — NEUTRALISÉS (direction monochrome "Vercel", juin 2026).
+     Les noms violet/ember sont conservés le temps de l'itération, mais leurs
+     valeurs pointent vers l'encre / surface neutres : plus aucun accent coloré
+     sur le site. Pour réintroduire UN signal unique plus tard, redéfinir un
+     seul de ces tokens avec une vraie valeur OKLCH. */
+  --color-violet: var(--color-ink);
+  --color-violet-deep: var(--color-ink);
+  --color-violet-soft: var(--color-surface-low);
+  --color-ember: var(--color-ink);
+  --color-ember-deep: var(--color-ink);
+  --color-ember-soft: var(--color-surface-low);
 
   /* Error / Success */
   --color-error: oklch(0.55 0.22 25);
@@ -92,6 +96,12 @@
   --duration-default: 200ms;
   --duration-reveal: 600ms;
   --duration-mount: 700ms;
+
+  /* ===== Elevation — profondeur douce "Vercel" (remplace le flat pur) ===== */
+  --shadow-card: 0 1px 2px -1px oklch(0.16 0.02 290 / 0.05),
+                 0 10px 28px -14px oklch(0.16 0.02 290 / 0.12);
+  --shadow-card-hover: 0 2px 4px -1px oklch(0.16 0.02 290 / 0.06),
+                       0 16px 40px -16px oklch(0.16 0.02 290 / 0.16);
 }
 
 /* =========================================================================
@@ -116,10 +126,11 @@ html.dark {
   --color-grid-line-active: oklch(0.50 0.008 290);
   --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-  --color-violet-soft: oklch(0.30 0.10 290);
-  --color-violet-deep: oklch(0.85 0.12 290);
-  --color-ember-soft: oklch(0.30 0.08 45);
-  --color-ember-deep: oklch(0.85 0.10 45);
+  /* Accents neutralisés en dark (cf. note en :root) */
+  --color-violet-soft: var(--color-surface-low);
+  --color-violet-deep: var(--color-ink);
+  --color-ember-soft: var(--color-surface-low);
+  --color-ember-deep: var(--color-ink);
   --color-success: oklch(0.80 0.16 148);
   --color-error: oklch(0.78 0.16 25);
 }
@@ -141,10 +152,11 @@ html.dark {
     --color-grid-line-active: oklch(0.50 0.008 290);
     --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-    --color-violet-soft: oklch(0.30 0.10 290);
-    --color-violet-deep: oklch(0.85 0.12 290);
-    --color-ember-soft: oklch(0.30 0.08 45);
-    --color-ember-deep: oklch(0.85 0.10 45);
+    /* Accents neutralisés en dark (cf. note en :root) */
+    --color-violet-soft: var(--color-surface-low);
+    --color-violet-deep: var(--color-ink);
+    --color-ember-soft: var(--color-surface-low);
+    --color-ember-deep: var(--color-ink);
     --color-success: oklch(0.80 0.16 148);
     --color-error: oklch(0.78 0.16 25);
   }
@@ -321,9 +333,11 @@ a, button, input, textarea, select,
 }
 
 /* =========================================================================
-   TECHNICAL GRID — signature element
-   Posée globalement par <TechnicalGrid />, lignes 1px tous les 96px.
-   Les + aux intersections sont gérés par chaque section (corner markers).
+   STRUCTURAL FRAME — signature element (refonte "Vercel", juin 2026)
+   La grille ne passe plus DERRIÈRE le contenu (papier millimétré) : elle se
+   réduit à deux filets verticaux 1px qui encadrent la colonne de contenu, dans
+   les gouttières. Le contenu flotte sur le papier nu ; la structure vit au bord.
+   La largeur de colonne réplique celle des sections (max-w 1200px + padding).
    ========================================================================= */
 
 .technical-grid {
@@ -331,60 +345,74 @@ a, button, input, textarea, select,
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden;
+  /* Largeur de la colonne de contenu (réplique des sections) et largeur de
+     gouttière qui en découle. Le quadrillage ne vit QUE dans la gouttière. */
+  --content-w: min(1200px, 100% - 2 * var(--spacing-section-x));
+  --gutter-w: calc((100% - var(--content-w)) / 2);
+}
+
+/* Gouttières gauche/droite : vrai quadrillage 96px, mais fondu en patch radial
+   pour qu'il émerge du bord de l'écran et se dissipe avant de toucher le contenu
+   — texture organique, non linéaire. Les deux patchs sont décalés en hauteur
+   (35% à gauche, 65% à droite) pour casser la symétrie. */
+.technical-grid::before,
+.technical-grid::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: var(--gutter-w);
   background-image:
     linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
   background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
-  background-position: 0 64px;
-  mask-image: linear-gradient(to bottom, transparent 0, black 96px, black calc(100% - 96px), transparent 100%);
 }
 
-/* Corner markers (+) sur les sections — 4 par section, aux 4 coins */
-.grid-corner {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  pointer-events: none;
-  color: var(--color-ink-mid);
-  transition: color var(--duration-default) var(--ease-out-quint),
-              transform var(--duration-reveal) var(--ease-out-expo);
-}
-
-.grid-corner::before,
-.grid-corner::after {
-  content: '';
-  position: absolute;
-  background: currentColor;
-}
-
-.grid-corner::before {
-  top: 50%;
+/* Plusieurs patchs radiaux à hauteurs irrégulières : la grille « fleurit » à
+   certains endroits et s'efface entre. Ancrés au bord extérieur (0%/100%) → ils
+   se dissipent vers le contenu. Positions en px pour des patchs discrets (pas
+   un seul grand dégradé). Gauche et droite décalés pour casser la symétrie. */
+.technical-grid::before {
   left: 0;
+  -webkit-mask-image:
+    radial-gradient(460px 320px at 0% 240px,  black 0%, transparent 72%),
+    radial-gradient(420px 300px at 0% 1640px, black 0%, transparent 72%),
+    radial-gradient(480px 340px at 0% 3160px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 0% 4600px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%);
+  mask-image:
+    radial-gradient(460px 320px at 0% 240px,  black 0%, transparent 72%),
+    radial-gradient(420px 300px at 0% 1640px, black 0%, transparent 72%),
+    radial-gradient(480px 340px at 0% 3160px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 0% 4600px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%);
+}
+
+.technical-grid::after {
   right: 0;
-  height: 1px;
-  transform: translateY(-50%);
+  -webkit-mask-image:
+    radial-gradient(440px 300px at 100% 820px,  black 0%, transparent 72%),
+    radial-gradient(460px 340px at 100% 2360px, black 0%, transparent 72%),
+    radial-gradient(420px 300px at 100% 3880px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 100% 5320px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%);
+  mask-image:
+    radial-gradient(440px 300px at 100% 820px,  black 0%, transparent 72%),
+    radial-gradient(460px 340px at 100% 2360px, black 0%, transparent 72%),
+    radial-gradient(420px 300px at 100% 3880px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 100% 5320px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%);
 }
 
-.grid-corner::after {
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  transform: translateX(-50%);
-}
-
-.grid-corner.tl { top: -4px; left: -4px; }
-.grid-corner.tr { top: -4px; right: -4px; }
-.grid-corner.bl { bottom: -4px; left: -4px; }
-.grid-corner.br { bottom: -4px; right: -4px; }
-
-/* Section in-viewport state: + virent violet (deep pour passer WCAG AA) */
-.section-active .grid-corner {
-  color: var(--color-violet-deep);
+/* Sous ~640px les gouttières sont quasi nulles : pas de quadrillage, papier nu. */
+@media (max-width: 640px) {
+  .technical-grid::before,
+  .technical-grid::after { display: none; }
 }
 
 /* =========================================================================
-   SECTION NUMBER — 01 — APPROCHE
+   SECTION KICKER — petit label mono au-dessus du titre de section
    ========================================================================= */
 
 .section-number {
@@ -396,11 +424,6 @@ a, button, input, textarea, select,
   text-transform: uppercase;
   color: var(--color-ink-low);
   margin-bottom: 1.5rem;
-  transition: color var(--duration-default) var(--ease-out-quint);
-}
-
-.section-active .section-number {
-  color: var(--color-violet-deep);
 }
 
 /* =========================================================================
@@ -537,7 +560,20 @@ a, button, input, textarea, select,
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-md);
   padding: 24px;
-  transition: border-color var(--duration-default) var(--ease-out-quint);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-default) var(--ease-out-quint),
+              box-shadow var(--duration-default) var(--ease-out-quint);
+}
+
+/* Utilitaire de surface douce — pour les cartes au markup inline (Stack, Offres,
+   ROI) qui n'utilisent pas .card mais veulent la même profondeur "Vercel". */
+.card-soft {
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-default) var(--ease-out-quint),
+              box-shadow var(--duration-default) var(--ease-out-quint);
+}
+.card-soft:hover {
+  box-shadow: var(--shadow-card-hover);
 }
 
 .card-elevated {
@@ -551,24 +587,17 @@ a, button, input, textarea, select,
 
 .card-interactive:hover {
   border-color: var(--color-ink-faint);
+  box-shadow: var(--shadow-card-hover);
 }
 
-.card-interactive:hover .grid-corner {
-  color: var(--color-violet-deep);
-}
-
-/* Clavier : le focus revendique sa cellule comme le hover (Grid-Claims-the-Cell). */
+/* Clavier : le focus revendique sa cellule comme le hover. */
 .card-interactive:focus-visible {
   border-color: var(--color-ink-faint);
 }
 
-.card-interactive:focus-visible .grid-corner {
-  color: var(--color-violet-deep);
-}
-
-/* Scan line — au hover, une ligne 1px violet glisse du top au bottom de la card.
+/* Scan line — au hover, une ligne 1px glisse du haut vers le bas de la card.
    Background-position animé (vs transform translateY) pour ne pas avoir besoin
-   d'overflow:hidden sur la card (sinon clip les grid-corners à -4px). */
+   d'overflow:hidden sur la card. */
 .card-interactive::after {
   content: '';
   position: absolute;
@@ -772,34 +801,22 @@ a, button, input, textarea, select,
 .reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
 
-/* Hero choreography — page-load orchestrée pour le manifesto.
-   Stagger plus long, translation plus dramatique, transition ease-out-expo. */
-.js-ready [data-hero-stagger] .reveal:not(.is-visible) {
+/* Hero choreography — page-load orchestrée sur le manifesto dé-boxé.
+   Chaque ligne (eyebrow → H1 → sous-titre → CTA → microdata) monte en cascade.
+   Les .reveal sont désormais enfants directs de [data-hero-stagger]. */
+.js-ready [data-hero-stagger] > .reveal:not(.is-visible) {
   opacity: 0;
   transform: translateY(24px);
 }
-[data-hero-stagger] .reveal {
+[data-hero-stagger] > .reveal {
   transition-duration: 1000ms;
   transition-timing-function: var(--ease-out-expo);
 }
-[data-hero-stagger] > div > .reveal:nth-child(1) { transition-delay: 0ms; }     /* eyebrow */
-[data-hero-stagger] > div > .reveal:nth-child(2) { transition-delay: 150ms; }   /* hero block */
-[data-hero-stagger] > div > .reveal:nth-child(3) { transition-delay: 600ms; }   /* CTA */
-[data-hero-stagger] > div > .reveal:nth-child(4) { transition-delay: 800ms; }   /* microdata */
-
-/* H1 manifesto rise plus marqué — sépare le H1 du bloc paper qui révèle */
-.js-ready [data-hero-stagger] .reveal:not(.is-visible) .hero-manifesto-h1 {
-  opacity: 0;
-  transform: translateY(32px);
-}
-[data-hero-stagger] .hero-manifesto-h1 {
-  transition: opacity 1100ms var(--ease-out-expo) 300ms,
-              transform 1100ms var(--ease-out-expo) 300ms;
-}
-[data-hero-stagger] .reveal.is-visible .hero-manifesto-h1 {
-  opacity: 1;
-  transform: translateY(0);
-}
+[data-hero-stagger] > .reveal:nth-child(1) { transition-delay: 0ms; }
+[data-hero-stagger] > .reveal:nth-child(2) { transition-delay: 120ms; }
+[data-hero-stagger] > .reveal:nth-child(3) { transition-delay: 260ms; }
+[data-hero-stagger] > .reveal:nth-child(4) { transition-delay: 400ms; }
+[data-hero-stagger] > .reveal:nth-child(5) { transition-delay: 540ms; }
 
 /* Grille technique — fade-in subtil au page-load (signature respiration). */
 .js-ready .technical-grid {
@@ -818,50 +835,43 @@ a, button, input, textarea, select,
   }
 }
 
-/* + corner pulse on viewport-center crossing */
-.js-ready .grid-corner-pulse {
-  animation: grid-pulse 600ms var(--ease-out-expo) both;
-}
-
-@keyframes grid-pulse {
-  0% { opacity: 0.4; transform: scale(0.7) rotate(-90deg); }
-  60% { opacity: 1; transform: scale(1.1) rotate(0deg); }
-  100% { opacity: 0.85; transform: scale(1) rotate(0deg); }
-}
-
-/* Living grid — section-active state choreography.
-   Quand une section entre en viewport, ses 4 grid-corners revendiquent
-   la cellule en cascade tl→tr→bl→br, et le section-number flash violet. */
-.js-ready .section-active .grid-corner {
-  animation: section-corner-claim 700ms var(--ease-out-expo) both;
-}
-.js-ready .section-active .grid-corner.tl { animation-delay: 0ms; }
-.js-ready .section-active .grid-corner.tr { animation-delay: 80ms; }
-.js-ready .section-active .grid-corner.bl { animation-delay: 160ms; }
-.js-ready .section-active .grid-corner.br { animation-delay: 240ms; }
-
-@keyframes section-corner-claim {
-  0% { transform: scale(1); color: var(--color-ink-mid); }
-  40% { transform: scale(1.3); color: var(--color-violet); }
-  100% { transform: scale(1); color: var(--color-violet-deep); }
-}
-
-.js-ready .section-active .section-number {
-  animation: section-num-flash 500ms var(--ease-out-expo) both;
-}
-
-@keyframes section-num-flash {
-  0% { opacity: 1; color: var(--color-ink-low); }
-  20% { opacity: 0.3; color: var(--color-violet); }
-  60% { opacity: 1; color: var(--color-violet-deep); }
-  100% { opacity: 1; color: var(--color-ink-low); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js-ready .section-active .grid-corner,
-  .js-ready .section-active .section-number {
-    animation: none !important;
+/* Grilles de gouttière animées au scroll — deux mouvements combinés :
+   1) les LIGNES s'écoulent verticalement dans les patchs (gauche ↓, droite ↑)
+   2) une légère parallaxe de bloc (sens opposés) ajoute de la profondeur.
+   Calme à l'arrêt, vivant au scroll. 100 % CSS scroll-driven (zéro JS),
+   absent gracieusement si non supporté, coupé en reduced-motion. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .technical-grid::before {
+      animation: grid-flow-down linear both, grid-parallax-down linear both;
+      animation-timeline: scroll(root block), scroll(root block);
+      will-change: background-position, transform;
+    }
+    .technical-grid::after {
+      animation: grid-flow-up linear both, grid-parallax-up linear both;
+      animation-timeline: scroll(root block), scroll(root block);
+      will-change: background-position, transform;
+    }
   }
+}
+
+/* Écoulement des lignes — multiple de la cellule (96px) pour un défilé sans saut. */
+@keyframes grid-flow-down {
+  from { background-position-y: 0; }
+  to   { background-position-y: 576px; }
+}
+@keyframes grid-flow-up {
+  from { background-position-y: 0; }
+  to   { background-position-y: -576px; }
+}
+
+@keyframes grid-parallax-down {
+  from { transform: translate3d(0, -48px, 0); }
+  to   { transform: translate3d(0, 48px, 0); }
+}
+@keyframes grid-parallax-up {
+  from { transform: translate3d(0, 48px, 0); }
+  to   { transform: translate3d(0, -48px, 0); }
 }
 
 /* =========================================================================
@@ -897,7 +907,7 @@ a, button, input, textarea, select,
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--color-ink-mid);
-  padding: 8px 12px 8px 16px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   text-decoration: none;
 }
@@ -907,24 +917,10 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
-.nav-link::before {
-  content: '+';
-  position: absolute;
-  left: 4px;
-  top: 50%;
-  transform: translate(-8px, -50%);
-  color: var(--color-violet-deep);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
-  opacity: 0;
-  transition: opacity var(--duration-default) var(--ease-out-expo),
-              transform var(--duration-default) var(--ease-out-expo);
-}
-
-.nav-link.is-active::before,
-.nav-link:hover::before {
-  opacity: 1;
-  transform: translate(0, -50%);
+/* Le "+" glissant a été retiré (décrassage "Vercel") : la nav se contente d'un
+   shift de couleur au hover/actif, comme sur vercel.com. */
+.nav-link.is-active {
+  font-weight: 600;
 }
 
 /* =========================================================================
@@ -959,6 +955,9 @@ a[href^="mailto:"] {
   /* border-strong : >=3:1 vs paper (WCAG 1.4.11 non-text), vs ink-faint 1.97:1. */
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-default) var(--ease-out-quint),
+              box-shadow var(--duration-default) var(--ease-out-quint);
 }
 
 .faq-item:hover,
@@ -1094,5 +1093,4 @@ a[href^="mailto:"] {
     scroll-behavior: auto !important;
   }
   .reveal { opacity: 1 !important; transform: none !important; }
-  .grid-corner { transform: none !important; }
 }
