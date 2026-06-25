@@ -52,12 +52,12 @@ Références positives (à étudier, pas à copier) :
 1. **Le site EST la démo.** Ce que Lilian vend (rigueur d'exécution, attention au détail, automatisations qui ne cassent pas), le site doit le démontrer dans sa propre construction. Si le site bug ou flotte, le pitch est mort.
 2. **Opinionated, pas exhaustif.** Une page de freelance liste 12 services et 30 outils. La nôtre montre **le cas le plus parlant** + **la méthode** + **le pourquoi** — et assume de ne pas tout dire. Anti-pattern : la grille 3×3 d'icônes.
 3. **Densité avant air.** Vercel/Modal montrent que le premium passe par une grille tenue, des chiffres alignés, des micro-typographies maîtrisées — pas par 200vh d'espace blanc. Information riche, hiérarchie nette.
-4. **Couleur comme signal, pas comme décoration.** Deux accents stricts (violet n8n, orange Anthropic) ≤10% de surface combinée, sur des éléments porteurs de sens (tags d'outils, états actifs, points de focus). Tout le reste est noir / blanc / gris tinté.
-5. **Motion qui prouve la maîtrise.** Animations courtes (≤300ms), ease-out exponentiel, qui réagissent à l'intention (hover, scroll, focus). Aucune animation décorative gratuite. Si elle ne dit rien, on la coupe.
+4. **Monochrome, zéro accent** _(refonte juin 2026, direction « Vercel pure black monochrome »)._ Tout est noir / blanc / gris tinté zinc (hue 290, chroma résiduelle ≤0.008). **Aucune couleur d'accent** : le contraste et la hiérarchie viennent du poids typographique, de la taille et de l'espace — jamais de la teinte. La structure vit dans la **grille de gouttière** (quadrillage 96px confiné aux marges, fondu en patchs) et la mono comme texture. _(Historique : une palette à deux accents violet n8n / orange Anthropic existait avant cette refonte ; retirée pour l'épure.)_
+5. **Motion qui prouve la maîtrise.** Animations courtes (≤300ms) qui réagissent à l'intention (hover, focus), ou ambiantes et liées au scroll (parallaxe/écoulement des grilles de gouttière, 100% CSS scroll-driven). Ease-out exponentiel, reduced-motion respecté. Aucune animation décorative gratuite : si elle ne dit rien, on la coupe.
 
 ## Accessibility & Inclusion
 
-- **WCAG AA** sur tous les textes et états interactifs (le contraste violet/orange sur blanc devra être vérifié, prévoir des dark variants si besoin pour le texte sur accent clair).
+- **WCAG AA** sur tous les textes et états interactifs. La palette monochrome simplifie le contraste : corps ≥4.5:1 sur papier, focus rings en encre (`--color-ink`), bordures interactives ≥3:1 (`--color-border-strong`).
 - **Reduced motion** respecté (déjà en place dans `global.css`, à conserver) — toutes les animations doivent dégrader proprement.
 - **Navigation clavier complète** : focus rings visibles cohérents avec la palette, ordre de tab logique, skip-link vers `#main-content`.
 - **Cible bilingue future possible** (FR principal, EN sans doute à terme) — éviter de hardcoder du copy long dans des composants ; structurer pour permettre l'i18n plus tard sans refonte.
