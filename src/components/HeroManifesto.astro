@@ -2,8 +2,8 @@
 /*
  * HeroManifesto — refonte "Vercel" (juin 2026).
  *   Dé-boxé : le statement (eyebrow + H1 + sous-titre + CTA + microdata) flotte
- *   directement sur le papier, sans carte bordée. Le portrait est le seul visuel,
- *   traité en noir & blanc (couleur révélée au survol) pour tenir le monochrome.
+ *   directement sur le papier, sans carte bordée. Le portrait couleur est le seul
+ *   visuel et le seul point de couleur de la page (choix assumé).
  *
  * Mobile (<lg) : colonne unique, photo en dessous.
  * Desktop (lg+) : split 1.35fr / 1fr, aligné au centre vertical.
@@ -32,25 +32,32 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
         </span>
 
         <h1 class="reveal hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0">
-          Freelance et formateur en IA et automation
+          J'automatise ce que vos équipes font encore à la main.
         </h1>
 
         <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[48ch]">
-          J'automatise vos processus avec des workflows n8n, Make et des agents IA,
-          et je crée vos outils métiers avec Claude Code.
+          Workflows n8n &amp; Make, agents IA et outils métiers sur-mesure avec
+          Claude Code — en production, et qui tiennent.
         </p>
 
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-          <a href="#contact-form" class="btn-primary w-full sm:w-auto">
-            Me contacter
+          <a
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary w-full sm:w-auto"
+            data-fast-goal="lead_call"
+            data-fast-goal-source="hero"
+          >
+            Réserver un appel · 20 min
           </a>
-          <a href="/cas-clients" class="btn-ghost w-full sm:w-auto">
-            Voir les cas clients
+          <a href="#contact-form" class="btn-ghost w-full sm:w-auto">
+            Me contacter
           </a>
         </div>
 
         <div class="reveal mono-caption text-[var(--color-ink-low)] pt-1">
-          500+ WORKFLOWS · 2&nbsp;000&nbsp;H AUTOMATISÉES /MOIS · MAKE CERTIFIÉ N5
+          500+ WORKFLOWS EN PRODUCTION
         </div>
 
       </div>
@@ -80,7 +87,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
     line-height: 0.95;
     letter-spacing: -0.035em;
     text-wrap: balance;
-    max-width: 17ch;
+    max-width: 20ch;
     overflow-wrap: break-word;
     hyphens: auto;
   }
@@ -96,20 +103,9 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
     aspect-ratio: 4 / 5;
   }
 
-  /* N&B par défaut, couleur révélée au survol (interaction Vercel/Linear).
-     Mirror horizontal : Lilian regarde vers le titre à gauche. */
+  /* Photo en couleur. Mirror horizontal : Lilian regarde vers le titre à gauche. */
   .hero-portrait-img {
     transform: scaleX(-1);
-    filter: grayscale(1) contrast(1.03);
-    transition: filter 600ms var(--ease-out-quint);
-  }
-
-  .hero-portrait:hover .hero-portrait-img {
-    filter: grayscale(0) contrast(1);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-portrait-img { transition: none; }
   }
 
   /* Dark mode : bordure plus visible pour matérialiser le crop de la photo. */

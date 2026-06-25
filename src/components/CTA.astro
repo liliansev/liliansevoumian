@@ -18,61 +18,32 @@ import SectionHeader from './SectionHeader.astro';
       class="!mb-0"
     />
 
-    <!-- Signature humaine d'abord — confidence-then-action. La preuve doit
-         précéder le bouton, sinon un visiteur qui ne scrolle pas jusqu'en bas
-         clique sans avoir vu la rassurance. -->
-    <div class="relative reveal mt-10 md:mt-12 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-x-8 gap-y-6">
+    {/* Face-a-face : message humain (gauche) + formulaire (droite). Sur mobile,
+        confidence-then-action preserve — le message passe avant le formulaire. */}
+    <div class="relative reveal mt-10 md:mt-14 grid grid-cols-1 lg:grid-cols-[0.85fr_1fr] gap-10 lg:gap-16 items-start">
 
-      <!-- Colonne gauche : signature stamp -->
-      <div class="flex flex-col gap-2">
-        <div class="mono-caption text-[var(--color-ink-low)]">SIGNÉ</div>
-        <div
-          class="font-display font-semibold tracking-[-0.025em] leading-[0.95] text-[var(--color-ink)]"
-          style="font-size: var(--text-signature);"
-        >
-          Lilian<br/>Sevoumian.
-        </div>
+      <!-- Colonne gauche : signature + statement passionne -->
+      <div class="flex flex-col gap-6">
+
+      <!-- Signature -->
+      <div
+        class="font-display font-semibold tracking-[-0.025em] leading-[0.95] text-[var(--color-ink)]"
+        style="font-size: var(--text-signature);"
+      >
+        Lilian<br/>Sevoumian.
       </div>
 
-      <!-- Colonne droite : credentials + liens -->
-      <div class="flex flex-col gap-5 max-w-[55ch]">
-        <p class="text-[length:var(--text-body-large)] leading-[1.55] m-0 text-[var(--color-ink-mid)]">
-          <span class="text-[var(--color-ink)]">Make certifié Niveau 5 (1<sup>er</sup> certifié en France).</span>
-          500+ workflows en production pour des Heads of Ops, fondateurs et PME.
-          Paris, remote-first.
-        </p>
-
-        <!-- Stamps techniques inline — focus sur ce qui n'est PAS dans
-             le hero (incidents, SLA, lieu remote) pour éviter duplication. -->
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mono-caption pt-4 text-[var(--color-ink-low)]">
-          <span class="inline-flex items-center gap-1.5">
-            <span class="w-1 h-1 rounded-full bg-[var(--color-violet)] inline-block"></span>
-            0 INCIDENT NON RÉSOLU /SLA
-          </span>
-          <span>·</span>
-          <span>30 J SLA INCLUS</span>
-          <span>·</span>
-          <span>REMOTE-FIRST</span>
-        </div>
-
-        <!-- Liens externes -->
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mono-caption text-[var(--color-ink-mid)]">
-          <a href="https://www.linkedin.com/in/liliansevoumian/" target="_blank" rel="noopener noreferrer" class="tap-44 inline-flex items-center gap-1 hover:text-[var(--color-ink)] transition-colors">LINKEDIN <span class="text-[var(--color-violet-deep)]" aria-hidden="true">↗</span></a>
-          <span class="text-[var(--color-ink-faint)]" aria-hidden="true">·</span>
-          <a href="https://www.youtube.com/@lilian.sevoumian" target="_blank" rel="noopener noreferrer" class="tap-44 inline-flex items-center gap-1 hover:text-[var(--color-ink)] transition-colors">YOUTUBE <span class="text-[var(--color-violet-deep)]" aria-hidden="true">↗</span></a>
-          <span class="text-[var(--color-ink-faint)]" aria-hidden="true">·</span>
-          <a href="https://liliansevoumian.substack.com/" target="_blank" rel="noopener noreferrer" class="tap-44 inline-flex items-center gap-1 hover:text-[var(--color-ink)] transition-colors">NEWSLETTER <span class="text-[var(--color-violet-deep)]" aria-hidden="true">↗</span></a>
-        </div>
+      <!-- Statement passionné -->
+      <p class="text-[length:var(--text-body-large)] leading-[1.55] m-0 text-[var(--color-ink-mid)] max-w-[58ch]">
+        J'automatise des process depuis des années, et honnêtement je ne m'en lasse pas. En ce moment je construis surtout des agents IA et des outils internes avec Claude&nbsp;Code — pour que vos équipes arrêtent de faire à la main ce qu'une machine fait mieux. <span class="text-[var(--color-ink)]">Montrez-moi votre tâche la plus pénible&nbsp;: c'est celle que je préfère.</span>
+      </p>
       </div>
-    </div>
+      <!-- /colonne gauche -->
 
-    <!-- Zone d'action — formulaire on-site (= canal "formulaire rempli").
-         Poste sur /api/contact (Resend) avec fallback mailto si l'API échoue,
-         pour ne jamais bloquer un lead. -->
-    <div class="reveal mt-14 md:mt-16 max-w-[600px]">
-
-      <!-- Formulaire -->
-      <form id="contact-form" class="flex flex-col gap-4 scroll-mt-24" novalidate>
+      <!-- Colonne droite : formulaire on-site (canal "formulaire rempli").
+           Poste sur /api/contact (Resend) avec fallback mailto si l'API echoue. -->
+      <div class="w-full">
+        <form id="contact-form" class="flex flex-col gap-4 scroll-mt-24" novalidate>
         <div class="flex flex-col sm:flex-row gap-4">
           <label class="flex-1 flex flex-col gap-1.5">
             <span class="mono-caption text-[var(--color-ink-low)]">NOM</span>
@@ -96,11 +67,12 @@ import SectionHeader from './SectionHeader.astro';
         <button type="submit" class="btn-primary justify-center" data-contact-submit>
           Envoyer ma demande
         </button>
-        <p class="mono-caption text-[var(--color-ink-low)] leading-[1.5]" data-form-status role="status" aria-live="polite">
-          RÉPONSE SOUS 48 H · SANS ENGAGEMENT · JE LIS CHAQUE DEMANDE
-        </p>
+        <p class="mono-caption text-[var(--color-ink-low)] leading-[1.5]" data-form-status role="status" aria-live="polite"></p>
       </form>
+      </div>
+      <!-- /colonne droite -->
     </div>
+    <!-- /face-a-face -->
 
   </div>
 </section>

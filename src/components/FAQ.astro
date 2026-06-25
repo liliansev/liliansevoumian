@@ -1,5 +1,4 @@
 ---
-import SectionHeader from './SectionHeader.astro';
 import { faqs } from '../data/faq';
 ---
 
@@ -7,17 +6,18 @@ import { faqs } from '../data/faq';
   id="faq"
   data-section  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
+  <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
 
-    <SectionHeader
-      number="05"
-      label="FAQ"
-      title="Vos questions les plus fréquentes."
-      titleMaxWidth="22ch"
-    />
+    <!-- Colonne gauche : titre sticky -->
+    <div class="reveal lg:sticky lg:top-28">
+      <div class="section-number">FAQ</div>
+      <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[14ch]">
+        Vos questions les plus fréquentes.
+      </h2>
+    </div>
 
-    <!-- Accordion — chaque item est une paper-island bordée qui revendique sa cellule -->
-    <div class="reveal max-w-[820px] flex flex-col gap-3">
+    <!-- Colonne droite : accordion -->
+    <div class="reveal flex flex-col gap-3">
       {faqs.map((faq, i) => (
         <div class="faq-item">
 
@@ -34,20 +34,9 @@ import { faqs } from '../data/faq';
         </div>
       ))}
 
-      <!-- 7e row : sortie de l'accordion, lien direct mailto -->
-      <p class="mono-caption text-[var(--color-ink-low)] mt-5 pt-6 border-t border-[var(--color-divider)]">
-        UNE QUESTION PAS LISTÉE ?
-        <a
-          href="mailto:bonjour@liliansevoumian.fr"
-          class="text-[var(--color-violet-deep)] hover:text-[var(--color-ink)] transition-colors ml-1"
-        >
-          BONJOUR@LILIANSEVOUMIAN.FR
-        </a>
-      </p>
-
       {/* Pont augmentes.fr — sortie pour l'intention « apprendre soi-même » /
           budget formation, distincte de la demande de mission. Lien secondaire. */}
-      <p class="mono-caption text-[var(--color-ink-low)] mt-3">
+      <p class="mono-caption text-[var(--color-ink-low)] mt-6 pt-6 border-t border-[var(--color-divider)]">
         BUDGET SERRÉ OU ENVIE D'APPRENDRE VOUS-MÊME ?
         <a
           href="https://augmentes.fr"

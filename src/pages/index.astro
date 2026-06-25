@@ -10,6 +10,7 @@ import FAQ from '../components/FAQ.astro';
 import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
 import ROICalculator from '../components/ROICalculator.astro';
+import MobileCTABar from '../components/MobileCTABar.astro';
 import { faqs } from '../data/faq';
 
 const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
@@ -18,11 +19,11 @@ const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
 <Layout faqSchema={faqSchema}>
   <Navigation />
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1" class="outline-none">
     <HeroManifesto />
-    <ROICalculator />
     <CaseStudy />
     <Testimonials />
+    <ROICalculator />
     <Stack />
     <Offres />
     <FAQ />
@@ -30,4 +31,5 @@ const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
   </main>
 
   <Footer />
+  <MobileCTABar />
 </Layout>

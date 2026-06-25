@@ -2,8 +2,8 @@
 import ThemeToggle from './ThemeToggle.astro';
 
 const navLinks = [
-  { href: "#roi", label: "ROI", num: "01" },
-  { href: "#cas", label: "Cas clients", num: "02" },
+  { href: "#cas", label: "Cas clients", num: "01" },
+  { href: "#roi", label: "ROI", num: "02" },
   { href: "#stack", label: "Stack", num: "03" },
   { href: "#offres", label: "Offres", num: "04" },
   { href: "#faq", label: "FAQ", num: "05" },
@@ -23,14 +23,8 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       class="inline-flex items-center gap-2.5 text-[var(--color-ink)] shrink-0 group min-h-[44px]"
       aria-label="Lilian Sevoumian, accueil"
     >
-      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true" class="shrink-0">
-        <rect x="0.5" y="0.5" width="21" height="21" stroke="currentColor" stroke-width="1"/>
-        <line x1="11" y1="0" x2="11" y2="22" stroke="currentColor" stroke-width="1"/>
-        <line x1="0" y1="11" x2="22" y2="11" stroke="currentColor" stroke-width="1"/>
-        <circle cx="11" cy="11" r="3" fill="currentColor"/>
-      </svg>
       <span class="mono-label hidden sm:inline">LILIAN SEVOUMIAN</span>
-      <span class="mono-label sm:hidden">LS</span>
+      <span class="mono-label sm:hidden">LILIAN</span>
     </a>
 
     <!-- Desktop links -->
@@ -46,10 +40,14 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     <div class="hidden lg:flex items-center gap-2">
       <ThemeToggle />
       <a
-        href={`${prefix}#contact-form`}
+        href="https://cal.com/lilian-sevoumian/20min"
+        target="_blank"
+        rel="noopener noreferrer"
         class="btn-primary"
+        data-fast-goal="lead_call"
+        data-fast-goal-source="nav"
       >
-        Me contacter
+        Réserver un appel
       </a>
     </div>
 
@@ -71,7 +69,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
 <!-- Mobile menu plein écran -->
 <div
   id="mobile-menu"
-  class="fixed inset-0 z-[49] bg-[var(--color-paper)] opacity-0 invisible transition-opacity duration-150 md:hidden"
+  class="fixed inset-0 z-[49] bg-[var(--color-paper)] opacity-0 invisible transition-opacity duration-150 lg:hidden"
   role="dialog"
   aria-modal="true"
   aria-labelledby="mobile-menu-title"
@@ -99,11 +97,15 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
         <ThemeToggle />
       </div>
       <a
-        href={`${prefix}#contact-form`}
+        href="https://cal.com/lilian-sevoumian/20min"
+        target="_blank"
+        rel="noopener noreferrer"
         class="btn-primary justify-center w-full"
+        data-fast-goal="lead_call"
+        data-fast-goal-source="nav_mobile"
         data-mobile-link
       >
-        Me contacter
+        Réserver un appel · 20 min
       </a>
     </div>
   </div>
