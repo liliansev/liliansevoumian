@@ -51,9 +51,9 @@ const testimonials: Testimonial[] = [
   <div class="relative max-w-[1200px] mx-auto">
 
     {/* Header sans numéro — bande de preuve, pas une étape numérotée */}
-    <div class="reveal mb-12 md:mb-16">
+    <div class="reveal mb-10 md:mb-12">
       <div class="testi-header-row">
-        <div class="section-number">TÉMOIGNAGES</div>
+        <div class="section-number">RECOMMANDATIONS</div>
         <h2
           class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"
           style="max-width: 22ch;"
@@ -63,15 +63,16 @@ const testimonials: Testimonial[] = [
       </div>
     </div>
 
-    <div role="group" aria-label="Témoignages clients" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 pb-2 md:grid md:grid-cols-3 lg:gap-4 md:overflow-visible md:pb-0 reveal-stagger">
+    {/* Pull-quotes éditoriaux pleine largeur, séparés par des filets — texture
+        volontairement distincte de la grille de cartes des cas clients (le bloc
+        de preuve sociale ne doit pas se confondre avec le catalogue). */}
+    <div class="reveal-stagger flex flex-col">
       {testimonials.map((t) => (
-        <article class="reveal relative card flex flex-col gap-5 snap-start shrink-0 basis-[80%] sm:basis-[55%] md:basis-auto">
-
-          <blockquote class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.6] m-0 flex-1">
-            {t.quote}
+        <figure class="reveal grid grid-cols-1 md:grid-cols-[1fr_minmax(0,240px)] gap-5 md:gap-12 items-start py-7 md:py-9 border-t border-[var(--color-divider)] m-0">
+          <blockquote class="font-display font-medium text-[length:var(--text-title-lg)] leading-[1.4] tracking-[-0.015em] text-[var(--color-ink)] m-0 max-w-[36ch]">
+            «&nbsp;{t.quote}&nbsp;»
           </blockquote>
-
-          <div class="flex items-center gap-3 pt-4 border-t border-[var(--color-divider)]">
+          <figcaption class="flex items-center gap-3 shrink-0 md:pt-2">
             <Image
               src={t.image}
               alt={`Photo de ${t.name}`}
@@ -86,8 +87,8 @@ const testimonials: Testimonial[] = [
               <span class="font-display font-semibold text-[var(--color-ink)] leading-tight">{t.name}</span>
               <span class="mono-caption text-[var(--color-ink-low)]">{t.role}</span>
             </div>
-          </div>
-        </article>
+          </figcaption>
+        </figure>
       ))}
     </div>
   </div>
