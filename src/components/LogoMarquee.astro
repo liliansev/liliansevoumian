@@ -7,7 +7,16 @@
  * fichiers fournis (src/assets/logos/). Boucle sans couture (liste doublée),
  * fade aux bords, pause au survol, statique sous prefers-reduced-motion.
  */
-const clients = ['Fraich Touch', 'M Partners', 'Celeris', 'CasanovaParis', 'Contournement'];
+interface Client { name: string; logo?: string; scale?: number }
+// Logos officiels récupérés sur les sites (public/logos/). M Partners n'a pas de
+// version transparente → wordmark texte. Traitement monochrome via CSS (filter).
+const clients: Client[] = [
+  { name: 'Fraich Touch', logo: '/logos/fraichtouch.svg', scale: 2.3 },
+  { name: 'M Partners' },
+  { name: 'Celeris', logo: '/logos/celeris.webp' },
+  { name: 'Casanova Paris', logo: '/logos/casanovaparis.png' },
+  { name: 'Contournement', logo: '/logos/contournement.svg' },
+];
 const loop = [...clients, ...clients];
 ---
 
@@ -18,9 +27,22 @@ const loop = [...clients, ...clients];
 
   <div class="lm-viewport reveal">
     <div class="lm-track">
-      {loop.map((name, i) => (
-        <span class="lm-item" aria-hidden={i >= clients.length ? 'true' : 'false'}>{name}</span>
-      ))}
+      {loop.map((c, i) => {
+        const dup = i >= clients.length;
+        return c.logo ? (
+          <img
+            class="lm-logo"
+            src={c.logo}
+            alt={c.name}
+            style={`--logo-scale:${c.scale ?? 1}`}
+            aria-hidden={dup ? 'true' : 'false'}
+            loading="eager"
+            decoding="async"
+          />
+        ) : (
+          <span class="lm-item" aria-hidden={dup ? 'true' : 'false'}>{c.name}</span>
+        );
+      })}
     </div>
   </div>
 </section>
@@ -68,6 +90,22 @@ const loop = [...clients, ...clients];
     transition: color var(--duration-default) var(--ease-out-quint);
   }
   .lm-item:hover { color: var(--color-ink-mid); }
+
+  /* Logos officiels — normalisés en silhouette monochrome (encre / blanc en dark). */
+  .lm-logo {
+    height: calc(30px * var(--logo-scale, 1));
+    width: auto;
+    max-width: 190px;
+    object-fit: contain;
+    filter: brightness(0);
+    opacity: 0.48;
+    transition: opacity var(--duration-default) var(--ease-out-quint);
+  }
+  .lm-logo:hover { opacity: 0.85; }
+  :global(html.dark) .lm-logo { filter: brightness(0) invert(1); opacity: 0.6; }
+  @media (prefers-color-scheme: dark) {
+    :global(html:not(.light)) .lm-logo { filter: brightness(0) invert(1); opacity: 0.6; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .lm-viewport { -webkit-mask-image: none; mask-image: none; }

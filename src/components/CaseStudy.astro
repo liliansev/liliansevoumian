@@ -17,6 +17,8 @@ import WorkflowCanvas from './mockups/WorkflowCanvas.astro';
 
 const fraichTouch = {
   client: 'Fraich Touch',
+  logo: '/logos/fraichtouch.svg',
+  logoScale: 2.2,
   sector: 'AGENCE DE GESTION DE TALENTS',
   title: 'Une facturation qui tourne seule, sans erreur.',
   description:
@@ -33,6 +35,7 @@ const mPartners = {
 };
 const celeris = {
   client: 'Celeris',
+  logo: '/logos/celeris.webp',
   sector: 'DISTRIBUTEUR IT B2B',
   title: "Un catalogue produits qui s'enrichit tout seul.",
   description:
@@ -60,8 +63,8 @@ const celeris = {
       {/* ── Fraich Touch : texte ⟶ facturation ── */}
       <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
         <div class="flex flex-col gap-5">
-          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{fraichTouch.client}</span>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <img class="case-logo" src={fraichTouch.logo} alt={fraichTouch.client} style={`--logo-scale:${fraichTouch.logoScale ?? 1}`} loading="lazy" decoding="async" />
             <span class="mono-caption text-[var(--color-ink-low)]">{fraichTouch.sector}</span>
           </div>
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{fraichTouch.title}</h3>
@@ -121,8 +124,8 @@ const celeris = {
       {/* ── Celeris : texte ⟶ catalogue ERP ── */}
       <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
         <div class="flex flex-col gap-5">
-          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{celeris.client}</span>
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <img class="case-logo" src={celeris.logo} alt={celeris.client} style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
             <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
           </div>
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{celeris.title}</h3>
@@ -157,4 +160,18 @@ const celeris = {
 <style>
   .case-link { text-decoration: none; }
   .case-link:hover { color: var(--color-ink); }
+
+  /* Logo client — silhouette monochrome (encre / blanc en dark). */
+  .case-logo {
+    height: calc(26px * var(--logo-scale, 1));
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    filter: brightness(0);
+    opacity: 0.9;
+  }
+  :global(html.dark) .case-logo { filter: brightness(0) invert(1); opacity: 0.92; }
+  @media (prefers-color-scheme: dark) {
+    :global(html:not(.light)) .case-logo { filter: brightness(0) invert(1); opacity: 0.92; }
+  }
 </style>
