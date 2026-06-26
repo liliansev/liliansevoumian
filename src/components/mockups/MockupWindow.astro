@@ -9,23 +9,26 @@
  * fonctionnel --color-success, réservé aux statuts positifs (cf. statusTone).
  */
 interface Props {
-  file: string;
+  file?: string;
   status?: string;
   statusTone?: 'success' | 'neutral';
   flush?: boolean;
+  bare?: boolean;
   class?: string;
 }
-const { file, status, statusTone = 'neutral', flush = false, class: className } = Astro.props;
+const { file, status, statusTone = 'neutral', flush = false, bare = false, class: className } = Astro.props;
 ---
 
 <div class:list={['mockup-window', className]}>
-  <div class="mw-bar">
-    <span class="mw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="mw-file">{file}</span>
-    {status && (
-      <span class:list={['mw-status', statusTone === 'success' && 'is-success']}>{status}</span>
-    )}
-  </div>
+  {!bare && (
+    <div class="mw-bar">
+      <span class="mw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="mw-file">{file}</span>
+      {status && (
+        <span class:list={['mw-status', statusTone === 'success' && 'is-success']}>{status}</span>
+      )}
+    </div>
+  )}
 
   <div class:list={['mw-body', flush && 'is-flush']}>
     <slot />

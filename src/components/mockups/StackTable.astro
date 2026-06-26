@@ -1,0 +1,62 @@
+---
+/* Notion — mini-table CRM qui se remplit toute seule. */
+const rows = [
+  { label: 'Devis #1042', status: 'Signé', ok: true },
+  { label: 'Devis #1043', status: 'En cours', ok: false },
+  { label: 'Lead — formulaire', status: 'Nouveau', ok: false },
+];
+---
+<div class="st">
+  <div class="st-head">
+    <span>Entrée</span>
+    <span>Statut</span>
+  </div>
+  {rows.map((r) => (
+    <div class="st-row">
+      <span class="st-l">{r.label}</span>
+      <span class:list={['st-pill', r.ok && 'is-ok']}>
+        {r.status}{r.ok && <span aria-hidden="true"> ✓</span>}
+      </span>
+    </div>
+  ))}
+</div>
+
+<style>
+  .st { padding: 10px 4px; }
+  .st-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-divider);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-low);
+  }
+  .st-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .st-row:last-child { border-bottom: 0; }
+  .st-l { font-size: var(--text-body-sm); color: var(--color-ink); min-width: 0; }
+  .st-pill {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-full);
+    padding: 2px 9px;
+    white-space: nowrap;
+  }
+  .st-pill.is-ok {
+    color: var(--color-success);
+    border-color: color-mix(in oklch, var(--color-success) 32%, transparent);
+    background: color-mix(in oklch, var(--color-success) 9%, transparent);
+  }
+</style>

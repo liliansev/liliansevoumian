@@ -1,0 +1,43 @@
+---
+/* Make — mini-scénario : modules ronds reliés (déclencheur · routeur · actions). */
+import { Icon } from 'astro-icon/components';
+---
+<div class="ss" role="img" aria-label="Scénario Make : un déclencheur, un routeur, puis deux actions reliées.">
+  <span class="ss-mod"><Icon name="lucide:mail" class="ss-ic" aria-hidden="true" /></span>
+  <span class="ss-link" aria-hidden="true"></span>
+  <span class="ss-mod is-accent"><Icon name="lucide:git-fork" class="ss-ic" aria-hidden="true" /></span>
+  <span class="ss-link" aria-hidden="true"></span>
+  <span class="ss-mod"><Icon name="simple-icons:hubspot" class="ss-ic" aria-hidden="true" /></span>
+  <span class="ss-link" aria-hidden="true"></span>
+  <span class="ss-mod"><Icon name="simple-icons:slack" class="ss-ic" aria-hidden="true" /></span>
+</div>
+
+<style>
+  .ss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 14px;
+  }
+  .ss-mod {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-divider);
+    box-shadow: var(--shadow-card);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ss-mod.is-accent { border-color: var(--color-border-strong); }
+  .ss-ic { width: 16px; height: 16px; color: var(--color-ink-mid); }
+  .ss-link {
+    flex: 1 1 auto;
+    max-width: 28px;
+    height: 1px;
+    background: var(--color-grid-line-active);
+    opacity: 0.55;
+  }
+</style>

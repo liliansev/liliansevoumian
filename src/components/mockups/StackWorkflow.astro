@@ -1,0 +1,48 @@
+---
+/* n8n — mini-workflow : Email → Agent IA → Tâche (sur fond pointillé). */
+import { Icon } from 'astro-icon/components';
+---
+<div class="sw" role="img" aria-label="Workflow n8n : un email entrant déclenche un agent IA qui crée la tâche.">
+  <div class="sw-node">
+    <Icon name="lucide:mail" class="sw-ic" aria-hidden="true" />
+    <span class="sw-k">Email</span>
+  </div>
+  <span class="sw-arr" aria-hidden="true">→</span>
+  <div class="sw-node is-accent">
+    <Icon name="simple-icons:anthropic" class="sw-ic" aria-hidden="true" />
+    <span class="sw-k">Agent IA</span>
+  </div>
+  <span class="sw-arr" aria-hidden="true">→</span>
+  <div class="sw-node">
+    <Icon name="simple-icons:notion" class="sw-ic" aria-hidden="true" />
+    <span class="sw-k">Tâche</span>
+  </div>
+</div>
+
+<style>
+  .sw {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 22px 16px;
+    background-image: radial-gradient(var(--color-grid-line) 1px, transparent 1px);
+    background-size: 13px 13px;
+  }
+  .sw-node {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 6px;
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+  }
+  .sw-node.is-accent { border-color: var(--color-border-strong); }
+  .sw-ic { width: 16px; height: 16px; color: var(--color-ink-mid); }
+  .sw-k { font-family: var(--font-mono); font-size: var(--text-mono-caption); color: var(--color-ink-low); }
+  .sw-arr { flex-shrink: 0; font-family: var(--font-mono); color: var(--color-ink-faint); }
+</style>
