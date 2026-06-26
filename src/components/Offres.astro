@@ -2,124 +2,61 @@
 /*
  * Offres.astro — section §04
  *
- * Remplace Methode (4 étapes process) ET Pricing (CTA seul) par une section
- * unique avec 4 cards-services + prix publics HT. Pattern transparence radicale
- * aligné brand voice opinionated/technique/premium.
- *
+ * Volontairement SANS catalogue de formats : on ne fait pas choisir le prospect
+ * dans une grille figée. Bloc à gauche (porte ouverte : Lilian propose le format
+ * adapté), CTA à droite. Minimaliste. Les liens augmentes.fr restent.
  */
-import SectionHeader from './SectionHeader.astro';
-
-interface Offre {
-  title: string;
-  format: string;
-  description: string;
-  href: string;
-  /** Pré-remplit le message du formulaire de contact (offres mission → #contact). */
-  prefill?: string;
-}
-
-const offres: Offre[] = [
-  {
-    title: 'Régie automation & apps internes',
-    format: 'RÉGIE · 1–2 J/SEM',
-    description: "Je rejoins votre équipe pour livrer des automations et des applications web avec Claude Code.",
-    href: '#contact-form',
-    prefill: 'Régie automation & apps internes',
-  },
-  {
-    title: 'Mentoring 3 mois',
-    format: 'FORFAIT · ACCOMPAGNEMENT',
-    description: "Trois mois pour autonomiser votre équipe sur n8n, Make et Claude. Mentoring direct, formation, et je débloque vos projets internes.",
-    href: '#contact-form',
-    prefill: 'Mentoring 3 mois',
-  },
-  {
-    title: 'Mission cadrée',
-    format: 'ONE-SHOT · CADRÉ',
-    description: "Mission ponctuelle selon votre besoin. Cadrage, conception, livraison.",
-    href: '#contact-form',
-    prefill: 'Mission perso',
-  },
-  {
-    title: 'Coaching ponctuel',
-    format: '1H · CIBLÉ',
-    description: "Débloquer rapidement une situation. Conseil ultra-ciblé sur une problématique métier.",
-    href: 'https://go.liliansevoumian.fr/coaching',
-  },
-];
 ---
 
 <section
   id="offres"
-  data-section  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
-    <SectionHeader
-      number="04"
-      label="4 FORMATS · RÉGIE → COACHING"
-      title="Quatre façons de bosser ensemble."
-      titleMaxWidth="26ch"
-    />
 
-    {/* Index des offres — cartes flottantes pleine largeur, cliquables d'un bout
-        à l'autre. Plus de bouton par carte : un seul CTA pilote l'action. */}
-    <div class="flex flex-col gap-3 md:gap-4">
-      {offres.map((o) => {
-        const isExternal = o.href.startsWith('http');
-        return (
-        <a
-          href={o.href}
-          target={isExternal ? '_blank' : undefined}
-          rel={isExternal ? 'noopener noreferrer' : undefined}
-          data-prefill={isExternal ? undefined : o.prefill}
-          aria-label={o.title}
-          class="offer-card group reveal block bg-[var(--color-paper)] rounded-[var(--radius-lg)] p-6 md:p-8 no-underline"
-        >
-          <div class="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:gap-10 md:items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,400px)] gap-10 lg:gap-16 items-center">
 
-            {/* Gauche : format + titre */}
-            <div class="flex flex-col gap-3">
-              <span class="chip self-start">{o.format}</span>
-              <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] m-0 leading-[1.15]">
-                {o.title}
-              </h3>
-            </div>
+      {/* Bloc gauche — la porte ouverte */}
+      <div class="reveal flex flex-col gap-5">
+        <div class="section-number">TRAVAILLER ENSEMBLE</div>
+        <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[16ch]">
+          On trouve le bon format ensemble.
+        </h2>
+        <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[52ch]">
+          Régie, mission cadrée, mentoring d'équipe, coaching ponctuel… je n'ai pas
+          de grille figée. On part de votre besoin réel et je vous propose le format
+          le plus adapté — souvent un mélange.
+        </p>
+      </div>
 
-            {/* Droite : description + flèche */}
-            <div class="flex items-start justify-between gap-6 mt-4 md:mt-0">
-              <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0 max-w-[60ch]">
-                {o.description}
-              </p>
-              <span class="offer-arrow shrink-0 mono-label text-[var(--color-ink-mid)] mt-0.5" aria-hidden="true">→</span>
-            </div>
+      {/* CTA droite */}
+      <div class="reveal">
+        <div class="card flex flex-col gap-4 p-7 md:p-8">
+          <p class="mono-caption text-[var(--color-ink-low)] leading-[1.5]">
+            PREMIER ÉCHANGE · 20 MIN · SANS ENGAGEMENT
+          </p>
+          <a
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary w-full justify-center"
+            data-fast-goal="lead_call"
+            data-fast-goal-source="offres"
+          >
+            Réserver un appel · 20 min
+          </a>
+          <a href="#contact-form" class="btn-ghost w-full justify-center">
+            M'écrire
+          </a>
+        </div>
+      </div>
 
-          </div>
-        </a>
-        );
-      })}
     </div>
 
-    {/* CTA principal de la section : après les offres, l'action la plus chaude
-        est de réserver un appel. Les CTA par carte sont secondaires (ghost) ;
-        celui-ci est LE primaire de la section. */}
-    <div class="reveal mt-8 md:mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-      <a
-        href="https://cal.com/lilian-sevoumian/20min"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn-primary w-full sm:w-auto justify-center"
-        data-fast-goal="lead_call"
-        data-fast-goal-source="offres"
-      >
-        Réserver un appel · 20 min
-      </a>
-      <span class="mono-caption text-[var(--color-ink-low)] leading-[1.5] max-w-[42ch]">
-        PAS SÛR DE L'OFFRE QUI COLLE ? ON EN PARLE 20 MIN.
-      </span>
-    </div>
-    {/* Pont augmentes.fr — route l'intention « apprendre soi-même » (≠ déléguer
-        une mission) vers la plateforme formations. Lien secondaire, jamais primaire. */}
-    <p class="reveal mt-4 mono-caption text-[var(--color-ink-low)]">
+    {/* Pont augmentes.fr — route l'intention « apprendre soi-même » vers la
+        plateforme formations. Lien secondaire, jamais primaire. */}
+    <p class="reveal mt-10 md:mt-12 mono-caption text-[var(--color-ink-low)]">
       VOUS PRÉFÉREZ APPRENDRE À LE FAIRE VOUS-MÊME&nbsp;?
       <a
         href="https://augmentes.fr"
@@ -130,35 +67,6 @@ const offres: Offre[] = [
         FORMATIONS MAKE &amp; N8N SUR AUGMENTES.FR&nbsp;<span aria-hidden="true">↗</span>
       </a>
     </p>
+
   </div>
 </section>
-
-<style>
-  /* Cartes flottantes : pas de bordure, profondeur douce, lift au hover. */
-  .offer-card {
-    box-shadow: var(--shadow-card);
-    transition: box-shadow var(--duration-default) var(--ease-out-quint),
-                transform var(--duration-default) var(--ease-out-quint);
-  }
-  /* No-Lift Rule (DESIGN.md) : l'interactivité se signale par l'ombre qui
-     grandit, jamais par une translation. */
-  .offer-card:hover,
-  .offer-card:focus-visible {
-    box-shadow: var(--shadow-card-hover);
-  }
-  .offer-arrow {
-    transition: transform var(--duration-default) var(--ease-out-quint),
-                color var(--duration-default) var(--ease-out-quint);
-  }
-  .offer-card:hover .offer-arrow {
-    transform: translateX(4px);
-    color: var(--color-ink);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .offer-card,
-    .offer-arrow { transition: none; }
-    .offer-card:hover { transform: none; }
-    .offer-card:hover .offer-arrow { transform: none; }
-  }
-</style>
