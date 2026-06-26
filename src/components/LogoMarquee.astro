@@ -1,48 +1,44 @@
 ---
 /*
- * LogoMarquee — bande de clients défilante, juste après le hero.
+ * LogoMarquee — bande d'OUTILS défilante, juste après le hero.
  *
- * Wordmarks TEXTE (monochrome, façon mur de logos grayscale) en attendant de
- * vrais fichiers logos : remplacer chaque entrée par une image une fois les
- * fichiers fournis (src/assets/logos/). Boucle sans couture (liste doublée),
- * fade aux bords, pause au survol, statique sous prefers-reduced-motion.
+ * Logos des outils les plus connus que Lilian connecte / automatise, via le jeu
+ * simple-icons (déjà installé) → monochromes et thème-aware nativement
+ * (currentColor). Boucle sans couture (liste doublée), fondu aux bords, pause au
+ * survol, statique sous prefers-reduced-motion.
  */
-interface Client { name: string; logo?: string; scale?: number }
-// Logos officiels récupérés sur les sites (public/logos/). M Partners n'a pas de
-// version transparente → wordmark texte. Traitement monochrome via CSS (filter).
-const clients: Client[] = [
-  { name: 'Fraich Touch', logo: '/logos/fraichtouch.svg', scale: 2.3 },
-  { name: 'M Partners' },
-  { name: 'Celeris', logo: '/logos/celeris.webp' },
-  { name: 'Casanova Paris', logo: '/logos/casanovaparis.png' },
-  { name: 'Contournement', logo: '/logos/contournement.svg' },
+import { Icon } from 'astro-icon/components';
+
+interface Tool { name: string; icon: string }
+const tools: Tool[] = [
+  { name: 'n8n', icon: 'simple-icons:n8n' },
+  { name: 'Make', icon: 'simple-icons:make' },
+  { name: 'Zapier', icon: 'simple-icons:zapier' },
+  { name: 'Airtable', icon: 'simple-icons:airtable' },
+  { name: 'Notion', icon: 'simple-icons:notion' },
+  { name: 'Google Sheets', icon: 'simple-icons:googlesheets' },
+  { name: 'Slack', icon: 'simple-icons:slack' },
+  { name: 'HubSpot', icon: 'simple-icons:hubspot' },
+  { name: 'Stripe', icon: 'simple-icons:stripe' },
+  { name: 'OpenAI', icon: 'simple-icons:openai' },
+  { name: 'Claude', icon: 'simple-icons:anthropic' },
 ];
-const loop = [...clients, ...clients];
+const loop = [...tools, ...tools];
 ---
 
-<section class="lm" aria-label="Quelques entreprises accompagnées">
+<section class="lm" aria-label="Outils que j'automatise et connecte au quotidien">
   <div class="px-[var(--spacing-section-x)]">
     <h2 class="lm-title reveal">Qu'allons-nous automatiser demain&nbsp;?</h2>
   </div>
 
   <div class="lm-viewport reveal">
     <div class="lm-track">
-      {loop.map((c, i) => {
-        const dup = i >= clients.length;
-        return c.logo ? (
-          <img
-            class="lm-logo"
-            src={c.logo}
-            alt={c.name}
-            style={`--logo-scale:${c.scale ?? 1}`}
-            aria-hidden={dup ? 'true' : 'false'}
-            loading="eager"
-            decoding="async"
-          />
-        ) : (
-          <span class="lm-item" aria-hidden={dup ? 'true' : 'false'}>{c.name}</span>
-        );
-      })}
+      {loop.map((t, i) => (
+        <span class="lm-tool" aria-hidden={i >= tools.length ? 'true' : 'false'}>
+          <Icon name={t.icon} class="lm-tool-ic" aria-hidden="true" />
+          <span class="lm-tool-name">{t.name}</span>
+        </span>
+      ))}
     </div>
   </div>
 </section>
@@ -80,31 +76,22 @@ const loop = [...clients, ...clients];
     to { transform: translateX(-50%); }
   }
 
-  .lm-item {
+  /* Outil = logo (simple-icons, currentColor) + nom, en gris discret. */
+  .lm-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
     white-space: nowrap;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: clamp(1.125rem, 1vw + 0.9rem, 1.6rem);
-    letter-spacing: -0.02em;
     color: var(--color-ink-faint);
     transition: color var(--duration-default) var(--ease-out-quint);
   }
-  .lm-item:hover { color: var(--color-ink-mid); }
-
-  /* Logos officiels — normalisés en silhouette monochrome (encre / blanc en dark). */
-  .lm-logo {
-    height: calc(30px * var(--logo-scale, 1));
-    width: auto;
-    max-width: 190px;
-    object-fit: contain;
-    filter: brightness(0);
-    opacity: 0.48;
-    transition: opacity var(--duration-default) var(--ease-out-quint);
-  }
-  .lm-logo:hover { opacity: 0.85; }
-  :global(html.dark) .lm-logo { filter: brightness(0) invert(1); opacity: 0.6; }
-  @media (prefers-color-scheme: dark) {
-    :global(html:not(.light)) .lm-logo { filter: brightness(0) invert(1); opacity: 0.6; }
+  .lm-tool:hover { color: var(--color-ink-mid); }
+  .lm-tool-ic { width: 26px; height: 26px; flex-shrink: 0; }
+  .lm-tool-name {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.05rem, 1vw + 0.85rem, 1.45rem);
+    letter-spacing: -0.02em;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -116,6 +103,6 @@ const loop = [...clients, ...clients];
       justify-content: center;
       gap: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
     }
-    .lm-item[aria-hidden='true'] { display: none; }
+    .lm-tool[aria-hidden='true'] { display: none; }
   }
 </style>
