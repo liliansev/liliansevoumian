@@ -2,49 +2,43 @@
 /*
  * CaseStudy.astro — section §02.
  *
- * Grille de cartes ÉGALES, toutes cliquables (chaque carte = un lien vers le
- * détail du cas), avec un CTA « Voir le cas ». Cartes orientées EXPERTISE
- * MÉTIER + présentation succincte du client — pas de métriques internes ni de
- * liste d'outils (sans valeur pour un prospect, et parfois confidentielles).
- * Les plateformes restent nommées ailleurs (hero, section Stack) où elles
- * signalent la compétence sans exposer le détail des missions.
- *
- * `href` : destination du « Voir le cas ». Par défaut /cas-clients ; à pointer
- * vers une page de détail dédiée par cas quand elles existent.
+ * Lignes alternées texte + mini-mockup produit (façon capture d'app), un mockup
+ * sur-mesure par mission pour rendre concret CE QUE FAIT l'automatisation :
+ *   · Fraich Touch  → panneau facturation (factures payées / relance auto)
+ *   · M Partners    → canvas de workflow (sourcing → agent IA → CRM)
+ *   · Celeris       → catalogue ERP enrichi par agent IA, en interne
+ * Tout en monochrome (tokens projet) ; seul --color-success (fonctionnel) pointe
+ * les statuts positifs. Copy et angle métier inchangés.
  */
 import SectionHeader from './SectionHeader.astro';
+import MockupWindow from './mockups/MockupWindow.astro';
+import MockupList from './mockups/MockupList.astro';
+import WorkflowCanvas from './mockups/WorkflowCanvas.astro';
 
-interface Case {
-  client: string;
-  sector: string;
-  title: string;
-  description: string;
-  href: string;
-}
-
-const cases: Case[] = [
-  {
-    client: 'Fraich Touch',
-    sector: 'AGENCE DE GESTION DE TALENTS',
-    title: 'Une facturation qui tourne seule, sans erreur.',
-    description: 'Agence de gestion de talents (santé, sport, entreprenariat) qui pilote les partenariats marques de ses créateurs. J\'ai repensé et fiabilisé tout leur système de facturation, automatisé de bout en bout, documenté et surveillé, pour que l\'équipe arrête de courir après les paiements et se concentre sur ses talents.',
-    href: '/cas-clients',
-  },
-  {
-    client: 'M Partners',
-    sector: 'EXECUTIVE SEARCH · TECH & VC',
-    title: 'Une prospection qualifiée par l\'IA.',
-    description: 'Cabinet de chasse de têtes spécialisé sur l\'écosystème startup et capital-risque. J\'ai industrialisé leur prospection : la collecte et l\'enrichissement des cibles sont automatisés, puis un agent IA qualifie les bons dirigeants à approcher. L\'équipe se concentre sur la relation, plus sur la recherche manuelle.',
-    href: '/cas-clients',
-  },
-  {
-    client: 'Celeris',
-    sector: 'DISTRIBUTEUR IT B2B',
-    title: 'Un catalogue produits qui s\'enrichit tout seul.',
-    description: 'Distributeur IT B2B, acteur établi du marché français. J\'accompagne leurs équipes dans leur montée en compétence sur l\'automatisation, et j\'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP, pensé pour tourner en interne, avec une exigence forte de souveraineté des données.',
-    href: '/cas-clients',
-  },
-];
+const fraichTouch = {
+  client: 'Fraich Touch',
+  sector: 'AGENCE DE GESTION DE TALENTS',
+  title: 'Une facturation qui tourne seule, sans erreur.',
+  description:
+    "Agence de gestion de talents (santé, sport, entreprenariat) qui pilote les partenariats marques de ses créateurs. J'ai repensé et fiabilisé tout leur système de facturation, automatisé de bout en bout, documenté et surveillé, pour que l'équipe arrête de courir après les paiements et se concentre sur ses talents.",
+  href: '/cas-clients',
+};
+const mPartners = {
+  client: 'M Partners',
+  sector: 'EXECUTIVE SEARCH · TECH & VC',
+  title: "Une prospection qualifiée par l'IA.",
+  description:
+    "Cabinet de chasse de têtes spécialisé sur l'écosystème startup et capital-risque. J'ai industrialisé leur prospection : la collecte et l'enrichissement des cibles sont automatisés, puis un agent IA qualifie les bons dirigeants à approcher. L'équipe se concentre sur la relation, plus sur la recherche manuelle.",
+  href: '/cas-clients',
+};
+const celeris = {
+  client: 'Celeris',
+  sector: 'DISTRIBUTEUR IT B2B',
+  title: "Un catalogue produits qui s'enrichit tout seul.",
+  description:
+    "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP, pensé pour tourner en interne, avec une exigence forte de souveraineté des données.",
+  href: '/cas-clients',
+};
 ---
 
 <section
@@ -61,46 +55,106 @@ const cases: Case[] = [
       titleMaxWidth="22ch"
     />
 
-    <!-- Grille de cartes égales, toutes cliquables -->
-    <div role="group" aria-label="Cas clients" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 pb-2 md:grid md:grid-cols-2 lg:grid-cols-3 lg:gap-4 md:overflow-visible md:pb-0 reveal-stagger">
-      {cases.map((c) => (
-        <a
-          href={c.href}
-          class="case-card reveal relative card card-interactive flex flex-col gap-5 h-full group no-underline snap-start shrink-0 basis-[80%] sm:basis-[55%] md:basis-auto"
-        >
+    <div class="flex flex-col gap-16 md:gap-20 lg:gap-24">
 
-          {/* Header : client + secteur */}
-          <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 pb-4 border-b border-[var(--color-divider)]">
-            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{c.client}</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">{c.sector}</span>
+      {/* ── Fraich Touch : texte ⟶ facturation ── */}
+      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{fraichTouch.client}</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">{fraichTouch.sector}</span>
           </div>
-
-          {/* Titre — l'angle expertise métier */}
-          <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0 max-w-[26ch]">
-            {c.title}
-          </h3>
-
-          {/* Description — société succincte + valeur métier */}
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
-            {c.description}
-          </p>
-
-          {/* CTA — pinned bottom */}
-          <span class="mt-auto pt-4 border-t border-[var(--color-divider)] inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)]">
+          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{fraichTouch.title}</h3>
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{fraichTouch.description}</p>
+          <a href={fraichTouch.href} class="case-link group inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)] w-fit">
             VOIR LE CAS
             <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
-          </span>
-        </a>
-      ))}
+          </a>
+        </div>
+        <div>
+          <MockupWindow file="facturation — clients.auto" status="3 payées" statusTone="success">
+            <MockupList
+              items={[
+                { label: 'Brand × Créateur', sub: 'INV-2041', value: '4 200 €', status: 'done' },
+                { label: 'Partenariat sport', sub: 'INV-2042', value: '1 850 €', status: 'done' },
+                { label: 'Relance J+7', sub: 'INV-2043', value: '2 600 €', status: 'pending' },
+              ]}
+            />
+            <Fragment slot="footer">
+              <span>▸ RELANCES AUTO · J+7 / J+14</span>
+              <span class="ml-auto">0 RETARD</span>
+            </Fragment>
+          </MockupWindow>
+        </div>
+      </article>
+
+      {/* ── M Partners : workflow ⟵ texte (alterné) ── */}
+      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+        <div class="order-2 lg:order-1">
+          <MockupWindow file="prospection — sourcing-to-crm.flow" status="actif" statusTone="success" flush>
+            <WorkflowCanvas
+              describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
+              trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
+              agent={{ icon: 'simple-icons:anthropic', kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
+              actions={[
+                { icon: 'simple-icons:hubspot', kicker: 'CRM', title: 'À approcher' },
+                { icon: 'lucide:list-checks', kicker: 'Shortlist', title: 'Top 20 %' },
+                { icon: 'lucide:bell', kicker: 'Alerte', title: 'Nouveau signal' },
+              ]}
+            />
+          </MockupWindow>
+        </div>
+        <div class="order-1 lg:order-2 flex flex-col gap-5">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{mPartners.client}</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">{mPartners.sector}</span>
+          </div>
+          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{mPartners.title}</h3>
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{mPartners.description}</p>
+          <a href={mPartners.href} class="case-link group inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)] w-fit">
+            VOIR LE CAS
+            <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </article>
+
+      {/* ── Celeris : texte ⟶ catalogue ERP ── */}
+      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{celeris.client}</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
+          </div>
+          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{celeris.title}</h3>
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{celeris.description}</p>
+          <a href={celeris.href} class="case-link group inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)] w-fit">
+            VOIR LE CAS
+            <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div>
+          <MockupWindow file="catalogue — erp.sync" status="synchronisé" statusTone="success">
+            <MockupList
+              items={[
+                { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
+                { label: 'Switch 48 ports', sub: 'SKU-44822', value: '+9 champs', status: 'done' },
+                { label: 'NAS 4 baies', sub: 'SKU-44823', value: 'en cours', status: 'pending' },
+              ]}
+            />
+            <Fragment slot="footer">
+              <span>▸ AGENT IA · EN INTERNE</span>
+              <span class="ml-auto">SOUVERAINETÉ ✓</span>
+            </Fragment>
+          </MockupWindow>
+        </div>
+      </article>
+
     </div>
 
   </div>
 </section>
 
 <style>
-  /* La carte est un lien : pas de soulignement, couleur de texte héritée. */
-  .case-card,
-  .case-card:hover {
-    text-decoration: none;
-  }
+  .case-link { text-decoration: none; }
+  .case-link:hover { color: var(--color-ink); }
 </style>

@@ -1,0 +1,111 @@
+---
+/*
+ * MockupWindow.astro — châssis "fenêtre produit" monochrome.
+ *
+ * Le contenant commun de tous les mini-mockups (façon capture d'app) : barre de
+ * titre avec pastilles + nom de fichier mono + badge de statut optionnel, corps
+ * (slot par défaut), pied de page optionnel (slot "footer"). 100 % tokens projet
+ * → suit le thème clair/sombre. Le seul écart au monochrome strict est le token
+ * fonctionnel --color-success, réservé aux statuts positifs (cf. statusTone).
+ */
+interface Props {
+  file: string;
+  status?: string;
+  statusTone?: 'success' | 'neutral';
+  flush?: boolean;
+  class?: string;
+}
+const { file, status, statusTone = 'neutral', flush = false, class: className } = Astro.props;
+---
+
+<div class:list={['mockup-window', className]}>
+  <div class="mw-bar">
+    <span class="mw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="mw-file">{file}</span>
+    {status && (
+      <span class:list={['mw-status', statusTone === 'success' && 'is-success']}>{status}</span>
+    )}
+  </div>
+
+  <div class:list={['mw-body', flush && 'is-flush']}>
+    <slot />
+  </div>
+
+  {Astro.slots.has('footer') && (
+    <div class="mw-foot">
+      <slot name="footer" />
+    </div>
+  )}
+</div>
+
+<style>
+  .mockup-window {
+    width: 100%;
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .mw-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--color-surface-low);
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .mw-dots { display: inline-flex; gap: 6px; flex-shrink: 0; }
+  .mw-dots i {
+    width: 9px; height: 9px;
+    border-radius: var(--radius-full);
+    background: var(--color-ink-faint);
+    opacity: 0.55;
+  }
+  .mw-file {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mw-status {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+    color: var(--color-ink-low);
+    background: var(--color-paper);
+    border: 1px solid var(--color-divider);
+    white-space: nowrap;
+  }
+  .mw-status.is-success {
+    color: var(--color-success);
+    border-color: color-mix(in oklch, var(--color-success) 32%, transparent);
+    background: color-mix(in oklch, var(--color-success) 9%, transparent);
+  }
+
+  .mw-body { padding: 4px 14px; }
+  .mw-body.is-flush { padding: 0; }
+
+  .mw-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px 16px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border-top: 1px solid var(--color-divider);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    background: var(--color-paper);
+  }
+</style>

@@ -1,0 +1,168 @@
+---
+/*
+ * WorkflowCanvas.astro — faux canvas de workflow (façon n8n/Make) monochrome.
+ *
+ * Géométrie fixe 1 → 1 → 3 : un déclencheur, un nœud agent IA (mis en avant),
+ * trois actions. Connecteurs SVG décoratifs avec flux animé (reduced-motion
+ * safe). Données par props pour rester réutilisable (cas client, section Stack…).
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Node { icon: string; kicker: string; title: string; sub?: string }
+interface Props {
+  trigger: Node;
+  agent: Node;
+  actions: Node[];
+  describe: string; // texte sr-only décrivant le schéma
+}
+const { trigger, agent, actions, describe } = Astro.props;
+---
+
+<div class="wf-canvas">
+  <p class="sr-only">{describe}</p>
+
+  <svg class="wf-wires" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true">
+    <path class="wf-wire" d="M250 90 C330 90 330 180 410 180" />
+    <path class="wf-wire-flow" d="M250 90 C330 90 330 180 410 180" />
+    <path class="wf-wire" d="M590 180 C670 180 670 70 750 70" />
+    <path class="wf-wire-flow" d="M590 180 C670 180 670 70 750 70" />
+    <path class="wf-wire" d="M590 180 C670 180 670 180 750 180" />
+    <path class="wf-wire-flow" d="M590 180 C670 180 670 180 750 180" />
+    <path class="wf-wire" d="M590 180 C670 180 670 290 750 290" />
+    <path class="wf-wire-flow" d="M590 180 C670 180 670 290 750 290" />
+  </svg>
+
+  <div class="wf-grid">
+    <div class="wf-col wf-col-trigger">
+      <div class="wf-node">
+        <div class="wf-head">
+          <span class="wf-dot" aria-hidden="true"></span>
+          <Icon name={trigger.icon} class="wf-icon" aria-hidden="true" />
+          <span class="wf-kicker">{trigger.kicker}</span>
+        </div>
+        <span class="wf-title">{trigger.title}</span>
+        {trigger.sub && <span class="wf-sub">{trigger.sub}</span>}
+      </div>
+    </div>
+
+    <div class="wf-col wf-col-agent">
+      <div class="wf-node is-accent">
+        <div class="wf-head">
+          <span class="wf-dot" aria-hidden="true"></span>
+          <Icon name={agent.icon} class="wf-icon" aria-hidden="true" />
+          <span class="wf-kicker">{agent.kicker}</span>
+        </div>
+        <span class="wf-title">{agent.title}</span>
+        {agent.sub && <span class="wf-sub">{agent.sub}</span>}
+      </div>
+    </div>
+
+    <div class="wf-col wf-col-actions">
+      {actions.map((a) => (
+        <div class="wf-node">
+          <div class="wf-head">
+            <span class="wf-dot" aria-hidden="true"></span>
+            <Icon name={a.icon} class="wf-icon" aria-hidden="true" />
+            <span class="wf-kicker">{a.kicker}</span>
+          </div>
+          <span class="wf-title">{a.title}</span>
+          {a.sub && <span class="wf-sub">{a.sub}</span>}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .wf-canvas {
+    position: relative;
+    padding: clamp(1rem, 3.5vw, 1.875rem);
+    background-color: var(--color-surface-high);
+    background-image: radial-gradient(var(--color-grid-line) 1px, transparent 1px);
+    background-size: 15px 15px;
+  }
+
+  .wf-wires {
+    position: absolute;
+    inset: clamp(1rem, 3.5vw, 1.875rem);
+    width: calc(100% - 2 * clamp(1rem, 3.5vw, 1.875rem));
+    height: calc(100% - 2 * clamp(1rem, 3.5vw, 1.875rem));
+    z-index: 1;
+    pointer-events: none;
+  }
+  .wf-wire { fill: none; stroke: var(--color-grid-line-active); stroke-width: 1.5; opacity: 0.5; }
+  .wf-wire-flow {
+    fill: none;
+    stroke: var(--color-ink-faint);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 9;
+    animation: wf-flow 1.5s linear infinite;
+  }
+  @keyframes wf-flow { to { stroke-dashoffset: -24; } }
+
+  .wf-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(0.75rem, 3vw, 2rem);
+    align-items: center;
+  }
+  .wf-col { display: flex; flex-direction: column; gap: 10px; }
+
+  .wf-node {
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    box-shadow: var(--shadow-card);
+  }
+  .wf-node.is-accent {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .wf-head { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .wf-dot {
+    width: 6px; height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-success);
+    flex-shrink: 0;
+  }
+  .wf-node.is-accent .wf-dot { animation: wf-pulse 1.9s ease-in-out infinite; }
+  @keyframes wf-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .wf-icon { width: 14px; height: 14px; color: var(--color-ink-mid); flex-shrink: 0; }
+  .wf-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .wf-node.is-accent .wf-kicker { color: var(--color-ink); font-weight: 600; }
+
+  .wf-title {
+    display: block;
+    font-size: var(--text-body-sm);
+    color: var(--color-ink);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .wf-sub {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    margin-top: 2px;
+  }
+
+  @media (max-width: 720px) {
+    .wf-grid { grid-template-columns: 1fr; gap: 10px; }
+    .wf-wires { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wf-wire-flow { animation: none; }
+    .wf-node.is-accent .wf-dot { animation: none; }
+  }
+</style>
