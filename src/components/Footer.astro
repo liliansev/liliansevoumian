@@ -1,10 +1,13 @@
 ---
+import { Icon } from 'astro-icon/components';
+
 const year = new Date().getFullYear();
 
 interface Channel {
   label: string;
   metric: string;
   href: string;
+  icon: string;
 }
 
 interface NavLink {
@@ -21,9 +24,9 @@ interface NavColumn {
 }
 
 const channels: Channel[] = [
-  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/" },
-  { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian" },
-  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/" },
+  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin" },
+  { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube" },
+  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", icon: "lucide:mail" },
 ];
 
 const navColumns: NavColumn[] = [
@@ -87,8 +90,9 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
                 href={ch.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group inline-flex items-baseline gap-3 text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors min-h-[44px] py-2"
+                class="group inline-flex items-center gap-2.5 text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors min-h-[44px] py-2"
               >
+                <Icon name={ch.icon} class="size-4 text-[var(--color-ink-mid)] shrink-0" aria-hidden="true" />
                 <span class="mono-label">{ch.label}</span>
                 <span class="mono-caption text-[var(--color-ink-low)]">{ch.metric}</span>
                 <span class="mono-label opacity-40 group-hover:opacity-100 transition-opacity">↗</span>

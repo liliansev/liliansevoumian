@@ -1,0 +1,83 @@
+---
+/*
+ * LogoMarquee — bande de clients défilante, juste après le hero.
+ *
+ * Wordmarks TEXTE (monochrome, façon mur de logos grayscale) en attendant de
+ * vrais fichiers logos : remplacer chaque entrée par une image une fois les
+ * fichiers fournis (src/assets/logos/). Boucle sans couture (liste doublée),
+ * fade aux bords, pause au survol, statique sous prefers-reduced-motion.
+ */
+const clients = ['Fraich Touch', 'M Partners', 'Celeris', 'CasanovaParis', 'Contournement'];
+const loop = [...clients, ...clients];
+---
+
+<section class="lm" aria-label="Quelques entreprises accompagnées">
+  <div class="px-[var(--spacing-section-x)]">
+    <h2 class="lm-title reveal">Qu'allons-nous automatiser demain&nbsp;?</h2>
+  </div>
+
+  <div class="lm-viewport reveal">
+    <div class="lm-track">
+      {loop.map((name, i) => (
+        <span class="lm-item" aria-hidden={i >= clients.length ? 'true' : 'false'}>{name}</span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lm { padding-block: clamp(2.5rem, 5vw, 4rem); }
+
+  .lm-title {
+    text-align: center;
+    max-width: 24ch;
+    margin: 0 auto;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-title-lg);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-ink);
+  }
+
+  .lm-viewport {
+    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--color-ink) 10%, var(--color-ink) 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, var(--color-ink) 10%, var(--color-ink) 90%, transparent);
+  }
+  .lm-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    animation: lm-scroll 34s linear infinite;
+  }
+  .lm-viewport:hover .lm-track { animation-play-state: paused; }
+  @keyframes lm-scroll {
+    to { transform: translateX(-50%); }
+  }
+
+  .lm-item {
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(1.125rem, 1vw + 0.9rem, 1.6rem);
+    letter-spacing: -0.02em;
+    color: var(--color-ink-faint);
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+  .lm-item:hover { color: var(--color-ink-mid); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lm-viewport { -webkit-mask-image: none; mask-image: none; }
+    .lm-track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
+    }
+    .lm-item[aria-hidden='true'] { display: none; }
+  }
+</style>
