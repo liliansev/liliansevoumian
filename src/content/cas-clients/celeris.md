@@ -1,35 +1,53 @@
 ---
 title: "Un catalogue produits qui s'enrichit tout seul"
 secteur: "Distributeur IT B2B"
-date: 2026-02-15
+date: 2026-06-20
 tags: ["Ops"]
-tools: ["Mistral", "n8n", "API"]
-kpis: []
-draft: true
+tools: ["n8n", "Mistral", "Odoo", "Claude"]
+kpis:
+  - value: "2–3 ¢"
+    label: "Coût IA par fiche"
+  - value: ">60 %"
+    label: "Matching auto (319/515)"
+  - value: "797"
+    label: "Fiches specs scrapées"
+draft: false
 ---
-
-> **Brouillon** — départ rédigé à partir de la description home. À relire / compléter (notamment les KPIs et les chiffres) avant de passer `draft: false`.
 
 ## L'entreprise
 
-Celeris est un distributeur IT B2B, acteur établi du marché français. <!-- À COMPLÉTER : volume catalogue, taille d'équipe, périmètre. -->
+Celeris est un distributeur IT B2B établi (PC, serveurs HPE, Dell, Lenovo), dont tout le catalogue et la gestion commerciale tournent sur Odoo. Un acteur avec une exigence forte : **garder la maîtrise de ses données**, beaucoup devant rester en interne.
 
 ## Le problème
 
-La tenue du catalogue produits dans l'ERP demandait un travail manuel important : enrichir les fiches, normaliser les données, suivre les évolutions fournisseurs. Le tout avec une exigence forte de souveraineté des données — rien ne devait sortir de leur environnement. <!-- À COMPLÉTER : chiffrer le volume de fiches, le temps passé, les erreurs constatées. -->
+L'enrichissement du catalogue produits était **100 % manuel** : les commerciaux recopiaient les fiches depuis des fichiers constructeurs (CTO) aux colonnes différentes selon les marques. Chronophage, source de doublons et d'erreurs — et un frein direct à la mise en ligne des produits.
 
 ## La solution
 
-J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP.
+J'accompagne les équipes Celeris dans leur montée en compétence sur l'automatisation, et j'ai conçu un système qui enrichit le catalogue **directement dans leur ERP**, pensé pour tourner en interne.
 
-### Agent IA souverain, en interne
+### Une architecture à deux agents IA (n8n + MCP Odoo)
 
-L'enrichissement des fiches produits est piloté par un agent IA hébergé en Europe (Mistral), pensé pour tourner en interne — aucune donnée sensible ne quitte leur environnement. <!-- À COMPLÉTER : périmètre exact de l'agent, champs enrichis, garde-fous. -->
+- **Agent 1** lit le fichier constructeur, extrait et structure les données, génère la fiche produit.
+- **Agent 2** vérifie la sortie, applique les bons attributs (sans jamais créer de doublon) et crée le produit dans Odoo via un **MCP Odoo**.
 
-### Intégration directe à l'ERP
+### Scraping des fiches techniques
 
-Les fiches sont mises à jour directement dans l'ERP, sans copier-coller ni outil tiers intermédiaire. <!-- À COMPLÉTER : ERP utilisé, fréquence de synchronisation. -->
+Les specs constructeurs sont récupérées automatiquement (déjà **797 pages** de fiches techniques scrapées), avec un déclenchement mensuel pour rester à jour.
+
+### Une IA souveraine
+
+Le moteur de génération est **Mistral** — IA française, données en Europe — choisi pour répondre à l'exigence de souveraineté de Celeris. Les données sensibles ne transitent pas par le cloud public : le MCP tourne en local, protégé par une URL secrète et une clé cryptographique.
+
+### Validation humaine
+
+Chaque fiche est créée **en brouillon** : le commercial reçoit le lien Odoo et valide avant publication. L'agent sait même **modifier une fiche après coup**, en langage naturel.
 
 ## Les résultats
 
-<!-- À COMPLÉTER : KPIs réels (fiches enrichies, temps gagné, qualité de données, autonomie de l'équipe). -->
+> Projet en cours de déploiement (mise en production visée à l'été 2026) — chiffres mesurés à ce stade.
+
+- Workflow d'enrichissement **fonctionnel sur l'environnement de test**, validé sur les serveurs HPE.
+- **Coût IA quasi nul** : 2 à 3 centimes par fiche générée.
+- Sur les données existantes, **plus de 60 % de correspondances automatiques** (319 produits sur ~515) — le reste fléché pour revue humaine.
+- Une architecture pensée pour s'étendre aux autres marques (Dell, HP) et à d'autres départements.
