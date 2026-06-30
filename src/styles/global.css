@@ -73,13 +73,20 @@
   --color-grid-line-dark: oklch(0.30 0.008 290);
   --color-surface-on-dark: oklch(0.20 0.008 290);
 
-  /* Accent — MONOCHROME scellé (juin 2026). Plus de tokens violet/ember : un
-     seul hook neutre. Aujourd'hui = encre / surface (zéro couleur). Dérive de
-     --color-ink / --color-surface-low qui sont déjà theme-aware → aucun override
-     dark nécessaire. Pour réintroduire UN accent coloré un jour : donner une
-     vraie valeur OKLCH à --color-accent (et --color-accent-soft) ici uniquement. */
-  --color-accent: var(--color-ink);
-  --color-accent-soft: var(--color-surface-low);
+  /* Accent — FLAMME chaude (inspiration Mistral, juin 2026). Le hook accent
+     unique pilote tout : surtitres, FAQ, focus, slider, liens, sélection.
+     Orange Mistral en light ; remonté en clarté en dark (override plus bas).
+     --gradient-flame = jaune → orange → rouge, réservé aux moments signature
+     (filet de surtitre). Pour revenir au monochrome : redonner
+     --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
+  --color-accent: oklch(0.62 0.19 45);
+  --color-accent-soft: oklch(0.95 0.035 65);
+  --gradient-flame: linear-gradient(
+    90deg,
+    oklch(0.84 0.16 88),
+    oklch(0.72 0.19 55),
+    oklch(0.60 0.21 30)
+  );
 
   /* Error / Success */
   --color-error: oklch(0.55 0.22 25);
@@ -122,7 +129,9 @@ html.dark {
   --color-grid-line-active: oklch(0.50 0.008 290);
   --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-  /* --color-accent dérive de --color-ink (theme-aware) : aucun override dark. */
+  /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
+  --color-accent: oklch(0.74 0.18 55);
+  --color-accent-soft: oklch(0.30 0.05 50);
   --color-success: oklch(0.80 0.16 148);
   --color-error: oklch(0.78 0.16 25);
 }
@@ -144,7 +153,9 @@ html.dark {
     --color-grid-line-active: oklch(0.50 0.008 290);
     --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-    /* --color-accent dérive de --color-ink (theme-aware) : aucun override dark. */
+    /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
+    --color-accent: oklch(0.74 0.18 55);
+    --color-accent-soft: oklch(0.30 0.05 50);
     --color-success: oklch(0.80 0.16 148);
     --color-error: oklch(0.78 0.16 25);
   }
@@ -438,8 +449,9 @@ a, button, input, textarea, select,
   content: '';
   flex-shrink: 0;
   width: 1.5rem;
-  height: 1px;
-  background: var(--color-ink-faint);
+  height: 2px;
+  border-radius: 1px;
+  background: var(--gradient-flame);
 }
 
 /* =========================================================================
@@ -558,6 +570,7 @@ a, button, input, textarea, select,
 .link-cta:hover .link-cta__arrow,
 .link-cta:focus-visible .link-cta__arrow {
   transform: translateX(4px);
+  color: var(--color-accent);
 }
 
 @media (prefers-reduced-motion: reduce) {
