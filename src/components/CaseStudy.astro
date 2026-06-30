@@ -14,6 +14,7 @@ import SectionHeader from './SectionHeader.astro';
 import MockupWindow from './mockups/MockupWindow.astro';
 import MockupList from './mockups/MockupList.astro';
 import WorkflowCanvas from './mockups/WorkflowCanvas.astro';
+import { brandColorFor } from '../data/brands';
 
 const fraichTouch = {
   client: 'Fraich Touch',
@@ -98,9 +99,9 @@ const celeris = {
             <WorkflowCanvas
               describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
               trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
-              agent={{ icon: 'simple-icons:anthropic', kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
+              agent={{ icon: 'simple-icons:anthropic', color: brandColorFor('simple-icons:anthropic'), kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
               actions={[
-                { icon: 'simple-icons:hubspot', kicker: 'CRM', title: 'À approcher' },
+                { icon: 'simple-icons:hubspot', color: brandColorFor('simple-icons:hubspot'), kicker: 'CRM', title: 'À approcher' },
                 { icon: 'lucide:list-checks', kicker: 'Shortlist', title: 'Top 20 %' },
                 { icon: 'lucide:bell', kicker: 'Alerte', title: 'Nouveau signal' },
               ]}
