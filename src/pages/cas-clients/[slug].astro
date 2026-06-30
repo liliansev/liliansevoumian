@@ -2,67 +2,50 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import { getCaseStudies, getCaseStudyBySlug } from '../../lib/notion';
+import { getCollection, render } from 'astro:content';
+import { chipClass } from '../../lib/tool-chip';
 
 export async function getStaticPaths() {
-  const caseStudies = await getCaseStudies();
-  return caseStudies
-    .filter(cs => cs.slug)
-    .map(cs => ({
-      params: { slug: cs.slug },
-    }));
+  const entries = await getCollection('cas-clients', (entry) =>
+    import.meta.env.PROD ? !entry.data.draft : true,
+  );
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
-const { slug } = Astro.params;
-const caseStudy = await getCaseStudyBySlug(slug as string);
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const cs = entry.data;
+const dateISO = cs.date.toISOString();
 
-if (!caseStudy) {
-  return Astro.redirect('/cas-clients');
-}
-
-const seoDescription = `${caseStudy.title}. ${caseStudy.kpis.length > 0 ? `Résultats : ${caseStudy.kpis.map(k => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${caseStudy.tools.length > 0 ? `avec ${caseStudy.tools.join(', ')} ` : ''}${caseStudy.secteur ? `pour un projet ${caseStudy.secteur}` : ''}.`.substring(0, 160);
+const seoDescription = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`.substring(0, 160);
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
   { name: 'Cas clients', url: '/cas-clients' },
-  { name: caseStudy.title, url: `/cas-clients/${caseStudy.slug}` }
+  { name: cs.title, url: `/cas-clients/${entry.id}` },
 ];
 
 const articleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": caseStudy.title,
-  "description": seoDescription,
-  "author": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
-  "publisher": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
-  "datePublished": caseStudy.date || new Date().toISOString(),
-  "dateModified": caseStudy.date || new Date().toISOString(),
-  "mainEntityOfPage": { "@type": "WebPage", "@id": `https://liliansevoumian.fr/cas-clients/${caseStudy.slug}` },
-  "articleSection": "Cas client",
-  "keywords": ["automatisation", "cas client", caseStudy.secteur, ...caseStudy.tags, ...caseStudy.tools].filter(Boolean).join(", "),
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: cs.title,
+  description: seoDescription,
+  author: { '@type': 'Person', name: 'Lilian Sevoumian', url: 'https://liliansevoumian.fr' },
+  publisher: { '@type': 'Person', name: 'Lilian Sevoumian', url: 'https://liliansevoumian.fr' },
+  datePublished: dateISO,
+  dateModified: dateISO,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://liliansevoumian.fr/cas-clients/${entry.id}` },
+  articleSection: 'Cas client',
+  keywords: ['automatisation', 'cas client', cs.secteur, ...cs.tags, ...cs.tools].filter(Boolean).join(', '),
 };
-
-const howToSchema = caseStudy.etapes ? {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  "name": `Comment automatiser : ${caseStudy.title}`,
-  "description": caseStudy.probleme?.substring(0, 200),
-  "tool": caseStudy.tools.map(tool => ({ "@type": "HowToTool", "name": tool })),
-} : null;
-
-const combinedSchema = howToSchema
-  ? { ...articleSchema, hasPart: howToSchema }
-  : articleSchema;
-
-import { chipClass } from '../../lib/tool-chip';
 ---
 
 <Layout
-  title={`${caseStudy.title} | Cas client Automatisation - Lilian Sevoumian`}
+  title={`${cs.title} | Cas client Automatisation - Lilian Sevoumian`}
   description={seoDescription}
   ogType="article"
-  publishedDate={caseStudy.date}
-  articleSchema={combinedSchema}
+  publishedDate={dateISO}
+  articleSchema={articleSchema}
   breadcrumbs={breadcrumbs}
 >
   <Navigation />
@@ -83,32 +66,30 @@ import { chipClass } from '../../lib/tool-chip';
 
         <!-- Meta header -->
         <div class="reveal flex flex-wrap items-center gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-6 md:mb-8">
-          {caseStudy.secteur && <span>{caseStudy.secteur.toUpperCase()}</span>}
-          {caseStudy.tags.length > 0 && (
+          {cs.secteur && <span>{cs.secteur.toUpperCase()}</span>}
+          {cs.tags.length > 0 && (
             <>
               <span aria-hidden="true">·</span>
-              <span>{caseStudy.tags.join(' · ').toUpperCase()}</span>
+              <span>{cs.tags.join(' · ').toUpperCase()}</span>
             </>
           )}
-          {caseStudy.date && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{new Date(caseStudy.date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }).toUpperCase()}</span>
-            </>
-          )}
+          <>
+            <span aria-hidden="true">·</span>
+            <span>{cs.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }).toUpperCase()}</span>
+          </>
         </div>
 
         <!-- Title -->
         <div class="reveal mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
           <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0">
-            {caseStudy.title}
+            {cs.title}
           </h1>
         </div>
 
         <!-- KPIs row -->
-        {caseStudy.kpis.length > 0 && (
+        {cs.kpis.length > 0 && (
           <div class="reveal grid grid-cols-1 sm:grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden max-w-3xl">
-            {caseStudy.kpis.map((kpi: { value: string; label: string }) => (
+            {cs.kpis.map((kpi) => (
               <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
                 <div class="font-display font-semibold tabular-nums text-3xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none">
                   {kpi.value}
@@ -122,127 +103,41 @@ import { chipClass } from '../../lib/tool-chip';
       </div>
     </section>
 
-    <!-- CONTEXTE / SOLUTION GRID -->
-    <section
-      data-section
-      class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
-    >
-      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden">
-
-        {caseStudy.entreprise && (
-          <article class="reveal bg-[var(--color-paper)] p-8 md:p-10 relative">
-            <div class="mono-caption text-[var(--color-ink-low)] mb-4">01 · L'ENTREPRISE</div>
-            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.65] whitespace-pre-line max-w-[58ch]">
-              {caseStudy.entreprise}
-            </p>
-          </article>
-        )}
-
-        {caseStudy.probleme && (
-          <article class="reveal bg-[var(--color-paper)] p-8 md:p-10 relative">
-            <div class="mono-caption text-[var(--color-ink-low)] mb-4">02 · LE PROBLÈME</div>
-            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.65] whitespace-pre-line max-w-[58ch]">
-              {caseStudy.probleme}
-            </p>
-          </article>
-        )}
-
+    <!-- CORPS DU CAS (Markdown) -->
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[72ch] mx-auto reveal case-prose">
+        <Content />
       </div>
     </section>
 
-    <!-- SOLUTION -->
-    {caseStudy.solution && (
-      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-        <div class="relative max-w-[1200px] mx-auto">
-          <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
-            <div class="section-number" style="margin-bottom: 0.5rem;">03 · LA SOLUTION</div>
-            <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[20ch]">
-              Le workflow déployé.
-            </h2>
-          </div>
-
-          <div class="reveal max-w-[64ch]">
-            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-large)] leading-[1.6] whitespace-pre-line m-0">
-              {caseStudy.solution}
-            </p>
-          </div>
-        </div>
-      </section>
-    )}
-
-    <!-- ÉTAPES -->
-    {caseStudy.etapes && (
-      <section
-        data-section
-        class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
-      >
-        <div class="relative max-w-[1200px] mx-auto">
-          <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-surface-low)] py-2 pr-2 relative">
-            <div class="section-number" style="margin-bottom: 0.5rem;">04 · LES ÉTAPES</div>
-            <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
-              Comment c'est arrivé en prod.
-            </h2>
-          </div>
-
-          <div class="reveal max-w-[64ch] card card-elevated bg-[var(--color-paper)] relative">
-            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.7] whitespace-pre-line m-0">
-              {caseStudy.etapes}
-            </p>
-          </div>
-        </div>
-      </section>
-    )}
-
-    <!-- RÉSULTATS DÉTAILLÉS -->
-    {caseStudy.resultatsDetails && (
-      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-        <div class="relative max-w-[1200px] mx-auto">
-          <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
-            <div class="section-number" style="margin-bottom: 0.5rem;">05 · LES RÉSULTATS</div>
-            <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
-              Ce qui a vraiment changé.
-            </h2>
-          </div>
-
-          <div class="reveal max-w-[64ch]">
-            <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-large)] leading-[1.6] whitespace-pre-line m-0">
-              {caseStudy.resultatsDetails}
-            </p>
-          </div>
-        </div>
-      </section>
-    )}
-
     <!-- TÉMOIGNAGE + STACK -->
-    {(caseStudy.testimonial?.quote || caseStudy.tools.length > 0) && (
+    {(cs.testimonial?.quote || cs.tools.length > 0) && (
       <section
         data-section
         class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
       >
         <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-start">
 
-          {caseStudy.testimonial?.quote && (
+          {cs.testimonial?.quote && (
             <blockquote class="reveal max-w-[60ch] m-0 p-0">
-              <div class="mono-caption text-[var(--color-ink-low)] mb-4">06 · TÉMOIGNAGE</div>
+              <div class="mono-caption text-[var(--color-ink-low)] mb-4">TÉMOIGNAGE</div>
               <p class="font-display font-semibold text-2xl md:text-3xl tracking-[-0.025em] text-[var(--color-ink)] leading-[1.25] m-0">
-                « {caseStudy.testimonial.quote} »
+                « {cs.testimonial.quote} »
               </p>
-              {(caseStudy.testimonial.name || caseStudy.testimonial.role) && (
+              {(cs.testimonial.name || cs.testimonial.role) && (
                 <footer class="mono-caption text-[var(--color-ink-low)] mt-5 not-italic">
-                  — {caseStudy.testimonial.name}
-                  {caseStudy.testimonial.role && (
-                    <span> · {caseStudy.testimonial.role}</span>
-                  )}
+                  — {cs.testimonial.name}
+                  {cs.testimonial.role && <span> · {cs.testimonial.role}</span>}
                 </footer>
               )}
             </blockquote>
           )}
 
-          {caseStudy.tools.length > 0 && (
+          {cs.tools.length > 0 && (
             <div class="reveal lg:max-w-[300px] w-full">
               <div class="mono-caption text-[var(--color-ink-low)] mb-4">STACK</div>
               <div class="flex flex-wrap gap-2">
-                {caseStudy.tools.map((tool: string) => (
+                {cs.tools.map((tool) => (
                   <span class={chipClass(tool)}>{tool}</span>
                 ))}
               </div>
@@ -259,10 +154,10 @@ import { chipClass } from '../../lib/tool-chip';
         <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
           <div class="section-number" style="margin-bottom: 0.5rem;">↦ APPEL</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
-            Un projet similaire ?
+            Un projet similaire ?
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-3 max-w-[55ch]">
-            20 min pour décider si on travaille ensemble. Sans engagement, réponse claire sous 48 h.
+            20 min pour décider si on travaille ensemble. Sans engagement, réponse claire sous 48 h.
           </p>
         </div>
 
@@ -272,6 +167,8 @@ import { chipClass } from '../../lib/tool-chip';
             target="_blank"
             rel="noopener noreferrer"
             class="btn-primary justify-center"
+            data-fast-goal="lead_call"
+            data-fast-goal-source="cas_article"
           >
             Réserver maintenant
           </a>
@@ -289,3 +186,71 @@ import { chipClass } from '../../lib/tool-chip';
 
   <Footer />
 </Layout>
+
+<style>
+  /* Corps Markdown des cas — calé sur les tokens du site. */
+  .case-prose :global(h2) {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-headline);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+    margin: 2.5em 0 0.75em;
+  }
+  .case-prose :global(h2:first-child) { margin-top: 0; }
+  .case-prose :global(h3) {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-title);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 1.75em 0 0.5em;
+  }
+  .case-prose :global(p) {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.65;
+    margin: 0 0 1.1em;
+  }
+  .case-prose :global(strong) { color: var(--color-ink); font-weight: 600; }
+  .case-prose :global(ul) {
+    margin: 0 0 1.3em;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+  }
+  .case-prose :global(li) {
+    position: relative;
+    padding-left: 1.4em;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body);
+    line-height: 1.6;
+  }
+  .case-prose :global(li::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+  }
+  .case-prose :global(blockquote) {
+    margin: 1.5em 0;
+    padding: 1em 1.25em;
+    border-left: 2px solid var(--color-accent);
+    background: var(--color-surface-low);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink-mid);
+  }
+  .case-prose :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
