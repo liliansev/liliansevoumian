@@ -9,32 +9,35 @@
  */
 import { Icon } from 'astro-icon/components';
 
-interface Tool { name: string; icon: string }
+/* color = couleur officielle de la marque (DA propre à chaque outil), portée par
+   la bordure + l'icône de la tuile. Marques quasi-monochromes (Notion, Typeform)
+   laissées sans couleur → fallback neutre theme-aware. */
+interface Tool { name: string; icon: string; color?: string }
 const tools: Tool[] = [
-  { name: 'n8n', icon: 'simple-icons:n8n' },
-  { name: 'Make', icon: 'simple-icons:make' },
-  { name: 'Zapier', icon: 'simple-icons:zapier' },
-  { name: 'Airtable', icon: 'simple-icons:airtable' },
+  { name: 'n8n', icon: 'simple-icons:n8n', color: '#EA4B71' },
+  { name: 'Make', icon: 'simple-icons:make', color: '#6D00CC' },
+  { name: 'Zapier', icon: 'simple-icons:zapier', color: '#FF4F00' },
+  { name: 'Airtable', icon: 'simple-icons:airtable', color: '#FCB400' },
   { name: 'Notion', icon: 'simple-icons:notion' },
-  { name: 'Google Sheets', icon: 'simple-icons:googlesheets' },
-  { name: 'Slack', icon: 'simple-icons:slack' },
-  { name: 'HubSpot', icon: 'simple-icons:hubspot' },
-  { name: 'Stripe', icon: 'simple-icons:stripe' },
-  { name: 'OpenAI', icon: 'simple-icons:openai' },
-  { name: 'Claude', icon: 'simple-icons:anthropic' },
-  { name: 'Mistral', icon: 'simple-icons:mistralai' },
-  { name: 'Gmail', icon: 'simple-icons:gmail' },
-  { name: 'Google Drive', icon: 'simple-icons:googledrive' },
-  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar' },
-  { name: 'Calendly', icon: 'simple-icons:calendly' },
+  { name: 'Google Sheets', icon: 'simple-icons:googlesheets', color: '#0F9D58' },
+  { name: 'Slack', icon: 'simple-icons:slack', color: '#611F69' },
+  { name: 'HubSpot', icon: 'simple-icons:hubspot', color: '#FF7A59' },
+  { name: 'Stripe', icon: 'simple-icons:stripe', color: '#635BFF' },
+  { name: 'OpenAI', icon: 'simple-icons:openai', color: '#10A37F' },
+  { name: 'Claude', icon: 'simple-icons:anthropic', color: '#D97757' },
+  { name: 'Mistral', icon: 'simple-icons:mistralai', color: '#FA520F' },
+  { name: 'Gmail', icon: 'simple-icons:gmail', color: '#EA4335' },
+  { name: 'Google Drive', icon: 'simple-icons:googledrive', color: '#1FA463' },
+  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar', color: '#4285F4' },
+  { name: 'Calendly', icon: 'simple-icons:calendly', color: '#006BFF' },
   { name: 'Typeform', icon: 'simple-icons:typeform' },
-  { name: 'Shopify', icon: 'simple-icons:shopify' },
-  { name: 'WhatsApp', icon: 'simple-icons:whatsapp' },
-  { name: 'Telegram', icon: 'simple-icons:telegram' },
-  { name: 'Discord', icon: 'simple-icons:discord' },
-  { name: 'Mailchimp', icon: 'simple-icons:mailchimp' },
-  { name: 'Brevo', icon: 'simple-icons:brevo' },
-  { name: 'Trello', icon: 'simple-icons:trello' },
+  { name: 'Shopify', icon: 'simple-icons:shopify', color: '#95BF47' },
+  { name: 'WhatsApp', icon: 'simple-icons:whatsapp', color: '#25D366' },
+  { name: 'Telegram', icon: 'simple-icons:telegram', color: '#26A5E4' },
+  { name: 'Discord', icon: 'simple-icons:discord', color: '#5865F2' },
+  { name: 'Mailchimp', icon: 'simple-icons:mailchimp', color: '#E0A900' },
+  { name: 'Brevo', icon: 'simple-icons:brevo', color: '#0B996E' },
+  { name: 'Trello', icon: 'simple-icons:trello', color: '#0052CC' },
 ];
 const loop = [...tools, ...tools];
 ---
@@ -48,7 +51,9 @@ const loop = [...tools, ...tools];
     <div class="lm-track">
       {loop.map((t, i) => (
         <span class="lm-tool" aria-hidden={i >= tools.length ? 'true' : 'false'}>
-          <Icon name={t.icon} class="lm-tool-ic" aria-hidden="true" />
+          <span class="lm-chip" style={t.color ? `--brand:${t.color}` : undefined}>
+            <Icon name={t.icon} class="lm-tool-ic" aria-hidden="true" />
+          </span>
           <span class="lm-tool-name">{t.name}</span>
         </span>
       ))}
@@ -94,23 +99,46 @@ const loop = [...tools, ...tools];
     to { transform: translateX(-50%); }
   }
 
-  /* Outil = logo (simple-icons, currentColor) + nom, en gris discret. */
+  /* Outil = tuile à bordure couleur-de-marque (DA propre à l'outil) + nom gris. */
   .lm-tool {
     display: inline-flex;
     align-items: center;
-    gap: 11px;
+    gap: 12px;
     white-space: nowrap;
-    color: var(--color-ink-faint);
-    transition: color var(--duration-default) var(--ease-out-quint);
   }
-  .lm-tool:hover { color: var(--color-ink-mid); }
-  .lm-tool-ic { width: 26px; height: 26px; flex-shrink: 0; }
+
+  /* Tuile : bordure + icône dans la couleur officielle de la marque (--brand),
+     fond très légèrement teinté. Fallback neutre si pas de couleur de marque. */
+  .lm-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    color: var(--brand, var(--color-ink-faint));
+    border: 1px solid color-mix(in oklab, var(--brand, var(--color-ink-faint)) 48%, transparent);
+    background: color-mix(in oklab, var(--brand, var(--color-ink-faint)) 7%, var(--color-surface-high));
+    transition: border-color var(--duration-default) var(--ease-out-quint),
+                background-color var(--duration-default) var(--ease-out-quint),
+                transform var(--duration-default) var(--ease-out-quint);
+  }
+  .lm-tool:hover .lm-chip {
+    border-color: var(--brand, var(--color-ink-mid));
+    background: color-mix(in oklab, var(--brand, var(--color-ink-faint)) 14%, var(--color-surface-high));
+    transform: translateY(-2px);
+  }
+  .lm-tool-ic { width: 24px; height: 24px; flex-shrink: 0; }
   .lm-tool-name {
     font-family: var(--font-display);
     font-weight: 500;
     font-size: clamp(1.05rem, 1vw + 0.85rem, 1.45rem);
     letter-spacing: -0.02em;
+    color: var(--color-ink-faint);
+    transition: color var(--duration-default) var(--ease-out-quint);
   }
+  .lm-tool:hover .lm-tool-name { color: var(--color-ink-mid); }
 
   @media (prefers-reduced-motion: reduce) {
     .lm-viewport { -webkit-mask-image: none; mask-image: none; }

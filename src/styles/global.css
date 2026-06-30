@@ -991,10 +991,26 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
-/* Le "+" glissant a été retiré (décrassage "Vercel") : la nav se contente d'un
-   shift de couleur au hover/actif, comme sur vercel.com. */
+/* Lien actif : shift de couleur + court filet flamme dessous (rappel discret du
+   surtitre), qui se dessine de gauche à droite. */
 .nav-link.is-active {
   font-weight: 600;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--gradient-flame);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+.nav-link.is-active::after {
+  transform: scaleX(1);
 }
 
 /* =========================================================================
