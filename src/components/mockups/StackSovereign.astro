@@ -1,0 +1,103 @@
+---
+/* Mistral — extraction souveraine : des documents traités en masse par une IA
+   française, sans qu'une donnée quitte l'Europe. Productivité (extraction auto)
+   + souveraineté (hébergé en UE, RGPD). */
+const fields = [
+  { k: 'Client', v: 'M. Partners' },
+  { k: 'Montant', v: '1 240 €' },
+  { k: 'Échéance', v: '30/04' },
+];
+---
+<div class="sov" role="img" aria-label="Mistral extrait les champs d'une facture PDF, traitement hébergé en Europe.">
+  <div class="sov-doc">
+    <span class="sov-file">facture_2026-04.pdf</span>
+    <span class="sov-tag">extraction</span>
+  </div>
+  <div class="sov-fields">
+    {fields.map((f) => (
+      <div class="sov-row">
+        <span class="sov-k">{f.k}</span>
+        <span class="sov-v">{f.v}<span class="sov-ok" aria-hidden="true"> ✓</span></span>
+      </div>
+    ))}
+  </div>
+  <div class="sov-foot">
+    <span class="sov-flag" aria-hidden="true">UE</span>
+    <span>Traité en Europe · aucune donnée ne sort</span>
+  </div>
+</div>
+
+<style>
+  .sov {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+  }
+  .sov-doc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .sov-file {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-body);
+    color: var(--color-ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sov-tag {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-accent);
+    border: 1px solid color-mix(in oklch, var(--color-accent) 30%, transparent);
+    border-radius: var(--radius-full);
+    padding: 2px 9px;
+    white-space: nowrap;
+  }
+  .sov-fields { display: flex; flex-direction: column; }
+  .sov-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .sov-k {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-low);
+  }
+  .sov-v { font-size: var(--text-body-sm); color: var(--color-ink); white-space: nowrap; }
+  .sov-ok { color: var(--color-success); font-weight: 600; }
+  .sov-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 9px;
+    border-top: 1px solid var(--color-divider);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+  }
+  .sov-flag {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.04em;
+    color: var(--color-ink);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-xs);
+    padding: 1px 6px;
+  }
+</style>

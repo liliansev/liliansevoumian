@@ -29,7 +29,7 @@ export default defineConfig({
     icon({
       include: {
         mdi: ['headphones', 'gamepad-variant', 'airplane'],
-        'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'hubspot', 'slack', 'stripe']
+        'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'whatsapp', 'telegram', 'discord', 'mailchimp', 'brevo', 'trello']
       }
     }),
     sitemap()

@@ -22,6 +22,19 @@ const tools: Tool[] = [
   { name: 'Stripe', icon: 'simple-icons:stripe' },
   { name: 'OpenAI', icon: 'simple-icons:openai' },
   { name: 'Claude', icon: 'simple-icons:anthropic' },
+  { name: 'Mistral', icon: 'simple-icons:mistralai' },
+  { name: 'Gmail', icon: 'simple-icons:gmail' },
+  { name: 'Google Drive', icon: 'simple-icons:googledrive' },
+  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar' },
+  { name: 'Calendly', icon: 'simple-icons:calendly' },
+  { name: 'Typeform', icon: 'simple-icons:typeform' },
+  { name: 'Shopify', icon: 'simple-icons:shopify' },
+  { name: 'WhatsApp', icon: 'simple-icons:whatsapp' },
+  { name: 'Telegram', icon: 'simple-icons:telegram' },
+  { name: 'Discord', icon: 'simple-icons:discord' },
+  { name: 'Mailchimp', icon: 'simple-icons:mailchimp' },
+  { name: 'Brevo', icon: 'simple-icons:brevo' },
+  { name: 'Trello', icon: 'simple-icons:trello' },
 ];
 const loop = [...tools, ...tools];
 ---
@@ -50,12 +63,17 @@ const loop = [...tools, ...tools];
     text-align: center;
     max-width: 24ch;
     margin: 0 auto;
+    text-wrap: balance;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: var(--text-title-lg);
     letter-spacing: -0.02em;
     line-height: 1.15;
     color: var(--color-ink);
+  }
+  /* Desktop : titre forcé sur une seule ligne. */
+  @media (min-width: 768px) {
+    .lm-title { max-width: none; white-space: nowrap; }
   }
 
   .lm-viewport {
