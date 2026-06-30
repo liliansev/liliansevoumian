@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
+import lilianPhoto from '../assets/lilian-photo.jpg';
 ---
 
 <section
@@ -25,12 +27,21 @@ import SectionHeader from './SectionHeader.astro';
       <!-- Colonne gauche : signature + statement passionne -->
       <div class="flex flex-col gap-6">
 
-      <!-- Signature -->
-      <div
-        class="font-display font-semibold tracking-[-0.025em] leading-[0.95] text-[var(--color-ink)]"
-        style="font-size: var(--text-signature);"
-      >
-        Lilian<br/>Sevoumian.
+      <!-- Signature — sur mobile, accompagnée d'un avatar (la photo n'apparaît plus dans le Hero). -->
+      <div class="flex items-center gap-4 md:gap-5">
+        <Image
+          src={lilianPhoto}
+          alt="Lilian Sevoumian"
+          width={144}
+          height={144}
+          class="contact-avatar lg:hidden"
+        />
+        <div
+          class="font-display font-semibold tracking-[-0.025em] leading-[0.95] text-[var(--color-ink)]"
+          style="font-size: var(--text-signature);"
+        >
+          Lilian<br/>Sevoumian.
+        </div>
       </div>
 
       <!-- Statement passionné -->
@@ -154,3 +165,15 @@ import SectionHeader from './SectionHeader.astro';
   else initContactForm();
   document.addEventListener('astro:page-load', initContactForm);
 </script>
+
+<style>
+  /* Avatar mobile à côté de la signature — la photo n'apparaissant plus dans le Hero. */
+  .contact-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--color-divider);
+  }
+</style>
