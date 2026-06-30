@@ -15,16 +15,24 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
 ---
 
 <nav id="main-nav" class="nav-root px-[var(--spacing-section-x)]" aria-label="Navigation principale">
-  <div class="max-w-[1200px] mx-auto h-full flex items-center justify-between gap-4">
-    <!-- Logo + name -->
+  <div class="relative max-w-[1200px] mx-auto h-full flex items-center justify-between gap-4">
+    <!-- Logo : wordmark en desktop, carré « L » en mobile (façon Mistral) -->
     <a
       href="/"
       id="logo-link"
       class="inline-flex items-center gap-2.5 text-[var(--color-ink)] shrink-0 group min-h-[44px]"
       aria-label="Lilian Sevoumian, accueil"
     >
-      <span class="mono-label hidden sm:inline">LILIAN SEVOUMIAN</span>
-      <span class="mono-label sm:hidden">LILIAN</span>
+      <span class="mono-label hidden lg:inline">LILIAN SEVOUMIAN</span>
+      <span class="nav-logo-sq lg:hidden" aria-hidden="true">L</span>
+    </a>
+
+    <!-- CTA central (mobile uniquement) -->
+    <a
+      href={`${prefix}#contact-form`}
+      class="nav-mid-cta lg:hidden absolute left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]"
+    >
+      Contactez-moi <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
     </a>
 
     <!-- Desktop links -->
@@ -51,17 +59,16 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       </a>
     </div>
 
-    <!-- Mobile burger -->
+    <!-- Déclencheur de menu (mobile) : carré à points (façon Mistral) ⇄ croix ouvert -->
     <button
       id="mobile-menu-btn"
-      class="lg:hidden min-h-[44px] min-w-[44px] flex flex-col justify-center items-center gap-[5px] text-[var(--color-ink)]"
+      class="menu-trigger lg:hidden"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
-      <span class="block w-5 h-px bg-current transition-transform duration-200 origin-center"></span>
-      <span class="block w-5 h-px bg-current transition-transform duration-200 origin-center"></span>
-      <span class="block w-5 h-px bg-current transition-transform duration-200 origin-center"></span>
+      <span class="mt-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="mt-x" aria-hidden="true"></span>
     </button>
   </div>
 </nav>
@@ -152,7 +159,6 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   // Mobile menu
   const menuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
-  const burgerLines = menuBtn?.querySelectorAll('span');
 
   function toggleMenu(forceClose = false) {
     if (!mobileMenu || !menuBtn) return;
@@ -163,19 +169,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     mobileMenu.setAttribute('aria-hidden', String(!willOpen));
     menuBtn.setAttribute('aria-expanded', String(willOpen));
     document.body.style.overflow = willOpen ? 'hidden' : '';
-
-    if (burgerLines) {
-      const [l1, l2, l3] = Array.from(burgerLines);
-      if (willOpen) {
-        l1?.style.setProperty('transform', 'translateY(6px) rotate(45deg)');
-        l2?.style.setProperty('opacity', '0');
-        l3?.style.setProperty('transform', 'translateY(-6px) rotate(-45deg)');
-      } else {
-        l1?.style.removeProperty('transform');
-        l2?.style.removeProperty('opacity');
-        l3?.style.removeProperty('transform');
-      }
-    }
+    // L'icône bascule points ⇄ croix via le sélecteur CSS [aria-expanded].
 
     // Focus management : on focalise le CONTENEUR du dialog à l'ouverture (a11y,
     // déplace le focus dans la modale pour le clavier/lecteur d'écran) — surtout
@@ -230,3 +224,74 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     }
   });
 </script>
+
+<style>
+  /* Logo carré « L » (mobile) — encadré, façon Mistral. */
+  .nav-logo-sq {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--color-ink);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1;
+    color: var(--color-ink);
+  }
+
+  /* CTA central mobile. */
+  .nav-mid-cta {
+    white-space: nowrap;
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+  .nav-mid-cta:hover { color: var(--color-accent); }
+
+  /* Déclencheur de menu : carré à 9 points (fermé) ⇄ croix (ouvert). */
+  .menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    transition: border-color var(--duration-default) var(--ease-out-quint);
+  }
+  .menu-trigger:hover { border-color: var(--color-ink-low); }
+  .mt-dots {
+    display: grid;
+    grid-template-columns: repeat(3, 3px);
+    grid-auto-rows: 3px;
+    gap: 3px;
+  }
+  .mt-dots i {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .mt-x {
+    position: relative;
+    display: none;
+    width: 15px;
+    height: 15px;
+  }
+  .mt-x::before,
+  .mt-x::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .mt-x::before { transform: rotate(45deg); }
+  .mt-x::after { transform: rotate(-45deg); }
+  .menu-trigger[aria-expanded='true'] .mt-dots { display: none; }
+  .menu-trigger[aria-expanded='true'] .mt-x { display: block; }
+</style>
