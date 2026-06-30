@@ -59,4 +59,16 @@ const rows = [
     border-color: color-mix(in oklch, var(--color-success) 32%, transparent);
     background: color-mix(in oklch, var(--color-success) 9%, transparent);
   }
+
+  /* Animation : la table se remplit, ligne par ligne (flash discret en cascade). */
+  .st-row { animation: st-fill 4s ease-in-out infinite; }
+  .st-row:nth-child(3) { animation-delay: 0.6s; }
+  .st-row:nth-child(4) { animation-delay: 1.2s; }
+  @keyframes st-fill {
+    0%, 24%, 100% { background: transparent; }
+    9% { background: color-mix(in oklch, var(--color-accent) 10%, transparent); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .st-row { animation: none; }
+  }
 </style>

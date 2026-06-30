@@ -34,10 +34,47 @@ import { Icon } from 'astro-icon/components';
   .ss-mod.is-accent { border-color: var(--color-border-strong); }
   .ss-ic { width: 16px; height: 16px; color: var(--color-ink-mid); }
   .ss-link {
+    position: relative;
     flex: 1 1 auto;
     max-width: 28px;
     height: 1px;
     background: var(--color-grid-line-active);
     opacity: 0.55;
+    overflow: hidden;
+  }
+
+  /* Animation : un flux parcourt le scénario, les modules pulsent en cascade. */
+  .ss-mod { animation: ss-pop 3.4s ease-in-out infinite; }
+  .ss-mod:nth-child(3) { animation-delay: 0.4s; }
+  .ss-mod:nth-child(5) { animation-delay: 0.8s; }
+  .ss-mod:nth-child(7) { animation-delay: 1.2s; }
+  @keyframes ss-pop {
+    0%, 26%, 100% { box-shadow: var(--shadow-card); transform: scale(1); }
+    9% {
+      box-shadow: 0 0 0 1.5px var(--color-accent),
+                  0 6px 16px -6px color-mix(in oklch, var(--color-accent) 45%, transparent);
+      transform: scale(1.07);
+    }
+  }
+  .ss-link::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 65%;
+    background: var(--color-accent);
+    animation: ss-flow 3.4s ease-in-out infinite;
+  }
+  .ss-link:nth-child(2)::after { animation-delay: 0.2s; }
+  .ss-link:nth-child(4)::after { animation-delay: 0.6s; }
+  .ss-link:nth-child(6)::after { animation-delay: 1s; }
+  @keyframes ss-flow {
+    0% { transform: translateX(-160%); opacity: 0; }
+    10% { opacity: 1; }
+    30% { transform: translateX(180%); opacity: 0; }
+    30.1%, 100% { transform: translateX(-160%); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ss-mod { animation: none; }
+    .ss-link::after { display: none; }
   }
 </style>

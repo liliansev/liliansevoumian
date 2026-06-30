@@ -79,7 +79,7 @@ const fields = [
     color: var(--color-ink-low);
   }
   .sov-v { font-size: var(--text-body-sm); color: var(--color-ink); white-space: nowrap; }
-  .sov-ok { color: var(--color-success); font-weight: 600; }
+  .sov-ok { color: var(--color-success); font-weight: 600; display: inline-block; }
   .sov-foot {
     display: flex;
     align-items: center;
@@ -99,5 +99,18 @@ const fields = [
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-xs);
     padding: 1px 6px;
+  }
+
+  /* Animation : Mistral extrait les champs un par un (✓ qui apparaissent en cascade). */
+  .sov-fields .sov-row .sov-ok { animation: sov-check 3.6s ease-in-out infinite; }
+  .sov-fields .sov-row:nth-child(2) .sov-ok { animation-delay: 0.35s; }
+  .sov-fields .sov-row:nth-child(3) .sov-ok { animation-delay: 0.7s; }
+  @keyframes sov-check {
+    0%, 18%, 100% { opacity: 0.2; transform: scale(0.85); }
+    7% { opacity: 1; transform: scale(1.2); }
+    11% { transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sov-ok { animation: none; opacity: 1; transform: none; }
   }
 </style>
