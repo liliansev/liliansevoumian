@@ -159,6 +159,8 @@ html {
   background: var(--color-paper);
   overflow-x: hidden;
   transition: background-color var(--duration-default) var(--ease-out-quint);
+  /* Pas de flash gris/noir au tap sur iOS (hérité par tous les éléments). */
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (min-width: 1024px) {
@@ -240,9 +242,16 @@ a {
   outline: none;
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+/* Focus ring clavier UNIQUEMENT sur appareils non-tactiles (souris + pointeur fin).
+   Sur mobile/tactile, iOS/Safari dessine un gros cadre noir disgracieux au tap ET
+   sur tout .focus() programmatique (ex. fermeture d'un menu, retour de focus). On ne
+   l'affiche donc jamais sur tactile — l'a11y clavier reste préservée sur desktop.
+   ⚠️ Règle globale anti-cadre-noir-iOS — cf. mémoire globale "ios-focus-outline-mobile". */
+@media (hover: hover) and (pointer: fine) {
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 }
 
 @media (forced-colors: active) {
