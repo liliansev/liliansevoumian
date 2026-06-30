@@ -22,15 +22,15 @@ Concrètement, ça implique des dizaines de transactions en parallèle, chacune 
 
 ## Le problème
 
-Fraich Touch avait déjà investi dans l'automatisation de sa facturation avec un premier prestataire. Mais le projet, prévu pour septembre 2025, n'était livré qu'à 70-80 % en décembre. Entre-temps, Pennylane avait changé son API deux fois, obligeant le prestataire à reconstruire le système trois fois — sans jamais nettoyer les anciennes versions.
+Fraich Touch avait déjà investi dans l'automatisation de sa facturation avec un premier prestataire. Mais le projet, prévu pour septembre 2025, n'était livré qu'à 70-80 % en décembre. Entre-temps, Pennylane avait changé son API deux fois, obligeant le prestataire à reconstruire le système trois fois, sans jamais nettoyer les anciennes versions.
 
 Résultat concret :
 
 - **33 scénarios Make empilés**, dont 28 étaient des reliques inutilisées (tests, backups, anciennes versions).
-- **16 factures bloquées** dans la file d'erreurs de Make, jamais envoyées aux clients — du CA en suspens que personne ne voyait.
+- **16 factures bloquées** dans la file d'erreurs de Make, jamais envoyées aux clients : du CA en suspens que personne ne voyait.
 - Un **bug d'acomptes** qui marquait les deals comme « payés » alors que seul un acompte avait été versé (3-4 deals faussés par mois).
 - **Zéro visibilité** : les factures étaient stockées dans un Data Store Make accessible uniquement par API. Les erreurs étaient découvertes par hasard.
-- Chaque pipeline annuel (2025, 2026) était **codé en dur** — ajouter 2027 nécessitait de dupliquer manuellement tous les scénarios.
+- Chaque pipeline annuel (2025, 2026) était **codé en dur** : ajouter 2027 obligeait à dupliquer tous les scénarios à la main.
 
 Quand William, le fondateur, nous contacte en janvier 2026, son équipe a perdu confiance dans le système. Ils ne savent pas quelles factures sont parties, lesquelles sont bloquées, ni pourquoi.
 
@@ -44,7 +44,7 @@ HubSpot reste la source unique (CRM), mais Notion remplace les Data Stores opaqu
 
 ### Génération automatique des devis
 
-Dès qu'un deal passe en « BRAVO » dans HubSpot, le devis se crée dans Pennylane avec le bon montant, la bonne TVA et le bon contact — et s'envoie au client. Si le client signe, le devis passe automatiquement en « accepté ».
+Dès qu'un deal passe en « BRAVO » dans HubSpot, le devis se crée dans Pennylane avec le bon montant, la bonne TVA et le bon contact, et s'envoie au client. Si le client signe, le devis passe automatiquement en « accepté ».
 
 ### Facturation échelonnée intelligente
 
@@ -60,7 +60,7 @@ Chaque facture a son statut en temps réel, ses erreurs détaillées et un lien 
 
 ### Configuration dynamique
 
-Au lieu de coder les IDs des pipelines en dur, les scénarios lisent une table de configuration Notion. Pour ajouter le pipeline 2027, il suffit d'ajouter une ligne — zéro scénario à toucher.
+Au lieu de coder les IDs des pipelines en dur, les scénarios lisent une table de configuration Notion. Pour ajouter le pipeline 2027, il suffit d'ajouter une ligne : zéro scénario à toucher.
 
 ## Les étapes
 
@@ -96,7 +96,7 @@ Debugging d'une erreur : 5 min au lieu de 30-60 min. Modification d'un flux : 1 
 
 ### Scalabilité intégrée
 
-Le système est prêt pour 2027, 2028 et au-delà sans refonte. Ajouter un pipeline annuel prend 30 minutes au lieu d'une journée — il suffit d'ajouter une ligne dans la table de configuration Notion.
+Le système est prêt pour 2027, 2028 et au-delà sans refonte. Ajouter un pipeline annuel prend 30 minutes au lieu d'une journée : une ligne à ajouter dans la table de configuration Notion.
 
 ### Autonomie de l'équipe
 

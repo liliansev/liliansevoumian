@@ -20,7 +20,7 @@ Celeris est un distributeur IT B2B établi (PC, serveurs HPE, Dell, Lenovo), don
 
 ## Le problème
 
-L'enrichissement du catalogue produits était **100 % manuel** : les commerciaux recopiaient les fiches depuis des fichiers constructeurs (CTO) aux colonnes différentes selon les marques. Chronophage, source de doublons et d'erreurs — et un frein direct à la mise en ligne des produits.
+L'enrichissement du catalogue produits était **100 % manuel** : les commerciaux recopiaient les fiches depuis des fichiers constructeurs (CTO) aux colonnes différentes selon les marques. Chronophage, source de doublons et d'erreurs, et un frein direct à la mise en ligne des produits.
 
 ## La solution
 
