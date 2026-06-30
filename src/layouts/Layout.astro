@@ -192,22 +192,46 @@ const faqPageSchema = faqSchema ? {
       (function () {
         function initCalEmbed() {
           var links = document.querySelectorAll('a[href*="cal.com/lilian-sevoumian"]');
-          if (!links.length) return;
-          // 1. Transformer chaque lien cal.com en déclencheur de popup embarquée.
-          //    (le href + target restent en fallback si le JS/embed échoue)
-          for (var i = 0; i < links.length; i++) {
-            links[i].setAttribute('data-cal-link', 'lilian-sevoumian/20min');
-            links[i].setAttribute('data-cal-config', '{"layout":"month_view"}');
-          }
-          // 2. Mémoriser la source du dernier bouton cliqué (pour l'attribuer à call_booked).
-          document.addEventListener('click', function (ev) {
-            var t = ev.target && ev.target.closest ? ev.target.closest('[data-cal-link]') : null;
-            if (t) window.__lastCalSource = t.getAttribute('data-fast-goal-source') || 'cal_embed';
-          }, true);
+          var overlay = document.getElementById('cal-overlay');
+          if (!links.length || !overlay) return;
+          var lastSource = 'cal_embed';
           // 3. Loader officiel de l'embed cal.com.
           (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
           window.Cal("init", { origin: "https://cal.com" });
-          // 4. Résa confirmée → goal DataFast "call_booked" (dédupliqué par uid de booking).
+
+          // Overlay plein écran : ouverture / fermeture + scroll lock.
+          var closeBtn = overlay.querySelector('[data-cal-close]');
+          var inited = false;
+          function openOverlay() {
+            if (!inited) {
+              var theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+              window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: theme } });
+              inited = true;
+            }
+            overlay.classList.add('is-open');
+            overlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+          }
+          function closeOverlay() {
+            overlay.classList.remove('is-open');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+          }
+
+          // Clic sur un CTA cal.com → ouvre l'overlay (jamais un nouvel onglet ni la popup native).
+          document.addEventListener('click', function (ev) {
+            var t = ev.target && ev.target.closest ? ev.target.closest('a[href*="cal.com/lilian-sevoumian"]') : null;
+            if (!t) return;
+            ev.preventDefault();
+            lastSource = t.getAttribute('data-fast-goal-source') || 'cal_embed';
+            openOverlay();
+          });
+          if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+          document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeOverlay();
+          });
+
+          // Résa confirmée → goal "call_booked" (dédup par uid) + fermeture après un court instant.
           var seen = {};
           function onBooked(e) {
             var data = (e && e.detail && e.detail.data) || {};
@@ -215,10 +239,10 @@ const faqPageSchema = faqSchema ? {
             if (seen[uid]) return;
             seen[uid] = 1;
             if (typeof window.datafast === 'function') {
-              window.datafast('call_booked', { source: window.__lastCalSource || 'cal_embed' });
+              window.datafast('call_booked', { source: lastSource });
             }
+            window.setTimeout(closeOverlay, 1800);
           }
-          // bookingSuccessful (déprécié) + bookingSuccessfulV2 (actuel) ; dédup évite le double-compte.
           window.Cal("on", { action: "bookingSuccessful", callback: onBooked });
           window.Cal("on", { action: "bookingSuccessfulV2", callback: onBooked });
         }
@@ -233,6 +257,17 @@ const faqPageSchema = faqSchema ? {
     </a>
     <div class="technical-grid" aria-hidden="true"></div>
     <slot />
+
+    <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
+    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label="Réserver un appel · 20 min" aria-hidden="true">
+      <div class="cal-overlay-bar">
+        <span class="cal-overlay-title">Réserver un appel · 20 min</span>
+        <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
+      </div>
+      <div class="cal-overlay-body">
+        <div id="cal-embed-target"></div>
+      </div>
+    </div>
 
 <script>
       function initMotion(): void {

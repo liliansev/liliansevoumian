@@ -15,24 +15,24 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
 ---
 
 <nav id="main-nav" class="nav-root px-[var(--spacing-section-x)]" aria-label="Navigation principale">
-  <div class="relative max-w-[1200px] mx-auto h-full flex items-center justify-between gap-4">
-    <!-- Logo : wordmark en desktop, carré « L » en mobile (façon Mistral) -->
+  <div class="max-w-[1200px] mx-auto h-full grid grid-cols-[auto_1fr_auto] items-stretch lg:flex lg:items-center lg:justify-between lg:gap-4">
+    <!-- Logo : wordmark en desktop, « L » en mobile (cellule de grille, façon Mistral) -->
     <a
       href="/"
       id="logo-link"
-      class="inline-flex items-center gap-2.5 text-[var(--color-ink)] shrink-0 group min-h-[44px]"
+      class="inline-flex items-center gap-2.5 text-[var(--color-ink)] group min-h-[44px] pr-4 border-r border-[var(--color-divider)] lg:pr-0 lg:border-r-0"
       aria-label="Lilian Sevoumian, accueil"
     >
       <span class="mono-label hidden lg:inline">LILIAN SEVOUMIAN</span>
-      <span class="nav-logo-sq lg:hidden" aria-hidden="true">L</span>
+      <span class="nav-logo-l lg:hidden" aria-hidden="true">L</span>
     </a>
 
-    <!-- CTA central (mobile uniquement) → cal.com (popup embed + goal lead_call) -->
+    <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
     <a
       href="https://cal.com/lilian-sevoumian/20min"
       target="_blank"
       rel="noopener noreferrer"
-      class="nav-mid-cta lg:hidden absolute left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]"
+      class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]"
       data-fast-goal="lead_call"
       data-fast-goal-source="nav_mobile_cta"
     >
@@ -63,10 +63,10 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       </a>
     </div>
 
-    <!-- Déclencheur de menu (mobile) : carré à points (façon Mistral) ⇄ croix ouvert -->
+    <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
     <button
       id="mobile-menu-btn"
-      class="menu-trigger lg:hidden"
+      class="menu-trigger lg:hidden inline-flex items-center justify-center min-h-[44px] pl-4 border-l border-[var(--color-divider)]"
       aria-label="Ouvrir le menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
@@ -230,18 +230,11 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
 </script>
 
 <style>
-  /* Logo carré « L » (mobile) — encadré, façon Mistral. */
-  .nav-logo-sq {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border: 1px solid var(--color-ink);
-    border-radius: var(--radius-sm);
+  /* Logo « L » (mobile) — lettre nue dans sa cellule de grille (pas de carré). */
+  .nav-logo-l {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     line-height: 1;
     color: var(--color-ink);
   }
@@ -253,19 +246,14 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   }
   .nav-mid-cta:hover { color: var(--color-accent); }
 
-  /* Déclencheur de menu : carré à 9 points (fermé) ⇄ croix (ouvert). */
+  /* Déclencheur de menu : grille de 9 points (fermé) ⇄ croix (ouvert), sans carré. */
   .menu-trigger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border: 1px solid var(--color-divider);
-    border-radius: var(--radius-sm);
     color: var(--color-ink);
-    transition: border-color var(--duration-default) var(--ease-out-quint);
+    background: transparent;
+    cursor: pointer;
+    transition: color var(--duration-default) var(--ease-out-quint);
   }
-  .menu-trigger:hover { border-color: var(--color-ink-low); }
+  .menu-trigger:hover { color: var(--color-ink-mid); }
   .mt-dots {
     display: grid;
     grid-template-columns: repeat(3, 3px);
