@@ -74,6 +74,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   aria-modal="true"
   aria-labelledby="mobile-menu-title"
   aria-hidden="true"
+  tabindex="-1"
 >
   <h2 id="mobile-menu-title" class="sr-only">Navigation principale</h2>
   <div class="h-full flex flex-col px-[var(--spacing-section-x)] pt-[80px] pb-12">
@@ -176,12 +177,12 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       }
     }
 
-    // Focus management : focus 1er link à l'ouverture, retour au burger à la fermeture
+    // Focus management : on focalise le CONTENEUR du dialog à l'ouverture (a11y,
+    // déplace le focus dans la modale pour le clavier/lecteur d'écran) — surtout
+    // PAS le 1er lien, qui déclenche un gros cadre de focus noir sur iOS au tactile.
+    // Retour au burger à la fermeture.
     if (willOpen) {
-      window.setTimeout(() => {
-        const firstLink = mobileMenu.querySelector<HTMLAnchorElement>('[data-mobile-link]');
-        firstLink?.focus();
-      }, 50);
+      window.setTimeout(() => mobileMenu.focus(), 50);
     } else {
       menuBtn.focus();
     }
