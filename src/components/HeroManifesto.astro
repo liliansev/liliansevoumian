@@ -11,6 +11,7 @@
  * Photo via <Picture> d'astro:assets (AVIF/WebP + srcset). Asset dans src/assets/.
  */
 import { Picture } from 'astro:assets';
+import LinkCTA from './LinkCTA.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 ---
 
@@ -26,7 +27,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
       <!-- Statement — sur papier nu, sans carte -->
       <div data-hero-stagger class="flex flex-col gap-6 md:gap-7">
 
-        <span class="reveal mono-caption text-[var(--color-ink-low)]" style="text-transform: none;">
+        <span class="reveal eyebrow-rule mono-caption text-[var(--color-ink-low)]" style="text-transform: none;">
           Freelance et Formateur en IA &amp; Automatisations
         </span>
 
@@ -39,7 +40,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
           Claude Code. En production, et qui tiennent.
         </p>
 
-        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <a
             href="https://cal.com/lilian-sevoumian/20min"
             target="_blank"
@@ -50,9 +51,7 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
           >
             Réserver un appel · 20 min
           </a>
-          <a href="#contact-form" class="btn-ghost w-full sm:w-auto">
-            M'écrire
-          </a>
+          <LinkCTA href="#contact-form">M'écrire</LinkCTA>
         </div>
 
       </div>

@@ -412,8 +412,14 @@ a, button, input, textarea, select,
    SECTION KICKER — petit label mono au-dessus du titre de section
    ========================================================================= */
 
+.section-number,
+.eyebrow-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .section-number {
-  display: inline-block;
   font-family: var(--font-mono);
   font-size: var(--text-mono-caption);
   font-weight: 500;
@@ -421,6 +427,19 @@ a, button, input, textarea, select,
   text-transform: uppercase;
   color: var(--color-ink-low);
   margin-bottom: 1.5rem;
+}
+
+/* Filet court devant le label — signature éditoriale "surtitre" (Mistral-like).
+   Décoratif : 24px de hairline en ink-faint, avant le texte du surtitre.
+   .eyebrow-rule applique le même filet à un surtitre hors .section-number
+   (ex. l'eyebrow du hero en casse normale). */
+.section-number::before,
+.eyebrow-rule::before {
+  content: '';
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--color-ink-faint);
 }
 
 /* =========================================================================
@@ -493,6 +512,57 @@ a, button, input, textarea, select,
 
 .btn-ghost:active {
   transform: scale(0.98);
+}
+
+/* =========================================================================
+   LINK-CTA — appel à l'action "texte" (pas un bouton). Inspiration éditoriale
+   Mistral : libellé mono + flèche qui avance, soulignement qui se dessine de
+   gauche à droite au hover/focus. Réservé aux actions SECONDAIRES.
+   ========================================================================= */
+
+.link-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+/* Soulignement qui se dessine de gauche à droite (background-size animé, pas
+   de pseudo séparé → fonctionne sur le seul libellé, pas sous la flèche). */
+.link-cta__label {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left 100%;
+  background-size: 0% 1px;
+  padding-bottom: 2px;
+  transition: background-size var(--duration-default) var(--ease-out-quint);
+}
+
+.link-cta:hover .link-cta__label,
+.link-cta:focus-visible .link-cta__label {
+  background-size: 100% 1px;
+}
+
+.link-cta__arrow {
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+
+.link-cta:hover .link-cta__arrow,
+.link-cta:focus-visible .link-cta__arrow {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-cta__label,
+  .link-cta__arrow { transition: none; }
 }
 
 /* =========================================================================

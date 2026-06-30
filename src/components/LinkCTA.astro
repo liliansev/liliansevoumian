@@ -1,0 +1,43 @@
+---
+/*
+ * LinkCTA — appel à l'action "texte" (pas un bouton). Inspiration éditoriale
+ * Mistral : libellé mono + flèche qui avance, soulignement qui se dessine de
+ * gauche à droite au hover/focus. À réserver aux actions SECONDAIRES — l'action
+ * primaire d'une zone reste un .btn-primary plein (une seule par zone).
+ *
+ * La flèche est décorative (aria-hidden) ; le libellé passe via <slot/>.
+ */
+interface Props {
+  href: string;
+  external?: boolean;
+  class?: string;
+  goal?: string;
+  goalSource?: string;
+  prefill?: string;
+  /** Glyphe de flèche. '↗' pour un lien externe, '→' par défaut. */
+  arrow?: string;
+}
+
+const {
+  href,
+  external = false,
+  class: className = '',
+  goal,
+  goalSource,
+  prefill,
+  arrow = '→',
+} = Astro.props;
+---
+
+<a
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  data-fast-goal={goal}
+  data-fast-goal-source={goalSource}
+  data-prefill={prefill}
+  class={`link-cta ${className}`}
+>
+  <span class="link-cta__label"><slot /></span>
+  <span class="link-cta__arrow" aria-hidden="true">{arrow}</span>
+</a>
