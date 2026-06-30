@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import lilianPhoto from '../assets/lilian-photo.jpg';
 import ThemeToggle from './ThemeToggle.astro';
 
 const navLinks = [
@@ -24,7 +26,19 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       aria-label="Lilian Sevoumian, accueil"
     >
       <span class="mono-label hidden lg:inline">LILIAN SEVOUMIAN</span>
-      <span class="nav-logo-l lg:hidden" aria-hidden="true">L</span>
+      <!-- Mobile : « L » et avatar empilés dans une cellule de taille fixe (pas de saut
+           de layout au scroll). Crossfade en opacité dès qu'on a dépassé le Hero. -->
+      <span class="nav-logo-mark lg:hidden" aria-hidden="true">
+        <span class="nav-logo-l">L</span>
+        <Image
+          src={lilianPhoto}
+          alt=""
+          width={56}
+          height={56}
+          loading="eager"
+          class="nav-logo-avatar"
+        />
+      </span>
     </a>
 
     <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
@@ -134,6 +148,18 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  // Avatar dans la nav : le logo « L » mobile devient la photo de Lilian dès qu'on a
+  // dépassé le Hero (sur mobile uniquement, où la photo n'apparaît plus dans le Hero).
+  const heroEl = document.getElementById('hero');
+  if (nav && heroEl) {
+    const heroObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        nav.classList.toggle('past-hero', !e.isIntersecting);
+      });
+    }, { rootMargin: '-80px 0px 0px 0px', threshold: 0 });
+    heroObs.observe(heroEl);
+  }
+
   // Active link tracking via IntersectionObserver
   const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
   const sections = Array.from(navLinks)
@@ -230,14 +256,48 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
 </script>
 
 <style>
-  /* Logo « L » (mobile) — lettre nue dans sa cellule de grille (pas de carré). */
+  /* Marque mobile — conteneur de taille fixe (28px) qui empile « L » et avatar.
+     La taille ne change jamais : la cellule de grille reste stable au scroll. */
+  .nav-logo-mark {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* « L » (mobile) — lettre nue, visible par défaut. */
   .nav-logo-l {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--font-display);
     font-weight: 600;
     font-size: 1.25rem;
     line-height: 1;
     color: var(--color-ink);
+    opacity: 1;
+    transition: opacity var(--duration-default, 300ms) var(--ease-out-quint, ease);
   }
+
+  /* Avatar (mobile) — photo ronde, en fondu une fois le Hero dépassé. */
+  .nav-logo-avatar {
+    position: absolute;
+    inset: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity var(--duration-default, 300ms) var(--ease-out-quint, ease);
+  }
+
+  /* Crossfade au passage du Hero. */
+  .nav-root.past-hero .nav-logo-l { opacity: 0; }
+  .nav-root.past-hero .nav-logo-avatar { opacity: 1; }
 
   /* CTA central mobile. */
   .nav-mid-cta {
