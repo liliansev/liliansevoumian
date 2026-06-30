@@ -1,9 +1,13 @@
 ---
-/* Claude Cowork — mini-chat : piloter ses automatisations par dialogue. */
+/* Claude Cowork — mini-chat animé : le message de l'utilisateur apparaît, l'agent
+   « réfléchit » (typing dots), puis la réponse arrive. En boucle. */
 ---
 <div class="sch">
   <div class="bub bub-user">Relance les devis non signés.</div>
-  <div class="bub bub-bot"><span class="bub-ok" aria-hidden="true">✓</span> 3 relances programmées dans Make.</div>
+  <div class="sch-reply">
+    <div class="bub bub-typing" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="bub bub-bot"><span class="bub-ok" aria-hidden="true">✓</span> 3 relances programmées dans Make.</div>
+  </div>
 </div>
 
 <style>
@@ -14,7 +18,7 @@
     padding: 16px 14px;
   }
   .bub {
-    max-width: 88%;
+    max-width: 100%;
     padding: 9px 12px;
     border-radius: var(--radius-md);
     font-size: var(--text-body-sm);
@@ -22,28 +26,75 @@
   }
   .bub-user {
     align-self: flex-end;
+    max-width: 88%;
     background: var(--color-surface-low);
     border: 1px solid var(--color-divider);
     color: var(--color-ink);
     border-bottom-right-radius: var(--radius-xs);
   }
-  .bub-bot {
+  /* Côté réponse : typing + réponse superposés (même cellule → taille = la réponse). */
+  .sch-reply {
     align-self: flex-start;
+    max-width: 88%;
+    display: grid;
+    justify-items: start;
+    align-items: start;
+  }
+  .bub-bot,
+  .bub-typing { grid-area: 1 / 1; }
+  .bub-bot {
     background: var(--color-surface-high);
     border: 1px solid var(--color-border-strong);
     color: var(--color-ink);
     border-bottom-left-radius: var(--radius-xs);
   }
-  .bub-ok { color: var(--color-success); font-weight: 600; display: inline-block; }
-
-  /* Animation : le ✓ de la réponse pulse quand l'action est exécutée. */
-  .bub-ok { animation: sch-ok 4s ease-in-out infinite; }
-  @keyframes sch-ok {
-    0%, 70%, 100% { transform: scale(1); }
-    78% { transform: scale(1.35); }
-    85% { transform: scale(1); }
+  .bub-ok { color: var(--color-success); font-weight: 600; }
+  .bub-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-border-strong);
+    border-bottom-left-radius: var(--radius-xs);
   }
+  .bub-typing i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-ink-faint);
+    animation: sch-dot 1.2s ease-in-out infinite;
+  }
+  .bub-typing i:nth-child(2) { animation-delay: 0.15s; }
+  .bub-typing i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes sch-dot {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-2px); }
+  }
+
+  /* Déroulé de la conversation, en boucle (~6s) : user → typing → réponse. */
+  .bub-user { animation: sch-user 6s ease-in-out infinite; }
+  .bub-typing { animation: sch-typing 6s ease-in-out infinite; }
+  .bub-bot { animation: sch-bot 6s ease-in-out infinite; }
+
+  @keyframes sch-user {
+    0% { opacity: 0; transform: translateY(6px); }
+    6%, 92% { opacity: 1; transform: translateY(0); }
+    98%, 100% { opacity: 0; transform: translateY(6px); }
+  }
+  @keyframes sch-typing {
+    0%, 14% { opacity: 0; transform: translateY(6px); }
+    20%, 40% { opacity: 1; transform: translateY(0); }
+    46%, 100% { opacity: 0; transform: translateY(6px); }
+  }
+  @keyframes sch-bot {
+    0%, 44% { opacity: 0; transform: translateY(6px); }
+    52%, 92% { opacity: 1; transform: translateY(0); }
+    98%, 100% { opacity: 0; transform: translateY(6px); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .bub-ok { animation: none; }
+    .bub-user, .bub-bot { animation: none; opacity: 1; transform: none; }
+    .bub-typing { display: none; }
+    .bub-typing i { animation: none; }
   }
 </style>

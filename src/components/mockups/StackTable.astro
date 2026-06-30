@@ -1,9 +1,10 @@
 ---
-/* Notion — mini-table CRM qui se remplit toute seule. */
+/* Notion — mini-table CRM qui se remplit toute seule : chaque ligne se crée,
+   puis son statut bascule en « terminé » (cross-fade), en cascade. */
 const rows = [
-  { label: 'Devis #1042', status: 'Signé', ok: true },
-  { label: 'Devis #1043', status: 'En cours', ok: false },
-  { label: 'Lead — formulaire', status: 'Nouveau', ok: false },
+  { label: 'Devis #1042', from: 'En cours', to: 'Signé' },
+  { label: 'Devis #1043', from: 'En attente', to: 'Payé' },
+  { label: 'Lead — formulaire', from: 'Nouveau', to: 'Qualifié' },
 ];
 ---
 <div class="st">
@@ -14,8 +15,9 @@ const rows = [
   {rows.map((r) => (
     <div class="st-row">
       <span class="st-l">{r.label}</span>
-      <span class:list={['st-pill', r.ok && 'is-ok']}>
-        {r.status}{r.ok && <span aria-hidden="true"> ✓</span>}
+      <span class="st-status">
+        <span class="st-pill st-from">{r.from}</span>
+        <span class="st-pill st-to is-ok">{r.to}<span aria-hidden="true"> ✓</span></span>
       </span>
     </div>
   ))}
@@ -44,7 +46,14 @@ const rows = [
   }
   .st-row:last-child { border-bottom: 0; }
   .st-l { font-size: var(--text-body-sm); color: var(--color-ink); min-width: 0; }
+
+  /* Les deux pastilles (avant / après) se superposent dans la même cellule. */
+  .st-status {
+    display: grid;
+    justify-items: end;
+  }
   .st-pill {
+    grid-area: 1 / 1;
     flex-shrink: 0;
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
@@ -60,15 +69,45 @@ const rows = [
     background: color-mix(in oklch, var(--color-success) 9%, transparent);
   }
 
-  /* Animation : la table se remplit, ligne par ligne (flash discret en cascade). */
-  .st-row { animation: st-fill 4s ease-in-out infinite; }
-  .st-row:nth-child(3) { animation-delay: 0.6s; }
-  .st-row:nth-child(4) { animation-delay: 1.2s; }
-  @keyframes st-fill {
-    0%, 24%, 100% { background: transparent; }
-    9% { background: color-mix(in oklch, var(--color-accent) 10%, transparent); }
+  /* Animation : 1) la ligne se crée, 2) le statut bascule. En cascade ligne par ligne. */
+  .st-row:nth-child(2) { --d: 0s; }
+  .st-row:nth-child(3) { --d: 0.7s; }
+  .st-row:nth-child(4) { --d: 1.4s; }
+
+  .st-row {
+    animation: st-create 6s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
   }
+  .st-from {
+    animation: st-from 6s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  .st-to {
+    animation: st-to 6s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+
+  /* 1) création de la ligne */
+  @keyframes st-create {
+    0%       { opacity: 0; transform: translateY(7px); }
+    7%, 92%  { opacity: 1; transform: translateY(0); }
+    98%, 100%{ opacity: 0; transform: translateY(7px); }
+  }
+  /* 2) statut « avant » visible, puis s'efface */
+  @keyframes st-from {
+    0%, 40%  { opacity: 1; }
+    50%, 100%{ opacity: 0; }
+  }
+  /* 2) statut « après » (Signé/Payé/Qualifié ✓) qui apparaît */
+  @keyframes st-to {
+    0%, 42%  { opacity: 0; transform: scale(0.96); }
+    52%, 92% { opacity: 1; transform: scale(1); }
+    98%, 100%{ opacity: 0; transform: scale(0.96); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .st-row { animation: none; }
+    .st-row, .st-from, .st-to { animation: none; }
+    .st-from { opacity: 0; }
+    .st-to { opacity: 1; transform: none; }
   }
 </style>
