@@ -1,80 +1,113 @@
 # Funnel de conversion DataFast — liliansevoumian.fr
 
-Objectif business : **être contacté pour une mission** — en priorité via le **formulaire on-site** (canal principal), l'appel cal.com et le mail restant en secondaire.
+Objectif business : **être contacté pour une mission**, par l'un des deux canaux —
+l'**appel cal.com** (call 20 min) ou le **formulaire on-site** (mail via Resend).
 
-Le tracking est posé en code (attributs `data-fast-goal` lus nativement par le
-script DataFast cookieless). Le **funnel** se configure dans le dashboard DataFast
-à partir des goals ci-dessous.
+Le tracking est posé en code : attributs `data-fast-goal` lus nativement par le
+script DataFast cookieless (liens cal.com) + des appels JS pour le formulaire et la
+résa confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir
+des 3 goals ci-dessous.
 
----
-
-## 1. Taxonomie des goals (posée en code)
-
-### Étape d'intention — `cta_contact_click`
-Clic sur un CTA **« Me contacter »** (nav, hero, ROI, cards offres) → scrolle vers le
-formulaire en bas. C'est l'**intention** de contact, pas encore la conversion. Les CTA
-ne pointent plus vers cal.com : ils mènent au formulaire on-site (canal principal).
-
-| Param | Valeurs |
-|-------|---------|
-| `source` | `nav`, `nav_mobile`, `hero`, `roi`, `offre_regie`, `offre_mentoring`, `offre_mission`, `principes` |
-
-> Les cards offres pré-remplissent le message du formulaire avec l'offre cliquée.
-
-### Conversion — `contact_lead`
-La vraie conversion (contact effectif). Un seul goal, paramétré :
-
-| Param | Valeurs | Sert à |
-|-------|---------|--------|
-| `type` | `form` (formulaire soumis = conversion la + fiable) · `call` (clic cal.com) · `email` (clic mailto) | Comment ils entrent en contact |
-| `source` | `contact`, `faq`, `footer` | Où |
-
-→ `type=form` fire sur **soumission réussie** du formulaire on-site (le canal principal
-désormais). `call`/`email` = options **secondaires** (section contact « ou plus direct »,
-footer, FAQ), firent au clic (intention, pas complétion).
-
-### Micro-conversions (hors funnel mission)
-| Goal | Déclencheur | Params |
-|------|-------------|--------|
-| `book_coaching` | CTA Coaching 150 €/h (go.liliansevoumian.fr/coaching) | — |
-| `newsletter_click` | Liens Substack (section contact + footer) | `source` |
-| `augmentes_click` | Ponts vers augmentes.fr (formations) — intention « apprendre soi-même » | `source` (`offres`, `faq`) |
-
-### Scroll-depth (natif DataFast, 1×/session)
-`scroll_to_section_roi` · `_cas` · `_stack` · `_offres` · `_faq` · `_contact`
-> Géré nativement via `data-fast-scroll` (seuil 50 %). Le handler JS custom qui
-> doublait ces events a été retiré.
+> ⚠️ **DataFast est cookieless** (empreinte IP+UA serveur, aucun `datafast_visitor_id`
+> exposé). Conséquence : impossible d'attribuer une conversion depuis un backend tiers
+> (webhook cal.com → API `/v1/goals`), car cette API exige le visitor_id introuvable.
+> C'est pourquoi `call_booked` passe par l'**embed cal.com on-site** (cf. ci-dessous),
+> et **pas** par un webhook. Voir aussi la mémoire projet `project_datafast-cookieless`.
 
 ---
 
-## 2. Funnel à créer dans le dashboard DataFast
+## 1. Les 3 goals (état réel du code)
 
-**Dashboard → Funnels → « + Funnel »** → nommer « Lead Mission » → ajouter 4 étapes :
+### `lead_call` — clic « Réserver un appel » (cal.com)
+Émis nativement sur **tout lien cal.com** via `data-fast-goal="lead_call"`.
+C'est une **intention de call** (le clic), pas la réservation confirmée — celle-ci
+se passe sur cal.com (voir Limite plus bas).
 
+| Param `source` | Où |
+|----------------|-----|
+| `hero` · `nav` · `nav_mobile` · `roi` · `offres` · `footer` · `mobile_bar` | Landing `/` |
+| `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
+| `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
+
+### `lead_form` — formulaire soumis (`/api/contact` → Resend)
+Émis en JS dans `CTA.astro` **sur soumission réussie** du formulaire on-site.
+C'est la **conversion la plus fiable** : mesurée de bout en bout (le mail est parti).
+
+| Param `source` | Valeur |
+|----------------|--------|
+| `source` | `contact` |
+
+### `call_booked` — réservation cal.com confirmée (embed on-site)
+La **vraie conversion appel** (pas juste le clic). Les boutons cal.com ouvrent une
+**popup embarquée** (embed cal.com, init dans `Layout.astro`) au lieu d'un onglet :
+le visiteur **reste sur le domaine**, donc DataFast l'attribue via son empreinte —
+ce qui marche en cookieless, **sans redirection ni webhook**. Émis en JS sur
+l'événement cal.com `bookingSuccessfulV2` (dédupliqué par `uid` de booking).
+
+| Param `source` | Valeur |
+|----------------|--------|
+| `source` | source du dernier bouton cliqué (`hero`, `roi`, `offres`, `cas_article`, `expert-*`…) ou `cal_embed` |
+
+> Un clic ne peut plus gonfler cette stat : seule une réservation réellement
+> confirmée déclenche `call_booked`. `lead_call` (le clic) reste l'étape d'intention.
+
+> Seuls `lead_call`, `lead_form` et `call_booked` sont émis. La taxonomie
+> `contact_lead` / `cta_contact_click` des anciennes versions n'existe plus.
+
+---
+
+## 2. Les 3 funnels à créer dans le dashboard DataFast
+
+**Dashboard → Funnels → « + Funnel »**. Étape 1 = visite d'une URL, étape 2 = goal.
+Les funnels DataFast sont par session : un visiteur qui voit l'URL puis fire le goal
+dans la même session compte comme converti.
+
+### Funnel A — « Landing → Call » (funnel complet en 3 étapes)
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
-| 1 | Visite | Page visit | URL equals `/` |
-| 2 | A vu les offres | Goal | `scroll_to_section_offres` |
-| 3 | A cliqué « Me contacter » | Goal | `cta_contact_click` |
-| 4 | A contacté | Goal | `contact_lead` |
+| 1 | Visite landing | Page visit | URL equals `/` |
+| 2 | A **cliqué** Réserver | Goal | `lead_call` *(filtrer `source` ∈ hero, nav, nav_mobile, roi, offres, footer, mobile_bar)* |
+| 3 | A **réservé** (résa confirmée) | Goal | `call_booked` |
 
-On voit exactement où ça décroche : visite → intérêt offres → intention (clic) → contact réel.
-Le gros écart probable est entre l'étape 3 (clic) et 4 (form rempli) — c'est là qu'on optimise.
+> L'étape 2→3 montre enfin la **déperdition clic → résa réelle** (le fameux « 10 clics, 1 résa »).
+> Le filtre `source` à l'étape 2 isole les clics venus de la landing. Les funnels B et C
+> ci-dessous suivent le même schéma (remplace juste l'URL et le filtre `source` de l'étape 2) ;
+> l'étape 3 `call_booked` est commune (la résa se fait dans la popup, peu importe la page d'origine).
 
-### Analyses complémentaires
-- Filtrer `cta_contact_click` par `source` → **quel CTA déclenche l'intention** (hero ? offres ?).
-- Filtrer `contact_lead` par `type` → **form vs call vs email** (canal de contact effectif).
-- Variante : si tu veux mesurer seulement la conversion finale, funnel à 3 étapes = 1, 2, 4.
+### Funnel B — « Cas d'usage → Call »
+| # | Étape | Type | Valeur |
+|---|-------|------|--------|
+| 1 | Visite cas-clients | Page visit | URL contains `/cas-clients` |
+| 2 | A réservé un appel | Goal | `lead_call` *(filtrer `source` ∈ cas_index, cas_index_empty, cas_article)* |
+
+> Couvre l'index `/cas-clients` **et** les articles `/cas-clients/<slug>` (URL contains).
+> ⚠️ Ces 3 CTA viennent d'être taguées — avant, un call depuis une page cas-clients
+> était invisible. Les données ne remontent donc qu'à partir du déploiement de ce commit.
+
+### Funnel C — « Page expert → Call » (le 3ᵉ que je vois)
+| # | Étape | Type | Valeur |
+|---|-------|------|--------|
+| 1 | Visite page expert | Page visit | URL contains `/expert-` *(n8n + make)* |
+| 2 | A réservé un appel | Goal | `lead_call` *(filtrer `source` ∈ expert-n8n, expert-n8n-bottom, expert-make, expert-make-bottom)* |
+
+> Les pages `/expert-n8n` et `/expert-make` sont des pages d'acquisition SEO à forte
+> intention. C'est le funnel « → call » le plus naturel après LP et cas-clients.
+
+### Bonus — funnel du 2ᵉ canal (form)
+Si tu veux suivre l'autre canal de contact : Étape 1 Page visit `/` → Étape 2 Goal
+`lead_form`. À comparer avec Funnel A pour voir **call vs formulaire** sur la landing.
 
 ---
 
-## ⚠️ Limite à connaître
-- `type=form` = **conversion réelle** (le formulaire a été soumis avec succès via `/api/contact`). C'est le signal le plus fiable.
-- `type=call` = clic vers cal.com, **pas** la réservation confirmée (elle se passe sur cal.com).
-- `type=email` = clic mailto, **pas** le mail réellement envoyé.
+## ✅ Les 3 signaux (du moins au plus fiable)
+- `lead_call` = **clic** « Réserver » (intention). Peut être gonflé par tes propres clics de test → **exclus ton trafic** (`localStorage.datafast_ignore = true`, IP dans Exclusions, ou teste sur preview Vercel non-trackée).
+- `lead_form` = **formulaire soumis** avec succès (`/api/contact` Resend). Conversion réelle, bout en bout.
+- `call_booked` = **réservation cal.com confirmée**, via l'embed on-site → `bookingSuccessfulV2`. Désormais mesuré **dans** DataFast (plus besoin de webhook). Un clic ne peut plus le déclencher.
 
-Pour mesurer aussi la complétion des **appels**, il faudrait une intégration cal.com → DataFast
-(webhook booking confirmé). Le formulaire, lui, est déjà une conversion mesurée de bout en bout.
+> Historique : on a un temps cru qu'il fallait un webhook cal.com → API DataFast pour
+> la résa. Impossible en cookieless (l'API `/v1/goals` exige un `datafast_visitor_id`
+> jamais exposé). L'**embed cal.com** contourne ça : la résa se faisant sur le domaine,
+> l'empreinte suffit. C'est la solution retenue.
 
 ## 🔧 Setup requis pour le formulaire (`/api/contact`)
 Le formulaire envoie un mail via **Resend**. À configurer dans Vercel (Settings → Environment Variables) :

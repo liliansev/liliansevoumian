@@ -183,6 +183,49 @@ const faqPageSchema = faqSchema ? {
       };
     </script>
     <script is:inline defer data-website-id="dfid_Mq8wt9KvIisuofpYWZouo" data-domain="liliansevoumian.fr" data-api-url="/api/dfst-events" src="/js/script.js"></script>
+
+    <!-- Embed cal.com : la réservation se fait dans une popup ON-SITE (pas un onglet,
+         pas de redirection). Le visiteur ne quitte jamais le domaine → DataFast
+         attribue le goal "call_booked" via son empreinte (marche en cookieless).
+         Funnel complet : visite → lead_call (clic) → call_booked (résa confirmée). -->
+    <script is:inline>
+      (function () {
+        function initCalEmbed() {
+          var links = document.querySelectorAll('a[href*="cal.com/lilian-sevoumian"]');
+          if (!links.length) return;
+          // 1. Transformer chaque lien cal.com en déclencheur de popup embarquée.
+          //    (le href + target restent en fallback si le JS/embed échoue)
+          for (var i = 0; i < links.length; i++) {
+            links[i].setAttribute('data-cal-link', 'lilian-sevoumian/20min');
+            links[i].setAttribute('data-cal-config', '{"layout":"month_view"}');
+          }
+          // 2. Mémoriser la source du dernier bouton cliqué (pour l'attribuer à call_booked).
+          document.addEventListener('click', function (ev) {
+            var t = ev.target && ev.target.closest ? ev.target.closest('[data-cal-link]') : null;
+            if (t) window.__lastCalSource = t.getAttribute('data-fast-goal-source') || 'cal_embed';
+          }, true);
+          // 3. Loader officiel de l'embed cal.com.
+          (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+          window.Cal("init", { origin: "https://cal.com" });
+          // 4. Résa confirmée → goal DataFast "call_booked" (dédupliqué par uid de booking).
+          var seen = {};
+          function onBooked(e) {
+            var data = (e && e.detail && e.detail.data) || {};
+            var uid = data.uid || (data.booking && data.booking.uid) || JSON.stringify(data).slice(0, 80);
+            if (seen[uid]) return;
+            seen[uid] = 1;
+            if (typeof window.datafast === 'function') {
+              window.datafast('call_booked', { source: window.__lastCalSource || 'cal_embed' });
+            }
+          }
+          // bookingSuccessful (déprécié) + bookingSuccessfulV2 (actuel) ; dédup évite le double-compte.
+          window.Cal("on", { action: "bookingSuccessful", callback: onBooked });
+          window.Cal("on", { action: "bookingSuccessfulV2", callback: onBooked });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initCalEmbed);
+        else initCalEmbed();
+      })();
+    </script>
   </head>
   <body class="antialiased m-0 p-0 relative">
     <a href="#main-content" class="skip-link">
