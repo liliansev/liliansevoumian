@@ -1,15 +1,16 @@
 ---
 /* Make — mini-scénario : modules ronds reliés (déclencheur · routeur · actions). */
 import { Icon } from 'astro-icon/components';
+import { brandColorFor } from '../../data/brands';
 ---
 <div class="ss" role="img" aria-label="Scénario Make : un déclencheur, un routeur, puis deux actions reliées.">
   <span class="ss-mod"><Icon name="lucide:mail" class="ss-ic" aria-hidden="true" /></span>
   <span class="ss-link" aria-hidden="true"></span>
   <span class="ss-mod is-accent"><Icon name="lucide:git-fork" class="ss-ic" aria-hidden="true" /></span>
   <span class="ss-link" aria-hidden="true"></span>
-  <span class="ss-mod"><Icon name="simple-icons:hubspot" class="ss-ic" aria-hidden="true" /></span>
+  <span class="ss-mod" style={`--ic:${brandColorFor('simple-icons:hubspot')}`}><Icon name="simple-icons:hubspot" class="ss-ic" aria-hidden="true" /></span>
   <span class="ss-link" aria-hidden="true"></span>
-  <span class="ss-mod"><Icon name="simple-icons:slack" class="ss-ic" aria-hidden="true" /></span>
+  <span class="ss-mod" style={`--ic:${brandColorFor('simple-icons:slack')}`}><Icon name="simple-icons:slack" class="ss-ic" aria-hidden="true" /></span>
 </div>
 
 <style>
@@ -32,7 +33,8 @@ import { Icon } from 'astro-icon/components';
     justify-content: center;
   }
   .ss-mod.is-accent { border-color: var(--brand, var(--color-border-strong)); }
-  .ss-ic { width: 16px; height: 16px; color: var(--color-ink-mid); }
+  /* Icône dans la couleur de son propre logo (--ic posé sur le module), sinon neutre. */
+  .ss-ic { width: 16px; height: 16px; color: var(--ic, var(--color-ink-mid)); }
   .ss-link {
     position: relative;
     flex: 1 1 auto;
