@@ -62,7 +62,7 @@ const layers: Layer[] = [
       {
         name: 'Notion',
         icon: 'simple-icons:notion',
-        role: 'OUTIL MÉTIER',
+        role: 'PRODUCTIVITÉ',
         mockup: 'table',
         caption: 'Un CRM sur-mesure qui se remplit tout seul depuis vos formulaires.',
       },
@@ -156,19 +156,20 @@ const layers: Layer[] = [
 </section>
 
 <style>
-  /* Logo titre dans la vraie couleur de la marque (--brand posé sur la carte),
-     fallback neutre pour les marques monochromes (Notion). */
+  /* Logo titre dans la vraie couleur de la marque (--brand posé sur la carte).
+     Marque monochrome (Notion) → encre pleine (noir/blanc, DA propre à Notion). */
   .stack-logo {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
-    color: var(--brand, var(--color-ink-mid));
+    color: var(--brand, var(--color-ink));
   }
 
-  /* Chip de rôle teinté à la couleur de marque de la carte (défaut = accent flamme). */
+  /* Chip de rôle à la couleur de marque de la carte ; fallback encre (noir/blanc)
+     pour les marques monochromes — pas d'orange générique sur Notion. */
   .stack-card .chip-accent {
-    color: var(--brand, var(--color-accent));
-    background: color-mix(in oklab, var(--brand, var(--color-accent)) 12%, transparent);
+    color: var(--brand, var(--color-ink));
+    background: color-mix(in oklab, var(--brand, var(--color-ink)) 12%, transparent);
     border-color: transparent;
   }
 </style>

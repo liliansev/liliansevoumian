@@ -66,14 +66,8 @@ const loop = [...tools, ...tools];
 </section>
 
 <style>
-  /* Rattaché au même fond que la section Cas clients qui suit : le saut de ton
-     se fait à la sortie du hero (paper → surface-low), puis bande d'outils → cas
-     enchaîne sans couture. */
-  .lm {
-    padding-block: clamp(2.25rem, 5vw, 4rem);
-    background: var(--color-surface-low);
-    border-top: 1px solid var(--color-divider);
-  }
+  /* Fond noir (paper), comme le hero et les sections voisines. */
+  .lm { padding-block: clamp(2.25rem, 5vw, 4rem); }
 
   .lm-title {
     text-align: center;
@@ -103,7 +97,7 @@ const loop = [...tools, ...tools];
     align-items: center;
     width: max-content;
     gap: clamp(2.5rem, 6vw, 5rem);
-    animation: lm-scroll 34s linear infinite;
+    animation: lm-scroll 52s linear infinite;
   }
   .lm-viewport:hover .lm-track { animation-play-state: paused; }
   @keyframes lm-scroll {
@@ -150,6 +144,15 @@ const loop = [...tools, ...tools];
     transition: color var(--duration-default) var(--ease-out-quint);
   }
   .lm-tool:hover .lm-tool-name { color: var(--color-ink-mid); }
+
+  /* Mobile : tuiles + logos plus compacts, gaps resserrés. */
+  @media (max-width: 640px) {
+    .lm-track { gap: 1.75rem; }
+    .lm-tool { gap: 9px; }
+    .lm-chip { width: 36px; height: 36px; border-radius: var(--radius-sm); }
+    .lm-tool-ic { width: 18px; height: 18px; }
+    .lm-tool-name { font-size: 1rem; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .lm-viewport { -webkit-mask-image: none; mask-image: none; }
