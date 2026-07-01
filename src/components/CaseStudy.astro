@@ -14,6 +14,7 @@ import SectionHeader from './SectionHeader.astro';
 import MockupWindow from './mockups/MockupWindow.astro';
 import MockupList from './mockups/MockupList.astro';
 import WorkflowCanvas from './mockups/WorkflowCanvas.astro';
+import { brandColorFor } from '../data/brands';
 
 const fraichTouch = {
   client: 'Fraich Touch',
@@ -47,7 +48,7 @@ const celeris = {
 <section
   id="cas"
   data-section
-  class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
 
@@ -69,9 +70,9 @@ const celeris = {
           </div>
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{fraichTouch.title}</h3>
           <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{fraichTouch.description}</p>
-          <a href={fraichTouch.href} class="case-link group inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)] w-fit">
-            VOIR LE CAS
-            <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
+          <a href={fraichTouch.href} class="case-cta group w-fit">
+            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+            <span class="case-cta-text">VOIR LE CAS</span>
           </a>
         </div>
         <div>
@@ -98,9 +99,9 @@ const celeris = {
             <WorkflowCanvas
               describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
               trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
-              agent={{ icon: 'simple-icons:anthropic', kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
+              agent={{ icon: 'simple-icons:anthropic', color: brandColorFor('simple-icons:anthropic'), kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
               actions={[
-                { icon: 'simple-icons:hubspot', kicker: 'CRM', title: 'À approcher' },
+                { icon: 'simple-icons:hubspot', color: brandColorFor('simple-icons:hubspot'), kicker: 'CRM', title: 'À approcher' },
                 { icon: 'lucide:list-checks', kicker: 'Shortlist', title: 'Top 20 %' },
                 { icon: 'lucide:bell', kicker: 'Alerte', title: 'Nouveau signal' },
               ]}
@@ -114,9 +115,9 @@ const celeris = {
           </div>
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{mPartners.title}</h3>
           <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{mPartners.description}</p>
-          <a href={mPartners.href} class="case-link group inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)] w-fit">
-            VOIR LE CAS
-            <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
+          <a href={mPartners.href} class="case-cta group w-fit">
+            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+            <span class="case-cta-text">VOIR LE CAS</span>
           </a>
         </div>
       </article>
@@ -130,9 +131,9 @@ const celeris = {
           </div>
           <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{celeris.title}</h3>
           <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{celeris.description}</p>
-          <a href={celeris.href} class="case-link group inline-flex items-center gap-1.5 mono-label text-[var(--color-accent)] w-fit">
-            VOIR LE CAS
-            <span class="transition-transform duration-200 ease-out group-hover:translate-x-1" aria-hidden="true">→</span>
+          <a href={celeris.href} class="case-cta group w-fit">
+            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+            <span class="case-cta-text">VOIR LE CAS</span>
           </a>
         </div>
         <div>
@@ -158,8 +159,58 @@ const celeris = {
 </section>
 
 <style>
-  .case-link { text-decoration: none; }
-  .case-link:hover { color: var(--color-ink); }
+  /* CTA "Voir le cas" — DA dédiée : pastille flèche circulaire qui se remplit de
+     l'accent flamme au hover (distincte du CTA-texte souligné du reste du site). */
+  .case-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    text-decoration: none;
+  }
+  .case-cta-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-ink);
+    transition: background-color var(--duration-default) var(--ease-out-quint),
+                border-color var(--duration-default) var(--ease-out-quint),
+                color var(--duration-default) var(--ease-out-quint);
+  }
+  .case-cta:hover .case-cta-dot,
+  .case-cta:focus-visible .case-cta-dot {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-paper);
+  }
+  .case-cta-arrow {
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+  .case-cta:hover .case-cta-arrow,
+  .case-cta:focus-visible .case-cta-arrow {
+    transform: translateX(2px);
+  }
+  .case-cta-text {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-ink-mid);
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+  .case-cta:hover .case-cta-text,
+  .case-cta:focus-visible .case-cta-text {
+    color: var(--color-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .case-cta-dot, .case-cta-arrow, .case-cta-text { transition: none; }
+  }
 
   /* Logo client — silhouette monochrome (encre / blanc en dark). */
   .case-logo {

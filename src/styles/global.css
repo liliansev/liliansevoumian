@@ -73,13 +73,20 @@
   --color-grid-line-dark: oklch(0.30 0.008 290);
   --color-surface-on-dark: oklch(0.20 0.008 290);
 
-  /* Accent — MONOCHROME scellé (juin 2026). Plus de tokens violet/ember : un
-     seul hook neutre. Aujourd'hui = encre / surface (zéro couleur). Dérive de
-     --color-ink / --color-surface-low qui sont déjà theme-aware → aucun override
-     dark nécessaire. Pour réintroduire UN accent coloré un jour : donner une
-     vraie valeur OKLCH à --color-accent (et --color-accent-soft) ici uniquement. */
-  --color-accent: var(--color-ink);
-  --color-accent-soft: var(--color-surface-low);
+  /* Accent — FLAMME chaude (inspiration Mistral, juin 2026). Le hook accent
+     unique pilote tout : surtitres, FAQ, focus, slider, liens, sélection.
+     Orange Mistral en light ; remonté en clarté en dark (override plus bas).
+     --gradient-flame = jaune → orange → rouge, réservé aux moments signature
+     (filet de surtitre). Pour revenir au monochrome : redonner
+     --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
+  --color-accent: oklch(0.62 0.19 45);
+  --color-accent-soft: oklch(0.95 0.035 65);
+  --gradient-flame: linear-gradient(
+    90deg,
+    oklch(0.84 0.16 88),
+    oklch(0.72 0.19 55),
+    oklch(0.60 0.21 30)
+  );
 
   /* Error / Success */
   --color-error: oklch(0.55 0.22 25);
@@ -122,7 +129,9 @@ html.dark {
   --color-grid-line-active: oklch(0.50 0.008 290);
   --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-  /* --color-accent dérive de --color-ink (theme-aware) : aucun override dark. */
+  /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
+  --color-accent: oklch(0.74 0.18 55);
+  --color-accent-soft: oklch(0.30 0.05 50);
   --color-success: oklch(0.80 0.16 148);
   --color-error: oklch(0.78 0.16 25);
 }
@@ -144,7 +153,9 @@ html.dark {
     --color-grid-line-active: oklch(0.50 0.008 290);
     --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
 
-    /* --color-accent dérive de --color-ink (theme-aware) : aucun override dark. */
+    /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
+    --color-accent: oklch(0.74 0.18 55);
+    --color-accent-soft: oklch(0.30 0.05 50);
     --color-success: oklch(0.80 0.16 148);
     --color-error: oklch(0.78 0.16 25);
   }
@@ -412,8 +423,14 @@ a, button, input, textarea, select,
    SECTION KICKER — petit label mono au-dessus du titre de section
    ========================================================================= */
 
+.section-number,
+.eyebrow-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .section-number {
-  display: inline-block;
   font-family: var(--font-mono);
   font-size: var(--text-mono-caption);
   font-weight: 500;
@@ -421,6 +438,20 @@ a, button, input, textarea, select,
   text-transform: uppercase;
   color: var(--color-ink-low);
   margin-bottom: 1.5rem;
+}
+
+/* Filet court devant le label — signature éditoriale "surtitre" (Mistral-like).
+   Décoratif : 24px de hairline en ink-faint, avant le texte du surtitre.
+   .eyebrow-rule applique le même filet à un surtitre hors .section-number
+   (ex. l'eyebrow du hero en casse normale). */
+.section-number::before,
+.eyebrow-rule::before {
+  content: '';
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--gradient-flame);
 }
 
 /* =========================================================================
@@ -493,6 +524,58 @@ a, button, input, textarea, select,
 
 .btn-ghost:active {
   transform: scale(0.98);
+}
+
+/* =========================================================================
+   LINK-CTA — appel à l'action "texte" (pas un bouton). Inspiration éditoriale
+   Mistral : libellé mono + flèche qui avance, soulignement qui se dessine de
+   gauche à droite au hover/focus. Réservé aux actions SECONDAIRES.
+   ========================================================================= */
+
+.link-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+/* Soulignement qui se dessine de gauche à droite (background-size animé, pas
+   de pseudo séparé → fonctionne sur le seul libellé, pas sous la flèche). */
+.link-cta__label {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left 100%;
+  background-size: 0% 1px;
+  padding-bottom: 2px;
+  transition: background-size var(--duration-default) var(--ease-out-quint);
+}
+
+.link-cta:hover .link-cta__label,
+.link-cta:focus-visible .link-cta__label {
+  background-size: 100% 1px;
+}
+
+.link-cta__arrow {
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+
+.link-cta:hover .link-cta__arrow,
+.link-cta:focus-visible .link-cta__arrow {
+  transform: translateX(4px);
+  color: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-cta__label,
+  .link-cta__arrow { transition: none; }
 }
 
 /* =========================================================================
@@ -908,10 +991,26 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
-/* Le "+" glissant a été retiré (décrassage "Vercel") : la nav se contente d'un
-   shift de couleur au hover/actif, comme sur vercel.com. */
+/* Lien actif : shift de couleur + court filet flamme dessous (rappel discret du
+   surtitre), qui se dessine de gauche à droite. */
 .nav-link.is-active {
   font-weight: 600;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--gradient-flame);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+.nav-link.is-active::after {
+  transform: scaleX(1);
 }
 
 /* =========================================================================

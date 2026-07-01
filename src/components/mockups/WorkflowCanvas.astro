@@ -8,7 +8,7 @@
  */
 import { Icon } from 'astro-icon/components';
 
-interface Node { icon: string; kicker: string; title: string; sub?: string }
+interface Node { icon: string; kicker: string; title: string; sub?: string; color?: string }
 interface Props {
   trigger: Node;
   agent: Node;
@@ -34,7 +34,7 @@ const { trigger, agent, actions, describe } = Astro.props;
 
   <div class="wf-grid">
     <div class="wf-col wf-col-trigger">
-      <div class="wf-node">
+      <div class="wf-node" style={trigger.color ? `--node-brand:${trigger.color}` : undefined}>
         <div class="wf-head">
           <span class="wf-dot" aria-hidden="true"></span>
           <Icon name={trigger.icon} class="wf-icon" aria-hidden="true" />
@@ -46,7 +46,7 @@ const { trigger, agent, actions, describe } = Astro.props;
     </div>
 
     <div class="wf-col wf-col-agent">
-      <div class="wf-node is-accent">
+      <div class="wf-node is-accent" style={agent.color ? `--node-brand:${agent.color}` : undefined}>
         <div class="wf-head">
           <span class="wf-dot" aria-hidden="true"></span>
           <Icon name={agent.icon} class="wf-icon" aria-hidden="true" />
@@ -59,7 +59,7 @@ const { trigger, agent, actions, describe } = Astro.props;
 
     <div class="wf-col wf-col-actions">
       {actions.map((a) => (
-        <div class="wf-node">
+        <div class="wf-node" style={a.color ? `--node-brand:${a.color}` : undefined}>
           <div class="wf-head">
             <span class="wf-dot" aria-hidden="true"></span>
             <Icon name={a.icon} class="wf-icon" aria-hidden="true" />
@@ -112,13 +112,15 @@ const { trigger, agent, actions, describe } = Astro.props;
 
   .wf-node {
     background: var(--color-surface-high);
-    border: 1px solid var(--color-divider);
+    /* Bordure tintée par la couleur de marque du logo dans le nœud (--node-brand),
+       fondue dans le divider pour rester discrète. Pas de marque → divider pur. */
+    border: 1px solid color-mix(in oklab, var(--node-brand, var(--color-divider)) 45%, var(--color-divider));
     border-radius: var(--radius-md);
     padding: 10px 12px;
     box-shadow: var(--shadow-card);
   }
   .wf-node.is-accent {
-    border-color: var(--color-border-strong);
+    border-color: color-mix(in oklab, var(--node-brand, var(--color-border-strong)) 60%, var(--color-border-strong));
     box-shadow: var(--shadow-card-hover);
   }
 
@@ -132,7 +134,7 @@ const { trigger, agent, actions, describe } = Astro.props;
   .wf-node.is-accent .wf-dot { animation: wf-pulse 1.9s ease-in-out infinite; }
   @keyframes wf-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  .wf-icon { width: 14px; height: 14px; color: var(--color-ink-mid); flex-shrink: 0; }
+  .wf-icon { width: 14px; height: 14px; color: var(--node-brand, var(--color-ink-mid)); flex-shrink: 0; }
   .wf-kicker {
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
