@@ -31,7 +31,7 @@ import { Icon } from 'astro-icon/components';
     align-items: center;
     justify-content: center;
   }
-  .ss-mod.is-accent { border-color: var(--color-border-strong); }
+  .ss-mod.is-accent { border-color: var(--brand, var(--color-border-strong)); }
   .ss-ic { width: 16px; height: 16px; color: var(--color-ink-mid); }
   .ss-link {
     position: relative;
@@ -51,8 +51,8 @@ import { Icon } from 'astro-icon/components';
   @keyframes ss-pop {
     0%, 26%, 100% { box-shadow: var(--shadow-card); transform: scale(1); }
     9% {
-      box-shadow: 0 0 0 1.5px var(--color-accent),
-                  0 6px 16px -6px color-mix(in oklch, var(--color-accent) 45%, transparent);
+      box-shadow: 0 0 0 1.5px var(--brand, var(--color-accent)),
+                  0 6px 16px -6px color-mix(in oklch, var(--brand, var(--color-accent)) 45%, transparent);
       transform: scale(1.07);
     }
   }
@@ -61,7 +61,7 @@ import { Icon } from 'astro-icon/components';
     position: absolute;
     inset: 0 auto 0 0;
     width: 65%;
-    background: var(--color-accent);
+    background: var(--brand, var(--color-accent));
     animation: ss-flow 3.4s ease-in-out infinite;
   }
   .ss-link:nth-child(2)::after { animation-delay: 0.2s; }

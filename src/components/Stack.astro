@@ -9,6 +9,7 @@
  */
 import SectionHeader from './SectionHeader.astro';
 import { Icon } from 'astro-icon/components';
+import { brandColorFor } from '../data/brands';
 import MockupWindow from './mockups/MockupWindow.astro';
 import StackWorkflow from './mockups/StackWorkflow.astro';
 import StackScenario from './mockups/StackScenario.astro';
@@ -125,8 +126,9 @@ const layers: Layer[] = [
           <div class={`grid grid-cols-1 ${layer.tools.length >= 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-3 lg:gap-4 items-stretch`}>
             {layer.tools.map((tool) => {
               const Mock = MOCKS[tool.mockup];
+              const brand = brandColorFor(tool.icon);
               return (
-                <div class="card-soft bg-[var(--color-paper)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4">
+                <div class="stack-card card-soft bg-[var(--color-paper)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4" style={brand ? `--brand:${brand}` : undefined}>
                   <div class="flex items-center justify-between gap-3 flex-wrap">
                     <div class="inline-flex items-center gap-2.5 min-w-0">
                       <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
@@ -154,10 +156,19 @@ const layers: Layer[] = [
 </section>
 
 <style>
+  /* Logo titre dans la vraie couleur de la marque (--brand posé sur la carte),
+     fallback neutre pour les marques monochromes (Notion). */
   .stack-logo {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
-    color: var(--color-accent);
+    color: var(--brand, var(--color-ink-mid));
+  }
+
+  /* Chip de rôle teinté à la couleur de marque de la carte (défaut = accent flamme). */
+  .stack-card .chip-accent {
+    color: var(--brand, var(--color-accent));
+    background: color-mix(in oklab, var(--brand, var(--color-accent)) 12%, transparent);
+    border-color: transparent;
   }
 </style>
