@@ -2,43 +2,55 @@
 /*
  * LogoMarquee — bande d'OUTILS défilante, juste après le hero.
  *
- * Logos des outils les plus connus que Lilian connecte / automatise, via le jeu
- * simple-icons (déjà installé) → monochromes et thème-aware nativement
- * (currentColor). Boucle sans couture (liste doublée), fondu aux bords, pause au
- * survol, statique sous prefers-reduced-motion.
+ * Logos de marque EN COULEUR, sans encadrés. Deux sources :
+ *  - jeu iconify `logos:` (multicolore) pour les marques qui ont une vraie icône
+ *    couleur (Slack, Gmail, Mistral, Drive…) ;
+ *  - `simple-icons:` teinté à la couleur officielle de marque (via `color:`) pour
+ *    les marques monochromes/absentes du set couleur (n8n, Make, Google Sheets,
+ *    HubSpot, Stripe) — rendu identique au vrai logo, footprint homogène.
+ *
+ * Dark mode : les logos monochromes-foncés (Notion, OpenAI, Typeform) sont
+ * inversés en blanc (`invertDark`) → lisibles sur fond sombre sans ajouter de
+ * cadre. Boucle sans couture (liste doublée), fondu horizontal aux bords, pause
+ * au survol, statique sous prefers-reduced-motion.
  */
 import { Icon } from 'astro-icon/components';
-import { brandColorFor } from '../data/brands';
 
-/* La couleur de marque (bordure + icône de la tuile) est dérivée du module
-   partagé brands.ts à partir du nom d'icône → vraies couleurs officielles.
-   Marques monochromes (Notion, Typeform, OpenAI) : pas de couleur → neutre. */
-interface Tool { name: string; icon: string }
+interface Tool {
+  name: string;
+  icon: string;
+  /** Teinte de marque (simple-icons monochromes rendus en currentColor). */
+  color?: string;
+  /** Teinte de marque alternative en dark mode (si la couleur claire manque de contraste). */
+  darkColor?: string;
+  /** Logo monochrome-foncé → inversé en blanc sur fond sombre. */
+  invertDark?: boolean;
+}
+
 const tools: Tool[] = [
-  { name: 'n8n', icon: 'simple-icons:n8n' },
-  { name: 'Make', icon: 'simple-icons:make' },
-  { name: 'Zapier', icon: 'simple-icons:zapier' },
-  { name: 'Airtable', icon: 'simple-icons:airtable' },
-  { name: 'Notion', icon: 'simple-icons:notion' },
-  { name: 'Google Sheets', icon: 'simple-icons:googlesheets' },
-  { name: 'Slack', icon: 'simple-icons:slack' },
-  { name: 'HubSpot', icon: 'simple-icons:hubspot' },
-  { name: 'Stripe', icon: 'simple-icons:stripe' },
-  { name: 'OpenAI', icon: 'simple-icons:openai' },
-  { name: 'Claude', icon: 'simple-icons:anthropic' },
-  { name: 'Mistral', icon: 'simple-icons:mistralai' },
-  { name: 'Gmail', icon: 'simple-icons:gmail' },
-  { name: 'Google Drive', icon: 'simple-icons:googledrive' },
-  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar' },
-  { name: 'Calendly', icon: 'simple-icons:calendly' },
-  { name: 'Typeform', icon: 'simple-icons:typeform' },
-  { name: 'Shopify', icon: 'simple-icons:shopify' },
-  { name: 'WhatsApp', icon: 'simple-icons:whatsapp' },
-  { name: 'Telegram', icon: 'simple-icons:telegram' },
-  { name: 'Discord', icon: 'simple-icons:discord' },
-  { name: 'Mailchimp', icon: 'simple-icons:mailchimp' },
-  { name: 'Brevo', icon: 'simple-icons:brevo' },
-  { name: 'Trello', icon: 'simple-icons:trello' },
+  { name: 'n8n', icon: 'simple-icons:n8n', color: '#EA4B71' },
+  { name: 'Make', icon: 'simple-icons:make', color: '#6D00CC', darkColor: '#A970FF' },
+  { name: 'Airtable', icon: 'logos:airtable' },
+  { name: 'Notion', icon: 'logos:notion-icon', invertDark: true },
+  { name: 'Google Sheets', icon: 'simple-icons:googlesheets', color: '#0F9D58', darkColor: '#34D07F' },
+  { name: 'Slack', icon: 'logos:slack-icon' },
+  { name: 'HubSpot', icon: 'simple-icons:hubspot', color: '#FF7A59' },
+  { name: 'Stripe', icon: 'simple-icons:stripe', color: '#635BFF', darkColor: '#8B85FF' },
+  { name: 'OpenAI', icon: 'logos:openai-icon', invertDark: true },
+  { name: 'Claude', icon: 'logos:claude-icon' },
+  { name: 'Mistral', icon: 'logos:mistral-ai-icon' },
+  { name: 'Gmail', icon: 'logos:google-gmail' },
+  { name: 'Google Drive', icon: 'logos:google-drive' },
+  { name: 'Google Calendar', icon: 'logos:google-calendar' },
+  { name: 'Calendly', icon: 'simple-icons:calendly', color: '#006BFF', darkColor: '#4D94FF' },
+  { name: 'Shopify', icon: 'logos:shopify' },
+  { name: 'Typeform', icon: 'logos:typeform-icon', invertDark: true },
+  { name: 'WhatsApp', icon: 'logos:whatsapp-icon' },
+  { name: 'Telegram', icon: 'logos:telegram' },
+  { name: 'Discord', icon: 'logos:discord-icon' },
+  { name: 'Brevo', icon: 'simple-icons:brevo', color: '#0B996E', darkColor: '#1FB88A' },
+  { name: 'Trello', icon: 'logos:trello' },
+  { name: 'Zapier', icon: 'logos:zapier-icon' },
 ];
 const loop = [...tools, ...tools];
 ---
@@ -50,24 +62,27 @@ const loop = [...tools, ...tools];
 
   <div class="lm-viewport reveal">
     <div class="lm-track">
-      {loop.map((t, i) => {
-        const brand = brandColorFor(t.icon);
-        return (
-          <span class="lm-tool" aria-hidden={i >= tools.length ? 'true' : 'false'}>
-            <span class="lm-chip" style={brand ? `--brand:${brand}` : undefined}>
-              <Icon name={t.icon} class="lm-tool-ic" aria-hidden="true" />
-            </span>
-            <span class="lm-tool-name">{t.name}</span>
-          </span>
-        );
-      })}
+      {loop.map((t, i) => (
+        <span
+          class="lm-tool"
+          aria-hidden={i >= tools.length ? 'true' : 'false'}
+          style={t.color ? `--tool-c:${t.color};--tool-c-dark:${t.darkColor ?? t.color}` : undefined}
+        >
+          <Icon
+            name={t.icon}
+            class:list={['lm-tool-ic', { 'is-tinted': !!t.color, 'is-invert-dark': t.invertDark }]}
+            aria-hidden="true"
+          />
+          <span class="lm-tool-name">{t.name}</span>
+        </span>
+      ))}
     </div>
   </div>
 </section>
 
 <style>
-  /* Fond noir (paper), comme le hero et les sections voisines. */
-  .lm { padding-block: clamp(2.25rem, 5vw, 4rem); }
+  /* Beaucoup d'air autour de la bande → lecture premium. */
+  .lm { padding-block: clamp(4rem, 8vw, 7rem); }
 
   .lm-title {
     text-align: center;
@@ -87,72 +102,64 @@ const loop = [...tools, ...tools];
   }
 
   .lm-viewport {
-    margin-top: clamp(1.75rem, 3vw, 2.5rem);
+    margin-top: clamp(2.75rem, 5vw, 4rem);
+    /* Respiration verticale : headroom pour que le survol (scale) ne soit jamais
+       rogné par l'overflow horizontal du marquee. */
+    padding-block: 1.5rem;
     overflow: hidden;
-    -webkit-mask-image: linear-gradient(90deg, transparent, var(--color-ink) 10%, var(--color-ink) 90%, transparent);
-    mask-image: linear-gradient(90deg, transparent, var(--color-ink) 10%, var(--color-ink) 90%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, var(--color-ink) 8%, var(--color-ink) 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, var(--color-ink) 8%, var(--color-ink) 92%, transparent);
   }
   .lm-track {
     display: flex;
     align-items: center;
     width: max-content;
-    gap: clamp(2.5rem, 6vw, 5rem);
-    animation: lm-scroll 52s linear infinite;
+    gap: clamp(3.5rem, 8vw, 7rem);
+    animation: lm-scroll 42s linear infinite;
+    will-change: transform;
   }
   .lm-viewport:hover .lm-track { animation-play-state: paused; }
   @keyframes lm-scroll {
     to { transform: translateX(-50%); }
   }
 
-  /* Outil = tuile à bordure couleur-de-marque (DA propre à l'outil) + nom gris. */
+  /* Outil = logo couleur + nom en gris discret. */
   .lm-tool {
     display: inline-flex;
     align-items: center;
     gap: 12px;
     white-space: nowrap;
+    opacity: 0.82;
+    transition: opacity var(--duration-default) var(--ease-out-quint);
   }
+  .lm-tool:hover { opacity: 1; }
 
-  /* Tuile : bordure + icône dans la couleur officielle de la marque (--brand),
-     fond très légèrement teinté. Fallback neutre si pas de couleur de marque. */
-  .lm-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 46px;
+  .lm-tool-ic {
+    height: 30px;
+    width: auto;
     flex-shrink: 0;
-    border-radius: var(--radius-md);
-    color: var(--brand, var(--color-ink-faint));
-    border: 1px solid color-mix(in oklab, var(--brand, var(--color-ink-faint)) 48%, transparent);
-    background: color-mix(in oklab, var(--brand, var(--color-ink-faint)) 7%, var(--color-surface-high));
-    transition: border-color var(--duration-default) var(--ease-out-quint),
-                background-color var(--duration-default) var(--ease-out-quint),
-                transform var(--duration-default) var(--ease-out-quint);
+    transform-origin: center;
+    transition: transform var(--duration-default) var(--ease-out-quint);
   }
-  .lm-tool:hover .lm-chip {
-    border-color: var(--brand, var(--color-ink-mid));
-    background: color-mix(in oklab, var(--brand, var(--color-ink-faint)) 14%, var(--color-surface-high));
-    transform: translateY(-2px);
-  }
-  .lm-tool-ic { width: 24px; height: 24px; flex-shrink: 0; }
+  /* Léger zoom centré au survol — reste dans le headroom vertical, jamais rogné. */
+  .lm-tool:hover .lm-tool-ic { transform: scale(1.09); }
+
+  /* Marques monochromes teintées à leur couleur officielle. */
+  .lm-tool-ic.is-tinted { color: var(--tool-c); }
+  :global(html.dark) .lm-tool-ic.is-tinted { color: var(--tool-c-dark); }
+
+  /* Logos monochromes-foncés → inversés en blanc sur fond sombre. */
+  :global(html.dark) .lm-tool-ic.is-invert-dark { filter: invert(1); }
+
   .lm-tool-name {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.05rem, 1vw + 0.85rem, 1.45rem);
+    font-size: clamp(1.05rem, 1vw + 0.85rem, 1.4rem);
     letter-spacing: -0.02em;
     color: var(--color-ink-faint);
     transition: color var(--duration-default) var(--ease-out-quint);
   }
   .lm-tool:hover .lm-tool-name { color: var(--color-ink-mid); }
-
-  /* Mobile : tuiles + logos plus compacts, gaps resserrés. */
-  @media (max-width: 640px) {
-    .lm-track { gap: 1.75rem; }
-    .lm-tool { gap: 9px; }
-    .lm-chip { width: 36px; height: 36px; border-radius: var(--radius-sm); }
-    .lm-tool-ic { width: 18px; height: 18px; }
-    .lm-tool-name { font-size: 1rem; }
-  }
 
   @media (prefers-reduced-motion: reduce) {
     .lm-viewport { -webkit-mask-image: none; mask-image: none; }
@@ -161,7 +168,7 @@ const loop = [...tools, ...tools];
       width: auto;
       flex-wrap: wrap;
       justify-content: center;
-      gap: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
+      gap: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4.5rem);
     }
     .lm-tool[aria-hidden='true'] { display: none; }
   }
