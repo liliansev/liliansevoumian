@@ -80,6 +80,10 @@
      (filet de surtitre). Pour revenir au monochrome : redonner
      --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
   --color-accent: oklch(0.62 0.19 45);
+  /* Variante foncée de l'accent pour le PETIT texte : ~4.7:1 sur paper light
+     (AA texte OK), là où l'accent vif ne fait que 3.86:1. Le gros texte / le
+     graphique gardent --color-accent. En dark, l'accent vif suffit déjà (8:1). */
+  --color-accent-text: oklch(0.57 0.19 45);
   --color-accent-soft: oklch(0.95 0.035 65);
   --gradient-flame: linear-gradient(
     90deg,
@@ -131,6 +135,7 @@ html.dark {
 
   /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
   --color-accent: oklch(0.74 0.18 55);
+  --color-accent-text: var(--color-accent);
   --color-accent-soft: oklch(0.30 0.05 50);
   --color-success: oklch(0.80 0.16 148);
   --color-error: oklch(0.78 0.16 25);
@@ -155,6 +160,7 @@ html.dark {
 
     /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
     --color-accent: oklch(0.74 0.18 55);
+    --color-accent-text: var(--color-accent);
     --color-accent-soft: oklch(0.30 0.05 50);
     --color-success: oklch(0.80 0.16 148);
     --color-error: oklch(0.78 0.16 25);
@@ -570,7 +576,7 @@ a, button, input, textarea, select,
 .link-cta:hover .link-cta__arrow,
 .link-cta:focus-visible .link-cta__arrow {
   transform: translateX(4px);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -615,7 +621,7 @@ a, button, input, textarea, select,
 
 .chip-accent {
   background: var(--color-accent-soft);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   border-color: transparent;
 }
 
@@ -722,8 +728,8 @@ a, button, input, textarea, select,
   margin: 0;
 }
 
-.code-key { color: var(--color-accent); }
-.code-string { color: var(--color-accent); }
+.code-key { color: var(--color-accent-text); }
+.code-string { color: var(--color-accent-text); }
 .code-number { color: var(--color-ink-mid); }
 .code-comment { color: var(--color-ink-faint); font-style: italic; }
 
@@ -1105,7 +1111,7 @@ a[href^="mailto:"] {
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   min-width: 36px;
 }
 
@@ -1129,7 +1135,7 @@ a[href^="mailto:"] {
 
 .faq-details[open] .faq-caret {
   transform: rotate(45deg);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .faq-answer {

@@ -8,6 +8,7 @@ interface Channel {
   metric: string;
   href: string;
   icon: string;
+  color: string; // couleur officielle de la plateforme (hover)
 }
 
 interface NavLink {
@@ -24,9 +25,9 @@ interface NavColumn {
 }
 
 const channels: Channel[] = [
-  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin" },
-  { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube" },
-  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", icon: "lucide:mail" },
+  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#0A66C2" },
+  { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
+  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", icon: "lucide:mail", color: "#FF6719" },
 ];
 
 const navColumns: NavColumn[] = [
@@ -90,9 +91,10 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
                 href={ch.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 text-[var(--color-ink)] hover:text-[var(--color-accent)] transition-colors min-h-[44px] py-2"
+                style={`--chan:${ch.color}`}
+                class="channel-link group inline-flex items-center gap-2.5 text-[var(--color-ink)] transition-colors min-h-[44px] py-2"
               >
-                <Icon name={ch.icon} class="size-4 text-[var(--color-ink-mid)] shrink-0" aria-hidden="true" />
+                <Icon name={ch.icon} class="channel-ic size-4 text-[var(--color-ink-mid)] shrink-0" aria-hidden="true" />
                 <span class="mono-label">{ch.label}</span>
                 <span class="mono-caption text-[var(--color-ink-low)]">{ch.metric}</span>
                 <span class="mono-label opacity-40 group-hover:opacity-100 transition-opacity">↗</span>
@@ -136,3 +138,16 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     </div>
   </div>
 </footer>
+
+<style>
+  /* Canaux : au survol, le lien + son icône prennent la couleur officielle de la
+     plateforme (--chan). Focus clavier inclus. */
+  .channel-link:hover,
+  .channel-link:focus-visible {
+    color: var(--chan, var(--color-accent));
+  }
+  .channel-link:hover .channel-ic,
+  .channel-link:focus-visible .channel-ic {
+    color: var(--chan, var(--color-accent));
+  }
+</style>

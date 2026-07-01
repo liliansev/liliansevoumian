@@ -1,6 +1,7 @@
 ---
 /* n8n — mini-workflow : Email → Agent IA → Tâche (sur fond pointillé). */
 import { Icon } from 'astro-icon/components';
+import { brandColorFor } from '../../data/brands';
 ---
 <div class="sw" role="img" aria-label="Workflow n8n : un email entrant déclenche un agent IA qui crée la tâche.">
   <div class="sw-node">
@@ -8,7 +9,7 @@ import { Icon } from 'astro-icon/components';
     <span class="sw-k">Email</span>
   </div>
   <span class="sw-arr" aria-hidden="true">→</span>
-  <div class="sw-node is-accent">
+  <div class="sw-node is-accent" style={`--ic:${brandColorFor('simple-icons:anthropic')}`}>
     <Icon name="simple-icons:anthropic" class="sw-ic" aria-hidden="true" />
     <span class="sw-k">Agent IA</span>
   </div>
@@ -42,7 +43,8 @@ import { Icon } from 'astro-icon/components';
     box-shadow: var(--shadow-card);
   }
   .sw-node.is-accent { border-color: var(--brand, var(--color-border-strong)); }
-  .sw-ic { width: 16px; height: 16px; color: var(--color-ink-mid); }
+  /* Icône dans la couleur de son propre logo (--ic posé sur le nœud), sinon neutre. */
+  .sw-ic { width: 16px; height: 16px; color: var(--ic, var(--color-ink-mid)); }
   .sw-k { font-family: var(--font-mono); font-size: var(--text-mono-caption); color: var(--color-ink-low); }
   .sw-arr { flex-shrink: 0; font-family: var(--font-mono); color: var(--color-ink-faint); transition: none; }
 
