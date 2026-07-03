@@ -49,6 +49,11 @@
   --color-paper: oklch(0.995 0.002 290);
   --color-surface-low: oklch(0.975 0.003 290);
   --color-surface-high: oklch(1 0.002 290);
+  /* Bande de section teintée ("gris sobre") — plus profonde que surface-low
+     pour créer un rythme vertical sans passer en dark. Light : 0.04 sous paper,
+     subtil mais lisible. Les cartes/panneaux internes (paper/surface-low)
+     restent plus clairs → ils flottent au-dessus de la bande. */
+  --color-section-band: oklch(0.955 0.004 290);
 
   /* Ink (neutrals tinted violet hue 290) */
   --color-ink: oklch(0.16 0.008 290);
@@ -121,6 +126,7 @@ html.dark {
   --color-paper: oklch(0.13 0.008 290);
   --color-surface-low: var(--color-surface-on-dark);
   --color-surface-high: oklch(0.16 0.008 290);
+  --color-section-band: oklch(0.185 0.006 290);
 
   --color-ink: var(--color-text-on-dark);
   --color-ink-soft: var(--color-text-on-dark-mid);
@@ -146,6 +152,7 @@ html.dark {
     --color-paper: oklch(0.13 0.008 290);
     --color-surface-low: var(--color-surface-on-dark);
     --color-surface-high: oklch(0.16 0.008 290);
+    --color-section-band: oklch(0.185 0.006 290);
 
     --color-ink: var(--color-text-on-dark);
     --color-ink-soft: var(--color-text-on-dark-mid);
@@ -165,6 +172,16 @@ html.dark {
     --color-success: oklch(0.80 0.16 148);
     --color-error: oklch(0.78 0.16 25);
   }
+}
+
+/* =========================================================================
+   SECTION SURFACES — bandes teintées pour le rythme vertical
+   ========================================================================= */
+
+/* Applique le fond de bande "gris sobre" (Calculateur ROI, Offres).
+   Réutilisable : ajouter cette classe à la racine d'une <section> suffit. */
+.section-band {
+  background-color: var(--color-section-band);
 }
 
 /* =========================================================================
