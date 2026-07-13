@@ -21,6 +21,10 @@ export const faqs: FaqItem[] = [
     a: "Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. Sur un workflow ciblé, c'est rentabilisé en quelques semaines ; sur une mission complète, en quelques mois. On regarde vos vrais process ensemble au premier échange.",
   },
   {
+    q: "Combien ça coûte ?",
+    a: "Un workflow ciblé : 1 500 à 3 000 €. Une mission complète (cadrage, déploiement, formation) : 8 000 à 15 000 €. En régie, intégré à votre équipe : 650 €/jour. En coaching : 150 €/h en séance ponctuelle, 2 500 €/mois en mentoring d'équipe. Pas de grille figée derrière ces fourchettes : le chiffre exact dépend de vos process, il est posé au premier appel et le devis est ferme.",
+  },
+  {
     q: "Et si l'API d'un de mes outils change ?",
     a: "Tous mes workflows incluent une couche d'erreur explicite (try/catch + Slack alert) et sont versionnés en JSON exportable. Si Make ou n8n bloque sur un changement d'API tiers, vous voyez l'erreur, vous savez ce qu'il s'est passé. Pendant les 30 j de SLA, je corrige sans surcoût. Au-delà, on cale ça ensemble. La plupart des évolutions courantes prennent moins d'1 h.",
   },
