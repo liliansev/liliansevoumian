@@ -34,6 +34,13 @@ const { class: className = '' } = Astro.props;
   .theme-toggle {
     position: relative;
   }
+  /* Zone de tap étendue à 44×44 (WCAG 2.5.8) sans grossir le bouton visuel :
+     le pseudo-élément d'un <button> est cliquable. 36px + 2×4px = 44px. */
+  .theme-toggle::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
   /* Light mode (default) : sun visible, moon hidden */
   .theme-toggle-moon {
     opacity: 0;

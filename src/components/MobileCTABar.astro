@@ -11,7 +11,7 @@
 
 <div
   id="mobile-cta-bar"
-  class="md:hidden fixed inset-x-0 bottom-0 z-40 translate-y-full"
+  class="md:hidden fixed inset-x-0 bottom-0 z-40"
   aria-hidden="true"
 >
   <div class="border-t border-[var(--color-divider)] bg-[color-mix(in_oklch,var(--color-paper)_90%,transparent)] backdrop-blur-md px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
@@ -30,11 +30,15 @@
 </div>
 
 <style>
+  /* Une seule propriété pilote l'entrée/sortie : `translate` scopé ici.
+     Ne PAS remettre l'utilitaire translate-y-full sur l'élément — Tailwind v4
+     le compile en propriété CSS `translate`, qu'un override `transform` n'annule pas. */
   #mobile-cta-bar {
-    transition: transform var(--duration-default) var(--ease-out-quint);
+    translate: 0 100%;
+    transition: translate var(--duration-default) var(--ease-out-quint);
   }
   #mobile-cta-bar.is-visible {
-    transform: translateY(0);
+    translate: 0 0;
   }
   @media (prefers-reduced-motion: reduce) {
     #mobile-cta-bar { transition: none; }

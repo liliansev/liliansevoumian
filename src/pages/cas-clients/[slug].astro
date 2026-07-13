@@ -240,16 +240,19 @@ const articleSchema = {
     border-radius: var(--radius-full);
     background: var(--color-accent);
   }
+  /* Citation : fond différencié + bordure pleine — pas de side-stripe accent
+     (ban DS « bordure latérale colorée >1px »). */
   .case-prose :global(blockquote) {
     margin: 1.5em 0;
     padding: 1em 1.25em;
-    border-left: 2px solid var(--color-accent);
+    border: 1px solid var(--color-divider);
     background: var(--color-surface-low);
     border-radius: var(--radius-sm);
     color: var(--color-ink-mid);
   }
   .case-prose :global(a) {
-    color: var(--color-accent);
+    /* accent-text (pas accent vif) : lien dans du corps de texte → AA 4.5:1. */
+    color: var(--color-accent-text);
     text-decoration: underline;
     text-underline-offset: 2px;
   }

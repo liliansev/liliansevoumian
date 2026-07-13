@@ -3,7 +3,8 @@
  * HeroManifesto — refonte "Vercel" (juin 2026).
  *   Dé-boxé : le statement (eyebrow + H1 + sous-titre + CTA + microdata) flotte
  *   directement sur le papier, sans carte bordée. Le portrait couleur est le seul
- *   visuel et le seul point de couleur de la page (choix assumé).
+ *   visuel du hero (depuis f135af5, marquee et stack portent aussi de la couleur
+ *   de marque — le portrait n'est plus « le seul point de couleur de la page »).
  *
  * Mobile (<lg) : colonne unique, photo en dessous.
  * Desktop (lg+) : split 1.35fr / 1fr, aligné au centre vertical.
@@ -56,15 +57,17 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
 
       </div>
 
-      <!-- Portrait couleur — seul visuel et seul point de couleur de la page (assumé).
-           Masqué sur mobile : la photo y est reprise en avatar dans la nav (dès qu'on dépasse le Hero). -->
+      <!-- Portrait couleur — seul visuel du hero.
+           Masqué sur mobile : la photo y est reprise en avatar dans la nav (dès qu'on dépasse le Hero).
+           loading="lazy" (pas eager/high) : le conteneur est display:none sous lg,
+           un fetch eager téléchargerait l'AVIF pour rien sur 100 % des mobiles.
+           Le LCP de la page est le H1 texte, pas cette image. -->
       <div class="reveal hero-portrait relative hidden lg:block rounded-[var(--radius-lg)] overflow-hidden border border-[var(--color-divider)]">
         <Picture
           src={lilianPhoto}
           alt="Lilian Sevoumian, freelance automatisation et IA (n8n, Make)"
           class="hero-portrait-img block w-full h-full object-cover"
-          loading="eager"
-          fetchpriority="high"
+          loading="lazy"
           formats={['avif', 'webp']}
           widths={[480, 768, 1024]}
           sizes="(min-width: 1024px) 30vw, 100vw"

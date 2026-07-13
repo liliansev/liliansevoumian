@@ -156,7 +156,9 @@ const loop = [...tools, ...tools];
     font-weight: 500;
     font-size: clamp(1.05rem, 1vw + 0.85rem, 1.4rem);
     letter-spacing: -0.02em;
-    color: var(--color-ink-faint);
+    /* ink-low, pas ink-faint : le nom de l'outil est porteur de sens (complément
+       du logo) — ink-faint plafonnait à ~2:1 sur paper (fail WCAG 1.4.3). */
+    color: var(--color-ink-low);
     transition: color var(--duration-default) var(--ease-out-quint);
   }
   .lm-tool:hover .lm-tool-name { color: var(--color-ink-mid); }

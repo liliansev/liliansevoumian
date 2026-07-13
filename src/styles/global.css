@@ -276,13 +276,26 @@ a {
   outline: none;
 }
 
-/* Focus ring clavier UNIQUEMENT sur appareils non-tactiles (souris + pointeur fin).
-   Sur mobile/tactile, iOS/Safari dessine un gros cadre noir disgracieux au tap ET
-   sur tout .focus() programmatique (ex. fermeture d'un menu, retour de focus). On ne
-   l'affiche donc jamais sur tactile — l'a11y clavier reste préservée sur desktop.
+/* Focus ring clavier sur tout appareil disposant d'un pointeur fin OU d'un hover
+   (any-hover/any-pointer : couvre aussi les hybrides type iPad + Magic Keyboard,
+   que l'ancien gate `hover AND pointer:fine` excluait). Sur tactile pur (iPhone),
+   iOS/Safari dessine un gros cadre noir disgracieux au tap ET sur tout .focus()
+   programmatique → toujours aucun ring générique là-bas.
    ⚠️ Règle globale anti-cadre-noir-iOS — cf. mémoire globale "ios-focus-outline-mobile". */
-@media (hover: hover) and (pointer: fine) {
+@media (any-hover: hover), (any-pointer: fine) {
   :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Champs de saisie : ring focus même sur tactile pur (WCAG 2.4.7). Un champ
+   focalisé engage toujours un clavier (virtuel ou physique) et n'est pas
+   concerné par le cadre noir iOS des éléments non-form (liens, conteneurs). */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type='range']):not([type='checkbox']):not([type='radio']):focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
@@ -404,6 +417,9 @@ a, button, input, textarea, select,
    certains endroits et s'efface entre. Ancrés au bord extérieur (0%/100%) → ils
    se dissipent vers le contenu. Positions en px pour des patchs discrets (pas
    un seul grand dégradé). Gauche et droite décalés pour casser la symétrie. */
+/* Les deux derniers patchs de chaque gouttière sont ancrés au BAS de la page
+   (calc(100% - …)) : la signature couvre FAQ/Contact/Footer quelle que soit la
+   hauteur totale, et suivra les futurs ajouts de sections sans retouche. */
 .technical-grid::before {
   left: 0;
   -webkit-mask-image:
@@ -411,13 +427,17 @@ a, button, input, textarea, select,
     radial-gradient(420px 300px at 0% 1640px, black 0%, transparent 72%),
     radial-gradient(480px 340px at 0% 3160px, black 0%, transparent 72%),
     radial-gradient(440px 320px at 0% 4600px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%);
+    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%),
+    radial-gradient(460px 330px at 0% 7600px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 0% calc(100% - 480px), black 0%, transparent 72%);
   mask-image:
     radial-gradient(460px 320px at 0% 240px,  black 0%, transparent 72%),
     radial-gradient(420px 300px at 0% 1640px, black 0%, transparent 72%),
     radial-gradient(480px 340px at 0% 3160px, black 0%, transparent 72%),
     radial-gradient(440px 320px at 0% 4600px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%);
+    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%),
+    radial-gradient(460px 330px at 0% 7600px, black 0%, transparent 72%),
+    radial-gradient(440px 320px at 0% calc(100% - 480px), black 0%, transparent 72%);
 }
 
 .technical-grid::after {
@@ -427,13 +447,17 @@ a, button, input, textarea, select,
     radial-gradient(460px 340px at 100% 2360px, black 0%, transparent 72%),
     radial-gradient(420px 300px at 100% 3880px, black 0%, transparent 72%),
     radial-gradient(440px 320px at 100% 5320px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%);
+    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%),
+    radial-gradient(420px 310px at 100% 8300px, black 0%, transparent 72%),
+    radial-gradient(460px 340px at 100% calc(100% - 1200px), black 0%, transparent 72%);
   mask-image:
     radial-gradient(440px 300px at 100% 820px,  black 0%, transparent 72%),
     radial-gradient(460px 340px at 100% 2360px, black 0%, transparent 72%),
     radial-gradient(420px 300px at 100% 3880px, black 0%, transparent 72%),
     radial-gradient(440px 320px at 100% 5320px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%);
+    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%),
+    radial-gradient(420px 310px at 100% 8300px, black 0%, transparent 72%),
+    radial-gradient(460px 340px at 100% calc(100% - 1200px), black 0%, transparent 72%);
 }
 
 /* Sous ~640px les gouttières sont quasi nulles : pas de quadrillage, papier nu. */
@@ -473,7 +497,7 @@ a, button, input, textarea, select,
   flex-shrink: 0;
   width: 1.5rem;
   height: 2px;
-  border-radius: 1px;
+  border-radius: var(--radius-full); /* pill : clampe à 1px sur 2px de haut */
   background: var(--gradient-flame);
 }
 
@@ -638,7 +662,10 @@ a, button, input, textarea, select,
 
 .chip-accent {
   background: var(--color-accent-soft);
-  color: var(--color-accent-text);
+  /* Un cran plus sombre que --color-accent-text : sur le fond teinté accent-soft
+     (L 0.95), accent-text seul plafonne à ~4.1:1 — le mix vers l'encre repasse
+     le mono-caption 11px au-dessus de 4.5:1 (AA). */
+  color: color-mix(in oklab, var(--color-accent-text) 78%, var(--color-ink));
   border-color: transparent;
 }
 
@@ -785,7 +812,9 @@ a, button, input, textarea, select,
   border-color: var(--color-ink-faint);
 }
 
-.input-text:focus {
+/* :focus-visible (pas :focus) : les champs texte le matchent toujours au focus,
+   mais ça aligne les inputs sur le contrat des boutons/liens du système. */
+.input-text:focus-visible {
   border-color: var(--color-accent);
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
@@ -799,16 +828,23 @@ a, button, input, textarea, select,
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 4px;
-  /* Track avec fill violet entre min et current value, via --slider-progress
+  /* Zone tactile 28px (WCAG 2.5.8 — l'input à 4px était insaisissable au doigt) ;
+     la piste VISIBLE reste une bande de 4px dessinée au centre via background-size.
+     Ne pas repasser le hover en shorthand `background:` — il réinitialiserait
+     size/position et la piste s'étalerait sur les 28px. */
+  height: 28px;
+  /* Track avec fill accent entre min et current value, via --slider-progress
      mis à jour par le JS du composant ROI à chaque input event. */
-  background: linear-gradient(
+  background-image: linear-gradient(
     to right,
     var(--color-accent) 0%,
     var(--color-accent) var(--slider-progress, 0%),
     var(--color-divider) var(--slider-progress, 0%),
     var(--color-divider) 100%
   );
+  background-repeat: no-repeat;
+  background-size: 100% 4px;
+  background-position: center;
   border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
@@ -816,7 +852,7 @@ a, button, input, textarea, select,
 }
 
 .roi-slider:hover {
-  background: linear-gradient(
+  background-image: linear-gradient(
     to right,
     var(--color-accent) 0%,
     var(--color-accent) var(--slider-progress, 0%),
@@ -1026,7 +1062,7 @@ a, button, input, textarea, select,
   right: 12px;
   bottom: 5px;
   height: 2px;
-  border-radius: 1px;
+  border-radius: var(--radius-full); /* pill : clampe à 1px sur 2px de haut */
   background: var(--gradient-flame);
   transform: scaleX(0);
   transform-origin: left;
@@ -1118,7 +1154,7 @@ a[href^="mailto:"] {
 }
 
 .faq-summary:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .faq-num {
@@ -1267,8 +1303,8 @@ a[href^="mailto:"] {
 .cal-overlay-close {
   flex-shrink: 0;
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-sm);
   background: transparent;

@@ -118,7 +118,7 @@ const layers: Layer[] = [
       {layers.map((layer) => (
         <div>
           <div class="flex items-baseline gap-x-3 gap-y-1 flex-wrap mb-4 md:mb-5 pb-3 border-b border-[var(--color-divider)]">
-            <span class="mono-label text-[var(--color-accent)]">{layer.label}</span>
+            <span class="mono-label text-[var(--color-accent-text)]">{layer.label}</span>
             <span class="mono-caption text-[var(--color-ink-low)]">{layer.caption}</span>
             <span class="mono-caption text-[var(--color-ink-low)] ml-auto whitespace-nowrap">{layer.tools.length} OUTILS</span>
           </div>
@@ -166,9 +166,13 @@ const layers: Layer[] = [
   }
 
   /* Chip de rôle à la couleur de marque de la carte ; fallback encre (noir/blanc)
-     pour les marques monochromes — pas d'orange générique sur Notion. */
+     pour les marques monochromes — pas d'orange générique sur Notion.
+     Le texte est mixé vers l'encre : la couleur de marque brute sur son propre
+     tint 12% tombait sous 4.5:1 (fail AA sur du 11px uppercase) ; le mix garde
+     la teinte de marque tout en repassant AA (et s'éclaircit seul en dark,
+     où --color-ink bascule vers le clair). */
   .stack-card .chip-accent {
-    color: var(--brand, var(--color-ink));
+    color: color-mix(in oklab, var(--brand, var(--color-ink)) 65%, var(--color-ink));
     background: color-mix(in oklab, var(--brand, var(--color-ink)) 12%, transparent);
     border-color: transparent;
   }
