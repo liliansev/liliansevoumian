@@ -197,6 +197,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     mobileMenu.style.visibility = willOpen ? 'visible' : 'hidden';
     mobileMenu.setAttribute('aria-hidden', String(!willOpen));
     menuBtn.setAttribute('aria-expanded', String(willOpen));
+    menuBtn.setAttribute('aria-label', willOpen ? 'Fermer le menu' : 'Ouvrir le menu');
     document.body.style.overflow = willOpen ? 'hidden' : '';
     // L'icône bascule points ⇄ croix via le sélecteur CSS [aria-expanded].
 
@@ -307,9 +308,18 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   /* CTA central mobile. */
   .nav-mid-cta {
     white-space: nowrap;
-    transition: color var(--duration-default) var(--ease-out-quint);
+    transition: color var(--duration-default) var(--ease-out-quint),
+                opacity var(--duration-default) var(--ease-out-quint),
+                visibility var(--duration-default);
   }
   .nav-mid-cta:hover { color: var(--color-accent-text); }
+  /* Quand la MobileCTABar est à l'écran, on éteint le CTA central : une seule
+     instance de « Réserver un appel » visible à la fois (anti triple-CTA).
+     visibility retire aussi le lien de l'ordre de tab. */
+  :global(body.cta-bar-visible) .nav-mid-cta {
+    opacity: 0;
+    visibility: hidden;
+  }
 
   /* Déclencheur de menu : grille de 9 points (fermé) ⇄ croix (ouvert), sans carré. */
   .menu-trigger {

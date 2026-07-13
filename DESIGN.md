@@ -15,7 +15,7 @@ colors:
   # Accent flamme (évolution fin juin 2026, commits 51f5146/f135af5/cf8c48b) :
   # UN seul hue chaud (45), décliné en 3 tokens + 1 gradient signature.
   accent: "oklch(0.62 0.19 45)"
-  accent-text: "oklch(0.57 0.19 45)"
+  accent-text: "oklch(0.55 0.19 45)"
   accent-soft: "oklch(0.95 0.035 65)"
   # --gradient-flame (jaune→orange→rouge) : réservé aux filets de surtitre
   # et au filet du lien de nav actif. Jamais sur du texte (ban gradient text).
@@ -183,7 +183,7 @@ Base **monochrome** : des neutres tintés zinc (hue 290), du papier presque blan
 ### Accent (flamme, hue 45)
 
 - **Accent** (`oklch(0.62 0.19 45)`, `--color-accent`): la teinte vive. Usages autorisés, liste fermée : chiffre-clé du ROI (large text ≥3:1 OK), fill des sliders ROI, underline/filet du lien de nav actif, focus ring, `::selection`, hover d'éléments interactifs déjà identifiés. En dark, le token est remonté en clarté (override dans `global.css`).
-- **Accent Text** (`oklch(0.57 0.19 45)`, `--color-accent-text`): la même teinte, assombrie pour le **petit texte** (~4.7:1 sur paper, AA). Obligatoire dès que l'accent colore du texte < 18px : liens augmentes.fr, numéros du menu mobile, labels de couche Stack, hovers de texte mono-caption. **Si tu hésites entre les deux sur du texte, c'est accent-text.**
+- **Accent Text** (`oklch(0.55 0.19 45)`, `--color-accent-text`): la même teinte, assombrie pour le **petit texte** — AA sur TOUTES les surfaces claires (~5.1:1 paper, ~4.6:1 section-band, ~4.8:1 surface-low ; à 0.57 le token échouait sur les bandes grises). Obligatoire dès que l'accent colore du texte < 18px : liens augmentes.fr, numéros menu mobile/principes, labels de couche Stack, microdata des pages expert, hovers mono-caption. **Si tu hésites entre les deux sur du texte, c'est accent-text.**
 - **Accent Soft** (`oklch(0.95 0.035 65)`, `--color-accent-soft`): tint de fond (chips). Tout texte posé dessus se mixe vers l'encre pour rester AA (voir `.chip-accent`).
 - **Gradient Flame** (`--gradient-flame`, jaune→orange→rouge): réservé aux **filets décoratifs** de 2px (surtitre `.section-number::before`, lien nav actif `.nav-link::after`). Jamais en fond de bloc, jamais sur du texte.
 

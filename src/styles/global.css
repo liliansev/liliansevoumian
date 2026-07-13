@@ -85,10 +85,12 @@
      (filet de surtitre). Pour revenir au monochrome : redonner
      --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
   --color-accent: oklch(0.62 0.19 45);
-  /* Variante foncée de l'accent pour le PETIT texte : ~4.7:1 sur paper light
-     (AA texte OK), là où l'accent vif ne fait que 3.86:1. Le gros texte / le
-     graphique gardent --color-accent. En dark, l'accent vif suffit déjà (8:1). */
-  --color-accent-text: oklch(0.57 0.19 45);
+  /* Variante foncée de l'accent pour le PETIT texte : ~5.1:1 sur paper light,
+     ~4.6:1 sur section-band, ~4.8:1 sur surface-low (AA partout), là où
+     l'accent vif ne fait que 3.87:1. À 0.57 le token passait sur paper (4.73)
+     mais échouait sur les bandes grises (4.22). Le gros texte / le graphique
+     gardent --color-accent. En dark, l'accent vif suffit déjà (8.27:1). */
+  --color-accent-text: oklch(0.55 0.19 45);
   --color-accent-soft: oklch(0.95 0.035 65);
   --gradient-flame: linear-gradient(
     90deg,

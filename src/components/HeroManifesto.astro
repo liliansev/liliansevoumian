@@ -11,10 +11,27 @@
  *
  * Photo via <Picture> d'astro:assets (AVIF/WebP + srcset). Asset dans src/assets/.
  */
-import { Picture } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import LinkCTA from './LinkCTA.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
+
+// Preload media-gaté du portrait : à ≥1024px l'image est above the fold et
+// candidate LCP — on la précharge SANS pénaliser le mobile (media query sur le
+// link, le portrait y est display:none et loading=lazy ne le fetche jamais).
+const portraitPreload = await getImage({
+  src: lilianPhoto,
+  format: 'avif',
+  widths: [480, 768, 1024],
+});
 ---
+
+<link
+  rel="preload"
+  as="image"
+  imagesrcset={portraitPreload.srcSet.attribute}
+  imagesizes="(min-width: 1024px) 30vw, 100vw"
+  media="(min-width: 1024px)"
+/>
 
 <section
   id="hero"

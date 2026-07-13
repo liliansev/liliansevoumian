@@ -118,7 +118,10 @@ const loop = [...tools, ...tools];
     animation: lm-scroll 42s linear infinite;
     will-change: transform;
   }
-  .lm-viewport:hover .lm-track { animation-play-state: paused; }
+  /* Pause au hover ET au focus clavier (WCAG 2.2.2 : contrôle du mouvement
+     indépendant de la préférence OS reduced-motion). */
+  .lm-viewport:hover .lm-track,
+  .lm-viewport:focus-within .lm-track { animation-play-state: paused; }
   @keyframes lm-scroll {
     to { transform: translateX(-50%); }
   }

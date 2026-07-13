@@ -8,6 +8,9 @@ interface Props {
   bodyMaxWidth?: string;
   titleMaxWidth?: string;
   class?: string;
+  /** Niveau de heading rendu. 'h1' pour le header principal d'une sous-page
+      (chaque page doit avoir exactement un h1) ; 'h2' par défaut en section. */
+  as?: 'h1' | 'h2';
 }
 
 const {
@@ -17,6 +20,7 @@ const {
   bodyMaxWidth = '60ch',
   titleMaxWidth = '18ch',
   class: className = '',
+  as: Heading = 'h2',
 } = Astro.props;
 ---
 
@@ -29,12 +33,12 @@ const {
     <div class="section-number">
       {label}
     </div>
-    <h2
+    <Heading
       class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"
       style={`max-width: ${titleMaxWidth};`}
     >
       {title}
-    </h2>
+    </Heading>
   </div>
 
   {body && (

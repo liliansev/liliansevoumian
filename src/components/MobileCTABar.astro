@@ -64,6 +64,9 @@
       bar!.classList.toggle('is-visible', visible);
       bar!.setAttribute('aria-hidden', String(!visible));
       if (link) link.tabIndex = visible ? 0 : -1;
+      // Signale l'état à la nav : le CTA central s'éteint quand la barre est
+      // visible (une seule instance de « Réserver un appel » à la fois).
+      document.body.classList.toggle('cta-bar-visible', visible);
     }
 
     new IntersectionObserver((entries) => {
