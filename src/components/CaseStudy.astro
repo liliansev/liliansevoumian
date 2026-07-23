@@ -2,7 +2,7 @@
 /*
  * CaseStudy.astro — section §02.
  *
- * Lignes alternées texte + mini-mockup produit (façon capture d'app), un mockup
+ * Carrousel chronologique (projet le plus récent en premier), avec un mockup
  * sur-mesure par mission pour rendre concret CE QUE FAIT l'automatisation :
  *   · Fraich Touch  → panneau facturation (factures payées / relance auto)
  *   · M Partners    → canvas de workflow (sourcing → agent IA → CRM)
@@ -16,6 +16,7 @@ import MockupWindow from './mockups/MockupWindow.astro';
 import MockupList from './mockups/MockupList.astro';
 import WorkflowCanvas from './mockups/WorkflowCanvas.astro';
 import { brandColorFor } from '../data/brands';
+import { Icon } from 'astro-icon/components';
 
 const fraichTouch = {
   client: 'Fraich Touch',
@@ -45,6 +46,7 @@ const celeris = {
   title: "Un catalogue produits qui s'enrichit tout seul.",
   description:
     "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP, pensé pour tourner en interne, avec une exigence forte de souveraineté des données.",
+  results: ['2–3 ¢ COÛT IA PAR FICHE', '797 FICHES SPECS SCRAPÉES'],
   href: '/cas-clients/celeris',
 };
 const humblePlus = {
@@ -61,6 +63,7 @@ const humblePlus = {
 <section
   id="cas"
   data-section
+  data-case-carousel
   class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
@@ -72,164 +75,548 @@ const humblePlus = {
       titleMaxWidth="24ch"
     />
 
-    <div class="flex flex-col gap-16 md:gap-20 lg:gap-24">
+    <div class="case-carousel-toolbar reveal">
+      <div class="case-carousel-status">
+        <span class="mono-caption text-[var(--color-ink-low)]">DU PLUS RÉCENT AU PLUS ANCIEN</span>
+        <span class="case-carousel-count">
+          <span aria-hidden="true"><span data-case-current>01</span> / 04</span>
+          <span class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 4 : Humble+</span>
+        </span>
+      </div>
 
-      {/* ── Fraich Touch : texte ⟶ facturation ── */}
-      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-        <div class="flex flex-col gap-5">
-          <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <img class="case-logo" src={fraichTouch.logo} alt={fraichTouch.client} width="810" height="810" style={`--logo-scale:${fraichTouch.logoScale ?? 1}`} loading="lazy" decoding="async" />
-            <span class="mono-caption text-[var(--color-ink-low)]">{fraichTouch.sector}</span>
-          </div>
-          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{fraichTouch.title}</h3>
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{fraichTouch.description}</p>
-          <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mono-caption text-[var(--color-ink-mid)] m-0">
-            {fraichTouch.results.map((result, i) => (
-              <Fragment>
-                {i > 0 && <span aria-hidden="true">·</span>}
-                <span>{result}</span>
-              </Fragment>
-            ))}
-          </p>
-          <a href={fraichTouch.href} class="case-cta group w-fit">
-            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-            <span class="case-cta-text">VOIR LE CAS</span>
-          </a>
-        </div>
-        <div>
-          <MockupWindow file="facturation — clients.auto" status="3 payées" statusTone="success">
-            <MockupList
-              items={[
-                { label: 'Brand × Créateur', sub: 'INV-2041', value: '4 200 €', status: 'done' },
-                { label: 'Partenariat sport', sub: 'INV-2042', value: '1 850 €', status: 'done' },
-                { label: 'Relance J+7', sub: 'INV-2043', value: '2 600 €', status: 'pending' },
-              ]}
-            />
-            <Fragment slot="footer">
-              <span>▸ RELANCES AUTO · J+7 / J+14</span>
-              <span class="ml-auto">0 RETARD</span>
-            </Fragment>
-          </MockupWindow>
-        </div>
-      </article>
+      <div class="case-carousel-actions">
+        <a href="/cas-clients" class="link-cta">
+          <span class="link-cta__label">VOIR TOUS LES CAS</span>
+          <span class="link-cta__arrow" aria-hidden="true">→</span>
+        </a>
 
-      {/* ── M Partners : workflow ⟵ texte (alterné) ── */}
-      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-        <div class="order-2 lg:order-1">
-          <MockupWindow file="prospection — sourcing-to-crm.flow" status="actif" statusTone="success" flush>
-            <WorkflowCanvas
-              describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
-              trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
-              agent={{ icon: 'simple-icons:anthropic', color: brandColorFor('simple-icons:anthropic'), kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
-              actions={[
-                { icon: 'simple-icons:hubspot', color: brandColorFor('simple-icons:hubspot'), kicker: 'CRM', title: 'À approcher' },
-                { icon: 'lucide:list-checks', kicker: 'Shortlist', title: 'Top 20 %' },
-                { icon: 'lucide:bell', kicker: 'Alerte', title: 'Nouveau signal' },
-              ]}
-            />
-          </MockupWindow>
+        <div class="case-carousel-arrows" aria-label="Navigation des cas clients">
+          <button
+            type="button"
+            class="case-carousel-arrow"
+            aria-label="Projet précédent"
+            aria-controls="case-carousel-track"
+            data-case-prev
+            disabled
+          >
+            <Icon name="lucide:arrow-left" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            class="case-carousel-arrow"
+            aria-label="Projet suivant"
+            aria-controls="case-carousel-track"
+            data-case-next
+          >
+            <Icon name="lucide:arrow-right" aria-hidden="true" />
+          </button>
         </div>
-        <div class="order-1 lg:order-2 flex flex-col gap-5">
-          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{mPartners.client}</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">{mPartners.sector}</span>
-          </div>
-          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{mPartners.title}</h3>
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{mPartners.description}</p>
-          <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mono-caption text-[var(--color-ink-mid)] m-0">
-            {mPartners.results.map((result, i) => (
-              <Fragment>
-                {i > 0 && <span aria-hidden="true">·</span>}
-                <span>{result}</span>
-              </Fragment>
-            ))}
-          </p>
-          <a href={mPartners.href} class="case-cta group w-fit">
-            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-            <span class="case-cta-text">VOIR LE CAS</span>
-          </a>
-        </div>
-      </article>
-
-      {/* ── Celeris : texte ⟶ catalogue ERP ── */}
-      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-        <div class="flex flex-col gap-5">
-          <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-            <img class="case-logo" src={celeris.logo} alt={celeris.client} width="512" height="218" style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
-            <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
-          </div>
-          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{celeris.title}</h3>
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{celeris.description}</p>
-          <a href={celeris.href} class="case-cta group w-fit">
-            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-            <span class="case-cta-text">VOIR LE CAS</span>
-          </a>
-        </div>
-        <div>
-          <MockupWindow file="catalogue — erp.sync" status="synchronisé" statusTone="success">
-            <MockupList
-              items={[
-                { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
-                { label: 'Switch 48 ports', sub: 'SKU-44822', value: '+9 champs', status: 'done' },
-                { label: 'NAS 4 baies', sub: 'SKU-44823', value: 'en cours', status: 'pending' },
-              ]}
-            />
-            <Fragment slot="footer">
-              <span>▸ AGENT IA · EN INTERNE</span>
-              <span class="ml-auto">SOUVERAINETÉ ✓</span>
-            </Fragment>
-          </MockupWindow>
-        </div>
-      </article>
-
-      {/* ── Humble+ : order-to-cash ⟵ texte (alterné) ── */}
-      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
-        <div class="order-2 lg:order-1">
-          <MockupWindow file="commandes — b2b.order-to-cash" status="actif" statusTone="success" flush>
-            <WorkflowCanvas
-              describe="Schéma simplifié du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow orchestre la commande Shopify, la facture Pennylane et la validation humaine des cas sensibles dans Slack."
-              trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Entrée B2B', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
-              agent={{ icon: 'simple-icons:mistralai', color: brandColorFor('simple-icons:mistralai'), kicker: 'OCR + IA', title: 'Extrait & contrôle', sub: 'EAN · montants · client' }}
-              actions={[
-                { icon: 'simple-icons:shopify', color: brandColorFor('simple-icons:shopify'), kicker: 'Shopify', title: 'Commande' },
-                { icon: 'lucide:receipt-text', kicker: 'Pennylane', title: 'Facture' },
-                { icon: 'simple-icons:slack', color: brandColorFor('simple-icons:slack'), kicker: 'Contrôle', title: 'Validation humaine' },
-              ]}
-            />
-            <Fragment slot="footer">
-              <span>▸ ANTI-DOUBLON · CONTRÔLE AU CENTIME</span>
-              <span class="ml-auto">2 FLUX</span>
-            </Fragment>
-          </MockupWindow>
-        </div>
-        <div class="order-1 lg:order-2 flex flex-col gap-5">
-          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{humblePlus.client}</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">{humblePlus.sector}</span>
-          </div>
-          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{humblePlus.title}</h3>
-          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{humblePlus.description}</p>
-          <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mono-caption text-[var(--color-ink-mid)] m-0">
-            {humblePlus.results.map((result, i) => (
-              <Fragment>
-                {i > 0 && <span aria-hidden="true">·</span>}
-                <span>{result}</span>
-              </Fragment>
-            ))}
-          </p>
-          <a href={humblePlus.href} class="case-cta group w-fit">
-            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-            <span class="case-cta-text">VOIR LE CAS</span>
-          </a>
-        </div>
-      </article>
-
+      </div>
     </div>
 
+    <div
+      id="case-carousel-track"
+      class="case-carousel-track no-scrollbar reveal"
+      role="region"
+      aria-roledescription="carrousel"
+      aria-label="Cas clients récents"
+      tabindex="0"
+      data-case-track
+    >
+      {/* ── 01 · Humble+ · juillet 2026 ── */}
+      <article
+        class="case-slide"
+        role="group"
+        aria-roledescription="diapositive"
+        aria-label="1 sur 4 : Humble+"
+        data-case-slide
+        data-case-active
+        data-case-name="Humble+"
+      >
+        <div class="case-slide-grid">
+          <div class="case-copy">
+            <div class="case-meta">
+              <span class="case-client">{humblePlus.client}</span>
+              <span class="mono-caption text-[var(--color-ink-low)]">{humblePlus.sector}</span>
+              <time class="case-date" datetime="2026-07-23">JUIL. 2026</time>
+            </div>
+            <h3>{humblePlus.title}</h3>
+            <p class="case-description">{humblePlus.description}</p>
+            <p class="case-results">
+              {humblePlus.results.map((result, i) => (
+                <Fragment>
+                  {i > 0 && <span aria-hidden="true">·</span>}
+                  <span>{result}</span>
+                </Fragment>
+              ))}
+            </p>
+            <a href={humblePlus.href} class="case-cta group">
+              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+              <span class="case-cta-text">VOIR LE CAS</span>
+            </a>
+          </div>
+
+          <div class="case-visual">
+            <MockupWindow file="commandes — b2b.order-to-cash" status="actif" statusTone="success" flush>
+              <WorkflowCanvas
+                describe="Schéma simplifié du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow orchestre la commande Shopify, la facture Pennylane et la validation humaine des cas sensibles dans Slack."
+                trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Entrée B2B', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
+                agent={{ icon: 'simple-icons:mistralai', color: brandColorFor('simple-icons:mistralai'), kicker: 'OCR + IA', title: 'Extrait & contrôle', sub: 'EAN · montants · client' }}
+                actions={[
+                  { icon: 'simple-icons:shopify', color: brandColorFor('simple-icons:shopify'), kicker: 'Shopify', title: 'Commande' },
+                  { icon: 'lucide:receipt-text', kicker: 'Pennylane', title: 'Facture' },
+                  { icon: 'simple-icons:slack', color: brandColorFor('simple-icons:slack'), kicker: 'Contrôle', title: 'Validation humaine' },
+                ]}
+              />
+              <Fragment slot="footer">
+                <span>▸ ANTI-DOUBLON · CONTRÔLE AU CENTIME</span>
+                <span class="ml-auto">2 FLUX</span>
+              </Fragment>
+            </MockupWindow>
+          </div>
+        </div>
+      </article>
+
+      {/* ── 02 · Celeris · juin 2026 ── */}
+      <article
+        class="case-slide"
+        role="group"
+        aria-roledescription="diapositive"
+        aria-label="2 sur 4 : Celeris"
+        data-case-slide
+        data-case-name="Celeris"
+      >
+        <div class="case-slide-grid">
+          <div class="case-copy">
+            <div class="case-meta">
+              <img class="case-logo" src={celeris.logo} alt={celeris.client} width="512" height="218" style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
+              <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
+              <time class="case-date" datetime="2026-06-20">JUIN 2026</time>
+            </div>
+            <h3>{celeris.title}</h3>
+            <p class="case-description">{celeris.description}</p>
+            <p class="case-results">
+              {celeris.results.map((result, i) => (
+                <Fragment>
+                  {i > 0 && <span aria-hidden="true">·</span>}
+                  <span>{result}</span>
+                </Fragment>
+              ))}
+            </p>
+            <a href={celeris.href} class="case-cta group">
+              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+              <span class="case-cta-text">VOIR LE CAS</span>
+            </a>
+          </div>
+
+          <div class="case-visual">
+            <MockupWindow file="catalogue — erp.sync" status="synchronisé" statusTone="success">
+              <MockupList
+                items={[
+                  { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
+                  { label: 'Switch 48 ports', sub: 'SKU-44822', value: '+9 champs', status: 'done' },
+                  { label: 'NAS 4 baies', sub: 'SKU-44823', value: 'en cours', status: 'pending' },
+                ]}
+              />
+              <Fragment slot="footer">
+                <span>▸ AGENT IA · EN INTERNE</span>
+                <span class="ml-auto">SOUVERAINETÉ ✓</span>
+              </Fragment>
+            </MockupWindow>
+          </div>
+        </div>
+      </article>
+
+      {/* ── 03 · M Partners · mai 2026 ── */}
+      <article
+        class="case-slide"
+        role="group"
+        aria-roledescription="diapositive"
+        aria-label="3 sur 4 : M Partners"
+        data-case-slide
+        data-case-name="M Partners"
+      >
+        <div class="case-slide-grid">
+          <div class="case-copy">
+            <div class="case-meta">
+              <span class="case-client">{mPartners.client}</span>
+              <span class="mono-caption text-[var(--color-ink-low)]">{mPartners.sector}</span>
+              <time class="case-date" datetime="2026-05-05">MAI 2026</time>
+            </div>
+            <h3>{mPartners.title}</h3>
+            <p class="case-description">{mPartners.description}</p>
+            <p class="case-results">
+              {mPartners.results.map((result, i) => (
+                <Fragment>
+                  {i > 0 && <span aria-hidden="true">·</span>}
+                  <span>{result}</span>
+                </Fragment>
+              ))}
+            </p>
+            <a href={mPartners.href} class="case-cta group">
+              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+              <span class="case-cta-text">VOIR LE CAS</span>
+            </a>
+          </div>
+
+          <div class="case-visual">
+            <MockupWindow file="prospection — sourcing-to-crm.flow" status="actif" statusTone="success" flush>
+              <WorkflowCanvas
+                describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
+                trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
+                agent={{ icon: 'simple-icons:anthropic', color: brandColorFor('simple-icons:anthropic'), kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
+                actions={[
+                  { icon: 'simple-icons:hubspot', color: brandColorFor('simple-icons:hubspot'), kicker: 'CRM', title: 'À approcher' },
+                  { icon: 'lucide:list-checks', kicker: 'Shortlist', title: 'Top 20 %' },
+                  { icon: 'lucide:bell', kicker: 'Alerte', title: 'Nouveau signal' },
+                ]}
+              />
+            </MockupWindow>
+          </div>
+        </div>
+      </article>
+
+      {/* ── 04 · Fraich Touch · janvier 2026 ── */}
+      <article
+        class="case-slide"
+        role="group"
+        aria-roledescription="diapositive"
+        aria-label="4 sur 4 : Fraich Touch"
+        data-case-slide
+        data-case-name="Fraich Touch"
+      >
+        <div class="case-slide-grid">
+          <div class="case-copy">
+            <div class="case-meta">
+              <img class="case-logo" src={fraichTouch.logo} alt={fraichTouch.client} width="810" height="810" style={`--logo-scale:${fraichTouch.logoScale ?? 1}`} loading="lazy" decoding="async" />
+              <span class="mono-caption text-[var(--color-ink-low)]">{fraichTouch.sector}</span>
+              <time class="case-date" datetime="2026-01-30">JANV. 2026</time>
+            </div>
+            <h3>{fraichTouch.title}</h3>
+            <p class="case-description">{fraichTouch.description}</p>
+            <p class="case-results">
+              {fraichTouch.results.map((result, i) => (
+                <Fragment>
+                  {i > 0 && <span aria-hidden="true">·</span>}
+                  <span>{result}</span>
+                </Fragment>
+              ))}
+            </p>
+            <a href={fraichTouch.href} class="case-cta group">
+              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+              <span class="case-cta-text">VOIR LE CAS</span>
+            </a>
+          </div>
+
+          <div class="case-visual">
+            <MockupWindow file="facturation — clients.auto" status="3 payées" statusTone="success">
+              <MockupList
+                items={[
+                  { label: 'Brand × Créateur', sub: 'INV-2041', value: '4 200 €', status: 'done' },
+                  { label: 'Partenariat sport', sub: 'INV-2042', value: '1 850 €', status: 'done' },
+                  { label: 'Relance J+7', sub: 'INV-2043', value: '2 600 €', status: 'pending' },
+                ]}
+              />
+              <Fragment slot="footer">
+                <span>▸ RELANCES AUTO · J+7 / J+14</span>
+                <span class="ml-auto">0 RETARD</span>
+              </Fragment>
+            </MockupWindow>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="case-carousel-pagination reveal" aria-label="Accès direct aux cas clients">
+      {[
+        ['01', 'Humble+'],
+        ['02', 'Celeris'],
+        ['03', 'M Partners'],
+        ['04', 'Fraich Touch'],
+      ].map(([number, label], index) => (
+        <button
+          type="button"
+          class="case-carousel-dot"
+          aria-label={`Afficher le cas ${label}`}
+          aria-current={index === 0 ? 'true' : undefined}
+          data-case-dot
+          data-case-index={index}
+        >
+          <span class="case-carousel-dot-number">{number}</span>
+          <span class="case-carousel-dot-label">{label}</span>
+        </button>
+      ))}
+    </div>
+
+    <p class="case-swipe-hint mono-caption" aria-hidden="true">GLISSER POUR PARCOURIR</p>
   </div>
 </section>
 
 <style>
+  .case-carousel-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .case-carousel-status,
+  .case-carousel-actions,
+  .case-carousel-arrows {
+    display: flex;
+    align-items: center;
+  }
+
+  .case-carousel-status {
+    gap: 1rem;
+  }
+
+  .case-carousel-count {
+    display: inline-flex;
+    align-items: baseline;
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-label);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .case-carousel-actions {
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+
+  .case-carousel-arrows {
+    gap: 0.5rem;
+  }
+
+  [data-case-carousel]:not([data-case-ready]) .case-carousel-arrows,
+  [data-case-carousel]:not([data-case-ready]) .case-carousel-pagination {
+    visibility: hidden;
+  }
+
+  .case-carousel-arrow {
+    display: inline-grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    padding: 0;
+    color: var(--color-ink);
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+  }
+
+  .case-carousel-arrow:hover:not(:disabled),
+  .case-carousel-arrow:focus-visible:not(:disabled) {
+    color: var(--color-paper);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  .case-carousel-arrow:active:not(:disabled) {
+    transform: translateY(0) scale(0.96);
+  }
+
+  .case-carousel-arrow:disabled {
+    color: var(--color-ink-faint);
+    background: transparent;
+    border-color: var(--color-divider);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .case-carousel-arrow :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  .case-carousel-track {
+    display: flex;
+    align-items: stretch;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    width: 100%;
+    padding: 2px;
+    margin: -2px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 2px;
+  }
+
+  .case-slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    background:
+      linear-gradient(var(--color-grid-line), var(--color-grid-line)) 0 0 / 100% 1px no-repeat,
+      var(--color-surface-high);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .case-slide-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+    min-height: clamp(430px, 40vw, 520px);
+  }
+
+  .case-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.75rem;
+    width: 100%;
+  }
+
+  .case-client {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .case-date {
+    margin-left: auto;
+    color: var(--color-ink-low);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .case-copy h3 {
+    max-width: 20ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-title-lg);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .case-description {
+    max-width: 48ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body);
+    line-height: 1.6;
+  }
+
+  .case-results {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .case-visual {
+    min-width: 0;
+  }
+
+  .case-slide:not([data-case-active]) :global(.wf-wire-flow),
+  .case-slide:not([data-case-active]) :global(.wf-node.is-accent .wf-dot) {
+    animation-play-state: paused;
+  }
+
+  .case-carousel-pagination {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.5rem, 2vw, 1.25rem);
+    margin-top: 1.25rem;
+  }
+
+  .case-carousel-dot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.75rem 0 0;
+    color: var(--color-ink-low);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.02em;
+    text-align: left;
+  }
+
+  .case-carousel-dot::before,
+  .case-carousel-dot::after {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    content: '';
+    transform-origin: left center;
+  }
+
+  .case-carousel-dot::before {
+    background: var(--color-divider);
+  }
+
+  .case-carousel-dot::after {
+    background: var(--gradient-flame);
+    transform: scaleX(0);
+    transition: transform 300ms var(--ease-out-quint);
+  }
+
+  .case-carousel-dot:hover,
+  .case-carousel-dot:focus-visible,
+  .case-carousel-dot[aria-current='true'] {
+    color: var(--color-ink);
+  }
+
+  .case-carousel-dot[aria-current='true']::after {
+    transform: scaleX(1);
+  }
+
+  .case-carousel-dot-number {
+    font-weight: 600;
+  }
+
+  .case-carousel-dot-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .case-swipe-hint {
+    display: none;
+    margin: 0.5rem 0 0;
+    color: var(--color-ink-low);
+    text-align: center;
+  }
+
   /* CTA "Voir le cas" — DA dédiée : pastille flèche circulaire qui se remplit de
      l'accent flamme au hover (distincte du CTA-texte souligné du reste du site). */
   .case-cta {
@@ -296,4 +683,184 @@ const humblePlus = {
   @media (prefers-color-scheme: dark) {
     :global(html:not(.light)) .case-logo { filter: brightness(0) invert(1); opacity: 0.92; }
   }
+
+  @media (max-width: 899px) {
+    .case-slide-grid {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .case-copy,
+    .case-description {
+      max-width: none;
+    }
+
+    .case-copy h3 {
+      max-width: 24ch;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .case-carousel-toolbar {
+      align-items: flex-start;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    .case-carousel-actions {
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .case-slide {
+      padding: 1.125rem;
+    }
+
+    .case-slide-grid {
+      gap: 1.75rem;
+    }
+
+    .case-meta {
+      align-items: flex-start;
+    }
+
+    .case-date {
+      flex: 0 0 100%;
+      margin-left: 0;
+    }
+
+    .case-logo {
+      max-width: 144px;
+    }
+
+    .case-carousel-dot-label {
+      display: none;
+    }
+
+    .case-swipe-hint {
+      display: block;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-carousel-track {
+      scroll-behavior: auto;
+    }
+
+    .case-carousel-arrow,
+    .case-carousel-dot::after {
+      transition: none;
+    }
+  }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-case-carousel]').forEach((carousel) => {
+    const track = carousel.querySelector<HTMLElement>('[data-case-track]');
+    const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-case-slide]'));
+    const previous = carousel.querySelector<HTMLButtonElement>('[data-case-prev]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-case-next]');
+    const current = carousel.querySelector<HTMLElement>('[data-case-current]');
+    const announcement = carousel.querySelector<HTMLElement>('[data-case-announcement]');
+    const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-case-dot]'));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    if (!track || !previous || !next || !current || slides.length === 0) return;
+
+    let activeIndex = 0;
+    let scrollEndTimer = 0;
+
+    const slideOffset = (slide: HTMLElement) => {
+      const trackBox = track.getBoundingClientRect();
+      const slideBox = slide.getBoundingClientRect();
+      return slideBox.left - trackBox.left + track.scrollLeft;
+    };
+
+    const updateState = (index: number) => {
+      const boundedIndex = Math.max(0, Math.min(index, slides.length - 1));
+      activeIndex = boundedIndex;
+      current.textContent = String(activeIndex + 1).padStart(2, '0');
+      if (announcement) {
+        announcement.textContent = `Projet ${activeIndex + 1} sur ${slides.length} : ${slides[activeIndex].dataset.caseName ?? ''}`;
+      }
+      previous.disabled = activeIndex === 0;
+      next.disabled = activeIndex === slides.length - 1;
+
+      slides.forEach((slide, slideIndex) => {
+        if (slideIndex === activeIndex) {
+          slide.setAttribute('data-case-active', '');
+          slide.removeAttribute('aria-hidden');
+          slide.removeAttribute('inert');
+        } else {
+          slide.removeAttribute('data-case-active');
+          slide.setAttribute('aria-hidden', 'true');
+          slide.setAttribute('inert', '');
+        }
+      });
+
+      dots.forEach((dot, dotIndex) => {
+        if (dotIndex === activeIndex) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+    };
+
+    const findClosestSlide = () => {
+      const position = track.scrollLeft;
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      slides.forEach((slide, index) => {
+        const distance = Math.abs(slideOffset(slide) - position);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      return closestIndex;
+    };
+
+    const goTo = (index: number) => {
+      const boundedIndex = Math.max(0, Math.min(index, slides.length - 1));
+      track.scrollTo({
+        left: slideOffset(slides[boundedIndex]),
+        behavior: reducedMotion.matches ? 'auto' : 'smooth',
+      });
+      updateState(boundedIndex);
+    };
+
+    previous.addEventListener('click', () => goTo(activeIndex - 1));
+    next.addEventListener('click', () => goTo(activeIndex + 1));
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const index = Number(dot.dataset.caseIndex);
+        if (Number.isInteger(index)) goTo(index);
+      });
+    });
+
+    track.addEventListener('scroll', () => {
+      window.clearTimeout(scrollEndTimer);
+      scrollEndTimer = window.setTimeout(() => updateState(findClosestSlide()), 80);
+    }, { passive: true });
+
+    track.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goTo(activeIndex - 1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goTo(activeIndex + 1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        goTo(0);
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        goTo(slides.length - 1);
+      }
+    });
+
+    updateState(0);
+    carousel.setAttribute('data-case-ready', '');
+  });
+</script>
