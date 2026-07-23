@@ -13,12 +13,11 @@ colors:
   surface-low: "oklch(0.975 0.003 290)"
   grid-line: "oklch(0.93 0.005 290)"
   # Accent flamme (évolution fin juin 2026, commits 51f5146/f135af5/cf8c48b) :
-  # UN seul hue chaud (45), décliné en 3 tokens + 1 gradient signature.
+  # UN seul hue chaud (45), décliné en 3 tokens fonctionnels.
   accent: "oklch(0.62 0.19 45)"
   accent-text: "oklch(0.55 0.19 45)"
   accent-soft: "oklch(0.95 0.035 65)"
-  # --gradient-flame (jaune→orange→rouge) : réservé aux filets de surtitre
-  # et au filet du lien de nav actif. Jamais sur du texte (ban gradient text).
+  # Aucun filet décoratif coloré : l'accent reste réservé aux états et données.
   # Les tokens --color-violet*/--color-ember* historiques restent neutralisés
   # (pointent vers ink / surface-low) — ne pas les réactiver.
 typography:
@@ -157,7 +156,7 @@ components:
 
 **Creative North Star: "The Operator's Console" — monochrome façon Vercel + un accent flamme unique**
 
-Le site doit ressembler à l'outil que Lilian *utiliserait* — pas à la plaquette qu'il *vendrait*. Densité technique d'un dashboard infra (Vercel, Modal, Plain), tenue par une mono qui sert de texture et une grille de gouttière qui vit au bord de la page. La base est monochrome zinc : le contraste et la hiérarchie viennent d'abord du **poids typographique**, de la **taille** et de l'**espace**. Par-dessus cette base vit **UN accent flamme** (hue 45, inspiration Mistral, fin juin 2026) : il marque le signal — surtitres (filet), donnée-clé du ROI, état actif de nav, focus, sélection — et rien d'autre. Un seul hue, des usages nommés, jamais de deuxième couleur. Référence : « Vercel pure black + Mistral flame ».
+Le site doit ressembler à l'outil que Lilian *utiliserait* — pas à la plaquette qu'il *vendrait*. Densité technique d'un dashboard infra (Vercel, Modal, Plain), tenue par une mono qui sert de texture et une grille de gouttière qui vit au bord de la page. La base est monochrome zinc : le contraste et la hiérarchie viennent d'abord du **poids typographique**, de la **taille** et de l'**espace**. Par-dessus cette base vit **UN accent flamme** (hue 45, inspiration Mistral, fin juin 2026) : il marque uniquement les données-clés, focus, sélection et états fonctionnels — jamais la structure ni un trait décoratif. Un seul hue, des usages nommés, jamais de deuxième couleur. Référence : « Vercel pure black + Mistral flame ».
 
 Ce système rejette explicitement : le ton chaleureux d'agence (cream, terracotta, ombres colorées 3D, polices arrondies humanistes), le hero gradient bleu/violet générique, les grilles 3×3 d'icônes, le glassmorphism décoratif, et **tout second accent** (l'ancien duo violet n8n / ember Anthropic est supprimé ; le système est passé de « deux accents » à « zéro » puis à « un seul », c'est l'état final). Si l'écran ressemble à un site de freelance que tu as déjà vu, il est faux.
 
@@ -182,10 +181,9 @@ Base **monochrome** : des neutres tintés zinc (hue 290), du papier presque blan
 
 ### Accent (flamme, hue 45)
 
-- **Accent** (`oklch(0.62 0.19 45)`, `--color-accent`): la teinte vive. Usages autorisés, liste fermée : chiffre-clé du ROI (large text ≥3:1 OK), fill des sliders ROI, underline/filet du lien de nav actif, focus ring, `::selection`, hover d'éléments interactifs déjà identifiés. En dark, le token est remonté en clarté (override dans `global.css`).
+- **Accent** (`oklch(0.62 0.19 45)`, `--color-accent`): la teinte vive. Usages autorisés, liste fermée : chiffre-clé du ROI (large text ≥3:1 OK), fill des sliders ROI, focus ring, `::selection`, hover d'éléments interactifs déjà identifiés. En dark, le token est remonté en clarté (override dans `global.css`).
 - **Accent Text** (`oklch(0.55 0.19 45)`, `--color-accent-text`): la même teinte, assombrie pour le **petit texte** — AA sur TOUTES les surfaces claires (~5.1:1 paper, ~4.6:1 section-band, ~4.8:1 surface-low ; à 0.57 le token échouait sur les bandes grises). Obligatoire dès que l'accent colore du texte < 18px : liens augmentes.fr, numéros menu mobile/principes, labels de couche Stack, microdata des pages expert, hovers mono-caption. **Si tu hésites entre les deux sur du texte, c'est accent-text.**
 - **Accent Soft** (`oklch(0.95 0.035 65)`, `--color-accent-soft`): tint de fond (chips). Tout texte posé dessus se mixe vers l'encre pour rester AA (voir `.chip-accent`).
-- **Gradient Flame** (`--gradient-flame`, jaune→orange→rouge): réservé aux **filets décoratifs** de 2px (surtitre `.section-number::before`, lien nav actif `.nav-link::after`). Jamais en fond de bloc, jamais sur du texte.
 
 ### Couleurs de marque tierces (exception documentée)
 
@@ -213,7 +211,7 @@ Les logos d'outils et de canaux portent leur **couleur officielle** : marquee d'
 
 **The Single-Accent Rule.** UN accent, UN hue (45), une liste d'usages fermée (voir § Accent). La structure se construit toujours par le poids typographique (400 → 500 → 600), la taille et l'espace ; l'accent ne crée jamais la hiérarchie, il **pointe** l'élément déjà hiérarchisé (le chiffre du ROI est déjà en display ; l'accent le signe). Interdits : un deuxième hue d'accent, l'accent en fond de section, l'accent « pour égayer ». `error` et `success` restent réservés aux états système.
 
-**The Accent-Text Rule.** Texte < 18px coloré accent → token `--color-accent-text`, jamais `--color-accent` brut (3.86:1, fail AA). L'accent vif est réservé au large text, aux fills et aux filets.
+**The Accent-Text Rule.** Texte < 18px coloré accent → token `--color-accent-text`, jamais `--color-accent` brut (3.86:1, fail AA). L'accent vif est réservé au large text, aux fills et aux états fonctionnels.
 
 **The Tinted-Neutral Rule.** Tout neutre porte une chroma résiduelle vers zinc (hue 290). Pas de `#FFFFFF`, pas de `#000000`, jamais. Le gris industriel pur (`oklch(0.5 0 0)`) est interdit — il aplatit la cohérence de l'ensemble.
 
@@ -244,7 +242,7 @@ Les logos d'outils et de canaux portent leur **couleur officielle** : marquee d'
 
 **The No-Italic Rule.** Pas d'italique. Pour l'emphase, on utilise le **poids** (400 → 500 → 600) ou la **taille** ; l'accent flamme ne sert pas d'emphase de prose. L'italique adoucit ; le système refuse l'adoucissement. Seule exception historique : les comments dans les code-blocks.
 
-**The Section-Kicker Rule.** Chaque section porte un petit kicker mono (le label, ex. `ROI`, `CAS CLIENTS`) en `mono-caption`, color `ink-low`, précédé du **filet flamme** 24×2px (`.section-number::before` / `.eyebrow-rule::before`, `--gradient-flame`, radius full). Pas de numéro `01`, `02`, … et pas de flash de couleur au scroll-in : le kicker est statique, seul le filet porte la couleur. Métaphore d'IDE/console + signature Mistral-like, coût d'implémentation nul.
+**The Section-Kicker Rule.** Chaque section porte un petit kicker mono (le label, ex. `ROI`, `CAS CLIENTS`) en `mono-caption`, color `ink-low`, sans numéro ni trait décoratif. Sa présence et son espacement suffisent à ouvrir la section avec une voix d'IDE/console.
 
 ## 4. Elevation
 
@@ -302,10 +300,10 @@ La hiérarchie et l'état passent par **trois mécanismes combinés**, dans cet 
 - **Corner Style:** `6px` (`rounded.md`). Plus carré que rond — pas de `12px+`.
 - **Background:** `paper` par défaut. `surface-low` pour différenciation latérale.
 - **Border:** `1px solid divider` toujours présente, **plus** une ombre douce `--shadow-card`. La bordure + l'ombre définissent la card.
-- **Hover (cards interactives, `.card-interactive`):** bordure passe à `ink-faint`, ombre passe à `--shadow-card-hover`, et une **scan line** 1px en **encre** glisse du haut vers le bas de la card (`@keyframes card-scan`, background-position animé pour éviter `overflow:hidden`). Transition `200ms ease-out-quint`. Pas de lift.
+- **Hover (cards interactives, `.card-interactive`):** bordure passe à `ink-faint` et l'ombre à `--shadow-card-hover`. Transition `200ms ease-out-quint`. Pas de lift ni de trait animé.
 - **Utilitaire `.card-soft`:** pour les cards au markup inline (Stack, Offres, ROI) qui n'utilisent pas `.card` mais veulent la même profondeur — applique `--shadow-card` au repos, `--shadow-card-hover` au hover.
 - **Internal Padding:** `24px` standard (`.card`), `32px` pour cards principales (`.card-elevated` — case studies hero, pricing).
-- **Focus clavier:** `.card-interactive:focus-visible` durcit la bordure à `ink-faint` comme le hover (et déclenche la même scan line).
+- **Focus clavier:** `.card-interactive:focus-visible` durcit la bordure à `ink-faint` comme le hover, en complément du focus ring global.
 
 ### Inputs / Fields
 
@@ -321,7 +319,7 @@ La hiérarchie et l'état passent par **trois mécanismes combinés**, dans cet 
 
 - **Style:** nav fixe top, fond `paper / 0.92` + `backdrop-filter: blur(12px)` (juste assez pour la transparence), bordure-bottom `1px solid divider`, hauteur `64px`. **Aucune ombre.** Au scroll, la bordure-bottom s'intensifie à `ink-faint`.
 - **Logo:** logo SVG `28×28px` à gauche, mono-caption "LILIAN SEVOUMIAN" à côté.
-- **Links:** typo `mono-label`, color `ink-mid` au repos, `ink` en hover / actif ; le lien actif passe en poids 600 **et** dessine un court filet flamme dessous (`.nav-link::after`, 2px, `--gradient-flame`, scaleX 0→1). Seul underline animé autorisé du système.
+- **Links:** typo `mono-label`, color `ink-mid` au repos, `ink` en hover / actif ; le lien actif se distingue par la couleur et le poids 600, sans soulignement décoratif.
 - **Mobile:** menu plein-écran sur tap burger (dialog `aria-modal` + focus conteneur + trap Tab), links empilés en `headline`, numéros `01`-`05` en `accent-text`. CTA central « Réserver un appel › » (libellé = destination cal.com, ne pas le renommer « Contactez-moi »).
 - **MobileCTABar:** barre fixe bottom (phones), entrée/sortie pilotée par la **propriété `translate` scopée** — ne jamais mélanger utilitaire `translate-y-*` Tailwind et override `transform` (propriétés différentes, le bug a déjà tué la barre une fois). Le blur léger de la barre relève de la même exception que la nav (surface de navigation flottante).
 
@@ -361,7 +359,7 @@ Le hero n'est **plus dans une carte bordée** : le titre flotte sur le papier nu
 - **Do** construire toute hiérarchie au **poids** (400 → 500 → 600), à la **taille** et à l'**espace** ; l'accent flamme **pointe** un élément déjà hiérarchisé, il ne crée pas la hiérarchie.
 - **Do** utiliser `--color-accent-text` (jamais `--color-accent` brut) dès que l'accent colore du texte < 18px.
 - **Do** utiliser `outline: 2px solid var(--color-accent); outline-offset: 2px` comme focus ring partout — uniformité d'état actif. **Outline, pas box-shadow.**
-- **Do** signaler les hovers de card par : ombre qui se renforce (`--shadow-card` → `--shadow-card-hover`), bordure qui se durcit (`divider` → `ink-faint`), ou scan line encre. Jamais par un translate-Y.
+- **Do** signaler les hovers de card par une ombre qui se renforce (`--shadow-card` → `--shadow-card-hover`) et/ou une bordure qui se durcit (`divider` → `ink-faint`). Jamais par un translate-Y.
 - **Do** réutiliser les deux tokens d'ombre (`--shadow-card`, `--shadow-card-hover`) pour toute profondeur ; ne pas inventer d'ombre ad-hoc, ne pas la colorer.
 - **Do** caper la longueur de ligne des paragraphes à 65–72ch.
 - **Do** alterner `paper` ↔ `surface-low` pour rythmer les sections, jamais `paper` ↔ couleur saturée.
@@ -372,6 +370,7 @@ Le hero n'est **plus dans une carte bordée** : le titre flotte sur le papier nu
 
 - **Don't** introduire un **second accent**. Le seul hue d'UI est la flamme (45) : aucune teinte violet, ember, bleu, cyan, rose. `error` et `success` restent réservés aux états système ; les couleurs de marque tierces restent cantonnées aux logos/chips de marque (§2).
 - **Don't** poser l'accent en fond de section, sur un heading, ou « pour égayer ». Ses usages sont une liste fermée (§2 Accent).
+- **Don't** utiliser l'accent comme trait décoratif, soulignement de navigation, séparateur ou scan line. Les lignes structurelles restent neutres.
 - **Don't** ré-introduire les ombres **colorées** 3D (orange, violet, cyan, rose) du site précédent. Les seules ombres autorisées sont les deux ombres douces quasi achromatiques (`--shadow-card`, `--shadow-card-hover`).
 - **Don't** ré-introduire la palette cream / sable / terracotta. Le fond est `paper`, jamais `#F8F7F4`.
 - **Don't** utiliser Bricolage Grotesque (typo trop ronde / "créative"). Geist + JetBrains Mono uniquement.

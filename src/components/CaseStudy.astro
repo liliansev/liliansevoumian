@@ -76,41 +76,27 @@ const humblePlus = {
     />
 
     <div class="case-carousel-toolbar reveal">
-      <div class="case-carousel-status">
-        <span class="mono-caption text-[var(--color-ink-low)]">DU PLUS RÉCENT AU PLUS ANCIEN</span>
-        <span class="case-carousel-count">
-          <span aria-hidden="true"><span data-case-current>01</span> / 04</span>
-          <span class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 4 : Humble+</span>
-        </span>
-      </div>
-
-      <div class="case-carousel-actions">
-        <a href="/cas-clients" class="link-cta">
-          <span class="link-cta__label">VOIR TOUS LES CAS</span>
-          <span class="link-cta__arrow" aria-hidden="true">→</span>
-        </a>
-
-        <div class="case-carousel-arrows" aria-label="Navigation des cas clients">
-          <button
-            type="button"
-            class="case-carousel-arrow"
-            aria-label="Projet précédent"
-            aria-controls="case-carousel-track"
-            data-case-prev
-            disabled
-          >
-            <Icon name="lucide:arrow-left" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            class="case-carousel-arrow"
-            aria-label="Projet suivant"
-            aria-controls="case-carousel-track"
-            data-case-next
-          >
-            <Icon name="lucide:arrow-right" aria-hidden="true" />
-          </button>
-        </div>
+      <p class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 4 : Humble+</p>
+      <div class="case-carousel-arrows" aria-label="Navigation des cas clients">
+        <button
+          type="button"
+          class="case-carousel-arrow"
+          aria-label="Projet précédent"
+          aria-controls="case-carousel-track"
+          data-case-prev
+          disabled
+        >
+          <Icon name="lucide:arrow-left" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          class="case-carousel-arrow"
+          aria-label="Projet suivant"
+          aria-controls="case-carousel-track"
+          data-case-next
+        >
+          <Icon name="lucide:arrow-right" aria-hidden="true" />
+        </button>
       </div>
     </div>
 
@@ -160,7 +146,7 @@ const humblePlus = {
             <MockupWindow file="commandes — b2b.order-to-cash" status="actif" statusTone="success" flush>
               <WorkflowCanvas
                 describe="Schéma simplifié du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow orchestre la commande Shopify, la facture Pennylane et la validation humaine des cas sensibles dans Slack."
-                trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Entrée B2B', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
+                trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Mail reçu', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
                 agent={{ icon: 'simple-icons:mistralai', color: brandColorFor('simple-icons:mistralai'), kicker: 'OCR + IA', title: 'Extrait & contrôle', sub: 'EAN · montants · client' }}
                 actions={[
                   { icon: 'simple-icons:shopify', color: brandColorFor('simple-icons:shopify'), kicker: 'Shopify', title: 'Commande' },
@@ -169,8 +155,7 @@ const humblePlus = {
                 ]}
               />
               <Fragment slot="footer">
-                <span>▸ ANTI-DOUBLON · CONTRÔLE AU CENTIME</span>
-                <span class="ml-auto">2 FLUX</span>
+                <span>Sécurité anti-doublon</span>
               </Fragment>
             </MockupWindow>
           </div>
@@ -348,6 +333,13 @@ const humblePlus = {
       ))}
     </div>
 
+    <div class="case-carousel-footer reveal">
+      <a href="/cas-clients" class="link-cta">
+        <span class="link-cta__label">VOIR TOUS LES CAS</span>
+        <span class="link-cta__arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
     <p class="case-swipe-hint mono-caption" aria-hidden="true">GLISSER POUR PARCOURIR</p>
   </div>
 </section>
@@ -356,35 +348,13 @@ const humblePlus = {
   .case-carousel-toolbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem 2rem;
+    justify-content: flex-end;
     margin-bottom: 1.25rem;
   }
 
-  .case-carousel-status,
-  .case-carousel-actions,
   .case-carousel-arrows {
     display: flex;
     align-items: center;
-  }
-
-  .case-carousel-status {
-    gap: 1rem;
-  }
-
-  .case-carousel-count {
-    display: inline-flex;
-    align-items: baseline;
-    color: var(--color-ink);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-  }
-
-  .case-carousel-actions {
-    gap: clamp(1rem, 3vw, 2rem);
   }
 
   .case-carousel-arrows {
@@ -571,23 +541,13 @@ const humblePlus = {
     text-align: left;
   }
 
-  .case-carousel-dot::before,
-  .case-carousel-dot::after {
+  .case-carousel-dot::before {
     position: absolute;
     inset: 0 0 auto;
     height: 2px;
     content: '';
-    transform-origin: left center;
-  }
-
-  .case-carousel-dot::before {
     background: var(--color-divider);
-  }
-
-  .case-carousel-dot::after {
-    background: var(--gradient-flame);
-    transform: scaleX(0);
-    transition: transform 300ms var(--ease-out-quint);
+    transition: background-color 300ms var(--ease-out-quint);
   }
 
   .case-carousel-dot:hover,
@@ -596,8 +556,8 @@ const humblePlus = {
     color: var(--color-ink);
   }
 
-  .case-carousel-dot[aria-current='true']::after {
-    transform: scaleX(1);
+  .case-carousel-dot[aria-current='true']::before {
+    background: var(--color-ink);
   }
 
   .case-carousel-dot-number {
@@ -615,6 +575,13 @@ const humblePlus = {
     margin: 0.5rem 0 0;
     color: var(--color-ink-low);
     text-align: center;
+  }
+
+  .case-carousel-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: clamp(1.25rem, 2vw, 1.75rem);
   }
 
   /* CTA "Voir le cas" — DA dédiée : pastille flèche circulaire qui se remplit de
@@ -702,14 +669,7 @@ const humblePlus = {
 
   @media (max-width: 639px) {
     .case-carousel-toolbar {
-      align-items: flex-start;
-      flex-direction: column;
       margin-bottom: 1rem;
-    }
-
-    .case-carousel-actions {
-      justify-content: space-between;
-      width: 100%;
     }
 
     .case-slide {
@@ -748,7 +708,7 @@ const humblePlus = {
     }
 
     .case-carousel-arrow,
-    .case-carousel-dot::after {
+    .case-carousel-dot::before {
       transition: none;
     }
   }
@@ -760,12 +720,11 @@ const humblePlus = {
     const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-case-slide]'));
     const previous = carousel.querySelector<HTMLButtonElement>('[data-case-prev]');
     const next = carousel.querySelector<HTMLButtonElement>('[data-case-next]');
-    const current = carousel.querySelector<HTMLElement>('[data-case-current]');
     const announcement = carousel.querySelector<HTMLElement>('[data-case-announcement]');
     const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-case-dot]'));
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    if (!track || !previous || !next || !current || slides.length === 0) return;
+    if (!track || !previous || !next || slides.length === 0) return;
 
     let activeIndex = 0;
     let scrollEndTimer = 0;
@@ -779,7 +738,6 @@ const humblePlus = {
     const updateState = (index: number) => {
       const boundedIndex = Math.max(0, Math.min(index, slides.length - 1));
       activeIndex = boundedIndex;
-      current.textContent = String(activeIndex + 1).padStart(2, '0');
       if (announcement) {
         announcement.textContent = `Projet ${activeIndex + 1} sur ${slides.length} : ${slides[activeIndex].dataset.caseName ?? ''}`;
       }

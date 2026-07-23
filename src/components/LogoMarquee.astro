@@ -126,6 +126,12 @@ const loop = [...tools, ...tools];
     to { transform: translateX(-50%); }
   }
 
+  /* Sur grand écran, davantage de logos sont visibles simultanément : un
+     passage plus lent laisse le temps de les identifier sans effet ticker. */
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .lm-track { animation-duration: 72s; }
+  }
+
   /* Outil = logo couleur + nom en gris discret. */
   .lm-tool {
     display: inline-flex;

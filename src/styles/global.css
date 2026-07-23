@@ -79,10 +79,9 @@
   --color-surface-on-dark: oklch(0.20 0.008 290);
 
   /* Accent — FLAMME chaude (inspiration Mistral, juin 2026). Le hook accent
-     unique pilote tout : surtitres, FAQ, focus, slider, liens, sélection.
-     Orange Mistral en light ; remonté en clarté en dark (override plus bas).
-     --gradient-flame = jaune → orange → rouge, réservé aux moments signature
-     (filet de surtitre). Pour revenir au monochrome : redonner
+     unique pilote les données-clés et états fonctionnels : FAQ, focus, slider,
+     liens, sélection. Aucun trait décoratif coloré. Orange Mistral en light ;
+     remonté en clarté en dark (override plus bas). Pour revenir au monochrome : redonner
      --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
   --color-accent: oklch(0.62 0.19 45);
   /* Variante foncée de l'accent pour le PETIT texte : ~5.1:1 sur paper light,
@@ -92,13 +91,6 @@
      gardent --color-accent. En dark, l'accent vif suffit déjà (8.27:1). */
   --color-accent-text: oklch(0.55 0.19 45);
   --color-accent-soft: oklch(0.95 0.035 65);
-  --gradient-flame: linear-gradient(
-    90deg,
-    oklch(0.84 0.16 88),
-    oklch(0.72 0.19 55),
-    oklch(0.60 0.21 30)
-  );
-
   /* Error / Success */
   --color-error: oklch(0.55 0.22 25);
   --color-success: oklch(0.52 0.15 148);
@@ -476,7 +468,6 @@ a, button, input, textarea, select,
 .eyebrow-rule {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
 }
 
 .section-number {
@@ -487,20 +478,6 @@ a, button, input, textarea, select,
   text-transform: uppercase;
   color: var(--color-ink-low);
   margin-bottom: 1.5rem;
-}
-
-/* Filet court devant le label — signature éditoriale "surtitre" (Mistral-like).
-   Décoratif : 24px de hairline en ink-faint, avant le texte du surtitre.
-   .eyebrow-rule applique le même filet à un surtitre hors .section-number
-   (ex. l'eyebrow du hero en casse normale). */
-.section-number::before,
-.eyebrow-rule::before {
-  content: '';
-  flex-shrink: 0;
-  width: 1.5rem;
-  height: 2px;
-  border-radius: var(--radius-full); /* pill : clampe à 1px sur 2px de haut */
-  background: var(--gradient-flame);
 }
 
 /* =========================================================================
@@ -719,34 +696,6 @@ a, button, input, textarea, select,
 /* Clavier : le focus revendique sa cellule comme le hover. */
 .card-interactive:focus-visible {
   border-color: var(--color-ink-faint);
-}
-
-/* Scan line — au hover, une ligne 1px glisse du haut vers le bas de la card.
-   Background-position animé (vs transform translateY) pour ne pas avoir besoin
-   d'overflow:hidden sur la card. */
-.card-interactive::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(to right, transparent, var(--color-accent) 50%, transparent);
-  background-size: 100% 1px;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  pointer-events: none;
-  opacity: 0;
-  border-radius: inherit;
-}
-
-.card-interactive:hover::after,
-.card-interactive:focus-visible::after {
-  animation: card-scan 1100ms var(--ease-out-quint);
-}
-
-@keyframes card-scan {
-  0% { background-position: 0 0; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { background-position: 0 100%; opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1052,26 +1001,9 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
-/* Lien actif : shift de couleur + court filet flamme dessous (rappel discret du
-   surtitre), qui se dessine de gauche à droite. */
+/* Le lien actif se distingue uniquement par le poids, sans filet décoratif. */
 .nav-link.is-active {
   font-weight: 600;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 5px;
-  height: 2px;
-  border-radius: var(--radius-full); /* pill : clampe à 1px sur 2px de haut */
-  background: var(--gradient-flame);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--duration-default) var(--ease-out-quint);
-}
-.nav-link.is-active::after {
-  transform: scaleX(1);
 }
 
 /* =========================================================================

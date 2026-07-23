@@ -2,7 +2,7 @@
 /*
  * Stack.astro — section §03.
  *
- * Cinq outils en deux couches (AUTOMATION / IA). Chaque outil porte SA mini-UI
+ * Six outils en trois familles (AUTOMATION / PRODUCTIVITÉ / IA). Chaque outil porte SA mini-UI
  * signature (mockup produit monochrome) qui montre concrètement ce qu'on en
  * fait, plutôt qu'une définition : n8n → mini-workflow, Make → scénario à
  * modules, Notion → table CRM, Claude Code → console, Claude Cowork → chat.
@@ -43,7 +43,7 @@ interface Layer {
 const layers: Layer[] = [
   {
     label: 'AUTOMATION',
-    caption: 'POUR AUTOMATISER DES PROCESSUS DÉTERMINISTES',
+    caption: 'Pour automatiser les processus déterministes',
     tools: [
       {
         name: 'n8n',
@@ -59,10 +59,16 @@ const layers: Layer[] = [
         mockup: 'scenario',
         caption: 'Trois outils métiers connectés en une après-midi, sans une ligne de code.',
       },
+    ],
+  },
+  {
+    label: 'PRODUCTIVITÉ',
+    caption: 'Pour structurer et piloter les opérations',
+    tools: [
       {
         name: 'Notion',
         icon: 'simple-icons:notion',
-        role: 'PRODUCTIVITÉ',
+        role: 'CRM · OPÉRATIONS',
         mockup: 'table',
         caption: 'Un CRM sur-mesure qui se remplit tout seul depuis vos formulaires.',
       },
@@ -70,7 +76,7 @@ const layers: Layer[] = [
   },
   {
     label: 'IA',
-    caption: 'INTELLIGENCE, JUGEMENT ET RÉFLEXION',
+    caption: 'Pour l’intelligence, le jugement et la réflexion',
     tools: [
       {
         name: 'Claude Code',
@@ -114,25 +120,27 @@ const layers: Layer[] = [
       bodyMaxWidth="60ch"
     />
 
-    <div class="reveal flex flex-col gap-10 md:gap-12">
-      {layers.map((layer) => (
-        <div>
-          <div class="flex items-baseline gap-x-3 gap-y-1 flex-wrap mb-4 md:mb-5 pb-3 border-b border-[var(--color-divider)]">
-            <span class="mono-label text-[var(--color-accent-text)]">{layer.label}</span>
-            <span class="mono-caption text-[var(--color-ink-low)]">{layer.caption}</span>
-            <span class="mono-caption text-[var(--color-ink-low)] ml-auto whitespace-nowrap">{layer.tools.length} OUTILS</span>
-          </div>
+    <div class="stack-layers reveal">
+      {layers.map((layer, index) => (
+        <section class="stack-layer" aria-labelledby={`stack-layer-${index}`}>
+          <header class="stack-layer-header">
+            <div>
+              <h3 id={`stack-layer-${index}`} class="stack-layer-title">{layer.label}</h3>
+              <p class="stack-layer-caption">{layer.caption}</p>
+            </div>
+            <span class="stack-layer-count">{layer.tools.length} {layer.tools.length > 1 ? 'OUTILS' : 'OUTIL'}</span>
+          </header>
 
-          <div class={`grid grid-cols-1 ${layer.tools.length >= 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-3 lg:gap-4 items-stretch`}>
+          <div class:list={['stack-tools', { 'stack-tools-single': layer.tools.length === 1 }]}>
             {layer.tools.map((tool) => {
               const Mock = MOCKS[tool.mockup];
               const brand = brandColorFor(tool.icon);
               return (
-                <div class="stack-card card-soft bg-[var(--color-paper)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4" style={brand ? `--brand:${brand}` : undefined}>
+                <article class="stack-card card-soft bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4" style={brand ? `--brand:${brand}` : undefined}>
                   <div class="flex items-center justify-between gap-3 flex-wrap">
                     <div class="inline-flex items-center gap-2.5 min-w-0">
                       <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
-                      <span class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">{tool.name}</span>
+                      <h4 class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] m-0">{tool.name}</h4>
                     </div>
                     <span class="chip chip-accent shrink-0">{tool.role}</span>
                   </div>
@@ -144,11 +152,11 @@ const layers: Layer[] = [
                   <p class="mt-auto m-0 text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.5]">
                     {tool.caption}
                   </p>
-                </div>
+                </article>
               );
             })}
           </div>
-        </div>
+        </section>
       ))}
     </div>
 
@@ -156,6 +164,62 @@ const layers: Layer[] = [
 </section>
 
 <style>
+  .stack-layers {
+    display: grid;
+    gap: clamp(2.75rem, 5vw, 4.5rem);
+  }
+
+  .stack-layer {
+    padding-top: clamp(1.25rem, 2vw, 1.75rem);
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  .stack-layer-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 1rem 2rem;
+    margin-bottom: clamp(1.25rem, 2vw, 1.75rem);
+  }
+
+  .stack-layer-title {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-title-lg);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .stack-layer-caption {
+    max-width: 44ch;
+    margin: 0.4rem 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .stack-layer-count {
+    color: var(--color-ink-low);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .stack-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(0.75rem, 1.5vw, 1rem);
+    align-items: stretch;
+  }
+
+  .stack-tools-single {
+    grid-template-columns: minmax(0, 520px);
+  }
+
   /* Logo titre dans la vraie couleur de la marque (--brand posé sur la carte).
      Marque monochrome (Notion) → encre pleine (noir/blanc, DA propre à Notion). */
   .stack-logo {
@@ -175,5 +239,13 @@ const layers: Layer[] = [
     color: color-mix(in oklab, var(--brand, var(--color-ink)) 65%, var(--color-ink));
     background: color-mix(in oklab, var(--brand, var(--color-ink)) 12%, transparent);
     border-color: transparent;
+  }
+
+  @media (max-width: 639px) {
+    .stack-layer-header {
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 0.5rem;
+    }
   }
 </style>
