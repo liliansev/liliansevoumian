@@ -1,0 +1,128 @@
+---
+/*
+ * KeyMetrics.astro — bandeau de trois chiffres (wireframe 1c).
+ *
+ * Chiffres RÉELS, repris tels quels des cas clients publiés (CaseStudy.astro et
+ * src/content/cas-clients/). Chaque métrique porte son client : un chiffre sans
+ * attribution ne prouve rien. Ne pas y mettre de valeur qui ne soit pas
+ * défendable dans le cas client correspondant.
+ */
+const metrics = [
+  {
+    value: '16 → 0',
+    label: 'Factures en erreur',
+    client: 'Fraich Touch',
+    href: '/cas-clients/facturation-automatisee-fraich-touch',
+  },
+  {
+    value: '3 h → 10 min',
+    label: 'Par run de sourcing',
+    client: 'M Partners',
+    href: '/cas-clients/m-partners',
+  },
+  {
+    value: '~4 h/sem',
+    label: 'De maintenance en moins',
+    client: 'Fraich Touch',
+    href: '/cas-clients/facturation-automatisee-fraich-touch',
+  },
+];
+---
+
+<section
+  data-section
+  class="relative py-14 md:py-20 px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  aria-label="Résultats mesurés chez mes clients"
+>
+  <div class="relative max-w-[1200px] mx-auto reveal">
+    <dl class="metrics-grid">
+      {metrics.map((metric) => (
+        <div class="metric">
+          <dt class="metric-value font-display font-semibold text-[var(--color-ink)]">
+            {metric.value}
+          </dt>
+          <dd class="metric-body">
+            <span class="metric-label">{metric.label}</span>
+            <a href={metric.href} class="metric-client mono-caption">
+              {metric.client}&nbsp;<span aria-hidden="true">→</span>
+            </a>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .metrics-grid {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 0;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .metric:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  /* Desktop : trois colonnes séparées par les filets verticaux, façon tableau
+     de bord — le rythme horizontal remplace l'empilement mobile. */
+  @media (min-width: 768px) {
+    .metrics-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0 clamp(1.5rem, 4vw, 4rem);
+    }
+
+    .metric {
+      padding: 0 0 0 clamp(1.25rem, 3vw, 2.5rem);
+      border-top: none;
+      border-left: 1px solid var(--color-divider);
+    }
+
+    .metric:first-child {
+      padding-left: 0;
+      border-left: none;
+    }
+  }
+
+  .metric-value {
+    font-size: var(--text-metric);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    /* Les chiffres doivent s'aligner verticalement entre les trois colonnes. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric-body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .metric-label {
+    font-size: var(--text-body);
+    line-height: 1.4;
+    color: var(--color-ink-mid);
+  }
+
+  .metric-client {
+    /* accent-text (et non accent vif) : petit texte → AA 4.5:1. */
+    color: var(--color-accent-text);
+    width: fit-content;
+  }
+
+  .metric-client:hover,
+  .metric-client:focus-visible {
+    color: var(--color-ink);
+  }
+</style>

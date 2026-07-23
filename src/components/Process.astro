@@ -1,0 +1,115 @@
+---
+/*
+ * Process.astro — « Comment ça se passe » en trois temps (wireframe 1c).
+ *
+ * Rôle : lever l'inconnu juste après les chiffres, avant que le prospect
+ * n'aille chercher le prix. Trois étapes, pas quatre — au-delà, l'engagement
+ * paraît lourd, ce qui est exactement l'objection qu'on veut désamorcer.
+ */
+import SectionHeader from './SectionHeader.astro';
+
+const steps = [
+  {
+    title: 'Un appel de 20 minutes',
+    body: "On regarde vos process ensemble. Je vous dis ce qui est automatisable, ce qui ne l'est pas, et ce que ça vaut le coup d'attaquer en premier.",
+  },
+  {
+    title: 'Un cadrage chiffré',
+    body: 'Vous recevez le périmètre, le gain estimé et le délai. Assez précis pour décider, assez court pour être lu.',
+  },
+  {
+    title: 'La mise en production',
+    body: 'Je construis, je documente et je surveille. Vos équipes reprennent la main : rien ne dépend de ma disponibilité.',
+  },
+];
+---
+
+<section
+  id="process"
+  data-section
+  class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      label="COMMENT ÇA SE PASSE"
+      title="Trois étapes, pas de tunnel."
+      body="Du premier appel à la mise en production, vous savez à chaque instant où on en est et ce qui reste à faire."
+      titleMaxWidth="20ch"
+    />
+
+    <ol class="process-steps">
+      {steps.map((step, i) => (
+        <li class="reveal process-step">
+          <span class="process-num mono-caption" aria-hidden="true">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <h3 class="process-title font-display font-semibold text-[var(--color-ink)] m-0">
+            {step.title}
+          </h3>
+          <p class="process-body m-0">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+
+  </div>
+</section>
+
+<style>
+  .process-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .process-step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 26px 0;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .process-step:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  @media (min-width: 768px) {
+    .process-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0 clamp(1.5rem, 4vw, 3.5rem);
+    }
+
+    .process-step {
+      padding: 24px 0 0;
+      /* Le filet horizontal court en tête de chaque étape : la lecture se fait
+         de gauche à droite, comme une frise. */
+      border-top: 1px solid var(--color-divider);
+    }
+
+    .process-step:first-child {
+      padding-top: 24px;
+    }
+  }
+
+  .process-num {
+    color: var(--color-accent-text);
+  }
+
+  .process-title {
+    font-size: var(--text-title-sm);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .process-body {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-ink-mid);
+    max-width: 42ch;
+  }
+</style>

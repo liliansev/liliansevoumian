@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import HeroManifesto from '../components/HeroManifesto.astro';
+import HeroOffre from '../components/HeroOffre.astro';
 import LogoMarquee from '../components/LogoMarquee.astro';
+import KeyMetrics from '../components/KeyMetrics.astro';
+import Process from '../components/Process.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Stack from '../components/Stack.astro';
@@ -21,8 +23,14 @@ const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
   <Navigation />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <HeroManifesto />
+    {/* Structure « Offre directe » : agenda au-dessus du pli, puis preuve
+        chiffrée, puis déroulé de la mission. Les sections de preuve longues
+        (cas, témoignages, ROI, stack) viennent après, une fois la promesse et
+        le process posés. */}
+    <HeroOffre />
     <LogoMarquee />
+    <KeyMetrics />
+    <Process />
     <CaseStudy />
     <Testimonials />
     <ROICalculator />

@@ -7,6 +7,7 @@
  *   · Fraich Touch  → panneau facturation (factures payées / relance auto)
  *   · M Partners    → canvas de workflow (sourcing → agent IA → CRM)
  *   · Celeris       → catalogue ERP enrichi par agent IA, en interne
+ *   · Humble+       → order-to-cash B2B (PDF/XLS → Shopify → Pennylane)
  * Tout en monochrome (tokens projet) ; seul --color-success (fonctionnel) pointe
  * les statuts positifs. Copy et angle métier inchangés.
  */
@@ -45,6 +46,15 @@ const celeris = {
   description:
     "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP, pensé pour tourner en interne, avec une exigence forte de souveraineté des données.",
   href: '/cas-clients/celeris',
+};
+const humblePlus = {
+  client: 'Humble+',
+  sector: 'NUTRITION FONCTIONNELLE · E-COMMERCE B2B',
+  title: 'Des bons de commande B2B aux factures, sans ressaisie',
+  description:
+    "Marque française de compléments alimentaires distribuée en direct et via un réseau B2B. J'ai remplacé un scénario Make fragile par un workflow n8n qui lit les bons de commande PDF ou Excel, sécurise les montants, crée la commande Shopify puis la facture Pennylane, avec validation Slack pendant la phase de stabilisation.",
+  results: ['2 FLUX PDF + XLS UNIFIÉS', "0,00 € D'ÉCART SUR LE CAS TEST"],
+  href: '/cas-clients/humble-plus',
 };
 ---
 
@@ -169,6 +179,48 @@ const celeris = {
               <span class="ml-auto">SOUVERAINETÉ ✓</span>
             </Fragment>
           </MockupWindow>
+        </div>
+      </article>
+
+      {/* ── Humble+ : order-to-cash ⟵ texte (alterné) ── */}
+      <article class="reveal grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+        <div class="order-2 lg:order-1">
+          <MockupWindow file="commandes — b2b.order-to-cash" status="actif" statusTone="success" flush>
+            <WorkflowCanvas
+              describe="Schéma simplifié du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow orchestre la commande Shopify, la facture Pennylane et la validation humaine des cas sensibles dans Slack."
+              trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Entrée B2B', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
+              agent={{ icon: 'simple-icons:mistralai', color: brandColorFor('simple-icons:mistralai'), kicker: 'OCR + IA', title: 'Extrait & contrôle', sub: 'EAN · montants · client' }}
+              actions={[
+                { icon: 'simple-icons:shopify', color: brandColorFor('simple-icons:shopify'), kicker: 'Shopify', title: 'Commande' },
+                { icon: 'lucide:receipt-text', kicker: 'Pennylane', title: 'Facture' },
+                { icon: 'simple-icons:slack', color: brandColorFor('simple-icons:slack'), kicker: 'Contrôle', title: 'Validation humaine' },
+              ]}
+            />
+            <Fragment slot="footer">
+              <span>▸ ANTI-DOUBLON · CONTRÔLE AU CENTIME</span>
+              <span class="ml-auto">2 FLUX</span>
+            </Fragment>
+          </MockupWindow>
+        </div>
+        <div class="order-1 lg:order-2 flex flex-col gap-5">
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-display font-medium text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)]">{humblePlus.client}</span>
+            <span class="mono-caption text-[var(--color-ink-low)]">{humblePlus.sector}</span>
+          </div>
+          <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.15] m-0 max-w-[20ch]">{humblePlus.title}</h3>
+          <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.6] m-0 max-w-[46ch]">{humblePlus.description}</p>
+          <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mono-caption text-[var(--color-ink-mid)] m-0">
+            {humblePlus.results.map((result, i) => (
+              <Fragment>
+                {i > 0 && <span aria-hidden="true">·</span>}
+                <span>{result}</span>
+              </Fragment>
+            ))}
+          </p>
+          <a href={humblePlus.href} class="case-cta group w-fit">
+            <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+            <span class="case-cta-text">VOIR LE CAS</span>
+          </a>
         </div>
       </article>
 

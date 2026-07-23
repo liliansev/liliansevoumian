@@ -1,0 +1,125 @@
+---
+/*
+ * HeroOffre.astro — hero « Offre directe » (wireframe 1c).
+ *
+ * Bascule par rapport à HeroManifesto : la colonne droite n'est plus le portrait
+ * mais l'agenda de réservation, au-dessus de la ligne de flottaison. La colonne
+ * gauche resserre l'offre sur un seul focus + trois bénéfices vérifiables.
+ *
+ * Mobile (<lg)  : colonne unique, l'offre d'abord, l'agenda juste en dessous.
+ * Desktop (lg+) : split 1.1fr / 1fr, aligné en haut (l'agenda est plus haut que
+ *                 le texte — un centrage vertical décrocherait le H1 du pli).
+ *
+ * Le LCP reste le H1 texte : l'embed Cal est monté paresseusement (voir
+ * BookingPanel.astro), aucune image n'est chargée au-dessus du pli.
+ */
+import BookingPanel from './BookingPanel.astro';
+import LinkCTA from './LinkCTA.astro';
+
+const benefits = [
+  'Vos tâches répétitives tournent seules, en production, avec supervision.',
+  'Un périmètre chiffré et un délai annoncés dès le cadrage.',
+  'Vos équipes gardent la main : tout est documenté et repris en interne.',
+];
+---
+
+<section
+  id="hero"
+  data-section
+  class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto pt-10 md:pt-20 pb-12 md:pb-[var(--spacing-section-y)]">
+
+    <div class="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-16 lg:items-start">
+
+      <!-- Offre : un seul focus, puis les bénéfices -->
+      <div data-hero-stagger class="flex flex-col gap-6 md:gap-7">
+
+        <span class="reveal eyebrow-rule mono-caption text-[var(--color-ink-low)]" style="text-transform: none;">
+          Freelance et Formateur en IA &amp; Automatisations
+        </span>
+
+        <h1 class="reveal hero-offre-h1 font-display font-semibold text-[var(--color-ink)] m-0">
+          J'automatise ce que vos équipes font encore à la main.
+        </h1>
+
+        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[48ch]">
+          Pour les PME et cabinets qui perdent des heures chaque semaine dans des
+          process manuels. Workflows n8n &amp; Make, agents IA et outils métiers
+          sur-mesure avec Claude&nbsp;Code.
+        </p>
+
+        <ul class="reveal hero-benefits">
+          {benefits.map((benefit) => (
+            <li>
+              <span class="hero-benefit-mark" aria-hidden="true">✓</span>
+              <span>{benefit}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+          <LinkCTA href="#cas">Voir les résultats clients</LinkCTA>
+          <LinkCTA href="#contact-form">M'écrire</LinkCTA>
+        </div>
+
+      </div>
+
+      <!-- Agenda : le CTA principal du hero est ici, pas dans le texte. -->
+      <div class="reveal lg:sticky lg:top-[104px]">
+        <BookingPanel source="hero" />
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .hero-offre-h1 {
+    font-size: var(--text-display-hero);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    max-width: 18ch;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-offre-h1 {
+      /* Un cran sous le manifesto : la colonne est plus étroite qu'avant,
+         l'agenda occupant désormais le tiers droit. */
+      font-size: clamp(2.5rem, 4vw + 0.5rem, 4rem);
+    }
+  }
+
+  /* ── Bénéfices ─────────────────────────────────────────────────────────
+     Liste sèche, pas de cartes : le poids visuel doit rester sur le H1 et
+     sur l'agenda. Le filet supérieur les rattache au sous-titre. */
+  .hero-benefits {
+    list-style: none;
+    margin: 0;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--color-divider);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 52ch;
+  }
+
+  .hero-benefits li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    color: var(--color-ink-mid);
+  }
+
+  .hero-benefit-mark {
+    flex-shrink: 0;
+    color: var(--color-accent-text);
+    font-weight: 600;
+  }
+</style>
