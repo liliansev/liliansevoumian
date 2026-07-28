@@ -1,6 +1,6 @@
 ---
 title: "Facturation complexe 100% automatisée depuis HubSpot"
-seoTitle: "Automatiser la facturation depuis HubSpot — cas client Make"
+seoTitle: "Automatiser la facturation depuis HubSpot : cas client Make"
 description: "Fraich Touch est passée de 33 à 4 scénarios Make et de 16 factures en erreur à 0, en récupérant environ 4 h par semaine."
 secteur: "Agence de gestion de talents"
 date: 2026-01-30
@@ -66,15 +66,15 @@ Au lieu de coder les IDs des pipelines en dur, les scénarios lisent une table d
 
 ## Les étapes
 
-### Semaine 1 — Audit et diagnostic
+### Audit et diagnostic (semaine 1)
 
 Analyse complète du compte Make (33 scénarios, 17 connexions, 3 Data Stores). Mapping du pipeline commercial HubSpot et des spécificités métier (TVA, VHR, échelonnement, bons de commande). Livraison d'un rapport d'audit détaillé avec vidéo explicative et recommandation de refonte.
 
-### Semaine 2 — Développement
+### Développement (semaine 2)
 
 Construction des 4 scénarios Make, dashboard Notion, intégration Pennylane API v2. Mise en place des webhooks HubSpot en remplacement du polling horaire. Configuration du mapping dynamique et de la logique TVA par code pays.
 
-### Semaines 3-4 — Tests et itérations
+### Tests et itérations (semaines 3-4)
 
 Sessions de test en live avec l'équipe sur de vrais deals. Corrections TVA, ajustement des workflows devis, validation du processus de réclamation facture talents. Migration des données historiques HubSpot vers Notion. Points de suivi bi-hebdomadaires.
 
@@ -86,11 +86,11 @@ Nettoyage des statuts par l'équipe, activation progressive, vidéo de formation
 
 ### Fiabilité totale de la facturation
 
-Les 16 factures bloquées dans la Dead Letter Queue, c'est terminé. Chaque facture est envoyée à temps, chaque erreur remonte instantanément dans Notion. Plus de CA bloqué, plus de retards de paiement découverts par hasard.
+Les 16 factures bloquées dans la Dead Letter Queue, c'est terminé. Chaque facture part à temps et chaque erreur remonte instantanément dans Notion.
 
 ### Visibilité en temps réel
 
-L'équipe est passée de zéro visibilité à un dashboard Notion où chaque facture a son statut, ses erreurs détaillées et un lien direct vers le deal HubSpot. Lise gère les paiements quotidiens (6-7 par jour) en quelques clics au lieu de naviguer entre HubSpot, Pennylane et des fichiers Excel.
+L'équipe est passée de zéro visibilité à un dashboard Notion où chaque facture se retrouve en un coup d'œil. Lise gère les paiements quotidiens (6-7 par jour) en quelques clics au lieu de naviguer entre HubSpot, Pennylane et des fichiers Excel.
 
 ### 4 h/semaine économisées
 

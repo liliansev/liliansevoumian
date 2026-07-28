@@ -22,11 +22,11 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Combien ça coûte ?",
-    a: "Je ne mets pas de tarif sur cette page, parce que le même mot — « automatiser la facturation » — recouvre trois jours de travail chez l'un et trois mois chez l'autre. Ce que je peux promettre : le devis est ferme, posé après le premier appel, et je vous dis avant de commencer si le jeu en vaut la chandelle. Si le budget est votre sujet, dites-le dès le premier appel, on gagnera du temps tous les deux.",
+    a: "Je ne mets pas de tarif sur cette page, parce que le même mot, « automatiser la facturation », recouvre trois jours de travail chez l'un et trois mois chez l'autre. Ce que je peux promettre : le devis est ferme, posé après le premier appel, et je vous dis avant de commencer si le jeu en vaut la chandelle. Si le budget est votre sujet, dites-le d'entrée, on gagnera du temps tous les deux.",
   },
   {
     q: "Et si un de mes outils change de son côté ?",
-    a: "Ça arrive : chez Fraich Touch, l'outil de compta avait changé d'interface deux fois avant que j'arrive. C'est pour ça que chaque automatisation que je livre a une alerte explicite — Slack, Notion ou email selon ce que vous utilisez : vous voyez l'erreur et vous savez ce qui s'est passé, au lieu de la découvrir trois semaines plus tard. Le mois qui suit la livraison, je corrige sans surcoût. Après, on cale ça ensemble.",
+    a: "Ça arrive : chez Fraich Touch, l'outil de compta avait changé d'interface deux fois avant que j'arrive. C'est pour ça que chaque automatisation que je livre a une alerte explicite sur Slack, Notion ou email selon ce que vous utilisez : vous voyez l'erreur le jour où elle arrive et vous savez ce qui s'est passé. Le mois qui suit la livraison, je corrige sans surcoût. Après, on cale ça ensemble.",
   },
   {
     q: "Mes équipes doivent-elles savoir coder ?",
@@ -34,7 +34,7 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Make ou n8n ? Lequel et pourquoi ?",
-    a: "Ça dépend de qui maintient. n8n si vous voulez héberger vous-même — données sensibles, RGPD strict — ou si le volume est important. Make si votre équipe veut reprendre la main dessus : c'est le plus lisible des deux. Sur mes quatre derniers projets, c'est moitié-moitié. Si vous êtes déjà sur l'un, on reste dessus : je ne migre pas pour migrer.",
+    a: "Ça dépend de qui maintient. n8n si vous voulez héberger vous-même (données sensibles, RGPD strict) ou si le volume est important. Make si votre équipe veut reprendre la main dessus : c'est le plus lisible des deux. Sur mes quatre derniers projets, c'est moitié-moitié. Si vous êtes déjà sur l'un, la réponse est simple : on reste dessus.",
   },
   {
     q: "Remote ou sur site ?",
@@ -42,6 +42,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Comment je suis sûr que vous comprenez mon métier ?",
-    a: "Je ne le suis pas. C'est exactement ce que sert à valider le premier appel. Si après l'appel je sens que je ne suis pas le bon (secteur trop spécialisé, contraintes que je ne maîtrise pas), je le dis et je vous oriente. Mieux que de prendre un projet que je ne sais pas livrer.",
+    a: "Je ne le suis pas. C'est exactement ce que le premier appel sert à valider. Si après l'appel je sens que je ne suis pas le bon (secteur trop spécialisé, contraintes que je ne maîtrise pas), je le dis et je vous oriente.",
   },
 ];

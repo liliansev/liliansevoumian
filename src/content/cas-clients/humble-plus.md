@@ -1,7 +1,7 @@
 ---
 title: "Des bons de commande B2B aux factures, sans ressaisie"
-seoTitle: "Bons de commande B2B transformés en factures — cas client n8n"
-description: "Chez Humble+, un scénario Make fragile a été remplacé par un workflow n8n qui lit les bons de commande PDF et Excel sans une seule ressaisie."
+seoTitle: "Bons de commande B2B transformés en factures : cas client n8n"
+description: "Chez Humble+, un workflow n8n lit les bons de commande PDF et Excel et les transforme en commandes Shopify et en factures Pennylane, sans une seule ressaisie."
 secteur: "Nutrition fonctionnelle · E-commerce B2B"
 date: 2026-07-23
 tags: ["Ops", "Finance", "IA"]
@@ -41,7 +41,7 @@ Après l'audit, j'ai reconstruit le parcours dans **n8n** autour d'une règle si
 
 ### Une entrée unique pour deux flux
 
-Les emails Gmail sont séparés par type de commande, puis chaque pièce jointe est traitée individuellement. Le workflow détecte le format, envoie le PDF vers le circuit pharmacie et l'Excel vers le circuit salle de sport. Un fichier non reconnu déclenche une alerte au lieu de disparaître silencieusement.
+Les emails Gmail sont séparés par type de commande, puis chaque pièce jointe est traitée individuellement. Le workflow détecte le format, envoie le PDF vers le circuit pharmacie et l'Excel vers le circuit salle de sport. Un fichier non reconnu déclenche une alerte.
 
 Cette boucle permet de traiter plusieurs pièces jointes dans un même message et d'enchaîner les commandes sans bloquer la file.
 
@@ -49,7 +49,7 @@ Cette boucle permet de traiter plusieurs pièces jointes dans un même message e
 
 Un agent **Mistral** lit le document et renvoie un JSON structuré : client, adresses, produits, EAN, quantités, remises et totaux.
 
-La sortie n'est jamais utilisée telle quelle. Une étape de normalisation recalcule chaque ligne depuis les montants imprimés, redéduit la remise, écarte les lignes offertes ou sans EAN valide et remonte les incohérences. L'IA comprend le document ; les règles métier garantissent le résultat.
+Chaque sortie passe ensuite par une étape de normalisation, qui recalcule chaque ligne depuis les montants imprimés, redéduit la remise, écarte les lignes offertes ou sans EAN valide et remonte les incohérences. L'IA comprend le document ; les règles métier garantissent le résultat.
 
 ### Une commande Shopify fidèle au bon de commande
 
@@ -83,7 +83,7 @@ Cartographie du scénario Make, des deux formats de commande et des règles Shop
 
 ### Refonte dans n8n
 
-Construction d'un workflow de plus de 60 nœuds, organisé autour de trois blocs : lecture et contrôle du document, création de la commande, puis facturation. Les règles de packs, l'identification client et les garde-fous anti-doublon sont centralisés au lieu d'être dispersés.
+Construction d'un workflow de plus de 60 nœuds, organisé autour de trois blocs : lecture et contrôle du document, création de la commande, puis facturation. Les règles de packs, l'identification client et les garde-fous anti-doublon sont centralisés au même endroit.
 
 ### Tests puis mise en production progressive
 
@@ -91,7 +91,7 @@ Le parcours a été validé sur un PDF pharmacie et un fichier Excel salle de sp
 
 ## Les résultats
 
-> Projet en phase de stabilisation : les résultats ci-dessous viennent des tests réels et des premières commandes traitées. La capacité de 50 emails par heure reste l'objectif de dimensionnement, pas une mesure de production.
+> Projet en phase de stabilisation : les résultats ci-dessous viennent des tests réels et des premières commandes traitées. La capacité de 50 emails par heure reste un objectif de dimensionnement : elle n'a pas encore été mesurée en production.
 
 - **Deux formats métier réunis dans un seul système** : PDF pharmacie et Excel salle de sport suivent chacun leurs règles sans multiplier les automatisations.
 - Sur le cas de référence documenté dans le workflow, les totaux étaient **identiques au centime** dans Slack, Shopify et Pennylane, soit **0,00 € d'écart**.

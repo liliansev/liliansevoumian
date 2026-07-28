@@ -46,7 +46,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     <SectionHeader
       label="SIMULATEUR · HYPOTHÈSE CONSERVATRICE"
       title="Le temps que vos équipes peuvent <mark class='inv'>récupérer.</mark>"
-      body="Deux réglages suffisent. L'estimation retient 55 % des heures manuelles comme récupérables et 48 semaines de travail effectif par an — au-delà de 20 h/sem ou 10 personnes, elle est plafonnée."
+      body="Deux réglages suffisent. L'estimation retient 55 % des heures manuelles comme récupérables et 48 semaines de travail effectif par an. Au-delà de 20 h/sem ou 10 personnes, elle est plafonnée."
       titleMaxWidth="24ch"
       bodyMaxWidth="60ch"
     />
@@ -68,11 +68,11 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
         </div>
 
         <p class="roi-traduction">
-          Sur les <span data-roi-output="manualHours">{formatFR(manualHours)}</span> h/an
+          Sur les <span data-roi-output="manualHours">{formatFR(manualHours)}</span>&nbsp;h/an
           passées en tâches répétitives, soit
           <span data-roi-output="weeksSaved">{formatFR(inWorkWeeks(hoursSaved))}</span> semaines
-          de travail rendues à l’équipe — environ
-          <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span> € à {HOURLY_COST} €
+          de travail rendues à l’équipe. Environ
+          <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span>&nbsp;€ à {HOURLY_COST}&nbsp;€
           de l’heure chargée.
         </p>
 

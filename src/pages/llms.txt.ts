@@ -19,7 +19,7 @@ export const GET: APIRoute = async () => {
   );
 
   const ligneCas = (c: (typeof cas)[number]) => {
-    const kpi = c.data.kpis[0] ? ` — ${c.data.kpis[0].value} ${c.data.kpis[0].label}` : '';
+    const kpi = c.data.kpis[0] ? ` · ${c.data.kpis[0].value} ${c.data.kpis[0].label}` : '';
     const outils = c.data.tools.length ? ` (${c.data.tools.join(', ')})` : '';
     return `- [${c.data.title}](https://liliansevoumian.fr/cas-clients/${c.id})${outils}${kpi}`;
   };
@@ -28,7 +28,7 @@ export const GET: APIRoute = async () => {
 
 > Freelance français en automatisation et en intelligence artificielle.
 > Je construis des workflows n8n et Make, des agents IA et des outils métiers
-> pour des PME françaises — et je reprends ceux qui existent déjà quand ils
+> pour des PME françaises. Je reprends aussi ceux qui existent déjà quand ils
 > cassent.
 
 ## Identité
@@ -49,14 +49,14 @@ export const GET: APIRoute = async () => {
 
 ## Outils utilisés au quotidien
 
-- n8n — workflows et agents IA, auto-hébergeables
-- Make — scénarios d'intégration visuels ; plateforme européenne, hébergement UE
-- Notion — base clients et suivi des opérations
-- Airtable — base relationnelle et vues métier (certifié Airtable)
-- Claude Code (Anthropic) — développement d'outils internes sur mesure
-- Codex (OpenAI) — tâches de développement déléguées, relues avant livraison
-- Claude Cowork (Anthropic) — pilotage des automatisations par les équipes, sans code
-- Mistral — traitement de documents sensibles sans sortie d'Europe
+- n8n : workflows et agents IA, auto-hébergeables
+- Make : scénarios d'intégration visuels ; plateforme européenne, hébergement UE
+- Notion : base clients et suivi des opérations
+- Airtable : base relationnelle et vues métier (certifié Airtable)
+- Claude Code (Anthropic) : développement d'outils internes sur mesure
+- Codex (OpenAI) : tâches de développement déléguées, relues avant livraison
+- Claude Cowork (Anthropic) : pilotage des automatisations par les équipes, sans code
+- Mistral : traitement de documents sensibles sans sortie d'Europe
 
 ## Cas clients documentés
 
@@ -64,7 +64,7 @@ ${cas.map(ligneCas).join('\n')}
 
 ## Pages
 
-- [Accueil](https://liliansevoumian.fr/) — offre, cas clients, calculateur, FAQ
+- [Accueil](https://liliansevoumian.fr/) : offre, cas clients, calculateur, FAQ
 - [Tous les cas clients](https://liliansevoumian.fr/cas-clients)
 - [Expert Make](https://liliansevoumian.fr/expert-make)
 - [Expert n8n](https://liliansevoumian.fr/expert-n8n)

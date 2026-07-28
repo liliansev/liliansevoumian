@@ -28,13 +28,13 @@ const valeur = [
     ia: true,
   },
   {
-    titre: 'Du code quand le no-code ne suffit plus',
-    texte: "Nœuds JavaScript/Python natifs, appels API sur-mesure, transformations de données complexes. Là où Make atteint sa limite, n8n continue, sans changer d'outil.",
+    titre: 'Du code natif dans le workflow',
+    texte: "Nœuds JavaScript/Python natifs, appels API sur-mesure, transformations de données complexes. Le traitement le plus fin reste dans le même outil que le déclencheur.",
     ia: false,
   },
   {
     titre: 'Workflows versionnés, exportables en JSON',
-    texte: "Chaque automatisation est versionnée et exportable : vous gardez la main, rien n'est enfermé. Couche d'erreur explicite (try/catch + alerte) sur chacune : une erreur remonte tout de suite.",
+    texte: "Chaque automatisation est versionnée et exportable : vous gardez la main sur votre logique métier. Couche d'erreur explicite (try/catch + alerte) sur chacune : une erreur remonte tout de suite.",
     ia: false,
   },
 ];
@@ -51,12 +51,12 @@ const casUsage = [
 
 const faqs = [
   {
-    q: 'Pourquoi n8n plutôt que Make ?',
+    q: 'n8n ou Make, lequel choisir ?',
     a: "n8n quand vous avez des contraintes de souveraineté (self-hosting, RGPD strict, données sensibles), du volume de données important, ou besoin d'agents IA et de code sur-mesure. Make reste excellent pour des automatisations visuelles que votre équipe maintient seule, sur des outils SaaS courants. Je travaille les deux et je vous oriente.",
   },
   {
     q: 'Peut-on l’héberger sur nos propres serveurs ?',
-    a: "Oui, c'est l'un des gros atouts de n8n. Je l'installe sur votre infrastructure (cloud privé ou serveur interne) pour que vos données ne sortent jamais de chez vous. Idéal pour les secteurs réglementés ou toute donnée que vous ne voulez pas voir transiter par un SaaS tiers.",
+    a: "Oui, c'est l'un des gros atouts de n8n. Je l'installe sur votre infrastructure (cloud privé ou serveur interne) pour que vos données restent chez vous. Idéal pour les secteurs réglementés et pour toute donnée que vous voulez garder en interne.",
   },
   {
     q: 'n8n peut-il vraiment faire tourner des agents IA ?',
@@ -110,7 +110,7 @@ const serviceSchema = {
             Expert <mark>n8n</mark> freelance.
           </h1>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
-            J'automatise vos processus et je déploie des agents IA avec n8n, hébergé chez vous quand vos données sont sensibles (RGPD), avec du code quand le no-code ne suffit plus.
+            J'automatise vos processus et je déploie des agents IA avec n8n, hébergé chez vous quand vos données sont sensibles (RGPD), avec du code natif quand votre logique métier l'exige.
           </p>
         </div>
 
@@ -136,7 +136,7 @@ const serviceSchema = {
         <div class="reveal mb-12 md:mb-16 pb-6 border-b border-[var(--color-divider)]">
           <div class="section-number">01 · CE QUE JE FAIS AVEC N8N</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
-            Là où le no-code atteint sa limite.
+            Souveraineté, agents IA et code natif.
           </h2>
         </div>
 
@@ -188,7 +188,7 @@ const serviceSchema = {
             n8n, rodé en production.
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
-            J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Self-hosting maîtrisé, agents IA avec garde-fous, couche d'erreur explicite sur chaque workflow. Des automatisations versionnées, qui tiennent dans le temps et ne vous enferment pas.
+            J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Self-hosting maîtrisé, agents IA avec garde-fous, couche d'erreur explicite sur chaque workflow. Des automatisations versionnées, qui tiennent dans le temps.
           </p>
         </div>
         <dl class="reveal grid grid-cols-1 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden min-w-[200px]">
@@ -245,14 +245,14 @@ const serviceSchema = {
     </section>
 
     {/* ===== CTA FINAL ===== */}
-    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal max-w-[40ch] mb-10 md:mb-12">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]">
             Un workflow n8n ou un agent IA en tête&nbsp;?
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 m-0">
-            20 min pour décider si on travaille ensemble. Sans engagement, réponse claire sous 48 h.
+            20&nbsp;min pour poser votre process à plat. Sans engagement.
           </p>
         </div>
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
@@ -276,7 +276,9 @@ const serviceSchema = {
   .expert-hero-logo {
     width: 18px;
     height: 18px;
-    color: var(--color-accent);
+    /* Encre, pas lime : le lime tient 1,25:1 sur blanc, illisible à 18 px, et
+       la DA veut le lime en surface, jamais en couleur de trait. */
+    color: var(--color-ink);
     flex-shrink: 0;
   }
 </style>

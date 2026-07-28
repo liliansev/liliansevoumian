@@ -56,7 +56,7 @@ const faqs = [
   },
   {
     q: 'Combien de temps pour un premier scénario ?',
-    a: "Quelques jours pour un cas simple et cadré. Une automatisation plus large (plusieurs outils, logique métier) se compte en semaines. On valide le périmètre au premier appel, avant de lancer quoi que ce soit.",
+    a: "On valide le périmètre au premier appel, avant de lancer quoi que ce soit. Le délai dépend du nombre d'outils à connecter et de la logique métier. Je vous l'annonce à ce moment-là.",
   },
   {
     q: 'Make est-il assez puissant pour mon besoin ?',
@@ -181,7 +181,7 @@ const serviceSchema = {
             Le premier certifié Make Niveau 5 en France.
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
-            J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Des automatisations qui tiennent dans le temps, documentées, avec une couche d'erreur sur chacune. Pas de scénario fragile livré et oublié.
+            J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Des automatisations qui tiennent dans le temps, documentées, avec une couche d'erreur sur chacune.
           </p>
         </div>
         <dl class="reveal grid grid-cols-1 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden min-w-[200px]">
@@ -238,14 +238,14 @@ const serviceSchema = {
     </section>
 
     {/* ===== CTA FINAL ===== */}
-    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal max-w-[40ch] mb-10 md:mb-12">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]">
             Un scénario Make en tête&nbsp;?
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 m-0">
-            20 min pour décider si on travaille ensemble. Sans engagement, réponse claire sous 48 h.
+            20&nbsp;min pour poser votre process à plat. Sans engagement.
           </p>
         </div>
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
@@ -269,7 +269,9 @@ const serviceSchema = {
   .expert-hero-logo {
     width: 18px;
     height: 18px;
-    color: var(--color-accent);
+    /* Encre, pas lime : le lime tient 1,25:1 sur blanc, illisible à 18 px, et
+       la DA veut le lime en surface, jamais en couleur de trait. */
+    color: var(--color-ink);
     flex-shrink: 0;
   }
 </style>
