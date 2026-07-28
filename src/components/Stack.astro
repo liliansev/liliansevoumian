@@ -46,14 +46,12 @@ interface Tool {
 }
 interface Layer {
   label: string;
-  caption: string;
   tools: Tool[];
 }
 
 const layers: Layer[] = [
   {
     label: 'AUTOMATION',
-    caption: 'Pour les tâches qui suivent toujours la même règle',
     tools: [
       /* « Le meilleur QUAND » et pas « le meilleur » : le mot « quand » borne le
          superlatif à un cas d'usage que n8n revendique officiellement. Énoncé
@@ -85,7 +83,6 @@ const layers: Layer[] = [
   },
   {
     label: 'PRODUCTIVITÉ',
-    caption: 'Pour structurer et piloter les opérations',
     tools: [
       {
         name: 'Notion',
@@ -111,7 +108,6 @@ const layers: Layer[] = [
   },
   {
     label: 'IA',
-    caption: 'Pour tout ce qui demande du jugement',
     tools: [
       /* Claude Code et Codex sont voisins parce qu'ils font le même métier
          autrement, et les rôles doivent le dire : deux chips « IA · DEV » côte
@@ -187,12 +183,13 @@ const layers: Layer[] = [
     <div class="stack-layers reveal">
       {layers.map((layer, index) => (
         <section class="stack-layer" aria-labelledby={`stack-layer-${index}`}>
+          {/* Le libellé seul, surligné. Le compte d'outils se lit en comptant
+              les cartes juste en dessous, et la phrase d'intention doublait un
+              nom déjà explicite. Inclinaison alternée, comme partout ailleurs. */}
           <header class="stack-layer-header">
-            <div>
-              <h3 id={`stack-layer-${index}`} class="stack-layer-title">{layer.label}</h3>
-              <p class="stack-layer-caption">{layer.caption}</p>
-            </div>
-            <span class="stack-layer-count">{layer.tools.length} {layer.tools.length > 1 ? 'OUTILS' : 'OUTIL'}</span>
+            <h3 id={`stack-layer-${index}`} class="stack-layer-title">
+              <mark class:list={{ inv: index % 2 === 1 }}>{layer.label}</mark>
+            </h3>
           </header>
 
           <div class:list={['stack-tools', {
@@ -247,10 +244,6 @@ const layers: Layer[] = [
   }
 
   .stack-layer-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: 1rem 2rem;
     margin-bottom: clamp(1.25rem, 2vw, 1.75rem);
   }
 
@@ -264,22 +257,7 @@ const layers: Layer[] = [
     letter-spacing: -0.02em;
   }
 
-  .stack-layer-caption {
-    max-width: 44ch;
-    margin: 0.4rem 0 0;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
-  }
 
-  .stack-layer-count {
-    color: var(--color-ink-low);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
 
   .stack-tools {
     display: grid;
@@ -325,12 +303,4 @@ const layers: Layer[] = [
     .stack-logo { transition: none; }
   }
 
-
-  @media (max-width: 639px) {
-    .stack-layer-header {
-      grid-template-columns: 1fr;
-      align-items: start;
-      gap: 0.5rem;
-    }
-  }
 </style>
