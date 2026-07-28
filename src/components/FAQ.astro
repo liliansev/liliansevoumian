@@ -57,3 +57,50 @@ import { faqs } from '../data/faq';
 
   </div>
 </section>
+
+<script>
+  /*
+   * Le balayage lime de la FAQ a son propre observateur, séparé de celui des
+   * `.reveal`. Deux raisons, et la seconde est celle qui l'imposait :
+   *
+   *  1. Le failsafe du <head> pose `.is-visible` sur TOUS les `.reveal` de la
+   *     page 2,5 s après le chargement, où qu'ils soient — c'est ce qui évite
+   *     la page blanche si le module de reveal ne s'exécute jamais. Le
+   *     balayage partait donc hors écran et était terminé avant qu'on arrive
+   *     dessus. Invisible pour un fondu, fatal pour une animation qui ne joue
+   *     qu'une fois.
+   *  2. La cascade se déclenche sur la LISTE, pas sur chaque question. En
+   *     observant chaque item, un défilement lent ferait attendre près d'une
+   *     seconde à la dernière question avant que sa bande parte, alors que
+   *     l'échelonnement de `--rang` suppose un départ commun.
+   */
+  function initFaqSweep(): void {
+    const liste = document.querySelector<HTMLElement>('.faq-liste');
+    if (!liste || liste.dataset.sweepInit === '1') return;
+    liste.dataset.sweepInit = '1';
+
+    const items = Array.from(liste.querySelectorAll<HTMLElement>('.faq-item'));
+    if (!items.length) return;
+
+    const lancer = () => items.forEach((el) => el.classList.add('balaye'));
+
+    if (!('IntersectionObserver' in window)) { lancer(); return; }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        lancer();
+        obs.disconnect();
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
+
+    obs.observe(liste);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFaqSweep);
+  } else {
+    initFaqSweep();
+  }
+  document.addEventListener('astro:page-load', initFaqSweep);
+</script>

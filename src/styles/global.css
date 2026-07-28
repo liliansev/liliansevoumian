@@ -1166,7 +1166,13 @@ a[href^="mailto:"] {
   transform: translateX(-101%);
 }
 
-.js-ready .faq-item.is-visible::after {
+/* Le déclencheur est `.balaye`, posé par l'observateur de FAQ.astro, et NON
+   `.is-visible`. Le failsafe du <head> pose `.is-visible` sur tous les
+   `.reveal` de la page au bout de 2,5 s, où qu'ils soient : le balayage
+   partait donc hors écran, et il était terminé avant qu'on arrive dessus.
+   Pour un fondu ça n'a pas d'importance, pour une animation qui ne joue
+   qu'une fois c'est rédhibitoire. */
+.faq-item.balaye::after {
   animation: faq-surligne 900ms var(--ease-out-quint) both;
   animation-delay: calc(var(--rang, 0) * 160ms);
 }
@@ -1190,8 +1196,7 @@ a[href^="mailto:"] {
 
 @media (prefers-reduced-motion: reduce) {
   .faq-liste > .reveal { transition-delay: 0ms; }
-  .faq-item.is-visible::after,
-  .js-ready .faq-item.is-visible::after { animation: none; display: none; }
+  .faq-item.balaye::after { animation: none; display: none; }
 }
 
 /* =========================================================================
