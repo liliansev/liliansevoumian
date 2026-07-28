@@ -60,7 +60,7 @@ const benefits = [
 
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <LinkCTA href="#cas">Voir les résultats clients</LinkCTA>
-          <LinkCTA href="#contact-form">M'écrire</LinkCTA>
+          <LinkCTA href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer">Réserver 20&nbsp;min</LinkCTA>
         </div>
 
       </div>
@@ -82,8 +82,11 @@ const benefits = [
     letter-spacing: -0.035em;
     text-wrap: balance;
     max-width: 18ch;
+    /* `overflow-wrap` sans `hyphens` : un mot trop long se replie, mais
+       jamais avec un tiret. À cette taille d'affichage une césure est
+       très visible, et elle coupait « freelance » en « free-lance »
+       ailleurs sur le site. Le repli reste là comme garde-fou. */
     overflow-wrap: break-word;
-    hyphens: auto;
   }
 
   @media (min-width: 1024px) {

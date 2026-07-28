@@ -49,7 +49,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       data-fast-goal="lead_call"
       data-fast-goal-source="nav_mobile_cta"
     >
-      Réserver un appel <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
+      Réserver un diagnostic <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
     </a>
 
     <!-- Desktop links -->
@@ -64,8 +64,8 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     <!-- Desktop CTA -->
     <div class="hidden lg:flex items-center gap-2">
       <a
-        href="#contact-form" class="btn-primary" data-fast-goal="lead_form" data-fast-goal-source="nav">
-        Décrire mon besoin
+        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary" data-fast-goal="lead_call" data-fast-goal-source="nav">
+        Diagnostic&nbsp;· 20&nbsp;min
       </a>
     </div>
 
@@ -110,8 +110,8 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     </div>
     <div class="flex flex-col gap-4">
       <a
-        href="#contact-form" class="btn-primary justify-center w-full" data-fast-goal="lead_form" data-fast-goal-source="nav">
-        Décrire mon besoin
+        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary justify-center w-full" data-fast-goal="lead_call" data-fast-goal-source="nav">
+        Diagnostic&nbsp;· 20&nbsp;min
       </a>
     </div>
   </div>
@@ -215,7 +215,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     link.addEventListener('click', () => {
       // Fermer le menu SYNCHRONE (restaure body.overflow) AVANT que le navigateur
       // exécute le scroll d'ancre — sinon body{overflow:hidden} (menu ouvert) bloque
-      // le scroll vers #contact-form et le CTA mobile "n'emmène pas au formulaire".
+      // le scroll vers la section visée.
       toggleMenu(true);
     });
   });

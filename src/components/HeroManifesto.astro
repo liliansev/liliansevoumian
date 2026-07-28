@@ -40,16 +40,14 @@ import LinkCTA from './LinkCTA.astro';
 
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <a
-            href="#contact-form"
+            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
             class="btn-primary w-full sm:w-auto"
-            data-fast-goal="lead_form"
+            data-fast-goal="lead_call"
             data-fast-goal-source="hero"
           >
-            Décrire mon besoin
+            Réserver mon diagnostic&nbsp;· 20&nbsp;min
           </a>
-          <LinkCTA href="https://cal.com/lilian-sevoumian/20min" external>
-            Ou réserver un appel&nbsp;· 20&nbsp;min
-          </LinkCTA>
+          <LinkCTA href="#cas">Ou voir les résultats clients</LinkCTA>
         </div>
 
       </div>
@@ -66,8 +64,11 @@ import LinkCTA from './LinkCTA.astro';
     letter-spacing: -0.035em;
     text-wrap: balance;
     max-width: 19ch;
+    /* `overflow-wrap` sans `hyphens` : un mot trop long se replie, mais
+       jamais avec un tiret. À cette taille d'affichage une césure est
+       très visible, et elle coupait « freelance » en « free-lance »
+       ailleurs sur le site. Le repli reste là comme garde-fou. */
     overflow-wrap: break-word;
-    hyphens: auto;
   }
 
   @media (min-width: 1024px) {

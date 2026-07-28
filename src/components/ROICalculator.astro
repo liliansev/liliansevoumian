@@ -25,8 +25,7 @@
  */
 import SectionHeader from './SectionHeader.astro';
 import {
-  compute, formatFR, inWorkWeeks,
-  HOURLY_COST, RECOVERY_RATE, WEEKS_PER_YEAR,
+  compute, formatFR, inWorkWeeks, HOURLY_COST,
 } from '../lib/roi';
 
 const initial = { hours: 8, people: 3 };
@@ -37,7 +36,6 @@ const sliders = [
 ];
 
 const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours, initial.people);
-const tauxPourcent = Math.round(RECOVERY_RATE * 100);
 ---
 
 <section
@@ -47,11 +45,8 @@ const tauxPourcent = Math.round(RECOVERY_RATE * 100);
   <div class="relative max-w-[1200px] mx-auto">
     <SectionHeader
       label="SIMULATEUR · HYPOTHÈSE CONSERVATRICE"
-      title="Le temps que vos équipes peuvent <mark class='inv'>récupérer chaque année.</mark>"
+      title="Le temps que vos équipes peuvent <mark class='inv'>récupérer.</mark>"
       body="Deux réglages suffisent. L'estimation retient 55 % des heures manuelles comme récupérables et 48 semaines de travail effectif par an — au-delà de 20 h/sem ou 10 personnes, elle est plafonnée."
-      {/* 24ch et pas 22 : « récupérer chaque année. » est un fragment surligné
-          en nowrap, il ne peut pas se couper, et à 22ch il dépassait de 8 px.
-          Le titre tient sur deux lignes dans les deux cas. */}
       titleMaxWidth="24ch"
       bodyMaxWidth="60ch"
     />
@@ -129,9 +124,9 @@ const tauxPourcent = Math.round(RECOVERY_RATE * 100);
 
         <div class="roi-actions">
           <a
-            href="#contact-form"
+            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
             class="btn-primary justify-center w-full"
-            data-fast-goal="lead_form"
+            data-fast-goal="lead_call"
             data-fast-goal-source="roi"
           >
             Récupérer ces heures

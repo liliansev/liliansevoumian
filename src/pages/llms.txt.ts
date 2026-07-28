@@ -38,7 +38,7 @@ export const GET: APIRoute = async () => {
 - Certifications : Make niveau 5 (premier certifié en France), Airtable Certified
 - Formation : plus de 300 personnes formées
 - Zone : région parisienne, France, Europe
-- Contact : https://liliansevoumian.fr/#contact-form
+- Contact : https://cal.com/lilian-sevoumian/20min (diagnostic de 20 min, sans engagement) ou bonjour@liliansevoumian.fr
 
 ## Ce que je fais
 

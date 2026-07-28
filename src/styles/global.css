@@ -1397,9 +1397,18 @@ h1 mark.inv::before { --angle: 1.1deg; }
    `nowrap` qui protege la bande devient une cause de debordement. La bande
    couvre alors le rectangle englobant, ce qui est moins grave qu un titre
    coupe hors ecran. */
-@media (max-width: 30rem) {
-  mark { white-space: normal; }
-  /* hyphens seul ne suffit pas : il depend d un dictionnaire francais que
-     tous les moteurs n embarquent pas. overflow-wrap garantit le repli. */
-  h1, h2, h3 { hyphens: auto; overflow-wrap: break-word; }
-}
+/* Il a existé ici une règle qui, sous 30rem, relâchait `mark` en
+   `white-space: normal` et posait `hyphens: auto` sur les titres, pour rattraper
+   un titre qui dépassait de deux pixels. Les deux effets étaient pires que le
+   défaut qu'ils corrigeaient :
+
+   — `hyphens: auto` coupait les mots au tiret, et « freelance » devenait
+     « free-lance » dans le seul titre du site qui porte le nom de l'entité ;
+   — `white-space: normal` laissait le fragment surligné passer à la ligne, or
+     la bande est un pseudo-élément unique posé derrière : sur deux lignes elle
+     couvre le rectangle englobant, donc aussi le vide à droite de la première
+     ligne. Un aplat lime informe au milieu du titre.
+
+   La contrainte reste donc celle du dispositif : un fragment surligné tient sur
+   une ligne, à toutes les tailles. C'est aux fragments d'être courts, pas à la
+   bande de se déformer. */
