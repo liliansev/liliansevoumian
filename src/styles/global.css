@@ -1124,6 +1124,66 @@ a[href^="mailto:"] {
   max-width: 72ch;
 }
 
+/* ── L'entrée de la FAQ : un surligneur qui descend la liste ──
+   Chaque question monte à son tour, et une bande lime la balaie de gauche à
+   droite pendant qu'elle arrive. C'est le dispositif de la DA joué dans le
+   temps : ailleurs le surligneur marque un mot, ici il parcourt une liste.
+
+   Le rythme est volontairement lent — 160 ms entre deux questions, 900 ms
+   d'entrée. Plus serré, la cascade se lit comme un défilement de chargement ;
+   plus lâche, on attend. Sur huit éléments, la descente complète dure environ
+   deux secondes et demie. */
+.faq-liste > .reveal {
+  transition-duration: 900ms;
+  transition-delay: calc(var(--rang, 0) * 160ms);
+}
+
+.faq-item {
+  /* Le balayage est en overflow: hidden sur la carte, sinon la bande déborde
+     du filet à gauche et à droite pendant sa course. */
+  overflow: hidden;
+}
+
+.faq-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--color-lime);
+  /* Au repos la bande est hors cadre à gauche ; elle traverse à l'apparition
+     puis sort à droite. `transform` seul : aucune propriété de layout animée. */
+  transform: translateX(-101%);
+}
+
+.js-ready .faq-item.is-visible::after {
+  animation: faq-surligne 900ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--rang, 0) * 160ms);
+}
+
+@keyframes faq-surligne {
+  0%   { transform: translateX(-101%); }
+  45%  { transform: translateX(0); }
+  100% { transform: translateX(101%); }
+}
+
+/* Le contenu passe au-dessus de la bande, SANS fond : la bande glisse entre le
+   papier de la carte et le texte, comme un surligneur sous l'encre. Un fond
+   opaque ici masquerait complètement le balayage — c'est le piège, et il ne se
+   voit pas au code, seulement à l'écran.
+   L'encre sur le lime donne 15,14:1, la question reste lisible pendant le
+   passage. */
+.faq-details {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-liste > .reveal { transition-delay: 0ms; }
+  .faq-item.is-visible::after,
+  .js-ready .faq-item.is-visible::after { animation: none; display: none; }
+}
+
 /* =========================================================================
    SR-ONLY — visually hidden mais lisible par screen readers
    ========================================================================= */

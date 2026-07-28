@@ -16,10 +16,16 @@ import { faqs } from '../data/faq';
       </h2>
     </div>
 
-    <!-- Colonne droite : accordion -->
-    <div class="reveal flex flex-col gap-3">
+    {/* Colonne droite : accordion.
+        Le conteneur n'est plus un `.reveal` unique — les sept questions
+        arrivaient d'un bloc en 700 ms, ce qui ne se lit pas comme une entrée
+        mais comme un chargement. Chacune est désormais son propre `.reveal`,
+        elles descendent une par une, et un coup de surligneur lime passe sur
+        chacune au moment où elle apparaît. Le geste est celui du dispositif de
+        la DA, appliqué au temps plutôt qu'à un mot. */}
+    <div class="faq-liste flex flex-col gap-3">
       {faqs.map((faq, i) => (
-        <div class="faq-item">
+        <div class="faq-item reveal" style={`--rang:${i}`}>
 
           <details class="faq-details group">
             <summary class="faq-summary">
@@ -36,7 +42,7 @@ import { faqs } from '../data/faq';
 
       {/* Pont augmentes.fr — sortie pour l'intention « apprendre soi-même » /
           budget formation, distincte de la demande de mission. Lien secondaire. */}
-      <p class="mono-caption text-[var(--color-ink-low)] mt-6 pt-6 border-t border-[var(--color-divider)]">
+      <p class="reveal mono-caption text-[var(--color-ink-low)] mt-6 pt-6 border-t border-[var(--color-divider)]" style={`--rang:${faqs.length}`}>
         BUDGET SERRÉ OU ENVIE D'APPRENDRE VOUS-MÊME ?
         <a
           href="https://augmentes.fr"
