@@ -113,7 +113,10 @@
   /* Le lime étant la couleur de marque, il ne peut pas signifier « valide » :
      un état correct serait indiscernable d'un élément de marque. Les deux
      états passent en encre, portés par un libellé. */
-  --color-error: #111111;
+  /* Un rouge ne concurrence pas le lime : ils ne sont pas de la même
+     famille. L'argument « le lime ne peut plus dire valide » vaut pour le
+     succès, pas pour l'échec. 5,24:1 sur lime, 8,8:1 sur blanc. */
+  --color-error: #b3261e;
   --color-success: #111111;
 
   /* ── Élévation : aucune. La structure vient des filets. ── */
@@ -305,7 +308,7 @@ a, button, input, textarea, select,
   font-size: var(--text-mono-label);
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -322,7 +325,7 @@ a, button, input, textarea, select,
   font-size: var(--text-mono-caption);
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -430,7 +433,7 @@ a, button, input, textarea, select,
   font-family: var(--font-mono);
   font-size: var(--text-mono-caption);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-low);
   margin-bottom: 1.5rem;
@@ -461,8 +464,35 @@ a, button, input, textarea, select,
               transform 100ms var(--ease-out-quint);
 }
 
-.btn-primary:hover {
-  background: var(--color-ink-soft);
+.btn-primary {
+  transition: background-color 0.16s cubic-bezier(0.25, 1, 0.5, 1),
+              color 0.16s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.16s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* LE LIME APPARAÎT AU SURVOL. Le bouton est noir au repos ; la couleur de
+   marque arrive quand la main arrive, au lieu de décorer en permanence.
+   C'est le seul endroit du site où elle bouge. */
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: var(--color-lime);
+  color: var(--color-ink);
+}
+
+/* Sur un aplat lime, ce geste ne peut pas fonctionner : du lime sur du lime
+   disparaît (1,00:1). C'est le blanc qui prend le relais — même geste, autre
+   matière selon le fond. */
+.bloc-lime .btn-primary:hover,
+.bloc-lime .btn-primary:focus-visible {
+  background: #ffffff;
+  color: var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* On garde la transition de COULEUR : c'est un retour d'information, pas
+     du mouvement. Seule l'échelle saute. */
+  .btn-primary { transition: background-color 0.16s ease, color 0.16s ease; }
+  .btn-primary:active { transform: none; }
 }
 
 .btn-primary:active {
@@ -1043,8 +1073,13 @@ a[href^="mailto:"] {
   display: none;
 }
 
+/* --color-accent-text vaut l'encre, et l'état de repos aussi : ce survol ne
+   changeait strictement rien sur les sept questions. Il devient un
+   soulignement, qui dit « cliquable » sans introduire de couleur. */
 .faq-summary:hover {
-  color: var(--color-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
 }
 
 .faq-num {
@@ -1266,7 +1301,9 @@ mark.inv::before { --angle: 1.5deg; }
 
 /* Sur les très gros corps l'inclinaison diminue : à 76 px, un degré déplace la
    bande de plusieurs pixels aux extrémités et elle mord la ligne voisine. */
-h1 mark::before { --angle: -1.3deg; }
+/* À 76 px pour un interlignage de 72 px, la bande dépassait la ligne et
+   mordait celle du dessus. Elle est resserrée ici, et seulement ici. */
+h1 mark::before { --angle: -1.3deg; inset: 0.14em 0 0.16em; }
 h1 mark.inv::before { --angle: 1.1deg; }
 
 /* Sur un aplat lime, c'est le blanc qui surligne — sinon le mot disparaîtrait
@@ -1315,3 +1352,42 @@ h1 mark.inv::before { --angle: 1.1deg; }
 .bloc-lime .btn-primary {
   color: #ffffff;
 }
+
+
+/* =========================================================================
+   L'APLAT ENCRE — le pied de page. Même mécanique que .bloc-lime : on remappe
+   les jetons de rôle, et les composants suivent sans variante. La page cesse
+   ainsi de finir sur du blanc.
+   ========================================================================= */
+
+.bloc-encre {
+  /* Valeurs LITTÉRALES ici, jamais var(--color-ink) : un remap se résout
+     contre la NOUVELLE valeur posée sur le même élément. Écrire
+     `background: var(--color-ink)` à côté de `--color-ink: <blanc>` donnait
+     un pied blanc avec du texte blanc dessus. C'est le même cycle que celui
+     déjà évité sur .bloc-lime — je l'ai reproduit ici. */
+  background: #111111;
+  color: #ffffff;
+
+  --color-paper: #111111;
+  --color-surface-low: var(--color-surface-on-dark);
+  --color-surface-high: var(--color-surface-on-dark);
+  --color-section-band: var(--color-ink);
+  --color-ink: #ffffff;
+  --color-ink-soft: #ffffff;
+  --color-ink-mid: var(--color-text-on-dark-mid);
+  --color-ink-low: var(--color-text-on-dark-low);
+  --color-ink-faint: var(--color-text-on-dark-faint);
+  --color-divider: var(--color-divider-dark);
+  --color-grid-line: var(--color-grid-line-dark);
+  --color-border-strong: var(--color-text-on-dark-low);
+  /* Sur l'encre, le lime redevient lisible : 15,14:1. C'est le seul endroit
+     du site où il a le droit d'être du texte. */
+  --color-accent-text: var(--color-lime);
+  --color-focus: var(--color-lime);
+}
+
+.bloc-encre mark::before { background: var(--color-lime); }
+.bloc-encre .btn-primary { background: var(--color-lime); color: #111111; }
+.bloc-encre .btn-primary:hover,
+.bloc-encre .btn-primary:focus-visible { background: #ffffff; }

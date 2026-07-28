@@ -22,35 +22,33 @@ interface Tool {
   /** Teinte de marque (simple-icons monochromes rendus en currentColor). */
   color?: string;
   /** Teinte de marque alternative en dark mode (si la couleur claire manque de contraste). */
-  darkColor?: string;
   /** Logo monochrome-foncé → inversé en blanc sur fond sombre. */
-  invertDark?: boolean;
 }
 
 const tools: Tool[] = [
   { name: 'n8n', icon: 'simple-icons:n8n', color: '#EA4B71' },
-  { name: 'Make', icon: 'simple-icons:make', color: '#6D00CC', darkColor: '#A970FF' },
-  { name: 'Airtable', icon: 'logos:airtable' },
-  { name: 'Notion', icon: 'logos:notion-icon', invertDark: true },
-  { name: 'Google Sheets', icon: 'simple-icons:googlesheets', color: '#0F9D58', darkColor: '#34D07F' },
-  { name: 'Slack', icon: 'logos:slack-icon' },
+  { name: 'Make', icon: 'simple-icons:make', color: '#6D00CC' },
+  { name: 'Airtable', icon: 'simple-icons:airtable' , color: '#18BFFF' },
+  { name: 'Notion', icon: 'simple-icons:notion' , color: '#000000' },
+  { name: 'Google Sheets', icon: 'simple-icons:googlesheets', color: '#0F9D58' },
+  { name: 'Slack', icon: 'simple-icons:slack' , color: '#4A154B' },
   { name: 'HubSpot', icon: 'simple-icons:hubspot', color: '#FF7A59' },
-  { name: 'Stripe', icon: 'simple-icons:stripe', color: '#635BFF', darkColor: '#8B85FF' },
-  { name: 'OpenAI', icon: 'logos:openai-icon', invertDark: true },
-  { name: 'Claude', icon: 'logos:claude-icon' },
-  { name: 'Mistral', icon: 'logos:mistral-ai-icon' },
-  { name: 'Gmail', icon: 'logos:google-gmail' },
-  { name: 'Google Drive', icon: 'logos:google-drive' },
-  { name: 'Google Calendar', icon: 'logos:google-calendar' },
-  { name: 'Calendly', icon: 'simple-icons:calendly', color: '#006BFF', darkColor: '#4D94FF' },
-  { name: 'Shopify', icon: 'logos:shopify' },
-  { name: 'Typeform', icon: 'logos:typeform-icon', invertDark: true },
-  { name: 'WhatsApp', icon: 'logos:whatsapp-icon' },
-  { name: 'Telegram', icon: 'logos:telegram' },
-  { name: 'Discord', icon: 'logos:discord-icon' },
-  { name: 'Brevo', icon: 'simple-icons:brevo', color: '#0B996E', darkColor: '#1FB88A' },
-  { name: 'Trello', icon: 'logos:trello' },
-  { name: 'Zapier', icon: 'logos:zapier-icon' },
+  { name: 'Stripe', icon: 'simple-icons:stripe', color: '#635BFF' },
+  { name: 'OpenAI', icon: 'simple-icons:openai' , color: '#412991' },
+  { name: 'Claude', icon: 'simple-icons:claude' , color: '#D97757' },
+  { name: 'Mistral', icon: 'simple-icons:mistralai' , color: '#FA520F' },
+  { name: 'Gmail', icon: 'simple-icons:gmail' , color: '#EA4335' },
+  { name: 'Google Drive', icon: 'simple-icons:googledrive' , color: '#4285F4' },
+  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar' , color: '#4285F4' },
+  { name: 'Calendly', icon: 'simple-icons:calendly', color: '#006BFF' },
+  { name: 'Shopify', icon: 'simple-icons:shopify' , color: '#7AB55C' },
+  { name: 'Typeform', icon: 'simple-icons:typeform' , color: '#262627' },
+  { name: 'WhatsApp', icon: 'simple-icons:whatsapp' , color: '#25D366' },
+  { name: 'Telegram', icon: 'simple-icons:telegram' , color: '#26A5E4' },
+  { name: 'Discord', icon: 'simple-icons:discord' , color: '#5865F2' },
+  { name: 'Brevo', icon: 'simple-icons:brevo', color: '#0B996E' },
+  { name: 'Trello', icon: 'simple-icons:trello' , color: '#0052CC' },
+  { name: 'Zapier', icon: 'simple-icons:zapier' , color: '#FF4F00' },
 ];
 const loop = [...tools, ...tools];
 ---
@@ -66,11 +64,11 @@ const loop = [...tools, ...tools];
         <span
           class="lm-tool"
           aria-hidden={i >= tools.length ? 'true' : 'false'}
-          style={t.color ? `--tool-c:${t.color};--tool-c-dark:${t.darkColor ?? t.color}` : undefined}
+          style={t.color ? `--tool-c:${t.color}` : undefined}
         >
           <Icon
             name={t.icon}
-            class:list={['lm-tool-ic', { 'is-tinted': !!t.color, 'is-invert-dark': t.invertDark }]}
+            class:list={['lm-tool-ic', { 'is-tinted': !!t.color }]}
             aria-hidden="true"
           />
           <span class="lm-tool-name">{t.name}</span>
@@ -154,7 +152,21 @@ const loop = [...tools, ...tools];
   .lm-tool:hover .lm-tool-ic { transform: scale(1.09); }
 
   /* Marques monochromes teintées à leur couleur officielle. */
-  .lm-tool-ic.is-tinted { color: var(--tool-c); }
+  /* Les logos sont en encre au repos : 23 couleurs de marque à 300 px du hero
+   contredisaient la promesse d'un seul accent. La couleur officielle revient
+   au survol — le clin d'œil est gardé, mais il devient un geste au lieu d'un
+   bruit permanent. Sur pointeur grossier, il n'y a pas de survol : la couleur
+   n'y apparaît jamais, et c'est acceptable, elle n'est pas porteuse de sens. */
+.lm-tool-ic.is-tinted { color: var(--color-ink); }
+
+@media (hover: hover) and (pointer: fine) {
+  .lm-tool-ic.is-tinted { transition: color 0.18s cubic-bezier(0.25, 1, 0.5, 1); }
+  .lm-tool:hover .lm-tool-ic.is-tinted { color: var(--tool-c); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lm-tool-ic.is-tinted { transition: none; }
+}
 
   /* Logos monochromes-foncés → inversés en blanc sur fond sombre. */
 

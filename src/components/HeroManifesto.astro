@@ -1,37 +1,17 @@
 ---
 /*
- * HeroManifesto — refonte "Vercel" (juin 2026).
- *   Dé-boxé : le statement (eyebrow + H1 + sous-titre + CTA + microdata) flotte
- *   directement sur le papier, sans carte bordée. Le portrait couleur est le seul
- *   visuel du hero (depuis f135af5, marquee et stack portent aussi de la couleur
- *   de marque — le portrait n'est plus « le seul point de couleur de la page »).
+ * HeroManifesto — aplat lime, typographie seule.
  *
- * Mobile (<lg) : colonne unique, photo en dessous.
- * Desktop (lg+) : split 1.35fr / 1fr, aligné au centre vertical.
- *
- * Photo via <Picture> d'astro:assets (AVIF/WebP + srcset). Asset dans src/assets/.
+ * Le portrait a été retiré : sur le lime il formait la masse la plus contrastée
+ * de la page — davantage que le H1 — et sa chemise lilas touchait le lime à
+ * l'opposition sur la roue. Il était de toute façon absent en mobile. On fait
+ * donc en desktop ce que le site faisait déjà en petit format, et mieux : la
+ * couleur et l'échelle du titre portent seules. La photo reste là où elle sert,
+ * à côté de la bio dans le bloc contact.
  */
-import { Picture, getImage } from 'astro:assets';
 import LinkCTA from './LinkCTA.astro';
-import lilianPhoto from '../assets/lilian-photo.jpg';
 
-// Preload media-gaté du portrait : à ≥1024px l'image est above the fold et
-// candidate LCP — on la précharge SANS pénaliser le mobile (media query sur le
-// link, le portrait y est display:none et loading=lazy ne le fetche jamais).
-const portraitPreload = await getImage({
-  src: lilianPhoto,
-  format: 'avif',
-  widths: [480, 768, 1024],
-});
 ---
-
-<link
-  rel="preload"
-  as="image"
-  imagesrcset={portraitPreload.srcSet.attribute}
-  imagesizes="(min-width: 1024px) 30vw, 100vw"
-  media="(min-width: 1024px)"
-/>
 
 <section
   id="hero"
@@ -40,7 +20,7 @@ const portraitPreload = await getImage({
 >
   <div class="relative max-w-[1200px] mx-auto pt-10 md:pt-24 pb-12 md:pb-[var(--spacing-section-y)] flex flex-col justify-center lg:block lg:min-h-0">
 
-    <div class="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-10 lg:gap-16 lg:items-center">
+    <div class="grid grid-cols-1">
 
       <!-- Statement — sur papier nu, sans carte -->
       <div data-hero-stagger class="flex flex-col gap-6 md:gap-7">
@@ -50,7 +30,7 @@ const portraitPreload = await getImage({
         </span>
 
         <h1 class="reveal hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0">
-          J'automatise ce que vos équipes font encore <mark>à la main</mark>.
+          J'automatise ce que vos équipes font encore <mark>à la main.</mark>
         </h1>
 
         <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[48ch]">
@@ -74,23 +54,6 @@ const portraitPreload = await getImage({
 
       </div>
 
-      <!-- Portrait couleur — seul visuel du hero.
-           Masqué sur mobile : la photo y est reprise en avatar dans la nav (dès qu'on dépasse le Hero).
-           loading="lazy" (pas eager/high) : le conteneur est display:none sous lg,
-           un fetch eager téléchargerait l'AVIF pour rien sur 100 % des mobiles.
-           Le LCP de la page est le H1 texte, pas cette image. -->
-      <div class="reveal hero-portrait relative hidden lg:block rounded-[var(--radius-lg)] overflow-hidden border border-[var(--color-divider)]">
-        <Picture
-          src={lilianPhoto}
-          alt="Lilian Sevoumian, freelance automatisation et IA (n8n, Make)"
-          class="hero-portrait-img block w-full h-full object-cover"
-          loading="lazy"
-          formats={['avif', 'webp']}
-          widths={[480, 768, 1024]}
-          sizes="(min-width: 1024px) 30vw, 100vw"
-        />
-      </div>
-
     </div>
 
   </div>
@@ -102,7 +65,7 @@ const portraitPreload = await getImage({
     line-height: 0.95;
     letter-spacing: -0.035em;
     text-wrap: balance;
-    max-width: 20ch;
+    max-width: 19ch;
     overflow-wrap: break-word;
     hyphens: auto;
   }
@@ -114,14 +77,8 @@ const portraitPreload = await getImage({
   }
 
   /* Portrait : ratio fixe portrait, hauteur maîtrisée sur mobile et desktop. */
-  .hero-portrait {
-    aspect-ratio: 4 / 5;
-  }
 
   /* Photo en couleur. Mirror horizontal : Lilian regarde vers le titre à gauche. */
-  .hero-portrait-img {
-    transform: scaleX(-1);
-  }
 
   /* Dark mode : bordure plus visible pour matérialiser le crop de la photo. */
 </style>
