@@ -89,50 +89,12 @@ const faqPageSchema = faqSchema ? {
 <html lang="fr" class="scroll-smooth">
   <head>
     <script is:inline>
-      // Anti-FOUC theme : pose .dark / .light AVANT render.
-      // Priorité : choix utilisateur (localStorage) > prefers-color-scheme OS.
-      // Listener matchMedia : si pas de choix user, suit les changements OS en live.
+      // La DA n'a qu'une surface : plus de bascule, donc plus de script de
+      // thème. Il ne reste que .js-ready, qui arme le voile des .reveal —
+      // sans JS tout reste peint, l'animation n'est jamais un gate.
       (function () {
-        try {
-          var stored = localStorage.getItem('theme');
-          var mql = window.matchMedia('(prefers-color-scheme: dark)');
-          var systemDark = mql.matches;
-          var isDark = stored === 'dark' || (!stored && systemDark);
-          var root = document.documentElement;
-          root.classList.toggle('dark', isDark);
-          if (stored === 'light') root.classList.add('light');
-          root.classList.add('js-ready');
-
-          // Suit l'OS en live (changements pendant la session) sauf si user override
-          mql.addEventListener('change', function (e) {
-            if (localStorage.getItem('theme')) return; // override actif → ignore
-            root.classList.toggle('dark', e.matches);
-            document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
-              btn.setAttribute('aria-pressed', String(e.matches));
-              btn.setAttribute(
-                'aria-label',
-                e.matches ? 'Activer le mode clair' : 'Activer le mode sombre'
-              );
-            });
-          });
-        } catch (e) {
-          document.documentElement.classList.add('js-ready');
-        }
-
-        // meta theme-color : les deux <meta media="prefers-color-scheme"> ne suivent
-        // que l'OS, pas la classe .dark/.light posée par le toggle. On resynchronise
-        // le chrome navigateur sur le thème effectif (les hex miroirs de paper/ink
-        // sont le seul endroit du projet où un hex est toléré : c'est du meta, pas du CSS).
-        var syncThemeColor = function () {
-          var val = document.documentElement.classList.contains('dark') ? '#1F1E26' : '#FCFCFD';
-          document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
-            m.setAttribute('content', val);
-            m.removeAttribute('media');
-          });
-        };
-        new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncThemeColor);
-        else syncThemeColor();
+        document.documentElement.classList.add('js-ready');
+      })();
 
         // Failsafe garanti, indépendant du module de reveal (fin de <body>).
         // .js-ready (posé ci-dessus) arme le cloak `opacity:0` des .reveal.
@@ -148,14 +110,13 @@ const faqPageSchema = faqSchema ? {
     </script>
 
     <meta charset="UTF-8" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <meta name="author" content="Lilian Sevoumian" />
-    <meta name="theme-color" content="#FCFCFD" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1F1E26" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
@@ -237,8 +198,9 @@ const faqPageSchema = faqSchema ? {
           function openOverlay() {
             bootCal();
             if (!inited) {
-              var theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-              window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: theme } });
+              // Le site n'a plus qu'une surface : l'embed cal.com est figé en
+              // clair, il ne lit plus une classe qui n'existe plus.
+              window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: "light" } });
               inited = true;
             }
             lastFocused = document.activeElement;

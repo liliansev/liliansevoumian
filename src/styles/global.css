@@ -7,12 +7,31 @@
    ========================================================================= */
 
 @theme {
-  /* ===== Fonts ===== */
+  /* =======================================================================
+     DA « LIME » appliquée au contenu de main.
+     Les NOMS de jetons sont ceux que les 25 composants consomment déjà : on
+     ne change que les valeurs, et toute la page bascule d'un coup. Les
+     composants n'ont pas à savoir que la direction artistique a changé.
+
+     Trois règles qui gouvernent tout :
+       — Le lime est une SURFACE, jamais du texte. Il ne porte que 1,25:1
+         contre le blanc ; il prend des sections entières, ou il surligne.
+       — Une seule police. Le monospace disparaît : c'était, avec les
+         sur-titres en capitales, le tell « IA » n° 1 relevé à l'audit.
+       — Deux rayons : 0 et 9999. Si c'est rond, ça se clique.
+     ======================================================================= */
+
+  /* ── Polices ── */
   --font-display: 'Geist Variable', system-ui, -apple-system, sans-serif;
   --font-body: 'Geist Variable', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Plus de famille monospace : --font-mono existe encore parce que 11
+     composants l'appellent, mais il vaut la police de texte. */
+  --font-mono: 'Geist Variable', system-ui, -apple-system, sans-serif;
 
-  /* ===== Typography scale (fluide) ===== */
+  /* ── Échelle typographique, espacement et motion ──
+     Repris tels quels de main : ce sont des mesures, pas une direction
+     artistique, et les 25 composants les consomment. Les avoir emportés
+     avec le bloc de couleurs faisait retomber le H1 à la taille du corps. */
   --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
   --text-display-hero: clamp(2.5rem, 6vw + 0.5rem, 5.75rem);
   --text-display-hero-lg: clamp(2.5rem, 5vw + 0.5rem, 4.75rem);
@@ -30,72 +49,9 @@
   --text-mono-label: 0.75rem;
   --text-mono-body: 0.8125rem;
   --text-mono-caption: 0.6875rem;
-
-  /* ===== Spacing fluide ===== */
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
   --spacing-grid-cell: 96px;
-
-  /* ===== Border radius (max 8px sauf chips) ===== */
-  --radius-none: 0px;
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-full: 9999px;
-
-  /* ===== Colors (OKLCH-first) ===== */
-  /* Surfaces */
-  --color-paper: oklch(0.995 0.002 290);
-  --color-surface-low: oklch(0.975 0.003 290);
-  --color-surface-high: oklch(1 0.002 290);
-  /* Bande de section teintée ("gris sobre") — plus profonde que surface-low
-     pour créer un rythme vertical sans passer en dark. Light : 0.04 sous paper,
-     subtil mais lisible. Les cartes/panneaux internes (paper/surface-low)
-     restent plus clairs → ils flottent au-dessus de la bande. */
-  --color-section-band: oklch(0.955 0.004 290);
-
-  /* Ink (neutrals tinted violet hue 290) */
-  --color-ink: oklch(0.16 0.008 290);
-  --color-ink-soft: oklch(0.22 0.008 290);
-  --color-ink-mid: oklch(0.40 0.006 290);
-  --color-ink-low: oklch(0.48 0.005 290);
-  --color-ink-faint: oklch(0.78 0.004 290);
-
-  /* Lines */
-  --color-divider: oklch(0.94 0.004 290);
-  --color-grid-line: oklch(0.93 0.005 290);
-  --color-grid-line-active: oklch(0.72 0.005 290);
-  /* Bordure d'élément interactif au repos : >=3:1 vs paper (WCAG 1.4.11). */
-  --color-border-strong: oklch(0.66 0.005 290);
-
-  /* Dark mode tokens (sections en bg-ink) */
-  --color-text-on-dark: oklch(0.97 0.003 290);
-  --color-text-on-dark-mid: oklch(0.78 0.005 290);
-  --color-text-on-dark-low: oklch(0.66 0.006 290);
-  --color-text-on-dark-faint: oklch(0.48 0.008 290);
-  --color-divider-dark: oklch(0.28 0.008 290);
-  --color-grid-line-dark: oklch(0.30 0.008 290);
-  --color-surface-on-dark: oklch(0.20 0.008 290);
-
-  /* Accent — FLAMME chaude (inspiration Mistral, juin 2026). Le hook accent
-     unique pilote les données-clés et états fonctionnels : FAQ, focus, slider,
-     liens, sélection. Aucun trait décoratif coloré. Orange Mistral en light ;
-     remonté en clarté en dark (override plus bas). Pour revenir au monochrome : redonner
-     --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
-  --color-accent: oklch(0.62 0.19 45);
-  /* Variante foncée de l'accent pour le PETIT texte : ~5.1:1 sur paper light,
-     ~4.6:1 sur section-band, ~4.8:1 sur surface-low (AA partout), là où
-     l'accent vif ne fait que 3.87:1. À 0.57 le token passait sur paper (4.73)
-     mais échouait sur les bandes grises (4.22). Le gros texte / le graphique
-     gardent --color-accent. En dark, l'accent vif suffit déjà (8.27:1). */
-  --color-accent-text: oklch(0.55 0.19 45);
-  --color-accent-soft: oklch(0.95 0.035 65);
-  /* Error / Success */
-  --color-error: oklch(0.55 0.22 25);
-  --color-success: oklch(0.52 0.15 148);
-
-  /* ===== Motion ===== */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-quick: 150ms;
@@ -103,70 +59,66 @@
   --duration-reveal: 600ms;
   --duration-mount: 700ms;
 
-  /* ===== Elevation — profondeur douce "Vercel" (remplace le flat pur) ===== */
-  --shadow-card: 0 1px 2px -1px oklch(0.16 0.02 290 / 0.05),
-                 0 10px 28px -14px oklch(0.16 0.02 290 / 0.12);
-  --shadow-card-hover: 0 2px 4px -1px oklch(0.16 0.02 290 / 0.06),
-                       0 16px 40px -16px oklch(0.16 0.02 290 / 0.16);
+  /* ── Rayons ── */
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 9999px;
+
+  /* ── Surfaces ── */
+  --color-paper: #ffffff;
+  --color-surface-low: #f7f7f7;
+  --color-surface-high: #ffffff;
+  --color-section-band: #f7f7f7;
+
+  /* ── Encres. Le gris tient 7,0:1 sur blanc, le gris clair 4,6:1. ── */
+  --color-ink: #111111;
+  --color-ink-soft: #1f1f1f;
+  --color-ink-mid: #595959;
+  --color-ink-low: #6b6b6b;
+  --color-ink-faint: #949494;
+
+  /* ── Filets ── */
+  --color-divider: #e5e5e5;
+  --color-grid-line: #ededed;
+  --color-grid-line-active: #c4c4c4;
+  --color-border-strong: #111111;
+
+  /* ── Texte sur fond sombre (pied de page, panneaux noirs) ── */
+  --color-text-on-dark: #ffffff;
+  --color-text-on-dark-mid: #c9c9c9;
+  --color-text-on-dark-low: #a8a8a8;
+  --color-text-on-dark-faint: #7d7d7d;
+  --color-divider-dark: #333333;
+  --color-grid-line-dark: #2b2b2b;
+  --color-surface-on-dark: #1c1c1c;
+
+  /* ── L'accent ──
+     --color-accent est un FOND : c'est le lime. --color-accent-text est ce
+     qu'on écrit quand un composant veut du texte accentué — et c'est de
+     l'encre, pas du lime, qui y serait illisible. Dans cette DA l'emphase
+     ne vient jamais d'un texte coloré mais d'un surlignage. */
+  --color-lime: #cdf564;
+  --color-lime-deep: #b8e043;
+  --color-accent: #cdf564;
+  --color-accent-text: #111111;
+  --color-accent-soft: #f2fbd8;
+
+  /* Le lime étant la couleur de marque, il ne peut pas signifier « valide » :
+     un état correct serait indiscernable d'un élément de marque. Les deux
+     états passent en encre, portés par un libellé. */
+  --color-error: #111111;
+  --color-success: #111111;
+
+  /* ── Élévation : aucune. La structure vient des filets. ── */
+  --shadow-card: 0 0 0 0 transparent;
+  --shadow-card-hover: 0 0 0 0 transparent;
 }
 
-/* =========================================================================
-   DARK THEME — Sobre tech (Vercel/Linear night).
-   Active via html.dark (toggle utilisateur, persisté dans localStorage).
-   Fallback no-JS via @media (prefers-color-scheme: dark) sauf opt-out html.light.
-   ========================================================================= */
 
-html.dark {
-  --color-paper: oklch(0.13 0.008 290);
-  --color-surface-low: var(--color-surface-on-dark);
-  --color-surface-high: oklch(0.16 0.008 290);
-  --color-section-band: oklch(0.185 0.006 290);
 
-  --color-ink: var(--color-text-on-dark);
-  --color-ink-soft: var(--color-text-on-dark-mid);
-  --color-ink-mid: var(--color-text-on-dark-low);
-  --color-ink-low: oklch(0.66 0.008 290);
-  --color-ink-faint: var(--color-text-on-dark-faint);
-
-  --color-divider: var(--color-divider-dark);
-  --color-grid-line: var(--color-grid-line-dark);
-  --color-grid-line-active: oklch(0.50 0.008 290);
-  --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
-
-  /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
-  --color-accent: oklch(0.74 0.18 55);
-  --color-accent-text: var(--color-accent);
-  --color-accent-soft: oklch(0.30 0.05 50);
-  --color-success: oklch(0.80 0.16 148);
-  --color-error: oklch(0.78 0.16 25);
-}
-
-@media (prefers-color-scheme: dark) {
-  html:not(.light) {
-    --color-paper: oklch(0.13 0.008 290);
-    --color-surface-low: var(--color-surface-on-dark);
-    --color-surface-high: oklch(0.16 0.008 290);
-    --color-section-band: oklch(0.185 0.006 290);
-
-    --color-ink: var(--color-text-on-dark);
-    --color-ink-soft: var(--color-text-on-dark-mid);
-    --color-ink-mid: var(--color-text-on-dark-low);
-    --color-ink-low: oklch(0.66 0.008 290);
-    --color-ink-faint: var(--color-text-on-dark-faint);
-
-    --color-divider: var(--color-divider-dark);
-    --color-grid-line: var(--color-grid-line-dark);
-    --color-grid-line-active: oklch(0.50 0.008 290);
-    --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
-
-    /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
-    --color-accent: oklch(0.74 0.18 55);
-    --color-accent-text: var(--color-accent);
-    --color-accent-soft: oklch(0.30 0.05 50);
-    --color-success: oklch(0.80 0.16 148);
-    --color-error: oklch(0.78 0.16 25);
-  }
-}
 
 /* =========================================================================
    SECTION SURFACES — bandes teintées pour le rythme vertical
@@ -1272,3 +1224,70 @@ a[href^="mailto:"] {
   max-width: 1080px;
   margin: 0 auto;
 }
+
+/* =========================================================================
+   LE DISPOSITIF DE LA DA — le surlignage penché et les aplats lime.
+   ========================================================================= */
+
+/* La bande est un pseudo-élément posé DERRIÈRE le texte, et c'est lui seul qui
+   penche : faire tourner le <mark> inclinerait les lettres, or on veut un coup
+   de surligneur de travers sur un texte droit.
+   Contrepartie assumée : sur un fragment qui passe à la ligne, la bande
+   couvrirait tout le rectangle englobant — d'où `nowrap` et des fragments
+   courts. */
+mark {
+  position: relative;
+  isolation: isolate;
+  background: none;
+  color: inherit;
+  padding: 0.02em 0.2em;
+  white-space: nowrap;
+}
+
+mark::before {
+  content: '';
+  position: absolute;
+  inset: 0.06em 0 0.1em;
+  background: var(--color-lime);
+  transform: rotate(var(--angle, -1.8deg));
+  transform-origin: center;
+  z-index: -1;
+}
+
+/* Un surlignage sur deux penche dans l'autre sens, et la classe est posée à la
+   main : `:nth-of-type(even)` ne s'appliquerait jamais, chaque <mark> étant
+   seul dans son parent. Douze bandes du même côté se lisent comme un réglage,
+   pas comme un geste. */
+mark.inv::before { --angle: 1.5deg; }
+
+/* Sur les très gros corps l'inclinaison diminue : à 76 px, un degré déplace la
+   bande de plusieurs pixels aux extrémités et elle mord la ligne voisine. */
+h1 mark::before { --angle: -1.3deg; }
+h1 mark.inv::before { --angle: 1.1deg; }
+
+/* Sur un aplat lime, c'est le blanc qui surligne — sinon le mot disparaîtrait
+   dans le fond. */
+.bloc-lime mark::before { background: #ffffff; }
+
+/* ── L'aplat lime ──
+   Il remappe les jetons de rôle : tout composant réutilisable s'y adapte sans
+   variante. Le remap ne lit que des valeurs fixes — lire un rôle produirait un
+   cycle, et la section entière deviendrait lime sur lime. */
+.bloc-lime {
+  background: var(--color-lime);
+
+  --color-paper: var(--color-lime);
+  --color-surface-low: var(--color-lime);
+  --color-surface-high: #ffffff;
+  --color-section-band: var(--color-lime);
+  --color-divider: rgba(17, 17, 17, 0.18);
+  --color-grid-line: rgba(17, 17, 17, 0.12);
+  --color-ink-mid: #2e2e2e;
+  --color-ink-low: #3a3a3a;
+  --color-ink-faint: #5c5c5c;
+  --color-accent: #111111;
+  --color-accent-soft: rgba(17, 17, 17, 0.08);
+}
+
+::selection { background: var(--color-lime); color: #111111; }
+.bloc-lime ::selection { background: #ffffff; color: #111111; }
