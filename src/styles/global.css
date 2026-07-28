@@ -627,10 +627,22 @@ a, button, input, textarea, select,
 
 .chip-accent {
   background: var(--color-accent-soft);
-  /* Un cran plus sombre que --color-accent-text : sur le fond teinté accent-soft
-     (L 0.95), accent-text seul plafonne à ~4.1:1 — le mix vers l'encre repasse
-     le mono-caption 11px au-dessus de 4.5:1 (AA). */
-  color: color-mix(in oklab, var(--color-accent-text) 78%, var(--color-ink));
+  /* Encre pleine : sur accent-soft (#f2fbd8) elle donne 17,59:1, très au-delà de
+     l'AA exigé pour un mono-caption de 11 px. Le color-mix qui figurait ici
+     visait l'ancien accent flamme, où le texte de marque plafonnait à 4,1:1 ;
+     depuis la bascule lime, --color-accent-text vaut l'encre et le mix
+     mélangeait #111111 avec lui-même. */
+  color: var(--color-accent-text);
+  border-color: transparent;
+}
+
+/* .chip:hover l'emporte en spécificité (0,2,0 contre 0,1,0) et repeignait le
+   fond en surface-low : survoler une chip de rôle lui faisait perdre sa teinte
+   lime. Les chips de rôle ne sont pas cliquables, ce survol n'avait rien à
+   signaler — et il retirait de la couleur à la seule section qui en manquait. */
+.chip-accent:hover {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-text);
   border-color: transparent;
 }
 

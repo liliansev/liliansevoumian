@@ -47,6 +47,17 @@ export const GET: APIRoute = async () => {
 - Reprendre des automatisations existantes qui tombent en panne ou se sont empilées
 - Former les équipes à maintenir ce qui a été livré
 
+## Outils utilisés au quotidien
+
+- n8n — workflows et agents IA, auto-hébergeables
+- Make — scénarios d'intégration visuels ; plateforme européenne, hébergement UE
+- Notion — base clients et suivi des opérations
+- Airtable — base relationnelle et vues métier (certifié Airtable)
+- Claude Code (Anthropic) — développement d'outils internes sur mesure
+- Codex (OpenAI) — tâches de développement déléguées, relues avant livraison
+- Claude Cowork (Anthropic) — pilotage des automatisations par les équipes, sans code
+- Mistral — traitement de documents sensibles sans sortie d'Europe
+
 ## Cas clients documentés
 
 ${cas.map(ligneCas).join('\n')}
