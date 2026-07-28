@@ -47,6 +47,16 @@ const collectionSchema = {
 };
 
 const total = displayStudies.length;
+
+/* Grille de KPI : une seule colonne, à toutes les tailles.
+   Deux raisons mesurées. Le séparateur est le fond du conteneur qui
+   transparaît par le `gap-px` : toute cellule manquante se remplit de gris, et
+   trois KPI sur deux colonnes laissaient un carré gris dans la carte. Et les
+   cartes tiennent à trois de front, soit ~390 px : découpées en trois
+   colonnes, les cellules tombaient à 111 px pour des libellés qui en
+   demandaient 117, et « AUTOMATIQUEMENT » débordait de la carte.
+   La page de détail, elle, dispose de toute la largeur et garde ses trois
+   colonnes. */
 ---
 
 <Layout
@@ -123,9 +133,9 @@ const total = displayStudies.length;
                   </h3>
 
                   {kpis.length > 0 && (
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-[var(--color-divider)] mt-auto">
+                    <div class="grid grid-cols-1 gap-px bg-[var(--color-divider)] mt-auto">
                       {kpis.slice(0, 3).map((kpi) => (
-                        <div class="bg-[var(--color-paper)] py-3 px-3 first:pl-0 flex flex-col gap-1">
+                        <div class="bg-[var(--color-paper)] py-3 flex flex-col gap-1">
                           <span class="font-display font-semibold tabular-nums text-xl tracking-[-0.025em] text-[var(--color-ink)] leading-none">
                             {kpi.value}
                           </span>
