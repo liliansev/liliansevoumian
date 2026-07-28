@@ -18,7 +18,7 @@ interface Props {
 }
 
 const {
-  title = "Lilian Sevoumian · Freelance automatisation & IA · n8n, Make, Airtable",
+  title = "Freelance automatisation & agents IA · n8n, Make · Lilian Sevoumian",
   description = "Freelance en automatisation et IA. J'automatise vos processus métier avec n8n, Make et des agents IA sur-mesure. Make certifié niveau 5, réponse sous 48 h.",
   ogType = 'website',
   ogImage: customOgImage,
@@ -44,22 +44,37 @@ const breadcrumbSchema = breadcrumbs ? {
 
 const personSchema = {
   "@context": "https://schema.org", "@type": "Person",
+  "@id": "https://liliansevoumian.fr/#person",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "image": ogImage.toString(),
   "jobTitle": ["Freelance automatisation & IA", "Expert n8n & Make", "Consultant automatisation des processus", "Formateur no-code"],
   "description": "Freelance et formateur en automatisation et IA : automatisation des processus métier avec n8n, Make, Airtable et agents IA sur-mesure.",
   "knowsAbout": ["Automatisation des processus", "Agents IA", "Make", "n8n", "Airtable", "Workflow", "Intégration API", "No-Code", "Claude", "Notion", "IA"],
+  "hasCredential": [
+    { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
+      "name": "Make Certified — Niveau 5 (premier certifie en France)",
+      "recognizedBy": { "@type": "Organization", "name": "Make", "url": "https://www.make.com" } },
+    { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
+      "name": "Airtable Certified",
+      "recognizedBy": { "@type": "Organization", "name": "Airtable", "url": "https://airtable.com" } }
+  ],
+  "address": { "@type": "PostalAddress", "addressRegion": "Ile-de-France", "addressCountry": "FR" },
   "sameAs": ["https://www.linkedin.com/in/liliansevoumian/", "https://github.com/liliansev", "https://www.youtube.com/@lilian.sevoumian", "https://liliansevoumian.substack.com/"]
 };
 
 const serviceSchema = {
   "@context": "https://schema.org", "@type": "ProfessionalService",
+  "@id": "https://liliansevoumian.fr/#service",
   "name": "Lilian Sevoumian - Automatisation No-Code",
   "description": "Automatisation des processus métier, agents IA, intégration et formation no-code (n8n, Make, Airtable).",
   "url": "https://liliansevoumian.fr", "image": ogImage.toString(),
-  "priceRange": "€€", "areaServed": "France",
+  "areaServed": [
+    { "@type": "Country", "name": "France" },
+    { "@type": "Place", "name": "Île-de-France" },
+    { "@type": "Place", "name": "Europe" }
+  ],
   "serviceType": ["Automatisation des processus", "Agents IA", "Intégration", "Workflow", "Conseil no-code", "Formation Make", "Formation n8n"],
-  "provider": { "@type": "Person", "name": "Lilian Sevoumian" }
+  "provider": { "@id": "https://liliansevoumian.fr/#person" }
 };
 
 function safeJsonLd(obj: object): string {
@@ -68,9 +83,10 @@ function safeJsonLd(obj: object): string {
 
 const websiteSchema = {
   "@context": "https://schema.org", "@type": "WebSite",
+  "@id": "https://liliansevoumian.fr/#website",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "description": description, "inLanguage": "fr-FR",
-  "author": { "@type": "Person", "name": "Lilian Sevoumian" }
+  "author": { "@id": "https://liliansevoumian.fr/#person" }
 };
 
 const faqPageSchema = faqSchema ? {
