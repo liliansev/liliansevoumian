@@ -32,6 +32,11 @@ export default defineConfig({
         'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'whatsapp', 'telegram', 'discord', 'mailchimp', 'brevo', 'trello']
       }
     }),
-    sitemap()
+    sitemap({
+      // Elle est en noindex,nofollow : la declarer au sitemap est un signal
+      // contradictoire, et Search Console le remonte comme avertissement.
+      filter: (page) => !page.includes('/mentions-legales'),
+      serialize: (item) => ({ ...item, lastmod: item.lastmod ?? new Date().toISOString() }),
+    })
   ]
 });

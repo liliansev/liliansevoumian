@@ -1,5 +1,7 @@
 ---
 title: "Des bons de commande B2B aux factures, sans ressaisie"
+seoTitle: "Bons de commande B2B transformés en factures — cas client n8n"
+description: "Chez Humble+, un scénario Make fragile a été remplacé par un workflow n8n qui lit les bons de commande PDF et Excel sans une seule ressaisie."
 secteur: "Nutrition fonctionnelle · E-commerce B2B"
 date: 2026-07-23
 tags: ["Ops", "Finance", "IA"]

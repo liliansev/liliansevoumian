@@ -1,5 +1,7 @@
 ---
 title: "Scraping, sourcing et qualification alimentée par l'IA"
+seoTitle: "Prospection et qualification automatisées par agent IA — cas client"
+description: "M Partners qualifie 23 cibles en 7 minutes là où l'équipe ouvrait chaque page d'entreprise une par une."
 secteur: "Executive Search · Tech & VC"
 date: 2026-05-05
 tags: ["Sales", "Ops"]

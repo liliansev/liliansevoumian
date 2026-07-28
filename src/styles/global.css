@@ -1377,3 +1377,15 @@ h1 mark.inv::before { --angle: 1.1deg; }
 .bloc-encre .btn-primary { background: var(--color-lime); color: #111111; }
 .bloc-encre .btn-primary:hover,
 .bloc-encre .btn-primary:focus-visible { background: #ffffff; }
+
+
+/* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
+   `nowrap` qui protege la bande devient une cause de debordement. La bande
+   couvre alors le rectangle englobant, ce qui est moins grave qu un titre
+   coupe hors ecran. */
+@media (max-width: 30rem) {
+  mark { white-space: normal; }
+  /* hyphens seul ne suffit pas : il depend d un dictionnaire francais que
+     tous les moteurs n embarquent pas. overflow-wrap garantit le repli. */
+  h1, h2, h3 { hyphens: auto; overflow-wrap: break-word; }
+}

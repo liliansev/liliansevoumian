@@ -17,7 +17,29 @@ const { Content } = await render(entry);
 const cs = entry.data;
 const dateISO = cs.date.toISOString();
 
-const seoDescription = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`.substring(0, 160);
+// Cas voisins : meme tag d abord, puis complement par les plus recents. Deux
+// cartes, jamais le cas courant. Transforme quatre culs-de-sac en carrefours.
+const tous = await getCollection('cas-clients', (e) => import.meta.env.DEV || !e.data.draft);
+const autres = tous.filter((e) => e.id !== entry.id);
+const voisins = [
+  ...autres.filter((e) => e.data.tags.some((t) => cs.tags.includes(t))),
+  ...autres.filter((e) => !e.data.tags.some((t) => cs.tags.includes(t))),
+].slice(0, 2);
+
+// L outil principal du cas, pour renvoyer vers sa page dediee avec l ancre
+// de requete exacte.
+const pageOutil = cs.tools.includes('n8n')
+  ? { nom: 'n8n', href: '/expert-n8n' }
+  : cs.tools.includes('Make')
+    ? { nom: 'Make', href: '/expert-make' }
+    : null;
+
+// La description redigee prime. A defaut, on compose, mais on coupe au
+// dernier espace avant 155 caracteres au lieu de trancher en plein mot.
+const brut = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`;
+const seoDescription =
+  cs.description ??
+  (brut.length <= 155 ? brut : brut.slice(0, brut.lastIndexOf(' ', 155)) + '…');
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
@@ -30,10 +52,12 @@ const articleSchema = {
   '@type': 'Article',
   headline: cs.title,
   description: seoDescription,
-  author: { '@type': 'Person', name: 'Lilian Sevoumian', url: 'https://liliansevoumian.fr' },
-  publisher: { '@type': 'Person', name: 'Lilian Sevoumian', url: 'https://liliansevoumian.fr' },
+  author: { '@id': 'https://liliansevoumian.fr/#person' },
+  publisher: { '@id': 'https://liliansevoumian.fr/#person' },
+  image: 'https://liliansevoumian.fr/og-image.jpg',
   datePublished: dateISO,
-  dateModified: dateISO,
+  about: [{ '@type': 'Thing', name: 'Automatisation des processus' }],
+  mentions: cs.tools.map((t) => ({ '@type': 'Thing', name: t })),
   mainEntityOfPage: { '@type': 'WebPage', '@id': `https://liliansevoumian.fr/cas-clients/${entry.id}` },
   articleSection: 'Cas client',
   keywords: ['automatisation', 'cas client', cs.secteur, ...cs.tags, ...cs.tools].filter(Boolean).join(', '),
@@ -41,7 +65,7 @@ const articleSchema = {
 ---
 
 <Layout
-  title={`${cs.title} | Cas client Automatisation - Lilian Sevoumian`}
+  title={cs.seoTitle ?? `${cs.title} — cas client`}
   description={seoDescription}
   ogType="article"
   publishedDate={dateISO}
@@ -148,6 +172,32 @@ const articleSchema = {
       </section>
     )}
 
+    <!-- CAS VOISINS -->
+    {voisins.length > 0 && (
+      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+        <div class="relative max-w-[1200px] mx-auto">
+          <div class="section-number mb-6">↦ AUTRES CAS</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {voisins.map((v) => (
+              <a href={`/cas-clients/${v.id}`} class="voisin">
+                <span class="voisin-secteur">{v.data.secteur}</span>
+                <span class="voisin-titre">{v.data.title}</span>
+                {v.data.kpis.length > 0 && (
+                  <span class="voisin-kpi">{v.data.kpis[0].value} {v.data.kpis[0].label}</span>
+                )}
+              </a>
+            ))}
+          </div>
+
+          {pageOutil && (
+            <p class="voisin-outil">
+              Ce projet tourne sur <a href={pageOutil.href}>{pageOutil.nom}</a>.
+            </p>
+          )}
+        </div>
+      </section>
+    )}
+
     <!-- CTA -->
     <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
@@ -163,14 +213,12 @@ const articleSchema = {
 
         <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <a
-            href="https://cal.com/lilian-sevoumian/20min"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/#contact-form"
             class="btn-primary justify-center"
-            data-fast-goal="lead_call"
+            data-fast-goal="lead_form"
             data-fast-goal-source="cas_article"
           >
-            Réserver maintenant
+            Décrire mon besoin
           </a>
           <a
             href="mailto:bonjour@liliansevoumian.fr"
@@ -186,6 +234,49 @@ const articleSchema = {
 
   <Footer />
 </Layout>
+
+<style>
+  .voisin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-top: 2px solid var(--color-ink);
+    padding-top: 1rem;
+    text-decoration: none;
+  }
+  .voisin-secteur {
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+  .voisin-titre {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-title);
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .voisin-kpi {
+    margin-top: 0.35rem;
+    align-self: flex-start;
+    background: var(--color-lime);
+    color: var(--color-ink);
+    padding: 0.3em 0.6em;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+  }
+  .voisin-outil {
+    margin-top: 2.5rem;
+    color: var(--color-ink-mid);
+  }
+  .voisin-outil a {
+    color: var(--color-ink);
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-lime);
+  }
+</style>
 
 <style>
   /* Corps Markdown des cas — calé sur les tokens du site. */
