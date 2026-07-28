@@ -17,28 +17,28 @@ export interface FaqItem {
 
 export const faqs: FaqItem[] = [
   {
-    q: "Quel ROI réel ?",
-    a: "Mes clients récupèrent en moyenne 12 à 20 h par semaine après déploiement. Sur un workflow ciblé, c'est rentabilisé en quelques semaines ; sur une mission complète, en quelques mois. On regarde vos vrais process ensemble au premier échange.",
+    q: "Ça rapporte vraiment quoi ?",
+    a: "Le seul chiffre que je peux prouver est celui d'un client : Fraich Touch a récupéré environ 4 h par semaine et n'a plus une facture qui traîne. Chez vous ce sera autre chose : ça dépend du volume, du nombre de personnes sur la tâche et de l'état de vos outils. On regarde vos process au premier échange et je vous donne un ordre de grandeur que je peux tenir.",
   },
   {
     q: "Combien ça coûte ?",
-    a: "Un workflow ciblé : 1 500 à 3 000 €. Une mission complète (cadrage, déploiement, formation) : 8 000 à 15 000 €. En régie, intégré à votre équipe : 650 €/jour. En coaching : 150 €/h en séance ponctuelle, 2 500 €/mois en mentoring d'équipe. Pas de grille figée derrière ces fourchettes : le chiffre exact dépend de vos process, il est posé au premier appel et le devis est ferme.",
+    a: "Je ne mets pas de tarif sur cette page, parce que le même mot — « automatiser la facturation » — recouvre trois jours de travail chez l'un et trois mois chez l'autre. Ce que je peux promettre : le devis est ferme, posé après le premier appel, et je vous dis avant de commencer si le jeu en vaut la chandelle. Si le budget est votre sujet, dites-le dès le premier appel, on gagnera du temps tous les deux.",
   },
   {
-    q: "Et si l'API d'un de mes outils change ?",
-    a: "Tous mes workflows incluent une couche d'erreur explicite (try/catch + Slack alert) et sont versionnés en JSON exportable. Si Make ou n8n bloque sur un changement d'API tiers, vous voyez l'erreur, vous savez ce qu'il s'est passé. Pendant les 30 j de SLA, je corrige sans surcoût. Au-delà, on cale ça ensemble. La plupart des évolutions courantes prennent moins d'1 h.",
+    q: "Et si un de mes outils change de son côté ?",
+    a: "Ça arrive : chez Fraich Touch, l'outil de compta avait changé d'interface deux fois avant que j'arrive. C'est pour ça que chaque automatisation que je livre a une alerte explicite — Slack, Notion ou email selon ce que vous utilisez : vous voyez l'erreur et vous savez ce qui s'est passé, au lieu de la découvrir trois semaines plus tard. Le mois qui suit la livraison, je corrige sans surcoût. Après, on cale ça ensemble.",
   },
   {
-    q: "Mes équipes ont-elles besoin de skills tech ?",
-    a: "Non. Les automatisations tournent en arrière-plan. À la livraison, je forme vos équipes aux ajustements courants (modifier un filtre, ajouter un destinataire, dupliquer un scenario) via une documentation custom + 1 session live. Pour les changements profonds, une séance à la carte suffit.",
+    q: "Mes équipes doivent-elles savoir coder ?",
+    a: "Non. Chez Fraich Touch, l'équipe gère les paiements du quotidien elle-même, et former un nouveau collaborateur prend une trentaine de minutes. Je livre toujours une documentation faite pour vous et une session de formation en direct. Pour tout ce qui sort de l'ordinaire, vous me rappelez.",
   },
   {
     q: "Make ou n8n ? Lequel et pourquoi ?",
-    a: "n8n par défaut sur 80 % des cas : self-hostable (RGPD strict, données sensibles), plus puissant data-heavy, code natif quand on en a besoin. Make uniquement si votre équipe maintient elle-même et veut le plus visuel possible. Si vous êtes déjà sur l'un, on continue dessus, je migre rarement pour migrer.",
+    a: "Ça dépend de qui maintient. n8n si vous voulez héberger vous-même — données sensibles, RGPD strict — ou si le volume est important. Make si votre équipe veut reprendre la main dessus : c'est le plus lisible des deux. Sur mes quatre derniers projets, c'est moitié-moitié. Si vous êtes déjà sur l'un, on reste dessus : je ne migre pas pour migrer.",
   },
   {
     q: "Remote ou sur site ?",
-    a: "100 % remote sur les missions courtes (workflow seul). Pour les missions complètes, 1 ou 2 jours sur site en kick-off + en formation, le reste en remote. Basé Paris, je peux me déplacer ailleurs en France ou en Europe sur demande.",
+    a: "À distance sur les missions courtes. Sur une mission complète, je viens un ou deux jours au démarrage puis pour la formation, le reste à distance. Je suis en région parisienne et je me déplace ailleurs en France ou en Europe sur demande.",
   },
   {
     q: "Comment je suis sûr que vous comprenez mon métier ?",
