@@ -159,9 +159,40 @@ const { trigger, agent, actions, describe } = Astro.props;
     margin-top: 2px;
   }
 
+  /* En dessous de 720 px la grille passe en une colonne et les connecteurs
+     disparaissent : il ne reste qu'une pile de cinq pavés hauts, chacun avec
+     son intitulé, son titre et sa sous-légende technique. C'est le schéma qui
+     devient illisible, pas le schéma qui informe.
+     Chaque nœud se replie donc sur une seule ligne — pastille, logo, titre —
+     et les mentions techniques (« EAN · montants · client ») sortent. Le
+     parcours reste lisible de haut en bas, la hauteur est divisée par deux,
+     et le texte sr-only continue de porter la description complète pour qui
+     ne voit pas le schéma. */
   @media (max-width: 720px) {
-    .wf-grid { grid-template-columns: 1fr; gap: 10px; }
+    .wf-grid { grid-template-columns: 1fr; gap: 6px; }
     .wf-wires { display: none; }
+
+    .wf-node {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+    }
+    .wf-head { margin-bottom: 0; }
+    .wf-kicker, .wf-sub { display: none; }
+    .wf-title { font-size: var(--text-body-sm); }
+
+    /* Une flèche entre les nœuds remplace les connecteurs SVG : sans elle, la
+       pile ne dit plus qu'il s'agit d'un enchaînement. */
+    .wf-col-trigger::after,
+    .wf-col-agent::after {
+      content: '↓';
+      align-self: center;
+      font-size: 12px;
+      line-height: 1;
+      color: var(--color-ink-faint);
+    }
+    .wf-col-actions .wf-node + .wf-node { margin-top: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .wf-wire-flow { animation: none; }

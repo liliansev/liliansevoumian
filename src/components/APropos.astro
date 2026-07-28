@@ -11,10 +11,16 @@
  *    répondre « qui est-il ». D'où la fiche de faits en <dl> sous le texte,
  *    chaque ligne autonome et extractible hors de son contexte.
  *
- * Tous les faits ici sont sourcés dans profile.md et dans les cas publiés :
- * Make niveau 5 premier français (:28), Airtable certifié (:31), 300+ formés
- * (:21, :44), depuis 2020 (:43), et les chiffres Fraich Touch / Humble+ qui
- * viennent des frontmatters. Aucun chiffre nouveau.
+ * Le bloc raconte une TRAJECTOIRE, pas des missions : les cas clients sont
+ * juste au-dessus, les répéter ici ne prouvait rien de plus et volait la place
+ * de la seule question à laquelle cette section doit répondre — pourquoi lui.
+ *
+ * Deux bornes datées seulement, 2020 et aujourd'hui, parce que ce sont les
+ * deux seules que le dépôt documente. La tentation d'un arc en cinq étapes
+ * datées est forte et fabriquerait des jalons : tout ce qui est ici est sourcé
+ * dans profile.md (Make niveau 5 premier français, Airtable, 300+ formés,
+ * début en 2020) ou dans CTA.astro (« le plus clair de mon temps sur des
+ * agents IA et des outils internes »).
  */
 import SectionHeader from './SectionHeader.astro';
 
@@ -22,6 +28,7 @@ const faits = [
   { cle: 'Depuis', valeur: '2020' },
   { cle: 'Certifications', valeur: 'Make niveau 5 — premier certifié en France · Airtable' },
   { cle: 'Formation', valeur: '300+ personnes formées' },
+  { cle: 'Aujourd’hui', valeur: 'Agents IA et outils internes, sur n8n et Make' },
   { cle: 'Zone', valeur: 'Région parisienne · France · Europe' },
 ];
 ---
@@ -41,31 +48,39 @@ const faits = [
     <div class="reveal apropos">
       <div class="apropos-texte">
         <p>
-          Je suis freelance en automatisation et en intelligence artificielle,
-          basé en région parisienne, et j'interviens partout en France et en
-          Europe. J'ai commencé à automatiser des processus métier en 2020,
-          avant que l'IA générative n'entre dans les entreprises.
+          J'ai commencé à automatiser des processus métier en 2020, avant que
+          l'IA générative n'entre dans les entreprises. À l'époque personne ne
+          parlait d'agents&nbsp;: on branchait des outils entre eux pour que
+          plus personne n'ait à recopier une ligne d'un logiciel dans un autre.
+          C'est ce qui m'a attrapé et ne m'a jamais lâché — prendre une tâche
+          que quelqu'un refait tous les lundis depuis trois ans, et la faire
+          disparaître.
         </p>
 
         <p>
-          Je suis certifié Make niveau&nbsp;5 — le premier en France à
-          l'obtenir — et certifié Airtable. J'ai formé plus de 300 personnes à
-          ces outils, en formation comme chez mes clients.
+          Ces années m'ont donné des preuves plutôt que des promesses&nbsp;:
+          certifié Make niveau&nbsp;5, le premier en France à l'obtenir,
+          certifié Airtable, et plus de 300 personnes formées à ces outils.
+          Former oblige à comprendre pourquoi une chose tient, pas seulement à
+          la faire tourner le jour de la démo. C'est ce qui me sert le plus
+          quand il faut défendre un choix devant l'équipe qui vivra avec.
         </p>
 
         <p>
-          Le plus souvent, on ne m'appelle pas pour ajouter une automatisation
-          de plus&nbsp;: on m'appelle parce que celles qui existent cassent.
-          Chez Fraich&nbsp;Touch, 33 scénarios Make imbriqués sont devenus 4,
-          et 16 factures bloquées en erreur sont revenues à 0. Chez
-          Humble+, un scénario fragile a été remplacé par un workflow n8n qui
-          traite les bons de commande PDF et Excel sans une seule ressaisie.
+          L'IA a changé ce que je construis, pas la manière dont je le
+          construis. Elle classe, rédige, qualifie&nbsp;; ce sont les workflows
+          qui exécutent, et un agent sans workflow autour reste une démo. Je
+          passe aujourd'hui le plus clair de mon temps sur des agents IA et des
+          outils internes, avec le réflexe de 2020 intact&nbsp;: ça doit tourner
+          seul le lundi matin, et continuer de tourner quand une API change.
         </p>
 
         <p>
           Je travaille en direct&nbsp;: la personne qui vous répond est celle
-          qui construit. Et quand un projet n'est pas pour moi, je le dis avant
-          de commencer.
+          qui construit. Ce que le terrain m'a surtout appris, c'est à voir tôt
+          ce qui tiendra six mois et ce qui cassera à la première mise à jour.
+          Alors quand un projet n'est pas pour moi, je le dis avant de
+          commencer.
         </p>
       </div>
 
@@ -78,7 +93,10 @@ const faits = [
         ))}
         <div class="apropos-fait">
           <dt>Cas publiés</dt>
-          <dd><a href="/cas-clients">4 missions documentées, chiffres à l'appui</a></dd>
+          {/* « chiffres à l'appui » signait un chèque que deux des quatre cas
+              n'encaissent pas : Celeris et Humble+ ne contiennent aucune durée
+              de travail humain, et Celeris n'est pas encore en production. */}
+          <dd><a href="/cas-clients">4 missions documentées, avant/après détaillé</a></dd>
         </div>
       </dl>
     </div>

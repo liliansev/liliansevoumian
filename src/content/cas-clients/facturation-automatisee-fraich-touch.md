@@ -7,12 +7,12 @@ date: 2026-01-30
 tags: ["Finances", "Ops"]
 tools: ["Make", "Notion", "HubSpot", "API"]
 kpis:
-  - value: "33 → 4"
-    label: "Scénarios Make"
-  - value: "16 → 0"
-    label: "Factures en erreur"
   - value: "~4 h/sem"
-    label: "Maintenance économisée"
+    label: "Récupérées par l’équipe"
+  - value: "5 min"
+    label: "Pour régler une erreur, contre 30 à 60 min"
+  - value: "30 min"
+    label: "Pour former un nouveau collaborateur"
 draft: false
 ---
 

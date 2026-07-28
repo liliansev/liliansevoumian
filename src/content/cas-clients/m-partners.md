@@ -7,12 +7,12 @@ date: 2026-05-05
 tags: ["Sales", "Ops"]
 tools: ["Make", "Claude", "Apollo", "Attio", "Instantly"]
 kpis:
-  - value: "50 → 300"
-    label: "Entreprises scrapées /sem"
   - value: "~10 min"
-    label: "Par run (vs 3 h à la main)"
+    label: "Par run, contre 1 à 3 h pour 50 entreprises à la main"
+  - value: "×6"
+    label: "Capacité de scraping hebdomadaire (~50 → 300)"
   - value: "23"
-    label: "Cibles qualifiées /run"
+    label: "Cibles qualifiées sur 4 entreprises (run mesuré, ~7 min)"
 draft: false
 ---
 

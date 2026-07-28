@@ -1,27 +1,43 @@
 ---
 /*
- * ROI Calculator — version vanilla JS (Astro <script>).
+ * Simulateur de temps — version vanilla JS (Astro <script>).
  *
- * Reprend la logique du composant React précédent (sliders, animation
- * rAF des outputs, capping) sans dépendance React. Économise ~55 KB gz
- * post-scroll.
+ * Trois choses ont changé par rapport à la version « calculateur ROI » :
  *
- * Le header passe désormais par <SectionHeader> au lieu d'une copie
- * inline (fin du drift TSX/Astro flaggué dans l'audit).
+ *  1. Le héros est le TEMPS, plus l'euro. L'euro passe en ligne secondaire :
+ *     c'est une traduction du temps à un coût chargé posé en hypothèse, pas la
+ *     mesure elle-même.
+ *  2. Une seule colonne, chiffre en tête. En deux colonnes il fallait un
+ *     `order-first` pour remonter le résultat en mobile, ce qui plaçait le CTA
+ *     AVANT les curseurs : on lisait le résultat, on descendait régler, il
+ *     fallait remonter pour voir le nouveau chiffre et le bouton. Ici l'ordre
+ *     du DOM est l'ordre de lecture est l'ordre de tabulation — chiffre,
+ *     réglages, action — et il n'y a plus rien à inverser.
+ *  3. Deux curseurs au lieu de trois. Le coût horaire est devenu une hypothèse
+ *     fixe (cf. HOURLY_COST dans lib/roi.ts) : il n'était pas plafonné alors
+ *     que les deux autres l'étaient, et c'était la question la plus intrusive
+ *     du formulaire.
+ *
+ * La ligne « FORMULE : 8H × 3 EMP × 0,55 RÉCUP × 48 SEM × 55€ » a disparu. Elle
+ * ne portait qu'une information propre — le plafonnement en action — que
+ * l'avertissement dit déjà en français, et les hypothèses sont écrites juste
+ * en dessous, en toutes lettres.
  */
 import SectionHeader from './SectionHeader.astro';
-import { compute, formatFR, formatFormula } from '../lib/roi';
+import {
+  compute, formatFR, inWorkWeeks,
+  HOURLY_COST, RECOVERY_RATE, WEEKS_PER_YEAR,
+} from '../lib/roi';
 
-const initial = { hours: 8, people: 3, hourlyCost: 55 };
+const initial = { hours: 8, people: 3 };
 
 const sliders = [
-  { id: 'roi-hours',  label: 'HEURES /SEM PERDUES SUR TÂCHES RÉPÉTITIVES', unit: 'H', min: 1,  max: 30,  step: 1, value: initial.hours },
-  { id: 'roi-people', label: 'EMPLOYÉS CONCERNÉS',                          unit: '',  min: 1,  max: 15,  step: 1, value: initial.people },
-  { id: 'roi-rate',   label: 'COÛT HORAIRE INTERNE',                        unit: '€', min: 25, max: 120, step: 5, value: initial.hourlyCost },
+  { id: 'roi-hours',  label: 'HEURES /SEM PERDUES SUR TÂCHES RÉPÉTITIVES', unit: 'H', min: 1, max: 30, step: 1, value: initial.hours },
+  { id: 'roi-people', label: 'PERSONNES CONCERNÉES',                        unit: '',  min: 1, max: 15, step: 1, value: initial.people },
 ];
 
-const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
-  compute(initial.hours, initial.people, initial.hourlyCost);
+const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours, initial.people);
+const tauxPourcent = Math.round(RECOVERY_RATE * 100);
 ---
 
 <section
@@ -30,23 +46,55 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
 >
   <div class="relative max-w-[1200px] mx-auto">
     <SectionHeader
-      number="01"
-      label="CALCUL · HYPOTHÈSE CONSERVATRICE"
-      title="Combien vous coûtent vos <mark class='inv'>tâches répétitives.</mark>"
-      body="Estimation conservatrice : 55 % des heures manuelles récupérées via automatisation, 48 semaines effectives par an. Au-delà de 20 h/sem ou 10 employés, l'estimation est plafonnée. L'audit réel descend dans le détail."
-      titleMaxWidth="20ch"
+      label="SIMULATEUR · HYPOTHÈSE CONSERVATRICE"
+      title="Le temps que vos équipes peuvent <mark class='inv'>récupérer chaque année.</mark>"
+      body="Deux réglages suffisent. L'estimation retient 55 % des heures manuelles comme récupérables et 48 semaines de travail effectif par an — au-delà de 20 h/sem ou 10 personnes, elle est plafonnée."
+      {/* 24ch et pas 22 : « récupérer chaque année. » est un fragment surligné
+          en nowrap, il ne peut pas se couper, et à 22ch il dépassait de 8 px.
+          Le titre tient sur deux lignes dans les deux cas. */}
+      titleMaxWidth="24ch"
       bodyMaxWidth="60ch"
     />
 
-    <!-- Calculator grid : sliders sur paper, output sur surface-low -->
     <div
-      class="card-soft relative grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal"
+      class="roi-carte card-soft reveal border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden"
       data-roi-calc
     >
+      <!-- Le résultat en tête : il est visible dès l'entrée dans la section, et
+           il reste au-dessus des curseurs qu'on manipule juste en dessous. -->
+      <div class="bloc-lime roi-sortie">
+        <div class="mono-caption text-[var(--color-ink-low)]">HEURES RÉCUPÉRÉES PAR AN</div>
 
-      <!-- Sliders panel -->
-      <fieldset class="bg-[var(--color-paper)] p-8 md:p-10 flex flex-col gap-8 border-0 m-0">
-        <legend class="sr-only">Paramètres d'estimation ROI</legend>
+        <div
+          class="roi-chiffre font-display font-semibold text-[var(--color-ink)] tabular-nums"
+        >
+          <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
+          <span> H</span>
+        </div>
+
+        <p class="roi-traduction">
+          Sur les <span data-roi-output="manualHours">{formatFR(manualHours)}</span> h/an
+          passées en tâches répétitives, soit
+          <span data-roi-output="weeksSaved">{formatFR(inWorkWeeks(hoursSaved))}</span> semaines
+          de travail rendues à l’équipe — environ
+          <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span> € à {HOURLY_COST} €
+          de l’heure chargée.
+        </p>
+
+        <span data-roi-warning class="mono-caption block mt-4 text-[var(--color-error)]" hidden={!isCapped}>
+          [!] ESTIMATION PLAFONNÉE · L’AUDIT RÉEL DESCEND DANS LE DÉTAIL
+        </span>
+
+        {/* Une seule région live, hors du chiffre animé. L'ancien montage
+            posait aria-live SUR le nombre, que l'animation rAF réécrit à chaque
+            image : un glissement de curseur empilait une vingtaine d'annonces
+            dans la file du lecteur d'écran. Ici le texte n'est écrit qu'une
+            fois l'animation finie. */}
+        <span class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-roi-annonce></span>
+      </div>
+
+      <fieldset class="roi-reglages border-0 m-0">
+        <legend class="sr-only">Paramètres du simulateur</legend>
         {sliders.map((s) => (
           <div class="flex flex-col gap-3">
             <div class="flex items-baseline justify-between">
@@ -78,77 +126,93 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
             </div>
           </div>
         ))}
-      </fieldset>
 
-      <!-- Output panel — aria-live ciblé sur le montant principal pour eviter de chunker tout le panel -->
-      <div class="bloc-lime p-8 md:p-10 flex flex-col order-first lg:order-none">
-        <div class="mono-caption mb-2 text-[var(--color-ink-low)]">ÉCONOMIE ESTIMÉE · HYPOTHÈSE CONSERVATRICE</div>
-        <div
-          class="font-display font-semibold leading-[0.98] tracking-[-0.045em] mb-6 text-[var(--color-ink)] tabular-nums"
-          style="font-size: var(--text-roi-money);"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span>
-          <span> €</span>
-          <span class="mono-caption ml-2 align-middle text-[var(--color-ink-low)]">/AN</span>
-        </div>
-
-        <span data-roi-warning class="mono-caption block mb-6 text-[var(--color-error)]" role="status" aria-live="polite" hidden={!isCapped}>
-          [!] ESTIMATION PLAFONNÉE · L'AUDIT RÉEL DESCEND DANS LE DÉTAIL
-        </span>
-
-        <div class="pb-6 border-b border-[var(--color-divider)] mb-6">
-          <div class="mono-caption mb-1 text-[var(--color-ink-low)]">HEURES /AN</div>
-          <div
-            class="font-display font-semibold tabular-nums tracking-[-0.025em] text-[var(--color-ink)]"
-            style="font-size: var(--text-roi-output);"
-          >
-            <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
-            <span> H</span>
-          </div>
-        </div>
-
-        <div class="mono-caption mb-6 leading-[1.6] flex flex-col gap-1 text-[var(--color-ink-low)]">
-          <span>
-            FORMULE : <span data-roi-formula>{formatFormula(cappedHours, cappedPeople, initial.hourlyCost)}</span>
-          </span>
-        </div>
-
-        <div class="mt-8 pt-6 border-t border-[var(--color-divider)] flex flex-col gap-3">
+        <div class="roi-actions">
           <a
-            href="#contact-form" class="btn-primary justify-center w-full" data-fast-goal="lead_form" data-fast-goal-source="roi">
-        Récupérer ces heures
-      </a>
-          <a href="#contact-form" class="btn-ghost justify-center w-full">
-            Ou m'écrire un message
+            href="#contact-form"
+            class="btn-primary justify-center w-full"
+            data-fast-goal="lead_form"
+            data-fast-goal-source="roi"
+          >
+            Récupérer ces heures
           </a>
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
-            <button
-              type="button"
-              data-roi-share
-              class="tap-44 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-accent-text)] transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
-            >
-              <span data-roi-share-label aria-live="polite">COPIER LE LIEN DE CE CALCUL</span>
-            </button>
-            <span class="mono-caption text-[var(--color-ink-faint)]" aria-hidden="true">·</span>
-            <button
-              type="button"
-              data-roi-reset
-              class="tap-44 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-accent-text)] transition-colors text-left bg-transparent border-0 p-0 cursor-pointer"
-            >
-              RÉINITIALISER
-            </button>
-          </div>
+          <button
+            type="button"
+            data-roi-share
+            class="tap-44 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors bg-transparent border-0 p-0 cursor-pointer self-start"
+          >
+            <span data-roi-share-label>COPIER LE LIEN DE CE CALCUL</span>
+          </button>
         </div>
-      </div>
+      </fieldset>
     </div>
   </div>
 </section>
 
+<style>
+  .roi-sortie {
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .roi-chiffre {
+    font-size: var(--text-roi-primary);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    margin-top: 0.35rem;
+  }
+
+  .roi-traduction {
+    max-width: 46ch;
+    margin: 1rem 0 0;
+    font-size: var(--text-body-sm);
+    line-height: 1.55;
+    color: var(--color-ink-mid);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .roi-reglages {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    background: var(--color-paper);
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .roi-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  /* Au-delà de 60rem le chiffre et les réglages tiennent côte à côte, mais
+     l'ordre du DOM reste celui de la lecture : résultat, puis réglages. */
+  @media (min-width: 60rem) {
+    .roi-carte {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    /* Les deux colonnes d'une grille prennent la hauteur de la plus haute :
+       sans ce centrage, le chiffre se collait en haut de l'aplat lime et
+       laissait un grand vide sous lui. */
+    .roi-sortie {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .roi-reglages {
+      border-top: 0;
+      border-left: 1px solid var(--color-divider);
+      justify-content: center;
+    }
+  }
+</style>
+
 <script>
-  import { compute, formatFR, formatFormula } from '../lib/roi';
+  import { compute, formatFR, inWorkWeeks } from '../lib/roi';
 
   // Met à jour la CSS custom property --slider-progress qui pilote
   // le linear-gradient de fill du track (entre min et current value).
@@ -160,26 +224,24 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
     input.style.setProperty('--slider-progress', progress + '%');
   }
 
-  // Animated number — easing rAF, identique au comportement React précédent.
+  // Animated number — easing rAF, identique au comportement précédent.
   // Un seul rAF actif par élément ; setTarget annule l'ancien et repart du current.
   class AnimatedValue {
     private current: number;
     private rafId: number | null = null;
     private duration = 350;
     private element: HTMLElement;
-    private formatter: (n: number) => string;
 
-    constructor(element: HTMLElement, initial: number, formatter: (n: number) => string = formatFR) {
+    constructor(element: HTMLElement, initial: number) {
       this.element = element;
       this.current = initial;
-      this.formatter = formatter;
     }
 
     setTarget(value: number, prefersReducedMotion: boolean) {
       if (value === this.current) return;
       if (prefersReducedMotion) {
         this.current = value;
-        this.element.textContent = this.formatter(value);
+        this.element.textContent = formatFR(value);
         return;
       }
       const start = this.current;
@@ -192,12 +254,12 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
         const progress = Math.min(elapsed / this.duration, 1);
         const eased = 1 - Math.pow(1 - progress, 4);
         this.current = Math.round(start + diff * eased);
-        this.element.textContent = this.formatter(this.current);
+        this.element.textContent = formatFR(this.current);
         if (progress < 1) {
           this.rafId = requestAnimationFrame(animate);
         } else {
           this.current = value;
-          this.element.textContent = this.formatter(value);
+          this.element.textContent = formatFR(value);
           this.rafId = null;
         }
       };
@@ -216,11 +278,13 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
   }
 
   // Met à jour l'URL sans navigation. On retire les params si on est revenu aux valeurs par défaut.
-  function syncUrl(hours: number, people: number, hourlyCost: number, defaults: { hours: number; people: number; hourlyCost: number }) {
+  function syncUrl(hours: number, people: number, defaults: { hours: number; people: number }) {
     const params = new URLSearchParams(window.location.search);
     if (hours === defaults.hours) params.delete('h'); else params.set('h', String(hours));
     if (people === defaults.people) params.delete('emp'); else params.set('emp', String(people));
-    if (hourlyCost === defaults.hourlyCost) params.delete('rate'); else params.set('rate', String(hourlyCost));
+    // `rate` a existé tant que le coût horaire était un curseur. On le purge des
+    // liens partagés à l'époque, sinon il resterait dans l'URL sans rien piloter.
+    params.delete('rate');
     const search = params.toString();
     const url = `${window.location.pathname}${search ? '?' + search : ''}${window.location.hash}`;
     history.replaceState(null, '', url);
@@ -233,98 +297,99 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
 
     const inputHours = root.querySelector<HTMLInputElement>('[data-roi-input="roi-hours"]');
     const inputPeople = root.querySelector<HTMLInputElement>('[data-roi-input="roi-people"]');
-    const inputRate = root.querySelector<HTMLInputElement>('[data-roi-input="roi-rate"]');
-    if (!inputHours || !inputPeople || !inputRate) return;
+    if (!inputHours || !inputPeople) return;
 
     const dispHours = root.querySelector<HTMLElement>('[data-roi-display="roi-hours"]')!;
     const dispPeople = root.querySelector<HTMLElement>('[data-roi-display="roi-people"]')!;
-    const dispRate = root.querySelector<HTMLElement>('[data-roi-display="roi-rate"]')!;
 
-    const outMoney = root.querySelector<HTMLElement>('[data-roi-output="moneySaved"]')!;
     const outHours = root.querySelector<HTMLElement>('[data-roi-output="hoursSaved"]')!;
+    const outManual = root.querySelector<HTMLElement>('[data-roi-output="manualHours"]')!;
+    const outWeeks = root.querySelector<HTMLElement>('[data-roi-output="weeksSaved"]')!;
+    const outMoney = root.querySelector<HTMLElement>('[data-roi-output="moneySaved"]')!;
 
-    const formulaEl = root.querySelector<HTMLElement>('[data-roi-formula]')!;
     const warningEl = root.querySelector<HTMLElement>('[data-roi-warning]')!;
+    const annonceEl = root.querySelector<HTMLElement>('[data-roi-annonce]')!;
 
     const shareBtn = root.querySelector<HTMLButtonElement>('[data-roi-share]');
     const shareLabel = root.querySelector<HTMLElement>('[data-roi-share-label]');
-    const resetBtn = root.querySelector<HTMLButtonElement>('[data-roi-reset]');
 
     const defaults = {
       hours: Number(inputHours.value),
       people: Number(inputPeople.value),
-      hourlyCost: Number(inputRate.value),
     };
 
-    // Préinitialise depuis URL si params présents
     const initHours = readParam('h', Number(inputHours.min), Number(inputHours.max), defaults.hours);
     const initPeople = readParam('emp', Number(inputPeople.min), Number(inputPeople.max), defaults.people);
-    const initRate = readParam('rate', Number(inputRate.min), Number(inputRate.max), defaults.hourlyCost);
     inputHours.value = String(initHours);
     inputPeople.value = String(initPeople);
-    inputRate.value = String(initRate);
 
     // Sync aria-valuetext avec les valeurs effectives (URL params), sinon AT lit la valeur SSR figee
     inputHours.setAttribute('aria-valuetext', `${initHours} H`);
     inputPeople.setAttribute('aria-valuetext', `${initPeople}`);
-    inputRate.setAttribute('aria-valuetext', `${initRate} €`);
 
-    // Initialise le fill violet du track avec les valeurs effectives
     updateSliderProgress(inputHours);
     updateSliderProgress(inputPeople);
-    updateSliderProgress(inputRate);
 
-    const initialComputed = compute(initHours, initPeople, initRate);
+    const c0 = compute(initHours, initPeople);
 
-    // Initialise les displays sliders avec les valeurs effectives
     dispHours.textContent = formatFR(initHours);
     dispPeople.textContent = formatFR(initPeople);
-    dispRate.textContent = formatFR(initRate);
 
-    // Initialise les outputs avec les valeurs computed (snap, pas d'animation au load)
-    outMoney.textContent = formatFR(initialComputed.moneySaved);
-    outHours.textContent = formatFR(initialComputed.hoursSaved);
-    formulaEl.textContent = formatFormula(initialComputed.cappedHours, initialComputed.cappedPeople, initRate);
-    warningEl.hidden = !initialComputed.isCapped;
+    outHours.textContent = formatFR(c0.hoursSaved);
+    outManual.textContent = formatFR(c0.manualHours);
+    outWeeks.textContent = formatFR(inWorkWeeks(c0.hoursSaved));
+    outMoney.textContent = formatFR(c0.moneySaved);
+    warningEl.hidden = !c0.isCapped;
 
-    const animMoney = new AnimatedValue(outMoney, initialComputed.moneySaved);
-    const animHours = new AnimatedValue(outHours, initialComputed.hoursSaved);
+    const animHours = new AnimatedValue(outHours, c0.hoursSaved);
+    const animManual = new AnimatedValue(outManual, c0.manualHours);
+    const animMoney = new AnimatedValue(outMoney, c0.moneySaved);
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // L'annonce vocale attend l'arrêt du curseur : sans ce délai, chaque cran
+    // d'un glissement produirait une phrase, toutes empilées dans la file.
+    let annonceTimer: number | null = null;
+    function annoncer(heures: number) {
+      if (annonceTimer !== null) window.clearTimeout(annonceTimer);
+      annonceTimer = window.setTimeout(() => {
+        annonceEl.textContent = `${formatFR(heures)} heures récupérées par an.`;
+      }, 600);
+    }
 
     function update() {
       const hours = Number(inputHours!.value);
       const people = Number(inputPeople!.value);
-      const hourlyCost = Number(inputRate!.value);
 
       dispHours.textContent = formatFR(hours);
       dispPeople.textContent = formatFR(people);
-      dispRate.textContent = formatFR(hourlyCost);
       inputHours!.setAttribute('aria-valuetext', `${hours} H`);
       inputPeople!.setAttribute('aria-valuetext', `${people}`);
-      inputRate!.setAttribute('aria-valuetext', `${hourlyCost} €`);
 
       updateSliderProgress(inputHours!);
       updateSliderProgress(inputPeople!);
-      updateSliderProgress(inputRate!);
 
-      const c = compute(hours, people, hourlyCost);
+      const c = compute(hours, people);
       const reducedMotion = motionQuery.matches;
 
-      animMoney.setTarget(c.moneySaved, reducedMotion);
       animHours.setTarget(c.hoursSaved, reducedMotion);
+      animManual.setTarget(c.manualHours, reducedMotion);
+      animMoney.setTarget(c.moneySaved, reducedMotion);
+      // Les semaines changent par petits paliers : les animer produirait un
+      // scintillement sans lecture possible.
+      outWeeks.textContent = formatFR(inWorkWeeks(c.hoursSaved));
 
-      formulaEl.textContent = formatFormula(c.cappedHours, c.cappedPeople, hourlyCost);
       warningEl.hidden = !c.isCapped;
+      annoncer(c.hoursSaved);
 
-      syncUrl(hours, people, hourlyCost, defaults);
+      syncUrl(hours, people, defaults);
     }
 
     inputHours.addEventListener('input', update);
     inputPeople.addEventListener('input', update);
-    inputRate.addEventListener('input', update);
 
-    // Bouton « Copier le lien »
+    // Bouton « Copier le lien » — le seul mécanisme par lequel un lecteur
+    // transmet son estimation à qui décide.
     if (shareBtn && shareLabel) {
       let resetTimer: number | null = null;
       shareBtn.addEventListener('click', async () => {
@@ -335,23 +400,9 @@ const { cappedHours, cappedPeople, isCapped, hoursSaved, moneySaved } =
           resetTimer = window.setTimeout(() => {
             shareLabel.textContent = 'COPIER LE LIEN DE CE CALCUL';
           }, 1500);
-        } catch (err) {
-          shareLabel.textContent = 'COPIE IMPOSSIBLE · SÉLECTIONNEZ L\'URL';
+        } catch {
+          shareLabel.textContent = 'COPIE IMPOSSIBLE · SÉLECTIONNEZ L’URL';
         }
-      });
-    }
-
-    // Bouton « Réinitialiser » : remet les sliders à leurs valeurs par défaut
-    // et nettoie l'URL des query params.
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        inputHours.value = String(defaults.hours);
-        inputPeople.value = String(defaults.people);
-        inputRate.value = String(defaults.hourlyCost);
-        update();
-        const url = new URL(window.location.href);
-        url.search = '';
-        window.history.replaceState(null, '', url.toString());
       });
     }
   }

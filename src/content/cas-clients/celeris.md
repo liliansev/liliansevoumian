@@ -7,12 +7,12 @@ date: 2026-06-20
 tags: ["Ops"]
 tools: ["n8n", "Mistral", "Odoo", "Claude"]
 kpis:
-  - value: "2–3 ¢"
-    label: "Coût IA par fiche"
+  - value: "Brouillon"
+    label: "L’agent rédige, le commercial valide avant publication"
   - value: ">60 %"
-    label: "Matching auto (319/515)"
+    label: "Produits appariés automatiquement (319 sur ~515, en test)"
   - value: "797"
-    label: "Fiches specs scrapées"
+    label: "Pages de specs constructeur collectées automatiquement"
 draft: false
 ---
 

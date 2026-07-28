@@ -7,12 +7,12 @@ date: 2026-07-23
 tags: ["Ops", "Finance", "IA"]
 tools: ["n8n", "Mistral", "Shopify", "Pennylane", "Slack", "Gmail"]
 kpis:
-  - value: "2 flux"
-    label: "PDF + XLS unifiés"
-  - value: "60+"
-    label: "Nœuds orchestrés"
-  - value: "0,00 €"
-    label: "Écart sur cas test"
+  - value: "0 ressaisie"
+    label: "Du bon de commande à la facture"
+  - value: "Sans attente"
+    label: "Les commandes s’enchaînent sans se bloquer"
+  - value: "1 système"
+    label: "PDF pharmacie et Excel salle de sport"
 draft: false
 ---
 
