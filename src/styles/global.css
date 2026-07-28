@@ -106,6 +106,10 @@
   --color-accent-text: #111111;
   --color-accent-soft: #f2fbd8;
 
+  /* L'anneau de focus ne peut pas être le lime : 1,25:1 sur blanc. L'encre
+     tient sur les deux surfaces — 18,88:1 sur blanc, 15,14:1 sur lime. */
+  --color-focus: #111111;
+
   /* Le lime étant la couleur de marque, il ne peut pas signifier « valide » :
      un état correct serait indiscernable d'un élément de marque. Les deux
      états passent en encre, portés par un libellé. */
@@ -230,7 +234,7 @@ a {
    ⚠️ Règle globale anti-cadre-noir-iOS — cf. mémoire globale "ios-focus-outline-mobile". */
 @media (any-hover: hover), (any-pointer: fine) {
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -242,7 +246,7 @@ a {
   input:not([type='range']):not([type='checkbox']):not([type='radio']):focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -719,7 +723,7 @@ a, button, input, textarea, select,
    mais ça aligne les inputs sur le contrat des boutons/liens du système. */
 .input-text:focus-visible {
   border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -740,7 +744,7 @@ a, button, input, textarea, select,
      mis à jour par le JS du composant ROI à chaque input event. */
   background-image: linear-gradient(
     to right,
-    var(--color-accent) 0%,
+    var(--color-ink) 0%,
     var(--color-accent) var(--slider-progress, 0%),
     var(--color-divider) var(--slider-progress, 0%),
     var(--color-divider) 100%
@@ -757,7 +761,7 @@ a, button, input, textarea, select,
 .roi-slider:hover {
   background-image: linear-gradient(
     to right,
-    var(--color-accent) 0%,
+    var(--color-ink) 0%,
     var(--color-accent) var(--slider-progress, 0%),
     var(--color-ink-faint) var(--slider-progress, 0%),
     var(--color-ink-faint) 100%
@@ -783,7 +787,7 @@ a, button, input, textarea, select,
 
 .roi-slider:focus-visible::-webkit-slider-thumb {
   border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -804,7 +808,7 @@ a, button, input, textarea, select,
 
 .roi-slider:focus-visible::-moz-range-thumb {
   border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1123,7 +1127,7 @@ a[href^="mailto:"] {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   border-radius: var(--radius-sm);
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1291,3 +1295,23 @@ h1 mark.inv::before { --angle: 1.1deg; }
 
 ::selection { background: var(--color-lime); color: #111111; }
 .bloc-lime ::selection { background: #ffffff; color: #111111; }
+
+
+/* =========================================================================
+   Les consommateurs de --color-paper en COULEUR (et non en fond).
+   Le remap .bloc-lime fait de --color-paper le lime : tout composant qui
+   l'écrit en `color:` ou en remplissage de champ hérite alors du lime, et
+   devient illisible sur son propre fond. Ces deux règles rattrapent les
+   seuls cas concernés.
+   ========================================================================= */
+
+.bloc-lime .input-text {
+  background: var(--color-surface-high);   /* #ffffff, déjà prévu par le remap */
+  /* Composite sur lime = #6a7836 : 3,9:1 contre le lime et 4,9:1 contre le
+     remplissage blanc. La bordure porte la conformité, pas le fond. */
+  border-color: rgba(17, 17, 17, 0.55);
+}
+
+.bloc-lime .btn-primary {
+  color: #ffffff;
+}
