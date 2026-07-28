@@ -13,6 +13,14 @@ kpis:
     label: "Pour régler une erreur, contre 30 à 60 min"
   - value: "30 min"
     label: "Pour former un nouveau collaborateur"
+flow:
+  describe: "Schéma du workflow de facturation Fraich Touch : un deal signé dans HubSpot déclenche le calcul des échéances, puis la facture part dans Pennylane, son statut remonte dans Notion et l’envoi part chaque jour à 9 h."
+  trigger: { icon: "simple-icons:hubspot", kicker: "Deal signé", title: "HubSpot", sub: "commission · échéances" }
+  agent: { icon: "lucide:calculator", kicker: "Règles", title: "Calcule & découpe", sub: "TVA · échéances · VHR" }
+  actions:
+    - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture émise" }
+    - { icon: "simple-icons:notion", kicker: "Notion", title: "Statut visible" }
+    - { icon: "lucide:clock", kicker: "Chaque jour à 9 h", title: "Envoi finalisé" }
 draft: false
 ---
 

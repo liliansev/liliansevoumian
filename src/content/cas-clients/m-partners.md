@@ -13,6 +13,14 @@ kpis:
     label: "Capacité de scraping hebdomadaire (~50 → 300)"
   - value: "23"
     label: "Cibles qualifiées sur 4 entreprises (run mesuré, ~7 min)"
+flow:
+  describe: "Schéma du workflow de prospection M Partners : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les dirigeants retenus partent dans le CRM avec une shortlist priorisée et des alertes."
+  trigger: { icon: "lucide:users", kicker: "Sourcing", title: "Cibles collectées", sub: "LinkedIn · bases" }
+  agent: { icon: "simple-icons:anthropic", kicker: "Agent IA", title: "Qualifie & score", sub: "fit · séniorité · signaux" }
+  actions:
+    - { icon: "simple-icons:hubspot", kicker: "CRM", title: "À approcher" }
+    - { icon: "lucide:list-checks", kicker: "Shortlist", title: "Top 20 %" }
+    - { icon: "lucide:bell", kicker: "Alerte", title: "Nouveau signal" }
 draft: false
 ---
 

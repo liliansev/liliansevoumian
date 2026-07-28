@@ -13,6 +13,14 @@ kpis:
     label: "Les commandes s’enchaînent sans se bloquer"
   - value: "1 système"
     label: "PDF pharmacie et Excel salle de sport"
+flow:
+  describe: "Schéma du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow crée la commande Shopify, la facture Pennylane et soumet les cas sensibles à validation dans Slack."
+  trigger: { icon: "simple-icons:gmail", kicker: "Mail reçu", title: "PDF + XLS", sub: "pharmacie · salles" }
+  agent: { icon: "simple-icons:mistralai", kicker: "OCR + IA", title: "Extrait & contrôle", sub: "EAN · montants · client" }
+  actions:
+    - { icon: "simple-icons:shopify", kicker: "Shopify", title: "Commande" }
+    - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture" }
+    - { icon: "simple-icons:slack", kicker: "Contrôle", title: "Validation humaine" }
 draft: false
 ---
 

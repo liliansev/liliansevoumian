@@ -4,6 +4,10 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
 import { chipClass } from '../../lib/tool-chip';
+import { Icon } from 'astro-icon/components';
+import MockupWindow from '../../components/mockups/MockupWindow.astro';
+import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
+import { brandColorFor } from '../../data/brands';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -13,8 +17,52 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+await render(entry);
 const cs = entry.data;
+
+/*
+ * Le corps du cas était rendu d'un seul tenant : 5 000 px de prose grise sans
+ * une respiration. Il est découpé ici en PIÈCES, une par <h2>, chacune posée
+ * sur sa propre surface avec son cartouche numéroté.
+ *
+ * Le découpage lit `entry.rendered.html` et coupe sur les ancres que Astro
+ * pose déjà (`<h2 id="…">`). Pas de plugin rehype : il faudrait une dépendance,
+ * une entrée de config, un cache à débusquer, et il travaillerait à l'aveugle
+ * hors de tout contexte visuel. Ici tout est dans le gabarit, sous les yeux.
+ */
+const HTML_RENDU: string = (entry as unknown as { rendered?: { html?: string } }).rendered?.html ?? '';
+
+/* L'icône dit de quoi parle la pièce : elle distingue le constat du remède, et
+   c'est le seul repère qui tienne quand on balaie la page au pouce. La clé est
+   l'ancre que Astro dérive du titre, insensible à la casse et aux accents. */
+const ICONES: Record<string, string> = {
+  lentreprise: 'lucide:building-2',
+  'le-problème': 'lucide:triangle-alert',
+  'la-solution': 'lucide:workflow',
+  'les-étapes': 'lucide:list-ordered',
+  'les-résultats': 'lucide:target',
+};
+
+interface Piece { id: string; titre: string; corps: string; icone: string }
+
+function decouper(html: string): Piece[] {
+  if (!html) return [];
+  const morceaux = html.split(/(?=<h2\b)/);
+  const pieces: Piece[] = [];
+  for (const m of morceaux) {
+    const tete = m.match(/^<h2\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/);
+    if (!tete) continue;
+    pieces.push({
+      id: tete[1],
+      titre: tete[2].replace(/<[^>]+>/g, '').trim(),
+      corps: m.slice(tete[0].length),
+      icone: ICONES[tete[1]] ?? 'lucide:square-dot',
+    });
+  }
+  return pieces;
+}
+
+const pieces = decouper(HTML_RENDU);
 const dateISO = cs.date.toISOString();
 
 // Cas voisins : meme tag d abord, puis complement par les plus recents. Deux
@@ -128,11 +176,52 @@ const articleSchema = {
     </section>
 
     <!-- CORPS DU CAS (Markdown) -->
-    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[72ch] mx-auto reveal case-prose">
-        <Content />
-      </div>
-    </section>
+    {/* Une pièce par <h2>, chacune sur sa propre surface. Les surfaces
+        alternent papier / bande grise pour donner un rythme vertical, et la
+        DERNIÈRE passe sur l'encre : c'est le pic de la page, et c'est là que
+        sont les résultats. Elle ne peut pas être en lime — le CTA de pied l'est
+        déjà, et deux aplats lime à 1 500 px d'écart font un motif, pas un
+        geste. Sur l'encre, une bande de surlignage tient 14:1. */}
+    {pieces.map((piece, i) => (
+      <section
+        data-section
+        id={piece.id}
+        class:list={[
+          'relative px-[var(--spacing-section-x)] piece-cas',
+          i === pieces.length - 1 ? 'bloc-encre' : i % 2 === 1 ? 'section-band' : '',
+        ]}
+      >
+        <div class="relative max-w-[72ch] mx-auto">
+          <header class="reveal piece-tete">
+            <span class="piece-cartouche">
+              <Icon name={piece.icone} class="piece-icone" aria-hidden="true" />
+              <span>{String(i + 1).padStart(2, '0')} / {String(pieces.length).padStart(2, '0')}</span>
+            </span>
+            <h2 class="piece-titre">{piece.titre}</h2>
+          </header>
+          {/* Le schéma ouvre « La solution » : le lecteur voit le parcours
+              avant de lire les seize paragraphes qui le détaillent. C'est une
+              reconstitution, jamais une capture — les écrans clients sont
+              confidentiels — et le châssis de fenêtre le dit assez. Un cas dont
+              la chaîne ne rentre pas dans la géométrie n'a pas de `flow`, donc
+              pas de schéma : rien vaut mieux qu'un dessin faux. */}
+          {piece.id === 'la-solution' && cs.flow && (
+            <div class="reveal piece-schema">
+              <MockupWindow file={`${cs.tools[0] ?? 'workflow'} · parcours`} status="reconstitution" flush>
+                <WorkflowCanvas
+                  describe={cs.flow.describe}
+                  trigger={{ ...cs.flow.trigger, color: brandColorFor(cs.flow.trigger.icon) }}
+                  agent={{ ...cs.flow.agent, color: brandColorFor(cs.flow.agent.icon) }}
+                  actions={cs.flow.actions.map((a) => ({ ...a, color: brandColorFor(a.icon) }))}
+                />
+              </MockupWindow>
+            </div>
+          )}
+
+          <div class="reveal case-prose" set:html={piece.corps} />
+        </div>
+      </section>
+    ))}
 
     <!-- TÉMOIGNAGE + STACK -->
     {(cs.testimonial?.quote || cs.tools.length > 0) && (
@@ -273,6 +362,60 @@ const articleSchema = {
 </style>
 
 <style>
+  /* ── La pièce ── */
+  /* Un demi-pas de section : cinq pièces à pleine hauteur de section auraient
+     ajouté 700 px à une page qui en faisait déjà 8 000. Le rythme vient de
+     l'alternance des surfaces, pas du vide entre elles. */
+  .piece-cas {
+    padding-top: clamp(2.5rem, 4vw, 4rem);
+    padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  }
+
+  .piece-schema {
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .piece-tete {
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  /* Cartouche : la flèche et le numéro reprennent `.section-number`, l'idiome
+     déjà posé partout ailleurs sur le site. Le numéro dit où l'on en est, ce
+     que l'icône seule ne dit pas. */
+  .piece-cartouche {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-low);
+  }
+
+  .piece-icone {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-ink);
+    stroke-width: 1.6;
+  }
+
+  .piece-titre {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-headline);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+  }
+
+  /* Sur l'encre, les jetons de rôle sont déjà remappés par `.bloc-encre` : la
+     prose, les titres et les filets suivent sans variante à écrire. Seule
+     l'icône a besoin d'être forcée, sa couleur étant posée en dur ci-dessus. */
+  .bloc-encre .piece-icone { color: var(--color-text-on-dark); }
+
   /* Corps Markdown des cas — calé sur les tokens du site. */
   .case-prose :global(h2) {
     font-family: var(--font-display);
@@ -283,6 +426,8 @@ const articleSchema = {
     color: var(--color-ink);
     margin: 2.5em 0 0.75em;
   }
+  /* Plus aucun h2 dans le corps : le titre de pièce est rendu par le gabarit.
+     La règle reste pour un cas qui en poserait un second dans son texte. */
   .case-prose :global(h2:first-child) { margin-top: 0; }
   .case-prose :global(h3) {
     font-family: var(--font-display);

@@ -24,6 +24,27 @@ const casClients = defineCollection({
     kpis: z
       .array(z.object({ value: z.string(), label: z.string() }))
       .default([]),
+    /*
+     * `flow` décrit le parcours réel de la donnée, tel que le corps du cas le
+     * raconte. Il alimente le schéma posé en tête de « La solution ».
+     *
+     * La géométrie est celle de WorkflowCanvas : un déclencheur, un agent, puis
+     * EXACTEMENT trois actions. Le `.length(3)` est délibérément strict — un
+     * gabarit qui accepte deux actions invite à en inventer une troisième pour
+     * remplir le dessin. Un cas dont la chaîne ne rentre pas dans cette forme
+     * (Celeris, dont le parcours est linéaire) n'a pas de `flow` : il n'a pas
+     * de schéma, plutôt qu'un schéma faux.
+     */
+    flow: z
+      .object({
+        describe: z.string(),
+        trigger: z.object({ icon: z.string(), kicker: z.string(), title: z.string(), sub: z.string().optional() }),
+        agent: z.object({ icon: z.string(), kicker: z.string(), title: z.string(), sub: z.string().optional() }),
+        actions: z
+          .array(z.object({ icon: z.string(), kicker: z.string(), title: z.string(), sub: z.string().optional() }))
+          .length(3),
+      })
+      .optional(),
     testimonial: z
       .object({
         quote: z.string(),
