@@ -752,7 +752,7 @@ a, button, input, textarea, select,
 /* :focus-visible (pas :focus) : les champs texte le matchent toujours au focus,
    mais ça aligne les inputs sur le contrat des boutons/liens du système. */
 .input-text:focus-visible {
-  border-color: var(--color-accent);
+  transform: scale(1.15);
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
@@ -772,30 +772,16 @@ a, button, input, textarea, select,
   height: 28px;
   /* Track avec fill accent entre min et current value, via --slider-progress
      mis à jour par le JS du composant ROI à chaque input event. */
-  background-image: linear-gradient(
-    to right,
-    var(--color-ink) 0%,
-    var(--color-accent) var(--slider-progress, 0%),
-    var(--color-divider) var(--slider-progress, 0%),
-    var(--color-divider) 100%
-  );
+  background-image:
+    linear-gradient(var(--color-lime), var(--color-lime)),
+    linear-gradient(var(--color-ink), var(--color-ink));
   background-repeat: no-repeat;
-  background-size: 100% 4px;
-  background-position: center;
+  background-size: var(--slider-progress, 0%) 10px, 100% 4px;
+  background-position: left center, center;
   border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
   transition: background-color var(--duration-default);
-}
-
-.roi-slider:hover {
-  background-image: linear-gradient(
-    to right,
-    var(--color-ink) 0%,
-    var(--color-accent) var(--slider-progress, 0%),
-    var(--color-ink-faint) var(--slider-progress, 0%),
-    var(--color-ink-faint) 100%
-  );
 }
 
 .roi-slider::-webkit-slider-thumb {
@@ -804,19 +790,19 @@ a, button, input, textarea, select,
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
-  background: var(--color-paper);
+  background: var(--color-lime);
   border: 2px solid var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-quick), transform var(--duration-quick);
 }
 
 .roi-slider::-webkit-slider-thumb:hover {
-  border-color: var(--color-accent);
+  transform: scale(1.15);
   transform: scale(1.1);
 }
 
 .roi-slider:focus-visible::-webkit-slider-thumb {
-  border-color: var(--color-accent);
+  transform: scale(1.15);
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
@@ -825,19 +811,19 @@ a, button, input, textarea, select,
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
-  background: var(--color-paper);
+  background: var(--color-lime);
   border: 2px solid var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-quick), transform var(--duration-quick);
 }
 
 .roi-slider::-moz-range-thumb:hover {
-  border-color: var(--color-accent);
+  transform: scale(1.15);
   transform: scale(1.1);
 }
 
 .roi-slider:focus-visible::-moz-range-thumb {
-  border-color: var(--color-accent);
+  transform: scale(1.15);
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }

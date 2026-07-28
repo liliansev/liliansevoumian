@@ -220,26 +220,27 @@ const layers: Layer[] = [
     grid-template-columns: minmax(0, 520px);
   }
 
-  /* Logo titre dans la vraie couleur de la marque (--brand posé sur la carte).
-     Marque monochrome (Notion) → encre pleine (noir/blanc, DA propre à Notion). */
+  /* Encre au repos, couleur de marque au survol — la même règle que le
+     bandeau de logos. Une marque tierce a droit à sa couleur DANS une
+     maquette, où l'on montre l'outil réel ; jamais dans notre propre chrome.
+     Sur pointeur grossier il n'y a pas de survol, donc pas de couleur : elle
+     n'est pas porteuse de sens, seulement un clin d'œil. */
   .stack-logo {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
-    color: var(--brand, var(--color-ink));
+    color: var(--color-ink);
   }
 
-  /* Chip de rôle à la couleur de marque de la carte ; fallback encre (noir/blanc)
-     pour les marques monochromes — pas d'orange générique sur Notion.
-     Le texte est mixé vers l'encre : la couleur de marque brute sur son propre
-     tint 12% tombait sous 4.5:1 (fail AA sur du 11px uppercase) ; le mix garde
-     la teinte de marque tout en repassant AA (et s'éclaircit seul en dark,
-     où --color-ink bascule vers le clair). */
-  .stack-card .chip-accent {
-    color: color-mix(in oklab, var(--brand, var(--color-ink)) 65%, var(--color-ink));
-    background: color-mix(in oklab, var(--brand, var(--color-ink)) 12%, transparent);
-    border-color: transparent;
+  @media (hover: hover) and (pointer: fine) {
+    .stack-logo { transition: color 0.18s cubic-bezier(0.25, 1, 0.5, 1); }
+    .stack-card:hover .stack-logo { color: var(--brand, var(--color-ink)); }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stack-logo { transition: none; }
+  }
+
 
   @media (max-width: 639px) {
     .stack-layer-header {
