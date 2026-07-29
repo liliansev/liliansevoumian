@@ -25,6 +25,16 @@ bascule:
   - { avant: "1 à 3 h pour 50 entreprises, à la main", apres: "~7 à 10 min par run" }
   - { avant: "~50 entreprises passées en revue par semaine", apres: "300 par semaine" }
   - { avant: "Le dirigeant prospecte", apres: "Le dirigeant valide" }
+nomenclature:
+  - { etape: "Détection des signaux de levée et de recrutement", outil: "Make", role: "declencheur" }
+  - { etape: "Constitution des listes de cibles", outil: "Make", role: "action" }
+  - { etape: "Parcours des pages d'équipe", outil: "Agent navigateur", role: "agent" }
+  - { etape: "Filtrage de la page collectée", outil: "Agent IA", role: "controle" }
+  - { etape: "Notation et grade des profils", outil: "Claude", role: "agent" }
+  - { etape: "Validation avant lancement des séquences", outil: "Make", role: "controle" }
+  - { etape: "Poussée des cibles dans le CRM", outil: "Attio", role: "action" }
+  - { etape: "Séquences email et LinkedIn", outil: "Instantly", role: "action" }
+  - { etape: "Récapitulatif de fin de run", outil: "Email", role: "controle" }
 draft: false
 ---
 

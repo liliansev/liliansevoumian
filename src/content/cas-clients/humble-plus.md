@@ -25,6 +25,22 @@ bascule:
   - { avant: "Un email traité à la fois", apres: "Les commandes s’enchaînent" }
   - { avant: "PDF et Excel dans la même entrée", apres: "Deux formats, un seul système" }
   - { avant: "Surveillance technique commande par commande", apres: "Un point de validation dans Slack" }
+nomenclature:
+  - { etape: "Emails de commande reçus", outil: "Gmail", role: "declencheur" }
+  - { etape: "Détection du format de pièce jointe", outil: "n8n", role: "controle" }
+  - { etape: "Boucle sur les pièces jointes", outil: "n8n", role: "action" }
+  - { etape: "Lecture du document, sortie JSON", outil: "Mistral", role: "agent" }
+  - { etape: "Normalisation et recalcul des lignes", outil: "n8n", role: "controle" }
+  - { etape: "Recherche ou création du client", outil: "Shopify", role: "action" }
+  - { etape: "Correspondance EAN carton vers unités", outil: "Data Table n8n", role: "controle" }
+  - { etape: "Validation des arrondis carton", outil: "Slack", role: "controle" }
+  - { etape: "Normalisation des adresses FR et BE", outil: "n8n", role: "controle" }
+  - { etape: "Identification du client sans doublon", outil: "Pennylane", role: "action" }
+  - { etape: "Facture créée en brouillon", outil: "Pennylane", role: "action" }
+  - { etape: "Contrôle humain de la facture", outil: "Slack", role: "controle" }
+  - { etape: "Finalisation puis envoi du PDF", outil: "Pennylane", role: "action" }
+  - { etape: "Verrou anti-doublon sur le bon de commande", outil: "Data Table n8n", role: "controle" }
+  - { etape: "Traitement des reliquats", outil: "n8n", role: "action" }
 draft: false
 ---
 

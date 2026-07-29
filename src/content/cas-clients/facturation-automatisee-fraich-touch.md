@@ -26,6 +26,17 @@ bascule:
   - { avant: "30 à 60 min pour régler une erreur", apres: "5 min" }
   - { avant: "Une journée pour ajouter un pipeline annuel", apres: "30 minutes, une ligne dans Notion" }
   - { avant: "Plusieurs heures pour former un arrivant", apres: "30 minutes" }
+nomenclature:
+  - { etape: "Changement de deal détecté", outil: "Webhooks HubSpot", role: "declencheur" }
+  - { etape: "Passage du deal en « BRAVO »", outil: "HubSpot", role: "declencheur" }
+  - { etape: "Devis créé puis accepté à la signature", outil: "Pennylane", role: "action" }
+  - { etape: "Jusqu'à 12 factures créées en brouillon", outil: "Pennylane", role: "action" }
+  - { etape: "VHR intégrés, TVA selon le code pays", outil: "Make", role: "controle" }
+  - { etape: "Finalisation quotidienne à 9 h", outil: "Make", role: "action" }
+  - { etape: "Email au talent au paiement", outil: "Make", role: "action" }
+  - { etape: "Alerte si le talent est introuvable", outil: "Make", role: "controle" }
+  - { etape: "Suivi et statut en temps réel", outil: "Notion", role: "controle" }
+  - { etape: "Configuration lue, jamais codée en dur", outil: "Notion", role: "controle" }
 draft: false
 ---
 

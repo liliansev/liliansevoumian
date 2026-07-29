@@ -61,6 +61,28 @@ const casClients = defineCollection({
       .array(z.object({ avant: z.string(), apres: z.string() }))
       .min(3)
       .optional(),
+    /*
+     * `nomenclature` déplie le parcours étape par étape, avec l'outil qui la
+     * porte et son rôle. Elle clôt « La solution ».
+     *
+     * La colonne `role` est le porteur de couleur le plus honnête de la page :
+     * elle montre où sont les CONTRÔLES déterministes, c'est-à-dire la thèse du
+     * portfolio — l'IA extrait, les règles décident. Le lime n'y marque donc
+     * pas « c'est bien », il marque « ici rien n'est laissé à l'IA ».
+     *
+     * Minimum six lignes : en dessous, ce n'est plus une nomenclature, c'est
+     * une liste, et le corps du texte la dit déjà mieux.
+     */
+    nomenclature: z
+      .array(
+        z.object({
+          etape: z.string(),
+          outil: z.string().optional(),
+          role: z.enum(['declencheur', 'agent', 'action', 'controle']),
+        }),
+      )
+      .min(6)
+      .optional(),
     testimonial: z
       .object({
         quote: z.string(),

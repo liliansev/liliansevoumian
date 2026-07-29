@@ -63,6 +63,13 @@ function decouper(html: string): Piece[] {
 }
 
 const pieces = decouper(HTML_RENDU);
+
+const ROLES: Record<string, string> = {
+  declencheur: 'Déclencheur',
+  agent: 'IA',
+  action: 'Action',
+  controle: 'Contrôle',
+};
 const dateISO = cs.date.toISOString();
 
 // Cas voisins : meme tag d abord, puis complement par les plus recents. Deux
@@ -238,12 +245,37 @@ const articleSchema = {
           )}
 
           <div class="reveal case-prose" set:html={piece.corps} />
+
+          {/* La nomenclature clôt « La solution » : après le récit, le relevé.
+              La colonne de rôle porte le lime sur les CONTRÔLES, et sur eux
+              seuls — c'est la thèse du portfolio rendue visible d'un coup d'œil,
+              l'IA extrait et les règles décident. */}
+          {piece.id === 'la-solution' && cs.nomenclature && (
+            <div class="reveal nomenclature">
+              <div class="nomenclature-tete">
+                <span>Nomenclature</span>
+                <span>{cs.nomenclature.length} étapes · {cs.nomenclature.filter((n) => n.role === 'controle').length} contrôles</span>
+              </div>
+              <ol class="nomenclature-liste">
+                {cs.nomenclature.map((n, k) => (
+                  <li class="nomenclature-ligne">
+                    <span class="nomenclature-rang">{String(k + 1).padStart(2, '0')}</span>
+                    <span class="nomenclature-etape">{n.etape}</span>
+                    {n.outil && <span class="nomenclature-outil">{n.outil}</span>}
+                    <span class:list={['nomenclature-role', n.role === 'controle' && 'est-controle']}>
+                      {ROLES[n.role]}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
         </div>
       </section>
     ))}
 
     <!-- TÉMOIGNAGE + STACK -->
-    {(cs.testimonial?.quote || cs.tools.length > 0) && (
+    {(cs.testimonial?.quote || (cs.tools.length > 0 && !cs.nomenclature)) && (
       <section
         data-section
         class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
@@ -265,7 +297,10 @@ const articleSchema = {
             </blockquote>
           )}
 
-          {cs.tools.length > 0 && (
+          {/* Les outils ne sont listés ici que si la nomenclature ne le fait
+              pas déjà : elle les donne dans l'ordre du parcours et avec leur
+              rôle, ce qu'une rangée de pastilles ne dit pas. */}
+          {cs.tools.length > 0 && !cs.nomenclature && (
             <div class="reveal lg:max-w-[300px] w-full">
               <div class="mono-caption text-[var(--color-ink-low)] mb-4">STACK</div>
               <div class="flex flex-wrap gap-2">
@@ -388,6 +423,86 @@ const articleSchema = {
   .piece-cas {
     padding-top: clamp(2.5rem, 4vw, 4rem);
     padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  }
+
+  /* ── La nomenclature ── */
+  .nomenclature {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    border-top: 2px solid var(--color-ink);
+  }
+
+  .nomenclature-tete {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-divider);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+
+  .nomenclature-liste {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nomenclature-ligne {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto auto;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .nomenclature-rang,
+  .nomenclature-outil,
+  .nomenclature-role {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.04em;
+  }
+
+  .nomenclature-rang { color: var(--color-ink-faint); }
+  .nomenclature-etape {
+    font-size: var(--text-body-sm);
+    color: var(--color-ink);
+    line-height: 1.4;
+    min-width: 0;
+  }
+  .nomenclature-outil {
+    color: var(--color-ink-low);
+    white-space: nowrap;
+  }
+
+  .nomenclature-role {
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+    white-space: nowrap;
+    padding: 0.15rem 0.5rem;
+  }
+
+  /* Le lime ne marque QUE le contrôle. Encre littérale : sur une pièce posée
+     sur l'encre, le jeton de rôle vaudrait le blanc, illisible sur la bande. */
+  .nomenclature-role.est-controle {
+    background: var(--color-lime);
+    color: #111111;
+    font-weight: 600;
+  }
+
+  @media (max-width: 40rem) {
+    .nomenclature-ligne {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+    .nomenclature-outil,
+    .nomenclature-role {
+      grid-column: 2;
+      justify-self: start;
+    }
   }
 
   /* ── La bascule avant / après ── */
@@ -560,6 +675,16 @@ const articleSchema = {
     height: 6px;
     border-radius: var(--radius-full);
     background: var(--color-accent);
+  }
+
+  /* Le lime dit un gain, partout ailleurs sur le site. Dans « Le problème » il
+     marquait des pannes : seize factures bloquées, un bug d'acomptes, zéro
+     visibilité. La puce y devient un anneau creux, qui énumère sans féliciter.
+     Même raison dans « Les étapes », qui décrit un déroulé, pas un résultat. */
+  #le-problème .case-prose :global(li::before),
+  #les-étapes .case-prose :global(li::before) {
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--color-ink-faint);
   }
   /* Citation : fond différencié + bordure pleine — pas de side-stripe accent
      (ban DS « bordure latérale colorée >1px »). */

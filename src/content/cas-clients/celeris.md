@@ -13,6 +13,15 @@ kpis:
     label: "Produits appariés automatiquement (319 sur ~515, en test)"
   - value: "797"
     label: "Pages de specs constructeur collectées automatiquement"
+nomenclature:
+  - { etape: "Fichier constructeur en entrée", outil: "CTO", role: "declencheur" }
+  - { etape: "Collecte des specs constructeur", outil: "Scraping", role: "declencheur" }
+  - { etape: "Extraction, structuration, rédaction", outil: "n8n + Mistral", role: "agent" }
+  - { etape: "Vérification des attributs, anti-doublon", outil: "Agent 2", role: "controle" }
+  - { etape: "Exécution locale protégée", outil: "MCP local", role: "controle" }
+  - { etape: "Création du produit dans l'ERP", outil: "MCP Odoo", role: "action" }
+  - { etape: "Fiche créée en brouillon", outil: "Odoo", role: "controle" }
+  - { etape: "Correction en langage naturel", outil: "Agent", role: "action" }
 draft: false
 ---
 
