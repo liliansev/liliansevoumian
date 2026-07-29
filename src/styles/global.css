@@ -37,14 +37,12 @@
   --text-display-hero-lg: clamp(2.5rem, 5vw + 0.5rem, 4.75rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
   --text-signature: clamp(2rem, 3vw + 0.5rem, 2.75rem);
-  --text-metric: clamp(1.5rem, 2vw + 0.75rem, 2.25rem);
   /* Le chiffre héros du simulateur porte désormais les HEURES, plus l'euro :
      garder le nom `money` ferait mentir le jeton. Le second niveau a disparu
      avec la ligne « formule », l'euro tenant maintenant dans une phrase. */
   --text-roi-primary: clamp(2.5rem, 5vw, 4rem);
   --text-title-lg: clamp(1.5rem, 1.5vw + 0.75rem, 1.875rem);
   --text-title: clamp(1.25rem, 1vw + 0.875rem, 1.5rem);
-  --text-title-sm: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);
   --text-body-large: clamp(1.0625rem, 0.5vw + 0.875rem, 1.25rem);
   --text-body: clamp(0.9375rem, 0.25vw + 0.875rem, 1rem);
   --text-body-sm: 0.875rem;
@@ -58,7 +56,6 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-quick: 150ms;
   --duration-default: 200ms;
-  --duration-reveal: 600ms;
   --duration-mount: 700ms;
 
   /* ── Rayons ── */
@@ -77,7 +74,6 @@
 
   /* ── Encres. Le gris tient 7,0:1 sur blanc, le gris clair 4,6:1. ── */
   --color-ink: #111111;
-  --color-ink-soft: #1f1f1f;
   --color-ink-mid: #595959;
   --color-ink-low: #6b6b6b;
   --color-ink-faint: #949494;
@@ -103,7 +99,6 @@
      l'encre, pas du lime, qui y serait illisible. Dans cette DA l'emphase
      ne vient jamais d'un texte coloré mais d'un surlignage. */
   --color-lime: #cdf564;
-  --color-lime-deep: #b8e043;
   --color-accent: #cdf564;
   --color-accent-text: #111111;
   --color-accent-soft: #f2fbd8;
@@ -125,9 +120,6 @@
   --shadow-card: 0 0 0 0 transparent;
   --shadow-card-hover: 0 0 0 0 transparent;
 }
-
-
-
 
 /* =========================================================================
    SECTION SURFACES — bandes teintées pour le rythme vertical
@@ -524,36 +516,6 @@ a, button, input, textarea, select,
   transform: none;
 }
 
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  background: transparent;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  padding: 11px 18px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background var(--duration-default) var(--ease-out-quint),
-              border-color var(--duration-default) var(--ease-out-quint);
-}
-
-.btn-ghost:hover {
-  background: var(--color-surface-low);
-  border-color: var(--color-ink-faint);
-}
-
-.btn-ghost:active {
-  transform: scale(0.98);
-}
-
 /* =========================================================================
    LINK-CTA — appel à l'action "texte" (pas un bouton). Inspiration éditoriale
    Mistral : libellé mono + flèche qui avance, soulignement qui se dessine de
@@ -693,7 +655,6 @@ a, button, input, textarea, select,
   box-shadow: var(--shadow-card-hover);
 }
 
-
 .card-interactive {
   cursor: pointer;
   position: relative;
@@ -720,67 +681,9 @@ a, button, input, textarea, select,
    CODE BLOCK
    ========================================================================= */
 
-.code-block {
-  background: var(--color-surface-low);
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-body);
-  font-weight: 400;
-  line-height: 1.6;
-  padding: 16px 20px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-md);
-  overflow-x: auto;
-  margin: 0;
-}
-
-.code-key { color: var(--color-accent-text); }
-.code-string { color: var(--color-accent-text); }
-.code-number { color: var(--color-ink-mid); }
-.code-comment { color: var(--color-ink-faint); font-style: italic; }
-
 /* =========================================================================
    INPUTS
    ========================================================================= */
-
-.input-text {
-  width: 100%;
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-body);
-  /* >=16px : évite le zoom auto iOS Safari au focus d'un champ. */
-  font-size: max(16px, var(--text-body));
-  line-height: 1.55;
-  padding: 10px 14px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-sm);
-  transition: border-color var(--duration-default) var(--ease-out-quint);
-}
-
-.input-text::placeholder {
-  color: var(--color-ink-low);
-}
-
-/* Honeypot anti-spam : hors-écran, invisible aux humains et aux lecteurs d'écran. */
-.hp-field {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.input-text:hover {
-  border-color: var(--color-ink-faint);
-}
-
-/* :focus-visible (pas :focus) : les champs texte le matchent toujours au focus,
-   mais ça aligne les inputs sur le contrat des boutons/liens du système. */
-.input-text:focus-visible {
-  transform: scale(1.15);
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
 
 /* =========================================================================
    ROI CALCULATOR — range slider mono-style
@@ -1422,7 +1325,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
 ::selection { background: var(--color-lime); color: #111111; }
 .bloc-lime ::selection { background: #ffffff; color: #111111; }
 
-
 /* =========================================================================
    Les consommateurs de --color-paper en COULEUR (et non en fond).
    Le remap .bloc-lime fait de --color-paper le lime : tout composant qui
@@ -1431,17 +1333,9 @@ h1 mark.inv::before { --angle: 1.1deg; }
    seuls cas concernés.
    ========================================================================= */
 
-.bloc-lime .input-text {
-  background: var(--color-surface-high);   /* #ffffff, déjà prévu par le remap */
-  /* Composite sur lime = #6a7836 : 3,9:1 contre le lime et 4,9:1 contre le
-     remplissage blanc. La bordure porte la conformité, pas le fond. */
-  border-color: rgba(17, 17, 17, 0.55);
-}
-
 .bloc-lime .btn-primary {
   color: #ffffff;
 }
-
 
 /* =========================================================================
    L'APLAT ENCRE — le pied de page. Même mécanique que .bloc-lime : on remappe
@@ -1463,7 +1357,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
   --color-surface-high: var(--color-surface-on-dark);
   --color-section-band: var(--color-ink);
   --color-ink: #ffffff;
-  --color-ink-soft: #ffffff;
   --color-ink-mid: var(--color-text-on-dark-mid);
   --color-ink-low: var(--color-text-on-dark-low);
   --color-ink-faint: var(--color-text-on-dark-faint);
@@ -1480,7 +1373,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
 .bloc-encre .btn-primary { background: var(--color-lime); color: #111111; }
 .bloc-encre .btn-primary:hover,
 .bloc-encre .btn-primary:focus-visible { background: #ffffff; }
-
 
 /* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
    `nowrap` qui protege la bande devient une cause de debordement. La bande

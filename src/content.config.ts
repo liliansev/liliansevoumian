@@ -83,13 +83,6 @@ const casClients = defineCollection({
       )
       .min(6)
       .optional(),
-    testimonial: z
-      .object({
-        quote: z.string(),
-        name: z.string().optional(),
-        role: z.string().optional(),
-      })
-      .optional(),
     // draft: true → exclu du build de prod (visible en dev pour relecture).
     draft: z.boolean().default(false),
   }),
