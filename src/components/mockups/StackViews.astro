@@ -1,0 +1,128 @@
+---
+/* Airtable — la même base vue autrement.
+ *
+ * La carte voisine (Notion) montre un tableau de lignes. Répéter un tableau ici
+ * donnerait deux jumelles, alors que ce qui distingue vraiment Airtable est
+ * ailleurs : une seule base, plusieurs vues, sans dupliquer une ligne. D'où des
+ * onglets de vue au-dessus d'un kanban — une forme que le tableau de Notion ne
+ * peut pas prendre.
+ *
+ * L'onglet actif glisse de « Grille » à « Kanban » puis revient : c'est le
+ * basculement de vue lui-même qui est le sujet, pas les données.
+ */
+const colonnes = [
+  { titre: 'À qualifier', cartes: 2 },
+  { titre: 'En cours', cartes: 3 },
+  { titre: 'Livré', cartes: 2 },
+];
+---
+<div class="av" role="img" aria-label="Base Airtable : la même table vue en grille, en kanban ou en calendrier.">
+  <div class="av-vues">
+    <span class="av-vue">Grille</span>
+    <span class="av-vue is-on">Kanban</span>
+    <span class="av-vue">Calendrier</span>
+  </div>
+
+  <div class="av-board">
+    {colonnes.map((c, i) => (
+      <div class="av-col" style={`--i:${i}`}>
+        <span class="av-col-t">{c.titre}</span>
+        {Array.from({ length: c.cartes }).map(() => <span class="av-fiche" aria-hidden="true"></span>)}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .av {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px 14px;
+  }
+
+  .av-vues {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--color-divider);
+    padding-bottom: 7px;
+  }
+
+  .av-vue {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.03em;
+    color: var(--color-ink-low);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+  .av-vue.is-on {
+    color: var(--color-ink);
+    background: var(--color-surface-low);
+    border: 1px solid var(--color-divider);
+    font-weight: 600;
+  }
+
+  .av-board {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .av-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+    padding: 8px 7px;
+    background: var(--color-surface-low);
+    border: 1px solid var(--color-divider);
+  }
+
+  .av-col-t {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    letter-spacing: 0.02em;
+    /* Les intitulés de colonne sont courts, mais « À qualifier » talonne la
+       largeur disponible à 3 colonnes dans une carte mobile. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Fiche neutre, bordée sur ses quatre côtés : un liseré latéral coloré est
+     proscrit par le design system, et il n'apporterait rien ici — c'est la
+     forme en colonnes qui dit « kanban », pas un accent.
+     Le trait intérieur figure le titre de l'enregistrement : sans lui, une
+     boîte vide se lit comme un squelette de chargement, pas comme une fiche. */
+  .av-fiche {
+    height: 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    background: var(--color-paper);
+    border: 1px solid var(--color-divider);
+    animation: av-pose 5.5s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * 0.32s);
+  }
+  .av-fiche::before {
+    content: '';
+    height: 2px;
+    width: var(--w, 68%);
+    background: var(--color-ink-faint);
+  }
+  .av-fiche:nth-of-type(3) { --w: 46%; }
+  .av-fiche:nth-of-type(4) { --w: 78%; }
+
+  @keyframes av-pose {
+    0%        { opacity: 0; transform: translateY(5px); }
+    12%, 88%  { opacity: 1; transform: translateY(0); }
+    97%, 100% { opacity: 0; transform: translateY(5px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .av-fiche { animation: none; opacity: 1; transform: none; }
+  }
+</style>

@@ -2,10 +2,16 @@
 /*
  * Stack.astro — section §03.
  *
- * Six outils en trois familles (AUTOMATION / PRODUCTIVITÉ / IA). Chaque outil porte SA mini-UI
+ * Huit outils en trois familles (AUTOMATION / PRODUCTIVITÉ / IA). Chaque outil porte SA mini-UI
  * signature (mockup produit monochrome) qui montre concrètement ce qu'on en
  * fait, plutôt qu'une définition : n8n → mini-workflow, Make → scénario à
- * modules, Notion → table CRM, Claude Code → console, Claude Cowork → chat.
+ * modules, Notion → table CRM, Airtable → vues et kanban, Claude Code →
+ * console, Codex → file de tâches déléguées, Claude Cowork → chat, Mistral →
+ * extraction de document.
+ *
+ * Les captions disent ce que l'outil fait DE MIEUX, pas ce que j'en fais : c'est
+ * ce que promet le chapô de la section. Chacune porte un <mark> — la section
+ * était la seule de la home sans le dispositif de la DA.
  */
 import SectionHeader from './SectionHeader.astro';
 import { Icon } from 'astro-icon/components';
@@ -17,6 +23,8 @@ import StackTable from './mockups/StackTable.astro';
 import StackConsole from './mockups/StackConsole.astro';
 import StackChat from './mockups/StackChat.astro';
 import StackSovereign from './mockups/StackSovereign.astro';
+import StackCodex from './mockups/StackCodex.astro';
+import StackViews from './mockups/StackViews.astro';
 
 const MOCKS = {
   workflow: StackWorkflow,
@@ -25,6 +33,8 @@ const MOCKS = {
   console: StackConsole,
   chat: StackChat,
   sovereign: StackSovereign,
+  codex: StackCodex,
+  views: StackViews,
 } as const;
 
 interface Tool {
@@ -36,68 +46,114 @@ interface Tool {
 }
 interface Layer {
   label: string;
-  caption: string;
   tools: Tool[];
 }
 
 const layers: Layer[] = [
   {
     label: 'AUTOMATION',
-    caption: 'Pour automatiser les processus déterministes',
     tools: [
+      /* « Le meilleur QUAND » et pas « le meilleur » : le mot « quand » borne le
+         superlatif à un cas d'usage que n8n revendique officiellement. Énoncé
+         nu, il deviendrait un classement, et sur l'orchestration d'agents c'est
+         LangGraph qui est documenté en production. Si « quand » saute à une
+         relecture, la phrase tombe. */
       {
         name: 'n8n',
         icon: 'simple-icons:n8n',
-        role: 'WORKFLOW · IA',
+        role: 'WORKFLOW · AGENTS IA',
         mockup: 'workflow',
-        caption: 'Un agent IA lit vos emails entrants et crée la tâche au bon endroit.',
+        caption:
+          'Le meilleur quand l’agent IA doit agir dans <mark>vos vrais outils</mark>.',
       },
+      /* « Le plus utilisé » a été demandé puis écarté : Zapier revendique
+         3,4 M d'entreprises contre 400 000 clients Make, et Power Platform
+         56 M d'utilisateurs actifs. « Le plus lisible » est un jugement, donc
+         tenable — et « où ça casse » raccroche l'outil à ce pour quoi on
+         l'appelle vraiment : reprendre des automatisations en panne. */
       {
         name: 'Make',
         icon: 'simple-icons:make',
-        role: 'WORKFLOW',
+        role: 'SCÉNARIOS · VISUEL',
         mockup: 'scenario',
-        caption: 'Trois outils métiers connectés en une après-midi, sans une ligne de code.',
+        caption:
+          'Le plus lisible : chaque module montre ce qui passe, et <mark class="inv">où ça casse</mark>.',
       },
     ],
   },
   {
     label: 'PRODUCTIVITÉ',
-    caption: 'Pour structurer et piloter les opérations',
     tools: [
       {
         name: 'Notion',
         icon: 'simple-icons:notion',
         role: 'CRM · OPÉRATIONS',
         mockup: 'table',
-        caption: 'Un CRM sur-mesure qui se remplit tout seul depuis vos formulaires.',
+        caption:
+          'Imbattable pour donner à vos équipes <mark>une base propre</mark> sans lancer un projet informatique.',
+      },
+      /* Airtable à côté de Notion, pas à sa place : les deux tiennent des
+         données, mais Notion agrège (docs, suivi, base au même endroit) là où
+         Airtable structure (une base, plusieurs vues). D'où deux maquettes de
+         formes différentes — un tableau, un kanban à onglets de vue. */
+      {
+        name: 'Airtable',
+        icon: 'simple-icons:airtable',
+        role: 'BASE · CERTIFIÉ',
+        mockup: 'views',
+        caption:
+          'Certifié Airtable : le plus solide quand la même base doit se lire <mark class="inv">de plusieurs façons</mark>.',
       },
     ],
   },
   {
     label: 'IA',
-    caption: 'Pour l’intelligence, le jugement et la réflexion',
     tools: [
+      /* Claude Code et Codex sont voisins parce qu'ils font le même métier
+         autrement, et les rôles doivent le dire : deux chips « IA · DEV » côte
+         à côte donneraient deux cartes jumelles. Claude Code est un agent local
+         qu'on supervise ; Codex un agent auquel on délègue, dont les tâches
+         partent tourner ailleurs et reviennent en diff. */
       {
         name: 'Claude Code',
         icon: 'simple-icons:anthropic',
         role: 'IA · DEV',
         mockup: 'console',
-        caption: 'Un outil interne sur-mesure, livré en quelques jours.',
+        caption:
+          'Ce qu’il fait de mieux : fabriquer <mark>en direct</mark> l’outil que personne ne vend.',
+      },
+      /* Ne jamais laisser dériver vers « le seul à paralléliser » : ce serait
+         faux (Claude Code a ses propres agents parallèles, comme Devin, Cursor
+         ou Jules). Et deux pièges de nommage : « le modèle Codex » est déprécié
+         depuis 2021, « l'application Codex » a fusionné dans l'app ChatGPT le
+         09/07/2026 — seul le CLI reste autonome. */
+      {
+        name: 'Codex',
+        icon: 'simple-icons:openai',
+        role: 'IA · DÉLÉGATION',
+        mockup: 'codex',
+        caption:
+          'Le plus doué pour travailler <mark class="inv">sans personne devant</mark> : les tâches reviennent prêtes à relire.',
       },
       {
         name: 'Claude Cowork',
         icon: 'simple-icons:anthropic',
-        role: 'IA · COACHING',
+        role: 'IA · ÉQUIPES',
         mockup: 'chat',
-        caption: 'Vos équipes pilotent leurs automatisations par simple dialogue.',
+        caption:
+          'Le meilleur pour <mark>rendre la main</mark>. Vos équipes pilotent leurs automatisations en langage courant.',
       },
+      /* Critère de choix, pas garantie : « les données ne quittent pas
+         l'Europe » n'est vrai que si la plateforme Mistral en zone UE ou un
+         déploiement auto-hébergé est effectivement retenu sur la mission, et
+         tombe dès qu'un autre maillon appelle un modèle hors UE. */
       {
         name: 'Mistral',
         icon: 'simple-icons:mistralai',
         role: 'IA · SOUVERAINE',
         mockup: 'sovereign',
-        caption: 'Vos documents traités en masse par une IA française, sans qu’une donnée quitte l’Europe.',
+        caption:
+          'Mon premier choix quand vos documents sensibles doivent <mark class="inv">rester en Europe</mark>.',
       },
     ],
   },
@@ -111,11 +167,14 @@ const layers: Layer[] = [
 >
   <div class="relative max-w-[1200px] mx-auto">
 
+    {/* Le body porte les huit superlatifs qui suivent : « mon verdict, pas un
+        comparatif » est ce qui fait d'« imbattable » ou « le meilleur » des
+        jugements d'expert plutôt que des affirmations de marché. Le raccourcir
+        rendrait les captions attaquables. */}
     <SectionHeader
-      number="03"
-      label="6 OUTILS · USAGE QUOTIDIEN"
+      label="8 OUTILS · USAGE QUOTIDIEN"
       title="Les outils IA et automatisations que je maîtrise"
-      body="Six outils que j'utilise tous les jours, gardés chacun pour ce qu'il fait de mieux."
+      body="Pour chacun, mon verdict sur ce qu'il fait mieux que les autres."
       titleMaxWidth="26ch"
       bodyMaxWidth="60ch"
     />
@@ -123,15 +182,19 @@ const layers: Layer[] = [
     <div class="stack-layers reveal">
       {layers.map((layer, index) => (
         <section class="stack-layer" aria-labelledby={`stack-layer-${index}`}>
+          {/* Le libellé seul, surligné. Le compte d'outils se lit en comptant
+              les cartes juste en dessous, et la phrase d'intention doublait un
+              nom déjà explicite. Inclinaison alternée, comme partout ailleurs. */}
           <header class="stack-layer-header">
-            <div>
-              <h3 id={`stack-layer-${index}`} class="stack-layer-title">{layer.label}</h3>
-              <p class="stack-layer-caption">{layer.caption}</p>
-            </div>
-            <span class="stack-layer-count">{layer.tools.length} {layer.tools.length > 1 ? 'OUTILS' : 'OUTIL'}</span>
+            <h3 id={`stack-layer-${index}`} class="stack-layer-title">
+              <mark class:list={{ inv: index % 2 === 1 }}>{layer.label}</mark>
+            </h3>
           </header>
 
-          <div class:list={['stack-tools', { 'stack-tools-single': layer.tools.length === 1 }]}>
+          <div class:list={['stack-tools', {
+            'stack-tools-single': layer.tools.length === 1,
+            'stack-tools-quad': layer.tools.length === 4,
+          }]}>
             {layer.tools.map((tool) => {
               const Mock = MOCKS[tool.mockup];
               const brand = brandColorFor(tool.icon);
@@ -149,9 +212,14 @@ const layers: Layer[] = [
                     <Mock />
                   </MockupWindow>
 
-                  <p class="mt-auto m-0 text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.5]">
-                    {tool.caption}
-                  </p>
+                  {/* set:html parce que les captions portent un <mark> : dans une
+                      expression JSX, Astro échapperait la balise et afficherait
+                      « &lt;mark&gt; » en clair. Les chaînes sont écrites ici même,
+                      jamais saisies par un tiers. */}
+                  <p
+                    class="mt-auto m-0 text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.5]"
+                    set:html={tool.caption}
+                  />
                 </article>
               );
             })}
@@ -175,10 +243,6 @@ const layers: Layer[] = [
   }
 
   .stack-layer-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: 1rem 2rem;
     margin-bottom: clamp(1.25rem, 2vw, 1.75rem);
   }
 
@@ -192,22 +256,7 @@ const layers: Layer[] = [
     letter-spacing: -0.02em;
   }
 
-  .stack-layer-caption {
-    max-width: 44ch;
-    margin: 0.4rem 0 0;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
-  }
 
-  .stack-layer-count {
-    color: var(--color-ink-low);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-  }
 
   .stack-tools {
     display: grid;
@@ -220,32 +269,37 @@ const layers: Layer[] = [
     grid-template-columns: minmax(0, 520px);
   }
 
-  /* Logo titre dans la vraie couleur de la marque (--brand posé sur la carte).
-     Marque monochrome (Notion) → encre pleine (noir/blanc, DA propre à Notion). */
+  /* Une couche de quatre outils passe en 2×2 plutôt qu'en une rangée de quatre.
+     Mesuré à 1440 px : quatre colonnes donnent des cartes de 288 px, où le chip
+     de rôle repasse à la ligne sous le nom de l'outil et où le nom de fichier
+     de la maquette Mistral se tronque. En 2×2 les cartes font 592 px — la
+     largeur exacte des cartes d'AUTOMATION, donc la section garde une seule
+     mesure de carte au lieu d'en introduire une troisième. */
+  @media (min-width: 64rem) {
+    .stack-tools-quad {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Encre au repos, couleur de marque au survol — la même règle que le
+     bandeau de logos. Une marque tierce a droit à sa couleur DANS une
+     maquette, où l'on montre l'outil réel ; jamais dans notre propre chrome.
+     Sur pointeur grossier il n'y a pas de survol, donc pas de couleur : elle
+     n'est pas porteuse de sens, seulement un clin d'œil. */
   .stack-logo {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
-    color: var(--brand, var(--color-ink));
+    color: var(--color-ink);
   }
 
-  /* Chip de rôle à la couleur de marque de la carte ; fallback encre (noir/blanc)
-     pour les marques monochromes — pas d'orange générique sur Notion.
-     Le texte est mixé vers l'encre : la couleur de marque brute sur son propre
-     tint 12% tombait sous 4.5:1 (fail AA sur du 11px uppercase) ; le mix garde
-     la teinte de marque tout en repassant AA (et s'éclaircit seul en dark,
-     où --color-ink bascule vers le clair). */
-  .stack-card .chip-accent {
-    color: color-mix(in oklab, var(--brand, var(--color-ink)) 65%, var(--color-ink));
-    background: color-mix(in oklab, var(--brand, var(--color-ink)) 12%, transparent);
-    border-color: transparent;
+  @media (hover: hover) and (pointer: fine) {
+    .stack-logo { transition: color 0.18s cubic-bezier(0.25, 1, 0.5, 1); }
+    .stack-card:hover .stack-logo { color: var(--brand, var(--color-ink)); }
   }
 
-  @media (max-width: 639px) {
-    .stack-layer-header {
-      grid-template-columns: 1fr;
-      align-items: start;
-      gap: 0.5rem;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    .stack-logo { transition: none; }
   }
+
 </style>

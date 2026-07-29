@@ -1,16 +1,46 @@
 ---
 title: "Des bons de commande B2B aux factures, sans ressaisie"
+seoTitle: "Bons de commande B2B transformés en factures : cas client n8n"
+description: "Chez Humble+, un workflow n8n lit les bons de commande PDF et Excel et les transforme en commandes Shopify et en factures Pennylane, sans une seule ressaisie."
 secteur: "Nutrition fonctionnelle · E-commerce B2B"
 date: 2026-07-23
 tags: ["Ops", "Finance", "IA"]
 tools: ["n8n", "Mistral", "Shopify", "Pennylane", "Slack", "Gmail"]
 kpis:
-  - value: "2 flux"
-    label: "PDF + XLS unifiés"
-  - value: "60+"
-    label: "Nœuds orchestrés"
-  - value: "0,00 €"
-    label: "Écart sur cas test"
+  - value: "0 ressaisie"
+    label: "Du bon de commande à la facture"
+  - value: "Sans attente"
+    label: "Les commandes s’enchaînent sans se bloquer"
+  - value: "1 système"
+    label: "PDF pharmacie et Excel salle de sport"
+flow:
+  describe: "Schéma du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow crée la commande Shopify, la facture Pennylane et soumet les cas sensibles à validation dans Slack."
+  trigger: { icon: "simple-icons:gmail", kicker: "Mail reçu", title: "PDF + XLS", sub: "pharmacie · salles" }
+  agent: { icon: "simple-icons:mistralai", kicker: "OCR + IA", title: "Extrait & contrôle", sub: "EAN · montants · client" }
+  actions:
+    - { icon: "simple-icons:shopify", kicker: "Shopify", title: "Commande" }
+    - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture" }
+    - { icon: "simple-icons:slack", kicker: "Contrôle", title: "Validation humaine" }
+bascule:
+  - { avant: "Un email traité à la fois", apres: "Les commandes s’enchaînent" }
+  - { avant: "PDF et Excel dans la même entrée", apres: "Deux formats, un seul système" }
+  - { avant: "Surveillance technique commande par commande", apres: "Un point de validation dans Slack" }
+nomenclature:
+  - { etape: "Emails de commande reçus", outil: "Gmail", role: "declencheur" }
+  - { etape: "Détection du format de pièce jointe", outil: "n8n", role: "controle" }
+  - { etape: "Boucle sur les pièces jointes", outil: "n8n", role: "action" }
+  - { etape: "Lecture du document, sortie JSON", outil: "Mistral", role: "agent" }
+  - { etape: "Normalisation et recalcul des lignes", outil: "n8n", role: "controle" }
+  - { etape: "Recherche ou création du client", outil: "Shopify", role: "action" }
+  - { etape: "Correspondance EAN carton vers unités", outil: "Data Table n8n", role: "controle" }
+  - { etape: "Validation des arrondis carton", outil: "Slack", role: "controle" }
+  - { etape: "Normalisation des adresses FR et BE", outil: "n8n", role: "controle" }
+  - { etape: "Identification du client sans doublon", outil: "Pennylane", role: "action" }
+  - { etape: "Facture créée en brouillon", outil: "Pennylane", role: "action" }
+  - { etape: "Contrôle humain de la facture", outil: "Slack", role: "controle" }
+  - { etape: "Finalisation puis envoi du PDF", outil: "Pennylane", role: "action" }
+  - { etape: "Verrou anti-doublon sur le bon de commande", outil: "Data Table n8n", role: "controle" }
+  - { etape: "Traitement des reliquats", outil: "n8n", role: "action" }
 draft: false
 ---
 
@@ -39,7 +69,7 @@ Après l'audit, j'ai reconstruit le parcours dans **n8n** autour d'une règle si
 
 ### Une entrée unique pour deux flux
 
-Les emails Gmail sont séparés par type de commande, puis chaque pièce jointe est traitée individuellement. Le workflow détecte le format, envoie le PDF vers le circuit pharmacie et l'Excel vers le circuit salle de sport. Un fichier non reconnu déclenche une alerte au lieu de disparaître silencieusement.
+Les emails Gmail sont séparés par type de commande, puis chaque pièce jointe est traitée individuellement. Le workflow détecte le format, envoie le PDF vers le circuit pharmacie et l'Excel vers le circuit salle de sport. Un fichier non reconnu déclenche une alerte.
 
 Cette boucle permet de traiter plusieurs pièces jointes dans un même message et d'enchaîner les commandes sans bloquer la file.
 
@@ -47,7 +77,7 @@ Cette boucle permet de traiter plusieurs pièces jointes dans un même message e
 
 Un agent **Mistral** lit le document et renvoie un JSON structuré : client, adresses, produits, EAN, quantités, remises et totaux.
 
-La sortie n'est jamais utilisée telle quelle. Une étape de normalisation recalcule chaque ligne depuis les montants imprimés, redéduit la remise, écarte les lignes offertes ou sans EAN valide et remonte les incohérences. L'IA comprend le document ; les règles métier garantissent le résultat.
+Chaque sortie passe ensuite par une étape de normalisation, qui recalcule chaque ligne depuis les montants imprimés, redéduit la remise, écarte les lignes offertes ou sans EAN valide et remonte les incohérences. L'IA comprend le document ; les règles métier garantissent le résultat.
 
 ### Une commande Shopify fidèle au bon de commande
 
@@ -81,7 +111,7 @@ Cartographie du scénario Make, des deux formats de commande et des règles Shop
 
 ### Refonte dans n8n
 
-Construction d'un workflow de plus de 60 nœuds, organisé autour de trois blocs : lecture et contrôle du document, création de la commande, puis facturation. Les règles de packs, l'identification client et les garde-fous anti-doublon sont centralisés au lieu d'être dispersés.
+Construction d'un workflow de plus de 60 nœuds, organisé autour de trois blocs : lecture et contrôle du document, création de la commande, puis facturation. Les règles de packs, l'identification client et les garde-fous anti-doublon sont centralisés au même endroit.
 
 ### Tests puis mise en production progressive
 
@@ -89,7 +119,7 @@ Le parcours a été validé sur un PDF pharmacie et un fichier Excel salle de sp
 
 ## Les résultats
 
-> Projet en phase de stabilisation : les résultats ci-dessous viennent des tests réels et des premières commandes traitées. La capacité de 50 emails par heure reste l'objectif de dimensionnement, pas une mesure de production.
+> Projet en phase de stabilisation : les résultats ci-dessous viennent des tests réels et des premières commandes traitées. La capacité de 50 emails par heure reste un objectif de dimensionnement : elle n'a pas encore été mesurée en production.
 
 - **Deux formats métier réunis dans un seul système** : PDF pharmacie et Excel salle de sport suivent chacun leurs règles sans multiplier les automatisations.
 - Sur le cas de référence documenté dans le workflow, les totaux étaient **identiques au centime** dans Slack, Shopify et Pennylane, soit **0,00 € d'écart**.

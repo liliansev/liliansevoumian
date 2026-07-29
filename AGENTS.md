@@ -21,39 +21,49 @@ pnpm preview    # Preview production build locally
 - **Icons**: astro-icon with Lucide and Simple Icons
 - **Fonts**: Geist, Geist Mono (Google Fonts)
 - **Language**: French (fr)
-- **Testing**: Playwright (E2E tests)
+- **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
 
 ## Architecture
 
 ```
 src/
-├── components/         # Astro components for each section
-│   ├── Navigation.astro
-│   ├── Hero.astro
-│   ├── Stats.astro
-│   ├── Expertise.astro
-│   ├── ToolsCarousel.astro
-│   ├── Quote.astro
-│   ├── Methodology.astro
-│   ├── Testimonials.astro
-│   ├── Timeline.astro
-│   ├── Pricing.astro
-│   ├── FAQ.astro
-│   ├── CTA.astro
+├── components/
+│   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
+│   ├── HeroManifesto.astro    # aplat lime, typographie seule
+│   ├── LogoMarquee.astro      # bandeau d'outils défilant
+│   ├── CaseStudy.astro        # carrousel des 4 cas sur la home
+│   ├── Testimonials.astro     # recommandations
+│   ├── APropos.astro          # trajectoire 2020 → aujourd'hui
+│   ├── ROICalculator.astro    # simulateur de temps (2 curseurs)
+│   ├── Stack.astro            # 8 outils en 3 familles
+│   ├── Offres.astro           # formats de collaboration
+│   ├── FAQ.astro              # 7 objections + balayage lime
+│   ├── CTA.astro              # section contact, réservation seule
 │   ├── Footer.astro
-│   ├── ScrollingLogos.astro
-│   └── ui/             # Reusable UI components
+│   ├── MobileCTABar.astro     # barre fixe sous le hero, mobile
+│   ├── SectionHeader.astro    # label + titre + chapô, partagé
+│   ├── LinkCTA.astro          # lien secondaire fléché
+│   └── mockups/               # mini-UI produit des cartes outils
+│       ├── MockupWindow.astro     # châssis fenêtre commun
+│       ├── WorkflowCanvas.astro   # faux canvas n8n/Make
+│       └── Stack*.astro           # une maquette par outil
+├── content/
+│   └── cas-clients/           # 4 cas en .md, frontmatter typé
+├── data/                      # brands.ts, faq.ts
+├── lib/                       # roi.ts, tool-chip.ts
 ├── layouts/
-│   └── Layout.astro    # Main layout with SEO/meta
+│   └── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
 ├── pages/
-│   └── index.astro     # Single page landing
+│   ├── index.astro
+│   ├── cas-clients/index.astro et [slug].astro
+│   ├── expert-make.astro · expert-n8n.astro   # pages SEO par outil
+│   ├── principes.astro · mentions-legales.astro
+│   └── llms.txt.ts            # fiche générée au build pour les moteurs IA
+├── content.config.ts          # schéma Zod de la collection
 └── styles/
-    └── global.css      # Tailwind imports + custom CSS
-public/
-├── favicon.svg
-├── logo_liliansevoumian.svg
-├── og-image.svg
-└── robots.txt
+    └── global.css             # jetons @theme + dispositif de la DA
+api/
+└── dfst-events.js             # proxy DataFast (cookieless)
 ```
 
 ## Design System

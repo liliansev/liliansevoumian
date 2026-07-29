@@ -4,7 +4,6 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { getCollection } from 'astro:content';
-import { chipClass } from '../../lib/tool-chip';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -47,6 +46,16 @@ const collectionSchema = {
 };
 
 const total = displayStudies.length;
+
+/* Grille de KPI : une seule colonne, à toutes les tailles.
+   Deux raisons mesurées. Le séparateur est le fond du conteneur qui
+   transparaît par le `gap-px` : toute cellule manquante se remplit de gris, et
+   trois KPI sur deux colonnes laissaient un carré gris dans la carte. Et les
+   cartes tiennent à trois de front, soit ~390 px : découpées en trois
+   colonnes, les cellules tombaient à 111 px pour des libellés qui en
+   demandaient 117, et « AUTOMATIQUEMENT » débordait de la carte.
+   La page de détail, elle, dispose de toute la largeur et garde ses trois
+   colonnes. */
 ---
 
 <Layout
@@ -66,7 +75,7 @@ const total = displayStudies.length;
 
         <a
           href="/"
-          class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+          class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
         >
           <span aria-hidden="true">←</span>
           RETOUR À L'ACCUEIL
@@ -83,7 +92,7 @@ const total = displayStudies.length;
             Des workflows en production, documentés.
           </h1>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-5 max-w-[60ch]">
-            Chaque cas est documenté avec son contexte, son architecture, ses métriques mesurées. Le contexte chiffré et l'outil utilisé, à chaque fois.
+            Pour chaque cas : le contexte chiffré, l'architecture retenue, les métriques mesurées et les outils utilisés.
           </p>
         </div>
 
@@ -95,7 +104,7 @@ const total = displayStudies.length;
             </p>
             <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary"
                data-fast-goal="lead_call" data-fast-goal-source="cas_index_empty">
-              Réserver un appel · 20 min
+              Réserver mon diagnostic · 20 min
             </a>
           </div>
         ) : (
@@ -118,12 +127,12 @@ const total = displayStudies.length;
                     </div>
                   )}
 
-                  <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
+                  <h2 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
                     {cs.title}
-                  </h3>
+                  </h2>
 
                   {kpis.length > 0 && (
-                    <div class="grid grid-cols-3 gap-px bg-[var(--color-divider)] mt-auto">
+                    <div class="grid grid-cols-1 gap-px bg-[var(--color-divider)] mt-auto">
                       {kpis.slice(0, 3).map((kpi) => (
                         <div class="bg-[var(--color-paper)] py-3 flex flex-col gap-1">
                           <span class="font-display font-semibold tabular-nums text-xl tracking-[-0.025em] text-[var(--color-ink)] leading-none">
@@ -138,7 +147,7 @@ const total = displayStudies.length;
                   {tools.length > 0 && (
                     <div class="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-divider)]">
                       {tools.slice(0, 4).map((tool) => (
-                        <span class={chipClass(tool)}>{tool}</span>
+                        <span class="chip chip-accent">{tool}</span>
                       ))}
                       {tools.length > 4 && (
                         <span class="chip chip-dashed">+ {tools.length - 4}</span>
@@ -160,13 +169,12 @@ const total = displayStudies.length;
     </section>
 
     <!-- CTA section -->
-    <section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+    <section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <SectionHeader
-          number="↦"
           label="APPEL"
-          title="Un projet qui ressemble à l'un de ceux-là ?"
-          body="20 min pour décider si on travaille ensemble. Format identique à chaque fois : 5 min de contexte, 15 min sur vos process, 10 min sur la marche à suivre."
+          title="Un projet qui ressemble à <mark class='inv'>l'un de ceux-là ?</mark>"
+          body="20 min pour décider si on travaille ensemble. On regarde un de vos process, je vous dis ce qui est automatisable."
           titleMaxWidth="22ch"
           bodyMaxWidth="60ch"
           class="!mb-0"
@@ -181,13 +189,7 @@ const total = displayStudies.length;
             data-fast-goal="lead_call"
             data-fast-goal-source="cas_index"
           >
-            Réserver maintenant
-          </a>
-          <a
-            href="mailto:bonjour@liliansevoumian.fr"
-            class="btn-ghost justify-center"
-          >
-            ou écrire un mail
+            Réserver mon diagnostic · 20 min
           </a>
         </div>
       </div>

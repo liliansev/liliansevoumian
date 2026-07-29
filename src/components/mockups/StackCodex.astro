@@ -1,0 +1,117 @@
+---
+/* Codex — file de tâches déléguées.
+ *
+ * La carte voisine (Claude Code) montre une console : un prompt, une réponse,
+ * un curseur qui clignote — quelqu'un est assis devant. Celle-ci doit montrer
+ * l'inverse, sinon les deux cartes racontent la même chose : des tâches parties
+ * tourner ailleurs, en parallèle, qui reviennent sous forme de diff à relire.
+ * D'où une file à statuts plutôt qu'un fil de commandes, et un pied qui compte
+ * ce qui attend une relecture.
+ *
+ * Le lime vient du fallback de --brand : simple-icons n'a pas d'icône Codex, on
+ * utilise celle d'OpenAI, qui est monochrome et volontairement absente de
+ * brands.ts (cf. son en-tête). --brand n'est donc pas posé et var() retombe sur
+ * --color-accent. Aucune couleur inventée pour la marque.
+ */
+---
+<div class="cx" role="img" aria-label="File Codex : trois tâches déléguées tournent en parallèle, l'une renvoie un diff à relire.">
+  <div class="cx-row is-done">
+    <span class="cx-mark" aria-hidden="true">✓</span>
+    <span class="cx-task">dédoublonnage des contacts</span>
+    <span class="cx-state">diff prêt</span>
+  </div>
+  <div class="cx-row">
+    <span class="cx-mark cx-spin" aria-hidden="true"></span>
+    <span class="cx-task">export compta mensuel</span>
+    <span class="cx-state is-run">en cours</span>
+  </div>
+  <div class="cx-row">
+    <span class="cx-mark cx-spin cx-spin-b" aria-hidden="true"></span>
+    <span class="cx-task">reprise des webhooks</span>
+    <span class="cx-state is-run">en cours</span>
+  </div>
+  <div class="cx-foot">
+    <span class="cx-par">3 tâches en parallèle</span>
+    <span class="cx-sep" aria-hidden="true">·</span>
+    <span>relecture avant merge</span>
+  </div>
+</div>
+
+<style>
+  .cx {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px 10px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-body);
+    line-height: 1.3;
+  }
+
+  .cx-row {
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .cx-task {
+    color: var(--color-ink-mid);
+    /* Une tâche longue se tronque plutôt que d'élargir la carte : la colonne de
+       statut à droite doit rester alignée d'une ligne à l'autre. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cx-row.is-done .cx-task { color: var(--color-ink); }
+
+  .cx-mark { color: var(--color-success); font-size: 0.95em; }
+
+  /* Le « en cours » est un arc qui tourne, pas un point qui clignote : le
+     clignotement est déjà pris par le curseur de la console voisine. */
+  .cx-spin {
+    width: 11px;
+    height: 11px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--color-ink-faint);
+    border-top-color: var(--brand, var(--color-accent-text));
+    animation: cx-turn 1.15s linear infinite;
+  }
+  .cx-spin-b { animation-delay: -0.45s; }
+
+  .cx-state {
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    background: var(--brand, var(--color-accent));
+    padding: 2px 7px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+  .cx-state.is-run {
+    color: var(--color-ink-low);
+    background: transparent;
+    border: 1px solid var(--color-divider);
+  }
+
+  .cx-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 9px;
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-low);
+    letter-spacing: 0.02em;
+  }
+  .cx-par { color: var(--color-ink-mid); }
+  .cx-sep { color: var(--color-ink-faint); }
+
+  @keyframes cx-turn { to { transform: rotate(360deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cx-spin { animation: none; }
+  }
+</style>

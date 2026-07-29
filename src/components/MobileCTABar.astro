@@ -16,16 +16,9 @@
 >
   <div class="border-t border-[var(--color-divider)] bg-[color-mix(in_oklch,var(--color-paper)_90%,transparent)] backdrop-blur-md px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
     <a
-      href="https://cal.com/lilian-sevoumian/20min"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="btn-primary w-full justify-center"
-      data-fast-goal="lead_call"
-      data-fast-goal-source="mobile_bar"
-      tabindex="-1"
-    >
-      Réserver un appel · 20 min
-    </a>
+      href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary w-full justify-center" data-fast-goal="lead_call" data-fast-goal-source="barre-mobile">
+        Réserver mon diagnostic
+      </a>
   </div>
 </div>
 
@@ -58,8 +51,9 @@
     let contactVisible = false;
 
     function update(): void {
-      // Visible une fois le hero dépassé, MAIS cachée quand le formulaire de
-      // contact est à l'écran (sinon la barre le recouvre et duplique le CTA).
+      // Visible une fois le hero dépassé, MAIS cachée quand la section contact
+      // est à l'écran (sinon la barre recouvre le bouton de réservation et
+      // duplique le même CTA à deux endroits).
       const visible = !heroVisible && !contactVisible;
       bar!.classList.toggle('is-visible', visible);
       bar!.setAttribute('aria-hidden', String(!visible));

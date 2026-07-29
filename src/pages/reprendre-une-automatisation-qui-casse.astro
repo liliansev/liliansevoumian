@@ -1,0 +1,318 @@
+---
+/*
+ * /reprendre-une-automatisation-qui-casse
+ *
+ * La page qui NOMME le différenciateur. Avant elle, « reprendre une
+ * automatisation qui casse » n'existait dans aucun title, aucun h1, aucun des
+ * 63 titres de section du site : la seule trace était une phrase du hero dont
+ * le sujet est un pronom (« je répare ceux qui cassent »), donc incitable par
+ * un moteur de réponse, qui ne cite pas une phrase sans sujet nommé.
+ *
+ * Tout ce qui est écrit ici vient des deux cas de reprise déjà publiés,
+ * Fraich Touch et Humble+. Aucun chiffre n'a été ajouté. Trois règles à tenir
+ * lors de toute relecture :
+ *  — les 50 emails par heure de Humble+ sont un OBJECTIF de dimensionnement,
+ *    jamais un résultat : son encadré de réserve le dit explicitement ;
+ *  — chaque affirmation porte son sujet nommé (« chez Fraich Touch, … »), pour
+ *    rester citable hors contexte par un moteur de réponse ;
+ *  — les dates du retard du prestataire précédent, publiques sur la fiche cas,
+ *    sont écartées ici : sur une page de service elles se lisent comme une
+ *    attaque, et le mécanisme porte déjà tout l'argument.
+ */
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: 'Reprendre une automatisation qui casse', url: '/reprendre-une-automatisation-qui-casse' },
+];
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://liliansevoumian.fr/reprendre-une-automatisation-qui-casse#service',
+  isPartOf: { '@id': 'https://liliansevoumian.fr/#service' },
+  name: 'Reprise d’automatisations Make et n8n · Lilian Sevoumian',
+  description:
+    'Audit et reprise d’automatisations Make et n8n déjà en place, y compris celles construites par un autre prestataire.',
+  url: 'https://liliansevoumian.fr/reprendre-une-automatisation-qui-casse',
+  areaServed: 'France',
+  serviceType: ['Reprise d’automatisation', 'Audit Make', 'Audit n8n', 'Maintenance de workflow'],
+  provider: { '@id': 'https://liliansevoumian.fr/#person' },
+};
+
+const sections = [
+  {
+    h2: 'Le symptôme arrive rarement par une alerte',
+    paragraphes: [
+      'Il arrive par un client qui rappelle pour une facture qu\'il n\'a jamais reçue. Par un chiffre d\'affaires du mois qui ne tombe pas juste. Par un commercial qui redemande une information que l\'outil était censé remplir tout seul. Pendant ce temps, l\'automatisation tourne, et rien à l\'écran ne dit qu\'elle a lâché.',
+      'Chez Fraich Touch, agence de management qui représente des créateurs de contenu et des athlètes, 16 factures dormaient dans la file d\'erreurs de Make, jamais envoyées aux clients. Personne ne les voyait. Un second défaut marquait des deals comme « payés » alors que seul un acompte avait été versé, à raison de 3 à 4 deals faussés par mois.',
+      'Le jour où l\'équipe cesse de faire confiance au système, l\'automatisation a cessé de faire son travail. Quelqu\'un revérifie à la main ce que la machine était censée garantir, et vous payez les deux.'
+    ],
+    liste: [
+      'Des factures qui ne partent plus, sans que rien ne signale l\'arrêt',
+      'Un montant encaissé qui ne correspond pas au montant facturé',
+      'Une automatisation qui traite un email à la fois et fait attendre les suivants',
+      'Une donnée lue de travers : une quantité prise pour un taux de TVA',
+      'Une commande rejouée qui ressort en double',
+      'Plus personne pour dire quelles opérations sont passées et lesquelles sont bloquées'
+    ],
+  },
+  {
+    h2: 'Pourquoi une automatisation finit par casser',
+    paragraphes: [
+      'La panne arrive à la fin. La dérive, elle, commence le jour de la livraison. Un système automatisé vit dans un environnement qui bouge : vos process évoluent, vos outils publient de nouvelles versions, vos équipes tournent. L\'automatisation, elle, reste telle qu\'on l\'a écrite.',
+      'Chaque écart se règle par une couche supplémentaire, et chaque couche paraît raisonnable au moment où on la pose. C\'est l\'accumulation qui coûte. Chez Fraich Touch, l\'outil de comptabilité avait changé son API deux fois, ce qui a obligé à reconstruire le système trois fois, sans que les versions précédentes soient retirées.',
+      'Aucun de ces mécanismes ne fait de bruit. Ils se paient en heures d\'équipe, en argent qui n\'arrive pas, et en confiance perdue dans l\'outil.'
+    ],
+    liste: [
+      'L\'empilement. On corrige en ajoutant. Le scénario d\'origine reste en place, la nouvelle version se pose à côté, et personne n\'ose supprimer l\'ancienne.',
+      'L\'API qui bouge. Un outil change son interface, le connecteur cesse de répondre, et le flux tombe sur une erreur qu\'il n\'a jamais rencontrée.',
+      'Le départ. Celui qui a construit le système s\'en va, prestataire ou salarié. La logique métier vivait dans sa tête.',
+      'L\'angle mort. Les erreurs s\'accumulent dans une file que personne ne regarde, parce que rien n\'a été prévu pour les faire remonter.',
+      'Le codage en dur. Une valeur écrite à la main dans chaque scénario : le jour où elle change, il faut tout rouvrir.'
+    ],
+  },
+  {
+    h2: 'Chez Fraich Touch : 33 scénarios empilés et 16 factures bloquées',
+    paragraphes: [
+      'Fraich Touch avait déjà investi dans l\'automatisation de sa facturation avec un premier prestataire. L\'outil de comptabilité avait changé son API deux fois, et le système avait été reconstruit trois fois sans que les anciennes versions soient nettoyées.',
+      'L\'audit du compte a couvert 33 scénarios Make, 17 connexions et 3 espaces de stockage internes. Sur ces 33 scénarios, 28 étaient des reliques inutilisées : tests, sauvegardes, versions précédentes. 16 factures attendaient dans la file d\'erreurs, jamais envoyées aux clients, soit du chiffre d\'affaires en suspens que personne ne voyait. Les factures elles-mêmes étaient rangées dans un espace de stockage interne accessible uniquement par API, donc invisible pour l\'équipe. Et chaque pipeline annuel était codé en dur : ajouter l\'année suivante obligeait à dupliquer tous les scénarios à la main.',
+      'L\'audit s\'est conclu par un rapport détaillé et une vidéo qui le commente. Le calcul était net : patcher l\'existant serait plus long et plus coûteux que de tout reconstruire.',
+      'Le système de Fraich Touch est reparti sur 4 scénarios Make propres et documentés, qui remplacent les 33 précédents, avec le CRM comme source unique et un suivi que l\'équipe consulte elle-même.'
+    ],
+    liste: [
+      'Chez Fraich Touch, régler une erreur prend 5 min, contre 30 à 60 min avant la reprise.',
+      'Chez Fraich Touch, ajouter un pipeline annuel prend 30 min et une ligne dans la table de configuration, contre une journée avant.',
+      'Chez Fraich Touch, former un nouveau collaborateur prend 30 min, contre plusieurs heures avant.',
+      'L\'équipe de Fraich Touch a récupéré environ 4 h par semaine.',
+      'Les 33 scénarios Make empilés de Fraich Touch ont été ramenés à 4, propres et documentés.'
+    ],
+  },
+  {
+    h2: 'Chez Humble+ : un premier workflow trop fragile pour le volume attendu',
+    paragraphes: [
+      'Humble+ est une marque française de compléments alimentaires qui développe un réseau B2B auprès des pharmacies et des salles de sport. Les bons de commande arrivent en PDF côté pharmacies, en Excel côté salles de sport. Un premier workflow Make en automatisait déjà une partie. Il restait trop fragile pour absorber le volume attendu.',
+      'L\'audit a porté sur le scénario Make existant, les deux formats de commande et les règles des outils de vente et de comptabilité. Les points de fragilité ont été isolés avant toute reconstruction.',
+      'Le parcours de Humble+ a ensuite été reconstruit dans n8n autour d\'une règle simple : l\'IA comprend le document, les règles métier garantissent le résultat. Les deux formats de bons de commande passent désormais dans un seul système, avec chacun ses règles.',
+      'Le projet de Humble+ est en phase de stabilisation. Une validation humaine dans Slack reste en place, le temps de verrouiller le comportement sur l\'ensemble des formats reçus, et sera retirée progressivement.'
+    ],
+    liste: [
+      'Le workflow ne traitait qu\'un email à la fois. Il fallait attendre la fin d\'une commande avant d\'envoyer la suivante.',
+      'Les deux circuits PDF et Excel partageaient la même entrée malgré des structures et des règles métier différentes.',
+      'L\'extraction confondait parfois une quantité avec un taux de TVA.',
+      'Une commande rejouée pouvait créer un doublon si elle n\'était pas détectée assez tôt.',
+      'La création d\'un nouveau client dans l\'outil de vente pouvait échouer et imposer une reprise manuelle.'
+    ],
+  },
+  {
+    h2: 'Comment se passe une reprise',
+    paragraphes: [
+      'Ça commence par un appel de 20 min. Vous décrivez le symptôme avec vos mots, tel que vous le vivez : les factures ne partent plus, les commandes s\'accumulent, les chiffres ne tombent pas juste. C\'est suffisant pour savoir si le sujet est de mon ressort.',
+      'Vient ensuite l\'audit du compte Make ou n8n. J\'ouvre ce qui existe et je cartographie ce qui tourne, ce qui dort et ce qui casse, avec les règles métier écrites noir sur blanc : TVA, frais variables, échelonnement, bons de commande. Chez Fraich Touch, cet audit a couvert 33 scénarios, 17 connexions et 3 espaces de stockage internes.',
+      'L\'objectif d\'une reprise est que vous puissiez vivre sans moi ensuite.'
+    ],
+    liste: [
+      'L\'audit. La liste de ce qui tourne, de ce qui ne tourne plus et de ce qui n\'a jamais servi, remise sous vos yeux dans un rapport détaillé accompagné d\'une vidéo explicative.',
+      'La décision. Réparer ou reconstruire : je tranche après l\'audit et je vous dis pourquoi. Chez Fraich Touch, patcher l\'existant sortait plus long et plus coûteux qu\'une reconstruction complète.',
+      'La reconstruction. Moins de scénarios, une logique lisible, et une configuration lue dans une table, jamais écrite en dur dans les scénarios.',
+      'La visibilité. Chaque erreur remonte là où votre équipe travaille déjà, avec le détail de ce qui a échoué et le lien vers la donnée concernée.',
+      'Le transfert. Une documentation faite pour votre installation et une vidéo de formation, pour que les modifications courantes se fassent sans moi.'
+    ],
+  },
+  {
+    h2: 'Ce qui empêche la dérive suivante',
+    paragraphes: [
+      'Une automatisation reprise puis laissée seule redérive. Ce qui tient dans le temps se pose à la reconstruction, et se résume à quelques principes simples.',
+      'Chez Fraich Touch, les identifiants de pipeline ne sont plus écrits dans les scénarios : ils sont lus dans une table de configuration Notion. Ajouter le pipeline suivant demande une ligne à remplir, sans toucher un seul scénario.'
+    ],
+    liste: [
+      'Une alerte explicite : l\'erreur remonte le jour où elle arrive, sur l\'outil que votre équipe regarde déjà.',
+      'Une configuration lue dans une table, jamais écrite en dur : ajouter une année devient une ligne à remplir.',
+      'Un suivi que l\'équipe ouvre elle-même, avec le statut de chaque opération et le détail de chaque erreur.',
+      'Une documentation et une formation, pour que les modifications courantes se fassent sans moi.'
+    ],
+  },
+  {
+    h2: '20 min pour <mark>ouvrir le capot</mark>',
+    paragraphes: [
+      'Si vous lisez cette page en pensant à un système précis, c\'est déjà un signe. Le premier pas prend 20 min : vous me montrez ce qui tourne, je vous dis ce que je vois, et si une reprise vaut le coup.',
+      'Vous repartez avec un avis clair, même quand la réponse est de ne rien toucher. Si je ne suis pas le bon interlocuteur, je le dis à ce moment-là.'
+    ],
+    liste: [
+      'Vous décrivez le symptôme avec vos mots, sans préparation technique.',
+      'Je vous dis si le sujet est de mon ressort et ce que l\'audit couvrirait.',
+      'Vous repartez avec un avis clair, même quand la réponse est de ne rien toucher.',
+      'Réserver un diagnostic de 20 min : https://cal.com/lilian-sevoumian/20min'
+    ],
+  }
+];
+
+const faqs = [
+  { q: 'Vous reprenez une automatisation construite par quelqu\'un d\'autre ?', a: 'Oui. Deux des quatre cas publiés sur ce site sont des reprises. Fraich Touch avait déjà investi dans l\'automatisation de sa facturation avec un premier prestataire : l\'audit a porté sur 33 scénarios Make, 17 connexions et 3 espaces de stockage internes. Humble+ avait un premier workflow Make, devenu trop fragile pour absorber le volume attendu. Dans les deux cas, le travail a commencé par l\'audit de ce qui existait, sans jugement sur ce qui avait été construit avant.' },
+  { q: 'Vous réparez l\'existant ou vous reconstruisez ?', a: 'La réponse sort de l\'audit. Chez Fraich Touch, patcher les 33 scénarios en place serait devenu plus long et plus coûteux que de tout reconstruire : le système est reparti sur 4 scénarios propres et documentés. Chez Humble+, les points de fragilité ont été isolés avant toute reconstruction. Quand la base est saine, une reprise ciblée suffit, et je vous le dis avant de commencer.' },
+  { q: 'La personne qui a construit notre automatisation est partie. On fait quoi ?', a: 'Ce qui part avec elle, c\'est la logique métier. Je la reconstitue depuis le système lui-même et depuis vos équipes, puis je la remets à un endroit lisible : une table de configuration, une documentation, une vidéo de formation. Chez Fraich Touch, former un nouveau collaborateur prend 30 min, contre plusieurs heures avant la reprise.' },
+  { q: 'Mon automatisation est sur Make. Faut-il passer sur n8n ?', a: 'L\'outil se choisit après l\'audit. Fraich Touch est resté sur Make, avec 4 scénarios propres et documentés à la place des 33. Humble+ est passé à n8n parce que le parcours mêlait lecture de documents par IA, contrôles déterministes et validations humaines. Le critère : ce que le flux doit faire, et qui maintiendra le système ensuite.' },
+  { q: 'Comment savoir si mon automatisation est en dette ?', a: 'Trois signes suffisent. Vous découvrez les erreurs par hasard. Une modification simple se transforme en chantier. Personne ne sait dire à quoi sert la moitié des scénarios en place. Chez Fraich Touch, 28 des 33 scénarios du compte étaient des reliques inutilisées et 16 factures attendaient dans une file d\'erreurs que personne ne regardait. L\'appel de 20 min sert exactement à trancher.' },
+  { q: 'Que se passe-t-il pendant l\'appel de 20 min ?', a: 'Vous décrivez le symptôme avec vos mots : les factures ne partent plus, les commandes s\'accumulent, les chiffres ne tombent pas juste. Je pose des questions sur les outils branchés, sur ce qui a été construit et sur ce que vous voyez remonter comme erreurs. À la fin, vous savez si votre sujet est de mon ressort et ce que l\'audit couvrirait. Réservation sur https://cal.com/lilian-sevoumian/20min' }
+];
+---
+
+<Layout
+  title="Reprendre une automatisation qui casse · Make et n8n"
+  description="Vos factures ne partent plus et le scénario affiche toujours vert. Lilian Sevoumian reprend les automatisations Make et n8n en place. Diagnostic 20 min."
+  breadcrumbs={breadcrumbs}
+  faqSchema={faqs.map((f) => ({ question: f.q, answer: f.a }))}
+  articleSchema={serviceSchema}
+>
+  <Navigation />
+
+  <main id="main-content">
+
+    <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+
+        <a href="/" class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8">
+          <span aria-hidden="true">←</span> RETOUR À L’ACCUEIL
+        </a>
+
+        <div class="mono-caption text-[var(--color-ink-low)] mb-6">REPRISE · MAKE ET N8N</div>
+
+        {/* Le h1 n’est pas un `.reveal` : peint à opacity 0 il serait
+            définitivement disqualifié comme candidat LCP, comme cela s’est
+            produit sur la home. */}
+        <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[18ch]" style="text-wrap: balance;">
+          <Fragment set:html="Reprendre une automatisation <mark>qui casse</mark>." />
+        </h1>
+
+        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[62ch]">Vos factures ne partent plus. Le scénario, lui, affiche toujours vert. Lilian Sevoumian reprend les automatisations Make et n8n déjà en place, y compris celles construites par quelqu'un d'autre, et remet le flux en marche.</p>
+
+        <div class="reveal mt-8 md:mt-10">
+          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+             class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="reprise-hero">
+            Réserver mon diagnostic&nbsp;· 20&nbsp;min
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {sections.map((s, i) => (
+      <section
+        data-section
+        class:list={[
+          'relative px-[var(--spacing-section-x)] piece-reprise',
+          i % 2 === 1 ? 'section-band' : '',
+        ]}
+      >
+        <div class="relative max-w-[72ch] mx-auto">
+          <h2 class="reprise-titre font-display font-semibold text-[var(--color-ink)]">
+            <Fragment set:html={s.h2} />
+          </h2>
+          {s.paragraphes.map((p) => (
+            <p class="reveal reprise-p"><Fragment set:html={p} /></p>
+          ))}
+          {s.liste.length > 0 && (
+            <ul class="reveal reprise-liste">
+              {s.liste.map((l) => <li><Fragment set:html={l} /></li>)}
+            </ul>
+          )}
+        </div>
+      </section>
+    ))}
+
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <SectionHeader
+          label="QUESTIONS FRÉQUENTES"
+          title="Ce qu’on me demande avant une <mark>reprise</mark>."
+          titleMaxWidth="24ch"
+        />
+        <div class="faq-liste flex flex-col gap-3">
+          {faqs.map((faq, i) => (
+            <div class="faq-item reveal" style={`--rang:${i}`}>
+              <details class="faq-details group">
+                <summary class="faq-summary">
+                  <span class="faq-num">Q0{i + 1}</span>
+                  <span class="faq-question">{faq.q}</span>
+                  <span class="faq-caret" aria-hidden="true">+</span>
+                </summary>
+                <div class="faq-answer"><p>{faq.a}</p></div>
+              </details>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <SectionHeader
+          label="DIAGNOSTIC · 20 MIN · SANS ENGAGEMENT"
+          title="Montrez-moi ce qui <mark class='inv'>tourne encore</mark>."
+          body="Vous décrivez le symptôme avec vos mots. Je vous dis ce que je vois, et si une reprise vaut le coup."
+          titleMaxWidth="22ch"
+        />
+        <div class="reveal mt-8">
+          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
+             class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="reprise-bottom">
+            Réserver mon diagnostic&nbsp;· 20&nbsp;min
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .piece-reprise {
+    padding-top: clamp(2.5rem, 4vw, 4rem);
+    padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  }
+
+  .reprise-titre {
+    margin: 0 0 1.25rem;
+    font-size: var(--text-headline);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .reprise-p {
+    margin: 0 0 1.1em;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.65;
+  }
+
+  .reprise-liste {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .reprise-liste li {
+    position: relative;
+    padding-left: 1.4em;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body);
+    line-height: 1.6;
+  }
+
+  .reprise-liste li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+  }
+</style>

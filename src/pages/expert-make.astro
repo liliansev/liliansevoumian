@@ -56,7 +56,7 @@ const faqs = [
   },
   {
     q: 'Combien de temps pour un premier scénario ?',
-    a: "Quelques jours pour un cas simple et cadré. Une automatisation plus large (plusieurs outils, logique métier) se compte en semaines. On valide le périmètre au premier appel, avant de lancer quoi que ce soit.",
+    a: "On valide le périmètre au premier appel, avant de lancer quoi que ce soit. Le délai dépend du nombre d'outils à connecter et de la logique métier. Je vous l'annonce à ce moment-là.",
   },
   {
     q: 'Make est-il assez puissant pour mon besoin ?',
@@ -67,13 +67,18 @@ const faqs = [
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  /* Un `@id` propre, rattaché à l'entité globale par `isPartOf` : sans lui, un
+     moteur voit deux ProfessionalService sans savoir s'il s'agit de la même
+     organisation. */
+  "@id": "https://liliansevoumian.fr/expert-make#service",
+  "isPartOf": { "@id": "https://liliansevoumian.fr/#service" },
   "name": "Expert Make freelance · Lilian Sevoumian",
   "description": "Expert Make (ex-Integromat) freelance, certifié Niveau 5. Automatisation des processus métier, intégration d’outils et scénarios no-code maintenables.",
   "url": "https://liliansevoumian.fr/expert-make",
   "areaServed": "France",
   "serviceType": ["Automatisation Make", "Intégration Make", "Conseil no-code", "Formation Make"],
   "knowsAbout": ["Make", "Integromat", "Automatisation des processus", "Intégration API", "No-Code", "Workflow"],
-  "provider": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+  "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
 ---
 
@@ -103,7 +108,7 @@ const serviceSchema = {
 
         <div class="reveal relative bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2">
           <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[16ch]" style="text-wrap: balance;">
-            Expert <span class="text-[var(--color-accent)]">Make</span> freelance.
+            Expert <mark>Make</mark> freelance.
           </h1>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
             Certifié Niveau 5, le premier en France. J'automatise vos processus métier et connecte vos outils en scénarios visuels que votre équipe peut lire, suivre et maintenir.
@@ -113,15 +118,12 @@ const serviceSchema = {
         <div class="reveal mt-8 md:mt-10 flex flex-col sm:flex-row sm:items-center gap-4">
           <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
              class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="expert-make">
-            Réserver un appel · 20 min
-          </a>
-          <a href="mailto:bonjour@liliansevoumian.fr" class="btn-ghost justify-center">
-            Ou écrire un mail
+            Réserver mon diagnostic · 20 min
           </a>
         </div>
 
         <div class="reveal mono-caption text-[var(--color-ink-low)] mt-7">
-          <span class="text-[var(--color-accent-text)]">MAKE CERTIFIÉ N5</span> · 500+ WORKFLOWS EN PROD · RÉPONSE SOUS 48&nbsp;H
+          <span class="text-[var(--color-accent-text)]">MAKE CERTIFIÉ N5</span> · 300+ PERSONNES FORMÉES · RÉPONSE SOUS 48&nbsp;H
         </div>
       </div>
     </section>
@@ -164,7 +166,7 @@ const serviceSchema = {
         <ul class="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-0 max-w-[1000px]">
           {casUsage.map((c) => (
             <li class="reveal flex items-start gap-3 py-4 border-b border-[var(--color-divider)]">
-              <span class="mono-label text-[var(--color-accent)] leading-[1.6] shrink-0" aria-hidden="true">+</span>
+              <span class="mono-label text-[var(--color-ink)] leading-[1.6] shrink-0" aria-hidden="true">+</span>
               <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5]">{c}</span>
             </li>
           ))}
@@ -181,21 +183,21 @@ const serviceSchema = {
             Le premier certifié Make Niveau 5 en France.
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
-            500+ workflows en production depuis 2021, pour des Heads of Ops, fondateurs et PME. Des automatisations qui tiennent dans le temps, documentées, avec une couche d'erreur sur chacune. Pas de scénario fragile livré et oublié.
+            J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Des automatisations qui tiennent dans le temps, documentées, avec une couche d'erreur sur chacune.
           </p>
         </div>
         <dl class="reveal grid grid-cols-1 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden min-w-[200px]">
           <div class="bg-[var(--color-paper)] px-6 py-5">
             <dt class="mono-caption text-[var(--color-ink-low)] mb-1">CERTIFICATION</dt>
-            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-accent)] m-0">Make Niveau 5</dd>
+            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">Make Niveau 5</dd>
           </div>
           <div class="bg-[var(--color-paper)] px-6 py-5">
             <dt class="mono-caption text-[var(--color-ink-low)] mb-1">EN PRODUCTION</dt>
-            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">500+ workflows</dd>
+            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">Depuis 2020</dd>
           </div>
           <div class="bg-[var(--color-paper)] px-6 py-5">
-            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">FIABILITÉ</dt>
-            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">0 incident / SLA</dd>
+            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">APRÈS LIVRAISON</dt>
+            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">Corrections incluses</dd>
           </div>
         </dl>
       </div>
@@ -230,7 +232,7 @@ const serviceSchema = {
 
         <p class="reveal mono-caption text-[var(--color-ink-low)] mt-5">
           BESOIN PLUTÔT DE n8n&nbsp;?
-          <a href="/expert-n8n" class="text-[var(--color-accent)] hover:text-[var(--color-ink)] transition-colors ml-1 tap-44">
+          <a href="/expert-n8n" class="text-[var(--color-ink)] hover:text-[var(--color-ink)] transition-colors ml-1 tap-44">
             VOIR LA PAGE EXPERT N8N <span aria-hidden="true">→</span>
           </a>
         </p>
@@ -238,23 +240,20 @@ const serviceSchema = {
     </section>
 
     {/* ===== CTA FINAL ===== */}
-    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal max-w-[40ch] mb-10 md:mb-12">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]">
             Un scénario Make en tête&nbsp;?
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 m-0">
-            20 min pour décider si on travaille ensemble. Sans engagement, réponse claire sous 48 h.
+            20&nbsp;min pour poser votre process à plat. Sans engagement. Votre scénario Make existe déjà et il casse&nbsp;? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.
           </p>
         </div>
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
           <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
              class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="expert-make-bottom">
-            Réserver un appel · 20 min
-          </a>
-          <a href="mailto:bonjour@liliansevoumian.fr" class="btn-ghost justify-center">
-            Ou écrire un mail
+            Réserver mon diagnostic · 20 min
           </a>
         </div>
       </div>
@@ -269,7 +268,9 @@ const serviceSchema = {
   .expert-hero-logo {
     width: 18px;
     height: 18px;
-    color: var(--color-accent);
+    /* Encre, pas lime : le lime tient 1,25:1 sur blanc, illisible à 18 px, et
+       la DA veut le lime en surface, jamais en couleur de trait. */
+    color: var(--color-ink);
     flex-shrink: 0;
   }
 </style>

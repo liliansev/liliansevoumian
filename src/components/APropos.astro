@@ -1,0 +1,159 @@
+---
+/*
+ * APropos — le bloc de légitimité, et le seul endroit du site où le nom de
+ * l'entité figure dans un titre.
+ *
+ * Deux fonctions à la fois :
+ *  — pour le lecteur : il vient de voir quatre cas et trois recommandations,
+ *    « qui est ce type » est exactement sa question suivante, et elle doit
+ *    trouver sa réponse avant le calculateur, qui demande un effort ;
+ *  — pour les moteurs de réponse : c'est le bloc qu'ils citeront pour
+ *    répondre « qui est-il ». D'où la fiche de faits en <dl> sous le texte,
+ *    chaque ligne autonome et extractible hors de son contexte.
+ *
+ * Le bloc raconte une TRAJECTOIRE, pas des missions : les cas clients sont
+ * juste au-dessus, les répéter ici ne prouvait rien de plus et volait la place
+ * de la seule question à laquelle cette section doit répondre — pourquoi lui.
+ *
+ * Deux bornes datées seulement, 2020 et aujourd'hui, parce que ce sont les
+ * deux seules que le dépôt documente. La tentation d'un arc en cinq étapes
+ * datées est forte et fabriquerait des jalons : tout ce qui est ici est sourcé
+ * dans profile.md (Make niveau 5 premier français, Airtable, 300+ formés,
+ * début en 2020) ou dans CTA.astro (« le plus clair de mon temps sur des
+ * agents IA et des outils internes »).
+ */
+import SectionHeader from './SectionHeader.astro';
+
+const faits = [
+  { cle: 'Depuis', valeur: '2020' },
+  { cle: 'Certifications', valeur: 'Make niveau 5, premier certifié en France · Airtable' },
+  { cle: 'Formation', valeur: '300+ personnes formées' },
+  { cle: 'Aujourd’hui', valeur: 'Agents IA et outils internes, sur n8n et Make' },
+  { cle: 'Zone', valeur: 'Région parisienne · France · Europe' },
+];
+---
+
+<section
+  id="a-propos"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      label="À PROPOS"
+      title="Lilian Sevoumian, freelance automatisation &amp; IA <mark>depuis 2020.</mark>"
+      titleMaxWidth="24ch"
+    />
+
+    <div class="reveal apropos">
+      <div class="apropos-texte">
+        <p>
+          J'ai commencé à automatiser des processus métier en 2020, avant que
+          l'IA générative n'entre dans les entreprises. On branchait des outils
+          entre eux pour que plus personne n'ait à recopier une ligne d'un
+          logiciel dans un autre. C'est ce qui m'a attrapé et ne m'a jamais
+          lâché&nbsp;: prendre une tâche que quelqu'un refait tous les lundis
+          depuis trois ans, et la faire disparaître.
+        </p>
+
+        <p>
+          Ces années m'ont donné des preuves&nbsp;: certifié Make
+          niveau&nbsp;5, le premier en France à l'obtenir, certifié Airtable, et
+          plus de 300 personnes formées à ces outils. Former oblige à comprendre
+          pourquoi une chose tient. C'est ce qui me sert le plus quand il faut
+          défendre un choix devant l'équipe qui vivra avec.
+        </p>
+
+        <p>
+          L'IA a changé ce que je construis. Ma méthode est restée la même.
+          L'IA classe, rédige, qualifie&nbsp;; ce sont les workflows qui
+          exécutent, et un agent sans workflow autour reste une démo. Je passe
+          aujourd'hui le plus clair de mon temps sur des agents IA et des outils
+          internes, avec le réflexe de 2020 intact&nbsp;: ça doit tourner seul
+          le lundi matin, et continuer de tourner quand une API change.
+        </p>
+
+        <p>
+          Je travaille en direct&nbsp;: la personne qui vous répond est celle
+          qui construit. Le terrain m'a surtout appris à voir tôt ce qui
+          tiendra six mois et ce qui cassera à la première mise à jour. Alors
+          quand un projet n'est pas pour moi, je le dis avant de commencer.
+        </p>
+      </div>
+
+      <dl class="apropos-faits">
+        {faits.map((f) => (
+          <div class="apropos-fait">
+            <dt>{f.cle}</dt>
+            <dd>{f.valeur}</dd>
+          </div>
+        ))}
+        <div class="apropos-fait">
+          <dt>Cas publiés</dt>
+          {/* « chiffres à l'appui » signait un chèque que deux des quatre cas
+              n'encaissent pas : Celeris et Humble+ ne contiennent aucune durée
+              de travail humain, et Celeris n'est pas encore en production. */}
+          <dd><a href="/cas-clients">4 missions documentées, avant/après détaillé</a></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<style>
+  .apropos {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 3.5rem;
+    align-items: start;
+    margin-top: 2.5rem;
+  }
+
+  .apropos-texte p {
+    max-width: 62ch;
+    color: var(--color-ink-mid);
+    line-height: 1.65;
+  }
+  .apropos-texte p + p { margin-top: 1.25rem; }
+  .apropos-texte p:first-child { color: var(--color-ink); }
+
+  .apropos-faits {
+    margin: 0;
+    border-top: 2px solid var(--color-ink);
+  }
+
+  .apropos-fait {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .apropos-fait dt {
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+
+  .apropos-fait dd {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+
+  .apropos-fait a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-lime);
+    padding-bottom: 1px;
+  }
+  .apropos-fait a:hover { border-bottom-color: var(--color-ink); }
+
+  @media (max-width: 52rem) {
+    .apropos { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+</style>

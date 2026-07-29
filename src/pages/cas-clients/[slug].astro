@@ -3,7 +3,10 @@ import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import { getCollection, render } from 'astro:content';
-import { chipClass } from '../../lib/tool-chip';
+import { Icon } from 'astro-icon/components';
+import MockupWindow from '../../components/mockups/MockupWindow.astro';
+import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
+import { brandColorFor } from '../../data/brands';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -13,11 +16,104 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+await render(entry);
 const cs = entry.data;
+
+/*
+ * Le corps du cas était rendu d'un seul tenant : 5 000 px de prose grise sans
+ * une respiration. Il est découpé ici en PIÈCES, une par <h2>, chacune posée
+ * sur sa propre surface avec son cartouche numéroté.
+ *
+ * Le découpage lit `entry.rendered.html` et coupe sur les ancres que Astro
+ * pose déjà (`<h2 id="…">`). Pas de plugin rehype : il faudrait une dépendance,
+ * une entrée de config, un cache à débusquer, et il travaillerait à l'aveugle
+ * hors de tout contexte visuel. Ici tout est dans le gabarit, sous les yeux.
+ */
+const HTML_RENDU: string = (entry as unknown as { rendered?: { html?: string } }).rendered?.html ?? '';
+
+/* L'icône dit de quoi parle la pièce : elle distingue le constat du remède, et
+   c'est le seul repère qui tienne quand on balaie la page au pouce. La clé est
+   l'ancre que Astro dérive du titre, insensible à la casse et aux accents. */
+const ICONES: Record<string, string> = {
+  lentreprise: 'lucide:building-2',
+  'le-problème': 'lucide:triangle-alert',
+  'la-solution': 'lucide:workflow',
+  'les-étapes': 'lucide:list-ordered',
+  'les-résultats': 'lucide:target',
+};
+
+interface Piece { id: string; titre: string; reserve: string; corps: string; icone: string }
+
+function decouper(html: string): Piece[] {
+  if (!html) return [];
+  const morceaux = html.split(/(?=<h2\b)/);
+  const pieces: Piece[] = [];
+  for (const m of morceaux) {
+    const tete = m.match(/^<h2\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/);
+    if (!tete) continue;
+    let corps = m.slice(tete[0].length);
+    /* Une réserve en tête de pièce est extraite pour être rendue AVANT la
+       bascule : elle restreint la portée de tout ce qui suit, on ne peut pas
+       la lire après les chiffres qu'elle qualifie. */
+    let reserve = '';
+    const tetePiece = corps.match(/^\s*<blockquote[\s\S]*?<\/blockquote>/);
+    if (tetePiece) {
+      reserve = tetePiece[0];
+      corps = corps.slice(tetePiece[0].length);
+    }
+    pieces.push({
+      id: tete[1],
+      titre: tete[2].replace(/<[^>]+>/g, '').trim(),
+      reserve,
+      corps,
+      icone: ICONES[tete[1]] ?? 'lucide:square-dot',
+    });
+  }
+  return pieces;
+}
+
+const pieces = decouper(HTML_RENDU);
+
+const ROLES: Record<string, string> = {
+  declencheur: 'Déclencheur',
+  agent: 'IA',
+  action: 'Action',
+  controle: 'Contrôle',
+};
 const dateISO = cs.date.toISOString();
 
-const seoDescription = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`.substring(0, 160);
+// Cas voisins : meme tag d abord, puis complement par les plus recents. Deux
+// cartes, jamais le cas courant. Transforme quatre culs-de-sac en carrefours.
+const tous = await getCollection('cas-clients', (e) => import.meta.env.DEV || !e.data.draft);
+const autres = tous.filter((e) => e.id !== entry.id);
+/* Le tri par tags partagés ne discriminait rien : les quatre cas portent tous
+   « Ops », donc la première liste les contenait tous et `slice(0, 2)` retenait
+   toujours les deux mêmes. M Partners, dernier dans l'ordre de chargement,
+   n'apparaissait sur aucune fiche sœur — 2 liens entrants contre 5 pour les
+   autres. On départage d'abord par NOMBRE de tags communs, puis par date, et
+   on fait tourner la sélection selon la position du cas courant pour que les
+   quatre soient cités autant de fois. */
+const rang = tous.findIndex((e) => e.id === entry.id);
+const classes = autres
+  .map((e) => ({ e, communs: e.data.tags.filter((t) => cs.tags.includes(t)).length }))
+  .sort((a, b) => b.communs - a.communs || b.e.data.date.getTime() - a.e.data.date.getTime())
+  .map((x) => x.e);
+const voisins = [...classes.slice(rang % classes.length), ...classes.slice(0, rang % classes.length)].slice(0, 2);
+
+// L outil principal du cas, pour renvoyer vers sa page dediee avec l ancre
+// de requete exacte.
+const pageOutil = cs.tools.includes('n8n')
+  ? { nom: 'n8n', href: '/expert-n8n' }
+  : cs.tools.includes('Make')
+    ? { nom: 'Make', href: '/expert-make' }
+    : null;
+
+// La description redigee prime. A defaut, on compose, mais on coupe au
+// dernier espace avant 155 caracteres au lieu de trancher en plein mot.
+const brut = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`;
+const seoDescription =
+  cs.description ??
+  (brut.length <= 155 ? brut : brut.slice(0, brut.lastIndexOf(' ', 155)) + '…');
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
@@ -30,10 +126,12 @@ const articleSchema = {
   '@type': 'Article',
   headline: cs.title,
   description: seoDescription,
-  author: { '@type': 'Person', name: 'Lilian Sevoumian', url: 'https://liliansevoumian.fr' },
-  publisher: { '@type': 'Person', name: 'Lilian Sevoumian', url: 'https://liliansevoumian.fr' },
+  author: { '@id': 'https://liliansevoumian.fr/#person' },
+  publisher: { '@id': 'https://liliansevoumian.fr/#person' },
+  image: 'https://liliansevoumian.fr/og-image.jpg',
   datePublished: dateISO,
-  dateModified: dateISO,
+  about: [{ '@type': 'Thing', name: 'Automatisation des processus' }],
+  mentions: cs.tools.map((t) => ({ '@type': 'Thing', name: t })),
   mainEntityOfPage: { '@type': 'WebPage', '@id': `https://liliansevoumian.fr/cas-clients/${entry.id}` },
   articleSection: 'Cas client',
   keywords: ['automatisation', 'cas client', cs.secteur, ...cs.tags, ...cs.tools].filter(Boolean).join(', '),
@@ -41,7 +139,7 @@ const articleSchema = {
 ---
 
 <Layout
-  title={`${cs.title} | Cas client Automatisation - Lilian Sevoumian`}
+  title={cs.seoTitle ?? `${cs.title} · cas client`}
   description={seoDescription}
   ogType="article"
   publishedDate={dateISO}
@@ -58,7 +156,7 @@ const articleSchema = {
 
         <a
           href="/cas-clients"
-          class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+          class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
         >
           <span aria-hidden="true">←</span>
           RETOUR AUX CAS
@@ -104,79 +202,154 @@ const articleSchema = {
     </section>
 
     <!-- CORPS DU CAS (Markdown) -->
-    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[72ch] mx-auto reveal case-prose">
-        <Content />
-      </div>
-    </section>
-
-    <!-- TÉMOIGNAGE + STACK -->
-    {(cs.testimonial?.quote || cs.tools.length > 0) && (
+    {/* Une pièce par <h2>, chacune sur sa propre surface. Les surfaces
+        alternent papier / bande grise pour donner un rythme vertical, et la
+        DERNIÈRE passe sur l'encre : c'est le pic de la page, et c'est là que
+        sont les résultats. Elle ne peut pas être en lime — le CTA de pied l'est
+        déjà, et deux aplats lime à 1 500 px d'écart font un motif, pas un
+        geste. Sur l'encre, une bande de surlignage tient 14:1. */}
+    {pieces.map((piece, i) => (
       <section
         data-section
-        class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+        id={piece.id}
+        class:list={[
+          'relative px-[var(--spacing-section-x)] piece-cas',
+          i === pieces.length - 1 ? 'bloc-encre' : i % 2 === 1 ? 'section-band' : '',
+        ]}
       >
-        <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-start">
+        <div class="relative max-w-[72ch] mx-auto">
+          <header class="reveal piece-tete">
+            <span class="piece-cartouche">
+              <Icon name={piece.icone} class="piece-icone" aria-hidden="true" />
+              <span>{String(i + 1).padStart(2, '0')} / {String(pieces.length).padStart(2, '0')}</span>
+            </span>
+            <h2 class="piece-titre">{piece.titre}</h2>
+          </header>
+          {piece.reserve && <div class="reveal case-prose" set:html={piece.reserve} />}
 
-          {cs.testimonial?.quote && (
-            <blockquote class="reveal max-w-[60ch] m-0 p-0">
-              <div class="mono-caption text-[var(--color-ink-low)] mb-4">TÉMOIGNAGE</div>
-              <p class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] leading-[1.25] m-0">
-                « {cs.testimonial.quote} »
-              </p>
-              {(cs.testimonial.name || cs.testimonial.role) && (
-                <footer class="mono-caption text-[var(--color-ink-low)] mt-5 not-italic">
-                  — {cs.testimonial.name}
-                  {cs.testimonial.role && <span> · {cs.testimonial.role}</span>}
-                </footer>
-              )}
-            </blockquote>
-          )}
-
-          {cs.tools.length > 0 && (
-            <div class="reveal lg:max-w-[300px] w-full">
-              <div class="mono-caption text-[var(--color-ink-low)] mb-4">STACK</div>
-              <div class="flex flex-wrap gap-2">
-                {cs.tools.map((tool) => (
-                  <span class={chipClass(tool)}>{tool}</span>
-                ))}
-              </div>
+          {/* Le schéma ouvre « La solution » : le lecteur voit le parcours
+              avant de lire les seize paragraphes qui le détaillent. C'est une
+              reconstitution, jamais une capture — les écrans clients sont
+              confidentiels — et le châssis de fenêtre le dit assez. Un cas dont
+              la chaîne ne rentre pas dans la géométrie n'a pas de `flow`, donc
+              pas de schéma : rien vaut mieux qu'un dessin faux. */}
+          {piece.id === 'la-solution' && cs.flow && (
+            <div class="reveal piece-schema">
+              <MockupWindow file={`${cs.tools[0] ?? 'workflow'} · parcours`} status="reconstitution" flush>
+                <WorkflowCanvas
+                  describe={cs.flow.describe}
+                  trigger={{ ...cs.flow.trigger, color: brandColorFor(cs.flow.trigger.icon) }}
+                  agent={{ ...cs.flow.agent, color: brandColorFor(cs.flow.agent.icon) }}
+                  actions={cs.flow.actions.map((a) => ({ ...a, color: brandColorFor(a.icon) }))}
+                />
+              </MockupWindow>
             </div>
           )}
 
+          {/* La bascule ouvre « Les résultats » : ce que le client achète,
+              c'est un écart, et il doit se lire avant la liste qui le détaille.
+              Le lime ne marque QUE la colonne « après » — un état obtenu,
+              jamais un terme d'avant, jamais un objectif. */}
+          {piece.id === 'les-résultats' && cs.bascule && (
+            <dl class="reveal bascule">
+              <div class="bascule-entete" aria-hidden="true">
+                <dt>Avant</dt>
+                <dd>Après</dd>
+              </div>
+              {cs.bascule.map((ligne) => (
+                <div class="bascule-ligne">
+                  <dt>{ligne.avant}</dt>
+                  <dd><mark>{ligne.apres}</mark></dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
+          <div class="reveal case-prose" set:html={piece.corps} />
+
+          {/* La nomenclature clôt « La solution » : après le récit, le relevé.
+              La colonne de rôle porte le lime sur les CONTRÔLES, et sur eux
+              seuls — c'est la thèse du portfolio rendue visible d'un coup d'œil,
+              l'IA extrait et les règles décident. */}
+          {piece.id === 'la-solution' && cs.nomenclature && (
+            <div class="reveal nomenclature">
+              <div class="nomenclature-tete">
+                <span>Nomenclature</span>
+                <span>{cs.nomenclature.length} étapes · {cs.nomenclature.filter((n) => n.role === 'controle').length} contrôles</span>
+              </div>
+              <ol class="nomenclature-liste">
+                {cs.nomenclature.map((n, k) => (
+                  <li class="nomenclature-ligne">
+                    <span class="nomenclature-rang">{String(k + 1).padStart(2, '0')}</span>
+                    <span class="nomenclature-etape">{n.etape}</span>
+                    {n.outil && <span class="nomenclature-outil">{n.outil}</span>}
+                    <span class:list={['nomenclature-role', n.role === 'controle' && 'est-controle']}>
+                      {ROLES[n.role]}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      </section>
+    ))}
+
+    {/* Le bloc « TÉMOIGNAGE + STACK » vivait ici. Il ne se rendait jamais :
+        aucun cas ne publie de `testimonial`, et les quatre ont une
+        `nomenclature`, qui donne les mêmes outils dans l'ordre du parcours et
+        avec leur rôle — sa branche STACK était donc doublement éteinte.
+        Le champ `testimonial` du schéma partait avec : il n'était alimenté par
+        aucun cas et n'avait que ce bloc pour lecteur. Le jour où un client en
+        donne un, il faudra un champ ET un bloc, écrits pour lui. */}
+
+    <!-- CAS VOISINS -->
+    {voisins.length > 0 && (
+      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
+        <div class="relative max-w-[1200px] mx-auto">
+          <div class="section-number mb-6">↦ AUTRES CAS</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {voisins.map((v) => (
+              <a href={`/cas-clients/${v.id}`} class="voisin">
+                <span class="voisin-secteur">{v.data.secteur}</span>
+                <span class="voisin-titre">{v.data.title}</span>
+                {v.data.kpis.length > 0 && (
+                  <span class="voisin-kpi">{v.data.kpis[0].value} {v.data.kpis[0].label}</span>
+                )}
+              </a>
+            ))}
+          </div>
+
+          {pageOutil && (
+            <p class="voisin-outil">
+              Ce projet tourne sur <a href={pageOutil.href}>{pageOutil.nom}</a>.
+            </p>
+          )}
         </div>
       </section>
     )}
 
     <!-- CTA -->
-    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal mb-8 md:mb-10 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
+        <div class="reveal mb-8 md:mb-10 inline-block py-2 pr-2 relative">
           <div class="section-number" style="margin-bottom: 0.5rem;">↦ APPEL</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
-            Un projet similaire ?
+            Un projet <mark>similaire&nbsp;?</mark>
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-3 max-w-[55ch]">
-            20 min pour décider si on travaille ensemble. Sans engagement, réponse claire sous 48 h.
+            20&nbsp;min pour poser votre process à plat. Sans engagement.
           </p>
         </div>
 
         <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <a
-            href="https://cal.com/lilian-sevoumian/20min"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
             class="btn-primary justify-center"
             data-fast-goal="lead_call"
             data-fast-goal-source="cas_article"
           >
-            Réserver maintenant
-          </a>
-          <a
-            href="mailto:bonjour@liliansevoumian.fr"
-            class="btn-ghost justify-center"
-          >
-            ou écrire un mail
+            Réserver mon diagnostic&nbsp;· 20&nbsp;min
           </a>
         </div>
       </div>
@@ -188,6 +361,255 @@ const articleSchema = {
 </Layout>
 
 <style>
+  .voisin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border-top: 2px solid var(--color-ink);
+    padding-top: 1rem;
+    text-decoration: none;
+  }
+  .voisin-secteur {
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+  .voisin-titre {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-title);
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .voisin-kpi {
+    margin-top: 0.35rem;
+    align-self: flex-start;
+    background: var(--color-lime);
+    color: var(--color-ink);
+    padding: 0.3em 0.6em;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+  }
+  .voisin-outil {
+    margin-top: 2.5rem;
+    color: var(--color-ink-mid);
+  }
+  .voisin-outil a {
+    color: var(--color-ink);
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-lime);
+  }
+</style>
+
+<style>
+  /* ── La pièce ── */
+  /* Un demi-pas de section : cinq pièces à pleine hauteur de section auraient
+     ajouté 700 px à une page qui en faisait déjà 8 000. Le rythme vient de
+     l'alternance des surfaces, pas du vide entre elles. */
+  .piece-cas {
+    padding-top: clamp(2.5rem, 4vw, 4rem);
+    padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  }
+
+  /* ── La nomenclature ── */
+  .nomenclature {
+    margin-top: clamp(2rem, 4vw, 3rem);
+    border-top: 2px solid var(--color-ink);
+  }
+
+  .nomenclature-tete {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-divider);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+
+  .nomenclature-liste {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nomenclature-ligne {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto auto;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .nomenclature-rang,
+  .nomenclature-outil,
+  .nomenclature-role {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.04em;
+  }
+
+  .nomenclature-rang { color: var(--color-ink-faint); }
+  .nomenclature-etape {
+    font-size: var(--text-body-sm);
+    color: var(--color-ink);
+    line-height: 1.4;
+    min-width: 0;
+  }
+  .nomenclature-outil {
+    color: var(--color-ink-low);
+    white-space: nowrap;
+  }
+
+  .nomenclature-role {
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+    white-space: nowrap;
+    padding: 0.15rem 0.5rem;
+  }
+
+  /* Le lime ne marque QUE le contrôle. Encre littérale : sur une pièce posée
+     sur l'encre, le jeton de rôle vaudrait le blanc, illisible sur la bande. */
+  .nomenclature-role.est-controle {
+    background: var(--color-lime);
+    color: #111111;
+    font-weight: 600;
+  }
+
+  @media (max-width: 40rem) {
+    .nomenclature-ligne {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+    .nomenclature-outil,
+    .nomenclature-role {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+
+  /* ── La bascule avant / après ── */
+  .bascule {
+    margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .bascule-entete,
+  .bascule-ligne {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem 1.5rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .bascule-entete {
+    padding-bottom: 0.5rem;
+  }
+  .bascule-entete dt,
+  .bascule-entete dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+
+  .bascule-ligne dt {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  .bascule-ligne dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  /* Le fragment surligné peut être long ici : la bande n'a pas à rester sur une
+     ligne dans une cellule étroite, donc `nowrap` est levé localement et la
+     bande couvre le rectangle englobant. C'est acceptable dans une cellule dont
+     le texte occupe toute la largeur, pas dans un titre. */
+  .bascule-ligne dd :global(mark) {
+    white-space: normal;
+    /* Encre LITTÉRALE, pas var(--color-ink). Sur `.bloc-encre` le jeton de rôle
+       est remappé en blanc : le texte du surlignage sortait blanc sur lime,
+       illisible. La bande est toujours lime, quelle que soit la surface qui la
+       porte, donc son texte est toujours l'encre. 15,14:1. */
+    color: #111111;
+  }
+
+  @media (max-width: 34rem) {
+    .bascule-entete { display: none; }
+    .bascule-ligne {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+    /* Sans l'en-tête, il faut dire lequel est lequel. */
+    .bascule-ligne dt::before {
+      content: 'AVANT · ';
+      font-family: var(--font-mono);
+      font-size: var(--text-mono-caption);
+      letter-spacing: 0.06em;
+      color: var(--color-ink-low);
+    }
+  }
+
+  .piece-schema {
+    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .piece-tete {
+    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  /* Cartouche : la flèche et le numéro reprennent `.section-number`, l'idiome
+     déjà posé partout ailleurs sur le site. Le numéro dit où l'on en est, ce
+     que l'icône seule ne dit pas. */
+  .piece-cartouche {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-low);
+  }
+
+  .piece-icone {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-ink);
+    stroke-width: 1.6;
+  }
+
+  .piece-titre {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-headline);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+  }
+
+  /* Sur l'encre, les jetons de rôle sont déjà remappés par `.bloc-encre` : la
+     prose, les titres et les filets suivent sans variante à écrire. Seule
+     l'icône a besoin d'être forcée, sa couleur étant posée en dur ci-dessus. */
+  .bloc-encre .piece-icone { color: var(--color-text-on-dark); }
+
   /* Corps Markdown des cas — calé sur les tokens du site. */
   .case-prose :global(h2) {
     font-family: var(--font-display);
@@ -198,6 +620,8 @@ const articleSchema = {
     color: var(--color-ink);
     margin: 2.5em 0 0.75em;
   }
+  /* Plus aucun h2 dans le corps : le titre de pièce est rendu par le gabarit.
+     La règle reste pour un cas qui en poserait un second dans son texte. */
   .case-prose :global(h2:first-child) { margin-top: 0; }
   .case-prose :global(h3) {
     font-family: var(--font-display);
@@ -240,16 +664,51 @@ const articleSchema = {
     border-radius: var(--radius-full);
     background: var(--color-accent);
   }
-  /* Citation : fond différencié + bordure pleine — pas de side-stripe accent
-     (ban DS « bordure latérale colorée >1px »). */
+
+  /* Le lime dit un gain, partout ailleurs sur le site. Dans « Le problème » il
+     marquait des pannes : seize factures bloquées, un bug d'acomptes, zéro
+     visibilité. La puce y devient un anneau creux, qui énumère sans féliciter.
+     Même raison dans « Les étapes », qui décrit un déroulé, pas un résultat. */
+  #le-problème .case-prose :global(li::before),
+  #les-étapes .case-prose :global(li::before) {
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--color-ink-faint);
+  }
+  /* L'encadré de réserve. Les deux qui existent sur ce site disent la même
+     chose : où en est le projet, et ce que les chiffres qui suivent valent
+     vraiment. Ils portaient jusqu'ici la mise en forme d'une citation, si bien
+     qu'on pouvait les lire comme un témoignage flatteur alors qu'ils
+     restreignent la portée de tout ce qui suit.
+
+     Le libellé est posé en CSS parce que le corps vient du markdown : il ne
+     peut pas porter de composant. Il est vrai pour les deux (« projet en phase
+     de stabilisation », « projet en cours de déploiement ») et le restera pour
+     tout encadré du même genre, puisque c'est la seule chose qu'on encadre.
+
+     Bordure pleine, jamais de liseré latéral coloré : c'est un interdit du
+     design system. */
   .case-prose :global(blockquote) {
     margin: 1.5em 0;
     padding: 1em 1.25em;
-    border: 1px solid var(--color-divider);
+    border: 1px solid var(--color-border-strong);
     background: var(--color-surface-low);
     border-radius: var(--radius-sm);
     color: var(--color-ink-mid);
   }
+
+  .case-prose :global(blockquote)::before {
+    content: 'Statut du projet';
+    display: block;
+    margin-bottom: 0.6em;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .case-prose :global(blockquote p:last-child) { margin-bottom: 0; }
   .case-prose :global(a) {
     /* accent-text (pas accent vif) : lien dans du corps de texte → AA 4.5:1. */
     color: var(--color-accent-text);

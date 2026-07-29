@@ -7,165 +7,118 @@
    ========================================================================= */
 
 @theme {
-  /* ===== Fonts ===== */
+  /* =======================================================================
+     DA « LIME » appliquée au contenu de main.
+     Les NOMS de jetons sont ceux que les 25 composants consomment déjà : on
+     ne change que les valeurs, et toute la page bascule d'un coup. Les
+     composants n'ont pas à savoir que la direction artistique a changé.
+
+     Trois règles qui gouvernent tout :
+       — Le lime est une SURFACE, jamais du texte. Il ne porte que 1,25:1
+         contre le blanc ; il prend des sections entières, ou il surligne.
+       — Une seule police. Le monospace disparaît : c'était, avec les
+         sur-titres en capitales, le tell « IA » n° 1 relevé à l'audit.
+       — Deux rayons : 0 et 9999. Si c'est rond, ça se clique.
+     ======================================================================= */
+
+  /* ── Polices ── */
   --font-display: 'Geist Variable', system-ui, -apple-system, sans-serif;
   --font-body: 'Geist Variable', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Plus de famille monospace : --font-mono existe encore parce que 11
+     composants l'appellent, mais il vaut la police de texte. */
+  --font-mono: 'Geist Variable', system-ui, -apple-system, sans-serif;
 
-  /* ===== Typography scale (fluide) ===== */
+  /* ── Échelle typographique, espacement et motion ──
+     Repris tels quels de main : ce sont des mesures, pas une direction
+     artistique, et les 25 composants les consomment. Les avoir emportés
+     avec le bloc de couleurs faisait retomber le H1 à la taille du corps. */
   --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
   --text-display-hero: clamp(2.5rem, 6vw + 0.5rem, 5.75rem);
   --text-display-hero-lg: clamp(2.5rem, 5vw + 0.5rem, 4.75rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
   --text-signature: clamp(2rem, 3vw + 0.5rem, 2.75rem);
-  --text-metric: clamp(1.5rem, 2vw + 0.75rem, 2.25rem);
-  --text-roi-money: clamp(2.5rem, 5vw, 4rem);
-  --text-roi-output: 1.5rem;
+  /* Le chiffre héros du simulateur porte désormais les HEURES, plus l'euro :
+     garder le nom `money` ferait mentir le jeton. Le second niveau a disparu
+     avec la ligne « formule », l'euro tenant maintenant dans une phrase. */
+  --text-roi-primary: clamp(2.5rem, 5vw, 4rem);
   --text-title-lg: clamp(1.5rem, 1.5vw + 0.75rem, 1.875rem);
   --text-title: clamp(1.25rem, 1vw + 0.875rem, 1.5rem);
-  --text-title-sm: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);
   --text-body-large: clamp(1.0625rem, 0.5vw + 0.875rem, 1.25rem);
   --text-body: clamp(0.9375rem, 0.25vw + 0.875rem, 1rem);
   --text-body-sm: 0.875rem;
   --text-mono-label: 0.75rem;
   --text-mono-body: 0.8125rem;
   --text-mono-caption: 0.6875rem;
-
-  /* ===== Spacing fluide ===== */
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
   --spacing-grid-cell: 96px;
-
-  /* ===== Border radius (max 8px sauf chips) ===== */
-  --radius-none: 0px;
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-full: 9999px;
-
-  /* ===== Colors (OKLCH-first) ===== */
-  /* Surfaces */
-  --color-paper: oklch(0.995 0.002 290);
-  --color-surface-low: oklch(0.975 0.003 290);
-  --color-surface-high: oklch(1 0.002 290);
-  /* Bande de section teintée ("gris sobre") — plus profonde que surface-low
-     pour créer un rythme vertical sans passer en dark. Light : 0.04 sous paper,
-     subtil mais lisible. Les cartes/panneaux internes (paper/surface-low)
-     restent plus clairs → ils flottent au-dessus de la bande. */
-  --color-section-band: oklch(0.955 0.004 290);
-
-  /* Ink (neutrals tinted violet hue 290) */
-  --color-ink: oklch(0.16 0.008 290);
-  --color-ink-soft: oklch(0.22 0.008 290);
-  --color-ink-mid: oklch(0.40 0.006 290);
-  --color-ink-low: oklch(0.48 0.005 290);
-  --color-ink-faint: oklch(0.78 0.004 290);
-
-  /* Lines */
-  --color-divider: oklch(0.94 0.004 290);
-  --color-grid-line: oklch(0.93 0.005 290);
-  --color-grid-line-active: oklch(0.72 0.005 290);
-  /* Bordure d'élément interactif au repos : >=3:1 vs paper (WCAG 1.4.11). */
-  --color-border-strong: oklch(0.66 0.005 290);
-
-  /* Dark mode tokens (sections en bg-ink) */
-  --color-text-on-dark: oklch(0.97 0.003 290);
-  --color-text-on-dark-mid: oklch(0.78 0.005 290);
-  --color-text-on-dark-low: oklch(0.66 0.006 290);
-  --color-text-on-dark-faint: oklch(0.48 0.008 290);
-  --color-divider-dark: oklch(0.28 0.008 290);
-  --color-grid-line-dark: oklch(0.30 0.008 290);
-  --color-surface-on-dark: oklch(0.20 0.008 290);
-
-  /* Accent — FLAMME chaude (inspiration Mistral, juin 2026). Le hook accent
-     unique pilote les données-clés et états fonctionnels : FAQ, focus, slider,
-     liens, sélection. Aucun trait décoratif coloré. Orange Mistral en light ;
-     remonté en clarté en dark (override plus bas). Pour revenir au monochrome : redonner
-     --color-accent: var(--color-ink) et --color-accent-soft: var(--color-surface-low). */
-  --color-accent: oklch(0.62 0.19 45);
-  /* Variante foncée de l'accent pour le PETIT texte : ~5.1:1 sur paper light,
-     ~4.6:1 sur section-band, ~4.8:1 sur surface-low (AA partout), là où
-     l'accent vif ne fait que 3.87:1. À 0.57 le token passait sur paper (4.73)
-     mais échouait sur les bandes grises (4.22). Le gros texte / le graphique
-     gardent --color-accent. En dark, l'accent vif suffit déjà (8.27:1). */
-  --color-accent-text: oklch(0.55 0.19 45);
-  --color-accent-soft: oklch(0.95 0.035 65);
-  /* Error / Success */
-  --color-error: oklch(0.55 0.22 25);
-  --color-success: oklch(0.52 0.15 148);
-
-  /* ===== Motion ===== */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-quick: 150ms;
   --duration-default: 200ms;
-  --duration-reveal: 600ms;
   --duration-mount: 700ms;
 
-  /* ===== Elevation — profondeur douce "Vercel" (remplace le flat pur) ===== */
-  --shadow-card: 0 1px 2px -1px oklch(0.16 0.02 290 / 0.05),
-                 0 10px 28px -14px oklch(0.16 0.02 290 / 0.12);
-  --shadow-card-hover: 0 2px 4px -1px oklch(0.16 0.02 290 / 0.06),
-                       0 16px 40px -16px oklch(0.16 0.02 290 / 0.16);
-}
+  /* ── Rayons ── */
+  --radius-none: 0px;
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-full: 9999px;
 
-/* =========================================================================
-   DARK THEME — Sobre tech (Vercel/Linear night).
-   Active via html.dark (toggle utilisateur, persisté dans localStorage).
-   Fallback no-JS via @media (prefers-color-scheme: dark) sauf opt-out html.light.
-   ========================================================================= */
+  /* ── Surfaces ── */
+  --color-paper: #ffffff;
+  --color-surface-low: #f7f7f7;
+  --color-surface-high: #ffffff;
+  --color-section-band: #f7f7f7;
 
-html.dark {
-  --color-paper: oklch(0.13 0.008 290);
-  --color-surface-low: var(--color-surface-on-dark);
-  --color-surface-high: oklch(0.16 0.008 290);
-  --color-section-band: oklch(0.185 0.006 290);
+  /* ── Encres. Le gris tient 7,0:1 sur blanc, le gris clair 4,6:1. ── */
+  --color-ink: #111111;
+  --color-ink-mid: #595959;
+  --color-ink-low: #6b6b6b;
+  --color-ink-faint: #949494;
 
-  --color-ink: var(--color-text-on-dark);
-  --color-ink-soft: var(--color-text-on-dark-mid);
-  --color-ink-mid: var(--color-text-on-dark-low);
-  --color-ink-low: oklch(0.66 0.008 290);
-  --color-ink-faint: var(--color-text-on-dark-faint);
+  /* ── Filets ── */
+  --color-divider: #e5e5e5;
+  --color-grid-line: #ededed;
+  --color-grid-line-active: #c4c4c4;
+  --color-border-strong: #111111;
 
-  --color-divider: var(--color-divider-dark);
-  --color-grid-line: var(--color-grid-line-dark);
-  --color-grid-line-active: oklch(0.50 0.008 290);
-  --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
+  /* ── Texte sur fond sombre (pied de page, panneaux noirs) ── */
+  --color-text-on-dark: #ffffff;
+  --color-text-on-dark-mid: #c9c9c9;
+  --color-text-on-dark-low: #a8a8a8;
+  --color-text-on-dark-faint: #7d7d7d;
+  --color-divider-dark: #333333;
+  --color-grid-line-dark: #2b2b2b;
+  --color-surface-on-dark: #1c1c1c;
 
-  /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
-  --color-accent: oklch(0.74 0.18 55);
-  --color-accent-text: var(--color-accent);
-  --color-accent-soft: oklch(0.30 0.05 50);
-  --color-success: oklch(0.80 0.16 148);
-  --color-error: oklch(0.78 0.16 25);
-}
+  /* ── L'accent ──
+     --color-accent est un FOND : c'est le lime. --color-accent-text est ce
+     qu'on écrit quand un composant veut du texte accentué — et c'est de
+     l'encre, pas du lime, qui y serait illisible. Dans cette DA l'emphase
+     ne vient jamais d'un texte coloré mais d'un surlignage. */
+  --color-lime: #cdf564;
+  --color-accent: #cdf564;
+  --color-accent-text: #111111;
+  --color-accent-soft: #f2fbd8;
 
-@media (prefers-color-scheme: dark) {
-  html:not(.light) {
-    --color-paper: oklch(0.13 0.008 290);
-    --color-surface-low: var(--color-surface-on-dark);
-    --color-surface-high: oklch(0.16 0.008 290);
-    --color-section-band: oklch(0.185 0.006 290);
+  /* L'anneau de focus ne peut pas être le lime : 1,25:1 sur blanc. L'encre
+     tient sur les deux surfaces — 18,88:1 sur blanc, 15,14:1 sur lime. */
+  --color-focus: #111111;
 
-    --color-ink: var(--color-text-on-dark);
-    --color-ink-soft: var(--color-text-on-dark-mid);
-    --color-ink-mid: var(--color-text-on-dark-low);
-    --color-ink-low: oklch(0.66 0.008 290);
-    --color-ink-faint: var(--color-text-on-dark-faint);
+  /* Le lime étant la couleur de marque, il ne peut pas signifier « valide » :
+     un état correct serait indiscernable d'un élément de marque. Les deux
+     états passent en encre, portés par un libellé. */
+  /* Un rouge ne concurrence pas le lime : ils ne sont pas de la même
+     famille. L'argument « le lime ne peut plus dire valide » vaut pour le
+     succès, pas pour l'échec. 5,24:1 sur lime, 8,8:1 sur blanc. */
+  --color-error: #b3261e;
+  --color-success: #111111;
 
-    --color-divider: var(--color-divider-dark);
-    --color-grid-line: var(--color-grid-line-dark);
-    --color-grid-line-active: oklch(0.50 0.008 290);
-    --color-border-strong: oklch(0.48 0.008 290); /* >=3:1 vs paper dark */
-
-    /* Accent flamme remonté en clarté pour tenir sur fond sombre (≥3:1 vs paper). */
-    --color-accent: oklch(0.74 0.18 55);
-    --color-accent-text: var(--color-accent);
-    --color-accent-soft: oklch(0.30 0.05 50);
-    --color-success: oklch(0.80 0.16 148);
-    --color-error: oklch(0.78 0.16 25);
-  }
+  /* ── Élévation : aucune. La structure vient des filets. ── */
+  --shadow-card: 0 0 0 0 transparent;
+  --shadow-card-hover: 0 0 0 0 transparent;
 }
 
 /* =========================================================================
@@ -219,37 +172,47 @@ body {
    TYPOGRAPHY
    ========================================================================= */
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  text-wrap: balance;
-  color: var(--color-ink);
-}
+/* Ces défauts d'élément DOIVENT vivre dans @layer base.
+   Hors couche, ils l'emportent sur tout ce que Tailwind v4 émet dans
+   @layer utilities, quelle que soit la spécificité : en cascade CSS le
+   non-layé bat le layé. Un `<h2 class="text-[length:var(--text-title-lg)]">`
+   rendait donc 48 px au lieu de 30, silencieusement.
+   Le défaut ne se voyait nulle part sur la home, dont tous les h2 demandent
+   justement --text-headline ; il éclatait sur /principes et
+   /mentions-legales, où les titres sortaient 60 % à 75 % trop gros. */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-wrap: balance;
+    color: var(--color-ink);
+  }
 
-h1 {
-  font-size: var(--text-display);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-}
+  h1 {
+    font-size: var(--text-display);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
 
-h2 {
-  font-size: var(--text-headline);
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-}
+  h2 {
+    font-size: var(--text-headline);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
 
-h3 {
-  font-size: var(--text-title);
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
+  h3 {
+    font-size: var(--text-title);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
 
-h4, h5, h6 {
-  font-size: var(--text-body-large);
-  font-weight: 500;
-  line-height: 1.3;
-  letter-spacing: -0.015em;
+  h4, h5, h6 {
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
 }
 
 p, li, blockquote {
@@ -278,7 +241,7 @@ a {
    ⚠️ Règle globale anti-cadre-noir-iOS — cf. mémoire globale "ios-focus-outline-mobile". */
 @media (any-hover: hover), (any-pointer: fine) {
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -290,7 +253,7 @@ a {
   input:not([type='range']):not([type='checkbox']):not([type='radio']):focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
@@ -349,7 +312,7 @@ a, button, input, textarea, select,
   font-size: var(--text-mono-label);
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -366,7 +329,7 @@ a, button, input, textarea, select,
   font-size: var(--text-mono-caption);
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -474,7 +437,7 @@ a, button, input, textarea, select,
   font-family: var(--font-mono);
   font-size: var(--text-mono-caption);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-ink-low);
   margin-bottom: 1.5rem;
@@ -505,12 +468,43 @@ a, button, input, textarea, select,
               transform 100ms var(--ease-out-quint);
 }
 
-.btn-primary:hover {
-  background: var(--color-ink-soft);
+.btn-primary {
+  transition: background-color 0.16s cubic-bezier(0.25, 1, 0.5, 1),
+              color 0.16s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.16s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* LE LIME APPARAÎT AU SURVOL. Le bouton est noir au repos ; la couleur de
+   marque arrive quand la main arrive, au lieu de décorer en permanence.
+   C'est le seul endroit du site où elle bouge. */
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: var(--color-lime);
+  color: var(--color-ink);
+}
+
+/* Sur un aplat lime, ce geste ne peut pas fonctionner : du lime sur du lime
+   disparaît (1,00:1). C'est le blanc qui prend le relais — même geste, autre
+   matière selon le fond. */
+.bloc-lime .btn-primary:hover,
+.bloc-lime .btn-primary:focus-visible {
+  background: #ffffff;
+  color: var(--color-ink);
 }
 
 .btn-primary:active {
   transform: scale(0.98);
+}
+
+/* Ce bloc DOIT rester après `.btn-primary:active` : les deux sélecteurs ont la
+   même spécificité, donc c'est l'ordre qui tranche. Écrit avant, il était
+   silencieusement annulé et l'échelle continuait de jouer pour qui avait
+   demandé moins de mouvement. */
+@media (prefers-reduced-motion: reduce) {
+  /* On garde la transition de COULEUR : c'est un retour d'information, pas
+     du mouvement. Seule l'échelle saute. */
+  .btn-primary { transition: background-color 0.16s ease, color 0.16s ease; }
+  .btn-primary:active { transform: none; }
 }
 
 .btn-primary:disabled {
@@ -520,36 +514,6 @@ a, button, input, textarea, select,
 
 .btn-primary:disabled:active {
   transform: none;
-}
-
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 44px;
-  background: transparent;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  padding: 11px 18px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background var(--duration-default) var(--ease-out-quint),
-              border-color var(--duration-default) var(--ease-out-quint);
-}
-
-.btn-ghost:hover {
-  background: var(--color-surface-low);
-  border-color: var(--color-ink-faint);
-}
-
-.btn-ghost:active {
-  transform: scale(0.98);
 }
 
 /* =========================================================================
@@ -641,10 +605,22 @@ a, button, input, textarea, select,
 
 .chip-accent {
   background: var(--color-accent-soft);
-  /* Un cran plus sombre que --color-accent-text : sur le fond teinté accent-soft
-     (L 0.95), accent-text seul plafonne à ~4.1:1 — le mix vers l'encre repasse
-     le mono-caption 11px au-dessus de 4.5:1 (AA). */
-  color: color-mix(in oklab, var(--color-accent-text) 78%, var(--color-ink));
+  /* Encre pleine : sur accent-soft (#f2fbd8) elle donne 17,59:1, très au-delà de
+     l'AA exigé pour un mono-caption de 11 px. Le color-mix qui figurait ici
+     visait l'ancien accent flamme, où le texte de marque plafonnait à 4,1:1 ;
+     depuis la bascule lime, --color-accent-text vaut l'encre et le mix
+     mélangeait #111111 avec lui-même. */
+  color: var(--color-accent-text);
+  border-color: transparent;
+}
+
+/* .chip:hover l'emporte en spécificité (0,2,0 contre 0,1,0) et repeignait le
+   fond en surface-low : survoler une chip de rôle lui faisait perdre sa teinte
+   lime. Les chips de rôle ne sont pas cliquables, ce survol n'avait rien à
+   signaler — et il retirait de la couleur à la seule section qui en manquait. */
+.chip-accent:hover {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-text);
   border-color: transparent;
 }
 
@@ -679,10 +655,6 @@ a, button, input, textarea, select,
   box-shadow: var(--shadow-card-hover);
 }
 
-.card-elevated {
-  padding: 32px;
-}
-
 .card-interactive {
   cursor: pointer;
   position: relative;
@@ -709,67 +681,9 @@ a, button, input, textarea, select,
    CODE BLOCK
    ========================================================================= */
 
-.code-block {
-  background: var(--color-surface-low);
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-body);
-  font-weight: 400;
-  line-height: 1.6;
-  padding: 16px 20px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-md);
-  overflow-x: auto;
-  margin: 0;
-}
-
-.code-key { color: var(--color-accent-text); }
-.code-string { color: var(--color-accent-text); }
-.code-number { color: var(--color-ink-mid); }
-.code-comment { color: var(--color-ink-faint); font-style: italic; }
-
 /* =========================================================================
    INPUTS
    ========================================================================= */
-
-.input-text {
-  width: 100%;
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-body);
-  /* >=16px : évite le zoom auto iOS Safari au focus d'un champ. */
-  font-size: max(16px, var(--text-body));
-  line-height: 1.55;
-  padding: 10px 14px;
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-sm);
-  transition: border-color var(--duration-default) var(--ease-out-quint);
-}
-
-.input-text::placeholder {
-  color: var(--color-ink-low);
-}
-
-/* Honeypot anti-spam : hors-écran, invisible aux humains et aux lecteurs d'écran. */
-.hp-field {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.input-text:hover {
-  border-color: var(--color-ink-faint);
-}
-
-/* :focus-visible (pas :focus) : les champs texte le matchent toujours au focus,
-   mais ça aligne les inputs sur le contrat des boutons/liens du système. */
-.input-text:focus-visible {
-  border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
 
 /* =========================================================================
    ROI CALCULATOR — range slider mono-style
@@ -786,30 +700,16 @@ a, button, input, textarea, select,
   height: 28px;
   /* Track avec fill accent entre min et current value, via --slider-progress
      mis à jour par le JS du composant ROI à chaque input event. */
-  background-image: linear-gradient(
-    to right,
-    var(--color-accent) 0%,
-    var(--color-accent) var(--slider-progress, 0%),
-    var(--color-divider) var(--slider-progress, 0%),
-    var(--color-divider) 100%
-  );
+  background-image:
+    linear-gradient(var(--color-lime), var(--color-lime)),
+    linear-gradient(var(--color-ink), var(--color-ink));
   background-repeat: no-repeat;
-  background-size: 100% 4px;
-  background-position: center;
+  background-size: var(--slider-progress, 0%) 10px, 100% 4px;
+  background-position: left center, center;
   border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
   transition: background-color var(--duration-default);
-}
-
-.roi-slider:hover {
-  background-image: linear-gradient(
-    to right,
-    var(--color-accent) 0%,
-    var(--color-accent) var(--slider-progress, 0%),
-    var(--color-ink-faint) var(--slider-progress, 0%),
-    var(--color-ink-faint) 100%
-  );
 }
 
 .roi-slider::-webkit-slider-thumb {
@@ -818,20 +718,22 @@ a, button, input, textarea, select,
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
-  background: var(--color-paper);
+  background: var(--color-lime);
   border: 2px solid var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-quick), transform var(--duration-quick);
 }
 
 .roi-slider::-webkit-slider-thumb:hover {
-  border-color: var(--color-accent);
-  transform: scale(1.1);
+  /* Une seule déclaration : il y en avait deux, la seconde écrasait la
+     première et le survol valait donc 1,1 quand le focus valait 1,15. L'écart
+     n'était pas voulu, il restait d'une édition. */
+  transform: scale(1.15);
 }
 
 .roi-slider:focus-visible::-webkit-slider-thumb {
-  border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
+  transform: scale(1.15);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -839,20 +741,22 @@ a, button, input, textarea, select,
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
-  background: var(--color-paper);
+  background: var(--color-lime);
   border: 2px solid var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-quick), transform var(--duration-quick);
 }
 
 .roi-slider::-moz-range-thumb:hover {
-  border-color: var(--color-accent);
-  transform: scale(1.1);
+  /* Une seule déclaration : il y en avait deux, la seconde écrasait la
+     première et le survol valait donc 1,1 quand le focus valait 1,15. L'écart
+     n'était pas voulu, il restait d'une édition. */
+  transform: scale(1.15);
 }
 
 .roi-slider:focus-visible::-moz-range-thumb {
-  border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
+  transform: scale(1.15);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -877,13 +781,22 @@ a, button, input, textarea, select,
   transform: translateY(0);
 }
 
-/* Stagger delays */
+/* Cascade d'entrée.
+   Le délai par défaut vaut le PLAFOND, pas zéro : une liste plus longue que
+   l'échelle voit ses derniers éléments arriver en dernier, avec le sixième,
+   au lieu d'arriver en premier avec le premier. C'est exactement ce qui se
+   passait sur /principes, dont la liste compte huit entrées. */
+.reveal-stagger > .reveal { transition-delay: 400ms; }
 .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
 .reveal-stagger > .reveal:nth-child(2) { transition-delay: 80ms; }
 .reveal-stagger > .reveal:nth-child(3) { transition-delay: 160ms; }
 .reveal-stagger > .reveal:nth-child(4) { transition-delay: 240ms; }
 .reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
+.reveal-stagger > .reveal:nth-child(7) { transition-delay: 480ms; }
+.reveal-stagger > .reveal:nth-child(8) { transition-delay: 560ms; }
+.reveal-stagger > .reveal:nth-child(9) { transition-delay: 640ms; }
+.reveal-stagger > .reveal:nth-child(10) { transition-delay: 720ms; }
 
 /* Hero choreography — page-load orchestrée sur le manifesto dé-boxé.
    Chaque ligne (eyebrow → H1 → sous-titre → CTA → microdata) monte en cascade.
@@ -1087,8 +1000,13 @@ a[href^="mailto:"] {
   display: none;
 }
 
+/* --color-accent-text vaut l'encre, et l'état de repos aussi : ce survol ne
+   changeait strictement rien sur les sept questions. Il devient un
+   soulignement, qui dit « cliquable » sans introduire de couleur. */
 .faq-summary:hover {
-  color: var(--color-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
 }
 
 .faq-num {
@@ -1133,6 +1051,71 @@ a[href^="mailto:"] {
   max-width: 72ch;
 }
 
+/* ── L'entrée de la FAQ : un surligneur qui descend la liste ──
+   Chaque question monte à son tour, et une bande lime la balaie de gauche à
+   droite pendant qu'elle arrive. C'est le dispositif de la DA joué dans le
+   temps : ailleurs le surligneur marque un mot, ici il parcourt une liste.
+
+   Le rythme est volontairement lent — 160 ms entre deux questions, 900 ms
+   d'entrée. Plus serré, la cascade se lit comme un défilement de chargement ;
+   plus lâche, on attend. Sur huit éléments, la descente complète dure environ
+   deux secondes et demie. */
+.faq-liste > .reveal {
+  transition-duration: 900ms;
+  transition-delay: calc(var(--rang, 0) * 160ms);
+}
+
+.faq-item {
+  /* Le balayage est en overflow: hidden sur la carte, sinon la bande déborde
+     du filet à gauche et à droite pendant sa course. */
+  overflow: hidden;
+}
+
+.faq-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--color-lime);
+  /* Au repos la bande est hors cadre à gauche ; elle traverse à l'apparition
+     puis sort à droite. `transform` seul : aucune propriété de layout animée. */
+  transform: translateX(-101%);
+}
+
+/* Le déclencheur est `.balaye`, posé par l'observateur de FAQ.astro, et NON
+   `.is-visible`. Le failsafe du <head> pose `.is-visible` sur tous les
+   `.reveal` de la page au bout de 2,5 s, où qu'ils soient : le balayage
+   partait donc hors écran, et il était terminé avant qu'on arrive dessus.
+   Pour un fondu ça n'a pas d'importance, pour une animation qui ne joue
+   qu'une fois c'est rédhibitoire. */
+.faq-item.balaye::after {
+  animation: faq-surligne 900ms var(--ease-out-quint) both;
+  animation-delay: calc(var(--rang, 0) * 160ms);
+}
+
+@keyframes faq-surligne {
+  0%   { transform: translateX(-101%); }
+  45%  { transform: translateX(0); }
+  100% { transform: translateX(101%); }
+}
+
+/* Le contenu passe au-dessus de la bande, SANS fond : la bande glisse entre le
+   papier de la carte et le texte, comme un surligneur sous l'encre. Un fond
+   opaque ici masquerait complètement le balayage — c'est le piège, et il ne se
+   voit pas au code, seulement à l'écran.
+   L'encre sur le lime donne 15,14:1, la question reste lisible pendant le
+   passage. */
+.faq-details {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-liste > .reveal { transition-delay: 0ms; }
+  .faq-item.balaye::after { animation: none; display: none; }
+}
+
 /* =========================================================================
    SR-ONLY — visually hidden mais lisible par screen readers
    ========================================================================= */
@@ -1171,7 +1154,7 @@ a[href^="mailto:"] {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   border-radius: var(--radius-sm);
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -1272,3 +1255,152 @@ a[href^="mailto:"] {
   max-width: 1080px;
   margin: 0 auto;
 }
+
+/* =========================================================================
+   LE DISPOSITIF DE LA DA — le surlignage penché et les aplats lime.
+   ========================================================================= */
+
+/* La bande est un pseudo-élément posé DERRIÈRE le texte, et c'est lui seul qui
+   penche : faire tourner le <mark> inclinerait les lettres, or on veut un coup
+   de surligneur de travers sur un texte droit.
+   Contrepartie assumée : sur un fragment qui passe à la ligne, la bande
+   couvrirait tout le rectangle englobant — d'où `nowrap` et des fragments
+   courts. */
+mark {
+  position: relative;
+  isolation: isolate;
+  background: none;
+  color: inherit;
+  padding: 0.02em 0.2em;
+  white-space: nowrap;
+}
+
+mark::before {
+  content: '';
+  position: absolute;
+  inset: 0.06em 0 0.1em;
+  background: var(--color-lime);
+  transform: rotate(var(--angle, -1.8deg));
+  transform-origin: center;
+  z-index: -1;
+}
+
+/* Un surlignage sur deux penche dans l'autre sens, et la classe est posée à la
+   main : `:nth-of-type(even)` ne s'appliquerait jamais, chaque <mark> étant
+   seul dans son parent. Douze bandes du même côté se lisent comme un réglage,
+   pas comme un geste. */
+mark.inv::before { --angle: 1.5deg; }
+
+/* Sur les très gros corps l'inclinaison diminue : à 76 px, un degré déplace la
+   bande de plusieurs pixels aux extrémités et elle mord la ligne voisine. */
+/* À 76 px pour un interlignage de 72 px, la bande dépassait la ligne et
+   mordait celle du dessus. Elle est resserrée ici, et seulement ici. */
+h1 mark::before { --angle: -1.3deg; inset: 0.14em 0 0.16em; }
+h1 mark.inv::before { --angle: 1.1deg; }
+
+/* Sur un aplat lime, c'est le blanc qui surligne — sinon le mot disparaîtrait
+   dans le fond. */
+.bloc-lime mark::before { background: #ffffff; }
+
+/* ── L'aplat lime ──
+   Il remappe les jetons de rôle : tout composant réutilisable s'y adapte sans
+   variante. Le remap ne lit que des valeurs fixes — lire un rôle produirait un
+   cycle, et la section entière deviendrait lime sur lime. */
+.bloc-lime {
+  background: var(--color-lime);
+
+  --color-paper: var(--color-lime);
+  --color-surface-low: var(--color-lime);
+  --color-surface-high: #ffffff;
+  --color-section-band: var(--color-lime);
+  --color-divider: rgba(17, 17, 17, 0.18);
+  --color-grid-line: rgba(17, 17, 17, 0.12);
+  --color-ink-mid: #2e2e2e;
+  --color-ink-low: #3a3a3a;
+  --color-ink-faint: #5c5c5c;
+  --color-accent: #111111;
+  --color-accent-soft: rgba(17, 17, 17, 0.08);
+}
+
+::selection { background: var(--color-lime); color: #111111; }
+.bloc-lime ::selection { background: #ffffff; color: #111111; }
+
+/* =========================================================================
+   Les consommateurs de --color-paper en COULEUR (et non en fond).
+   Le remap .bloc-lime fait de --color-paper le lime : tout composant qui
+   l'écrit en `color:` ou en remplissage de champ hérite alors du lime, et
+   devient illisible sur son propre fond. Ces deux règles rattrapent les
+   seuls cas concernés.
+   ========================================================================= */
+
+.bloc-lime .btn-primary {
+  color: #ffffff;
+}
+
+/* =========================================================================
+   L'APLAT ENCRE — le pied de page. Même mécanique que .bloc-lime : on remappe
+   les jetons de rôle, et les composants suivent sans variante. La page cesse
+   ainsi de finir sur du blanc.
+   ========================================================================= */
+
+.bloc-encre {
+  /* Valeurs LITTÉRALES ici, jamais var(--color-ink) : un remap se résout
+     contre la NOUVELLE valeur posée sur le même élément. Écrire
+     `background: var(--color-ink)` à côté de `--color-ink: <blanc>` donnait
+     un pied blanc avec du texte blanc dessus. C'est le même cycle que celui
+     déjà évité sur .bloc-lime — je l'ai reproduit ici. */
+  background: #111111;
+  color: #ffffff;
+
+  --color-paper: #111111;
+  --color-surface-low: var(--color-surface-on-dark);
+  --color-surface-high: var(--color-surface-on-dark);
+  --color-section-band: var(--color-ink);
+  --color-ink: #ffffff;
+  --color-ink-mid: var(--color-text-on-dark-mid);
+  --color-ink-low: var(--color-text-on-dark-low);
+  --color-ink-faint: var(--color-text-on-dark-faint);
+  --color-divider: var(--color-divider-dark);
+  --color-grid-line: var(--color-grid-line-dark);
+  --color-border-strong: var(--color-text-on-dark-low);
+  /* Sur l'encre, le lime redevient lisible : 15,14:1. C'est le seul endroit
+     du site où il a le droit d'être du texte. */
+  --color-accent-text: var(--color-lime);
+  --color-focus: var(--color-lime);
+}
+
+.bloc-encre mark::before { background: var(--color-lime); }
+.bloc-encre .btn-primary { background: var(--color-lime); color: #111111; }
+.bloc-encre .btn-primary:hover,
+.bloc-encre .btn-primary:focus-visible { background: #ffffff; }
+
+/* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
+   `nowrap` qui protege la bande devient une cause de debordement. La bande
+   couvre alors le rectangle englobant, ce qui est moins grave qu un titre
+   coupe hors ecran. */
+/* Il a existé ici une règle qui, sous 30rem, relâchait `mark` en
+   `white-space: normal` et posait `hyphens: auto` sur les titres, pour rattraper
+   un titre qui dépassait de deux pixels. Les deux effets étaient pires que le
+   défaut qu'ils corrigeaient :
+
+   — `hyphens: auto` coupait les mots au tiret, et « freelance » devenait
+     « free-lance » dans le seul titre du site qui porte le nom de l'entité ;
+   — `white-space: normal` laissait le fragment surligné passer à la ligne, or
+     la bande est un pseudo-élément unique posé derrière : sur deux lignes elle
+     couvre le rectangle englobant, donc aussi le vide à droite de la première
+     ligne. Un aplat lime informe au milieu du titre.
+
+   La contrainte reste donc celle du dispositif : un fragment surligné tient sur
+   une ligne, à toutes les tailles. C'est aux fragments d'être courts, pas à la
+   bande de se déformer. */
+
+
+/* Lien dans une phrase de prose : souligné d'un filet lime, qui passe à l'encre
+   au survol. Le lime ne porte jamais le texte, seulement le trait. */
+.lien-prose {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-lime);
+  padding-bottom: 1px;
+}
+.lien-prose:hover { border-bottom-color: var(--color-ink); }

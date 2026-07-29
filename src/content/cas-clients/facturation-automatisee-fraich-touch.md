@@ -1,16 +1,42 @@
 ---
 title: "Facturation complexe 100% automatisée depuis HubSpot"
+seoTitle: "Automatiser la facturation depuis HubSpot : cas client Make"
+description: "Fraich Touch est passée de 33 à 4 scénarios Make et de 16 factures en erreur à 0, en récupérant environ 4 h par semaine."
 secteur: "Agence de gestion de talents"
 date: 2026-01-30
 tags: ["Finances", "Ops"]
 tools: ["Make", "Notion", "HubSpot", "API"]
 kpis:
-  - value: "33 → 4"
-    label: "Scénarios Make"
-  - value: "16 → 0"
-    label: "Factures en erreur"
   - value: "~4 h/sem"
-    label: "Maintenance économisée"
+    label: "Récupérées par l’équipe"
+  - value: "5 min"
+    label: "Pour régler une erreur, contre 30 à 60 min"
+  - value: "30 min"
+    label: "Pour former un nouveau collaborateur"
+flow:
+  describe: "Schéma du workflow de facturation Fraich Touch : un deal signé dans HubSpot déclenche le calcul des échéances, puis la facture part dans Pennylane, son statut remonte dans Notion et l’envoi part chaque jour à 9 h."
+  trigger: { icon: "simple-icons:hubspot", kicker: "Deal signé", title: "HubSpot", sub: "commission · échéances" }
+  agent: { icon: "lucide:calculator", kicker: "Règles", title: "Calcule & découpe", sub: "TVA · échéances · VHR" }
+  actions:
+    - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture émise" }
+    - { icon: "simple-icons:notion", kicker: "Notion", title: "Statut visible" }
+    - { icon: "lucide:clock", kicker: "Chaque jour à 9 h", title: "Envoi finalisé" }
+bascule:
+  - { avant: "33 scénarios Make empilés, dont 28 reliques", apres: "4 scénarios propres et documentés" }
+  - { avant: "30 à 60 min pour régler une erreur", apres: "5 min" }
+  - { avant: "Une journée pour ajouter un pipeline annuel", apres: "30 minutes, une ligne dans Notion" }
+  - { avant: "Plusieurs heures pour former un arrivant", apres: "30 minutes" }
+nomenclature:
+  - { etape: "Changement de deal détecté", outil: "Webhooks HubSpot", role: "declencheur" }
+  - { etape: "Passage du deal en « BRAVO »", outil: "HubSpot", role: "declencheur" }
+  - { etape: "Devis créé puis accepté à la signature", outil: "Pennylane", role: "action" }
+  - { etape: "Jusqu'à 12 factures créées en brouillon", outil: "Pennylane", role: "action" }
+  - { etape: "VHR intégrés, TVA selon le code pays", outil: "Make", role: "controle" }
+  - { etape: "Finalisation quotidienne à 9 h", outil: "Make", role: "action" }
+  - { etape: "Email au talent au paiement", outil: "Make", role: "action" }
+  - { etape: "Alerte si le talent est introuvable", outil: "Make", role: "controle" }
+  - { etape: "Suivi et statut en temps réel", outil: "Notion", role: "controle" }
+  - { etape: "Configuration lue, jamais codée en dur", outil: "Notion", role: "controle" }
 draft: false
 ---
 
@@ -64,15 +90,15 @@ Au lieu de coder les IDs des pipelines en dur, les scénarios lisent une table d
 
 ## Les étapes
 
-### Semaine 1 — Audit et diagnostic
+### Audit et diagnostic (semaine 1)
 
 Analyse complète du compte Make (33 scénarios, 17 connexions, 3 Data Stores). Mapping du pipeline commercial HubSpot et des spécificités métier (TVA, VHR, échelonnement, bons de commande). Livraison d'un rapport d'audit détaillé avec vidéo explicative et recommandation de refonte.
 
-### Semaine 2 — Développement
+### Développement (semaine 2)
 
 Construction des 4 scénarios Make, dashboard Notion, intégration Pennylane API v2. Mise en place des webhooks HubSpot en remplacement du polling horaire. Configuration du mapping dynamique et de la logique TVA par code pays.
 
-### Semaines 3-4 — Tests et itérations
+### Tests et itérations (semaines 3-4)
 
 Sessions de test en live avec l'équipe sur de vrais deals. Corrections TVA, ajustement des workflows devis, validation du processus de réclamation facture talents. Migration des données historiques HubSpot vers Notion. Points de suivi bi-hebdomadaires.
 
@@ -84,11 +110,11 @@ Nettoyage des statuts par l'équipe, activation progressive, vidéo de formation
 
 ### Fiabilité totale de la facturation
 
-Les 16 factures bloquées dans la Dead Letter Queue, c'est terminé. Chaque facture est envoyée à temps, chaque erreur remonte instantanément dans Notion. Plus de CA bloqué, plus de retards de paiement découverts par hasard.
+Les 16 factures bloquées dans la Dead Letter Queue, c'est terminé. Chaque facture part à temps et chaque erreur remonte instantanément dans Notion.
 
 ### Visibilité en temps réel
 
-L'équipe est passée de zéro visibilité à un dashboard Notion où chaque facture a son statut, ses erreurs détaillées et un lien direct vers le deal HubSpot. Lise gère les paiements quotidiens (6-7 par jour) en quelques clics au lieu de naviguer entre HubSpot, Pennylane et des fichiers Excel.
+L'équipe est passée de zéro visibilité à un dashboard Notion où chaque facture se retrouve en un coup d'œil. Lise gère les paiements quotidiens (6-7 par jour) en quelques clics au lieu de naviguer entre HubSpot, Pennylane et des fichiers Excel.
 
 ### 4 h/semaine économisées
 

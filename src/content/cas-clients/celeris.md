@@ -1,22 +1,33 @@
 ---
 title: "Un catalogue produits qui s'enrichit tout seul"
+seoTitle: "Enrichir un catalogue produits par agent IA : cas client Odoo"
+description: "Celeris enrichit son catalogue directement dans Odoo grâce à deux agents IA, pour 2 à 3 centimes par fiche et plus de 60 % de correspondances automatiques."
 secteur: "Distributeur IT B2B"
 date: 2026-06-20
 tags: ["Ops"]
 tools: ["n8n", "Mistral", "Odoo", "Claude"]
 kpis:
-  - value: "2–3 ¢"
-    label: "Coût IA par fiche"
+  - value: "Brouillon"
+    label: "L’agent rédige, le commercial valide avant publication"
   - value: ">60 %"
-    label: "Matching auto (319/515)"
+    label: "Produits appariés automatiquement (319 sur ~515, en test)"
   - value: "797"
-    label: "Fiches specs scrapées"
+    label: "Pages de specs constructeur collectées automatiquement"
+nomenclature:
+  - { etape: "Fichier constructeur en entrée", outil: "CTO", role: "declencheur" }
+  - { etape: "Collecte des specs constructeur", outil: "Scraping", role: "declencheur" }
+  - { etape: "Extraction, structuration, rédaction", outil: "n8n + Mistral", role: "agent" }
+  - { etape: "Vérification des attributs, anti-doublon", outil: "Agent 2", role: "controle" }
+  - { etape: "Exécution locale protégée", outil: "MCP local", role: "controle" }
+  - { etape: "Création du produit dans l'ERP", outil: "MCP Odoo", role: "action" }
+  - { etape: "Fiche créée en brouillon", outil: "Odoo", role: "controle" }
+  - { etape: "Correction en langage naturel", outil: "Agent", role: "action" }
 draft: false
 ---
 
 ## L'entreprise
 
-Celeris est un distributeur IT B2B établi (PC, serveurs HPE, Dell, Lenovo), dont tout le catalogue et la gestion commerciale tournent sur Odoo. Un acteur avec une exigence forte : **garder la maîtrise de ses données**, beaucoup devant rester en interne.
+Celeris est un distributeur IT B2B établi (PC, serveurs HPE, Dell, Lenovo), dont tout le catalogue et la gestion commerciale tournent sur Odoo. Un acteur avec une exigence forte : **garder la maîtrise de ses données**, dont une bonne partie doit rester en interne.
 
 ## Le problème
 
@@ -37,7 +48,7 @@ Les specs constructeurs sont récupérées automatiquement (déjà **797 pages**
 
 ### Une IA souveraine
 
-Le moteur de génération est **Mistral** — IA française, données en Europe — choisi pour répondre à l'exigence de souveraineté de Celeris. Les données sensibles ne transitent pas par le cloud public : le MCP tourne en local, protégé par une URL secrète et une clé cryptographique.
+Le moteur de génération est **Mistral**, une IA française dont les données restent en Europe, choisi pour répondre à l'exigence de souveraineté de Celeris. Les données sensibles ne transitent pas par le cloud public : le MCP tourne en local, protégé par une URL secrète et une clé cryptographique.
 
 ### Validation humaine
 
@@ -45,9 +56,9 @@ Chaque fiche est créée **en brouillon** : le commercial reçoit le lien Odoo e
 
 ## Les résultats
 
-> Projet en cours de déploiement (mise en production visée à l'été 2026) — chiffres mesurés à ce stade.
+> Projet en cours de déploiement (mise en production visée à l'été 2026). Les chiffres ci-dessous sont ceux mesurés à ce stade.
 
 - Workflow d'enrichissement **fonctionnel sur l'environnement de test**, validé sur les serveurs HPE.
 - **Coût IA quasi nul** : 2 à 3 centimes par fiche générée.
-- Sur les données existantes, **plus de 60 % de correspondances automatiques** (319 produits sur ~515) — le reste fléché pour revue humaine.
+- Sur les données existantes, **plus de 60 % de correspondances automatiques** (319 produits sur ~515). Le reste est fléché pour revue humaine.
 - Une architecture pensée pour s'étendre aux autres marques (Dell, HP) et à d'autres départements.

@@ -1,9 +1,7 @@
 ---
 import '@fontsource-variable/geist';
-import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
-import jetbrainsLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 
 interface Props {
   title?: string;
@@ -20,7 +18,7 @@ interface Props {
 }
 
 const {
-  title = "Lilian Sevoumian · Freelance automatisation & IA · n8n, Make, Airtable",
+  title = "Freelance automatisation & agents IA · n8n, Make · Lilian Sevoumian",
   description = "Freelance en automatisation et IA. J'automatise vos processus métier avec n8n, Make et des agents IA sur-mesure. Make certifié niveau 5, réponse sous 48 h.",
   ogType = 'website',
   ogImage: customOgImage,
@@ -33,7 +31,13 @@ const {
   faqSchema
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+/* Sans slash final, comme les 217 liens internes du site et comme le sitemap.
+   `Astro.url.pathname` en porte un, si bien que le canonical déclarait une URL
+   que RIEN sur le site ne pointait : les liens, llms.txt et le JSON-LD
+   contredisaient tous la seule balise censée trancher la duplication.
+   La racine reste « / », elle ne se normalise pas. */
+const cheminCanonique = Astro.url.pathname.replace(/(.+)\/$/, '$1');
+const canonicalURL = new URL(cheminCanonique, Astro.site);
 const ogImage = customOgImage ? new URL(customOgImage, Astro.site) : new URL('/og-image.jpg', Astro.site);
 
 const breadcrumbSchema = breadcrumbs ? {
@@ -46,22 +50,40 @@ const breadcrumbSchema = breadcrumbs ? {
 
 const personSchema = {
   "@context": "https://schema.org", "@type": "Person",
+  "@id": "https://liliansevoumian.fr/#person",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "image": ogImage.toString(),
   "jobTitle": ["Freelance automatisation & IA", "Expert n8n & Make", "Consultant automatisation des processus", "Formateur no-code"],
   "description": "Freelance et formateur en automatisation et IA : automatisation des processus métier avec n8n, Make, Airtable et agents IA sur-mesure.",
-  "knowsAbout": ["Automatisation des processus", "Agents IA", "Make", "n8n", "Airtable", "Workflow", "Intégration API", "No-Code", "Claude", "Notion", "IA"],
+  /* Les outils listés ici sont exactement ceux que la section « outils » de la
+     home affiche : un moteur de réponse qui compare les deux ne doit pas
+     trouver de liste plus courte dans le balisage que sur la page. */
+  "knowsAbout": ["Automatisation des processus", "Agents IA", "Make", "n8n", "Airtable", "Workflow", "Intégration API", "No-Code", "Claude", "Claude Code", "Codex", "Mistral AI", "Notion", "IA"],
+  "hasCredential": [
+    { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
+      "name": "Make Certified Niveau 5 (premier certifié en France)",
+      "recognizedBy": { "@type": "Organization", "name": "Make", "url": "https://www.make.com" } },
+    { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
+      "name": "Airtable Certified",
+      "recognizedBy": { "@type": "Organization", "name": "Airtable", "url": "https://airtable.com" } }
+  ],
+  "address": { "@type": "PostalAddress", "addressRegion": "Ile-de-France", "addressCountry": "FR" },
   "sameAs": ["https://www.linkedin.com/in/liliansevoumian/", "https://github.com/liliansev", "https://www.youtube.com/@lilian.sevoumian", "https://liliansevoumian.substack.com/"]
 };
 
 const serviceSchema = {
   "@context": "https://schema.org", "@type": "ProfessionalService",
+  "@id": "https://liliansevoumian.fr/#service",
   "name": "Lilian Sevoumian - Automatisation No-Code",
   "description": "Automatisation des processus métier, agents IA, intégration et formation no-code (n8n, Make, Airtable).",
   "url": "https://liliansevoumian.fr", "image": ogImage.toString(),
-  "priceRange": "€€", "areaServed": "France",
+  "areaServed": [
+    { "@type": "Country", "name": "France" },
+    { "@type": "Place", "name": "Île-de-France" },
+    { "@type": "Place", "name": "Europe" }
+  ],
   "serviceType": ["Automatisation des processus", "Agents IA", "Intégration", "Workflow", "Conseil no-code", "Formation Make", "Formation n8n"],
-  "provider": { "@type": "Person", "name": "Lilian Sevoumian" }
+  "provider": { "@id": "https://liliansevoumian.fr/#person" }
 };
 
 function safeJsonLd(obj: object): string {
@@ -70,9 +92,10 @@ function safeJsonLd(obj: object): string {
 
 const websiteSchema = {
   "@context": "https://schema.org", "@type": "WebSite",
+  "@id": "https://liliansevoumian.fr/#website",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "description": description, "inLanguage": "fr-FR",
-  "author": { "@type": "Person", "name": "Lilian Sevoumian" }
+  "author": { "@id": "https://liliansevoumian.fr/#person" }
 };
 
 const faqPageSchema = faqSchema ? {
@@ -89,50 +112,11 @@ const faqPageSchema = faqSchema ? {
 <html lang="fr" class="scroll-smooth">
   <head>
     <script is:inline>
-      // Anti-FOUC theme : pose .dark / .light AVANT render.
-      // Priorité : choix utilisateur (localStorage) > prefers-color-scheme OS.
-      // Listener matchMedia : si pas de choix user, suit les changements OS en live.
+      // La DA n'a qu'une surface : plus de bascule, donc plus de script de
+      // thème. Il ne reste que .js-ready, qui arme le voile des .reveal —
+      // sans JS tout reste peint, l'animation n'est jamais un gate.
       (function () {
-        try {
-          var stored = localStorage.getItem('theme');
-          var mql = window.matchMedia('(prefers-color-scheme: dark)');
-          var systemDark = mql.matches;
-          var isDark = stored === 'dark' || (!stored && systemDark);
-          var root = document.documentElement;
-          root.classList.toggle('dark', isDark);
-          if (stored === 'light') root.classList.add('light');
-          root.classList.add('js-ready');
-
-          // Suit l'OS en live (changements pendant la session) sauf si user override
-          mql.addEventListener('change', function (e) {
-            if (localStorage.getItem('theme')) return; // override actif → ignore
-            root.classList.toggle('dark', e.matches);
-            document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
-              btn.setAttribute('aria-pressed', String(e.matches));
-              btn.setAttribute(
-                'aria-label',
-                e.matches ? 'Activer le mode clair' : 'Activer le mode sombre'
-              );
-            });
-          });
-        } catch (e) {
-          document.documentElement.classList.add('js-ready');
-        }
-
-        // meta theme-color : les deux <meta media="prefers-color-scheme"> ne suivent
-        // que l'OS, pas la classe .dark/.light posée par le toggle. On resynchronise
-        // le chrome navigateur sur le thème effectif (les hex miroirs de paper/ink
-        // sont le seul endroit du projet où un hex est toléré : c'est du meta, pas du CSS).
-        var syncThemeColor = function () {
-          var val = document.documentElement.classList.contains('dark') ? '#1F1E26' : '#FCFCFD';
-          document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
-            m.setAttribute('content', val);
-            m.removeAttribute('media');
-          });
-        };
-        new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncThemeColor);
-        else syncThemeColor();
+        document.documentElement.classList.add('js-ready');
 
         // Failsafe garanti, indépendant du module de reveal (fin de <body>).
         // .js-ready (posé ci-dessus) arme le cloak `opacity:0` des .reveal.
@@ -148,14 +132,13 @@ const faqPageSchema = faqSchema ? {
     </script>
 
     <meta charset="UTF-8" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
     <meta name="author" content="Lilian Sevoumian" />
-    <meta name="theme-color" content="#FCFCFD" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1F1E26" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
@@ -189,12 +172,9 @@ const faqPageSchema = faqSchema ? {
     <meta name="generator" content={Astro.generator} />
 
     <link rel="preload" as="font" type="font/woff2" href={geistLatin} crossorigin />
-    {/* JetBrains Mono est above the fold (eyebrow, nav, boutons) : préchargée
-        comme Geist pour éviter le FOUT/reflow de la voix technique. */}
-    <link rel="preload" as="font" type="font/woff2" href={jetbrainsLatin} crossorigin />
     <link rel="preconnect" href="https://taap.it" crossorigin />
 
-    <script is:inline async src="https://taap.it/scripts/tracker.js" data-project="pk_b238afbc093083b15bf02b73e03d494f" data-track-outbound="true" data-track-forms="true"></script>
+    <script is:inline async src="https://taap.it/scripts/tracker.js" data-project="pk_b238afbc093083b15bf02b73e03d494f" data-track-outbound="true"></script>
     <!-- DataFast queue — capture les goals déclenchés avant le chargement du script -->
     <script is:inline>
       window.datafast = window.datafast || function () {
@@ -237,8 +217,9 @@ const faqPageSchema = faqSchema ? {
           function openOverlay() {
             bootCal();
             if (!inited) {
-              var theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-              window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: theme } });
+              // Le site n'a plus qu'une surface : l'embed cal.com est figé en
+              // clair, il ne lit plus une classe qui n'existe plus.
+              window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: "light" } });
               inited = true;
             }
             lastFocused = document.activeElement;
@@ -307,9 +288,9 @@ const faqPageSchema = faqSchema ? {
     <slot />
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
-    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label="Réserver un appel · 20 min" aria-hidden="true" tabindex="-1">
+    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label="Réserver un diagnostic · 20 min" aria-hidden="true" tabindex="-1">
       <div class="cal-overlay-bar">
-        <span class="cal-overlay-title">Réserver un appel · 20 min</span>
+        <span class="cal-overlay-title">Diagnostic · 20 min</span>
         <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
       </div>
       <div class="cal-overlay-body">
@@ -364,10 +345,15 @@ const faqPageSchema = faqSchema ? {
       document.addEventListener('astro:page-load', initMotion);
     </script>
 
-    <!-- Tracking DataFast : 2 conversions UNIQUEMENT (noms distincts pour les funnels).
-         1) Formulaire soumis    → goal "lead_form", émis en JS dans CTA.astro.
-         2) Appel 20 min réservé  → goal "lead_call" sur les liens cal.com
-            (Offres, pages expert, footer).
+    <!-- Tracking DataFast : le site n'a plus qu'un seul canal de conversion.
+         1) Clic sur un CTA de réservation → goal "lead_call", posé en attribut
+            sur chaque lien cal.com, avec sa source (hero, offres, roi, cas…).
+         2) Réservation confirmée         → goal "call_booked", émis par le
+            listener de l'embed ci-dessus.
+         Le goal "lead_form" n'est plus émis : le formulaire de contact a été
+         retiré au profit du seul créneau. Les funnels du dashboard qui en
+         dépendaient tomberont à zéro à partir de cette mise en ligne — c'est
+         attendu, ce n'est pas une régression de tracking.
          Pas de scroll-depth ni de goals d'engagement intermédiaires. -->
   </body>
 </html>
