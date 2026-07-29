@@ -2,18 +2,26 @@
 /*
  * Stack.astro — section §03.
  *
- * Huit outils en trois familles (AUTOMATION / PRODUCTIVITÉ / IA). Chaque outil porte SA mini-UI
- * signature (mockup produit monochrome) qui montre concrètement ce qu'on en
- * fait, plutôt qu'une définition : n8n → mini-workflow, Make → scénario à
- * modules, Notion → table CRM, Airtable → vues et kanban, Claude Code →
- * console, Codex → file de tâches déléguées, Claude Cowork → chat, Mistral →
- * extraction de document.
+ * Dix outils en quatre familles (AUTOMATION / PRODUCTIVITÉ / IA / VIBE CODING).
+ * Chaque outil porte SA mini-UI signature (mockup produit monochrome) qui montre
+ * concrètement ce qu'on en fait, plutôt qu'une définition : n8n → mini-workflow,
+ * Make → scénario à modules, Notion → table CRM, Airtable → vues et kanban,
+ * Claude Code → console, Codex → file de tâches déléguées, Claude Cowork → chat,
+ * Mistral → extraction de document, Zite → outil interne généré, Lovable →
+ * conversation qui produit un écran.
  *
  * Les captions disent ce que l'outil fait DE MIEUX, pas ce que j'en fais : c'est
  * ce que promet le chapô de la section. Chacune porte un <mark> — la section
  * était la seule de la home sans le dispositif de la DA.
+ *
+ * Chaque famille se termine par un lien vers le diagnostic, avec une intention
+ * qui lui est propre et un `goalSource` distinct : c'est la seule façon de
+ * savoir laquelle des quatre convertit. Le site n'a qu'un point d'arrivée, la
+ * réservation ; ces liens n'en ouvrent pas un second, ils y mènent depuis
+ * l'endroit où le besoin se formule.
  */
 import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
 import { Icon } from 'astro-icon/components';
 import { brandColorFor } from '../data/brands';
 import MockupWindow from './mockups/MockupWindow.astro';
@@ -25,6 +33,8 @@ import StackChat from './mockups/StackChat.astro';
 import StackSovereign from './mockups/StackSovereign.astro';
 import StackCodex from './mockups/StackCodex.astro';
 import StackViews from './mockups/StackViews.astro';
+import StackZite from './mockups/StackZite.astro';
+import StackLovable from './mockups/StackLovable.astro';
 
 const MOCKS = {
   workflow: StackWorkflow,
@@ -35,11 +45,18 @@ const MOCKS = {
   sovereign: StackSovereign,
   codex: StackCodex,
   views: StackViews,
+  zite: StackZite,
+  lovable: StackLovable,
 } as const;
 
 interface Tool {
   name: string;
-  icon: string;
+  /* Optionnel : simple-icons couvre 3 653 marques, ni Zite ni Lovable n'en font
+     partie. Plutôt que de dessiner un faux logo — le site vend la rigueur, une
+     marque approximative se voit — la carte retombe sur le monogramme
+     ci-dessous. L'absence est un choix lisible, l'à-peu-près ne l'est pas. */
+  icon?: string;
+  monogramme?: string;
   role: string;
   mockup: keyof typeof MOCKS;
   caption: string;
@@ -47,11 +64,17 @@ interface Tool {
 interface Layer {
   label: string;
   tools: Tool[];
+  /** L'intention propre à la famille, portée par le lien de fin de bloc. */
+  cta: string;
+  /** Suffixe de `data-fast-goal-source`, pour distinguer les quatre au suivi. */
+  ctaSource: string;
 }
 
 const layers: Layer[] = [
   {
     label: 'AUTOMATION',
+    cta: 'Faire tourner mon process sur n8n ou Make',
+    ctaSource: 'stack-automation',
     tools: [
       /* « Le meilleur QUAND » et pas « le meilleur » : le mot « quand » borne le
          superlatif à un cas d'usage que n8n revendique officiellement. Énoncé
@@ -83,6 +106,8 @@ const layers: Layer[] = [
   },
   {
     label: 'PRODUCTIVITÉ',
+    cta: 'Remettre mes données au propre',
+    ctaSource: 'stack-productivite',
     tools: [
       {
         name: 'Notion',
@@ -108,6 +133,8 @@ const layers: Layer[] = [
   },
   {
     label: 'IA',
+    cta: 'Construire mon agent IA',
+    ctaSource: 'stack-ia',
     tools: [
       /* Claude Code et Codex sont voisins parce qu'ils font le même métier
          autrement, et les rôles doivent le dire : deux chips « IA · DEV » côte
@@ -157,6 +184,34 @@ const layers: Layer[] = [
       },
     ],
   },
+  {
+    label: 'VIBE CODING',
+    cta: 'Faire fabriquer mon outil interne',
+    ctaSource: 'stack-vibe-coding',
+    tools: [
+      /* Les deux outils de cette famille décrivent une application en langage
+         courant, et c'est bien pour ça qu'il faut que leurs maquettes racontent
+         deux choses différentes : Zite montre l'outil une fois EN SERVICE, avec
+         ses données et ses accès ; Lovable montre le moment d'AVANT, quand
+         l'écran apparaît pendant qu'on parle. */
+      {
+        name: 'Zite',
+        monogramme: 'Z',
+        role: 'APP · OUTILS INTERNES',
+        mockup: 'zite',
+        caption:
+          'Le meilleur quand une équipe a besoin de <mark>son propre outil</mark> et qu’il doit rester modifiable.',
+      },
+      {
+        name: 'Lovable',
+        monogramme: 'L',
+        role: 'APP · PROTOTYPE',
+        mockup: 'lovable',
+        caption:
+          'Le plus rapide pour transformer une idée en <mark class="inv">écran qu’on peut cliquer</mark>, le jour même.',
+      },
+    ],
+  },
 ];
 ---
 
@@ -172,7 +227,7 @@ const layers: Layer[] = [
         jugements d'expert plutôt que des affirmations de marché. Le raccourcir
         rendrait les captions attaquables. */}
     <SectionHeader
-      label="8 OUTILS · USAGE QUOTIDIEN"
+      label="10 OUTILS · USAGE QUOTIDIEN"
       title="Les outils IA et automatisations que je maîtrise"
       body="Pour chacun, mon verdict sur ce qu'il fait mieux que les autres."
       titleMaxWidth="26ch"
@@ -197,12 +252,19 @@ const layers: Layer[] = [
           }]}>
             {layer.tools.map((tool) => {
               const Mock = MOCKS[tool.mockup];
-              const brand = brandColorFor(tool.icon);
+              {/* La garde n'est pas défensive : depuis que `icon` est optionnel,
+                  les outils à monogramme passent ici avec undefined, et
+                  `brandColorFor` faisait un .replace() dessus. `tsc --noEmit` ne
+                  typecheck pas les templates .astro, donc rien ne l'a signalé —
+                  seule la page rendue vide l'a montré. */}
+              const brand = tool.icon ? brandColorFor(tool.icon) : undefined;
               return (
                 <article class="stack-card card-soft bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4" style={brand ? `--brand:${brand}` : undefined}>
                   <div class="flex items-center justify-between gap-3 flex-wrap">
                     <div class="inline-flex items-center gap-2.5 min-w-0">
-                      <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
+                      {tool.icon
+                        ? <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
+                        : <span class="stack-monogramme" aria-hidden="true">{tool.monogramme}</span>}
                       <h4 class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] m-0">{tool.name}</h4>
                     </div>
                     <span class="chip chip-accent shrink-0">{tool.role}</span>
@@ -223,6 +285,16 @@ const layers: Layer[] = [
                 </article>
               );
             })}
+          </div>
+
+          <div class="stack-layer-cta">
+            <LinkCTA
+              href="https://cal.com/lilian-sevoumian/20min"
+              external
+              goal="lead_call"
+              goalSource={layer.ctaSource}
+              arrow="↗"
+            >{layer.cta}</LinkCTA>
           </div>
         </section>
       ))}
@@ -300,6 +372,35 @@ const layers: Layer[] = [
 
   @media (prefers-reduced-motion: reduce) {
     .stack-logo { transition: none; }
+  }
+
+  /* Le repli des marques que simple-icons ne couvre pas. Mêmes 22 px que le
+     logo qu'il remplace, pour que la ligne de titre garde une seule métrique
+     d'une carte à l'autre.
+     Contour et non aplat : mesuré côte à côte, un carré d'encre plein pesait
+     nettement plus lourd que les glyphes des huit autres cartes, et la ligne
+     de titre des deux cartes VIBE CODING sautait aux yeux avant les autres.
+     Le filet de 1 px est de toute façon le vocabulaire du site.
+     Pas de padding de correction : la mesure a montré qu'il déplaçait la
+     capitale d'un demi-pixel vers le BAS, à l'inverse de ce qu'il prétendait
+     corriger. Le centrage du flex est exact, on le laisse faire. */
+  .stack-monogramme {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    border: 1px solid var(--color-ink);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .stack-layer-cta {
+    margin-top: clamp(1.1rem, 2vw, 1.5rem);
   }
 
 </style>

@@ -1,0 +1,204 @@
+---
+/* Lovable — l’écran se refait pendant qu’on parle.
+ *
+ * La carte voisine (Zite) ouvre l’application en coupe : trois étages, rien qui
+ * bouge, on inspecte. Celle-ci doit montrer l’autre moitié du vibe coding,
+ * sinon les deux cartes racontent la même chose : on décrit en une phrase, et
+ * l’écran se peint à côté. D’où un wireframe de page — la seule maquette de la
+ * section qui montre un rendu, quand les huit autres montrent des flux, des
+ * lignes ou des consoles.
+ *
+ * Deux écueils écartés au passage. Un fil de bulles aurait doublé la maquette de
+ * Claude Cowork : il n’y a donc pas de conversation ici, une seule phrase, et
+ * c’est l’aperçu qui occupe la surface. Un sélecteur ordinateur / mobile aurait
+ * doublé les onglets de vue d’Airtable : il n’y en a pas.
+ *
+ * La frappe est une révélation par steps() plutôt qu’un curseur qui clignote —
+ * le clignotement appartient déjà à la console de Claude Code.
+ *
+ * Le lime vient du fallback de --brand : Lovable n’est pas déclaré dans
+ * brands.ts et ne le sera pas, donc la carte hôte ne pose pas --brand et var()
+ * retombe sur --color-accent. Aucune couleur inventée pour la marque. Il ne sert
+ * qu’en aplat et en trait, jamais en texte.
+ */
+---
+<div class="lv" role="img" aria-label="Lovable : une phrase décrit ce qu’on veut, et l’aperçu de la page se repeint juste en dessous avec la nouvelle section.">
+  <div class="lv-champ">
+    <span class="lv-phrase">« ajoute une page tarifs »</span>
+  </div>
+
+  <span class="lv-note">Aperçu · refait à chaque phrase</span>
+
+  <div class="lv-vue">
+    <span class="lv-titre" aria-hidden="true"></span>
+    <span class="lv-ligne" aria-hidden="true"></span>
+    <span class="lv-ligne is-court" aria-hidden="true"></span>
+    <span class="lv-bouton" aria-hidden="true"></span>
+    <span class="lv-section">Tarifs</span>
+  </div>
+</div>
+
+<style>
+  .lv {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 12px 14px 13px;
+  }
+
+  /* La phrase est encadrée comme un champ pour qu’on la lise comme une saisie et
+     non comme une légende. overflow:hidden fait deux choses : il masque la
+     frappe, et il garantit qu’une phrase plus longue que la carte est coupée au
+     lieu de l’élargir. */
+  .lv-champ {
+    overflow: hidden;
+    padding: 7px 9px;
+    background: var(--color-surface-low);
+    border: 1px solid var(--color-divider);
+  }
+  .lv-phrase {
+    display: block;
+    width: 26ch;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-body);
+    color: var(--color-ink);
+    animation:
+      lv-frappe 6.5s steps(26, end) infinite,
+      lv-sortie 6.5s ease-in-out infinite;
+  }
+
+  .lv-note {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.03em;
+    color: var(--color-ink-low);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lv-vue {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 12px 11px;
+    border: 1px solid var(--color-divider);
+  }
+
+  /* Blocs muets : un wireframe, pas une capture. Aucun libellé d’interface
+     inventé, seul le mot que la phrase vient de demander est écrit. */
+  .lv-titre {
+    height: 9px;
+    width: 54%;
+    background: var(--color-ink);
+  }
+  .lv-ligne {
+    height: 4px;
+    width: 78%;
+    background: var(--color-ink-faint);
+  }
+  .lv-ligne.is-court { width: 58%; }
+
+  /* Le bouton est le seul aplat de marque de la maquette, et il n’a pas de
+     libellé : du texte posé dessus dépendrait d’un couple fond / encre qui ne
+     tient pas dans les trois thèmes du projet. En aplat muet, le lime reste ce
+     qu’il doit être — une surface. */
+  .lv-bouton {
+    height: 14px;
+    width: 32%;
+    background: var(--brand, var(--color-accent));
+  }
+
+  .lv-section {
+    align-self: stretch;
+    margin-top: 2px;
+    padding: 9px 8px;
+    border: 1px solid var(--color-divider);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Cascade : la page se peint une fois la phrase finie. Les décalages restent
+     courts (0,3 s au plus) pour deux raisons. D’abord chaque élément doit boucler
+     dans le même cycle de 6,5 s — un delay long déphaserait les blocs d’un tour
+     sur l’autre et la page ne se viderait jamais entre deux phrases. Ensuite le
+     delay décale aussi la SORTIE : à 0,62 s d’écart, le titre s’effaçait pendant
+     que le bouton et la section tenaient encore, et l’aperçu passait par un état
+     bancal d’une seconde. Resserré, l’entrée reste en cascade et la sortie se
+     lit comme un seul effacement. */
+  .lv-titre { --d: 0s; }
+  .lv-ligne { --d: 0.07s; }
+  .lv-ligne.is-court { --d: 0.14s; }
+  .lv-bouton { --d: 0.22s; }
+  .lv-section { --d: 0.3s; }
+
+  .lv-vue > * {
+    animation: lv-peint 6.5s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+  /* La section demandée est la seule à s’encadrer de la couleur de marque en
+     arrivant : c’est ce que la phrase vient d’ajouter. Bordure sur les quatre
+     côtés — un liseré latéral est proscrit par le design system.
+     Sélecteur `.lv-vue > .lv-section` et non `.lv-section` seul : Astro scope
+     les styles en suffixant chaque compound d’un attribut `data-astro-cid`, si
+     bien que `.lv-vue > *` pèse (0,3,0) une fois scopé contre (0,2,0) pour
+     `.lv-section`. À égalité de source order la règle générique gagnait, et
+     `lv-neuf` ne s’appliquait jamais — vérifié en computed style. */
+  .lv-vue > .lv-section {
+    animation:
+      lv-peint 6.5s ease-in-out infinite,
+      lv-neuf 6.5s ease-in-out infinite;
+    animation-delay: var(--d), var(--d);
+  }
+
+  @keyframes lv-frappe {
+    0%        { width: 0; }
+    22%, 100% { width: 26ch; }
+  }
+  @keyframes lv-sortie {
+    0%, 92%   { opacity: 1; }
+    97%, 100% { opacity: 0; }
+  }
+  @keyframes lv-peint {
+    0%, 22%   { opacity: 0; transform: translateY(5px); }
+    30%, 88%  { opacity: 1; transform: translateY(0); }
+    95%, 100% { opacity: 0; transform: translateY(5px); }
+  }
+  @keyframes lv-neuf {
+    0%, 26%   { border-color: var(--color-divider); }
+    32%, 48%  { border-color: var(--brand, var(--color-accent)); }
+    56%, 100% { border-color: var(--color-divider); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lv-phrase {
+      animation: none;
+      width: auto;
+      opacity: 1;
+      /* La coupe nette sert la frappe ; au repos, une phrase trop longue mérite
+         des points de suspension. */
+      text-overflow: ellipsis;
+    }
+    /* `.lv-vue > .lv-section` doit être répété tel quel : une media query n’ajoute
+       aucune spécificité, donc un simple `.lv-section` (0,2,0) se ferait battre
+       par la règle animée ci-dessus (0,4,0) et le mouvement continuerait de
+       tourner malgré la préférence système. */
+    .lv-vue > *,
+    .lv-vue > .lv-section {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      border-color: var(--color-divider);
+    }
+  }
+</style>

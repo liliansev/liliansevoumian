@@ -10,19 +10,23 @@
  * à côté de la bio dans le bloc contact.
  */
 import LinkCTA from './LinkCTA.astro';
+import Outil from './Outil.astro';
 
 ---
 
 <section
   id="hero"
   data-section
-  class="bloc-lime relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]"
+  class="bloc-lime hero-grille relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)] overflow-hidden"
 >
   <div class="relative max-w-[1200px] mx-auto pt-10 md:pt-24 pb-12 md:pb-[var(--spacing-section-y)] flex flex-col justify-center lg:block lg:min-h-0">
 
     <div class="grid grid-cols-1">
 
-      <!-- Statement — sur papier nu, sans carte -->
+      {/* Statement, sur papier nu, sans carte.
+          Commentaire Astro et non HTML : un `<!-- -->` est recopié tel quel
+          dans la page servie, et ceux-ci y laissaient des tirets cadratins
+          alors que la copy n'en porte aucun. */}
       <div data-hero-stagger class="flex flex-col gap-6 md:gap-7">
 
         <span class="reveal eyebrow-rule mono-caption text-[var(--color-ink-low)]" style="text-transform: none;">
@@ -45,9 +49,13 @@ import LinkCTA from './LinkCTA.astro';
           J'automatise ce que vos équipes font encore <mark>à la main.</mark>
         </h1>
 
-        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[48ch]">
-          Workflows n8n &amp; Make et agents IA. Je construis ceux qui manquent,
-          et je <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">reprends les automatisations qui cassent</a>.
+        {/* 43ch et non 48 : à 48 le paragraphe dépassait le point où la trame
+            commence, et il était de toute façon au-dessus de la fourchette de
+            lisibilité de 65 à 75 caractères une fois la ligne pleine. */}
+        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[43ch]">
+          Workflows <Outil icon="simple-icons:n8n">n8n</Outil> &amp; <Outil icon="simple-icons:make">Make</Outil>
+          et agents IA. Je construis ceux qui manquent,
+          et je reprends les automatisations qui cassent.
         </p>
 
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
@@ -70,6 +78,52 @@ import LinkCTA from './LinkCTA.astro';
 </section>
 
 <style>
+  /* La trame du hero.
+   *
+   * Même maille que le quadrillage des gouttières posé par Layout.astro
+   * (--spacing-grid-cell, 96 px) : le site n'a qu'une grille, elle entre
+   * simplement dans l'aplat au lieu de s'arrêter à son bord. Une seconde maille
+   * se serait vue comme une erreur d'alignement.
+   *
+   * La couleur vient de --color-grid-line, que .bloc-lime remappe déjà en
+   * rgba(17,17,17,0.12). Rien à écrire ici : la trame suivra toute reprise du
+   * remap, et resterait juste si l'aplat changeait de couleur.
+   *
+   * Le masque est ce qui la rend supportable. Le texte occupe la moitié gauche
+   * (le h1 est plafonné à 19ch) ; la trame est donc pleine à droite et se
+   * dissipe avant de passer sous les mots. Sans lui, un quadrillage derrière un
+   * titre de 76 px se lit comme du bruit.
+   */
+  .hero-grille::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    /* Trait plus clair que le jeton hérité de .bloc-lime, qui vaut 0,12.
+       Mesuré : à 0,12 les verticales coupaient les lettres du h1 avec 5,3 %
+       d'écart de luminance, assez pour se lire comme un trait sur un mot. */
+    background-image:
+      linear-gradient(to right, rgba(17, 17, 17, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(17, 17, 17, 0.07) 1px, transparent 1px);
+    background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
+    /* La dissipation s'arrête à 24 % depuis la DROITE, et non 62 %.
+       Le réglage d'origine supposait que le titre tenait la moitié gauche ;
+       mesuré, sa ligne la plus longue va jusqu'à 72 % de la largeur, et les
+       verticales lui traversaient les lettres. À 24 %, la trame ne commence
+       qu'après le point où le texte s'arrête, à toutes les largeurs où elle
+       est active. */
+    -webkit-mask-image: linear-gradient(to left, #000 0%, transparent 24%);
+    mask-image: linear-gradient(to left, #000 0%, transparent 24%);
+  }
+
+  /* Pas de trame sous 1024 px. Le texte y occupe toute la largeur ET toute la
+     hauteur utile : une dissipation verticale laissait la trame traverser le
+     sous-titre et le lien secondaire à 8-9 % d'écart de luminance. Aucun
+     réglage ne la rendait à la fois visible et inoffensive, donc elle saute. */
+  @media (max-width: 1023px) {
+    .hero-grille::before { display: none; }
+  }
+
   .hero-manifesto-h1 {
     font-size: var(--text-display-hero);
     line-height: 0.95;
@@ -83,15 +137,12 @@ import LinkCTA from './LinkCTA.astro';
     overflow-wrap: break-word;
   }
 
-  @media (min-width: 1024px) {
-    .hero-manifesto-h1 {
-      font-size: var(--text-display-hero-lg);
-    }
-  }
-
-  /* Portrait : ratio fixe portrait, hauteur maîtrisée sur mobile et desktop. */
-
-  /* Photo en couleur. Mirror horizontal : Lilian regarde vers le titre à gauche. */
+  /* La bascule à 1024 px a été retirée : elle commutait vers un second jeton
+     PLUS PETIT que le premier, et le titre rétrécissait de 14,7 % au passage
+     du point de rupture. La courbe unique de --text-display-hero couvre
+     désormais toute la plage.
+     Le plafond de 19ch reste utile jusqu'à ~92 px de corps ; au-delà c'est le
+     conteneur de 1200 px qui borne, et la règle devient inerte sans nuire. */
 
   /* Dark mode : bordure plus visible pour matérialiser le crop de la photo. */
 </style>

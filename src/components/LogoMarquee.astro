@@ -55,7 +55,7 @@ const loop = [...tools, ...tools];
 
 <section class="lm" aria-label="Outils que j'automatise et connecte au quotidien">
   <div class="px-[var(--spacing-section-x)]">
-    <h2 class="lm-title reveal">Qu'allons-nous automatiser demain&nbsp;?</h2>
+    <h2 class="lm-title reveal">Votre <mark>Agent IA</mark> s'occupera de ça&nbsp;:</h2>
   </div>
 
   <div class="lm-viewport reveal">
@@ -89,9 +89,14 @@ const loop = [...tools, ...tools];
     text-wrap: balance;
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: var(--text-title-lg);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
+    /* --text-headline, comme les huit autres titres de section, et non
+       --text-title-lg. Mesuré sur la page : ce H2 rendait 30 px, soit
+       exactement la taille des neuf H3 des cartes, et il était le seul de son
+       rang à ne pas passer par SectionHeader. Deux niveaux sémantiques pour
+       une seule taille n'est pas une hiérarchie. */
+    font-size: var(--text-headline);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
     color: var(--color-ink);
   }
   /* Desktop : titre forcé sur une seule ligne. */
@@ -173,7 +178,10 @@ const loop = [...tools, ...tools];
   .lm-tool-name {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(1.05rem, 1vw + 0.85rem, 1.4rem);
+    /* Jeton, et non un clamp() recopié sur place : le bloc @theme est l'unique
+       source de l'échelle, et une courbe écrite ici échappait à toute reprise
+       globale. --text-title est le rang le plus proche de l'ancienne valeur. */
+    font-size: var(--text-title);
     letter-spacing: -0.02em;
     /* ink-low, pas ink-faint : le nom de l'outil est porteur de sens (complément
        du logo) — ink-faint plafonnait à ~2:1 sur paper (fail WCAG 1.4.3). */

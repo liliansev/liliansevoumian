@@ -1,0 +1,77 @@
+---
+/*
+ * Outil.astro — le nom d'un outil précédé de son logo, dans le fil du texte.
+ *
+ * Trois décisions valent d'être écrites, parce qu'elles ne se devinent pas à la
+ * lecture du CSS :
+ *
+ * 1. LE LOGO PREND LA COULEUR DU TEXTE. Pas sa couleur de marque. La DA réserve
+ *    les couleurs tierces aux maquettes produit et au survol du bandeau : vingt
+ *    logos colorés semés dans les paragraphes rendraient au corps de texte le
+ *    bruit qu'on a retiré du bandeau. En `currentColor`, le glyphe suit la
+ *    couleur du paragraphe qui l'accueille, y compris sur l'aplat lime et sur
+ *    l'aplat encre, sans variante à écrire.
+ *
+ * 2. LE COUPLE NE SE COUPE JAMAIS. `white-space: nowrap` sur l'ensemble : un
+ *    logo orphelin en fin de ligne, séparé de son nom, se lit comme une puce.
+ *    C'est la même contrainte que la bande de surlignage, pour la même raison.
+ *
+ * 3. L'ALIGNEMENT EST OPTIQUE, PAS MÉTRIQUE. Les glyphes simple-icons occupent
+ *    tout leur cadre de 24, sans le talon qu'une lettre garde sous sa ligne de
+ *    base. Calé sur la ligne de base, le logo paraît donc flotter. Les 0,85 em
+ *    de haut et le décalage de 0,115 em le ramènent sur la hauteur d'x du texte
+ *    voisin, qui est ce que l'œil compare réellement.
+ *
+ * L'icône est décorative : le nom porte seul le sens, et reste lu par les
+ * lecteurs d'écran comme n'importe quel mot de la phrase.
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** Nom de l'icône iconify, par exemple « simple-icons:n8n ». */
+  icon: string;
+  /** Classe additionnelle, pour un ajustement local rare. */
+  class?: string;
+}
+
+const { icon, class: className = '' } = Astro.props;
+---
+
+<span class={`outil ${className}`} data-icone={icon}>
+  <Icon name={icon} class="outil-ic" aria-hidden="true" /><slot />
+</span>
+
+<style>
+  .outil {
+    white-space: nowrap;
+  }
+
+  .outil-ic {
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    vertical-align: -0.115em;
+    margin-right: 0.24em;
+    color: currentColor;
+  }
+
+  /* Correction PAR MARQUE, et non réglage global.
+   *
+   * Une même taille CSS ne donne pas un même poids optique : chaque glyphe
+   * simple-icons remplit son cadre de 24 différemment. Mesuré au pixel sur le
+   * rendu, à 0,85 em dans un corps de 20 px, le logo n8n ne pose que 9 px
+   * d'encre et s'arrête 1,75 px au-dessus de la ligne de base, quand celui de
+   * Make en pose 12 et descend jusqu'à la toucher. Côte à côte dans la même
+   * phrase, n8n flottait et pesait un tiers de moins que son voisin.
+   *
+   * Le rapport 12/9 fixe l'agrandissement, et le décalage suit pour que le
+   * surcroît de hauteur se répartisse de part et d'autre de la hauteur d'x.
+   * Toute marque ajoutée ici demande la même mesure : il n'y a pas de valeur
+   * qui vaille pour toutes.
+   */
+  .outil[data-icone='simple-icons:n8n'] .outil-ic {
+    width: 1.13em;
+    height: 1.13em;
+    vertical-align: -0.235em;
+  }
+</style>

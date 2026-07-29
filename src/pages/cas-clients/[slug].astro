@@ -7,6 +7,7 @@ import { Icon } from 'astro-icon/components';
 import MockupWindow from '../../components/mockups/MockupWindow.astro';
 import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
 import { brandColorFor } from '../../data/brands';
+import Outil from '../../components/Outil.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -103,9 +104,9 @@ const voisins = [...classes.slice(rang % classes.length), ...classes.slice(0, ra
 // L outil principal du cas, pour renvoyer vers sa page dediee avec l ancre
 // de requete exacte.
 const pageOutil = cs.tools.includes('n8n')
-  ? { nom: 'n8n', href: '/expert-n8n' }
+  ? { nom: 'n8n', href: '/expert-n8n', icone: 'simple-icons:n8n' }
   : cs.tools.includes('Make')
-    ? { nom: 'Make', href: '/expert-make' }
+    ? { nom: 'Make', href: '/expert-make', icone: 'simple-icons:make' }
     : null;
 
 // La description redigee prime. A defaut, on compose, mais on coupe au
@@ -322,7 +323,7 @@ const articleSchema = {
 
           {pageOutil && (
             <p class="voisin-outil">
-              Ce projet tourne sur <a href={pageOutil.href}>{pageOutil.nom}</a>.
+              Ce projet tourne sur <Outil icon={pageOutil.icone}><a href={pageOutil.href}>{pageOutil.nom}</a></Outil>.
             </p>
           )}
         </div>

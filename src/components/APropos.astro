@@ -15,19 +15,30 @@
  * juste au-dessus, les répéter ici ne prouvait rien de plus et volait la place
  * de la seule question à laquelle cette section doit répondre — pourquoi lui.
  *
- * Deux bornes datées seulement, 2020 et aujourd'hui, parce que ce sont les
- * deux seules que le dépôt documente. La tentation d'un arc en cinq étapes
- * datées est forte et fabriquerait des jalons : tout ce qui est ici est sourcé
- * dans profile.md (Make niveau 5 premier français, Airtable, 300+ formés,
- * début en 2020) ou dans CTA.astro (« le plus clair de mon temps sur des
- * agents IA et des outils internes »).
+ * Chaque paragraphe s'ouvre sur une année en encre pleine, et chacune est
+ * sourcée dans profile.md, section « Parcours Chronologique » : découverte du
+ * no-code en 2020 ; passage en freelance, premiers clients et Slack NoCode
+ * France en 2021 ; Jellysmack et la certification niveau 4 en 2022 ; niveau 5
+ * premier français, Make Trainer et refonte d'apprendre-make.com en 2023 ;
+ * agents IA aujourd'hui (aussi dans CTA.astro, « le plus clair de mon temps
+ * sur des agents IA et des outils internes »). Rien n'est ajouté hors de ces
+ * sources : ni date, ni chiffre, ni nom de client. Le site vend la rigueur,
+ * une seule année fabriquée ferait tomber tout le bloc.
+ *
+ * 2024 et 2025 sont volontairement sautés : profile.md n'y documente presque
+ * que les formations, et la formation ne peut figurer ici que comme PREUVE de
+ * maîtrise (former oblige à comprendre pourquoi une chose tient), jamais comme
+ * l'activité vendue. Un saut de deux ans coûte moins cher qu'un bloc qui
+ * laisse croire qu'on vend des cours.
  */
 import SectionHeader from './SectionHeader.astro';
 
 const faits = [
   { cle: 'Depuis', valeur: '2020' },
-  { cle: 'Certifications', valeur: 'Make niveau 5, premier certifié en France · Airtable' },
-  { cle: 'Formation', valeur: '300+ personnes formées' },
+  // Insécables en caractère littéral (U+00A0), pas en entité : ce sont des
+  // chaînes JS, un &nbsp; y ressortirait tel quel à l'écran.
+  { cle: 'Certifications', valeur: 'Make niveau 5, premier certifié en France · Airtable' },
+  { cle: 'Formation', valeur: '300+ personnes formées' },
   { cle: 'Aujourd’hui', valeur: 'Agents IA et outils internes, sur n8n et Make' },
   { cle: 'Zone', valeur: 'Région parisienne · France · Europe' },
 ];
@@ -48,35 +59,56 @@ const faits = [
     <div class="reveal apropos">
       <div class="apropos-texte">
         <p>
-          J'ai commencé à automatiser des processus métier en 2020, avant que
-          l'IA générative n'entre dans les entreprises. On branchait des outils
-          entre eux pour que plus personne n'ait à recopier une ligne d'un
-          logiciel dans un autre. C'est ce qui m'a attrapé et ne m'a jamais
+          <strong class="annee">2020.</strong> Je découvre le no-code, avant
+          que l'IA générative n'entre dans les entreprises. On branche des
+          outils entre eux pour que plus personne n'ait à recopier une ligne
+          d'un logiciel dans un autre, et Make et Airtable deviennent mes deux
+          outils de fond. C'est ce qui m'a attrapé et ne m'a jamais
           lâché&nbsp;: prendre une tâche que quelqu'un refait tous les lundis
           depuis trois ans, et la faire disparaître.
         </p>
 
         <p>
-          Ces années m'ont donné des preuves&nbsp;: certifié Make
-          niveau&nbsp;5, le premier en France à l'obtenir, certifié Airtable, et
-          plus de 300 personnes formées à ces outils. Former oblige à comprendre
-          pourquoi une chose tient. C'est ce qui me sert le plus quand il faut
-          défendre un choix devant l'équipe qui vivra avec.
+          <strong class="annee">2021.</strong> Je passe freelance. Premiers
+          clients&nbsp;: Familytrip, WeTechCare, puis Qonto. En parallèle, je
+          réponds aux questions des autres sur le Slack NoCode France, plus de
+          14&nbsp;000 messages bénévoles. C'est la meilleure école que je
+          connaisse&nbsp;: on y voit tomber en panne les scénarios de tout le
+          monde avant les siens.
         </p>
 
         <p>
-          L'IA a changé ce que je construis. Ma méthode est restée la même.
-          L'IA classe, rédige, qualifie&nbsp;; ce sont les workflows qui
-          exécutent, et un agent sans workflow autour reste une démo. Je passe
-          aujourd'hui le plus clair de mon temps sur des agents IA et des outils
-          internes, avec le réflexe de 2020 intact&nbsp;: ça doit tourner seul
-          le lundi matin, et continuer de tourner quand une API change.
+          <strong class="annee">2022.</strong> J'entre chez Jellysmack comme
+          no-code engineer, en interne cette fois, et je passe la certification
+          Make niveau&nbsp;4, la plus haute qui existait alors. Être dans
+          l'équipe change la façon de construire&nbsp;: on hérite le lundi de
+          ce qu'on a écrit le vendredi.
         </p>
 
         <p>
-          Je travaille en direct&nbsp;: la personne qui vous répond est celle
-          qui construit. Le terrain m'a surtout appris à voir tôt ce qui
-          tiendra six mois et ce qui cassera à la première mise à jour. Alors
+          <strong class="annee">2023.</strong> Certification Make
+          niveau&nbsp;5, <mark class="inv">premier en France</mark> à
+          l'obtenir et dans les cinq premiers au monde, puis Make Trainer. Je
+          refonds apprendre-make.com de fond en comble&nbsp;; plus de
+          300&nbsp;personnes s'y sont formées. Former oblige à comprendre
+          pourquoi une chose tient, et c'est ce qui me sert le plus quand il
+          faut défendre un choix devant l'équipe qui vivra avec.
+        </p>
+
+        <p>
+          <strong class="annee">2026.</strong> L'IA a changé ce que je
+          construis, ma méthode est restée la même. Elle classe, rédige,
+          qualifie&nbsp;; ce sont les workflows qui exécutent, et un agent sans
+          workflow autour reste une démo. Je passe le plus clair de mon temps
+          sur des agents IA et des outils internes, sur n8n et Make, avec le
+          réflexe de 2020 intact&nbsp;: ça doit tourner seul le lundi matin, et
+          continuer quand une API change.
+        </p>
+
+        <p>
+          D'une année à l'autre, une chose n'a pas bougé&nbsp;: la personne qui
+          vous répond est celle qui construit. Le terrain m'a appris à voir tôt
+          ce qui tiendra et ce qui cassera à la première mise à jour, alors
           quand un projet n'est pas pour moi, je le dis avant de commencer.
         </p>
       </div>
@@ -116,6 +148,19 @@ const faits = [
   }
   .apropos-texte p + p { margin-top: 1.25rem; }
   .apropos-texte p:first-child { color: var(--color-ink); }
+
+  /* L'année ouvre le paragraphe et sert de seul repère de lecture au bloc :
+     encre pleine sur un corps en gris moyen. Chiffres tabulaires pour que les
+     cinq millésimes s'alignent optiquement d'un paragraphe à l'autre — c'est
+     ce qui fait lire la colonne comme une chronologie plutôt que comme cinq
+     phrases qui commencent par un nombre. Le lime ne descend pas ici : il est
+     déjà sur le titre et sur le seul fragment surligné du texte. */
+  .apropos-texte .annee {
+    color: var(--color-ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
 
   .apropos-faits {
     margin: 0;

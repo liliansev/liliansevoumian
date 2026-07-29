@@ -23,11 +23,19 @@ import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import Outil from '../components/Outil.astro';
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
   { name: 'Reprendre une automatisation qui casse', url: '/reprendre-une-automatisation-qui-casse' },
 ];
+
+/* Le titre vit ici, en variable, et non en `set:html="…"` dans le gabarit.
+   Écrit en guillemets, `set:html` reçoit une chaîne d'attribut et non une
+   expression : Astro l'échappe, et la page a servi en production un titre
+   affichant littéralement `<mark>qui casse</mark>`. La forme en accolades est
+   la seule qui interprète le balisage. */
+const TITRE_H1 = 'Reprendre une automatisation <mark>qui casse</mark>.';
 
 const serviceSchema = {
   '@context': 'https://schema.org',
@@ -184,10 +192,10 @@ const faqs = [
             définitivement disqualifié comme candidat LCP, comme cela s’est
             produit sur la home. */}
         <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[18ch]" style="text-wrap: balance;">
-          <Fragment set:html="Reprendre une automatisation <mark>qui casse</mark>." />
+          <Fragment set:html={TITRE_H1} />
         </h1>
 
-        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[62ch]">Vos factures ne partent plus. Le scénario, lui, affiche toujours vert. Lilian Sevoumian reprend les automatisations Make et n8n déjà en place, y compris celles construites par quelqu'un d'autre, et remet le flux en marche.</p>
+        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[62ch]">Vos factures ne partent plus. Le scénario, lui, affiche toujours vert. Lilian Sevoumian reprend les automatisations <Outil icon="simple-icons:make">Make</Outil> et <Outil icon="simple-icons:n8n">n8n</Outil> déjà en place, y compris celles construites par quelqu'un d'autre, et remet le flux en marche.</p>
 
         <div class="reveal mt-8 md:mt-10">
           <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"

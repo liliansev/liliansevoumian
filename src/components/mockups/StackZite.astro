@@ -1,0 +1,188 @@
+---
+/* Zite — la coupe de l’application générée.
+ *
+ * La carte voisine (Lovable) montre un écran qui se peint pendant qu’on parle :
+ * le sujet y est le rendu, et la vitesse à laquelle il arrive. Reprendre un
+ * aperçu ici donnerait deux jumelles, alors que ce que Zite revendique est
+ * exactement l’autre moitié — ce qu’il y a DERRIÈRE l’écran, et le fait que ça
+ * reste ouvert. D’où une coupe en trois étages (écrans, données, accès) plutôt
+ * qu’une page, et un cadre d’inspection qui descend d’étage en étage : c’est
+ * l’inspection le sujet, pas la génération.
+ *
+ * Conséquence assumée sur le mouvement : rien n’apparaît ici. L’application est
+ * déjà là, on l’ouvre. C’est le contraire du voisin, qui se construit sous les
+ * yeux — deux cartes qui bougent pareil se liraient comme une seule.
+ *
+ * Le lime vient du fallback de --brand : Zite n’est pas déclaré dans brands.ts
+ * et ne le sera pas, donc la carte hôte ne pose pas --brand et var() retombe sur
+ * --color-accent. Aucune couleur inventée pour la marque.
+ */
+/* Pas d’icône au pied : `include.lucide` dans astro.config.mjs est une liste
+   fermée, et aucun cadenas n’y figure. Plutôt qu’élargir la config pour un
+   ornement, le pied se dit en toutes lettres — c’est de toute façon la phrase
+   qui porte l’argument, pas le pictogramme.
+
+   Trois couches, pas quatre : Zite génère aussi des workflows, mais une couche
+   « WORKFLOWS » irait marcher sur la famille AUTOMATION juste au-dessus. Les
+   règles sont dites par le pied, où elles ne se confondent avec rien. */
+const couches = [
+  { nom: 'ÉCRANS', pieces: ['liste', 'fiche', 'formulaire'] },
+  { nom: 'DONNÉES', pieces: ['Commandes', 'Clients'] },
+  { nom: 'ACCÈS', pieces: ['connexion', 'rôles'] },
+];
+---
+<div class="zt" role="img" aria-label="Application générée par Zite, ouverte en coupe : ses écrans, ses tables et ses règles d’accès restent lisibles et modifiables.">
+  <div class="zt-app">
+    <span class="zt-nom">Portail client</span>
+    <span class="zt-etat">généré</span>
+  </div>
+
+  <div class="zt-plan">
+    {couches.map((c) => (
+      <div class="zt-couche">
+        <span class="zt-nom-couche">{c.nom}</span>
+        <div class="zt-pieces">
+          {c.pieces.map((p) => <span class="zt-piece">{p}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="zt-pied">
+    <span>Rien n’est verrouillé : logique et données restent modifiables.</span>
+  </div>
+</div>
+
+<style>
+  .zt {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px 11px;
+  }
+
+  .zt-app {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-divider);
+  }
+  .zt-nom {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-body);
+    color: var(--color-ink);
+    /* Un nom d’application long se tronque plutôt que d’élargir la carte : la
+       pastille d’état doit rester collée au bord droit. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .zt-etat {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-full);
+    padding: 2px 9px;
+    white-space: nowrap;
+  }
+
+  .zt-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  /* Libellé de couche à gauche, pièces à droite. Empiler le libellé au-dessus se
+     lisait aussi bien mais coûtait 21 px par couche : la maquette montait à
+     299 px quand les huit autres de la section tiennent entre 92 et 215 px, et
+     une carte qui dépasse ses voisines d’un tiers ne se lit plus comme un
+     membre de la même famille. En colonne, l’ensemble revient dans la mesure.
+     Les pièces gardent `flex-wrap` : à la largeur de carte minimale, elles
+     passent à la ligne au lieu d’élargir quoi que ce soit.
+     La bordure transparente est là en permanence pour que le cadre d’inspection
+     ne fasse pas sauter la mise en page quand il s’allume. */
+  .zt-couche {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 6px 9px;
+    border: 1px solid transparent;
+    animation: zt-scan 6s ease-in-out infinite;
+  }
+  .zt-couche:nth-child(2) { animation-delay: 1.15s; }
+  .zt-couche:nth-child(3) { animation-delay: 2.3s; }
+
+  .zt-nom-couche {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+    white-space: nowrap;
+  }
+
+  .zt-pieces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  /* Pièces à angles vifs, bordées sur leurs quatre côtés : les pastilles rondes
+     du système servent aux statuts, et ce ne sont pas des statuts mais des
+     morceaux d’application. Un liseré latéral coloré est proscrit par le design
+     system, et n’aurait rien dit de plus ici. */
+  .zt-piece {
+    max-width: 100%;
+    padding: 2px 7px;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    color: var(--color-ink-mid);
+    background: var(--color-paper);
+    border: 1px solid var(--color-divider);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .zt-pied {
+    padding-top: 9px;
+    border-top: 1px solid var(--color-divider);
+    font-size: var(--text-mono-caption);
+    line-height: 1.45;
+    color: var(--color-ink-low);
+  }
+
+  /* Le cadre d’inspection descend d’un étage à l’autre puis marque une pause.
+     Le fond neutre porte le mouvement (le lime seul, à 1,25:1 sur blanc, ne se
+     verrait pas), le trait de marque porte la couleur. */
+  @keyframes zt-scan {
+    0%, 3% {
+      border-color: transparent;
+      background-color: transparent;
+    }
+    8%, 16% {
+      border-color: var(--brand, var(--color-accent));
+      background-color: var(--color-surface-low);
+    }
+    22%, 100% {
+      border-color: transparent;
+      background-color: transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zt-couche {
+      animation: none;
+      border-color: var(--color-divider);
+    }
+  }
+</style>

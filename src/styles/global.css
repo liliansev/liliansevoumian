@@ -33,8 +33,17 @@
      artistique, et les 25 composants les consomment. Les avoir emportés
      avec le bloc de couleurs faisait retomber le H1 à la taille du corps. */
   --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
-  --text-display-hero: clamp(2.5rem, 6vw + 0.5rem, 5.75rem);
-  --text-display-hero-lg: clamp(2.5rem, 5vw + 0.5rem, 4.75rem);
+  /* UNE seule courbe pour le manifeste, et non deux jetons commutés à 1024 px.
+     Mesuré sur la page vivante, l'ancien dispositif faisait perdre au titre
+     10,2 px (−14,7 %) quand la fenêtre gagnait UN pixel, et il ne repassait
+     au-dessus de sa taille de 1023 px que vers 1180 px : toute la plage des
+     iPad en paysage et des petits portables affichait un hero plus petit que
+     sur une tablette. L'ancien plafond de 5,75rem n'était par ailleurs jamais
+     atteint, le jeton n'étant actif que sous 1024 px où il plafonnait à 69 px.
+     Calée à ×1,20 de --text-display sur toute la plage : le manifeste de la
+     home cessait d'être plus petit que le titre d'une page SEO (76 contre
+     84 px). Vérifié : 3 lignes à 1440 px comme avant, aucun débordement. */
+  --text-display-hero: clamp(3.25rem, 6vw + 1.2rem, 6.25rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
   --text-signature: clamp(2rem, 3vw + 0.5rem, 2.75rem);
   /* Le chiffre héros du simulateur porte désormais les HEURES, plus l'euro :
@@ -215,14 +224,29 @@ body {
   }
 }
 
-p, li, blockquote {
-  text-wrap: pretty;
-  max-width: 72ch;
-}
+/* DANS @layer base, et c'est tout l'enjeu.
+ *
+ * Écrites hors couche, ces deux déclarations l'emportaient sur tout ce que
+ * Tailwind émet dans @layer utilities, quelle que soit la spécificité. Un
+ * paragraphe portant `max-w-[43ch]` rendait donc 72ch, soit 955 px au lieu de
+ * 570 : aucune des contraintes de largeur écrites dans les composants ne
+ * s'appliquait, et la colonne de texte du site mesurait 85 caractères de
+ * médiane au lieu des 65 à 75 lisibles.
+ *
+ * C'est exactement le piège déjà rencontré sur les tailles de titres, où un
+ * <h2> demandant 30 px en rendait 48. Même cause, autre propriété. Toute
+ * valeur par défaut d'élément appartient à @layer base, sans exception.
+ */
+@layer base {
+  p, li, blockquote {
+    text-wrap: pretty;
+    max-width: 72ch;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 /* =========================================================================
@@ -464,23 +488,40 @@ a, button, input, textarea, select,
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background var(--duration-default) var(--ease-out-quint),
-              transform 100ms var(--ease-out-quint);
-}
 
-.btn-primary {
-  transition: background-color 0.16s cubic-bezier(0.25, 1, 0.5, 1),
-              color 0.16s cubic-bezier(0.25, 1, 0.5, 1),
-              transform 0.16s cubic-bezier(0.25, 1, 0.5, 1);
+  /* UNE seule déclaration de transition. Il y en avait deux à la suite : la
+     seconde écrasait intégralement la première, dont la ligne `transform
+     100ms` n'a donc jamais rien piloté. Les valeurs en dur (0.16s et une
+     cubic-bezier recopiée) repassent sur les jetons.
+
+     LA SORTIE EST PLUS LENTE QUE L'ENTRÉE, et c'est tout le réglage. Un survol
+     dont l'aller et le retour durent autant se ressent comme une commutation ;
+     répondre vite puis relâcher lentement est ce qui le fait ressembler à une
+     matière qui cède. C'est ici l'état de repos qui porte la durée longue,
+     l'état de survol qui porte la courte.
+
+     Pas de balayage du lime sur la largeur, malgré la tentation d'y retrouver
+     le geste du surligneur : une bande qui traverse laisse forcément le
+     libellé à cheval sur les deux fonds, blanc sur lime d'un côté ou encre sur
+     encre de l'autre, soit un texte illisible pendant tout le milieu du geste.
+     Le fondu croisé n'a pas ce défaut : le fond et le texte se croisent, donc
+     leur écart de luminance ne s'effondre à aucune image. */
+  transition: background-color var(--duration-default) var(--ease-out-quint),
+              color var(--duration-default) var(--ease-out-quint),
+              transform var(--duration-default) var(--ease-out-quint);
 }
 
 /* LE LIME APPARAÎT AU SURVOL. Le bouton est noir au repos ; la couleur de
    marque arrive quand la main arrive, au lieu de décorer en permanence.
-   C'est le seul endroit du site où elle bouge. */
+   C'est le seul endroit du site où elle bouge.
+   Le bouton monte d'un pixel : à cette échelle le déplacement ne se lit pas
+   comme un mouvement, il se lit comme une réponse. */
 .btn-primary:hover,
 .btn-primary:focus-visible {
   background: var(--color-lime);
   color: var(--color-ink);
+  transform: translateY(-1px);
+  transition-duration: var(--duration-quick);
 }
 
 /* Sur un aplat lime, ce geste ne peut pas fonctionner : du lime sur du lime
@@ -492,8 +533,11 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
+/* `translateY(0)` explicite : le pressé écrase la montée d'un pixel plutôt que
+   de s'y ajouter. Écrit `scale(.98)` seul, il la remplaçait de fait, mais par
+   effet de bord de la syntaxe raccourcie et non par intention. */
 .btn-primary:active {
-  transform: scale(0.98);
+  transform: translateY(0) scale(0.98);
 }
 
 /* Ce bloc DOIT rester après `.btn-primary:active` : les deux sélecteurs ont la
@@ -502,8 +546,13 @@ a, button, input, textarea, select,
    demandé moins de mouvement. */
 @media (prefers-reduced-motion: reduce) {
   /* On garde la transition de COULEUR : c'est un retour d'information, pas
-     du mouvement. Seule l'échelle saute. */
-  .btn-primary { transition: background-color 0.16s ease, color 0.16s ease; }
+     du mouvement. Le déplacement et l'échelle sautent, tous les deux. */
+  .btn-primary {
+    transition: background-color var(--duration-quick) ease,
+                color var(--duration-quick) ease;
+  }
+  .btn-primary:hover,
+  .btn-primary:focus-visible { transform: none; }
   .btn-primary:active { transform: none; }
 }
 
@@ -1149,7 +1198,10 @@ a[href^="mailto:"] {
   background: var(--color-ink);
   color: var(--color-paper);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  /* Le jeton vaut exactement la valeur qui était écrite ici en dur : le
+     remplacement ne change rien au rendu, il remet simplement le lien-évitement
+     sous la même source que le reste de l'échelle. */
+  font-size: var(--text-mono-label);
   font-weight: 500;
   letter-spacing: 0.02em;
   text-transform: uppercase;
