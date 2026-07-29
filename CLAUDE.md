@@ -35,7 +35,7 @@ src/
 │   ├── Testimonials.astro     # recommandations
 │   ├── APropos.astro          # trajectoire 2020 → aujourd'hui
 │   ├── ROICalculator.astro    # simulateur de temps (2 curseurs)
-│   ├── Stack.astro            # 8 outils en 3 familles
+│   ├── Stack.astro            # 10 outils en 4 familles, un appel par famille
 │   ├── Offres.astro           # formats de collaboration
 │   ├── FAQ.astro              # 7 objections + balayage lime
 │   ├── CTA.astro              # section contact, réservation seule
@@ -43,6 +43,7 @@ src/
 │   ├── MobileCTABar.astro     # barre fixe sous le hero, mobile
 │   ├── SectionHeader.astro    # label + titre + chapô, partagé
 │   ├── LinkCTA.astro          # lien secondaire fléché
+│   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   └── mockups/               # mini-UI produit des cartes outils
 │       ├── MockupWindow.astro     # châssis fenêtre commun
 │       ├── WorkflowCanvas.astro   # faux canvas n8n/Make

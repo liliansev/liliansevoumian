@@ -27,6 +27,14 @@ Trois règles gouvernent l'ensemble :
 - **Deux rayons seulement**, `0` et `9999px`. Si c'est rond, ça se clique.
 - **Aucune ombre.** L'élévation vient des filets.
 
+**Le piège qui a déjà coûté deux bugs : toute valeur par défaut d'élément doit
+vivre dans `@layer base`.** Écrite hors couche, elle bat silencieusement toute
+classe utilitaire de Tailwind, quelle que soit la spécificité, et rien dans
+l'outillage ne le signale. Un `h1…h6 { font-size }` hors couche faisait rendre
+48 px à un `<h2>` qui en demandait 30 ; un `p, li, blockquote { max-width: 72ch }`
+hors couche annulait **toutes** les contraintes de largeur du site, dont un
+`max-w-[43ch]` qui rendait 955 px au lieu de 570.
+
 **Les cas clients sont une content collection** (`src/content/cas-clients/`, du
 Markdown au schéma Zod typé dans `src/content.config.ts`). Trois champs de
 frontmatter pilotent des visuels : `flow` (le schéma de parcours), `bascule`

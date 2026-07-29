@@ -22,7 +22,7 @@ colors:
 typography:
   display-hero:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(2.5rem, 6vw + 0.5rem, 5.75rem)"
+    fontSize: "clamp(3.25rem, 6vw + 1.2rem, 6.25rem)"
     fontWeight: 600
     lineHeight: 0.95
     letterSpacing: "-0.035em"
@@ -154,16 +154,42 @@ fixes**. Écrire `background: var(--color-ink)` dans un bloc qui redéfinit
 composants l'appellent, mais il vaut la police de texte : le monospace a disparu
 de la DA.
 
-L'échelle est **fluide**, en `clamp()`, du hero (`2,5rem → 5,75rem`) à la légende
+L'échelle est **fluide**, en `clamp()`, du hero (`3,25rem → 6,25rem`) à la légende
 (`0,6875rem` fixe). Les titres de section descendent à `-0,035em` de chasse ; le
 plancher est `-0,04em`, en dessous les lettres se touchent.
 
-Les défauts d'élément vivent dans `@layer base`. **Ce n'est pas cosmétique** :
-hors couche, ils l'emportent sur tout ce que Tailwind émet dans
-`@layer utilities`, quelle que soit la spécificité. Un `<h2>` demandant 30 px en
-rendait 48, silencieusement.
+**Le manifeste du hero est une courbe unique, jamais deux jetons commutés.** Il y
+a eu une bascule à `1024px` vers un second jeton plus petit que le premier : le
+titre perdait 14,7 % en gagnant un pixel de largeur, et ne repassait au-dessus de
+sa taille de 1023 px que vers 1180. Toute la plage des iPad en paysage affichait
+un hero plus petit que sur une tablette. La courbe est calée à **×1,20 de
+`--text-display`** sur toute la plage : le titre de la home ne peut plus se
+retrouver plus petit que celui d'une page secondaire, ce qui était le cas
+(76 px contre 84).
 
-Pas de césure automatique sur les titres. À 76 px un tiret se voit de loin, et
+### La règle de couche, qui a déjà coûté deux bugs
+
+**Toute valeur par défaut d'élément appartient à `@layer base`. Sans exception,
+et quelle que soit la propriété.**
+
+Hors couche, une règle l'emporte sur tout ce que Tailwind émet dans
+`@layer utilities`, **quelle que soit la spécificité** : un sélecteur d'élément
+nu bat une classe utilitaire. Le symptôme est toujours le même, une déclaration
+écrite dans un composant qui ne s'applique pas, sans erreur ni avertissement.
+
+Deux fois plutôt qu'une :
+
+| Règle hors couche | Ce qui était demandé | Ce qui était rendu |
+|---|---|---|
+| `h1…h6 { font-size }` | `<h2>` à 30 px | 48 px |
+| `p, li, blockquote { max-width: 72ch }` | `max-w-[43ch]`, 570 px | 955 px |
+
+La seconde était la plus coûteuse : **aucune** contrainte de largeur écrite dans
+un composant ne s'appliquait, et la colonne de texte du site mesurait 85
+caractères de médiane au lieu des 65 à 75 lisibles. Une ligne déplacée dans
+`@layer base` a ramené les 45 blocs de la home sous le seuil.
+
+Pas de césure automatique sur les titres. À 96 px un tiret se voit de loin, et
 `hyphens: auto` coupait « freelance » en « free-lance ».
 
 ## 4. Elevation
@@ -177,6 +203,16 @@ Une bande de surlignage arrondie devient un badge.
 
 La profondeur, quand elle est nécessaire, vient du **changement de surface** :
 papier, bande grise, aplat lime, aplat encre.
+
+**Une seule maille de grille sur le site**, 96 px (`--spacing-grid-cell`). Elle
+court dans les gouttières de chaque page et entre dans l'aplat du hero ; une
+seconde maille se lirait comme une erreur d'alignement. Là où elle croise du
+texte, elle doit rester **sous le seuil de perception** : mesuré, à 12 %
+d'opacité les verticales coupaient les lettres du titre avec 5,3 % d'écart de
+luminance, assez pour se lire comme un trait sur un mot. À 7 %, et cantonnée au
+quart droit que le texte n'occupe pas, elle retombe à 0,5 %. **Sous 1024 px elle
+n'existe pas** : le texte y prend toute la surface, et aucun réglage ne la rendait
+à la fois visible et inoffensive.
 
 ## 5. Components
 
@@ -194,6 +230,40 @@ pas à la bande de se déformer.
 
 **Le bouton primaire** est noir au repos et passe au lime au survol. Sur un aplat
 lime il passe au blanc : le survol doit toujours changer quelque chose.
+
+Le changement se fait en **fondu croisé**, et le lime ne balaie jamais la
+largeur. La tentation d'y retrouver le geste du surligneur est forte, mais une
+bande qui traverse laisse forcément le libellé à cheval sur les deux fonds :
+blanc sur lime d'un côté, encre sur encre de l'autre, soit un texte illisible
+pendant tout le milieu du geste. Le fondu n'a pas ce défaut, le fond et le texte
+se croisant, leur écart de luminance ne s'effondre à aucune image.
+
+**La sortie est plus lente que l'entrée.** Un survol dont l'aller et le retour
+durent autant se ressent comme une commutation ; répondre vite puis relâcher
+lentement est ce qui le fait ressembler à une matière qui cède.
+
+**Le monogramme** remplace le logo des marques absentes du jeu simple-icons, qui
+en couvre pourtant 3 653. Un carré de 22 px au filet d'encre, la capitale au
+centre, exactement la métrique du logo qu'il remplace pour que la ligne de titre
+garde une seule mesure d'une carte à l'autre. Contour et non aplat : mesuré côte
+à côte, un carré plein pesait plus lourd que les glyphes voisins et la ligne de
+titre sautait aux yeux avant les autres. **On ne dessine pas un logo approximatif
+sur un site qui vend la rigueur** : l'absence assumée se lit comme une décision,
+l'à-peu-près comme une erreur.
+
+**Le logo dans le fil du texte** (`Outil.astro`) prend la **couleur du texte**,
+jamais celle de la marque : vingt logos colorés semés dans les paragraphes
+rendraient au corps de texte le bruit qu'on a retiré du bandeau. Le couple
+logo + nom est en `nowrap`, un logo orphelin en fin de ligne se lisant comme une
+puce. Et **l'alignement se corrige par marque, pas globalement** : à taille CSS
+égale, le glyphe n8n ne pose que 9 px d'encre là où celui de Make en pose 12, si
+bien qu'il flottait et pesait un tiers de moins que son voisin. Toute marque
+ajoutée demande la même mesure.
+
+Le dispositif est **rare** : sur quatorze emplacements de prose examinés, trois
+l'ont mérité. Partout ailleurs le logo serait un doublon à quelques pixels d'un
+vrai logo, ou un ornement dans une citation, une fiche de faits ou un titre qui
+porte déjà son surlignage.
 
 **Les maquettes produit** (`MockupWindow` et les composants `Stack*`) sont des
 reconstitutions schématiques. Les écrans clients sont confidentiels : aucun
@@ -234,3 +304,14 @@ moitié invite à inventer pour l'équilibrer.
 - Lire un jeton de rôle dans `.bloc-lime` ou `.bloc-encre` : le remap ne lit que
   des valeurs fixes, sinon il produit un cycle.
 - Faire passer une reconstitution pour une capture d'écran.
+- **Écrire une valeur par défaut d'élément hors de `@layer base`.** Elle battra
+  silencieusement toute classe utilitaire, quelle que soit la spécificité. Deux
+  bugs sur ce projet, et rien dans l'outillage ne les signale.
+- Commuter un rôle typographique entre deux jetons à un point de rupture. Une
+  seule courbe `clamp()`, sinon la taille peut décroître quand la fenêtre
+  grandit.
+- Faire balayer le lime sur la largeur d'un bouton : le libellé traverse les deux
+  fonds et devient illisible au milieu du geste.
+- Dessiner le logo d'une marque absente du jeu d'icônes. Monogramme.
+- Écrire un `clamp()` sur place dans un composant. L'échelle vit dans `@theme`,
+  et une courbe recopiée échappe à toute reprise globale.
