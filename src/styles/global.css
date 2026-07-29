@@ -500,15 +500,19 @@ a, button, input, textarea, select,
   color: var(--color-ink);
 }
 
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Ce bloc DOIT rester après `.btn-primary:active` : les deux sélecteurs ont la
+   même spécificité, donc c'est l'ordre qui tranche. Écrit avant, il était
+   silencieusement annulé et l'échelle continuait de jouer pour qui avait
+   demandé moins de mouvement. */
 @media (prefers-reduced-motion: reduce) {
   /* On garde la transition de COULEUR : c'est un retour d'information, pas
      du mouvement. Seule l'échelle saute. */
   .btn-primary { transition: background-color 0.16s ease, color 0.16s ease; }
   .btn-primary:active { transform: none; }
-}
-
-.btn-primary:active {
-  transform: scale(0.98);
 }
 
 .btn-primary:disabled {
@@ -821,8 +825,10 @@ a, button, input, textarea, select,
 }
 
 .roi-slider::-webkit-slider-thumb:hover {
+  /* Une seule déclaration : il y en avait deux, la seconde écrasait la
+     première et le survol valait donc 1,1 quand le focus valait 1,15. L'écart
+     n'était pas voulu, il restait d'une édition. */
   transform: scale(1.15);
-  transform: scale(1.1);
 }
 
 .roi-slider:focus-visible::-webkit-slider-thumb {
@@ -842,8 +848,10 @@ a, button, input, textarea, select,
 }
 
 .roi-slider::-moz-range-thumb:hover {
+  /* Une seule déclaration : il y en avait deux, la seconde écrasait la
+     première et le survol valait donc 1,1 quand le focus valait 1,15. L'écart
+     n'était pas voulu, il restait d'une édition. */
   transform: scale(1.15);
-  transform: scale(1.1);
 }
 
 .roi-slider:focus-visible::-moz-range-thumb {
@@ -873,13 +881,22 @@ a, button, input, textarea, select,
   transform: translateY(0);
 }
 
-/* Stagger delays */
+/* Cascade d'entrée.
+   Le délai par défaut vaut le PLAFOND, pas zéro : une liste plus longue que
+   l'échelle voit ses derniers éléments arriver en dernier, avec le sixième,
+   au lieu d'arriver en premier avec le premier. C'est exactement ce qui se
+   passait sur /principes, dont la liste compte huit entrées. */
+.reveal-stagger > .reveal { transition-delay: 400ms; }
 .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
 .reveal-stagger > .reveal:nth-child(2) { transition-delay: 80ms; }
 .reveal-stagger > .reveal:nth-child(3) { transition-delay: 160ms; }
 .reveal-stagger > .reveal:nth-child(4) { transition-delay: 240ms; }
 .reveal-stagger > .reveal:nth-child(5) { transition-delay: 320ms; }
 .reveal-stagger > .reveal:nth-child(6) { transition-delay: 400ms; }
+.reveal-stagger > .reveal:nth-child(7) { transition-delay: 480ms; }
+.reveal-stagger > .reveal:nth-child(8) { transition-delay: 560ms; }
+.reveal-stagger > .reveal:nth-child(9) { transition-delay: 640ms; }
+.reveal-stagger > .reveal:nth-child(10) { transition-delay: 720ms; }
 
 /* Hero choreography — page-load orchestrée sur le manifesto dé-boxé.
    Chaque ligne (eyebrow → H1 → sous-titre → CTA → microdata) monte en cascade.
