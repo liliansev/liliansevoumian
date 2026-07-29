@@ -46,7 +46,16 @@ export default defineConfig({
       // Elle est en noindex,nofollow : la declarer au sitemap est un signal
       // contradictoire, et Search Console le remonte comme avertissement.
       filter: (page) => !page.includes('/mentions-legales'),
-      serialize: (item) => ({ ...item, lastmod: item.lastmod ?? new Date().toISOString() }),
+      /* UN SEUL `serialize` : deux clés du même nom dans un littéral d'objet
+         ne lèvent aucune erreur, la seconde écrase simplement la première.
+         L'URL est normalisée sans slash final, comme le canonical et comme les
+         217 liens internes — un sitemap qui déclare l'autre forme rouvrirait la
+         duplication qu'on vient de fermer. */
+      serialize: (item) => ({
+        ...item,
+        url: item.url.replace(/(.+)\/$/, '$1'),
+        lastmod: item.lastmod ?? new Date().toISOString(),
+      }),
     })
   ]
 });

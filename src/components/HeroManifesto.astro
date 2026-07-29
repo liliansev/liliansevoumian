@@ -29,7 +29,19 @@ import LinkCTA from './LinkCTA.astro';
           Freelance et Formateur en IA &amp; Automatisations
         </span>
 
-        <h1 class="reveal hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0">
+        {/* Le h1 n'est PAS un `.reveal`, et c'est délibéré.
+            Mesuré : peint à opacity 0 par le voile, il est définitivement
+            disqualifié comme candidat LCP par Chrome. Le navigateur retenait
+            donc le bouton de la nav — 2 016 px² — au lieu de ce titre de
+            214 833 px², cent six fois plus grand. Le score était flatteur
+            parce qu'il mesurait le mauvais élément.
+            Surtout, le titre mettait ~280 ms à devenir lisible et une seconde
+            à être opaque, et le filet de sécurité du <head> le laissait
+            invisible 2,5 s si le module de reveal échouait. Le message
+            principal du site ne peut pas dépendre d'un module JavaScript.
+            La cascade reste sur le sur-titre, le sous-titre et les boutons :
+            le geste est préservé, le message est peint tout de suite. */}
+        <h1 class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0">
           J'automatise ce que vos équipes font encore <mark>à la main.</mark>
         </h1>
 

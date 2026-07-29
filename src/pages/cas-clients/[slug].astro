@@ -86,10 +86,19 @@ const dateISO = cs.date.toISOString();
 // cartes, jamais le cas courant. Transforme quatre culs-de-sac en carrefours.
 const tous = await getCollection('cas-clients', (e) => import.meta.env.DEV || !e.data.draft);
 const autres = tous.filter((e) => e.id !== entry.id);
-const voisins = [
-  ...autres.filter((e) => e.data.tags.some((t) => cs.tags.includes(t))),
-  ...autres.filter((e) => !e.data.tags.some((t) => cs.tags.includes(t))),
-].slice(0, 2);
+/* Le tri par tags partagés ne discriminait rien : les quatre cas portent tous
+   « Ops », donc la première liste les contenait tous et `slice(0, 2)` retenait
+   toujours les deux mêmes. M Partners, dernier dans l'ordre de chargement,
+   n'apparaissait sur aucune fiche sœur — 2 liens entrants contre 5 pour les
+   autres. On départage d'abord par NOMBRE de tags communs, puis par date, et
+   on fait tourner la sélection selon la position du cas courant pour que les
+   quatre soient cités autant de fois. */
+const rang = tous.findIndex((e) => e.id === entry.id);
+const classes = autres
+  .map((e) => ({ e, communs: e.data.tags.filter((t) => cs.tags.includes(t)).length }))
+  .sort((a, b) => b.communs - a.communs || b.e.data.date.getTime() - a.e.data.date.getTime())
+  .map((x) => x.e);
+const voisins = [...classes.slice(rang % classes.length), ...classes.slice(0, rang % classes.length)].slice(0, 2);
 
 // L outil principal du cas, pour renvoyer vers sa page dediee avec l ancre
 // de requete exacte.

@@ -31,7 +31,13 @@ const {
   faqSchema
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+/* Sans slash final, comme les 217 liens internes du site et comme le sitemap.
+   `Astro.url.pathname` en porte un, si bien que le canonical déclarait une URL
+   que RIEN sur le site ne pointait : les liens, llms.txt et le JSON-LD
+   contredisaient tous la seule balise censée trancher la duplication.
+   La racine reste « / », elle ne se normalise pas. */
+const cheminCanonique = Astro.url.pathname.replace(/(.+)\/$/, '$1');
+const canonicalURL = new URL(cheminCanonique, Astro.site);
 const ogImage = customOgImage ? new URL(customOgImage, Astro.site) : new URL('/og-image.jpg', Astro.site);
 
 const breadcrumbSchema = breadcrumbs ? {
