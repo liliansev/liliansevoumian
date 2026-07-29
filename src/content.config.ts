@@ -45,6 +45,22 @@ const casClients = defineCollection({
           .length(3),
       })
       .optional(),
+    /*
+     * `bascule` met en regard l'état d'avant et l'état d'après. Elle ouvre la
+     * pièce « Les résultats », c'est-à-dire ce que le client achète : un écart.
+     *
+     * Minimum trois lignes, délibérément. Une ou deux lignes ne font pas une
+     * bascule, elles font un chiffre isolé qu'on aurait tendance à compléter
+     * pour équilibrer le bloc. Un cas qui n'a pas trois écarts documentés n'en
+     * a pas (Celeris : un seul, et mesuré en environnement de test).
+     *
+     * Les deux termes doivent être écrits dans le corps du cas. Aucun « avant »
+     * reconstruit pour faire valoir un « après ».
+     */
+    bascule: z
+      .array(z.object({ avant: z.string(), apres: z.string() }))
+      .min(3)
+      .optional(),
     testimonial: z
       .object({
         quote: z.string(),

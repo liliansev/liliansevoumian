@@ -21,6 +21,11 @@ flow:
     - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture émise" }
     - { icon: "simple-icons:notion", kicker: "Notion", title: "Statut visible" }
     - { icon: "lucide:clock", kicker: "Chaque jour à 9 h", title: "Envoi finalisé" }
+bascule:
+  - { avant: "33 scénarios Make empilés, dont 28 reliques", apres: "4 scénarios propres et documentés" }
+  - { avant: "30 à 60 min pour régler une erreur", apres: "5 min" }
+  - { avant: "Une journée pour ajouter un pipeline annuel", apres: "30 minutes, une ligne dans Notion" }
+  - { avant: "Plusieurs heures pour former un arrivant", apres: "30 minutes" }
 draft: false
 ---
 

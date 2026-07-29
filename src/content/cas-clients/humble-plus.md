@@ -21,6 +21,10 @@ flow:
     - { icon: "simple-icons:shopify", kicker: "Shopify", title: "Commande" }
     - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture" }
     - { icon: "simple-icons:slack", kicker: "Contrôle", title: "Validation humaine" }
+bascule:
+  - { avant: "Un email traité à la fois", apres: "Les commandes s’enchaînent" }
+  - { avant: "PDF et Excel dans la même entrée", apres: "Deux formats, un seul système" }
+  - { avant: "Surveillance technique commande par commande", apres: "Un point de validation dans Slack" }
 draft: false
 ---
 

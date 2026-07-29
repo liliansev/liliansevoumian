@@ -218,6 +218,25 @@ const articleSchema = {
             </div>
           )}
 
+          {/* La bascule ouvre « Les résultats » : ce que le client achète,
+              c'est un écart, et il doit se lire avant la liste qui le détaille.
+              Le lime ne marque QUE la colonne « après » — un état obtenu,
+              jamais un terme d'avant, jamais un objectif. */}
+          {piece.id === 'les-résultats' && cs.bascule && (
+            <dl class="reveal bascule">
+              <div class="bascule-entete" aria-hidden="true">
+                <dt>Avant</dt>
+                <dd>Après</dd>
+              </div>
+              {cs.bascule.map((ligne) => (
+                <div class="bascule-ligne">
+                  <dt>{ligne.avant}</dt>
+                  <dd><mark>{ligne.apres}</mark></dd>
+                </div>
+              ))}
+            </dl>
+          )}
+
           <div class="reveal case-prose" set:html={piece.corps} />
         </div>
       </section>
@@ -369,6 +388,78 @@ const articleSchema = {
   .piece-cas {
     padding-top: clamp(2.5rem, 4vw, 4rem);
     padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  }
+
+  /* ── La bascule avant / après ── */
+  .bascule {
+    margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .bascule-entete,
+  .bascule-ligne {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem 1.5rem;
+    align-items: baseline;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .bascule-entete {
+    padding-bottom: 0.5rem;
+  }
+  .bascule-entete dt,
+  .bascule-entete dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-low);
+  }
+
+  .bascule-ligne dt {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  .bascule-ligne dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  /* Le fragment surligné peut être long ici : la bande n'a pas à rester sur une
+     ligne dans une cellule étroite, donc `nowrap` est levé localement et la
+     bande couvre le rectangle englobant. C'est acceptable dans une cellule dont
+     le texte occupe toute la largeur, pas dans un titre. */
+  .bascule-ligne dd :global(mark) {
+    white-space: normal;
+    /* Encre LITTÉRALE, pas var(--color-ink). Sur `.bloc-encre` le jeton de rôle
+       est remappé en blanc : le texte du surlignage sortait blanc sur lime,
+       illisible. La bande est toujours lime, quelle que soit la surface qui la
+       porte, donc son texte est toujours l'encre. 15,14:1. */
+    color: #111111;
+  }
+
+  @media (max-width: 34rem) {
+    .bascule-entete { display: none; }
+    .bascule-ligne {
+      grid-template-columns: 1fr;
+      gap: 0.35rem;
+    }
+    /* Sans l'en-tête, il faut dire lequel est lequel. */
+    .bascule-ligne dt::before {
+      content: 'AVANT · ';
+      font-family: var(--font-mono);
+      font-size: var(--text-mono-caption);
+      letter-spacing: 0.06em;
+      color: var(--color-ink-low);
+    }
   }
 
   .piece-schema {

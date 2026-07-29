@@ -21,6 +21,10 @@ flow:
     - { icon: "simple-icons:hubspot", kicker: "CRM", title: "À approcher" }
     - { icon: "lucide:list-checks", kicker: "Shortlist", title: "Top 20 %" }
     - { icon: "lucide:bell", kicker: "Alerte", title: "Nouveau signal" }
+bascule:
+  - { avant: "1 à 3 h pour 50 entreprises, à la main", apres: "~7 à 10 min par run" }
+  - { avant: "~50 entreprises passées en revue par semaine", apres: "300 par semaine" }
+  - { avant: "Le dirigeant prospecte", apres: "Le dirigeant valide" }
 draft: false
 ---
 
