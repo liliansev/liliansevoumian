@@ -51,12 +51,12 @@ const MOCKS = {
 
 interface Tool {
   name: string;
-  /* Optionnel : simple-icons couvre 3 653 marques, ni Zite ni Lovable n'en font
-     partie. Plutôt que de dessiner un faux logo — le site vend la rigueur, une
-     marque approximative se voit — la carte retombe sur le monogramme
-     ci-dessous. L'absence est un choix lisible, l'à-peu-près ne l'est pas. */
-  icon?: string;
-  monogramme?: string;
+  /* Toujours un vrai logo, jamais un substitut. simple-icons couvre 3 653
+     marques et n'a ni Zite ni Lovable : Lovable vient du jeu devicon-plain,
+     qui est monochrome, et Zite d'un SVG déposé dans src/icons/ puisque aucun
+     jeu du catalogue Iconify ne le référence. Une marque qui manquerait se
+     règle de la même façon, par un SVG local ramené à currentColor. */
+  icon: string;
   role: string;
   mockup: keyof typeof MOCKS;
   caption: string;
@@ -186,7 +186,7 @@ const layers: Layer[] = [
   },
   {
     label: 'VIBE CODING',
-    cta: 'Faire fabriquer mon outil interne',
+    cta: 'Créer mon outil métier interne',
     ctaSource: 'stack-vibe-coding',
     tools: [
       /* Les deux outils de cette famille décrivent une application en langage
@@ -196,7 +196,10 @@ const layers: Layer[] = [
          l'écran apparaît pendant qu'on parle. */
       {
         name: 'Zite',
-        monogramme: 'Z',
+        /* Pas de préfixe de jeu : astro-icon expose les SVG déposés dans
+           src/icons/ sous leur seul nom de fichier. Zite est la seule marque du
+           site dans ce cas, aucun jeu Iconify ne la couvrant. */
+        icon: 'zite',
         role: 'APP · OUTILS INTERNES',
         mockup: 'zite',
         caption:
@@ -204,7 +207,7 @@ const layers: Layer[] = [
       },
       {
         name: 'Lovable',
-        monogramme: 'L',
+        icon: 'devicon-plain:lovable',
         role: 'APP · PROTOTYPE',
         mockup: 'lovable',
         caption:
@@ -252,19 +255,17 @@ const layers: Layer[] = [
           }]}>
             {layer.tools.map((tool) => {
               const Mock = MOCKS[tool.mockup];
-              {/* La garde n'est pas défensive : depuis que `icon` est optionnel,
-                  les outils à monogramme passent ici avec undefined, et
-                  `brandColorFor` faisait un .replace() dessus. `tsc --noEmit` ne
-                  typecheck pas les templates .astro, donc rien ne l'a signalé —
-                  seule la page rendue vide l'a montré. */}
-              const brand = tool.icon ? brandColorFor(tool.icon) : undefined;
+              {/* Zite et Lovable ne sont pas déclarés dans brands.ts et ne le
+                  seront pas : leurs logos restent en encre au repos comme au
+                  survol, exactement comme Codex. `brandColorFor` rend alors
+                  undefined, --brand n'est pas posé, et les maquettes retombent
+                  sur le lime par leur propre var(). */}
+              const brand = brandColorFor(tool.icon);
               return (
                 <article class="stack-card card-soft bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4" style={brand ? `--brand:${brand}` : undefined}>
                   <div class="flex items-center justify-between gap-3 flex-wrap">
                     <div class="inline-flex items-center gap-2.5 min-w-0">
-                      {tool.icon
-                        ? <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
-                        : <span class="stack-monogramme" aria-hidden="true">{tool.monogramme}</span>}
+                      <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
                       <h4 class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] m-0">{tool.name}</h4>
                     </div>
                     <span class="chip chip-accent shrink-0">{tool.role}</span>
@@ -374,30 +375,6 @@ const layers: Layer[] = [
     .stack-logo { transition: none; }
   }
 
-  /* Le repli des marques que simple-icons ne couvre pas. Mêmes 22 px que le
-     logo qu'il remplace, pour que la ligne de titre garde une seule métrique
-     d'une carte à l'autre.
-     Contour et non aplat : mesuré côte à côte, un carré d'encre plein pesait
-     nettement plus lourd que les glyphes des huit autres cartes, et la ligne
-     de titre des deux cartes VIBE CODING sautait aux yeux avant les autres.
-     Le filet de 1 px est de toute façon le vocabulaire du site.
-     Pas de padding de correction : la mesure a montré qu'il déplaçait la
-     capitale d'un demi-pixel vers le BAS, à l'inverse de ce qu'il prétendait
-     corriger. Le centrage du flex est exact, on le laisse faire. */
-  .stack-monogramme {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-    border: 1px solid var(--color-ink);
-    color: var(--color-ink);
-    font-family: var(--font-display);
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-  }
 
   .stack-layer-cta {
     margin-top: clamp(1.1rem, 2vw, 1.5rem);

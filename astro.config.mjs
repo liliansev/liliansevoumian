@@ -39,7 +39,13 @@ export default defineConfig({
          réellement rendu. */
       include: {
         lucide: ['arrow-left', 'arrow-right', 'bell', 'building-2', 'calculator', 'clock', 'git-fork', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'receipt-text', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'youtube'],
-        'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello']
+        'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello'],
+        /* Lovable ne figure pas dans simple-icons. La variante `-plain` de
+           devicon est monochrome, donc elle prend currentColor comme tous les
+           autres logos du site ; le jeu devicon standard, lui, dessine un
+           dégradé de six couleurs qui ne pourrait ni passer à l'encre au repos
+           ni virer à la marque au survol. */
+        'devicon-plain': ['lovable']
       }
     }),
     sitemap({
