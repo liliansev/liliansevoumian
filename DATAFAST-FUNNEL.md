@@ -1,12 +1,12 @@
 # Funnel de conversion DataFast — liliansevoumian.fr
 
-Objectif business : **être contacté pour une mission**, par l'un des deux canaux —
-l'**appel cal.com** (call 20 min) ou le **formulaire on-site** (mail via Resend).
+Objectif business : **être contacté pour une mission**. Le site n'a plus qu'un
+seul canal, le **diagnostic de 20 min** réservé sur cal.com.
 
 Le tracking est posé en code : attributs `data-fast-goal` lus nativement par le
-script DataFast cookieless (liens cal.com) + des appels JS pour le formulaire et la
-résa confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir
-des 3 goals ci-dessous.
+script DataFast cookieless sur les liens cal.com, plus un appel JS sur la résa
+confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir des
+2 goals ci-dessous.
 
 > ⚠️ **DataFast est cookieless** (empreinte IP+UA serveur, aucun `datafast_visitor_id`
 > exposé). Conséquence : impossible d'attribuer une conversion depuis un backend tiers
@@ -16,7 +16,7 @@ des 3 goals ci-dessous.
 
 ---
 
-## 1. Les 3 goals (état réel du code)
+## 1. Les 2 goals (état réel du code)
 
 ### `lead_call` — clic « Réserver un appel » (cal.com)
 Émis nativement sur **tout lien cal.com** via `data-fast-goal="lead_call"`.
@@ -28,14 +28,6 @@ se passe sur cal.com (voir Limite plus bas).
 | `hero` · `nav` · `nav_mobile` · `roi` · `offres` · `footer` · `mobile_bar` | Landing `/` |
 | `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
 | `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
-
-### `lead_form` — formulaire soumis (`/api/contact` → Resend)
-Émis en JS dans `CTA.astro` **sur soumission réussie** du formulaire on-site.
-C'est la **conversion la plus fiable** : mesurée de bout en bout (le mail est parti).
-
-| Param `source` | Valeur |
-|----------------|--------|
-| `source` | `contact` |
 
 ### `call_booked` — réservation cal.com confirmée (embed on-site)
 La **vraie conversion appel** (pas juste le clic). Les boutons cal.com ouvrent une
@@ -51,8 +43,13 @@ l'événement cal.com `bookingSuccessfulV2` (dédupliqué par `uid` de booking).
 > Un clic ne peut plus gonfler cette stat : seule une réservation réellement
 > confirmée déclenche `call_booked`. `lead_call` (le clic) reste l'étape d'intention.
 
-> Seuls `lead_call`, `lead_form` et `call_booked` sont émis. La taxonomie
+> Seuls `lead_call` et `call_booked` sont émis. La taxonomie
 > `contact_lead` / `cta_contact_click` des anciennes versions n'existe plus.
+>
+> **`lead_form` n'existe plus.** Le formulaire de contact a été retiré du site au
+> profit d'un canal unique, la réservation. `api/contact.js` a été supprimé avec
+> lui. Tout funnel du dashboard fondé sur ce goal tombera à zéro à la mise en
+> ligne : c'est attendu, ce n'est pas une panne de tracking.
 
 ---
 
@@ -93,26 +90,11 @@ dans la même session compte comme converti.
 > Les pages `/expert-n8n` et `/expert-make` sont des pages d'acquisition SEO à forte
 > intention. C'est le funnel « → call » le plus naturel après LP et cas-clients.
 
-### Bonus — funnel du 2ᵉ canal (form)
-Si tu veux suivre l'autre canal de contact : Étape 1 Page visit `/` → Étape 2 Goal
-`lead_form`. À comparer avec Funnel A pour voir **call vs formulaire** sur la landing.
-
----
-
-## ✅ Les 3 signaux (du moins au plus fiable)
+## ✅ Les 2 signaux (du moins au plus fiable)
 - `lead_call` = **clic** « Réserver » (intention). Peut être gonflé par tes propres clics de test → **exclus ton trafic** (`localStorage.datafast_ignore = true`, IP dans Exclusions, ou teste sur preview Vercel non-trackée).
-- `lead_form` = **formulaire soumis** avec succès (`/api/contact` Resend). Conversion réelle, bout en bout.
 - `call_booked` = **réservation cal.com confirmée**, via l'embed on-site → `bookingSuccessfulV2`. Désormais mesuré **dans** DataFast (plus besoin de webhook). Un clic ne peut plus le déclencher.
 
 > Historique : on a un temps cru qu'il fallait un webhook cal.com → API DataFast pour
 > la résa. Impossible en cookieless (l'API `/v1/goals` exige un `datafast_visitor_id`
 > jamais exposé). L'**embed cal.com** contourne ça : la résa se faisant sur le domaine,
 > l'empreinte suffit. C'est la solution retenue.
-
-## 🔧 Setup requis pour le formulaire (`/api/contact`)
-Le formulaire envoie un mail via **Resend**. À configurer dans Vercel (Settings → Environment Variables) :
-- `RESEND_API_KEY` — **obligatoire** (clé `re_...` depuis resend.com). Sans elle, le formulaire bascule sur son fallback mailto.
-- `CONTACT_TO` — optionnel (défaut `bonjour@liliansevoumian.fr`).
-- `CONTACT_FROM` — optionnel. En prod, mettre une adresse d'un **domaine vérifié dans Resend** (ex. `contact@liliansevoumian.fr`), sinon le défaut `onboarding@resend.dev` ne livre qu'à l'owner du compte.
-
-En dev local (`pnpm dev`), les fonctions `/api/*` ne tournent pas → le formulaire utilise son fallback mailto. Pour tester l'envoi réel : `vercel dev` ou un déploiement preview.
