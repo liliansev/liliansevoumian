@@ -43,7 +43,7 @@ const ICONES: Record<string, string> = {
   'les-résultats': 'lucide:target',
 };
 
-interface Piece { id: string; titre: string; corps: string; icone: string }
+interface Piece { id: string; titre: string; reserve: string; corps: string; icone: string }
 
 function decouper(html: string): Piece[] {
   if (!html) return [];
@@ -52,10 +52,21 @@ function decouper(html: string): Piece[] {
   for (const m of morceaux) {
     const tete = m.match(/^<h2\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/);
     if (!tete) continue;
+    let corps = m.slice(tete[0].length);
+    /* Une réserve en tête de pièce est extraite pour être rendue AVANT la
+       bascule : elle restreint la portée de tout ce qui suit, on ne peut pas
+       la lire après les chiffres qu'elle qualifie. */
+    let reserve = '';
+    const tetePiece = corps.match(/^\s*<blockquote[\s\S]*?<\/blockquote>/);
+    if (tetePiece) {
+      reserve = tetePiece[0];
+      corps = corps.slice(tetePiece[0].length);
+    }
     pieces.push({
       id: tete[1],
       titre: tete[2].replace(/<[^>]+>/g, '').trim(),
-      corps: m.slice(tete[0].length),
+      reserve,
+      corps,
       icone: ICONES[tete[1]] ?? 'lucide:square-dot',
     });
   }
@@ -206,6 +217,8 @@ const articleSchema = {
             </span>
             <h2 class="piece-titre">{piece.titre}</h2>
           </header>
+          {piece.reserve && <div class="reveal case-prose" set:html={piece.reserve} />}
+
           {/* Le schéma ouvre « La solution » : le lecteur voit le parcours
               avant de lire les seize paragraphes qui le détaillent. C'est une
               reconstitution, jamais une capture — les écrans clients sont
@@ -686,16 +699,41 @@ const articleSchema = {
     background: transparent;
     box-shadow: inset 0 0 0 1.5px var(--color-ink-faint);
   }
-  /* Citation : fond différencié + bordure pleine — pas de side-stripe accent
-     (ban DS « bordure latérale colorée >1px »). */
+  /* L'encadré de réserve. Les deux qui existent sur ce site disent la même
+     chose : où en est le projet, et ce que les chiffres qui suivent valent
+     vraiment. Ils portaient jusqu'ici la mise en forme d'une citation, si bien
+     qu'on pouvait les lire comme un témoignage flatteur alors qu'ils
+     restreignent la portée de tout ce qui suit.
+
+     Le libellé est posé en CSS parce que le corps vient du markdown : il ne
+     peut pas porter de composant. Il est vrai pour les deux (« projet en phase
+     de stabilisation », « projet en cours de déploiement ») et le restera pour
+     tout encadré du même genre, puisque c'est la seule chose qu'on encadre.
+
+     Bordure pleine, jamais de liseré latéral coloré : c'est un interdit du
+     design system. */
   .case-prose :global(blockquote) {
     margin: 1.5em 0;
     padding: 1em 1.25em;
-    border: 1px solid var(--color-divider);
+    border: 1px solid var(--color-border-strong);
     background: var(--color-surface-low);
     border-radius: var(--radius-sm);
     color: var(--color-ink-mid);
   }
+
+  .case-prose :global(blockquote)::before {
+    content: 'Statut du projet';
+    display: block;
+    margin-bottom: 0.6em;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+
+  .case-prose :global(blockquote p:last-child) { margin-bottom: 0; }
   .case-prose :global(a) {
     /* accent-text (pas accent vif) : lien dans du corps de texte → AA 4.5:1. */
     color: var(--color-accent-text);
