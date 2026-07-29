@@ -56,9 +56,17 @@ const principes = [
     body: "Secteur trop spécialisé (santé, défense, certains régulés), contraintes que je ne maîtrise pas, équipe qui vise une internalisation rapide : je te le dis au premier appel et je te redirige.",
   },
 ];
+
+/* Page indexée : elle a droit à son fil d'Ariane, comme /cas-clients et les
+   pages de cas. Seules les mentions légales, en noindex, s'en passent. */
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: 'Principes', url: '/principes' },
+];
 ---
 
 <Layout
+  breadcrumbs={breadcrumbs}
   title="Principes · Lilian Sevoumian, expert no-code"
   description="Les 8 principes que je suis sur chaque mission d'automatisation. Publics, pour que tu saches à quoi t'attendre avant le call."
 >
@@ -112,6 +120,8 @@ const principes = [
           <a
             href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
             class="btn-primary w-full sm:w-auto sm:self-start"
+            data-fast-goal="lead_call"
+            data-fast-goal-source="principes"
           >
             Réserver mon diagnostic&nbsp;· 20&nbsp;min
           </a>

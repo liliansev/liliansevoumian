@@ -71,13 +71,18 @@ const faqs = [
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  /* Un `@id` propre, rattaché à l'entité globale par `isPartOf` : sans lui, un
+     moteur voit deux ProfessionalService sans savoir s'il s'agit de la même
+     organisation. */
+  "@id": "https://liliansevoumian.fr/expert-n8n#service",
+  "isPartOf": { "@id": "https://liliansevoumian.fr/#service" },
   "name": "Expert n8n freelance · Lilian Sevoumian",
   "description": "Expert n8n freelance : automatisation des processus, agents IA et workflows self-hosted (RGPD). Intégration, code natif et couche d'erreur sur chaque workflow.",
   "url": "https://liliansevoumian.fr/expert-n8n",
   "areaServed": "France",
   "serviceType": ["Automatisation n8n", "Agents IA", "Intégration n8n", "Self-hosting n8n", "Conseil no-code"],
   "knowsAbout": ["n8n", "Automatisation des processus", "Agents IA", "Self-hosting", "RGPD", "Intégration API", "Workflow", "Claude"],
-  "provider": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+  "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
 ---
 

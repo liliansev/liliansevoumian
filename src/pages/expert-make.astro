@@ -67,13 +67,18 @@ const faqs = [
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  /* Un `@id` propre, rattaché à l'entité globale par `isPartOf` : sans lui, un
+     moteur voit deux ProfessionalService sans savoir s'il s'agit de la même
+     organisation. */
+  "@id": "https://liliansevoumian.fr/expert-make#service",
+  "isPartOf": { "@id": "https://liliansevoumian.fr/#service" },
   "name": "Expert Make freelance · Lilian Sevoumian",
   "description": "Expert Make (ex-Integromat) freelance, certifié Niveau 5. Automatisation des processus métier, intégration d’outils et scénarios no-code maintenables.",
   "url": "https://liliansevoumian.fr/expert-make",
   "areaServed": "France",
   "serviceType": ["Automatisation Make", "Intégration Make", "Conseil no-code", "Formation Make"],
   "knowsAbout": ["Make", "Integromat", "Automatisation des processus", "Intégration API", "No-Code", "Workflow"],
-  "provider": { "@type": "Person", "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr" },
+  "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
 ---
 

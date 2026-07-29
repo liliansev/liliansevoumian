@@ -147,7 +147,7 @@ const articleSchema = {
 
         <a
           href="/cas-clients"
-          class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+          class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
         >
           <span aria-hidden="true">←</span>
           RETOUR AUX CAS
@@ -286,46 +286,12 @@ const articleSchema = {
       </section>
     ))}
 
-    <!-- TÉMOIGNAGE + STACK -->
-    {(cs.testimonial?.quote || (cs.tools.length > 0 && !cs.nomenclature)) && (
-      <section
-        data-section
-        class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
-      >
-        <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-start">
-
-          {cs.testimonial?.quote && (
-            <blockquote class="reveal max-w-[60ch] m-0 p-0">
-              <div class="mono-caption text-[var(--color-ink-low)] mb-4">TÉMOIGNAGE</div>
-              <p class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] leading-[1.25] m-0">
-                « {cs.testimonial.quote} »
-              </p>
-              {(cs.testimonial.name || cs.testimonial.role) && (
-                <footer class="mono-caption text-[var(--color-ink-low)] mt-5 not-italic">
-                  {cs.testimonial.name}
-                  {cs.testimonial.role && <span> · {cs.testimonial.role}</span>}
-                </footer>
-              )}
-            </blockquote>
-          )}
-
-          {/* Les outils ne sont listés ici que si la nomenclature ne le fait
-              pas déjà : elle les donne dans l'ordre du parcours et avec leur
-              rôle, ce qu'une rangée de pastilles ne dit pas. */}
-          {cs.tools.length > 0 && !cs.nomenclature && (
-            <div class="reveal lg:max-w-[300px] w-full">
-              <div class="mono-caption text-[var(--color-ink-low)] mb-4">STACK</div>
-              <div class="flex flex-wrap gap-2">
-                {cs.tools.map((tool) => (
-                  <span class="chip chip-accent">{tool}</span>
-                ))}
-              </div>
-            </div>
-          )}
-
-        </div>
-      </section>
-    )}
+    {/* Le bloc « TÉMOIGNAGE + STACK » vivait ici. Il ne se rendait jamais :
+        aucun cas ne publie de `testimonial`, et les quatre ont une
+        `nomenclature`, qui donne les mêmes outils dans l'ordre du parcours et
+        avec leur rôle — sa branche STACK était donc doublement éteinte.
+        Le champ `testimonial` reste déclaré dans content.config.ts : le jour où
+        un client en donne un, il faudra un bloc, mais écrit pour lui. */}
 
     <!-- CAS VOISINS -->
     {voisins.length > 0 && (
