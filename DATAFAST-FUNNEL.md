@@ -25,7 +25,7 @@ se passe sur cal.com (voir Limite plus bas).
 
 | Param `source` | Où |
 |----------------|-----|
-| `hero` · `nav` · `nav_mobile` · `roi` · `offres` · `footer` · `mobile_bar` | Landing `/` |
+| `hero` · `nav` · `nav_mobile_cta` · `roi` · `offres` · `contact` · `barre-mobile` | Landing `/` |
 | `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
 | `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
 

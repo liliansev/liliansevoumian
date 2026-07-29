@@ -4,7 +4,6 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { getCollection } from 'astro:content';
-import { chipClass } from '../../lib/tool-chip';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -148,7 +147,7 @@ const total = displayStudies.length;
                   {tools.length > 0 && (
                     <div class="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-divider)]">
                       {tools.slice(0, 4).map((tool) => (
-                        <span class={chipClass(tool)}>{tool}</span>
+                        <span class="chip chip-accent">{tool}</span>
                       ))}
                       {tools.length > 4 && (
                         <span class="chip chip-dashed">+ {tools.length - 4}</span>
