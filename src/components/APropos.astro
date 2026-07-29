@@ -147,7 +147,11 @@ const faits = [
     line-height: 1.65;
   }
   .apropos-texte p + p { margin-top: 1.25rem; }
-  .apropos-texte p:first-child { color: var(--color-ink); }
+  /* Le premier paragraphe ne prend plus l'encre pleine. Depuis que chaque
+     paragraphe s'ouvre sur son année en gras, ce traitement rendait le premier
+     millésime discernable par la SEULE graisse, quand les quatre suivants se
+     détachent par la graisse ET la couleur. La colonne de dates se lisait de
+     travers. Tous les corps sont désormais au même rang. */
 
   /* L'année ouvre le paragraphe et sert de seul repère de lecture au bloc :
      encre pleine sur un corps en gris moyen. Chiffres tabulaires pour que les

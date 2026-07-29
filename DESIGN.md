@@ -154,9 +154,14 @@ fixes**. Écrire `background: var(--color-ink)` dans un bloc qui redéfinit
 composants l'appellent, mais il vaut la police de texte : le monospace a disparu
 de la DA.
 
-L'échelle est **fluide**, en `clamp()`, du hero (`3,25rem → 6,25rem`) à la légende
-(`0,6875rem` fixe). Les titres de section descendent à `-0,035em` de chasse ; le
-plancher est `-0,04em`, en dessous les lettres se touchent.
+L'échelle est **fluide en haut, fixe en bas**, et la coupure est délibérée. Du
+hero (`3,25rem → 6,25rem`) au corps, chaque rang est un `clamp()`. En dessous de
+`0,875rem` les quatre derniers rangs sont des valeurs fixes : à cette taille une
+courbe ne produirait qu'un pixel d'écart entre les deux extrémités du viewport,
+soit un jeton plus difficile à lire pour aucun bénéfice visible.
+
+Les titres de section descendent à `-0,035em` de chasse ; le plancher est
+`-0,04em`, en dessous les lettres se touchent.
 
 **Le manifeste du hero est une courbe unique, jamais deux jetons commutés.** Il y
 a eu une bascule à `1024px` vers un second jeton plus petit que le premier : le

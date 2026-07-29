@@ -45,7 +45,11 @@
      84 px). Vérifié : 3 lignes à 1440 px comme avant, aucun débordement. */
   --text-display-hero: clamp(3.25rem, 6vw + 1.2rem, 6.25rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
-  --text-signature: clamp(2rem, 3vw + 0.5rem, 2.75rem);
+  /* --text-signature a été retiré. Même plancher et même pente que
+     --text-headline, seul son plafond différait : les deux rendaient
+     exactement 32 px sous 700 px de large. Deux jetons pour une valeur, et un
+     seul consommateur. La signature du bloc contact prend --text-headline,
+     qui est bien son rang. */
   /* Le chiffre héros du simulateur porte désormais les HEURES, plus l'euro :
      garder le nom `money` ferait mentir le jeton. Le second niveau a disparu
      avec la ligne « formule », l'euro tenant maintenant dans une phrase. */
@@ -340,13 +344,8 @@ a, button, input, textarea, select,
   text-transform: uppercase;
 }
 
-.mono-body {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-body);
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: 0;
-}
+/* `.mono-body` a été retirée : aucun élément du markup ne la portait. Le jeton
+   --text-mono-body reste vivant, appelé directement par six maquettes. */
 
 .mono-caption {
   font-family: var(--font-mono);
