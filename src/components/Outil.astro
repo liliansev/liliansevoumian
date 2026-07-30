@@ -37,11 +37,11 @@ interface Props {
 const { icon, class: className = '' } = Astro.props;
 ---
 
-<span class={`outil ${className}`} data-icone={icon}>
-  <Icon name={icon} class="outil-ic" aria-hidden="true" /><slot />
-</span>
-
-<style>
+{/* Aucun blanc entre le <slot /> et la fermeture du <span> : le retour à la
+    ligne y injecterait une espace, et le premier signe de ponctuation posé
+    juste après le composant s'en trouverait détaché — « Make . » au lieu de
+    « Make. ». Le défaut restait invisible tant qu'un mot suivait le nom. */}
+<span class={`outil ${className}`} data-icone={icon}><Icon name={icon} class="outil-ic" aria-hidden="true" /><slot /></span><style>
   .outil {
     white-space: nowrap;
   }
