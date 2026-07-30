@@ -2,9 +2,14 @@
 import { Image } from 'astro:assets';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 
+/* Les numéros suivent l'ordre de DÉFILEMENT de la home, pas un ordre d'importance.
+   Le calculateur est passé en 2ᵉ section, il ouvre donc la liste. Toute permutation
+   dans src/pages/index.astro doit se répercuter ici, sinon la nav annonce un ordre
+   que la page ne tient pas. « Cas clients » mène à la page dédiée et non à l'ancre
+   de la home, mais sa place dans la liste reflète celle de la section. */
 const navLinks = [
-  { href: "/cas-clients", label: "Cas clients", num: "01" },
-  { href: "#roi", label: "Calcul", num: "02" },
+  { href: "#roi", label: "Calcul", num: "01" },
+  { href: "/cas-clients", label: "Cas clients", num: "02" },
   { href: "#stack", label: "Outils", num: "03" },
   { href: "#offres", label: "Offres", num: "04" },
   { href: "#faq", label: "FAQ", num: "05" },

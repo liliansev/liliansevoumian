@@ -21,13 +21,27 @@ const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
 <Layout faqSchema={faqSchema}>
   <Navigation />
 
+  {/* L'ordre suit la décision du lecteur, pas l'inventaire de ce qu'on sait faire.
+      Mesuré sur l'ancien ordre : quatre sections répondaient successivement à la
+      même question (« est-ce que ce type sait faire ? ») sur 55 % de la hauteur,
+      et 4 815 px séparaient le CTA du hero du suivant, soit cinq écrans sans un
+      seul point de réservation.
+
+      Le déplacement décisif est celui du calculateur, passé de la 6ᵉ à la 2ᵉ
+      place : le hero énonce le problème en une phrase, le calculateur le convertit
+      en heures que le lecteur règle lui-même. C'est l'étape « intérêt » qui
+      manquait, et elle amène un CTA juste après le premier écran.
+
+      Hero premier et CTA dernier sont FIGÉS : MobileCTABar s'arme quand #hero
+      quitte l'écran et se recache quand #contact y entre. Les déplacer casse son
+      déclenchement. */}
   <main id="main-content" tabindex="-1" class="outline-none">
     <HeroManifesto />
-    <LogoMarquee />
+    <ROICalculator />
     <CaseStudy />
     <Testimonials />
     <APropos />
-    <ROICalculator />
+    <LogoMarquee />
     <Stack />
     <Offres />
     <FAQ />
