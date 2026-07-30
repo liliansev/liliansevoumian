@@ -6,6 +6,19 @@
  * différente du visible → risque vis-à-vis des guidelines Google (le structured
  * data doit refléter le contenu visible). Désormais un seul texte, dérivé ici.
  *
+ * LES RÉPONSES SONT ÉCRITES POUR ÊTRE EXTRAITES, pas seulement lues. Trois
+ * règles en découlent, et elles expliquent la forme de chaque réponse :
+ *  — la PREMIÈRE phrase répond à elle seule à la question posée. C'est elle
+ *    qu'un extrait enrichi ou un moteur de réponse citera, souvent sans les
+ *    suivantes ;
+ *  — aucun pronom sans antécédent dans la réponse même : « il », « ça » ou
+ *    « le mien » deviennent illisibles une fois la phrase sortie de la page ;
+ *  — les entités sont NOMMÉES (agent IA, n8n, Make, workflow) plutôt que
+ *    reprises par un synonyme, parce que c'est sur ces mots que la question
+ *    est posée.
+ *
+ * Format visé : 3 à 4 phrases, 40 à 70 mots. Au-delà, l'extrait est tronqué au
+ * milieu d'une idée ; en deçà, la réponse n'a pas de quoi être choisie.
  */
 
 export interface FaqItem {
@@ -17,31 +30,19 @@ export interface FaqItem {
 
 export const faqs: FaqItem[] = [
   {
-    q: "Ça rapporte vraiment quoi ?",
-    a: "Le seul chiffre que je peux prouver est celui d'un client : Fraich Touch a récupéré environ 4 h par semaine et n'a plus une facture qui traîne. Chez vous ce sera autre chose : ça dépend du volume, du nombre de personnes sur la tâche et de l'état de vos outils. On regarde vos process au premier échange et je vous donne un ordre de grandeur que je peux tenir.",
+    q: "C'est quoi un agent IA ?",
+    a: "Un agent IA est un programme qui reçoit une consigne en langage courant, décide seul des étapes à suivre et les exécute dans vos outils. Un logiciel classique attend qu'on clique ; l'agent lit un document, en tire les informations utiles et déclenche la suite. Sur mes missions, il est toujours encadré par un workflow qui vérifie son résultat avant de l'envoyer plus loin. Un agent seul reste une démonstration, c'est ce qui l'entoure qui en fait un outil de production.",
   },
   {
-    q: "Combien ça coûte ?",
-    a: "Je ne mets pas de tarif sur cette page, parce que le même mot, « automatiser la facturation », recouvre trois jours de travail chez l'un et trois mois chez l'autre. Ce que je peux promettre : le devis est ferme, posé après le premier appel, et je vous dis avant de commencer si le jeu en vaut la chandelle. Si le budget est votre sujet, dites-le d'entrée, on gagnera du temps tous les deux.",
+    q: "Quelle différence avec une automatisation ?",
+    a: "Une automatisation suit un chemin écrit à l'avance : quand tel événement arrive, faire telle action, toujours dans le même ordre. Un agent IA interprète une situation qu'on n'avait pas prévue et choisit quoi faire. L'automatisation est prévisible et se répare vite, l'agent absorbe la variété des cas réels. En pratique je combine les deux : l'agent comprend le document, le workflow garantit le résultat.",
   },
   {
-    q: "Et si un de mes outils change de son côté ?",
-    a: "Ça arrive : chez Fraich Touch, l'outil de compta avait changé d'interface deux fois avant que j'arrive. C'est pour ça que chaque automatisation que je livre a une alerte explicite sur Slack, Notion ou email selon ce que vous utilisez : vous voyez l'erreur le jour où elle arrive et vous savez ce qui s'est passé. Le mois qui suit la livraison, je corrige sans surcoût. Après, on cale ça ensemble.",
+    q: "Je dois prendre n8n ou Make ?",
+    a: "Make si vos équipes doivent lire et corriger le scénario elles-mêmes : chaque module montre ce qui passe et où ça casse. n8n si l'automatisation doit orchestrer un agent IA, agir dans vos outils métier, ou tourner sur vos propres serveurs. Les deux font tourner de la production sérieuse, et le choix se joue surtout sur qui maintiendra derrière. Si vous êtes déjà installé sur l'un des deux, on reste dessus.",
   },
   {
-    q: "Mes équipes doivent-elles savoir coder ?",
-    a: "Non. Chez Fraich Touch, l'équipe gère les paiements du quotidien elle-même, et former un nouveau collaborateur prend une trentaine de minutes. Je livre toujours une documentation faite pour vous et une session de formation en direct. Pour tout ce qui sort de l'ordinaire, vous me rappelez.",
-  },
-  {
-    q: "Make ou n8n ? Lequel et pourquoi ?",
-    a: "Ça dépend de qui maintient. n8n si vous voulez héberger vous-même (données sensibles, RGPD strict) ou si le volume est important. Make si votre équipe veut reprendre la main dessus : c'est le plus lisible des deux. Sur mes quatre derniers projets, c'est moitié-moitié. Si vous êtes déjà sur l'un, la réponse est simple : on reste dessus.",
-  },
-  {
-    q: "Remote ou sur site ?",
-    a: "À distance sur les missions courtes. Sur une mission complète, je viens un ou deux jours au démarrage puis pour la formation, le reste à distance. Je suis en région parisienne et je me déplace ailleurs en France ou en Europe sur demande.",
-  },
-  {
-    q: "Comment je suis sûr que vous comprenez mon métier ?",
-    a: "Je ne le suis pas. C'est exactement ce que le premier appel sert à valider. Si après l'appel je sens que je ne suis pas le bon (secteur trop spécialisé, contraintes que je ne maîtrise pas), je le dis et je vous oriente.",
+    q: "Comment vous contacter rapidement ?",
+    a: "Le plus rapide est de réserver un créneau de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
   },
 ];
