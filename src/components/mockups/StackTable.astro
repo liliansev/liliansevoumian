@@ -1,9 +1,13 @@
 ---
 /* Notion — mini-table CRM qui se remplit toute seule : chaque ligne se crée,
    puis son statut bascule en « terminé » (cross-fade), en cascade. */
+/* Deux lignes, pas trois : la cascade se lit dès deux créations décalées, et une
+   troisième ligne coûtait 42 px sur une maquette qui dépassait de moitié les plus
+   compactes de la section. C'est « Devis #1043 » qui part — il doublait
+   « Devis #1042 ». Les deux qui restent montrent deux entrées de nature
+   différente (un devis, un lead), ce que trois devis n'auraient pas fait. */
 const rows = [
   { label: 'Devis #1042', from: 'En cours', to: 'Signé' },
-  { label: 'Devis #1043', from: 'En attente', to: 'Payé' },
   { label: 'Lead · formulaire', from: 'Nouveau', to: 'Qualifié' },
 ];
 ---
@@ -24,11 +28,11 @@ const rows = [
 </div>
 
 <style>
-  .st { padding: 10px 4px; }
+  .st { padding: 8px 4px; }
   .st-head {
     display: grid;
     grid-template-columns: 1fr auto;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
     border-bottom: 1px solid var(--color-divider);
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
@@ -41,7 +45,7 @@ const rows = [
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 10px;
-    padding: 9px 0;
+    padding: 7px 0;
     border-bottom: 1px solid var(--color-divider);
   }
   .st-row:last-child { border-bottom: 0; }
@@ -70,9 +74,9 @@ const rows = [
   }
 
   /* Animation : 1) la ligne se crée, 2) le statut bascule. En cascade ligne par ligne. */
+  /* L'en-tête est le premier enfant : les lignes commencent donc à nth-child(2). */
   .st-row:nth-child(2) { --d: 0s; }
   .st-row:nth-child(3) { --d: 0.7s; }
-  .st-row:nth-child(4) { --d: 1.4s; }
 
   .st-row {
     animation: st-create 6s ease-in-out infinite;

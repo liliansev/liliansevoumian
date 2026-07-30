@@ -1,11 +1,16 @@
 ---
 /* Mistral — extraction souveraine animée : le doc est « lu » (spinner + skeletons
    qui réfléchissent), puis les champs extraits se remplissent après un court délai,
-   en cascade. Productivité (extraction auto) + souveraineté (hébergé en UE, RGPD). */
+   en cascade. Productivité (extraction auto) + souveraineté (hébergé en UE, RGPD).
+
+   Deux champs et non trois : la cascade se lit dès deux valeurs décalées, et le
+   troisième coûtait 34 px sur la maquette la plus haute de la section. C'est
+   « Échéance » qui part, la donnée la moins caractéristique d'une facture. Le pied
+   reste : c'est lui qui porte l'argument de souveraineté, et il est le seul de la
+   section à le dire. */
 const fields = [
   { k: 'Client', v: 'M. Partners' },
   { k: 'Montant', v: '1 240 €' },
-  { k: 'Échéance', v: '30/04' },
 ];
 ---
 <div class="sov" role="img" aria-label="Mistral lit une facture PDF et en extrait les champs, traitement hébergé en Europe.">
@@ -34,15 +39,15 @@ const fields = [
   .sov {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 14px;
+    gap: 6px;
+    padding: 8px 14px;
   }
   .sov-doc {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    padding-bottom: 9px;
+    padding-bottom: 6px;
     border-bottom: 1px solid var(--color-divider);
   }
   .sov-file {
@@ -66,7 +71,7 @@ const fields = [
     color: var(--brand, var(--color-accent));
     border: 1px solid color-mix(in oklch, var(--brand, var(--color-accent)) 30%, transparent);
     border-radius: var(--radius-full);
-    padding: 2px 9px;
+    padding: 1px 9px;
     white-space: nowrap;
   }
   /* Spinner « ça réfléchit » — visible pendant la lecture du doc. */
@@ -85,7 +90,9 @@ const fields = [
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 10px;
-    padding: 6px 0;
+    /* Pas de filet entre les champs : leur propre demi-interligne suffit à les
+       séparer, un padding généreux ne faisait qu'allonger la maquette. */
+    padding: 2px 0;
   }
   .sov-k {
     font-family: var(--font-mono);
@@ -121,10 +128,9 @@ const fields = [
   }
   .sov-ok { color: var(--color-success); font-weight: 600; }
 
-  /* Stagger : les 3 champs se remplissent l'un après l'autre. */
+  /* Stagger : les champs se remplissent l'un après l'autre. */
   .sov-row:nth-child(1) { --d: 0s; }
   .sov-row:nth-child(2) { --d: 0.22s; }
-  .sov-row:nth-child(3) { --d: 0.44s; }
   .sov-skel { animation-delay: 0s, var(--d, 0s); }
   .sov-v { animation-delay: var(--d, 0s); }
 
@@ -132,7 +138,7 @@ const fields = [
     display: flex;
     align-items: center;
     gap: 8px;
-    padding-top: 9px;
+    padding-top: 6px;
     border-top: 1px solid var(--color-divider);
     font-size: var(--text-mono-caption);
     color: var(--color-ink-low);

@@ -20,14 +20,18 @@
  * brands.ts et ne le sera pas, donc la carte hôte ne pose pas --brand et var()
  * retombe sur --color-accent. Aucune couleur inventée pour la marque. Il ne sert
  * qu’en aplat et en trait, jamais en texte.
+ *
+ * La légende « Aperçu · refait à chaque phrase » a été retirée : 23 px pour
+ * nommer ce que la composition dit déjà — un cadre posé sous un champ de saisie,
+ * qui se repeint bloc par bloc dès que la frappe s’arrête. Le wireframe, lui,
+ * garde ses cinq blocs : c’est le seul rendu de la section, et l’amputer pour
+ * gagner 9 px l’aurait vidé.
  */
 ---
 <div class="lv" role="img" aria-label="Lovable : une phrase décrit ce qu’on veut, et l’aperçu de la page se repeint juste en dessous avec la nouvelle section.">
   <div class="lv-champ">
     <span class="lv-phrase">« ajoute une page tarifs »</span>
   </div>
-
-  <span class="lv-note">Aperçu · refait à chaque phrase</span>
 
   <div class="lv-vue">
     <span class="lv-titre" aria-hidden="true"></span>
@@ -42,8 +46,10 @@
   .lv {
     display: flex;
     flex-direction: column;
+    /* La légende retirée, c'est ce seul intervalle qui sépare encore la phrase de
+       l'aperçu : trop serré, les deux cadres se lisaient comme un seul bloc. */
     gap: 9px;
-    padding: 12px 14px 13px;
+    padding: 8px 14px;
   }
 
   /* La phrase est encadrée comme un champ pour qu’on la lise comme une saisie et
@@ -52,7 +58,7 @@
      lieu de l’élargir. */
   .lv-champ {
     overflow: hidden;
-    padding: 7px 9px;
+    padding: 5px 9px;
     background: var(--color-surface-low);
     border: 1px solid var(--color-divider);
   }
@@ -70,22 +76,12 @@
       lv-sortie 6.5s ease-in-out infinite;
   }
 
-  .lv-note {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    letter-spacing: 0.03em;
-    color: var(--color-ink-low);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .lv-vue {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 7px;
-    padding: 12px 11px;
+    gap: 4px;
+    padding: 7px 11px;
     border: 1px solid var(--color-divider);
   }
 
@@ -116,7 +112,7 @@
   .lv-section {
     align-self: stretch;
     margin-top: 2px;
-    padding: 9px 8px;
+    padding: 4px 8px;
     border: 1px solid var(--color-divider);
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);

@@ -10,10 +10,15 @@
  * L'onglet actif glisse de « Grille » à « Kanban » puis revient : c'est le
  * basculement de vue lui-même qui est le sujet, pas les données.
  */
+/* Quatre fiches et non sept : c'est la colonne la plus remplie qui fixe la hauteur
+ * de la maquette, et trois fiches empilées la poussaient 50 px au-dessus des plus
+ * compactes de la section. Le rapport entre les colonnes est conservé — celle du
+ * milieu reste la plus chargée, ce qui est le seul point que le kanban doit dire.
+ */
 const colonnes = [
-  { titre: 'À qualifier', cartes: 2 },
-  { titre: 'En cours', cartes: 3 },
-  { titre: 'Livré', cartes: 2 },
+  { titre: 'À qualifier', cartes: 1 },
+  { titre: 'En cours', cartes: 2 },
+  { titre: 'Livré', cartes: 1 },
 ];
 ---
 <div class="av" role="img" aria-label="Base Airtable : la même table vue en grille, en kanban ou en calendrier.">
@@ -37,15 +42,15 @@ const colonnes = [
   .av {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 12px 14px 14px;
+    gap: 8px;
+    padding: 8px 14px;
   }
 
   .av-vues {
     display: flex;
     gap: 4px;
     border-bottom: 1px solid var(--color-divider);
-    padding-bottom: 7px;
+    padding-bottom: 6px;
   }
 
   .av-vue {
@@ -53,7 +58,7 @@ const colonnes = [
     font-size: var(--text-mono-caption);
     letter-spacing: 0.03em;
     color: var(--color-ink-low);
-    padding: 3px 8px;
+    padding: 2px 8px;
     border-radius: var(--radius-full);
     white-space: nowrap;
   }
@@ -73,9 +78,9 @@ const colonnes = [
   .av-col {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
     min-width: 0;
-    padding: 8px 7px;
+    padding: 5px 7px;
     background: var(--color-surface-low);
     border: 1px solid var(--color-divider);
   }
@@ -98,7 +103,7 @@ const colonnes = [
      Le trait intérieur figure le titre de l'enregistrement : sans lui, une
      boîte vide se lit comme un squelette de chargement, pas comme une fiche. */
   .av-fiche {
-    height: 15px;
+    height: 13px;
     display: flex;
     align-items: center;
     padding: 0 4px;
@@ -113,8 +118,10 @@ const colonnes = [
     width: var(--w, 68%);
     background: var(--color-ink-faint);
   }
+  /* Le titre de colonne est un <span> lui aussi : la première fiche est donc
+     nth-of-type(2), la seconde nth-of-type(3). Deux largeurs suffisent depuis que
+     la colonne la plus chargée n'en porte plus que deux. */
   .av-fiche:nth-of-type(3) { --w: 46%; }
-  .av-fiche:nth-of-type(4) { --w: 78%; }
 
   @keyframes av-pose {
     0%        { opacity: 0; transform: translateY(5px); }
