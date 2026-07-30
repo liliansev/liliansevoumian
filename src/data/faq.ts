@@ -42,6 +42,14 @@ export const faqs: FaqItem[] = [
     a: "Make si vos équipes doivent lire et corriger le scénario elles-mêmes : chaque module montre ce qui passe et où ça casse. n8n si l'automatisation doit orchestrer un agent IA, agir dans vos outils métier, ou tourner sur vos propres serveurs. Les deux font tourner de la production sérieuse, et le choix se joue surtout sur qui maintiendra derrière. Si vous êtes déjà installé sur l'un des deux, on reste dessus.",
   },
   {
+    q: "Et si un de mes outils change et que tout casse ?",
+    a: "Un outil qui modifie son interface suffit à arrêter une automatisation, et c'est la panne la plus fréquente. Chaque système que je livre envoie une alerte là où vos équipes regardent déjà, Slack, Notion ou email : la panne se voit le jour où elle arrive. Je corrige sans surcoût le mois qui suit la livraison. Je reprends aussi les automatisations construites par quelqu'un d'autre.",
+  },
+  {
+    q: "Combien coûte une automatisation ?",
+    a: "Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après le premier appel, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.",
+  },
+  {
     q: "Comment vous contacter rapidement ?",
     a: "Le plus rapide est de réserver un créneau de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
   },
