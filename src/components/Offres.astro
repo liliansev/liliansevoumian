@@ -12,7 +12,14 @@ import LinkCTA from './LinkCTA.astro';
 <section
   id="offres"
   data-section
-  class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  {/* Bande grise et non aplat lime. Deux raisons qui vont dans le même sens.
+      La section « contact » 900 px plus bas portait le même aplat, le même
+      bouton et la même destination : deux fins de page en lime se disputaient
+      la conclusion. Et DESIGN.md fixe trois aplats lime sur la home, « pas un
+      quatrième, au-delà l'alternance cesse de signifier quelque chose » — il y
+      en avait quatre. Le lime est rendu à ce qu'il annonce : le début (hero),
+      la preuve (témoignages), la fin (contact). */}
+  class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
 >
   <div class="relative max-w-[680px] mx-auto reveal flex flex-col items-center text-center gap-6">
 
@@ -36,7 +43,12 @@ import LinkCTA from './LinkCTA.astro';
       >
         Réserver mon diagnostic&nbsp;· 20&nbsp;min
       </a>
-      <LinkCTA href="#cas">Ou voir les résultats clients</LinkCTA>
+      {/* La page, pas l'ancre. `#cas` renvoyait le lecteur six mille pixels en
+          arrière, au milieu d'un carrousel qu'il venait de dépasser : un lien
+          qui remonte aussi loin se vit comme une perte de place, pas comme une
+          sortie. `/cas-clients` va vers l'avant et montre les quatre cas
+          entiers plutôt qu'une slide sur quatre. */}
+      <LinkCTA href="/cas-clients">Ou voir les résultats clients</LinkCTA>
     </div>
 
     {/* Pont augmentes.fr — route l'intention « apprendre soi-même » vers la
