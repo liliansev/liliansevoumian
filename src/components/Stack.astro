@@ -33,6 +33,7 @@
  * l'endroit où le besoin se formule.
  */
 import SectionHeader from './SectionHeader.astro';
+import StackLayer from './StackLayer.astro';
 import LinkCTA from './LinkCTA.astro';
 import { Icon } from 'astro-icon/components';
 import { brandColorFor } from '../data/brands';
@@ -84,7 +85,7 @@ interface Layer {
 
 const layers: Layer[] = [
   {
-    label: 'AUTOMATION',
+    label: 'Automatisation',
     cta: 'Faire tourner mon process sur n8n ou Make',
     ctaSource: 'stack-automation',
     tools: [
@@ -125,7 +126,7 @@ const layers: Layer[] = [
     ],
   },
   {
-    label: 'PRODUCTIVITÉ',
+    label: 'Productivité',
     cta: 'Remettre mes données au propre',
     ctaSource: 'stack-productivite',
     tools: [
@@ -205,7 +206,7 @@ const layers: Layer[] = [
     ],
   },
   {
-    label: 'VIBE CODING',
+    label: 'Vibe coding',
     cta: 'Créer mon outil métier interne',
     ctaSource: 'stack-vibe-coding',
     tools: [
@@ -242,9 +243,9 @@ const layers: Layer[] = [
   id="stack"
   data-section
   data-motion-pause
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+  class="relative pt-[var(--spacing-section-y)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
+  <div class="relative max-w-[1200px] mx-auto px-[var(--spacing-section-x)]">
 
     {/* Le body porte les dix jugements qui suivent : « mon verdict », à la
         première personne, est ce qui en fait des avis d'expert plutôt que des
@@ -262,74 +263,29 @@ const layers: Layer[] = [
     />
 
     <div class="stack-layers reveal">
-      {layers.map((layer, index) => (
-        <section class="stack-layer" aria-labelledby={`stack-layer-${index}`}>
-          {/* Le libellé seul, surligné. Le compte d'outils se lit en comptant
-              les cartes juste en dessous, et la phrase d'intention doublait un
-              nom déjà explicite. Inclinaison alternée, comme partout ailleurs. */}
-          <header class="stack-layer-header">
-            <h3 id={`stack-layer-${index}`} class="stack-layer-title">
-              {layer.label}
-            </h3>
-          </header>
-
-          <div class:list={['stack-tools', {
-            'stack-tools-single': layer.tools.length === 1,
-            'stack-tools-quad': layer.tools.length === 4,
-          }]}>
-            {layer.tools.map((tool) => {
-              const Mock = MOCKS[tool.mockup];
-              {/* Zite et Lovable ne sont pas déclarés dans brands.ts et ne le
-                  seront pas : leurs logos restent en encre au repos comme au
-                  survol, exactement comme Codex. `brandColorFor` rend alors
-                  undefined, --brand n'est pas posé, et les maquettes retombent
-                  sur le lime par leur propre var(). */}
-              const brand = brandColorFor(tool.icon);
-              return (
-                <article class="stack-card card-soft bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-lg)] p-5 flex flex-col gap-4" style={brand ? `--brand:${brand}` : undefined}>
-                  <div class="flex items-center justify-between gap-3 flex-wrap">
-                    <div class="inline-flex items-center gap-2.5 min-w-0">
-                      <Icon name={tool.icon} class="stack-logo" aria-hidden="true" />
-                      <h4 class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] m-0">{tool.name}</h4>
-                    </div>
-                    <span class="chip chip-accent shrink-0">{tool.role}</span>
-                  </div>
-
-                  <MockupWindow bare flush>
-                    <Mock />
-                  </MockupWindow>
-
-                  {/* set:html parce que les captions portent un <mark> : dans une
-                      expression JSX, Astro échapperait la balise et afficherait
-                      « &lt;mark&gt; » en clair. Les chaînes sont écrites ici même,
-                      jamais saisies par un tiers. */}
-                  <p
-                    class="mt-auto m-0 text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.5]"
-                    set:html={tool.caption}
-                  />
-                </article>
-              );
-            })}
-          </div>
-
-          {/* Ni `external`, ni `↗`. Ces quatre liens ouvrent l'overlay de
-              réservation sur le domaine, et ils annonçaient l'inverse : un
-              libellé de lien de contenu (« Faire tourner mon process sur n8n ou
-              Make »), un glyphe qui promet un nouvel onglet, et une modale à
-              l'arrivée. Trois signaux, trois vérités différentes, quatre fois
-              sur la page. La flèche montante reste réservée à ce qui quitte
-              vraiment le domaine — augmentes.fr, LinkedIn, YouTube. */}
-          <div class="stack-layer-cta">
-            <LinkCTA
-              href="https://cal.com/lilian-sevoumian/20min"
-              goal="lead_call"
-              goalSource={layer.ctaSource}
-            >{layer.cta}</LinkCTA>
-          </div>
-        </section>
+      {layers.slice(0, 2).map((layer, index) => (
+        <StackLayer layer={layer} titreId={`stack-layer-${index}`} />
       ))}
     </div>
 
+  </div>
+
+  {/* Bande grise sous les deux dernières familles. La section faisait 2 648 px
+      de papier d'un seul tenant — vingt-trois pour cent de la home, et la seule
+      zone de la page sans aucun événement de surface, alors que la DA fait
+      porter tout son rythme vertical par le changement de fond. Le lime
+      disparaissait par ailleurs pendant 5 890 px d'affilée, dont l'essentiel
+      ici. Un div pleine largeur plutôt qu'un `100vw` : la section n'a plus de
+      padding horizontal, ses deux enfants le portent, et rien ne peut déborder
+      de la largeur du document. */}
+  <div class="stack-bande section-band">
+    <div class="relative max-w-[1200px] mx-auto">
+      <div class="stack-layers reveal">
+        {layers.slice(2).map((layer, index) => (
+          <StackLayer layer={layer} titreId={`stack-layer-${index + 2}`} />
+        ))}
+      </div>
+    </div>
   </div>
 </section>
 
@@ -356,6 +312,11 @@ const layers: Layer[] = [
     margin-bottom: clamp(1.25rem, 2vw, 1.75rem);
   }
 
+  /* Casse normale, et libellés en français. Deux des quatre étaient en anglais
+     — « AUTOMATION », « VIBE CODING » — sur un site francophone, à côté de
+     « PRODUCTIVITÉ » qui, lui, était traduit. Et les capitales portaient un
+     `letter-spacing` négatif, alors qu'un mot en capitales demande de l'air
+     entre ses lettres, pas moins. */
   .stack-layer-title {
     margin: 0;
     color: var(--color-ink);
@@ -413,7 +374,13 @@ const layers: Layer[] = [
   }
 
 
-  .stack-layer-cta {
+  .stack-bande {
+  margin-top: clamp(2.75rem, 5vw, 4.5rem);
+  padding: clamp(2.75rem, 5vw, 4.5rem) var(--spacing-section-x) var(--spacing-section-y);
+  border-top: 1px solid var(--color-divider);
+}
+
+.stack-layer-cta {
     margin-top: clamp(1.1rem, 2vw, 1.5rem);
   }
 

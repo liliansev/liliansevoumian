@@ -118,6 +118,16 @@ const humblePlus = {
       tabindex="0"
       data-case-track
     >
+      {/* L'ordre n'est plus strictement chronologique, et le critère est celui
+          que DESIGN.md pose déjà pour les visuels : « un cas qui n'a pas la
+          matière n'a pas le visuel ». Celeris est un vrai travail — ERP, agent
+          IA, souveraineté — mais ses deux indicateurs de tête sont un statut
+          (« brouillon ») et un taux « en test », donc pas encore un résultat
+          livré. Il passait en deuxième position, c'est-à-dire à l'endroit où un
+          lecteur qui cherche son analogue le plus proche tombe en premier, sur
+          une page qui promet des automatisations « qui tiennent en production ».
+          Les trois cas livrés passent devant, dans leur ordre chronologique ;
+          celui qui n'a pas encore ses chiffres ferme la marche. */}
       {/* ── 01 · Humble+ · juillet 2026 ── */}
       <article
         class="case-slide"
@@ -171,62 +181,11 @@ const humblePlus = {
         </div>
       </article>
 
-      {/* ── 02 · Celeris · juin 2026 ── */}
       <article
         class="case-slide"
         role="group"
         aria-roledescription="diapositive"
-        aria-label="2 sur 4 : Celeris"
-        data-case-slide
-        data-case-name="Celeris"
-      >
-        <div class="case-slide-grid">
-          <div class="case-copy">
-            <div class="case-meta">
-              <img class="case-logo" src={celeris.logo} alt={celeris.client} width="512" height="218" style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
-              <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
-              <time class="case-date" datetime="2026-06-20">JUIN 2026</time>
-            </div>
-            <h3>{celeris.title}</h3>
-            <p class="case-description">{celeris.description}</p>
-            <p class="case-results">
-              {celeris.results.map((result, i) => (
-                <Fragment>
-                  {i > 0 && <span aria-hidden="true">·</span>}
-                  <span>{result}</span>
-                </Fragment>
-              ))}
-            </p>
-            <a href={celeris.href} class="case-cta group">
-              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-              <span class="case-cta-text">VOIR LE CAS</span>
-            </a>
-          </div>
-
-          <div class="case-visual">
-            <MockupWindow file="catalogue · erp.sync" status="synchronisé" statusTone="success" schema>
-              <MockupList
-                items={[
-                  { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
-                  { label: 'Switch 48 ports', sub: 'SKU-44822', value: '+9 champs', status: 'done' },
-                  { label: 'NAS 4 baies', sub: 'SKU-44823', value: 'en cours', status: 'pending' },
-                ]}
-              />
-              <Fragment slot="footer">
-                <span>▸ AGENT IA · EN INTERNE</span>
-                <span class="ml-auto">SOUVERAINETÉ ✓</span>
-              </Fragment>
-            </MockupWindow>
-          </div>
-        </div>
-      </article>
-
-      {/* ── 03 · M Partners · mai 2026 ── */}
-      <article
-        class="case-slide"
-        role="group"
-        aria-roledescription="diapositive"
-        aria-label="3 sur 4 : M Partners"
+        aria-label="2 sur 4 : M Partners"
         data-case-slide
         data-case-name="M Partners"
       >
@@ -270,12 +229,11 @@ const humblePlus = {
         </div>
       </article>
 
-      {/* ── 04 · Fraich Touch · janvier 2026 ── */}
       <article
         class="case-slide"
         role="group"
         aria-roledescription="diapositive"
-        aria-label="4 sur 4 : Fraich Touch"
+        aria-label="3 sur 4 : Fraich Touch"
         data-case-slide
         data-case-name="Fraich Touch"
       >
@@ -319,6 +277,55 @@ const humblePlus = {
           </div>
         </div>
       </article>
+
+      <article
+        class="case-slide"
+        role="group"
+        aria-roledescription="diapositive"
+        aria-label="4 sur 4 : Celeris"
+        data-case-slide
+        data-case-name="Celeris"
+      >
+        <div class="case-slide-grid">
+          <div class="case-copy">
+            <div class="case-meta">
+              <img class="case-logo" src={celeris.logo} alt={celeris.client} width="512" height="218" style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
+              <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
+              <time class="case-date" datetime="2026-06-20">JUIN 2026</time>
+            </div>
+            <h3>{celeris.title}</h3>
+            <p class="case-description">{celeris.description}</p>
+            <p class="case-results">
+              {celeris.results.map((result, i) => (
+                <Fragment>
+                  {i > 0 && <span aria-hidden="true">·</span>}
+                  <span>{result}</span>
+                </Fragment>
+              ))}
+            </p>
+            <a href={celeris.href} class="case-cta group">
+              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
+              <span class="case-cta-text">VOIR LE CAS</span>
+            </a>
+          </div>
+
+          <div class="case-visual">
+            <MockupWindow file="catalogue · erp.sync" status="synchronisé" statusTone="success" schema>
+              <MockupList
+                items={[
+                  { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
+                  { label: 'Switch 48 ports', sub: 'SKU-44822', value: '+9 champs', status: 'done' },
+                  { label: 'NAS 4 baies', sub: 'SKU-44823', value: 'en cours', status: 'pending' },
+                ]}
+              />
+              <Fragment slot="footer">
+                <span>▸ AGENT IA · EN INTERNE</span>
+                <span class="ml-auto">SOUVERAINETÉ ✓</span>
+              </Fragment>
+            </MockupWindow>
+          </div>
+        </div>
+      </article>
     </div>
 
     <div class="case-carousel-pagination reveal" aria-label="Accès direct aux cas clients">
@@ -328,7 +335,7 @@ const humblePlus = {
           un article long — où j'en suis, combien il reste. Ici les quatre
           boutons sont visibles ensemble, avec le nom du client et le filet
           d'état : le chiffre ne répondait à aucune question. */}
-      {['Humble+', 'Celeris', 'M Partners', 'Fraich Touch'].map((label, index) => (
+      {['Humble+', 'M Partners', 'Fraich Touch', 'Celeris'].map((label, index) => (
         <button
           type="button"
           class="case-carousel-dot"
