@@ -125,7 +125,8 @@
      états passent en encre, portés par un libellé. */
   /* Un rouge ne concurrence pas le lime : ils ne sont pas de la même
      famille. L'argument « le lime ne peut plus dire valide » vaut pour le
-     succès, pas pour l'échec. 5,24:1 sur lime, 8,8:1 sur blanc. */
+     succès, pas pour l'échec. 5,24:1 sur lime, 6,53:1 sur blanc (la valeur
+     8,8:1 notée ici était fausse, recalculée en runtime). */
   --color-error: #b3261e;
   --color-success: #111111;
 
@@ -447,23 +448,24 @@ a, button, input, textarea, select,
 }
 
 /* =========================================================================
-   SECTION KICKER — petit label mono au-dessus du titre de section
+   SUR-TITRE — un seul, en tête du hero
+
+   `.section-number` a été supprimée. Elle rendait un sur-titre en petites
+   capitales espacées au-dessus de vingt titres, alors que DESIGN.md le range
+   parmi les trois marqueurs les plus universels du site généré, retirés en
+   chemin : la règle était écrite depuis le début, le code ne l'avait jamais
+   suivie. La classe part avec la prop `label` de SectionHeader — laissée en
+   place, elle remettait le motif à un attribut de distance.
+
+   `.eyebrow-rule` reste, et la distinction est tout le sujet. Elle ne sert
+   qu'une fois, en tête du hero, en casse normale, et elle porte le métier, que
+   le titre ne dit pas. Un sur-titre unique qui ajoute une information est une
+   voix ; le même motif répété au-dessus de chaque section est une grammaire.
    ========================================================================= */
 
-.section-number,
 .eyebrow-rule {
   display: inline-flex;
   align-items: center;
-}
-
-.section-number {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-caption);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-ink-low);
-  margin-bottom: 1.5rem;
 }
 
 /* =========================================================================
@@ -1057,16 +1059,9 @@ a[href^="mailto:"] {
   text-decoration-thickness: 2px;
 }
 
-.faq-num {
-  flex-shrink: 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-caption);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-accent-text);
-  min-width: 36px;
-}
+/* `.faq-num` a été retirée avec les libellés `Q01`…`Q06` : l'ordre des questions
+   ne porte aucune information — on cherche la sienne, pas la troisième — et le
+   numéro réservait 36 px de gouttière à gauche de chacune. */
 
 .faq-question {
   flex: 1;
@@ -1273,14 +1268,17 @@ a[href^="mailto:"] {
   position: relative;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--color-divider);
+  /* ink-low et non divider : à 1,26:1 le contour du bouton de fermeture était
+     dessiné sans être visible, sur la seule sortie de la modale de réservation.
+     WCAG 1.4.11 demande 3:1 pour un composant d'interface, ink-low tient 5,33:1. */
+  border: 1px solid var(--color-ink-low);
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-default) var(--ease-out-quint);
 }
-.cal-overlay-close:hover { border-color: var(--color-ink-low); }
+.cal-overlay-close:hover { border-color: var(--color-ink); }
 .cal-overlay-close::before,
 .cal-overlay-close::after {
   content: '';

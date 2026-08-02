@@ -2,17 +2,18 @@
 import { Image } from 'astro:assets';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 
-/* Les numéros suivent l'ordre de DÉFILEMENT de la home, pas un ordre d'importance.
-   Le calculateur est passé en 2ᵉ section, il ouvre donc la liste. Toute permutation
+/* L'ordre suit le DÉFILEMENT de la home, pas une hiérarchie d'importance. Le
+   calculateur est passé en 2ᵉ section, il ouvre donc la liste. Toute permutation
    dans src/pages/index.astro doit se répercuter ici, sinon la nav annonce un ordre
    que la page ne tient pas. « Cas clients » mène à la page dédiée et non à l'ancre
-   de la home, mais sa place dans la liste reflète celle de la section. */
+   de la home, mais sa place dans la liste reflète celle de la section.
+   Les numéros `01`…`05` ont été retirés avec le reste de la numérotation du site. */
 const navLinks = [
-  { href: "#roi", label: "Calcul", num: "01" },
-  { href: "/cas-clients", label: "Cas clients", num: "02" },
-  { href: "#stack", label: "Outils", num: "03" },
-  { href: "#offres", label: "Offres", num: "04" },
-  { href: "#faq", label: "FAQ", num: "05" },
+  { href: "#roi", label: "Calcul" },
+  { href: "/cas-clients", label: "Cas clients" },
+  { href: "#stack", label: "Outils" },
+  { href: "#offres", label: "Offres" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 // Ancres relatives à la home : sur une sous-page, préfixer par "/" pour y revenir
@@ -99,6 +100,12 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   tabindex="-1"
 >
   <div class="h-full flex flex-col px-[var(--spacing-section-x)] pt-[80px] pb-12">
+    {/* Sans numéro : une navigation n'est pas une séquence. Le chiffre annonçait
+        un ordre que le lecteur ne suit pas — il clique là où il veut aller — et
+        il numérotait cinq entrées dont deux mènent à une autre page.
+        (Commentaire posé ici et non dans la boucle : à l'intérieur d'une
+        expression Astro, un `{/* */}` est compilé comme une expression et casse
+        le rendu de toute la page.) */}
     <div class="flex-1 flex flex-col justify-center gap-6">
       {navLinks.map((link) => (
         <a
@@ -106,7 +113,6 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
           class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
           data-mobile-link
         >
-          <span class="mono-caption text-[var(--color-accent-text)] w-8">{link.num}</span>
           <span class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)]">
             {link.label}
           </span>
@@ -114,8 +120,13 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       ))}
     </div>
     <div class="flex flex-col gap-4">
+      {/* `data-mobile-link` ferme le menu AVANT que le handler délégué de Layout
+          n'ouvre l'overlay cal.com. Sans lui, l'overlay se posait par-dessus un
+          menu resté ouvert, et sa fermeture relâchait le scroll lock que le menu
+          exigeait encore : on retrouvait le menu plein écran, page scrollable
+          derrière. Le listener du lien passe avant celui de `document`. */}
       <a
-        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary justify-center w-full" data-fast-goal="lead_call" data-fast-goal-source="nav">
+        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary justify-center w-full" data-mobile-link data-fast-goal="lead_call" data-fast-goal-source="nav">
         Diagnostic&nbsp;· 20&nbsp;min
       </a>
     </div>

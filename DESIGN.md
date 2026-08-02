@@ -110,6 +110,22 @@ Trois choses ont été retirées en chemin, et l'absence est le geste : le
 monospace, les sur-titres en petites capitales espacées, et les arrondis. Ce
 sont, dans cet ordre, les trois marqueurs les plus universels du site généré.
 
+Ce paragraphe a longtemps décrit une intention plutôt qu'un état. Les sur-titres
+étaient posés au-dessus de neuf sections de la home et de onze autres endroits,
+et la numérotation `01 / 02 / 03` courait dans la navigation, les deux pages
+outil, les principes, la FAQ et la pagination des cas — pendant que ce document
+les déclarait retirés. Ils le sont maintenant, partout : la prop `label` de
+`SectionHeader` est optionnelle et n'est plus passée nulle part, et les
+informations que quelques-uns de ces sur-titres portaient réellement — le nombre
+d'outils, le nombre de questions, la durée du diagnostic — sont descendues dans
+le chapô, où elles se lisent dans une phrase.
+
+**Ce qui n'est pas visé.** Les libellés fonctionnels en petites capitales
+(`.mono-label`, `.mono-caption`) restent : un rôle sous un nom, une métrique de
+pied de page, un statut dans une maquette, le libellé d'un curseur. Le motif
+retiré est le sur-titre qui coiffe un titre en le répétant, pas la petite
+capitale en soi.
+
 ## 2. Colors: Papier, encre, et un lime qui ne s'écrit jamais
 
 La palette n'a **aucune chroma résiduelle** : les gris sont de vrais gris. Un
@@ -274,7 +290,19 @@ porte déjà son surlignage.
 reconstitutions schématiques. Les écrans clients sont confidentiels : aucun
 visuel du site ne doit pouvoir passer pour une capture, et le châssis porte la
 mention quand le doute est possible. C'est le seul endroit où les couleurs de
-marque tierces sont autorisées — on y montre l'outil réel.
+marque tierces sont **posées au repos** — on y montre l'outil réel.
+
+**Une couleur de marque au survol n'est pas la même chose.** Trois dispositifs
+la font apparaître au pointeur et seulement là : les logos du bandeau
+(`LogoMarquee`), le logo en tête de carte outil (`Stack`), et les trois canaux
+du pied de page (`Footer`). Le raisonnement est écrit dans `LogoMarquee` :
+vingt-trois couleurs posées en permanence contrediraient la promesse d'un seul
+accent, la même couleur rendue au survol est un geste. La règle est donc :
+**au repos, tout est encre ; la marque tierce n'apparaît qu'au survol, et jamais
+sur pointeur grossier**, où elle ne manque à personne puisqu'elle ne porte pas
+de sens. Sur l'encre du pied de page, la teinte est celle que la plateforme
+publie pour les fonds sombres — le bleu LinkedIn des fonds clairs y tombe à
+3,32:1.
 
 **Les pages de cas** découpent leur corps markdown en pièces, une par titre, sur
 des surfaces alternées dont la dernière est l'encre. Trois dispositifs y sont
@@ -283,7 +311,31 @@ actions, `bascule` au moins trois lignes, `nomenclature` au moins six. **Un cas
 qui n'a pas la matière n'a pas le visuel** — un gabarit qu'on peut remplir à
 moitié invite à inventer pour l'équilibrer.
 
-## 6. Do's and Don'ts
+## 6. L'identité hors-site
+
+Vignette de partage, favicon, icône d'écran d'accueil. Ces trois actifs sont **les
+plus vus de la marque** — chaque lien posté sur LinkedIn, chaque onglet, chaque
+favori — et ils étaient les seuls que ce document ne gouvernait pas. Ils ont
+porté pendant un temps un cube 3D blanc cassé aux logos multicolores : ni lime,
+ni Geist, ni aucune trace de ce système, et trois des anti-références de
+`PRODUCT.md` cochées d'un coup.
+
+**La vignette** (`public/og-image.png`, 1200 × 630) est la page en petit : aplat
+lime, la phrase du hero en Geist semibold, le surlignage blanc penché sur les
+trois derniers mots, le nom en haut, les outils en bas. Elle se lit à la taille
+d'une carte LinkedIn. En **PNG palettisé et non en JPEG** : trois couleurs, un
+aplat et de la typo — le JPEG posait un halo sur chaque bord de lettre pour 51 Ko,
+le PNG-8 est net pour 14. Son `alt` décrit la vignette, pas le site.
+
+**Les icônes** (`favicon_liliansevoumian.svg`, `favicon.png`, `apple-touch-icon.png`)
+sont le monogramme à l'encre sur un carré lime, à 62 % de la largeur. Le carré
+plutôt que le tracé sur fond transparent : à 16 px sur un onglet sombre, un
+monogramme sans fond disparaît, et c'est le lime qui rend l'onglet
+reconnaissable au coin de l'œil. Rayon `0` — un carré ne se clique pas. Les
+trois sont générés depuis la même source SVG : **une seule identité**, là où le
+PNG et le SVG en portaient deux différentes.
+
+## 7. Do's and Don'ts
 
 **À faire**
 
@@ -312,6 +364,12 @@ moitié invite à inventer pour l'équilibrer.
 - **Écrire une valeur par défaut d'élément hors de `@layer base`.** Elle battra
   silencieusement toute classe utilitaire, quelle que soit la spécificité. Deux
   bugs sur ce projet, et rien dans l'outillage ne les signale.
+- **Poser un commentaire `{/* … */}` à l'intérieur d'une expression Astro** —
+  dans un `.map()`, dans un `&&`, ou entre les attributs d'un composant. Le
+  compilateur le lit comme une expression et non comme un commentaire, et rend
+  `Expected ")" but found "$$render"` : les huit pages du site tombent en 500
+  d'un coup, sans que le message ne nomme le fichier fautif. Le commentaire va
+  avant l'expression, ou passe en `<!-- -->`.
 - Commuter un rôle typographique entre deux jetons à un point de rupture. Une
   seule courbe `clamp()`, sinon la taille peut décroître quand la fenêtre
   grandit.

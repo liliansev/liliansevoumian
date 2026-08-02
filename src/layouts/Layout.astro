@@ -22,7 +22,9 @@ const {
   description = "Freelance en automatisation et IA. J'automatise vos processus métier avec n8n, Make et des agents IA sur-mesure. Make certifié niveau 5, réponse sous 48 h.",
   ogType = 'website',
   ogImage: customOgImage,
-  ogImageAlt = "Lilian Sevoumian · Freelance automatisation & IA",
+  // L'alt décrit la vignette telle qu'elle est, pas le site : elle porte la phrase
+// du hero sur l'aplat lime, c'est ce que lit qui ne voit pas l'image.
+ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — Lilian Sevoumian, freelance automatisation et agents IA",
   publishedDate,
   modifiedDate,
   articleSchema,
@@ -38,7 +40,10 @@ const {
    La racine reste « / », elle ne se normalise pas. */
 const cheminCanonique = Astro.url.pathname.replace(/(.+)\/$/, '$1');
 const canonicalURL = new URL(cheminCanonique, Astro.site);
-const ogImage = customOgImage ? new URL(customOgImage, Astro.site) : new URL('/og-image.jpg', Astro.site);
+// PNG palettisé et non JPEG : la vignette est un aplat lime avec de la typo et
+// une bande de surlignage — trois couleurs. Le JPEG y posait un halo sur chaque
+// bord de lettre pour 51 Ko ; le PNG-8 est net pour 14.
+const ogImage = customOgImage ? new URL(customOgImage, Astro.site) : new URL('/og-image.png', Astro.site);
 
 const breadcrumbSchema = breadcrumbs ? {
   "@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -214,7 +219,13 @@ const faqPageSchema = faqSchema ? {
           var closeBtn = overlay.querySelector('[data-cal-close]');
           var inited = false;
           var lastFocused = null;
+          // Entre "lead_call" au clic et "call_booked" à la confirmation, tout se
+          // passe dans un iframe cross-origin : la déperdition y était totalement
+          // invisible. `booked` distingue la fermeture qui suit une réservation
+          // de celle qui l'abandonne — sans lui, les deux se ressemblent.
+          var booked = false;
           function openOverlay() {
+            booked = false;
             bootCal();
             if (!inited) {
               // Le site n'a plus qu'une surface : l'embed cal.com est figé en
@@ -229,11 +240,15 @@ const faqPageSchema = faqSchema ? {
             window.setTimeout(function () { overlay.focus(); }, 50);
           }
           function closeOverlay() {
+            var wasOpen = overlay.classList.contains('is-open');
             overlay.classList.remove('is-open');
             overlay.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
             if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
             lastFocused = null;
+            if (wasOpen && !booked && typeof window.datafast === 'function') {
+              window.datafast('cal_abandoned', { source: lastSource });
+            }
           }
 
           // Trap Tab dans l'overlay ouvert (même pattern que le menu mobile).
@@ -267,6 +282,7 @@ const faqPageSchema = faqSchema ? {
             var uid = data.uid || (data.booking && data.booking.uid) || JSON.stringify(data).slice(0, 80);
             if (seen[uid]) return;
             seen[uid] = 1;
+            booked = true;
             if (typeof window.datafast === 'function') {
               window.datafast('call_booked', { source: lastSource });
             }
@@ -345,15 +361,78 @@ const faqPageSchema = faqSchema ? {
       document.addEventListener('astro:page-load', initMotion);
     </script>
 
-    <!-- Tracking DataFast : le site n'a plus qu'un seul canal de conversion.
-         1) Clic sur un CTA de réservation → goal "lead_call", posé en attribut
-            sur chaque lien cal.com, avec sa source (hero, offres, roi, cas…).
-         2) Réservation confirmée         → goal "call_booked", émis par le
-            listener de l'embed ci-dessus.
+    <!-- Goals d'intention. La distinction avec les goals d'engagement, qui
+         restent exclus : un scroll ne dit rien de ce que le lecteur veut, il dit
+         qu'il descend. Bouger un curseur, ouvrir une objection, aller lire un cas
+         entier sont des gestes délibérés, et chacun se rattache à un endroit
+         précis de la page — c'est ce qui rend une déperdition lisible.
+         Chaque goal continu n'est émis qu'une fois : on mesure « il a essayé »,
+         pas combien de fois. -->
+    <script>
+      (function () {
+        function goal(name, props) {
+          if (typeof window.datafast === 'function') window.datafast(name, props || {});
+        }
+
+        // Le simulateur est la deuxième section et le principal signal d'intérêt
+        // de la page. Il n'était pas instrumenté du tout.
+        var roiSent = false;
+        document.addEventListener('input', function (ev) {
+          if (roiSent) return;
+          var t = ev.target;
+          if (!t || t.type !== 'range' || !t.closest || !t.closest('#roi')) return;
+          roiSent = true;
+          goal('roi_used');
+        }, true);
+
+        // Une question ouverte est une objection nommée : le libellé dit
+        // laquelle. `toggle` ne remonte pas — d'où la phase de capture.
+        var faqSeen = {};
+        document.addEventListener('toggle', function (ev) {
+          var d = ev.target;
+          if (!d || d.tagName !== 'DETAILS' || !d.open || !d.closest('#faq')) return;
+          // Le caret est du chrome : laissé dans le libellé, le goal remonterait
+          // « … + ». `.faq-num` est retiré par précaution — les numéros de
+          // question ont disparu du markup, mais un libellé de goal ne doit pas
+          // dépendre de ce qui décore le résumé.
+          var sum = d.querySelector('summary');
+          var label = '?';
+          if (sum) {
+            var clone = sum.cloneNode(true);
+            var chrome = clone.querySelectorAll('[aria-hidden="true"], .faq-num');
+            for (var i = 0; i < chrome.length; i++) chrome[i].remove();
+            label = clone.textContent.trim().replace(/\s+/g, ' ').slice(0, 80);
+          }
+          if (faqSeen[label]) return;
+          faqSeen[label] = 1;
+          goal('faq_opened', { question: label });
+        }, true);
+
+        // Aller lire un cas entier est le geste de preuve le plus coûteux que la
+        // page propose. Aucun de ces liens n'était tagué.
+        document.addEventListener('click', function (ev) {
+          var a = ev.target && ev.target.closest ? ev.target.closest('a[href^="/cas-clients"]') : null;
+          if (!a) return;
+          goal('case_opened', { href: a.getAttribute('href') });
+        });
+      })();
+    </script>
+
+    <!-- Tracking DataFast — inventaire des goals émis.
+         1) "lead_call"     → clic sur un CTA de réservation, posé en attribut sur
+                              chaque lien cal.com, avec sa source (hero, offres…).
+         2) "call_booked"   → réservation confirmée, émis par le listener embed.
+         3) "cal_abandoned" → overlay fermé sans réservation. Comble le trou entre
+                              1 et 2, qui se jouait dans un iframe cross-origin.
+         4) "lead_email"    → clic sur l'adresse mail (pied de page, contact).
+         5) "roi_used"      → premier mouvement d'un curseur du simulateur.
+         6) "faq_opened"    → première ouverture d'une question, libellé en prop.
+         7) "case_opened"   → clic vers un cas client, href en prop.
+         8) "outbound_formations" → sortie vers augmentes.fr.
          Le goal "lead_form" n'est plus émis : le formulaire de contact a été
-         retiré au profit du seul créneau. Les funnels du dashboard qui en
-         dépendaient tomberont à zéro à partir de cette mise en ligne — c'est
-         attendu, ce n'est pas une régression de tracking.
-         Pas de scroll-depth ni de goals d'engagement intermédiaires. -->
+         retiré au profit du créneau. Les funnels du dashboard qui en dépendaient
+         tomberont à zéro à partir de cette mise en ligne — c'est attendu, ce
+         n'est pas une régression de tracking.
+         Toujours pas de scroll-depth. -->
   </body>
 </html>

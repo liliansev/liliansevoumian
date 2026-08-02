@@ -68,7 +68,11 @@ const fields = [
     font-size: var(--text-mono-caption);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--brand, var(--color-accent));
+    /* Le libellé passe à l'encre, la couleur de marque reste sur le filet : à
+       11 px, le orange tenait 3,35:1 sur papier, et le fallback lime du `var()`
+       serait descendu à 1,25:1. La teinte identifie toujours la marque, elle ne
+       porte simplement plus le texte. */
+    color: var(--color-ink);
     border: 1px solid color-mix(in oklch, var(--brand, var(--color-accent)) 30%, transparent);
     border-radius: var(--radius-full);
     padding: 1px 9px;

@@ -10,13 +10,16 @@ import { faqs } from '../data/faq';
 
     <!-- Colonne gauche : titre sticky -->
     <div class="reveal lg:sticky lg:top-28">
-      {/* Le compte se déduit de la source, il n'est plus écrit à la main : le
-          libellé annonçait sept objections alors que faq.ts en portait quatre.
-          Toute entrée ajoutée ou retirée se reflète désormais ici. */}
-      <div class="section-number">{faqs.length} QUESTIONS · RÉPONSES TRANCHÉES</div>
       <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
         Vos questions sur <mark>l'automatisation</mark>.
       </h2>
+      {/* Le compte descend du sur-titre dans le chapô : il se déduit toujours de
+          la source — le libellé a déjà annoncé sept objections quand faq.ts en
+          portait quatre — mais il se lit dans une phrase au lieu d'occuper une
+          ligne de petites capitales au-dessus du titre. */}
+      <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 mb-0 max-w-[40ch]">
+        {faqs.length} questions, et des réponses tranchées.
+      </p>
     </div>
 
     {/* Colonne droite : accordion.
@@ -32,7 +35,6 @@ import { faqs } from '../data/faq';
 
           <details class="faq-details group">
             <summary class="faq-summary">
-              <span class="faq-num">Q0{i + 1}</span>
               <span class="faq-question">{faq.q}</span>
               <span class="faq-caret" aria-hidden="true">+</span>
             </summary>
@@ -52,6 +54,8 @@ import { faqs } from '../data/faq';
           target="_blank"
           rel="noopener noreferrer"
           class="tap-44 text-[var(--color-accent-text)] hover:text-[var(--color-ink)] transition-colors ml-1"
+          data-fast-goal="outbound_formations"
+          data-fast-goal-source="faq"
         >
           MES FORMATIONS MAKE &amp; N8N <span aria-hidden="true">↗</span>
         </a>

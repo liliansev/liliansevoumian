@@ -10,6 +10,7 @@
  * pas d'invention. Avatars dans src/assets/testimonials/.
  */
 import { Image } from 'astro:assets';
+import LinkCTA from './LinkCTA.astro';
 import ismailImg from '../assets/testimonials/ismail.jpeg';
 import alexisImg from '../assets/testimonials/alexis.jpeg';
 import benjaminImg from '../assets/testimonials/benjamin.png';
@@ -50,12 +51,13 @@ const testimonials: Testimonial[] = [
 >
   <div class="relative max-w-[1200px] mx-auto">
 
-    {/* Header sans numéro — bande de preuve, pas une étape numérotée */}
+    {/* Header sans numéro ni sur-titre — bande de preuve, pas une étape. Le
+        titre nomme déjà ce que la section montre, et « RECOMMANDATIONS » le
+        redisait juste au-dessus en plus petit. */}
     <div class="reveal mb-10 md:mb-12">
       <div class="testi-header-row">
-        <div class="section-number">RECOMMANDATIONS</div>
         <h2
-          class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3"
+          class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]"
           style="max-width: 22ch;"
         >
           Ce qu'en disent ceux qui ont <mark>travaillé avec moi.</mark>
@@ -90,6 +92,22 @@ const testimonials: Testimonial[] = [
           </figcaption>
         </figure>
       ))}
+    </div>
+
+    {/* Le seul lien de réservation de la zone de preuve. Entre le hero et la
+        section outils, quatre sections et trois mille cinq cents pixels de cas,
+        de recommandations et de parcours n'en portaient aucun : le lecteur
+        traversait le moment où il est le plus convaincu sans rien à cliquer.
+        Lien secondaire et non bouton plein — l'action primaire de la page reste
+        la même, elle n'a pas besoin d'un quatorzième bouton noir. */}
+    <div class="reveal mt-10 md:mt-12 pt-7 border-t border-[var(--color-divider)]">
+      <LinkCTA
+        href="https://cal.com/lilian-sevoumian/20min"
+        goal="lead_call"
+        goalSource="temoignages"
+      >
+        Voir ce que ça donnerait chez moi
+      </LinkCTA>
     </div>
   </div>
 </section>

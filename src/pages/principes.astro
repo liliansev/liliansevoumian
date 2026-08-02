@@ -81,20 +81,23 @@ const breadcrumbs = [
 
         <SectionHeader
           as="h1"
-          label="MANIFESTO"
           title="Ce que je crois sur l’automatisation <mark>no-code.</mark>"
           body="On travaille bien ensemble quand on est alignés sur ces principes. Ils sont publics pour ça : tu sais à quoi t'attendre avant le call."
           titleMaxWidth="22ch"
           bodyMaxWidth="60ch"
         />
 
-        <!-- Liste principes — chaque principe revendique sa cellule de grille (paper-island bordé) -->
+        <!-- Liste principes — chaque principe revendique sa cellule de grille
+             (paper-island bordé). Sans numéro : des principes ne forment pas une
+             séquence, le troisième ne vient pas après le deuxième, il vient à
+             côté. Le chiffre ne disait rien que le lecteur ait besoin de savoir,
+             et c'était la numérotation en écaille que le reste du site a
+             retirée. Le label, lui, nomme le principe. -->
         <ol class="reveal-stagger flex flex-col gap-4 md:gap-6 list-none m-0 p-0">
           {principes.map((p, i) => (
             <li class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 grid grid-cols-1 md:grid-cols-[7rem_1fr] gap-x-6 gap-y-3">
 
               <div class="flex flex-col gap-1">
-                <span class="mono-caption text-[var(--color-accent-text)]">{String(i + 1).padStart(2, '0')}</span>
                 <span class="mono-caption text-[var(--color-ink-low)]">{p.label}</span>
               </div>
               <div class="flex flex-col gap-3 max-w-[60ch]">

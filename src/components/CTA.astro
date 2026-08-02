@@ -10,8 +10,10 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
 >
   <div class="relative max-w-[1200px] mx-auto">
 
+    {/* Sans sur-titre : « CONTACT » au-dessus de « Parlons de votre projet »
+        annonçait une deuxième fois ce que la phrase dit déjà, et la section
+        porte l'ancre `#contact` pour la navigation. */}
     <SectionHeader
-      label="CONTACT"
       title="Parlons de votre projet d’<mark class='inv'>automatisation.</mark>"
       body="Vingt minutes pour poser votre process à plat et savoir ce qui s’automatise."
       titleMaxWidth="22ch"
@@ -46,8 +48,24 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
       </div>
 
       <!-- Statement passionné -->
-      <p class="text-[length:var(--text-body-large)] leading-[1.55] m-0 text-[var(--color-ink-mid)] max-w-[58ch]">
-        <span class="text-[var(--color-ink)]">Montrez-moi votre tâche la plus pénible&nbsp;: c’est celle que je préfère.</span>
+      <p class="text-[length:var(--text-body-large)] leading-[1.55] m-0 text-[var(--color-ink)] max-w-[58ch]">
+        Montrez-moi votre tâche la plus pénible&nbsp;: c’est celle que je préfère.
+      </p>
+
+      {/* La porte écrite, posée du côté de la signature et non sous le bouton.
+          Le commentaire de la colonne droite explique pourquoi la formule
+          « même si ce n'est pas avec moi » a été retirée : elle envisageait
+          l'échec de la vente à l'instant précis où l'on demande le clic. Une
+          alternative placée sous le bouton ferait exactement la même chose.
+          Ici, elle se lit avec le nom — un moyen de me joindre, pas un repli. */}
+      <p class="text-[length:var(--text-body-sm)] leading-[1.5] m-0 text-[var(--color-ink-mid)]">
+        Vous préférez écrire&nbsp;?
+        <a
+          href="mailto:bonjour@liliansevoumian.fr"
+          class="contact-mail"
+          data-fast-goal="lead_email"
+          data-fast-goal-source="contact"
+        >bonjour@liliansevoumian.fr</a>
       </p>
       </div>
       <!-- /colonne gauche -->
@@ -161,5 +179,19 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
     object-fit: cover;
     flex-shrink: 0;
     border: 1px solid var(--color-divider);
+  }
+
+  /* Le soulignement porte l'affordance : sur l'aplat lime, un lien ne peut pas
+     se signaler par la couleur. Il est déjà à l'encre comme tout le reste. */
+  .contact-mail {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-thickness var(--duration-default) var(--ease-out-quint);
+  }
+  .contact-mail:hover,
+  .contact-mail:focus-visible {
+    text-decoration-thickness: 2px;
   }
 </style>

@@ -1,6 +1,22 @@
 ---
+/*
+ * SectionHeader — le bloc titre d'une section : un titre, un filet, un chapô.
+ *
+ * Il a longtemps porté une prop `label`, rendue en petites capitales espacées
+ * au-dessus du titre. DESIGN.md rangeait déjà ce sur-titre parmi les trois
+ * marqueurs les plus universels du site généré, retirés en chemin — mais il
+ * coiffait neuf sections de la home et onze autres endroits, et la règle
+ * n'avait jamais atteint le code.
+ *
+ * La prop a été supprimée plutôt que rendue optionnelle. La différence compte :
+ * une prop optionnelle laisse le motif à un caractère de distance, et
+ * l'historique de ce fichier montre qu'une règle écrite ailleurs ne suffit pas
+ * à l'empêcher de revenir. Les informations que quelques-uns de ces sur-titres
+ * portaient réellement — le nombre d'outils, le nombre de questions, la durée
+ * du diagnostic — sont descendues dans le chapô, où elles se lisent dans une
+ * phrase.
+ */
 interface Props {
-  label: string;
   title: string;
   body?: string;
   bodyMaxWidth?: string;
@@ -12,7 +28,6 @@ interface Props {
 }
 
 const {
-  label,
   title,
   body,
   bodyMaxWidth = '60ch',
@@ -23,21 +38,18 @@ const {
 ---
 
 <div class={`reveal mb-12 md:mb-16 ${className}`}>
-  {/* Header en flow naturel (block, full-width) plutôt qu'une card flottante
-      en coin. Le section-number devient le repère visuel à gauche, le title
-      respire avec son max-width. Pas de border outer ni corners — la grille
-      technique 1px en background suffit comme structure. */}
+  {/* Header en flow naturel (block, full-width) plutôt qu'une card flottante en
+      coin. Le titre respire avec son max-width, le filet du dessous porte la
+      structure. Pas de border outer ni corners — la grille technique 1px en
+      background suffit. */}
   <div class="section-header-row">
-    <div class="section-number">
-      {label}
-    </div>
     {/* La TAILLE suit le niveau, elle n'est plus codée en dur.
         `as="h1"` ne changeait que la balise : le titre de /principes rendait
         48 px là où les h1 de toutes les autres pages font 84 px, soit 43 % de
         moins. Le titre de la page y était visuellement un titre de section. */}
     <Heading
       class:list={[
-        'font-display font-semibold leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mt-3',
+        'font-display font-semibold leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]',
         Heading === 'h1'
           ? 'text-[length:var(--text-display)]'
           : 'text-[length:var(--text-headline)]',

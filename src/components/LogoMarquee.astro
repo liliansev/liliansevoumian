@@ -48,7 +48,11 @@ const tools: Tool[] = [
   { name: 'Discord', icon: 'simple-icons:discord' , color: '#5865F2' },
   { name: 'Brevo', icon: 'simple-icons:brevo', color: '#0B996E' },
   { name: 'Trello', icon: 'simple-icons:trello' , color: '#0052CC' },
-  { name: 'Zapier', icon: 'simple-icons:zapier' , color: '#FF4F00' },
+  // Zapier retiré : c'est le concurrent direct des deux plateformes vendues
+  // trois cents pixels plus haut, il n'apparaît dans aucun cas client et dans
+  // aucune des quatre familles de la section outils. Le faire défiler ici
+  // revenait à le présenter comme une option, dans la bande censée montrer ce
+  // qu'on branche.
 ];
 const loop = [...tools, ...tools];
 ---
@@ -59,7 +63,11 @@ const loop = [...tools, ...tools];
     de la DA, qui repose entièrement sur le changement de surface, s'effondrait. */}
 <section class="lm section-band" aria-label="Outils que j'automatise et connecte au quotidien">
   <div class="px-[var(--spacing-section-x)]">
-    <h2 class="lm-title reveal">Votre <mark>Agent IA</mark> s'occupera de ça&nbsp;:</h2>
+    {/* Le titre annonçait « Votre Agent IA s'occupera de ça : » au-dessus d'une
+        bande de logos d'outils. La phrase promet des tâches, la bande montre des
+        outils, et le lecteur devait faire le raccourci lui-même. L'aria-label de
+        la section, lui, disait déjà juste depuis le début. */}
+    <h2 class="lm-title reveal">Ce que je branche à vos <mark>agents IA</mark>&nbsp;:</h2>
   </div>
 
   <div class="lm-viewport reveal">
@@ -145,18 +153,23 @@ const loop = [...tools, ...tools];
     align-items: center;
     gap: 12px;
     white-space: nowrap;
-    opacity: 0.82;
-    transition: opacity var(--duration-default) var(--ease-out-quint);
   }
-  .lm-tool:hover { opacity: 1; }
 
+  /* L'atténuation porte sur le logo seul, plus sur la puce entière. Posée sur
+     `.lm-tool`, elle s'appliquait aussi au nom : ink-low composité à 82 % sur la
+     bande grise retombait à 3,49:1, sous le seuil AA à 20 px. Le commentaire de
+     `.lm-tool-name` corrigeait déjà une fois cette couleur sans voir que
+     l'opacité du parent la reprenait. */
   .lm-tool-ic {
     height: 30px;
     width: auto;
     flex-shrink: 0;
     transform-origin: center;
-    transition: transform var(--duration-default) var(--ease-out-quint);
+    opacity: 0.82;
+    transition: transform var(--duration-default) var(--ease-out-quint),
+                opacity var(--duration-default) var(--ease-out-quint);
   }
+  .lm-tool:hover .lm-tool-ic { opacity: 1; }
   /* Léger zoom centré au survol — reste dans le headroom vertical, jamais rogné. */
   .lm-tool:hover .lm-tool-ic { transform: scale(1.09); }
 

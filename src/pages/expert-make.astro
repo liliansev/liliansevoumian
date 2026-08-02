@@ -106,11 +106,16 @@ const serviceSchema = {
           <span class="mono-caption text-[var(--color-ink-low)]">EXPERT MAKE · CERTIFIÉ NIVEAU 5</span>
         </div>
 
-        <div class="reveal relative bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2">
+        {/* Le voile est descendu du conteneur au paragraphe, comme sur la home
+            (HeroManifesto.astro:36-47) : englobé dans un `.reveal`, le h1 était
+            peint à opacity 0, disqualifié comme candidat LCP, et laissé
+            invisible 2,5 s si le module de reveal échouait. La cascade reste
+            sur le sous-titre. */}
+        <div class="relative bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2">
           <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[16ch]" style="text-wrap: balance;">
             Expert <mark>Make</mark> freelance.
           </h1>
-          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
+          <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
             Certifié Niveau 5, le premier en France. J'automatise vos processus métier et connecte vos outils en scénarios visuels que votre équipe peut lire, suivre et maintenir.
           </p>
         </div>
@@ -132,7 +137,6 @@ const serviceSchema = {
     <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal mb-12 md:mb-16 pb-6 border-b border-[var(--color-divider)]">
-          <div class="section-number">01 · CE QUE JE FAIS AVEC MAKE</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
             Du visuel, du robuste, du maintenable.
           </h2>
@@ -157,7 +161,6 @@ const serviceSchema = {
     <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal mb-10 md:mb-12">
-          <div class="section-number">02 · CAS D'USAGE</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
             Ce qu'on peut automatiser avec Make.
           </h2>
@@ -178,7 +181,6 @@ const serviceSchema = {
     <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
         <div class="reveal max-w-[55ch]">
-          <div class="section-number">03 · POURQUOI MOI</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mb-6 max-w-[20ch]">
             Le premier certifié Make Niveau 5 en France.
           </h2>
@@ -207,7 +209,6 @@ const serviceSchema = {
     <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal mb-10 md:mb-12">
-          <div class="section-number">04 · FAQ MAKE</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
             Les questions qui reviennent sur Make.
           </h2>
@@ -218,7 +219,6 @@ const serviceSchema = {
             <div class="faq-item">
               <details class="faq-details group">
                 <summary class="faq-summary">
-                  <span class="faq-num">Q0{i + 1}</span>
                   <span class="faq-question">{faq.q}</span>
                   <span class="faq-caret" aria-hidden="true">+</span>
                 </summary>

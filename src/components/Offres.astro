@@ -3,10 +3,47 @@ import LinkCTA from './LinkCTA.astro';
 /*
  * Offres.astro — section §04
  *
- * Volontairement SANS catalogue de formats : on ne fait pas choisir le prospect
- * dans une grille figée. Bloc à gauche (porte ouverte : Lilian propose le format
- * adapté), CTA à droite. Minimaliste. Les liens augmentes.fr restent.
+ * Trois formats décrits, et toujours pas de grille tarifaire.
+ *
+ * La version précédente tenait en cinquante mots et citait quatre formats
+ * (« Régie, mission cadrée, mentoring d'équipe, coaching ponctuel… ») sans en
+ * définir un seul : ni livrable, ni périmètre, ni point de départ. C'était la
+ * section la plus courte de la page — cinq fois moins haute que celle des
+ * outils — et la seule qui vend. Ne rien décrire ne protégeait de rien : ça
+ * repoussait la totalité de la décision au premier appel, ce qui est l'inverse
+ * de ce que la page promet.
+ *
+ * Ce qui reste absent est le prix, et c'est la position tenue en FAQ Q5 : le
+ * même énoncé vaut trois jours chez l'un et trois mois chez l'autre, le devis
+ * est ferme et arrive après le premier appel. Décrire le travail n'oblige pas
+ * à le tarifer.
+ *
+ * Les trois formats ne sont pas inventés : ils recouvrent ce que le site prouve
+ * déjà ailleurs — les quatre cas clients (construire), la page « reprendre une
+ * automatisation qui casse » et la FAQ Q4 (reprendre), la certification
+ * formateur et les trois cents personnes formées (rendre la main).
  */
+
+const formats = [
+  {
+    titre: 'Construire ce qui n’existe pas',
+    corps:
+      'Un workflow ou un agent, de la première brique à la mise en production dans vos outils. Vous repartez avec la documentation, et je corrige sans surcoût le mois qui suit la livraison.',
+    depart: 'On part du process qui vous coûte le plus de temps.',
+  },
+  {
+    titre: 'Reprendre ce qui casse',
+    corps:
+      'Une automatisation héritée de quelqu’un d’autre, qui tombe à chaque changement d’API. Je la relis, je la répare, et je la laisse dans un état où votre équipe peut la suivre.',
+    depart: 'On part de ce qui tourne déjà, mal.',
+  },
+  {
+    titre: 'Rendre la main à votre équipe',
+    corps:
+      'Des sessions sur vos propres scénarios, pas sur des cas d’école. Certifié formateur Make, plus de trois cents personnes formées depuis 2020.',
+    depart: 'On part de ce que personne chez vous n’ose encore toucher.',
+  },
+];
 ---
 
 <section
@@ -15,26 +52,62 @@ import LinkCTA from './LinkCTA.astro';
   {/* Bande grise et non aplat lime. Deux raisons qui vont dans le même sens.
       La section « contact » 900 px plus bas portait le même aplat, le même
       bouton et la même destination : deux fins de page en lime se disputaient
-      la conclusion. Et DESIGN.md fixe trois aplats lime sur la home, « pas un
-      quatrième, au-delà l'alternance cesse de signifier quelque chose » — il y
-      en avait quatre. Le lime est rendu à ce qu'il annonce : le début (hero),
-      la preuve (témoignages), la fin (contact). */}
+      la conclusion. Et le lime perd son sens s'il revient trop souvent : il est
+      rendu ici à trois moments qui se distinguent — le début (hero), la preuve
+      (témoignages), la fin (contact). Le panneau de résultat du simulateur est
+      une incrustation dans une bande grise, pas un aplat de section.
+      (Décision de ce fichier, pas une règle écrite dans DESIGN.md — une version
+      antérieure de ce commentaire la citait comme telle, à tort.) */}
   class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
 >
-  <div class="relative max-w-[680px] mx-auto reveal flex flex-col items-center text-center gap-6">
+  <div class="relative max-w-[1200px] mx-auto">
 
-    {/* Porte ouverte — centrée */}
-    <div class="section-number !mb-0">TRAVAILLER ENSEMBLE</div>
-    <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[18ch]">
-      On trouve le <mark class="inv">bon format</mark> ensemble.
-    </h2>
-    <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[54ch]">
-      Régie, mission cadrée, mentoring d'équipe, coaching ponctuel… On part de
-      votre besoin réel, et c'est souvent un mélange.
-    </p>
+    <div class="reveal mb-12 md:mb-16">
+      {/* Sans sur-titre : « TRAVAILLER ENSEMBLE » annonçait en petites capitales
+          ce que le titre annonce en grand, et le verbe du titre est plus précis
+          que le sien. */}
+      <div class="offres-header">
+        <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
+          Construire, reprendre, ou <mark>rendre la main</mark>.
+        </h2>
+      </div>
+      <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0 max-w-[56ch]">
+        Trois formats. Le vôtre est souvent un mélange des trois, et c’est le
+        premier appel qui le décide.
+      </p>
+    </div>
+
+    {/* Filets et non cartes : le rythme de la page vient des traits, et une
+        grille de trois cartes à icône est le motif que ce site évite partout
+        ailleurs. `auto-fit` plutôt qu'un nombre de colonnes figé — trois
+        formats aujourd'hui, la grille ne casse pas s'il y en a deux ou quatre. */}
+    <div class="reveal-stagger offres-grille">
+      {formats.map((f) => (
+        <div class="reveal offres-item">
+          <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
+            {f.titre}
+          </h3>
+          <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
+            {f.corps}
+          </p>
+          <p class="text-[length:var(--text-body-sm)] text-[var(--color-ink-low)] leading-[1.5] mt-4 mb-0">
+            {f.depart}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    {/* La durée et le mode d'engagement, énoncés une fois pour les trois — les
+        répéter par format aurait donné trois fois la même phrase. */}
+    <div class="reveal offres-cadre">
+      <p>
+        En régie ou en mission cadrée, selon ce qui vous arrange. La durée dépend
+        du périmètre&nbsp;: le devis est ferme et arrive après le premier appel.
+      </p>
+    </div>
 
     {/* Actions */}
-    <div class="mt-2 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full sm:w-auto">
+    <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
       <a
         href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
         class="btn-primary justify-center"
@@ -48,18 +121,23 @@ import LinkCTA from './LinkCTA.astro';
           qui remonte aussi loin se vit comme une perte de place, pas comme une
           sortie. `/cas-clients` va vers l'avant et montre les quatre cas
           entiers plutôt qu'une slide sur quatre. */}
+      {/* Pas de `goal` en attribut ici : le listener délégué de Layout tague
+          déjà tout lien vers /cas-clients en `case_opened`, et deux goals sur
+          le même clic compteraient la même intention deux fois. */}
       <LinkCTA href="/cas-clients">Ou voir les résultats clients</LinkCTA>
     </div>
 
     {/* Pont augmentes.fr — route l'intention « apprendre soi-même » vers la
         plateforme formations. Lien secondaire, jamais primaire. */}
-    <p class="mt-4 mono-caption text-[var(--color-ink-low)]">
+    <p class="reveal mt-8 mono-caption text-[var(--color-ink-low)]">
       VOUS PRÉFÉREZ APPRENDRE À LE FAIRE VOUS-MÊME&nbsp;?
       <a
         href="https://augmentes.fr"
         target="_blank"
         rel="noopener noreferrer"
         class="tap-44 text-[var(--color-accent-text)] hover:text-[var(--color-ink)] transition-colors ml-1"
+        data-fast-goal="outbound_formations"
+        data-fast-goal-source="offres"
       >
         FORMATIONS MAKE &amp; N8N SUR AUGMENTES.FR&nbsp;<span aria-hidden="true">↗</span>
       </a>
@@ -67,3 +145,57 @@ import LinkCTA from './LinkCTA.astro';
 
   </div>
 </section>
+
+<style>
+  .offres-header {
+    position: relative;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .offres-grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    /* Gouttière verticale en une seule colonne : sans elle, la ligne de départ
+       d'un format touchait le filet du suivant, et les trois blocs se lisaient
+       comme un seul. Elle repasse à zéro dès que la grille se répartit, où le
+       filet de tête suffit à séparer. */
+    gap: 1.75rem 0;
+  }
+
+  .offres-item {
+    /* Le filet ouvre chaque format, comme les pull-quotes des témoignages. En
+       une seule colonne il devient une séparation horizontale, en plusieurs il
+       coiffe chaque colonne — même trait, deux lectures. */
+    border-top: 1px solid var(--color-divider);
+    padding: 1.75rem 0 0;
+  }
+
+  @media (min-width: 640px) {
+    .offres-grille { gap: 0 2.5rem; }
+  }
+
+  @media (max-width: 639px) {
+    .offres-item:first-child { padding-top: 1.5rem; }
+  }
+
+  @media (min-width: 900px) {
+    .offres-grille { gap: 0 4rem; }
+  }
+
+  /* Le filet court sur toute la largeur, le texte s'arrête à sa mesure : posé
+     sur le paragraphe lui-même, le trait s'interrompait au milieu de la grille
+     et se lisait comme une bordure cassée. */
+  .offres-cadre {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-divider);
+  }
+  .offres-cadre p {
+    margin: 0;
+    max-width: 62ch;
+    font-size: var(--text-body-sm);
+    line-height: 1.6;
+    color: var(--color-ink-low);
+  }
+</style>

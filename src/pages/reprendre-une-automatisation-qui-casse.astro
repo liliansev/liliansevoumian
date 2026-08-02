@@ -233,7 +233,6 @@ const faqs = [
     <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto">
         <SectionHeader
-          label="QUESTIONS FRÉQUENTES"
           title="Ce qu’on me demande avant une <mark>reprise</mark>."
           titleMaxWidth="24ch"
         />
@@ -242,7 +241,6 @@ const faqs = [
             <div class="faq-item reveal" style={`--rang:${i}`}>
               <details class="faq-details group">
                 <summary class="faq-summary">
-                  <span class="faq-num">Q0{i + 1}</span>
                   <span class="faq-question">{faq.q}</span>
                   <span class="faq-caret" aria-hidden="true">+</span>
                 </summary>
@@ -256,10 +254,13 @@ const faqs = [
 
     <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
+        {/* La réassurance descend du sur-titre dans le chapô. Elle est la seule
+            du lot à porter une vraie information — la durée et l'absence
+            d'engagement — mais elle la portait dans la plus petite taille du
+            système, à onze pixels et en capitales espacées. */}
         <SectionHeader
-          label="DIAGNOSTIC · 20 MIN · SANS ENGAGEMENT"
           title="Montrez-moi ce qui <mark class='inv'>tourne encore</mark>."
-          body="Vous décrivez le symptôme avec vos mots. Je vous dis ce que je vois, et si une reprise vaut le coup."
+          body="Vingt minutes, sans engagement. Vous décrivez le symptôme avec vos mots. Je vous dis ce que je vois, et si une reprise vaut le coup."
           titleMaxWidth="22ch"
         />
         <div class="reveal mt-8">

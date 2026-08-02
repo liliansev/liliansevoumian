@@ -25,7 +25,10 @@ interface NavColumn {
 }
 
 const channels: Channel[] = [
-  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#0A66C2" },
+  // Le bleu LinkedIn pour fond sombre (#70B5F9), pas le #0A66C2 des fonds clairs :
+  // sur l'encre du footer, le bleu de base tient 3,32:1 et le libellé s'effaçait
+  // au survol. La variante sombre est officielle et tient 8,7:1.
+  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#70B5F9" },
   { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
   { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", icon: "lucide:mail", color: "#FF6719" },
 ];
@@ -53,6 +56,14 @@ const navColumns: NavColumn[] = [
     title: "CONTACT",
     links: [
       { label: "Réserver un diagnostic", href: "https://cal.com/lilian-sevoumian/20min", external: true, goal: "lead_call", goalSource: "footer" },
+      // La deuxième porte. Treize appels à l'action menaient au même agenda et à
+      // rien d'autre : qui n'est pas prêt à poser vingt minutes en calendrier
+      // avec un inconnu repartait sans laisser de trace.
+      // L'adresse du domaine et non celle des mentions légales : le site publie
+      // déjà `bonjour@` dans son llms.txt, c'est donc celle qu'un moteur cite,
+      // et une adresse gmail sur une page qui vend de la rigueur travaille
+      // contre elle. Les mentions légales gardent l'adresse déclarée.
+      { label: "Écrire un email", href: "mailto:bonjour@liliansevoumian.fr", goal: "lead_email", goalSource: "footer" },
     ],
   },
   {

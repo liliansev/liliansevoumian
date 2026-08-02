@@ -51,7 +51,10 @@ const celeris = {
   title: "Un catalogue produits qui s'enrichit tout seul.",
   description:
     "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP. Il est pensé pour tourner en interne, avec une exigence forte de souveraineté des données.",
-  results: ['L’AGENT RÉDIGE LES FICHES, LE COMMERCIAL VALIDE', '6 PRODUITS SUR 10 APPARIÉS AUTOMATIQUEMENT'],
+  /* « EN TEST » vient de la fiche source (celeris.md:13, « 319 sur ~515, en
+     test ») : le chiffre circulait sans sa réserve, ce qui le faisait passer
+     pour un résultat de production. */
+  results: ['L’AGENT RÉDIGE LES FICHES, LE COMMERCIAL VALIDE', '6 PRODUITS SUR 10 APPARIÉS AUTOMATIQUEMENT, EN TEST'],
   href: '/cas-clients/celeris',
 };
 const humblePlus = {
@@ -73,8 +76,10 @@ const humblePlus = {
 >
   <div class="relative max-w-[1200px] mx-auto">
 
+    {/* Sans sur-titre : « CAS CLIENTS » nommait la section en petites capitales
+        au-dessus d'un titre qui dit « mes derniers projets », et la navigation
+        porte déjà l'entrée du même nom. */}
     <SectionHeader
-      label="CAS CLIENTS"
       title="Mes derniers projets d'<mark class='inv'>Agents IA</mark> et automatisation."
       titleMaxWidth="24ch"
     />
@@ -147,7 +152,7 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="commandes · b2b.order-to-cash" status="actif" statusTone="success" flush>
+            <MockupWindow file="commandes · b2b.order-to-cash" status="actif" statusTone="success" schema flush>
               <WorkflowCanvas
                 describe="Schéma simplifié du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow orchestre la commande Shopify, la facture Pennylane et la validation humaine des cas sensibles dans Slack."
                 trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Mail reçu', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
@@ -199,7 +204,7 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="catalogue · erp.sync" status="synchronisé" statusTone="success">
+            <MockupWindow file="catalogue · erp.sync" status="synchronisé" statusTone="success" schema>
               <MockupList
                 items={[
                   { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
@@ -249,7 +254,7 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="prospection · sourcing-to-crm.flow" status="actif" statusTone="success" flush>
+            <MockupWindow file="prospection · sourcing-to-crm.flow" status="actif" statusTone="success" schema flush>
               <WorkflowCanvas
                 describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
                 trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
@@ -298,7 +303,7 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="facturation · clients.auto" status="3 payées" statusTone="success">
+            <MockupWindow file="facturation · clients.auto" status="3 payées" statusTone="success" schema>
               <MockupList
                 items={[
                   { label: 'Brand × Créateur', sub: 'INV-2041', value: '4 200 €', status: 'done' },
@@ -421,8 +426,16 @@ const humblePlus = {
     scroll-padding-inline: 2px;
   }
 
+  /* La diapositive ne prend pas toute la largeur de la piste : il lui manque de
+     quoi laisser dépasser le bord de la suivante. Quatre cas chiffrés vivaient
+     derrière un geste que rien n'annonçait — la carte occupait la largeur
+     entière, et un lecteur qui ne balaie pas repartait avec une preuve sur
+     quatre. Le fragment laissé visible (33 px à 1440, 28 px à 402, la gouttière
+     déduite) suffit à dire qu'il y a une suite. Il coûte une ligne de titre à la
+     carte sur mobile ; trois cas jamais vus coûtaient nettement plus cher. */
   .case-slide {
-    flex: 0 0 100%;
+    flex: 0 0 auto;
+    width: calc(100% - clamp(2.75rem, 4vw, 4.5rem));
     min-width: 0;
     padding: clamp(1.25rem, 3vw, 2.25rem);
     background:
@@ -554,12 +567,16 @@ const humblePlus = {
     text-align: left;
   }
 
+  /* ink-faint et non divider : cette barre est le seul indicateur d'état des
+     cas non sélectionnés, et à 1,26:1 elle était invisible — la pagination
+     n'annonçait donc pas qu'il restait trois cas à voir. 3,03:1, seuil des
+     indicateurs non textuels. */
   .case-carousel-dot::before {
     position: absolute;
     inset: 0 0 auto;
     height: 2px;
     content: '';
-    background: var(--color-divider);
+    background: var(--color-ink-faint);
     transition: background-color 300ms var(--ease-out-quint);
   }
 
@@ -577,6 +594,13 @@ const humblePlus = {
     font-weight: 600;
   }
 
+  /* Le nom du client reste affiché à toutes les largeurs. Il disparaissait sous
+     640 px et la pagination se réduisait à « 01 02 03 04 » : quatre traits
+     numérotés ne disent pas ce qu'ils contiennent, et c'est précisément là que
+     les libellés manquaient le plus, l'écran ne montrant qu'un cas. Mesuré à
+     402 px, chaque colonne fait 80 px — de quoi poser « 02 Celeris » en entier
+     et « 03 M Partne… » tronqué. Un nom coupé nomme encore ; un numéro nu ne
+     nomme rien. */
   .case-carousel-dot-label {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -613,11 +637,14 @@ const humblePlus = {
                 border-color var(--duration-default) var(--ease-out-quint),
                 color var(--duration-default) var(--ease-out-quint);
   }
+  /* La flèche passe à l'encre, pas au papier : sur un fond lime, du blanc tient
+     1,25:1 et le glyphe disparaissait pendant tout le survol. Le lime est une
+     surface, ce qui se pose dessus est de l'encre. */
   .case-cta:hover .case-cta-dot,
   .case-cta:focus-visible .case-cta-dot {
     background: var(--color-accent);
     border-color: var(--color-accent);
-    color: var(--color-paper);
+    color: var(--color-ink);
   }
   .case-cta-arrow {
     transition: transform var(--duration-default) var(--ease-out-quint);
@@ -692,10 +719,6 @@ const humblePlus = {
 
     .case-logo {
       max-width: 144px;
-    }
-
-    .case-carousel-dot-label {
-      display: none;
     }
   }
 

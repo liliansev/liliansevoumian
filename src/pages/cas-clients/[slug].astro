@@ -129,7 +129,7 @@ const articleSchema = {
   description: seoDescription,
   author: { '@id': 'https://liliansevoumian.fr/#person' },
   publisher: { '@id': 'https://liliansevoumian.fr/#person' },
-  image: 'https://liliansevoumian.fr/og-image.jpg',
+  image: 'https://liliansevoumian.fr/og-image.png',
   datePublished: dateISO,
   about: [{ '@type': 'Thing', name: 'Automatisation des processus' }],
   mentions: cs.tools.map((t) => ({ '@type': 'Thing', name: t })),
@@ -179,7 +179,10 @@ const articleSchema = {
         </div>
 
         <!-- Title -->
-        <div class="reveal mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
+        {/* Pas de `.reveal` sur ce bloc, comme sur la home (HeroManifesto.astro:36-47) :
+            le titre du cas est le message de la page, il ne peut pas dépendre
+            d'un module JavaScript ni être disqualifié comme candidat LCP. */}
+        <div class="mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
           <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0">
             {cs.title}
           </h1>
@@ -236,7 +239,12 @@ const articleSchema = {
               pas de schéma : rien vaut mieux qu'un dessin faux. */}
           {piece.id === 'la-solution' && cs.flow && (
             <div class="reveal piece-schema">
-              <MockupWindow file={`${cs.tools[0] ?? 'workflow'} · parcours`} status="reconstitution" flush>
+              {/* `schema` et non `status="reconstitution"` : passé en statut, le
+                  mot prenait la pastille du badge d'état et se lisait comme un
+                  état de l'application, à côté d'« actif » et de « synchronisé ».
+                  La mention dédiée est en encre pleine, sans pastille, et c'est
+                  la même sur les quatre fenêtres de la home. */}
+              <MockupWindow file={`${cs.tools[0] ?? 'workflow'} · parcours`} schema flush>
                 <WorkflowCanvas
                   describe={cs.flow.describe}
                   trigger={{ ...cs.flow.trigger, color: brandColorFor(cs.flow.trigger.icon) }}
@@ -304,11 +312,19 @@ const articleSchema = {
         aucun cas et n'avait que ce bloc pour lecteur. Le jour où un client en
         donne un, il faudra un champ ET un bloc, écrits pour lui. */}
 
-    <!-- CAS VOISINS -->
+    <!-- CAS VOISINS.
+         Le titre de cette grille était un sur-titre, le seul du site à ne
+         coiffer aucun titre : il servait d'en-tête tout en étant rendu comme un
+         libellé de onze pixels. La grille gagne son h2, la page gagne un niveau
+         de structure. (Commentaire HTML et non JSX : à l'intérieur d'une
+         expression Astro, un `{/* */}` est compilé comme une expression et
+         casse le rendu de toute la page.) -->
     {voisins.length > 0 && (
       <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
         <div class="relative max-w-[1200px] mx-auto">
-          <div class="section-number mb-6">↦ AUTRES CAS</div>
+          <h2 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.1] tracking-[-0.025em] text-[var(--color-ink)] m-0 mb-6">
+            Autres cas
+          </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {voisins.map((v) => (
               <a href={`/cas-clients/${v.id}`} class="voisin">
@@ -334,7 +350,6 @@ const articleSchema = {
     <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal mb-8 md:mb-10 inline-block py-2 pr-2 relative">
-          <div class="section-number" style="margin-bottom: 0.5rem;">↦ APPEL</div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
             Un projet <mark>similaire&nbsp;?</mark>
           </h2>
@@ -574,9 +589,14 @@ const articleSchema = {
     margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
   }
 
-  /* Cartouche : la flèche et le numéro reprennent `.section-number`, l'idiome
-     déjà posé partout ailleurs sur le site. Le numéro dit où l'on en est, ce
-     que l'icône seule ne dit pas. */
+  /* Cartouche : le seul numéro conservé quand le reste de la numérotation a été
+     retiré du site, et pour une raison précise. Ailleurs, `01 / 02 / 03`
+     ordonnait des choses qui n'ont pas d'ordre — des sections de landing, des
+     principes, des entrées de navigation. Ici il dit `02 / 04` : où l'on en est
+     dans un article long, et combien il en reste. C'est une progression, pas un
+     ordinal, et c'est ce que l'icône seule ne dit pas.
+     (Il ne reprend plus `.section-number`, qui n'existe plus : le style est
+     porté par cette règle.) */
   .piece-cartouche {
     display: inline-flex;
     align-items: center;
