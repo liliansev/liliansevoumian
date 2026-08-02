@@ -1,8 +1,34 @@
 // @ts-check
+import { readdirSync, readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
+
+/* Les cas clients sont les seules pages du site à porter une date de
+   publication réelle. On la lit ici pour alimenter le `lastmod` du sitemap
+   (motif détaillé au niveau de `serialize`, plus bas).
+
+   La clé `date` du frontmatter est déjà la source de vérité, validée par le
+   schéma Zod de la collection : la relire évite d'en tenir une seconde à jour
+   à la main. Le frontmatter est le premier bloc délimité par deux lignes
+   `---`, ce qui reste vrai même quand le corps du cas contient des filets
+   horizontaux. */
+const CAS_CLIENTS_DIR = new URL('./src/content/cas-clients/', import.meta.url);
+
+/** @type {Map<string, string>} chemin d'URL du cas → date de publication ISO */
+const lastmodParCas = new Map();
+for (const fichier of readdirSync(CAS_CLIENTS_DIR)) {
+  if (!fichier.endsWith('.md')) continue;
+  const frontmatter = readFileSync(new URL(fichier, CAS_CLIENTS_DIR), 'utf8').split(/^---\s*$/m)[1] ?? '';
+  const brut = frontmatter.match(/^date:\s*(.+)$/m)?.[1]?.trim();
+  if (!brut) continue;
+  const date = new Date(brut);
+  // Une date illisible vaut une date absente : mieux vaut ne rien déclarer pour
+  // ce cas que de propager une valeur bancale jusqu'au sitemap.
+  if (Number.isNaN(date.getTime())) continue;
+  lastmodParCas.set(`/cas-clients/${fichier.slice(0, -'.md'.length)}`, date.toISOString());
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -56,12 +82,20 @@ export default defineConfig({
          ne lèvent aucune erreur, la seconde écrase simplement la première.
          L'URL est normalisée sans slash final, comme le canonical et comme les
          217 liens internes — un sitemap qui déclare l'autre forme rouvrirait la
-         duplication qu'on vient de fermer. */
-      serialize: (item) => ({
-        ...item,
-        url: item.url.replace(/(.+)\/$/, '$1'),
-        lastmod: item.lastmod ?? new Date().toISOString(),
-      }),
+         duplication qu'on vient de fermer.
+
+         `lastmod` retombait sur `new Date()` : les 10 URL annonçaient donc la
+         date du build, et chaque déploiement prétendait que tout le site venait
+         de changer, y compris les pages intouchées depuis des mois. Un champ
+         qui bouge à chaque passage n'apprend rien à un robot, il lui apprend à
+         ne plus le lire. Seuls les cas clients ont une date réelle : eux seuls
+         en déclarent une. Pour les autres, `lastmodParCas.get()` rend
+         `undefined`, la balise n'est pas écrite, et c'est le résultat voulu —
+         un `lastmod` absent est neutre, un `lastmod` faux est trompeur. */
+      serialize: (item) => {
+        const url = item.url.replace(/(.+)\/$/, '$1');
+        return { ...item, url, lastmod: lastmodParCas.get(new URL(url).pathname) };
+      },
     })
   ]
 });

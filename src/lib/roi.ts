@@ -13,14 +13,23 @@
  * l'existant, il ne chiffre pas ce que coûterait de le corriger.
  */
 
+/*
+ * Ces quatre constantes sont les hypothèses de calcul, pas des valeurs à
+ * afficher : le module ne les expose donc pas. Seuls `compute()` et
+ * `HOURLY_COST` traversent la frontière, HOURLY_COST parce que la page écrit le
+ * taux en toutes lettres à côté du montant. Les garder privées évite qu'un
+ * composant se remette à recomposer la formule de son côté, ce qui est
+ * exactement la duplication SSR/JS que ce fichier a été créé pour clore.
+ */
+
 /** Part des heures manuelles récupérées via automatisation (estimation conservatrice) */
-export const RECOVERY_RATE = 0.55;
+const RECOVERY_RATE = 0.55;
 /** Semaines effectives par an */
-export const WEEKS_PER_YEAR = 48;
+const WEEKS_PER_YEAR = 48;
 /** Plafond raisonnable d'heures/sem au-delà duquel l'estimation est cappée */
-export const MAX_REASONABLE_HOURS = 20;
+const MAX_REASONABLE_HOURS = 20;
 /** Plafond raisonnable d'employés au-delà duquel l'estimation est cappée */
-export const MAX_REASONABLE_PEOPLE = 10;
+const MAX_REASONABLE_PEOPLE = 10;
 /**
  * Coût horaire chargé, en hypothèse fixe et non plus en curseur.
  *
@@ -61,7 +70,7 @@ export function compute(hours: number, people: number) {
  * personne, « 18 semaines de 35 h » se voit dans un planning. Arithmétique pure
  * sur le chiffre déjà affiché, aucune hypothèse supplémentaire.
  */
-export const WORK_WEEK_HOURS = 35;
+const WORK_WEEK_HOURS = 35;
 export function inWorkWeeks(hours: number): number {
   return Math.round(hours / WORK_WEEK_HOURS);
 }
