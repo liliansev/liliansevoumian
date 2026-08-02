@@ -607,20 +607,50 @@ a, button, input, textarea, select,
   cursor: pointer;
 }
 
-/* Soulignement qui se dessine de gauche à droite (background-size animé, pas
-   de pseudo séparé → fonctionne sur le seul libellé, pas sous la flèche). */
+/* Le surligneur, devenu le geste d'interaction.
+   Le lien secondaire portait un trait d'un pixel qui se dessinait de gauche à
+   droite : correct, mais c'était le seul endroit du site où quelque chose
+   s'anime sans rien devoir à la marque. Le coup de surligneur penché est LE
+   dispositif de cette DA ; posé ici, il relie l'emphase du texte au geste du
+   clic, et il met du lime là où l'action se joue — sans toucher au bouton
+   primaire, qui ne peut pas en porter.
+
+   Pourquoi c'est permis ici et interdit sur un bouton : DESIGN.md refuse que le
+   lime balaie la largeur d'un bouton parce que son libellé est BLANC, et qu'il
+   traverserait alors deux fonds en devenant illisible au milieu du geste. Le
+   libellé d'un lien secondaire est de l'encre : 18,88:1 sur papier, 15,14:1 une
+   fois la bande passée. Il ne descend sous aucun seuil, à aucune image.
+
+   Même inclinaison et mêmes retraits que `mark`, pour que ce soit reconnu comme
+   le même objet. L'échelle part de la gauche : la bande se pose, elle
+   n'apparaît pas. */
 .link-cta__label {
-  background-image: linear-gradient(currentColor, currentColor);
-  background-repeat: no-repeat;
-  background-position: left 100%;
-  background-size: 0% 1px;
-  padding-bottom: 2px;
-  transition: background-size var(--duration-default) var(--ease-out-quint);
+  position: relative;
+  isolation: isolate;
+  padding: 0.02em 0.2em;
 }
 
-.link-cta:hover .link-cta__label,
-.link-cta:focus-visible .link-cta__label {
-  background-size: 100% 1px;
+.link-cta__label::before {
+  content: '';
+  position: absolute;
+  inset: 0.06em 0 0.1em;
+  background: var(--color-lime);
+  transform: rotate(-1.8deg) scaleX(0);
+  transform-origin: left center;
+  z-index: -1;
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+
+.link-cta:hover .link-cta__label::before,
+.link-cta:focus-visible .link-cta__label::before {
+  transform: rotate(-1.8deg) scaleX(1);
+}
+
+/* Sur l'aplat lime, la bande passe au blanc — exactement comme les `mark` de
+   ces sections, qui s'y inversent déjà. Une bande lime sur fond lime ne
+   signalerait rien. */
+.bloc-lime .link-cta__label::before {
+  background: #ffffff;
 }
 
 .link-cta__arrow {
@@ -634,7 +664,7 @@ a, button, input, textarea, select,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .link-cta__label,
+  .link-cta__label::before,
   .link-cta__arrow { transition: none; }
 }
 
