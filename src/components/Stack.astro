@@ -11,8 +11,20 @@
  * conversation qui produit un écran.
  *
  * Les captions disent ce que l'outil fait DE MIEUX, pas ce que j'en fais : c'est
- * ce que promet le chapô de la section. Chacune porte un <mark> — la section
- * était la seule de la home sans le dispositif de la DA.
+ * ce que promet le chapô de la section.
+ *
+ * Trois d'entre elles portent un <mark>, plus les dix qu'elles portaient toutes.
+ * La raison qui les avait posées est écrite dans la version précédente de ce
+ * commentaire — « la section était la seule de la home sans le dispositif de la
+ * DA » — et c'est exactement le geste qui produit un tic : le dispositif appliqué
+ * parce que l'emplacement était vide, pas parce que la phrase le demandait. Le
+ * site comptait vingt-quatre surlignages sur la home, un tous les 486 px, sur
+ * neuf titres de premier rang sur dix ; quatorze venaient de ce seul fichier.
+ * Un surligneur qui passe sur tout ne souligne plus rien.
+ *
+ * Les quatre libellés de famille l'ont perdu aussi, et pour une raison de plus :
+ * leur mark enveloppait la TOTALITÉ du titre. Une bande qui couvre tout le texte
+ * n'est pas un surlignage, c'est une pastille de catégorie.
  *
  * Chaque famille se termine par un lien vers le diagnostic, avec une intention
  * qui lui est propre et un `goalSource` distinct : c'est la seule façon de
@@ -95,7 +107,7 @@ const layers: Layer[] = [
         role: 'WORKFLOW · AGENTS IA',
         mockup: 'workflow',
         caption:
-          'Celui que je choisis quand l’agent IA doit agir dans <mark>vos vrais outils</mark>.',
+          'Celui que je choisis quand l’agent IA doit agir dans vos vrais outils.',
       },
       /* « Le plus utilisé » a été demandé puis écarté : Zapier revendique
          3,4 M d'entreprises contre 400 000 clients Make, et Power Platform
@@ -123,7 +135,7 @@ const layers: Layer[] = [
         role: 'CRM · OPÉRATIONS',
         mockup: 'table',
         caption:
-          'Le plus court chemin pour donner à vos équipes <mark>une base propre</mark> sans lancer un projet informatique.',
+          'Le plus court chemin pour donner à vos équipes une base propre sans lancer un projet informatique.',
       },
       /* Airtable à côté de Notion, pas à sa place : les deux tiennent des
          données, mais Notion agrège (docs, suivi, base au même endroit) là où
@@ -135,7 +147,7 @@ const layers: Layer[] = [
         role: 'BASE · CERTIFIÉ',
         mockup: 'views',
         caption:
-          'Certifié Airtable : le plus solide quand la même base doit se lire <mark class="inv">de plusieurs façons</mark>.',
+          'Certifié Airtable : le plus solide quand la même base doit se lire de plusieurs façons.',
       },
     ],
   },
@@ -155,7 +167,7 @@ const layers: Layer[] = [
         role: 'IA · DEV',
         mockup: 'console',
         caption:
-          'Ce qu’il fait de mieux : fabriquer <mark>en direct</mark> l’outil que personne ne vend.',
+          'Ce qu’il fait de mieux : fabriquer en direct l’outil que personne ne vend.',
       },
       /* Ne jamais laisser dériver vers « le seul à paralléliser » : ce serait
          faux (Claude Code a ses propres agents parallèles, comme Devin, Cursor
@@ -168,7 +180,7 @@ const layers: Layer[] = [
         role: 'IA · DÉLÉGATION',
         mockup: 'codex',
         caption:
-          'Le plus doué pour travailler <mark class="inv">sans personne devant</mark> : les tâches reviennent prêtes à relire.',
+          'Le plus doué pour travailler sans personne devant : les tâches reviennent prêtes à relire.',
       },
       {
         name: 'Claude Cowork',
@@ -176,7 +188,7 @@ const layers: Layer[] = [
         role: 'IA · ÉQUIPES',
         mockup: 'chat',
         caption:
-          'Celui qui <mark>rend la main</mark> : vos équipes pilotent leurs automatisations en langage courant.',
+          'Celui qui rend la main : vos équipes pilotent leurs automatisations en langage courant.',
       },
       /* Critère de choix, pas garantie : « les données ne quittent pas
          l'Europe » n'est vrai que si la plateforme Mistral en zone UE ou un
@@ -211,7 +223,7 @@ const layers: Layer[] = [
         role: 'APP · OUTILS INTERNES',
         mockup: 'zite',
         caption:
-          'Pour une équipe qui a besoin de <mark>son propre outil</mark>, et qu’il reste modifiable après.',
+          'Pour une équipe qui a besoin de son propre outil, et qu’il reste modifiable après.',
       },
       {
         name: 'Lovable',
@@ -219,7 +231,7 @@ const layers: Layer[] = [
         role: 'APP · PROTOTYPE',
         mockup: 'lovable',
         caption:
-          'Le plus rapide pour transformer une idée en <mark class="inv">écran qu’on peut cliquer</mark>, le jour même.',
+          'Le plus rapide pour transformer une idée en écran qu’on peut cliquer, le jour même.',
       },
     ],
   },
@@ -229,6 +241,7 @@ const layers: Layer[] = [
 <section
   id="stack"
   data-section
+  data-motion-pause
   class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
@@ -256,7 +269,7 @@ const layers: Layer[] = [
               nom déjà explicite. Inclinaison alternée, comme partout ailleurs. */}
           <header class="stack-layer-header">
             <h3 id={`stack-layer-${index}`} class="stack-layer-title">
-              <mark class:list={{ inv: index % 2 === 1 }}>{layer.label}</mark>
+              {layer.label}
             </h3>
           </header>
 

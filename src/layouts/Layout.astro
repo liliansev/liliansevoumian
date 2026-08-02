@@ -128,7 +128,20 @@ const faqPageSchema = faqSchema ? {
         // Si le module échoue (erreur JS, chunk bloqué, CSP), il ne dé-cloake
         // jamais → page blanche. Ce timer s'exécute depuis le script inline du
         // <head>, qui tourne toujours : le contenu réapparaît quoi qu'il arrive.
+        //
+        // La condition `motionInit` est ce qui manquait, et son absence coûtait
+        // toute la chorégraphie du site. Sans elle, le timer dé-cloakait TOUS
+        // les `.reveal` de la page à 2,5 s, où qu'ils soient : mesuré sur la
+        // home, trente-cinq des trente-huit se dévoilaient hors écran, avant
+        // même que le lecteur ait scrollé. L'observateur ne trouvait plus rien
+        // à observer. Le site payait le voile — un `opacity: 0` piloté par JS
+        // sur trente-cinq blocs, avec le risque LCP que ça implique — sans
+        // jamais rien obtenir en échange.
+        // Le module pose `body.dataset.motionInit` dès qu'il démarre : le
+        // filet ne se déclenche donc plus que dans le cas qu'il vise, celui où
+        // le module n'a pas tourné du tout.
         window.setTimeout(function () {
+          if (document.body && document.body.dataset.motionInit) return;
           document.querySelectorAll('.reveal:not(.is-visible)').forEach(function (el) {
             el.classList.add('is-visible');
           });
@@ -353,6 +366,23 @@ const faqPageSchema = faqSchema ? {
           // 3. Fail-safe — déplacé dans le script inline du <head> (Layout),
           //    qui s'exécute toujours. Garantit le dé-cloak même si ce module
           //    ne tourne pas (erreur JS / chunk bloqué). Ne pas le dupliquer ici.
+        }
+
+        // Boucles ambiantes : en pause tant que le conteneur n'est pas à
+        // l'écran. Marge d'un demi-écran pour que rien ne démarre sous les yeux
+        // du lecteur. Sans observateur, on repasse en lecture continue plutôt
+        // que de laisser des maquettes figées.
+        const idlers = document.querySelectorAll<HTMLElement>('[data-motion-pause]');
+        if (idlers.length && 'IntersectionObserver' in window) {
+          idlers.forEach((el) => el.setAttribute('data-motion-idle', ''));
+          const idleObs = new IntersectionObserver((entries) => {
+            entries.forEach((e) => {
+              const el = e.target as HTMLElement;
+              if (e.isIntersecting) el.removeAttribute('data-motion-idle');
+              else el.setAttribute('data-motion-idle', '');
+            });
+          }, { rootMargin: '50% 0px' });
+          idlers.forEach((el) => idleObs.observe(el));
         }
       }
 

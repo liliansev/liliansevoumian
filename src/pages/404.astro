@@ -1,0 +1,90 @@
+---
+/*
+ * 404 — la page qui manquait.
+ *
+ * Le site n'en avait aucune : ni fichier, ni rewrite dans vercel.json. Une URL
+ * tronquée par LinkedIn, une ancienne adresse d'avant la refonte, une faute de
+ * frappe, et le visiteur tombait sur l'écran générique de l'hébergeur — sans
+ * marque, sans un lien pour revenir. Sur un site dont le trafic vient de posts
+ * et de descriptions de vidéos, c'est-à-dire d'endroits où les liens se cassent,
+ * c'était le seul écran que personne n'avait dessiné.
+ *
+ * Aplat lime, comme le hero et le contact : arriver ici n'est pas une faute, et
+ * l'écran n'a pas à ressembler à une erreur. Il propose les trois routes qui
+ * couvrent à peu près toutes les intentions — la preuve, la méthode, l'appel.
+ */
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import LinkCTA from '../components/LinkCTA.astro';
+---
+
+<Layout
+  title="Page introuvable · Lilian Sevoumian"
+  description="Cette page n'existe pas ou a été déplacée. Les cas clients, la méthode et le diagnostic de 20 minutes sont accessibles depuis ici."
+  noindex
+>
+  <Navigation />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <section class="bloc-lime relative min-h-[70vh] flex items-center py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto w-full">
+
+        <p class="mono-caption text-[var(--color-ink-low)] m-0">ERREUR 404</p>
+
+        <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[1.02] tracking-[-0.04em] text-[var(--color-ink)] mt-4 mb-0 max-w-[18ch]">
+          Cette page n’existe <mark>plus</mark>.
+        </h1>
+
+        <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 mb-0 max-w-[46ch]">
+          Un lien tronqué, une adresse d’avant la refonte, ou une faute de frappe.
+          Voilà par où reprendre.
+        </p>
+
+        <div class="mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+          <a
+            href="https://cal.com/lilian-sevoumian/20min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary justify-center"
+            data-fast-goal="lead_call"
+            data-fast-goal-source="404"
+          >
+            Réserver mon diagnostic&nbsp;· 20&nbsp;min
+          </a>
+          <LinkCTA href="/">Ou revenir à l’accueil</LinkCTA>
+        </div>
+
+        <ul class="mt-12 md:mt-14 pt-7 border-t border-[var(--color-divider)] flex flex-wrap gap-x-8 gap-y-3 list-none m-0 p-0">
+          <li><a href="/cas-clients" class="lien-404">Les cas clients</a></li>
+          <li><a href="/principes" class="lien-404">La méthode</a></li>
+          <li><a href="/expert-n8n" class="lien-404">Expert n8n</a></li>
+          <li><a href="/expert-make" class="lien-404">Expert Make</a></li>
+        </ul>
+
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* Soulignement et non couleur : sur l'aplat lime, un lien ne peut pas se
+     signaler par la teinte — elle est déjà celle du fond. */
+  .lien-404 {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-body);
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-thickness var(--duration-default) var(--ease-out-quint);
+  }
+  .lien-404:hover,
+  .lien-404:focus-visible {
+    text-decoration-thickness: 2px;
+  }
+</style>

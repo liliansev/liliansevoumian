@@ -90,7 +90,7 @@ const formats = [
           <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
             {f.corps}
           </p>
-          <p class="text-[length:var(--text-body-sm)] text-[var(--color-ink-low)] leading-[1.5] mt-4 mb-0">
+          <p class="text-[length:var(--text-body-sm)] text-[var(--color-ink-low)] leading-[1.5] mt-4 mb-0 offres-depart">
             {f.depart}
           </p>
         </div>
@@ -167,6 +167,12 @@ const formats = [
   }
 
   .offres-item {
+    /* La note « On part de… » se cale en bas de colonne. Sans ça, la troisième
+       carte la posait 26 px plus haut que les deux autres — son corps fait trois
+       lignes contre quatre — et un rôle répété se lisait à trois horizontales
+       différentes, dans une grille explicitement filetée en colonnes. */
+    display: flex;
+    flex-direction: column;
     /* Le filet ouvre chaque format, comme les pull-quotes des témoignages. En
        une seule colonne il devient une séparation horizontale, en plusieurs il
        coiffe chaque colonne — même trait, deux lectures. */
@@ -177,6 +183,8 @@ const formats = [
   /* Le filet court sur toute la largeur, le texte s'arrête à sa mesure : posé
      sur le paragraphe lui-même, le trait s'interrompait au milieu de la grille
      et se lisait comme une bordure cassée. */
+  .offres-depart { margin-top: auto; padding-top: 1rem; }
+
   .offres-cadre {
     margin-top: 2.5rem;
     padding-top: 1.5rem;

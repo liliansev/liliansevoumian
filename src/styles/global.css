@@ -834,7 +834,22 @@ a, button, input, textarea, select,
    MOTION — scroll-driven reveals
    ========================================================================= */
 
+/* Deux régimes, et la différence est tout le sujet.
+   Le failsafe dé-cloakait toute la page à 2,5 s : trente-cinq blocs sur
+   trente-huit se dévoilaient hors écran, donc personne n'a jamais vu ce
+   dispositif. Réparé, il rendait soudain visible un fondu-montée identique sur
+   chaque section — précisément ce que le register `brand` nomme comme un tell,
+   le réflexe uniforme appliqué à tout.
+   La règle qui distingue les deux cas est la même que celle du skill : le
+   décalage des items D'UNE liste est légitime, c'est le geste unique répété
+   section après section qui ne l'est pas. Un bloc isolé se contente donc d'un
+   fondu court, sans déplacement — il apparaît, il ne monte pas. Les listes
+   gardent la montée et la cascade, là où l'œil suit réellement une succession. */
 .reveal {
+  transition: opacity 380ms var(--ease-out-quint);
+}
+
+.reveal-stagger > .reveal {
   transition: opacity var(--duration-mount) var(--ease-out-quint),
               transform var(--duration-mount) var(--ease-out-quint);
 }
@@ -843,12 +858,33 @@ a, button, input, textarea, select,
    This way the no-JS / pre-hydration baseline keeps content fully painted. */
 .js-ready .reveal:not(.is-visible) {
   opacity: 0;
+}
+
+.js-ready .reveal-stagger > .reveal:not(.is-visible) {
   transform: translateY(12px);
 }
 
 .js-ready .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Les boucles ambiantes ne tournent que si on les regarde.
+   Mesuré avant : cinquante-deux animations infinies tournaient en permanence,
+   pour cinq cents millisecondes de processeur toutes les cinq secondes — la
+   totalité du travail de rendu au repos de la page — et cent pour cent de ce
+   travail portait sur des maquettes hors écran. Sur mobile, assis en haut de la
+   page, trois cent soixante millisecondes étaient dépensées pour des éléments
+   situés six mille pixels plus bas. La grille de gouttière, elle, était déjà
+   coupée sous 640 px : c'était l'inverse de ce qu'il fallait, les maquettes
+   coûtant bien plus cher.
+   Le dispositif reprend celui que le carrousel applique déjà à ses diapositives
+   inactives, étendu aux conteneurs marqués `data-motion-pause`. */
+[data-motion-idle],
+[data-motion-idle] *,
+[data-motion-idle] *::before,
+[data-motion-idle] *::after {
+  animation-play-state: paused !important;
 }
 
 /* Cascade d'entrée.
@@ -1000,18 +1036,23 @@ a, button, input, textarea, select,
   /* Entrée du menu : fondu + léger translateY en cascade à l'ouverture. */
   opacity: 0;
   transform: translateY(14px);
-  transition: opacity 0.45s var(--ease-out-quint),
-              transform 0.45s var(--ease-out-quint);
+  /* 260 ms et non 450 : DESIGN.md plafonne à 300 ms les animations qui
+     répondent à une intention, et un panneau de navigation est de l'intention
+     pure. Mesuré avant, le dernier lien arrivait à 740 ms — la réponse la plus
+     lente du site, sur le geste le plus impatient. */
+  transition: opacity 260ms var(--ease-out-quint),
+              transform 260ms var(--ease-out-quint);
 }
 #mobile-menu.is-open .mobile-link {
   opacity: 1;
   transform: translateY(0);
 }
-#mobile-menu.is-open .mobile-link:nth-child(1) { transition-delay: 0.05s; }
-#mobile-menu.is-open .mobile-link:nth-child(2) { transition-delay: 0.11s; }
-#mobile-menu.is-open .mobile-link:nth-child(3) { transition-delay: 0.17s; }
-#mobile-menu.is-open .mobile-link:nth-child(4) { transition-delay: 0.23s; }
-#mobile-menu.is-open .mobile-link:nth-child(5) { transition-delay: 0.29s; }
+#mobile-menu.is-open .mobile-link:nth-child(1) { transition-delay: 0ms; }
+#mobile-menu.is-open .mobile-link:nth-child(2) { transition-delay: 35ms; }
+#mobile-menu.is-open .mobile-link:nth-child(3) { transition-delay: 70ms; }
+#mobile-menu.is-open .mobile-link:nth-child(4) { transition-delay: 105ms; }
+#mobile-menu.is-open .mobile-link:nth-child(5) { transition-delay: 140ms; }
+#mobile-menu.is-open .mobile-link:nth-child(6) { transition-delay: 175ms; }
 /* Conteneur focalisé à l'ouverture (a11y) — jamais de cadre de focus disgracieux
    sur un lien (iOS dessine un gros rectangle noir sur le focus programmatique). */
 #mobile-menu:focus { outline: none; }
@@ -1054,6 +1095,33 @@ a[href^="mailto:"] {
 
 .faq-details {
   display: block;
+}
+
+/* L'ouverture d'une question était une coupe franche : la carte passait de 70 à
+   248 px en une seule image, +254 %, et toutes les questions du dessous se
+   téléportaient avec elle — décalage mesuré à 0,0588. C'est l'interaction la
+   plus utilisée de la page, celle qui a son propre goal, et la seule motion
+   qu'elle portait était la rotation du caret.
+   `interpolate-size` autorise l'animation vers `auto`, que la hauteur d'un
+   contenu replié ne peut pas connaître autrement. Là où le navigateur ne
+   supporte pas ces propriétés, on retrouve exactement le comportement
+   d'avant — le repli reste instantané, rien ne casse. */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+
+  .faq-details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 260ms var(--ease-out-quint),
+                content-visibility 260ms var(--ease-out-quint) allow-discrete;
+  }
+  .faq-details[open]::details-content {
+    block-size: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-details::details-content { transition: none; }
 }
 
 .faq-summary {
@@ -1267,8 +1335,19 @@ a[href^="mailto:"] {
   flex-direction: column;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s var(--ease-out-quint);
+  /* `visibility` doit être dans la transition, sinon le fondu de sortie est
+     calculé et jamais vu : mesuré, `visibility` basculait à `hidden` dès la
+     première image pendant que l'opacité continuait de descendre pendant
+     200 ms. La modale disparaissait d'un coup.
+     Sortie plus courte que l'entrée, comme le bouton primaire : on répond vite
+     et on relâche plus lentement, jamais l'inverse. */
+  transition: opacity 200ms var(--ease-out-quint),
+              visibility 200ms var(--ease-out-quint);
   overscroll-behavior: contain;
+}
+.cal-overlay:not(.is-open) {
+  transition: opacity 150ms var(--ease-out-quint),
+              visibility 150ms var(--ease-out-quint);
 }
 .cal-overlay.is-open { opacity: 1; visibility: visible; }
 

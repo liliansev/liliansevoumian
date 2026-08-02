@@ -471,7 +471,13 @@ const articleSchema = {
     letter-spacing: 0.04em;
   }
 
-  .nomenclature-rang { color: var(--color-ink-faint); }
+  /* ink-low et non ink-faint : ce rang est l'index 01→08 d'un tableau
+     d'architecture qu'on lit dans l'ordre, donc du texte porteur, et ink-faint
+     ne tient que 3,03:1 sur papier. DESIGN.md le dit noir sur blanc — ink-faint
+     sert aux traits et aux puces creuses, « jamais du texte lisible ». Le
+     marquee avait déjà corrigé exactement ce cas ; celui-ci était passé au
+     travers. 5,33:1. */
+  .nomenclature-rang { color: var(--color-ink-low); }
   .nomenclature-etape {
     font-size: var(--text-body-sm);
     color: var(--color-ink);

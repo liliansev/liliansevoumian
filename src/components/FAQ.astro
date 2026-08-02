@@ -11,7 +11,7 @@ import { faqs } from '../data/faq';
     <!-- Colonne gauche : titre sticky -->
     <div class="reveal lg:sticky lg:top-28">
       <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
-        Vos questions sur <mark>l'automatisation</mark>.
+        Vos questions sur l'automatisation.
       </h2>
       {/* Le compte descend du sur-titre dans le chapô : il se déduit toujours de
           la source — le libellé a déjà annoncé sept objections quand faq.ts en
@@ -70,12 +70,13 @@ import { faqs } from '../data/faq';
    * Le balayage lime de la FAQ a son propre observateur, séparé de celui des
    * `.reveal`. Deux raisons, et la seconde est celle qui l'imposait :
    *
-   *  1. Le failsafe du <head> pose `.is-visible` sur TOUS les `.reveal` de la
-   *     page 2,5 s après le chargement, où qu'ils soient — c'est ce qui évite
-   *     la page blanche si le module de reveal ne s'exécute jamais. Le
-   *     balayage partait donc hors écran et était terminé avant qu'on arrive
-   *     dessus. Invisible pour un fondu, fatal pour une animation qui ne joue
-   *     qu'une fois.
+   *  1. Le failsafe du <head> dé-cloakait les `.reveal` de toute la page 2,5 s
+   *     après le chargement, où qu'ils soient. Le balayage partait donc hors
+   *     écran et était terminé avant qu'on arrive dessus : invisible pour un
+   *     fondu, fatal pour une animation qui ne joue qu'une fois. Ce filet est
+   *     depuis conditionné à `body.dataset.motionInit`, donc il ne se déclenche
+   *     plus que si le module n'a pas tourné — mais l'observateur séparé reste
+   *     la bonne réponse pour la raison 2, qui n'a jamais dépendu du filet.
    *  2. La cascade se déclenche sur la LISTE, pas sur chaque question. En
    *     observant chaque item, un défilement lent ferait attendre près d'une
    *     seconde à la dernière question avant que sa bande parte, alors que
