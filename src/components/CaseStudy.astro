@@ -322,12 +322,13 @@ const humblePlus = {
     </div>
 
     <div class="case-carousel-pagination reveal" aria-label="Accès direct aux cas clients">
-      {[
-        ['01', 'Humble+'],
-        ['02', 'Celeris'],
-        ['03', 'M Partners'],
-        ['04', 'Fraich Touch'],
-      ].map(([number, label], index) => (
+      {/* Sans numéro. DESIGN.md déclare la numérotation retirée partout et cite
+          nommément la pagination des cas ; elle y tournait encore. Le `01 / 04`
+          des pages de cas a été gardé, lui, parce qu'il dit une progression dans
+          un article long — où j'en suis, combien il reste. Ici les quatre
+          boutons sont visibles ensemble, avec le nom du client et le filet
+          d'état : le chiffre ne répondait à aucune question. */}
+      {['Humble+', 'Celeris', 'M Partners', 'Fraich Touch'].map((label, index) => (
         <button
           type="button"
           class="case-carousel-dot"
@@ -336,7 +337,6 @@ const humblePlus = {
           data-case-dot
           data-case-index={index}
         >
-          <span class="case-carousel-dot-number">{number}</span>
           <span class="case-carousel-dot-label">{label}</span>
         </button>
       ))}
@@ -588,10 +588,6 @@ const humblePlus = {
 
   .case-carousel-dot[aria-current='true']::before {
     background: var(--color-ink);
-  }
-
-  .case-carousel-dot-number {
-    font-weight: 600;
   }
 
   /* Le nom du client reste affiché à toutes les largeurs. Il disparaissait sous

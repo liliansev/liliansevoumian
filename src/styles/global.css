@@ -32,7 +32,12 @@
      Repris tels quels de main : ce sont des mesures, pas une direction
      artistique, et les 25 composants les consomment. Les avoir emportés
      avec le bloc de couleurs faisait retomber le H1 à la taille du corps. */
-  --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  /* Plancher à 2,25rem et non 2,75 : à 320 px, « l'automatisation » mesurait
+     317 px à 44 px dans une colonne de 272, et le titre de /principes se coupait
+     en plein glyphe — on lisait « l'automatisatio ». C'est le seul défaut de
+     l'audit responsive qu'un visiteur pouvait voir directement. La courbe est
+     inchangée au-dessus de 400 px de large. */
+  --text-display: clamp(2.25rem, 5vw + 1rem, 5.25rem);
   /* UNE seule courbe pour le manifeste, et non deux jetons commutés à 1024 px.
      Mesuré sur la page vivante, l'ancien dispositif faisait perdre au titre
      10,2 px (−14,7 %) quand la fenêtre gagnait UN pixel, et il ne repassait
@@ -245,7 +250,22 @@ body {
 @layer base {
   p, li, blockquote {
     text-wrap: pretty;
-    max-width: 72ch;
+    /* 46ch et non 72. Le `ch` se calcule sur la chasse du glyphe `0`, qui fait
+       10,53 px dans Geist à 16 px, alors que le caractère moyen d'une prose
+       française en fait 6,87 : un `ch` vaut une fois et demie un caractère
+       rendu. `72ch` plafonnait donc à cent dix caractères, pas à soixante-douze,
+       et trente-sept pour cent des blocs de la home dépassaient soixante-quinze.
+       La fourchette annoncée par DESIGN.md est enfin celle qui est rendue. */
+    max-width: 46ch;
+  }
+
+  /* Un `li` n'est pas toujours de la prose : sur /principes, la liste des huit
+     principes est un conteneur de mise en page, et le cap la rognait à 764 px
+     dans une colonne de 1 200 — quatre cent trente-six pixels morts à droite,
+     sur la page censée prouver la rigueur. Le cap ne vaut que pour un `li` qui
+     porte directement du texte. */
+  li:has(> :where(p, h2, h3, h4, div)) {
+    max-width: none;
   }
 
   a {
@@ -1087,11 +1107,18 @@ a[href^="mailto:"] {
 }
 
 .faq-answer {
-  padding: 0 24px 20px 76px;
+  /* 24 px à gauche et non 76 : les 52 px de plus réservaient la gouttière du
+     numéro `Q01`, retiré depuis. La réponse démarrait donc 52 px à droite de sa
+     question, en retrait de rien.
+     Et la mesure suit le `ch` réel de Geist : son glyphe `0` fait 10,53 px quand
+     le caractère moyen d'une prose française en fait 6,87, si bien qu'un `ch`
+     vaut une fois et demie un caractère rendu. `72ch` plafonnait à cent dix
+     caractères, pas soixante-douze. */
+  padding: 0 24px 20px 24px;
   color: var(--color-ink-mid);
   font-size: var(--text-body);
   line-height: 1.65;
-  max-width: 72ch;
+  max-width: 46ch;
 }
 
 /* ── L'entrée de la FAQ : un surligneur qui descend la liste ──

@@ -299,13 +299,18 @@ const layers: Layer[] = [
             })}
           </div>
 
+          {/* Ni `external`, ni `↗`. Ces quatre liens ouvrent l'overlay de
+              réservation sur le domaine, et ils annonçaient l'inverse : un
+              libellé de lien de contenu (« Faire tourner mon process sur n8n ou
+              Make »), un glyphe qui promet un nouvel onglet, et une modale à
+              l'arrivée. Trois signaux, trois vérités différentes, quatre fois
+              sur la page. La flèche montante reste réservée à ce qui quitte
+              vraiment le domaine — augmentes.fr, LinkedIn, YouTube. */}
           <div class="stack-layer-cta">
             <LinkCTA
               href="https://cal.com/lilian-sevoumian/20min"
-              external
               goal="lead_call"
               goalSource={layer.ctaSource}
-              arrow="↗"
             >{layer.cta}</LinkCTA>
           </div>
         </section>
@@ -318,6 +323,14 @@ const layers: Layer[] = [
 <style>
   .stack-layers {
     display: grid;
+    /* `minmax(0, 1fr)` et non la piste implicite : sans lui, les items héritent
+       de `min-width: auto` et c'est leur min-content qui dicte la largeur. Ici
+       ce min-content venait du libellé du CTA de la première famille, mesuré à
+       316 px, dans une piste de 261 : la section débordait de 41 px à 320 px et
+       de 5 px à 360 px — la largeur Android la plus répandue — en décalant toute
+       la home. Le débordement ne se voyait pas, `html { overflow-x: hidden }`
+       l'absorbait. */
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(2.75rem, 5vw, 4.5rem);
   }
 

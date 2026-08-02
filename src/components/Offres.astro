@@ -156,11 +156,14 @@ const formats = [
   .offres-grille {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    /* Gouttière verticale en une seule colonne : sans elle, la ligne de départ
-       d'un format touchait le filet du suivant, et les trois blocs se lisaient
-       comme un seul. Elle repasse à zéro dès que la grille se répartit, où le
-       filet de tête suffit à séparer. */
-    gap: 1.75rem 0;
+    /* Une seule gouttière, sur les deux axes, fluide. Les trois règles qu'elle
+       remplace se contredisaient dans deux plages mesurées : `auto-fit` passe à
+       deux colonnes dès 578 px alors que la gouttière horizontale n'arrivait
+       qu'à 640 — les colonnes s'y touchaient et leurs deux filets de tête n'en
+       formaient qu'un. Et de 640 à 1008 px, la gouttière verticale nulle faisait
+       toucher le filet du troisième format à la dernière ligne du premier, au
+       pixel près. */
+    gap: clamp(1.75rem, 4vw, 4rem);
   }
 
   .offres-item {
@@ -169,18 +172,6 @@ const formats = [
        coiffe chaque colonne — même trait, deux lectures. */
     border-top: 1px solid var(--color-divider);
     padding: 1.75rem 0 0;
-  }
-
-  @media (min-width: 640px) {
-    .offres-grille { gap: 0 2.5rem; }
-  }
-
-  @media (max-width: 639px) {
-    .offres-item:first-child { padding-top: 1.5rem; }
-  }
-
-  @media (min-width: 900px) {
-    .offres-grille { gap: 0 4rem; }
   }
 
   /* Le filet court sur toute la largeur, le texte s'arrête à sa mesure : posé
