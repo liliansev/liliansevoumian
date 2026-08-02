@@ -258,6 +258,45 @@ Pas de césure automatique sur les titres. À 96 px un tiret se voit de loin, et
 **Il n'y en a pas.** `--shadow-card` et `--shadow-card-hover` valent
 `0 0 0 0 transparent`. La structure vient des filets, d'un seul poids : 1 px.
 
+Les deux jetons restent, et plus rien ne les peint. Sept déclarations le
+faisaient encore dans `global.css` : trois transitions `box-shadow`, deux états
+de survol dont c'était le seul contenu, et un bloc `prefers-reduced-motion` qui
+coupait une animation sur un `.card-interactive::after` qui n'existe nulle part.
+Une élévation qui ne rend rien coûte pourtant deux choses — une propriété que le
+navigateur surveille à chaque transition, et surtout un survol vide qui se lit au
+code comme une intention, si bien que la carte suivante le recopie. `.card-soft`,
+qui ne déclarait que cela, a disparu en entier ; son nom traîne encore dans le
+markup de deux composants, où il ne désigne plus rien.
+
+Les jetons, eux, ne peuvent pas partir : six déclarations hors de ce fichier les
+lisent, dont deux comme valeur de **repos** d'une `@keyframes` qui alterne avec un
+halo de marque. Les supprimer y rendrait `box-shadow: var(--shadow-card)` invalide
+à l'exécution, sans erreur ni avertissement. Et ils disent quelque chose : « pas
+d'élévation » écrit comme une valeur plutôt que laissé comme un blanc qu'on
+comblerait un jour au jugé.
+
+**Un seul poids de filet, et une exception qui n'en est pas une.** Le
+soulignement d'un lien de prose (`.lien-prose`) fait 2 px. Un filet sépare ou
+encadre une surface ; celui-ci souligne des mots, et c'est le seul endroit où le
+lime a le droit d'être un trait plutôt qu'une surface. L'argument facile serait
+« le lime est trop clair pour tenir à 1 px » — il est faux, et calculé : le lime
+rend 1,25:1 sur papier, `divider` en rend 1,26. Même contraste. Le vrai motif est
+ailleurs : mesuré sur la home, ce lien fait 297 px de large et le filet de
+séparation de la fiche qui l'entoure, 314 — deux traits de même longueur et de
+même contraste, à douze pixels l'un de l'autre. À poids égal, seule la teinte
+distinguerait « ceci se clique » de « ceci sépare », et une information portée
+par la seule couleur n'en est pas une. Le soulignement au survol d'une question
+de FAQ, du bloc contact ou de la 404 relève de la même décision, en
+`text-decoration-thickness`.
+
+**Corollaire, et il a coûté un lien invisible.** `.lime` lu en dur ne suit pas le
+remap de `.bloc-lime`, qui ne redéfinit pas ce jeton. Le soulignement de
+`.lien-prose` était donc du lime sur du lime — 1,00:1 — sur les deux pages outil,
+où « Je le reprends » est le seul chemin vers la page des automatisations qui
+cassent. Il n'apparaissait qu'au survol, c'est-à-dire jamais sur pointeur
+grossier. Sur l'aplat lime, le trait passe au blanc, comme `mark` et
+`.link-cta__label` le font déjà.
+
 **Deux rayons**, `0` et `9999px`. Tous les `--radius-*` valent zéro sauf
 `--radius-full`.
 
@@ -296,6 +335,38 @@ luminance, assez pour se lire comme un trait sur un mot. À 7 %, et cantonnée a
 quart droit que le texte n'occupe pas, elle retombe à 0,5 %. **Sous 1024 px elle
 n'existe pas** : le texte y prend toute la surface, et aucun réglage ne la rendait
 à la fois visible et inoffensive.
+
+**Ce seuil était écrit ici et nulle part ailleurs**, le code coupant à 640 px.
+Entre les deux, mesuré sur la page vivante, la gouttière vaut 32 px à 641, 38 à
+768, 45 à 900 et 51 à 1023 : pour une maille de 96, il n'y tient pas une cellule.
+Ce qu'on y voyait n'était pas une grille atténuée mais un reste de grille — un
+filet vertical collé au bord de l'écran, et des tirets horizontaux de 32 à 51 px
+tous les 96. Le code coupe désormais à 1023 px, c'est-à-dire au **seul seuil
+desktop du site**, celui où la navigation passe du menu au wordmark et où
+`scrollbar-gutter` se stabilise. Une signature de structure apparaît là où la
+mise en page desktop apparaît, pas quatre cents pixels avant.
+
+**Et elle ne s'anime plus qu'en `transform`.** Les deux calques de gouttière
+menaient deux animations liées au scroll de front : un défilé des lignes en
+`background-position`, et une parallaxe en `translate3d`. La seconde est
+compositable — le compositeur déplace un calque déjà peint ; la première ne l'est
+pas — elle fait repeindre puis re-rastériser deux calques de la hauteur du
+document, masqués par sept dégradés radiaux chacun, à chaque image de défilement.
+Mesuré par trace CDP sur un même scroll de 3 000 px à 1440 × 900, médiane de
+trois passes :
+
+| | Paint | RasterTask |
+|---|---|---|
+| les deux animations | 867 | 967 |
+| grille masquée (témoin) | 445 | 88 |
+| la parallaxe seule | 445 | 94 |
+
+Le défilé des lignes coûtait à lui seul 422 peintures et 879 rastérisations —
+la rastérisation multipliée par onze — pour un mouvement que le masque efface à
+72 % et dont le motif se répète de toute façon tous les 96 px. Le plus cher était
+celui qu'on voyait le moins. **Une animation liée au scroll ne porte que des
+propriétés compositables**, `transform` et `opacity` ; tout le reste se paie à
+chaque image, et se paie sur le seul geste que le visiteur fait en continu.
 
 ## 5. Components
 
@@ -343,6 +414,29 @@ Un jeton déclaré pour être adopté plus tard doit vivre dans un bloc
 `@theme static` : Tailwind v4 n'émet pas un jeton que rien ne référence, et le
 premier composant à l'appeler recevrait une valeur vide, donc le `ease` par
 défaut du navigateur, sans erreur ni avertissement.
+
+**Le repère de navigation est un emplacement, pas deux objets.** Au-dessus de
+1024 px il porte le wordmark, `LILIAN SEVOUMIAN` en toutes lettres, en permanence.
+En dessous, seize caractères en capitales ne cohabitent pas avec un CTA central et
+un déclencheur de menu : l'emplacement tombe à 28 px et porte un « L » tant que le
+hero est à l'écran — le hero y écrit déjà le nom entre 40 et 84 px, le repère y
+serait un doublon —, puis le visage, en fondu croisé, une fois le hero sorti.
+
+Le portrait apparu dans le bloc contact ne le rend pas redondant, et le mobile
+n'en montre pas « deux » : les deux images ne répondent pas à la même question.
+Celle de 28 px répond à *chez qui suis-je*, dans le seul élément qui ne quitte
+jamais l'écran ; celle du bloc contact, à 72 px, répond à *à qui vais-je parler*,
+une fois, au moment de réserver, douze mille pixels plus bas. À 28 px on ne lit
+pas un visage, on lit une marque. C'est aussi pourquoi le visage ne monte pas en
+desktop : il y serait le seul endroit du site où l'identité est énoncée deux fois
+dans le même empan, à côté du nom écrit.
+
+Le fondu croisé était piloté par un observateur sur `#hero`, que seule la home
+possède : vérifié en runtime, sur les **dix autres pages** le repère restait un
+« L » à toute hauteur de défilement, et le visage n'apparaissait jamais. L'état
+est maintenant posé au rendu sur toute page sans hero — au rendu et non au
+chargement, pour ne pas faire clignoter un « L » pendant 200 ms à chaque
+ouverture de sous-page.
 
 **Le monogramme** remplace le logo des marques absentes du jeu simple-icons, qui
 en couvre pourtant 3 653. Un carré de 22 px au filet d'encre, la capitale au
@@ -442,6 +536,20 @@ PNG et le SVG en portaient deux différentes.
   généré, et elle a été retirée volontairement.
 - Lire un jeton de rôle dans `.bloc-lime` ou `.bloc-encre` : le remap ne lit que
   des valeurs fixes, sinon il produit un cycle.
+- **Écrire `var(--color-lime)` dans un composant qui peut se retrouver sur
+  `.bloc-lime`** — le piège inverse du précédent. Ce jeton n'est pas remappé, il
+  reste le lime, et le composant devient lime sur lime, 1,00:1. Trois
+  dispositifs prévoient déjà l'inversion (`mark`, `.link-cta__label`,
+  `.lien-prose`) ; tout nouveau trait ou aplat lime doit la prévoir aussi.
+- **Animer autre chose que `transform` ou `opacity` sur une timeline de scroll.**
+  Le reste n'est pas compositable : chaque image de défilement repasse par la
+  peinture et la rastérisation. Mesuré sur les gouttières, une seule propriété
+  mal choisie doublait les peintures de la page et multipliait par onze ses
+  rastérisations.
+- **Déclarer une transition, ou un état de survol, sur une propriété qui ne
+  change pas.** Sept déclarations d'ombre sur des jetons transparents ont vécu
+  ainsi : elles ne rendaient rien, et elles se recopiaient de carte en carte
+  parce qu'au code elles ressemblaient à une intention.
 - Faire passer une reconstitution pour une capture d'écran.
 - **Écrire une valeur par défaut d'élément hors de `@layer base`.** Elle battra
   silencieusement toute classe utilitaire, quelle que soit la spécificité. Deux

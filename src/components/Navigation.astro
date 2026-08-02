@@ -26,10 +26,27 @@ const navLinks = [
 
 // Ancres relatives à la home : sur une sous-page, préfixer par "/" pour y revenir
 // (le « Me contacter » du header doit marcher depuis /expert-make, /cas-clients, etc.).
-const prefix = Astro.url.pathname === '/' ? '' : '/';
+const isHome = Astro.url.pathname === '/';
+const prefix = isHome ? '' : '/';
+
+/* `past-hero` posé DÈS LE RENDU sur toute page qui n'est pas la home, et c'est
+   la réparation d'un défaut qui touchait dix pages sur douze. La classe était
+   posée uniquement par l'IntersectionObserver du bas de ce fichier, qui observe
+   `#hero` — un élément que seul `HeroManifesto` porte, donc que seule la home
+   possède. Vérifié en runtime sur /principes à 402 px : `past-hero` absent,
+   opacité du « L » à 1, opacité de l'avatar à 0, à n'importe quelle hauteur de
+   défilement. Le visage n'apparaissait jamais ailleurs que sur la home.
+   Côté serveur plutôt qu'au chargement : poser la classe en JS ferait jouer le
+   fondu croisé à l'ouverture de chaque sous-page, soit un « L » qui clignote
+   200 ms avant de céder la place. Si une sous-page reçoit un jour un hero,
+   l'observateur reprend la main et corrige l'état à sa première mesure. */
 ---
 
-<nav id="main-nav" class="nav-root px-[var(--spacing-section-x)]" aria-label="Navigation principale">
+<nav
+  id="main-nav"
+  class:list={['nav-root', 'px-[var(--spacing-section-x)]', { 'past-hero': !isHome }]}
+  aria-label="Navigation principale"
+>
   <div class="max-w-[1200px] mx-auto h-full grid grid-cols-[auto_1fr_auto] items-stretch lg:flex lg:items-center lg:justify-between lg:gap-4">
     <!-- Logo : wordmark en desktop, « L » en mobile (cellule de grille, façon Mistral) -->
     <a
@@ -40,7 +57,25 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     >
       <span class="mono-label hidden lg:inline">LILIAN SEVOUMIAN</span>
       <!-- Mobile : « L » et avatar empilés dans une cellule de taille fixe (pas de saut
-           de layout au scroll). Crossfade en opacité dès qu'on a dépassé le Hero. -->
+           de layout au scroll). Crossfade en opacité dès qu'on a dépassé le Hero.
+
+           POURQUOI LE VISAGE RESTE SOUS 1024 PX, alors qu'un portrait vient
+           d'apparaître en desktop dans le bloc contact. Ce n'est pas un portrait
+           de plus : c'est le MÊME emplacement que le wordmark, rempli autrement
+           selon la place. Au-dessus de 1024 px la marque tient en toutes
+           lettres, « LILIAN SEVOUMIAN », en permanence dans la barre ; en
+           dessous, seize caractères en capitales ne cohabitent pas avec un CTA
+           central et un déclencheur de menu, et la marque tombe donc sur un
+           repère de 28 px. Poser le visage à côté du wordmark serait le seul
+           endroit du site où l'identité est énoncée deux fois dans le même
+           empan.
+           Les deux images du mobile ne répondent pas à la même question. Celle
+           de 28 px répond à « chez qui suis-je », dans le seul élément qui ne
+           quitte jamais l'écran ; celle du bloc contact, à 72 px, répond à « à
+           qui vais-je parler », une fois, au moment de réserver, douze mille
+           pixels plus bas. À 28 px on ne lit pas un visage, on lit une marque.
+           Et le « L » tient tant que le hero est à l'écran parce que le hero y
+           écrit déjà le nom entre 40 et 84 px : le repère y serait un doublon. -->
       <span class="nav-logo-mark lg:hidden" aria-hidden="true">
         <span class="nav-logo-l">L</span>
         <Image
@@ -152,8 +187,11 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Avatar dans la nav : le logo « L » mobile devient la photo de Lilian dès qu'on a
-  // dépassé le Hero (sur mobile uniquement, où la photo n'apparaît plus dans le Hero).
+  // Avatar dans la nav : le repère « L » devient le visage dès que le hero est
+  // sorti de l'écran. Le hero écrit le nom en 40 à 84 px ; tant qu'il est là, un
+  // second énoncé de la marque à 28 px ne dit rien de plus.
+  // Uniquement sur la home : ailleurs, la classe est déjà posée au rendu (voir le
+  // frontmatter), et il n'y a pas de `#hero` à observer.
   const heroEl = document.getElementById('hero');
   if (nav && heroEl) {
     const heroObs = new IntersectionObserver((entries) => {

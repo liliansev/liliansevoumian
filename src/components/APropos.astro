@@ -120,7 +120,7 @@ const faits = [
           {/* « chiffres à l'appui » signait un chèque que deux des quatre cas
               n'encaissent pas : Celeris et Humble+ ne contiennent aucune durée
               de travail humain, et Celeris n'est pas encore en production. */}
-          <dd><a href="/cas-clients">4 missions documentées, avant/après détaillé</a></dd>
+          <dd><a class="lien-prose" href="/cas-clients">4 missions documentées, avant/après détaillé</a></dd>
         </div>
       </dl>
     </div>
@@ -141,7 +141,13 @@ const faits = [
     color: var(--color-ink-mid);
     line-height: 1.65;
   }
-  .apropos-texte p + p { margin-top: 1.25rem; }
+  /* 30 px d'écart pour un interligne de 26,4 px, soit 1,14 ligne. Il valait
+     20 px, donc 0,76 : moins d'une ligne pleine, ce qui est l'écart d'un
+     paragraphe de note, pas celui d'une chronologie. Or ce bloc est le seul du
+     site à aligner six paragraphes d'affilée, et rien d'autre que le millésime
+     en gras ne les séparait : la bio se lisait comme un pavé. L'air fait
+     désormais la moitié du travail que le gras faisait seul. */
+  .apropos-texte p + p { margin-top: 1.875rem; }
   /* Le premier paragraphe ne prend plus l'encre pleine. Depuis que chaque
      paragraphe s'ouvre sur son année en gras, ce traitement rendait le premier
      millésime discernable par la SEULE graisse, quand les quatre suivants se
@@ -161,9 +167,15 @@ const faits = [
     letter-spacing: -0.01em;
   }
 
+  /* Filet de tête à 1 px, comme les soixante autres du site. Il était le seul
+     filet de structure à 2 px, dans un système qui déclare « des filets, d'un
+     seul poids : 1 px » (DESIGN.md). Le poids servait à marquer la tête de
+     fiche, mais l'encre pleine le fait déjà : les filets de séparation en
+     dessous sont en gris divider, et l'écart de valeur suffit à ouvrir le
+     tableau sans dérober un second poids au système. */
   .apropos-faits {
     margin: 0;
-    border-top: 2px solid var(--color-ink);
+    border-top: 1px solid var(--color-ink);
   }
 
   .apropos-fait {
@@ -173,6 +185,16 @@ const faits = [
     padding: 0.9rem 0;
     border-bottom: 1px solid var(--color-divider);
   }
+
+  /* Rattrapage optique de la première ligne, en deux colonnes seulement. Les
+     deux boîtes démarrent au même pixel, c'est la grille qui l'impose, mais la
+     fiche ouvrait sur son filet puis 14,4 px de padding : sa première étiquette
+     tombait 16,4 px sous le haut de la colonne et sa ligne de base 10,4 px sous
+     celle de « 2020. ». Une demi-ligne, mesurée sur la page vivante, et la
+     fiche pendait à côté de la prose. Le filet passé à 1 px en reprend un, les
+     5 px de padding les neuf autres : écart résiduel 0,01 px. Le rythme des
+     lignes suivantes ne bouge pas. */
+  .apropos-faits > .apropos-fait:first-child { padding-top: 0.3125rem; }
 
   .apropos-fait dt {
     font-size: var(--text-mono-caption);
@@ -189,15 +211,17 @@ const faits = [
     color: var(--color-ink);
   }
 
-  .apropos-fait a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 2px solid var(--color-lime);
-    padding-bottom: 1px;
-  }
-  .apropos-fait a:hover { border-bottom-color: var(--color-ink); }
+  /* Le lien de la fiche n'a plus de règle ici : il redéclarait à l'identique
+     `.lien-prose` de global.css (soulignement lime de 2 px qui passe à l'encre
+     au survol), et cette copie locale était le second filet de 2 px du
+     fichier. Ce n'en est pas un : c'est le soulignement d'un lien, le seul
+     endroit où le lime a le droit d'être un trait et non une surface. Il n'en
+     existe désormais qu'une définition, partagée avec les deux pages outils. */
 
   @media (max-width: 52rem) {
     .apropos { grid-template-columns: 1fr; gap: 2.5rem; }
+    /* En une colonne la fiche ne longe plus la prose : il n'y a plus de ligne
+       de base à rejoindre, la première ligne reprend le pas des autres. */
+    .apropos-faits > .apropos-fait:first-child { padding-top: 0.9rem; }
   }
 </style>

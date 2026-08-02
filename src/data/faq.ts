@@ -19,6 +19,21 @@
  *
  * Format visé : 3 à 4 phrases, 40 à 70 mots. Au-delà, l'extrait est tronqué au
  * milieu d'une idée ; en deçà, la réponse n'a pas de quoi être choisie.
+ *
+ * L'ORDRE COMPTE AUTANT QUE LE TEXTE, et le prix ouvre la liste. Il était en
+ * cinquième position sur six, soit à 9 500 px du haut de la page et replié dans
+ * un accordéon : l'acheteur qui se budget-qualifie en soixante secondes ne
+ * l'atteignait jamais, alors que la section « offres » qui précède
+ * immédiatement la FAQ laisse exactement cette question ouverte. La FAQ reprend
+ * donc là où la page s'arrête. Les deux questions de définition restent
+ * accolées derrière lui, dans cet ordre parce que la seconde répond en
+ * s'appuyant sur la première, et le moyen de prendre contact ferme la liste.
+ *
+ * Un seul nom pour le rendez-vous : « diagnostic », celui qui est écrit sur les
+ * dix-neuf boutons de réservation du site. « Premier appel » et « premier
+ * échange » désignaient le même objet ailleurs, et un lecteur qui croise trois
+ * noms fait le rapprochement trois fois. Les réponses étant lues hors de la
+ * page, il y est nommé en entier, « diagnostic de 20 minutes ».
  */
 
 export interface FaqItem {
@@ -29,6 +44,10 @@ export interface FaqItem {
 }
 
 export const faqs: FaqItem[] = [
+  {
+    q: "Combien coûte une automatisation ?",
+    a: "Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après le diagnostic de 20 minutes, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.",
+  },
   {
     q: "C'est quoi un agent IA ?",
     a: "Un agent IA est un programme qui reçoit une consigne en langage courant, décide seul des étapes à suivre et les exécute dans vos outils. Un logiciel classique attend qu'on clique ; l'agent lit un document, en tire les informations utiles et déclenche la suite. Sur mes missions, il est toujours encadré par un workflow qui vérifie son résultat avant de l'envoyer plus loin. Un agent seul reste une démonstration, c'est ce qui l'entoure qui en fait un outil de production.",
@@ -46,11 +65,7 @@ export const faqs: FaqItem[] = [
     a: "Un outil qui modifie son interface suffit à arrêter une automatisation, et c'est la panne la plus fréquente. Chaque système que je livre envoie une alerte là où vos équipes regardent déjà, Slack, Notion ou email : la panne se voit le jour où elle arrive. Je corrige sans surcoût le mois qui suit la livraison. Je reprends aussi les automatisations construites par quelqu'un d'autre.",
   },
   {
-    q: "Combien coûte une automatisation ?",
-    a: "Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après le premier appel, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.",
-  },
-  {
     q: "Comment vous contacter rapidement ?",
-    a: "Le plus rapide est de réserver un créneau de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
+    a: "Le plus rapide est de réserver un diagnostic de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
   },
 ];

@@ -77,7 +77,7 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 ## Notes
 
 - Aucun tarif n'est publié : le chiffrage dépend du processus et se pose après
-  un premier échange. Le devis est ferme.
+  un diagnostic. Le devis est ferme.
 - Les chiffres cités dans les cas clients sont ceux mesurés chez le client
   concerné. Ils ne sont pas des moyennes et ne se transposent pas tels quels.
 `;

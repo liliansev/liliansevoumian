@@ -117,6 +117,18 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
     </div>
 
     <!-- Middle: nav columns -->
+    <!--
+      Les liens de ces quatre colonnes faisaient déjà 44 px de haut — la règle
+      d'élément `footer a` de global.css les passe en inline-flex avec un
+      plancher de hauteur — mais 26 à 40 px de large seulement : « FAQ » 26,
+      « Outils » 37, « Calcul » et « Offres » 40. Une cible de 26 × 44 rate le
+      plancher de 44 × 44 dans la dimension la plus étroite, et ce sont
+      justement les libellés les plus courts, donc les plus difficiles à viser.
+      Le plancher de largeur suffit à le corriger : les ancres sont déjà des
+      boîtes inline-flex, la zone gagnée se pose à droite du mot, sans fond, sans
+      décalage du texte et sans toucher à la grille — mesuré, aucune colonne ne
+      descend sous 80 px, même à 375 px de fenêtre.
+    -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 py-12">
       {navColumns.map((col) => (
         <div>
@@ -130,7 +142,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
                   rel={link.external ? "noopener noreferrer" : undefined}
                   data-fast-goal={link.goal}
                   data-fast-goal-source={link.goalSource}
-                  class="text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[length:var(--text-body-sm)] break-words"
+                  class="min-w-[44px] text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[length:var(--text-body-sm)] break-words"
                 >
                   {link.label}
                 </a>

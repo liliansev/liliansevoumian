@@ -1,6 +1,12 @@
 ---
 /*
- * CaseStudy.astro — section §02.
+ * CaseStudy.astro — les quatre cas clients, en carrousel.
+ *
+ * Pas de numéro de section dans cet en-tête : il portait « §02 » quand l'ordre
+ * de la home en faisait la deuxième, et elle y est troisième depuis que le
+ * calculateur est remonté avant elle. L'ordre vit dans index.astro, à un seul
+ * endroit ; le répéter ici crée une deuxième vérité qui se périme sans que rien
+ * ne le signale.
  *
  * Carrousel chronologique (projet le plus récent en premier), avec un mockup
  * sur-mesure par mission pour rendre concret CE QUE FAIT l'automatisation :
@@ -420,31 +426,64 @@ const humblePlus = {
   }
 
   .case-carousel-track {
+    /* La gouttière est nommée parce que deux autres déclarations en dépendent :
+       la largeur de la diapositive et la marge de fin qui rend la dernière
+       position de calage atteignable. Trois valeurs qui doivent rester égales,
+       et rien ne signalait une dérive entre elles. */
+    --case-gap: clamp(1rem, 2vw, 1.5rem);
+    /* Le carrousel emprunte --duration-reveal (380 ms), la durée la plus répandue
+       du système, plutôt que la courbe interne de Chrome. Le défilement natif en
+       `smooth` mettait 564 ms mesurées à 1440 px et 286 ms à 402 px : la même
+       commande répondait deux fois moins vite selon la largeur de la fenêtre, sur
+       une durée qu'aucun jeton ne pilotait. Le JS lit cette valeur et
+       --ease-out-quint, et anime lui-même scrollLeft. */
+    --case-scroll-duration: var(--duration-reveal);
     display: flex;
     align-items: stretch;
-    gap: clamp(1rem, 2vw, 1.5rem);
+    gap: var(--case-gap);
     width: 100%;
     padding: 2px;
     margin: -2px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: 2px;
+  }
+
+  /* Le calage natif est suspendu pendant le défilement piloté : avec
+     `mandatory`, chaque écriture de scrollLeft en rAF est susceptible d'être
+     rattrapée par le moteur de calage, qui ramène alors la piste au point le
+     plus proche au milieu du geste. L'attribut est retiré à l'arrivée, sur un
+     point de calage exact — la remise en service ne produit donc aucun saut. */
+  .case-carousel-track[data-case-scripted] {
+    scroll-snap-type: none;
   }
 
   /* La diapositive ne prend pas toute la largeur de la piste : il lui manque de
      quoi laisser dépasser le bord de la suivante. Quatre cas chiffrés vivaient
      derrière un geste que rien n'annonçait — la carte occupait la largeur
      entière, et un lecteur qui ne balaie pas repartait avec une preuve sur
-     quatre. Le fragment laissé visible (33 px à 1440, 28 px à 402, la gouttière
-     déduite) suffit à dire qu'il y a une suite. Il coûte une ligne de titre à la
-     carte sur mobile ; trois cas jamais vus coûtaient nettement plus cher. */
+     quatre.
+     Ce qui dépasse est désormais calé sur le rembourrage de la carte, et non sur
+     une courbe indépendante. Mesuré avant : 28 px dépassaient à 375, 402 et
+     430 px, pour 18 px de rembourrage — soit 10 px de colonne de texte, dont
+     9 px de glyphes tranchés sur chacune des six lignes de la carte suivante. On
+     y lisait une colonne de lettres orphelines, pas « il y en a d'autres » : trop
+     peu pour qu'un mot se devine, assez pour que l'œil s'y arrête. L'autre issue
+     — 110 à 130 px, où un mot entier se lit — laissait 214 px de carte à 402 px
+     de fenêtre, soit 176 px de contenu : la maquette produit n'y tient pas.
+     Le filet vaut donc le rembourrage moins 2 px : la coupe tombe juste avant la
+     colonne de texte, à toutes les largeurs et sans exception mobile à écrire.
+     Ce qui dépasse est un bord de carte — 1 px de filet et du papier — c'est-à-dire
+     exactement ce que le bureau montrait déjà (35,6 px pour 36 px de
+     rembourrage), et que le mobile était seul à ne pas faire. */
   .case-slide {
+    --case-padding: clamp(1.25rem, 3vw, 2.25rem);
+    --case-peek: calc(var(--case-padding) - 2px);
     flex: 0 0 auto;
-    width: calc(100% - clamp(2.75rem, 4vw, 4.5rem));
+    width: calc(100% - var(--case-gap) - var(--case-peek));
     min-width: 0;
-    padding: clamp(1.25rem, 3vw, 2.25rem);
+    padding: var(--case-padding);
     background:
       linear-gradient(var(--color-grid-line), var(--color-grid-line)) 0 0 / 100% 1px no-repeat,
       var(--color-surface-high);
@@ -453,6 +492,22 @@ const humblePlus = {
     box-shadow: var(--shadow-card);
     scroll-snap-align: start;
     scroll-snap-stop: always;
+  }
+
+  /* La dernière diapositive était la seule dont le cadrage différait des trois
+     autres, et ce n'était pas un choix : `scroll-snap-align: start` sur une
+     largeur amputée du filet rend la dernière position de calage inatteignable
+     d'exactement la valeur du filet. Mesuré : 46 px manquaient à 402 px de
+     fenêtre, 59 px à 1440. La carte s'arrêtait donc décalée vers la droite, avec
+     un morceau de la PRÉCÉDENTE visible à gauche — le geste inverse de celui que
+     les trois autres font.
+     La marge de fin rend cette course. Elle vaut la gouttière plus le filet, et
+     l'égalité n'est pas approchée : la course maximale devient 3 × (largeur utile
+     − filet), c'est-à-dire au pixel près l'abscisse qui aligne la quatrième carte
+     à gauche. Ce qui dépasse alors à droite est du vide, et c'est exact — il n'y
+     a pas de cinquième cas. */
+  .case-slide:last-child {
+    margin-inline-end: calc(var(--case-gap) + var(--case-peek));
   }
 
   .case-slide-grid {
@@ -589,10 +644,16 @@ const humblePlus = {
 
   .case-carousel-dot:hover,
   .case-carousel-dot:focus-visible,
+  .case-carousel-dot:active,
   .case-carousel-dot[aria-current='true'] {
     color: var(--color-ink);
   }
 
+  /* Le filet passe à l'encre dès l'appui, avant même que la carte ne soit
+     arrivée. L'état `aria-current`, lui, attend l'arrivée réelle : sans ce
+     retour à l'appui, presser un onglet ne produirait plus rien pendant les
+     380 ms du déplacement. */
+  .case-carousel-dot:active::before,
   .case-carousel-dot[aria-current='true']::before {
     background: var(--color-ink);
   }
@@ -720,8 +781,11 @@ const humblePlus = {
       margin-bottom: 1rem;
     }
 
+    /* Le rembourrage seul : la largeur et la marge de fin suivent, puisqu'elles
+       le lisent. Écrire `padding` en dur ici aurait laissé le filet calé sur la
+       valeur du bureau, ce qui est exactement la dérive d'origine. */
     .case-slide {
-      padding: 1.125rem;
+      --case-padding: 1.125rem;
     }
 
     .case-slide-grid {
@@ -742,11 +806,11 @@ const humblePlus = {
     }
   }
 
+  /* La piste n'a plus de `scroll-behavior: smooth` à neutraliser ici : le
+     déplacement est piloté en JS, qui saute directement à l'arrivée quand le
+     système demande moins d'animation. La déclaration CSS aurait été un second
+     endroit à tenir à jour pour la même règle. */
   @media (prefers-reduced-motion: reduce) {
-    .case-carousel-track {
-      scroll-behavior: auto;
-    }
-
     .case-carousel-arrow,
     .case-carousel-dot::before {
       transition: none;
@@ -766,23 +830,82 @@ const humblePlus = {
 
     if (!track || !previous || !next || slides.length === 0) return;
 
+    /* Deux index, et la distinction est tout le sujet du correctif.
+       `activeIndex` est ce qui est RÉELLEMENT à l'écran ; `targetIndex` est ce
+       vers quoi on se déplace. Avant, un seul index basculait tout au clic :
+       mesurée, la pagination changeait d'onglet 12 ms après l'appui pendant que
+       la carte mettait 564 ms à arriver — pendant une demi-seconde le carrousel
+       annonçait un cas qu'on ne voyait pas encore, y compris au lecteur d'écran.
+       Ce qui répond à l'appui (les flèches, qui doivent pouvoir s'enchaîner) lit
+       la cible ; ce qui décrit l'écran (onglet courant, `inert`, `aria-hidden`,
+       annonce vocale) attend l'arrivée. */
     let activeIndex = 0;
+    let targetIndex = 0;
     let scrollEndTimer = 0;
+    let scrollRaf: number | null = null;
+    let scripted = false;
 
+    const trackStyles = getComputedStyle(track);
+    const bounded = (index: number) => Math.max(0, Math.min(index, slides.length - 1));
+
+    /* Durée et courbe viennent des jetons — DESIGN.md interdit d'écrire l'une ou
+       l'autre sur place, et le défilement natif n'obéissait à aucune des deux.
+       Les valeurs de repli ne servent qu'au cas où la feuille de style n'aurait
+       pas encore été appliquée : elles reprennent --duration-reveal et
+       --ease-out-quint à l'identique. */
+    const scrollDuration = parseFloat(trackStyles.getPropertyValue('--case-scroll-duration')) || 380;
+    const scrollPadding = parseFloat(trackStyles.scrollPaddingInlineStart) || 0;
+
+    /* Résout la courbe de Bézier du jeton pour une abscisse donnée. La bissection
+       sur 24 pas descend sous 10⁻⁷, soit très en dessous du pixel sur la course
+       d'une diapositive ; une approximation recopiée aurait été une seconde
+       définition de --ease-out-quint, exactement ce que la DA a déjà eu à
+       corriger deux fois. */
+    const easingFromToken = (declaration: string) => {
+      const numbers = declaration.match(/-?\d*\.?\d+/g)?.map(Number);
+      if (!numbers || numbers.length < 4) return (progress: number) => progress;
+      const [x1, y1, x2, y2] = numbers;
+      const axis = (a: number, b: number, t: number) =>
+        3 * (1 - t) * (1 - t) * t * a + 3 * (1 - t) * t * t * b + t * t * t;
+      return (progress: number) => {
+        let low = 0;
+        let high = 1;
+        let t = progress;
+        for (let step = 0; step < 24; step += 1) {
+          t = (low + high) / 2;
+          if (axis(x1, x2, t) < progress) low = t;
+          else high = t;
+        }
+        return axis(y1, y2, t);
+      };
+    };
+    const ease = easingFromToken(trackStyles.getPropertyValue('--ease-out-quint'));
+
+    /* L'abscisse de calage de la diapositive, dans le même repère que
+       `scrollLeft`. Le retrait de `scroll-padding-inline` n'est pas cosmétique :
+       sans lui le JS visait 2 px à droite du point de calage natif, et le moteur
+       de calage rattrapait ces 2 px après coup, en un second déplacement. */
     const slideOffset = (slide: HTMLElement) => {
       const trackBox = track.getBoundingClientRect();
       const slideBox = slide.getBoundingClientRect();
-      return slideBox.left - trackBox.left + track.scrollLeft;
+      return slideBox.left - trackBox.left + track.scrollLeft - scrollPadding;
     };
 
-    const updateState = (index: number) => {
-      const boundedIndex = Math.max(0, Math.min(index, slides.length - 1));
-      activeIndex = boundedIndex;
+    // Ce que la commande doit rendre TOUT DE SUITE : de quoi enchaîner les appuis
+    // sans dépasser les bornes, la carte n'étant pas encore arrivée.
+    const syncArrows = () => {
+      previous.disabled = targetIndex === 0;
+      next.disabled = targetIndex === slides.length - 1;
+    };
+
+    // Ce qui décrit l'écran, et n'est donc écrit qu'une fois la carte arrivée.
+    const settle = (index: number) => {
+      activeIndex = bounded(index);
+      targetIndex = activeIndex;
+      syncArrows();
       if (announcement) {
         announcement.textContent = `Projet ${activeIndex + 1} sur ${slides.length} : ${slides[activeIndex].dataset.caseName ?? ''}`;
       }
-      previous.disabled = activeIndex === 0;
-      next.disabled = activeIndex === slides.length - 1;
 
       slides.forEach((slide, slideIndex) => {
         if (slideIndex === activeIndex) {
@@ -818,17 +941,62 @@ const humblePlus = {
       return closestIndex;
     };
 
-    const goTo = (index: number) => {
-      const boundedIndex = Math.max(0, Math.min(index, slides.length - 1));
-      track.scrollTo({
-        left: slideOffset(slides[boundedIndex]),
-        behavior: reducedMotion.matches ? 'auto' : 'smooth',
-      });
-      updateState(boundedIndex);
+    const stopScripted = () => {
+      if (scrollRaf !== null) {
+        cancelAnimationFrame(scrollRaf);
+        scrollRaf = null;
+      }
+      if (scripted) {
+        scripted = false;
+        track.removeAttribute('data-case-scripted');
+      }
     };
 
-    previous.addEventListener('click', () => goTo(activeIndex - 1));
-    next.addEventListener('click', () => goTo(activeIndex + 1));
+    const scrollTo = (left: number, onArrival: () => void) => {
+      stopScripted();
+      const limit = track.scrollWidth - track.clientWidth;
+      const destination = Math.max(0, Math.min(left, limit));
+      const origin = track.scrollLeft;
+      const distance = destination - origin;
+
+      // Moins d'un pixel à parcourir, ou une préférence système pour moins de
+      // mouvement : on arrive tout de suite.
+      if (reducedMotion.matches || Math.abs(distance) < 1) {
+        track.scrollLeft = destination;
+        onArrival();
+        return;
+      }
+
+      scripted = true;
+      track.setAttribute('data-case-scripted', '');
+      const startedAt = performance.now();
+
+      const frame = (now: number) => {
+        const progress = Math.min((now - startedAt) / scrollDuration, 1);
+        track.scrollLeft = origin + distance * ease(progress);
+        if (progress < 1) {
+          scrollRaf = requestAnimationFrame(frame);
+          return;
+        }
+        scrollRaf = null;
+        scripted = false;
+        track.removeAttribute('data-case-scripted');
+        track.scrollLeft = destination;
+        onArrival();
+      };
+
+      scrollRaf = requestAnimationFrame(frame);
+    };
+
+    const goTo = (index: number) => {
+      const wanted = bounded(index);
+      targetIndex = wanted;
+      syncArrows();
+      scrollTo(slideOffset(slides[wanted]), () => settle(wanted));
+    };
+
+    previous.addEventListener('click', () => goTo(targetIndex - 1));
+    next.addEventListener('click', () => goTo(targetIndex + 1));
 
     dots.forEach((dot) => {
       dot.addEventListener('click', () => {
@@ -837,18 +1005,29 @@ const humblePlus = {
       });
     });
 
+    // Le doigt et la molette l'emportent sur un déplacement en cours : une piste
+    // qui continue sa course sous la main est le défaut que le défilement natif
+    // avait déjà, et qu'il n'y avait aucune raison de reconduire.
+    (['pointerdown', 'wheel', 'touchstart'] as const).forEach((type) => {
+      track.addEventListener(type, stopScripted, { passive: true });
+    });
+
     track.addEventListener('scroll', () => {
+      // Pendant un déplacement piloté, l'arrivée est déjà datée : la relecture de
+      // la diapositive la plus proche ne servirait qu'à écrire deux fois le même
+      // état, et à le faire une image trop tôt.
+      if (scripted) return;
       window.clearTimeout(scrollEndTimer);
-      scrollEndTimer = window.setTimeout(() => updateState(findClosestSlide()), 80);
+      scrollEndTimer = window.setTimeout(() => settle(findClosestSlide()), 80);
     }, { passive: true });
 
     track.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
-        goTo(activeIndex - 1);
+        goTo(targetIndex - 1);
       } else if (event.key === 'ArrowRight') {
         event.preventDefault();
-        goTo(activeIndex + 1);
+        goTo(targetIndex + 1);
       } else if (event.key === 'Home') {
         event.preventDefault();
         goTo(0);
@@ -858,7 +1037,7 @@ const humblePlus = {
       }
     });
 
-    updateState(0);
+    settle(0);
     carousel.setAttribute('data-case-ready', '');
   });
 </script>

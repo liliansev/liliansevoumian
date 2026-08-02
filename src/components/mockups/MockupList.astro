@@ -36,7 +36,18 @@ const glyph = { done: '✓', pending: '↻', muted: '·' } as const;
 </ul>
 
 <style>
-  .mock-list { list-style: none; margin: 0; padding: 0; }
+  /* La liste est son PROPRE conteneur de requête, et c'est la seule façon
+     correcte de la régler : sa largeur ne suit pas celle de la fenêtre mais
+     celle de la carte de carrousel qui la porte. Mesuré, elle vaut 168 px à
+     320 px de fenêtre, 223 à 375, 250 à 402, 466 à 640, 775 à 1024 — et
+     redescend à 535 à 1440 px, où la maquette passe en colonne. Un point de
+     rupture posé sur le viewport se tromperait donc dans les deux sens. */
+  .mock-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    container-type: inline-size;
+  }
   .mock-row {
     display: flex;
     align-items: center;
@@ -52,7 +63,10 @@ const glyph = { done: '✓', pending: '↻', muted: '·' } as const;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    /* Le jeton vaut exactement les 12 px qui étaient écrits ici en dur : le
+       rendu ne change pas, le glyphe de statut rejoint simplement l'échelle,
+       comme les trois autres tailles de ce fichier. */
+    font-size: var(--text-mono-label);
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-divider);
     background: var(--color-surface-low);
@@ -71,12 +85,19 @@ const glyph = { done: '✓', pending: '↻', muted: '·' } as const;
     color: var(--color-ink);
     font-weight: 500;
     line-height: 1.2;
+    /* Plancher de sécurité : un mot plus long que sa colonne se coupe au lieu
+       de déborder sous le montant. `break-word` et non `anywhere`, qui ramène
+       la largeur min-content à un caractère et change le partage flex de la
+       ligne à toutes les tailles ; celui-ci ne s'applique qu'au mot qui ne
+       tient pas seul sur sa ligne. */
+    overflow-wrap: break-word;
   }
   .mock-sub {
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
     color: var(--color-ink-low);
     letter-spacing: 0.02em;
+    overflow-wrap: break-word;
   }
   .mock-val {
     margin-left: auto;
@@ -86,5 +107,25 @@ const glyph = { done: '✓', pending: '↻', muted: '·' } as const;
     color: var(--color-ink);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+  }
+
+  /* Sous 216 px de colonne, le montant descend d'une ligne.
+     Mesuré à 320 px de fenêtre : la ligne ne fait que 168 px, dont 26 pour la
+     pastille de statut, 24 pour les deux gouttières et jusqu'à 78 pour le
+     montant — qui ne peut ni se couper ni rétrécir, chiffres tabulaires et
+     `nowrap`. Il ne restait que 40 px au libellé : « Onduleur 3000 VA » s'y
+     empilait sur trois lignes et son mot le plus long, 60 px, débordait de
+     20 px SOUS le montant. Une maquette n'a que son libellé à montrer ; coupé,
+     elle ne montre plus rien.
+     Le montant sur sa propre ligne rend 130 px au libellé, plus du triple. Le
+     seuil est calé pour ne rien changer au plancher de 375 px du projet, où la
+     ligne mesure 223 px : il ne se déclenche qu'à 320 et 360, en dessous. */
+  @container (max-width: 13.5rem) {
+    .mock-row { flex-wrap: wrap; }
+    .mock-val {
+      flex-basis: 100%;
+      margin-left: 0;
+      text-align: right;
+    }
   }
 </style>

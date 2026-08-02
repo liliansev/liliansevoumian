@@ -207,7 +207,16 @@
   --color-error: #b3261e;
   --color-success: #111111;
 
-  /* ── Élévation : aucune. La structure vient des filets. ── */
+  /* ── Élévation : aucune. La structure vient des filets. ──
+     Les deux jetons ne rendent rien et c'est leur rôle : ils tiennent la place
+     de l'ombre pour que « pas d'élévation » soit une valeur écrite, et non une
+     absence qu'un composant comblerait un jour au jugé. Six déclarations les
+     lisent encore (MockupWindow, WorkflowCanvas, CaseStudy, StackScenario,
+     StackWorkflow), dont deux comme état de REPOS d'une `@keyframes` qui
+     alterne avec un halo de marque : les retirer y ferait échouer
+     `box-shadow: var(--shadow-card)` en silence.
+     Ce qui a été retiré, ce sont les déclarations inertes qui les peignaient
+     dans ce fichier — voir la section CARDS. */
   --shadow-card: 0 0 0 0 transparent;
   --shadow-card-hover: 0 0 0 0 transparent;
 }
@@ -564,8 +573,27 @@ body {
     radial-gradient(460px 340px at 100% calc(100% - 1200px), black 0%, transparent 72%);
 }
 
-/* Sous ~640px les gouttières sont quasi nulles : pas de quadrillage, papier nu. */
-@media (max-width: 640px) {
+/* Sous 1024 px : pas de quadrillage, papier nu.
+
+   Le seuil était à 640 px, et DESIGN.md déclarait 1024 depuis le début — le
+   document et le code disaient deux choses différentes. Mesuré sur la page
+   vivante, la gouttière rendue vaut 32 px à 641 px de large, 38 à 768, 45 à 900
+   et 51 à 1023, pour une maille de 96 : dans toute cette bande il ne reste pas
+   une cellule entière, donc pas de quadrillage — un filet vertical collé au
+   bord de l'écran, et des tirets horizontaux de 32 à 51 px de long tous les
+   96 px. Ce n'est pas une grille atténuée, c'est un reste de grille, et il se
+   lit comme de la salissure au bord du papier.
+
+   1024 et non une valeur choisie pour l'occasion : c'est le SEUL seuil desktop
+   du site — le `lg:` de Tailwind, celui où la navigation passe du burger au
+   wordmark, celui du `scrollbar-gutter: stable` plus haut dans ce fichier. La
+   signature de structure apparaît là où la mise en page desktop apparaît, pas
+   quatre cents pixels avant.
+
+   Gain de côté : sous 1024 px, deux calques de la hauteur du document, masqués
+   par sept dégradés radiaux chacun, cessent d'être composés — sur les appareils
+   où le budget de rendu est le plus serré. */
+@media (max-width: 1023px) {
   .technical-grid::before,
   .technical-grid::after { display: none; }
 }
@@ -840,7 +868,25 @@ body {
 }
 
 /* =========================================================================
-   CARDS — flat, bordered, hover = grid claims the cell
+   CARDS — à plat, un filet, et le filet est la seule chose qui bouge.
+
+   Cette section portait une élévation entière qui ne rendait rien. Les deux
+   jetons d'ombre valent `0 0 0 0 transparent` — c'est la position de DESIGN.md,
+   « il n'y en a pas » — et sept déclarations les peignaient quand même, dont
+   trois transitions `box-shadow` et deux états de survol dont c'était le seul
+   contenu. Le coût n'est pas nul : une transition déclarée sur une propriété
+   qui ne change jamais reste une propriété que le navigateur surveille, et
+   surtout un état de survol vide se lit au code comme une intention, si bien
+   que la carte suivante le recopie.
+
+   LES DEUX JETONS RESTENT dans @theme, et c'est vérifié plutôt que supposé :
+   six déclarations hors de ce fichier les appellent encore — MockupWindow,
+   WorkflowCanvas, CaseStudy, StackScenario et StackWorkflow, ces deux
+   dernières s'en servant comme valeur de REPOS dans une `@keyframes` qui
+   alterne avec un vrai halo de marque. Les supprimer y rendrait
+   `box-shadow: var(--shadow-card)` invalide à l'exécution, sans erreur ni
+   avertissement. Ce qui part ici, ce sont les déclarations inertes, pas le
+   jeton qu'elles lisaient.
    ========================================================================= */
 
 .card {
@@ -849,30 +895,31 @@ body {
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-md);
   padding: 24px;
-  box-shadow: var(--shadow-card);
-  transition: border-color var(--duration-default) var(--ease-out-quint),
-              box-shadow var(--duration-default) var(--ease-out-quint);
+  /* Seul le filet s'anime, parce que seul le filet change — `.card-interactive`
+     ci-dessous le passe à `ink-faint` au survol et au focus. */
+  transition: border-color var(--duration-default) var(--ease-out-quint);
 }
 
-/* Utilitaire de surface douce — pour les cartes au markup inline (Stack, Offres,
-   ROI) qui n'utilisent pas .card mais veulent la même profondeur "Vercel". */
-.card-soft {
-  box-shadow: var(--shadow-card);
-  transition: border-color var(--duration-default) var(--ease-out-quint),
-              box-shadow var(--duration-default) var(--ease-out-quint);
-}
-.card-soft:hover {
-  box-shadow: var(--shadow-card-hover);
-}
+/* `.card-soft` a été retirée en entier : elle ne déclarait qu'une ombre
+   transparente, sa transition, et un survol qui repeignait la même ombre
+   transparente. Zéro pixel rendu, à l'arrêt comme au survol.
+   La transition `border-color` qu'elle portait aussi ne servait rien : vérifié
+   sur ses deux seuls porteurs, `.stack-card` (StackLayer) et `.roi-carte`
+   (ROICalculator), aucun des deux ne change sa propre couleur de filet — le
+   survol de la carte outil ne touche que la couleur du logo, sur l'enfant.
+   Le NOM survit dans le markup de ces deux composants, hors périmètre ici ; il
+   n'y désigne plus rien et peut tomber au prochain passage. */
 
 .card-interactive {
   cursor: pointer;
   position: relative;
 }
 
+/* Le survol revendique la cellule par son filet, et par lui seul. La ligne
+   `box-shadow: var(--shadow-card-hover)` qui l'accompagnait peignait du
+   transparent sur du transparent. */
 .card-interactive:hover {
   border-color: var(--color-ink-faint);
-  box-shadow: var(--shadow-card-hover);
 }
 
 /* Clavier : le focus revendique sa cellule comme le hover. */
@@ -880,12 +927,13 @@ body {
   border-color: var(--color-ink-faint);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .card-interactive:hover::after,
-  .card-interactive:focus-visible::after {
-    animation: none;
-  }
-}
+/* Il y avait ici un bloc `prefers-reduced-motion` qui coupait une animation sur
+   `.card-interactive:hover::after`. Ce pseudo-élément n'existe nulle part :
+   grep sur tout `src/`, `.card-interactive` n'apparaît que dans ce fichier et
+   sur une carte de `/cas-clients`, qui ne déclare aucun `::after`. Le bloc
+   protégeait donc les personnes sensibles au mouvement d'une animation qui
+   n'avait jamais existé — et il donnait à lire, à qui ouvrait ce fichier, une
+   carte animée qu'on chercherait en vain. */
 
 /* =========================================================================
    CODE BLOCK
@@ -1084,34 +1132,53 @@ body {
   }
 }
 
-/* Grilles de gouttière animées au scroll — deux mouvements combinés :
-   1) les LIGNES s'écoulent verticalement dans les patchs (gauche ↓, droite ↑)
-   2) une légère parallaxe de bloc (sens opposés) ajoute de la profondeur.
-   Calme à l'arrêt, vivant au scroll. 100 % CSS scroll-driven (zéro JS),
-   absent gracieusement si non supporté, coupé en reduced-motion. */
+/* Grilles de gouttière animées au scroll — une parallaxe de bloc, en sens
+   opposés (gauche vers le bas, droite vers le haut), qui donne la profondeur.
+   Calme à l'arrêt, vivant au scroll. 100 % CSS scroll-driven (zéro JS), absente
+   gracieusement si le navigateur ne connaît pas `animation-timeline`, coupée en
+   reduced-motion.
+
+   IL Y AVAIT UN SECOND MOUVEMENT, ET IL EST RETIRÉ SUR MESURE. Chacun des deux
+   calques portait DEUX animations menées de front : `background-position-y`,
+   qui faisait défiler le quadrillage à l'intérieur des patchs, et `translate3d`,
+   la parallaxe. La seconde est compositable — le compositeur déplace un calque
+   déjà peint, sans repasser par le rendu ; la première ne l'est pas — elle
+   oblige à REPEINDRE puis re-rastériser les deux calques, sur toute la hauteur
+   du document et derrière sept masques radiaux chacun, à chaque image de
+   défilement.
+
+   Mesuré par trace CDP (catégories devtools.timeline) sur un même scroll
+   scripté de 3 000 px à 1440 × 900, médiane de trois passes :
+
+       les deux animations      : 867 Paint · 967 RasterTask
+       grille masquée (témoin)  : 445 Paint ·  88 RasterTask
+       la parallaxe seule       : 445 Paint ·  94 RasterTask
+
+   soit 422 peintures et 879 rastérisations imputables aux seules gouttières —
+   la rastérisation était multipliée par onze — pour un défilé de lignes que le
+   masque efface à 72 % et dont le motif se répète de toute façon tous les
+   96 px. Le mouvement le plus cher de la page était aussi celui qu'on y voit
+   le moins. La parallaxe reste : elle porte l'effet, et elle est GRATUITE — la
+   troisième ligne est celle du témoin à six rastérisations près, les deux
+   calques composés. Rastérisation cumulée : 24,5 ms avant, 8,2 ms après.
+
+   `will-change` retombe du coup sur `transform` seul. Annoncer
+   `background-position` demandait au navigateur de préparer un calque pour une
+   propriété qu'il ne sait pas composer — c'est-à-dire de payer le calque sans
+   jamais en tirer le bénéfice. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: scroll()) {
     .technical-grid::before {
-      animation: grid-flow-down linear both, grid-parallax-down linear both;
-      animation-timeline: scroll(root block), scroll(root block);
-      will-change: background-position, transform;
+      animation: grid-parallax-down linear both;
+      animation-timeline: scroll(root block);
+      will-change: transform;
     }
     .technical-grid::after {
-      animation: grid-flow-up linear both, grid-parallax-up linear both;
-      animation-timeline: scroll(root block), scroll(root block);
-      will-change: background-position, transform;
+      animation: grid-parallax-up linear both;
+      animation-timeline: scroll(root block);
+      will-change: transform;
     }
   }
-}
-
-/* Écoulement des lignes — multiple de la cellule (96px) pour un défilé sans saut. */
-@keyframes grid-flow-down {
-  from { background-position-y: 0; }
-  to   { background-position-y: 576px; }
-}
-@keyframes grid-flow-up {
-  from { background-position-y: 0; }
-  to   { background-position-y: -576px; }
 }
 
 @keyframes grid-parallax-down {
@@ -1229,9 +1296,10 @@ a[href^="mailto:"] {
   border: 1px solid var(--color-border-strong);
   /* Angles vifs (sans arrondi) sur la FAQ — choix produit. */
   border-radius: var(--radius-none);
-  box-shadow: var(--shadow-card);
-  transition: border-color var(--duration-default) var(--ease-out-quint),
-              box-shadow var(--duration-default) var(--ease-out-quint);
+  /* Même nettoyage qu'au-dessus sur `.card` : l'ombre transparente et sa
+     transition ne rendaient rien. Le filet, lui, passe bien à `ink-low` au
+     survol — c'est la seule chose à animer. */
+  transition: border-color var(--duration-default) var(--ease-out-quint);
 }
 
 .faq-item:hover,
@@ -1703,8 +1771,23 @@ h1 mark.inv::before { --angle: 1.1deg; }
    bande de se déformer. */
 
 
-/* Lien dans une phrase de prose : souligné d'un filet lime, qui passe à l'encre
-   au survol. Le lime ne porte jamais le texte, seulement le trait. */
+/* Lien dans une phrase de prose : souligné d'un trait lime, qui passe à l'encre
+   au survol. Le lime ne porte jamais le texte, seulement le trait.
+
+   POURQUOI 2 PX ET NON 1, dans un système qui déclare « des filets, d'un seul
+   poids : 1 px ». Ce n'en est pas un. Un filet sépare ou encadre une surface ;
+   ceci souligne des mots, et c'est le seul endroit où le lime a le droit d'être
+   un trait plutôt qu'une surface.
+   L'argument qu'on serait tenté d'écrire — « le lime est trop clair pour tenir
+   à 1 px » — est faux, vérifié par le calcul : le lime rend 1,25:1 sur papier
+   et `divider` (#e5e5e5), le filet standard du site, 1,26:1. Les deux traits
+   ont le MÊME contraste de luminance. C'est justement le problème : mesuré sur
+   la home, ce lien fait 297 px de large et le filet de séparation de la fiche
+   qui l'entoure, 314 px — deux traits de même longueur, de même contraste, à
+   douze pixels l'un de l'autre. À poids égal, la seule chose qui distinguerait
+   « ceci se clique » de « ceci sépare » serait la teinte, et une information
+   portée par la seule couleur n'en est pas une (WCAG 1.4.1). Le pixel de plus
+   est ce qui fait la différence, et il ne coûte rien à personne. */
 .lien-prose {
   color: inherit;
   text-decoration: none;
@@ -1712,3 +1795,16 @@ h1 mark.inv::before { --angle: 1.1deg; }
   padding-bottom: 1px;
 }
 .lien-prose:hover { border-bottom-color: var(--color-ink); }
+
+/* Sur l'aplat lime, le trait passe au blanc — exactement comme `mark::before` et
+   `.link-cta__label::before`, qui s'y inversent déjà. Et l'inversion conserve la
+   force du signal : le lime rend 1,25:1 sur papier, le blanc rend 1,25:1 sur
+   lime. Le trait a rigoureusement le même poids perceptif des deux côtés, ce qui
+   n'est pas une coïncidence mais la définition d'une inversion réussie.
+   Ce n'était pas un raffinement mais une réparation : `.lien-prose` lit
+   `var(--color-lime)` en dur, et `.bloc-lime` ne remappe pas ce jeton-là. Le
+   soulignement était donc du lime sur du lime, 1,00:1, littéralement invisible —
+   sur les deux pages outil, où « Je le reprends » est le seul chemin vers la page
+   des automatisations qui cassent. Le lien n'apparaissait qu'au survol, quand la
+   couleur passe à l'encre : sur pointeur grossier, il n'apparaissait jamais. */
+.bloc-lime .lien-prose { border-bottom-color: #ffffff; }

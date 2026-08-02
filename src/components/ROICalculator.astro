@@ -184,6 +184,63 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     border-top: 1px solid var(--color-divider);
   }
 
+  /* Le curseur est la seule commande du site à manipulation continue, et la plus
+     difficile à saisir au doigt : il faut attraper une poignée de 16 px puis la
+     tenir pendant qu'elle se déplace. Sa zone tactile valait 28 px, soit 16 de
+     moins que le plancher de 44 px que le reste du site tient déjà (flèches du
+     carrousel, liens du pied de page, barre mobile). Sur pointeur grossier
+     uniquement : sur bureau, 28 px suffisent à la souris et 44 px pousseraient
+     les deux réglages de 32 px sans rien améliorer.
+     La piste PEINTE ne bouge pas — elle est dessinée en `background-image` de
+     4 px centrée dans la boîte, et c'est la boîte seule qui grandit. D'où
+     l'avertissement de global.css, répété ici parce que c'est de ce côté-ci que
+     la tentation revient : ne jamais repasser en raccourci `background`, il
+     réinitialiserait `background-size` et la piste s'étalerait sur les 44 px. */
+  @media (pointer: coarse) {
+    [data-roi-calc] .roi-slider {
+      height: 44px;
+    }
+  }
+
+  /* Aucun accusé de réception à l'appui : la poignée répondait au survol et au
+     focus clavier, c'est-à-dire aux deux situations où l'on voit déjà un curseur
+     à l'écran, et à rien au doigt — là où le doigt masque justement la poignée.
+     L'aplat d'encre est instantané (aucune transition ne le porte, et c'est
+     voulu : un appui doit être reconnu à l'image suivante), le grossissement
+     suit la transition de 150 ms déjà déclarée sur la poignée. L'encre plutôt
+     qu'un lime plus vif : le lime est une surface, il ne signale pas un état.
+     Sélecteur préfixé par [data-roi-calc] pour passer devant la règle de survol
+     de global.css, de spécificité identique — une égalité qui se serait tranchée
+     à l'ordre d'injection des feuilles, c'est-à-dire au hasard du build. */
+  [data-roi-calc] .roi-slider:active::-webkit-slider-thumb {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    transform: scale(1.25);
+  }
+
+  [data-roi-calc] .roi-slider:active::-moz-range-thumb {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    transform: scale(1.25);
+  }
+
+  /* Deux règles et non une liste séparée par une virgule : un sélecteur invalide
+     dans une liste invalide la règle ENTIÈRE, et `::-moz-range-thumb` est
+     invalide pour Chrome comme `::-webkit-slider-thumb` l'est pour Firefox.
+     Groupées, les deux poignées auraient gardé leur transition dans les deux
+     navigateurs — vérifié : Chrome ne conserve aucune des deux. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-roi-calc] .roi-slider::-webkit-slider-thumb {
+      transition: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-roi-calc] .roi-slider::-moz-range-thumb {
+      transition: none;
+    }
+  }
+
   /* Au-delà de 60rem le chiffre et les réglages tiennent côte à côte, mais
      l'ordre du DOM reste celui de la lecture : résultat, puis réglages. */
   @media (min-width: 60rem) {
@@ -222,15 +279,22 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
 
   // Animated number — easing rAF, identique au comportement précédent.
   // Un seul rAF actif par élément ; setTarget annule l'ancien et repart du current.
+  //
+  // `onFrame` reçoit la valeur courante à chaque image. Il sert aux nombres qui
+  // ne sont pas des grandeurs indépendantes mais des traductions de celle-ci
+  // (cf. les semaines, plus bas) : ils suivent alors la même durée et la même
+  // courbe sans qu'un second compteur ait à être tenu en parallèle.
   class AnimatedValue {
     private current: number;
     private rafId: number | null = null;
     private duration = 350;
     private element: HTMLElement;
+    private onFrame?: (value: number) => void;
 
-    constructor(element: HTMLElement, initial: number) {
+    constructor(element: HTMLElement, initial: number, onFrame?: (value: number) => void) {
       this.element = element;
       this.current = initial;
+      this.onFrame = onFrame;
     }
 
     setTarget(value: number, prefersReducedMotion: boolean) {
@@ -238,6 +302,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
       if (prefersReducedMotion) {
         this.current = value;
         this.element.textContent = formatFR(value);
+        this.onFrame?.(value);
         return;
       }
       const start = this.current;
@@ -251,11 +316,13 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
         const eased = 1 - Math.pow(1 - progress, 4);
         this.current = Math.round(start + diff * eased);
         this.element.textContent = formatFR(this.current);
+        this.onFrame?.(this.current);
         if (progress < 1) {
           this.rafId = requestAnimationFrame(animate);
         } else {
           this.current = value;
           this.element.textContent = formatFR(value);
+          this.onFrame?.(value);
           this.rafId = null;
         }
       };
@@ -337,7 +404,26 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     outMoney.textContent = formatFR(c0.moneySaved);
     warningEl.hidden = !c0.isCapped;
 
-    const animHours = new AnimatedValue(outHours, c0.hoursSaved);
+    /* Les semaines ne sont pas un quatrième compteur : elles sont les heures
+       divisées par 35, et elles sont donc écrites par le compteur des heures, à
+       chaque image.
+       L'exception qui les faisait sauter est tombée à la mesure. Elle disait
+       « petits paliers, l'animer produirait un scintillement » — les paliers ne
+       sont pas petits : un cran du curseur des heures vaut 26,4 h par personne,
+       soit 0,75 semaine à 1 personne, 2,3 à 3 et 7,5 à 10. Et une variation de
+       deux semaines resterait 79 ms sur sa valeur intermédiaire avec la courbe en
+       place, c'est-à-dire cinq images : un cran lisible, pas un scintillement.
+       Restait le vrai symptôme, celui qu'on voit : quatre nombres dans le même
+       bloc, trois qui glissent sur 350 ms et un qui se téléporte.
+       Un compteur indépendant aurait suffi à l'aligner, mais pas à le rendre
+       juste — `arrondi(sA + (sB−sA)·e)` et `arrondi(arrondi(hA + (hB−hA)·e) / 35)`
+       divergent d'une demi-semaine pendant la course, et la phrase aurait pu
+       afficher un nombre d'heures et un nombre de semaines qui ne se répondent
+       pas. La traduction est donc calculée à partir du nombre réellement
+       affiché : même durée, même courbe, et l'égalité tient par construction. */
+    const animHours = new AnimatedValue(outHours, c0.hoursSaved, (heures) => {
+      outWeeks.textContent = formatFR(inWorkWeeks(heures));
+    });
     const animManual = new AnimatedValue(outManual, c0.manualHours);
     const animMoney = new AnimatedValue(outMoney, c0.moneySaved);
 
@@ -368,12 +454,11 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
       const c = compute(hours, people);
       const reducedMotion = motionQuery.matches;
 
+      // Les semaines suivent le compteur des heures (cf. sa construction) : rien
+      // à écrire ici, sous peine de deux sources pour un même nombre.
       animHours.setTarget(c.hoursSaved, reducedMotion);
       animManual.setTarget(c.manualHours, reducedMotion);
       animMoney.setTarget(c.moneySaved, reducedMotion);
-      // Les semaines changent par petits paliers : les animer produirait un
-      // scintillement sans lecture possible.
-      outWeeks.textContent = formatFR(inWorkWeeks(c.hoursSaved));
 
       warningEl.hidden = !c.isCapped;
       annoncer(c.hoursSaved);
