@@ -22,21 +22,40 @@ interface Testimonial {
   image: ImageMetadata;
 }
 
+/* Les trois citations sont tronquées, et la règle de coupe est stricte : on ne
+ * retire que des phrases entières ou des fins de phrase, jamais un fragment au
+ * milieu d'une idée, et aucun mot n'est reformulé. Toutes les coupes retirent
+ * un éloge — aucune ne peut donc faire dire à quelqu'un plus que ce qu'il a
+ * écrit, seulement moins. Les versions intégrales sont dans l'historique git de
+ * ce fichier.
+ *
+ * Ce qui part, et pourquoi :
+ *  · Ismail — « Un Champion du no-code d'Airtable et de Make avéré ! » Le
+ *    registre jurait avec la voix du reste du site, et la phrase gardée est la
+ *    seule des deux à nommer un sujet de travail.
+ *  · Alexis — « et de sa volonté infaillible de servir un projet ». Le fait le
+ *    plus probant de toute la section est ailleurs dans sa phrase : quelqu'un
+ *    qui revient « à de nombreuses reprises ». Le superlatif le diluait.
+ *  · Benjamin — « Il a une approche très professionnelle, un large spectre de
+ *    connaissances, et un bon esprit de synthèse. » Trois adjectifs devant la
+ *    seule phrase de résultat des trois témoignages. Elle reste seule, et
+ *    courte, ce qui la fait entendre.
+ */
 const testimonials: Testimonial[] = [
   {
-    quote: "Un Champion du no-code d'Airtable et de Make avéré ! Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.",
+    quote: "Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.",
     name: 'Ismail Landoulsi',
     role: 'Co-fondateur & COO · CasanovaParis',
     image: ismailImg,
   },
   {
-    quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation et de sa volonté infaillible de servir un projet.",
+    quote: "J'ai la chance d'avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.",
     name: 'Alexis Kovalenko',
     role: 'Co-fondateur · Contournement',
     image: alexisImg,
   },
   {
-    quote: 'Il a une approche très professionnelle, un large spectre de connaissances, et un bon esprit de synthèse. Les projets qu\'il prend en charge sont un succès.',
+    quote: 'Les projets qu\'il prend en charge sont un succès.',
     name: 'Benjamin Potet',
     role: 'Solution Architect · Customer Experience',
     image: benjaminImg,
