@@ -15,6 +15,17 @@
  * portaient réellement — le nombre d'outils, le nombre de questions, la durée
  * du diagnostic — sont descendues dans le chapô, où elles se lisent dans une
  * phrase.
+ *
+ * Deux sections l'ignoraient et refaisaient cet en-tête à la main : Témoignages
+ * et FAQ. Le coût était mesurable, et il portait sur le filet plus que sur les
+ * pixels : les six sections qui passaient par ici avaient un trait sous leur
+ * titre, ces deux-là non. Dans une DA sans ombre, où l'élévation vient
+ * uniquement des filets, un titre de section sans son trait annonce un rang
+ * inférieur — la preuve sociale et la FAQ se présentaient comme des
+ * sous-parties. S'y ajoutaient trois valeurs d'écart au lieu d'une : titre vers
+ * chapô à 24 px contre 53, bloc vers contenu à 48 et 0 contre 64.
+ * Elles passent toutes les deux par ce composant. Ce qui leur était propre est
+ * devenu des props — largeurs de mesure, et `spacing` pour la colonne de la FAQ.
  */
 interface Props {
   title: string;
@@ -25,6 +36,24 @@ interface Props {
   /** Niveau de heading rendu. 'h1' pour le header principal d'une sous-page
       (chaque page doit avoir exactement un h1) ; 'h2' par défaut en section. */
   as?: 'h1' | 'h2';
+  /**
+   * Qui porte l'écart entre l'en-tête et le contenu qu'il annonce.
+   *
+   * 'section' (défaut) : l'en-tête le porte lui-même, 48 px puis 64 px au-delà
+   * de 768. C'est la mesure de six sections de la home, et elle doit rester
+   * unique — un écart différent d'une section à l'autre se lit comme un rang
+   * différent alors que ce sont les mêmes.
+   *
+   * 'none' : le parent le porte déjà. Le seul cas est la FAQ, dont l'en-tête est
+   * la colonne gauche d'une grille : le `gap` de la grille sépare les deux
+   * colonnes en desktop et les deux blocs en mobile, et une marge basse
+   * s'ajouterait à ce `gap` au lieu de le remplacer.
+   *
+   * Une prop et non une classe passée dans `class` : `mb-0` et `mb-12` sont la
+   * même famille d'utilitaires, et c'est l'ordre du CSS généré qui tranche, pas
+   * l'ordre des classes écrites. `mb-0` perdrait, silencieusement.
+   */
+  spacing?: 'section' | 'none';
 }
 
 const {
@@ -34,10 +63,13 @@ const {
   titleMaxWidth = '18ch',
   class: className = '',
   as: Heading = 'h2',
+  spacing = 'section',
 } = Astro.props;
+
+const spacingClass = spacing === 'section' ? 'mb-12 md:mb-16' : '';
 ---
 
-<div class={`reveal mb-12 md:mb-16 ${className}`}>
+<div class={`reveal ${spacingClass} ${className}`.replace(/\s+/g, ' ').trim()}>
   {/* Header en flow naturel (block, full-width) plutôt qu'une card flottante en
       coin. Le titre respire avec son max-width, le filet du dessous porte la
       structure. Pas de border outer ni corners — la grille technique 1px en

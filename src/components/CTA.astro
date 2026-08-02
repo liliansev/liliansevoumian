@@ -29,15 +29,24 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
       <!-- Colonne gauche : signature + statement passionne -->
       <div class="flex flex-col gap-6">
 
-      {/* Signature. Sur mobile, accompagnée d'un avatar, la photo n'apparaissant
-          plus dans le hero. */}
+      {/* Signature : le portrait accompagne le nom, à toutes les largeurs.
+          Il portait `lg:hidden`, et l'avatar de la navigation aussi : au-delà de
+          1024 px le site ne montrait donc aucun visage, sur une marque qui est
+          un nom propre. Le hero reste volontairement typographique — la décision
+          est écrite dans HeroManifesto.astro — donc le seul endroit où le visage
+          peut apparaître en desktop est ici, à côté de la signature.
+          Il grandit de 72 à 96 px au-dessus de 1024 px : c'est la hauteur exacte
+          des deux lignes de « Lilian / Sevoumian. » (48 px de corps, interligne
+          0,95), si bien que le portrait s'aligne sur le nom au lieu de former un
+          second bloc. À cette taille il pèse un quart de la carte de réservation
+          qui lui fait face à droite, et reste une signature plutôt qu'un sujet. */}
       <div class="flex items-center gap-4 md:gap-5">
         <Image
           src={lilianPhoto}
           alt="Lilian Sevoumian"
-          width={144}
-          height={144}
-          class="contact-avatar lg:hidden"
+          width={192}
+          height={192}
+          class="contact-avatar"
         />
         <div
           class="font-display font-semibold tracking-[-0.025em] leading-[0.95] text-[var(--color-ink)]"
@@ -171,14 +180,28 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
 </style>
 
 <style>
-  /* Avatar mobile à côté de la signature — la photo n'apparaissant plus dans le Hero. */
+  /* Portrait à côté de la signature — la photo n'apparaissant plus dans le hero.
+     Le rayon passe par le jeton : le système n'a que deux valeurs, 0 et
+     --radius-full, et un `50%` écrit sur place en introduisait une troisième
+     qu'aucune reprise globale n'aurait touchée. Sur un carré, le rendu est
+     identique. */
   .contact-avatar {
     width: 72px;
     height: 72px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     object-fit: cover;
     flex-shrink: 0;
     border: 1px solid var(--color-divider);
+  }
+
+  /* Même point de rupture que la bascule en deux colonnes du bloc contact
+     (lg, 1024 px) : le portrait grandit au moment où la carte de réservation
+     part à droite et libère la colonne de gauche. */
+  @media (min-width: 1024px) {
+    .contact-avatar {
+      width: 96px;
+      height: 96px;
+    }
   }
 
   /* Le soulignement porte l'affordance : sur l'aplat lime, un lien ne peut pas

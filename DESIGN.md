@@ -40,7 +40,7 @@ typography:
     letterSpacing: "-0.02em"
   body:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(0.9375rem, 0.25vw + 0.875rem, 1rem)"
+    fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.55
     letterSpacing: "-0.005em"
@@ -62,6 +62,8 @@ components:
     textColor: "{colors.paper}"
     rounded: "{rounded.none}"
     padding: "14px 24px"
+    fontSize: "clamp(0.75rem, 3.1vw, 0.875rem)"
+    textTransform: "uppercase"
   button-primary-hover:
     backgroundColor: "{colors.lime}"
     textColor: "{colors.ink}"
@@ -171,10 +173,48 @@ composants l'appellent, mais il vaut la police de texte : le monospace a disparu
 de la DA.
 
 L'échelle est **fluide en haut, fixe en bas**, et la coupure est délibérée. Du
-hero (`3,25rem → 6,25rem`) au corps, chaque rang est un `clamp()`. En dessous de
-`0,875rem` les quatre derniers rangs sont des valeurs fixes : à cette taille une
-courbe ne produirait qu'un pixel d'écart entre les deux extrémités du viewport,
-soit un jeton plus difficile à lire pour aucun bénéfice visible.
+hero (`3,25rem → 6,25rem`) au chapô, chaque rang est un `clamp()`. À partir du
+corps les rangs sont des valeurs fixes : à cette taille une courbe ne produirait
+qu'un pixel d'écart entre les deux extrémités du viewport, soit un jeton plus
+difficile à lire pour aucun bénéfice visible.
+
+**Le corps est passé de ce côté-là de la coupure.** Il portait
+`clamp(0,9375rem, 0,25vw + 0,875rem, 1rem)`, c'est-à-dire exactement le cas que
+l'argument ci-dessus condamne : mesuré, la courbe rendait 16 px partout au-dessus
+de 800 px de large et ne descendait à 15 px que sous 400 px — un pixel de moins,
+et il tombait précisément sur les écrans où le corps de texte doit être le plus
+lisible. Il vaut `1rem`, plancher compris.
+
+**Le bas de l'échelle a perdu un rang.** Elle comptait 11 / 12 / 13 / 14 / 16 px,
+soit des rapports de 1,09, 1,08, 1,08 et 1,14 entre paliers voisins — deux ranges
+séparés par un pixel ne peuvent rien hiérarchiser. Le rang de 13 px
+(`--text-mono-body`) a disparu : ses six consommateurs étaient tous des maquettes
+produit, dont deux appelaient *aussi* le rang de 14 px dans la même maquette. Le
+jeton survit comme alias de `--text-body-sm`, sur le modèle de `--font-mono` qui
+vaut la police de texte depuis que le monospace a quitté la DA.
+
+Il reste un rapport de 1,09, entre les deux rangs de petites capitales (11 et
+12 px), et il est le suivant sur la liste. Les résorber demande de fusionner
+`.mono-caption` et `.mono-label`, qui ne diffèrent alors plus que par leur nom,
+et de reprendre une quinzaine de fichiers — dont une trentaine d'étiquettes
+serrées dans les maquettes.
+
+**Une seule exception à « fixe en bas », et elle est mesurée.** Le libellé du
+bouton primaire (`--text-button`) est un `clamp()` sous `0,875rem`. Il valait
+`--text-mono-label`, soit 12 px : l'action la plus importante de la page portait
+la taille exacte des liens secondaires et du deuxième plus petit rang du système,
+et sa hiérarchie ne tenait plus que par l'aplat noir. Le monter à 14 px sec
+faisait passer quatre des six boutons de la home de 44 à 65 px de haut à 320 px
+de large, le libellé le plus long y réclamant 298 px dans une colonne de 261. La
+courbe n'existe que pour tenir les largeurs étroites : 12 px sous 387 px, 14 px
+au-dessus de 452, une seule pente monotone entre les deux.
+
+La pente n'est pas calée sur la home mais sur le cas le plus serré du site, et
+c'est ce qui l'a fait passer de 3,6vw à 3,1vw : le CTA de `/principes` vit dans
+un encart lime à 32 px de padding, et sa colonne reste sous 300 px jusqu'à 480 px
+de fenêtre. **Une courbe typographique se cale sur le conteneur le plus étroit
+qui la porte, pas sur la page où on l'a écrite** — sans quoi elle règle une
+section et en casse une autre, sur une page qu'on ne regardait pas.
 
 Les titres de section descendent à `-0,035em` de chasse ; le plancher est
 `-0,04em`, en dessous les lettres se touchent.
@@ -219,8 +259,30 @@ Pas de césure automatique sur les titres. À 96 px un tiret se voit de loin, et
 `0 0 0 0 transparent`. La structure vient des filets, d'un seul poids : 1 px.
 
 **Deux rayons**, `0` et `9999px`. Tous les `--radius-*` valent zéro sauf
-`--radius-full`. La règle se dit en une phrase : *si c'est rond, ça se clique*.
-Une bande de surlignage arrondie devient un badge.
+`--radius-full`.
+
+La règle se disait *si c'est rond, ça se clique*, et ce document déclarait dans
+son propre frontmatter `chip-accent` en `{rounded.full}`. Recensé sur la home :
+soixante-neuf éléments ronds, dont **soixante-trois ne se cliquent pas** — vingt-
+cinq pastilles d'état dans les maquettes produit, quinze pastilles de châssis de
+fenêtre, dix chips de rôle, trois portraits. La règle décrivait six éléments sur
+soixante-neuf. Elle n'a jamais gouverné le site, et elle interdisait par écrit ce
+que la section 2 de ce document autorise par ailleurs noir sur blanc, en rangeant
+la « pastille d'état » parmi les usages légitimes du lime.
+
+La règle réelle, celle qui rend compte des soixante-neuf, tient dans une autre
+phrase : ***le rond dit « une unité », le carré dit « une surface »***. Une unité
+est une chose entière et indivisible — une cible qu'on presse, un état, un
+visage, un mot-étiquette. Une surface est une chose qui en contient d'autres :
+une carte, un panneau, une bande, un champ, un bouton, un châssis de maquette.
+Le rayon ne signale donc pas l'interaction, il signale la nature de l'objet ;
+c'est pour cela qu'un bouton — qui se clique pourtant — est carré, et qu'un
+portrait — qui ne se clique pas — est rond.
+
+Ce que la règle continue d'interdire est inchangé, et c'était son vrai objet :
+**une bande de surlignage arrondie devient un badge**, une carte arrondie devient
+un composant de bibliothèque, un champ arrondi devient un formulaire générique.
+Ce sont des surfaces, elles restent à zéro.
 
 La profondeur, quand elle est nécessaire, vient du **changement de surface** :
 papier, bande grise, aplat lime, aplat encre.
@@ -262,6 +324,25 @@ se croisant, leur écart de luminance ne s'effondre à aucune image.
 **La sortie est plus lente que l'entrée.** Un survol dont l'aller et le retour
 durent autant se ressent comme une commutation ; répondre vite puis relâcher
 lentement est ce qui le fait ressembler à une matière qui cède.
+
+**Le motion vit dans les jetons, exactement comme l'échelle.** Trois courbes, et
+trois seulement : `--ease-out-quint` par défaut, `--ease-out-expo` pour les
+entrées longues du hero, `--ease-out-quart` pour les teintes de marque au
+survol. Toutes les trois sont des *ease-out* — le mouvement part vite et
+s'arrête doucement, jamais l'inverse.
+
+Deux courbes vivaient hors des jetons, et la seconde était une erreur silencieuse.
+`cubic-bezier(0.25, 1, 0.5, 1)` était recopiée dans deux composants : c'est
+désormais `--ease-out-quart`. Et `--default-transition-timing-function`, que toute
+classe `transition-*` de Tailwind hérite, valait `cubic-bezier(0.4, 0, 0.2, 1)` —
+un **ease-in-out**, l'exact contraire de ce que cette page prescrit partout
+ailleurs. Quatre éléments de la home s'animaient encore dessus. Les deux défauts
+de Tailwind pointent maintenant sur les jetons du projet.
+
+Un jeton déclaré pour être adopté plus tard doit vivre dans un bloc
+`@theme static` : Tailwind v4 n'émet pas un jeton que rien ne référence, et le
+premier composant à l'appeler recevrait une valeur vide, donc le `ease` par
+défaut du navigateur, sans erreur ni avertissement.
 
 **Le monogramme** remplace le logo des marques absentes du jeu simple-icons, qui
 en couvre pourtant 3 653. Un carré de 22 px au filet d'encre, la capitale au
@@ -352,8 +433,9 @@ PNG et le SVG en portaient deux différentes.
 
 - Écrire du texte en lime. Jamais, nulle part, quelle que soit la taille.
 - Poser un anneau de focus lime : il est invisible.
-- Ajouter un arrondi. Deux valeurs existent, et l'une des deux veut dire
-  « cliquable ».
+- Arrondir une surface. Deux valeurs existent, et le rond est réservé aux
+  unités : une cible, un état, un visage, un mot-étiquette. Une carte, une
+  bande, un panneau, un champ et un bouton restent à zéro.
 - Ajouter une ombre. L'élévation vient des filets.
 - Poser un sur-titre en petites capitales espacées au-dessus de chaque section,
   ni une numérotation `01 / 02 / 03` en écaille. C'est la grammaire du site
@@ -378,3 +460,12 @@ PNG et le SVG en portaient deux différentes.
 - Dessiner le logo d'une marque absente du jeu d'icônes. Monogramme.
 - Écrire un `clamp()` sur place dans un composant. L'échelle vit dans `@theme`,
   et une courbe recopiée échappe à toute reprise globale.
+- Écrire une `cubic-bezier()` sur place, pour la même raison. Trois courbes
+  existent, toutes en *ease-out*, toutes dans `@theme`.
+- Poser une durée en dur quand deux déclarations doivent rester égales. Le
+  balayage de la FAQ en avait quatre, couplées deux à deux — la durée de
+  transition de la question et celle de son animation, le pas de la cascade et
+  celui du délai d'animation. Rien ne signalait une dérive entre elles.
+- Refaire à la main l'en-tête d'une section. `SectionHeader` porte le titre, le
+  filet et le chapô, et le filet est ce qui donne son rang à la section — deux
+  sections l'avaient réimplémenté et se présentaient comme des sous-parties.

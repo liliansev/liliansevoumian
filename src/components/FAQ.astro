@@ -1,5 +1,6 @@
 ---
 import { faqs } from '../data/faq';
+import SectionHeader from './SectionHeader.astro';
 ---
 
 <section
@@ -8,19 +9,33 @@ import { faqs } from '../data/faq';
 >
   <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
 
-    <!-- Colonne gauche : titre sticky -->
-    <div class="reveal lg:sticky lg:top-28">
-      <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
-        Vos questions sur l'automatisation.
-      </h2>
-      {/* Le compte descend du sur-titre dans le chapô : il se déduit toujours de
-          la source — le libellé a déjà annoncé sept objections quand faq.ts en
-          portait quatre — mais il se lit dans une phrase au lieu d'occuper une
-          ligne de petites capitales au-dessus du titre. */}
-      <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 mb-0 max-w-[40ch]">
-        {faqs.length} questions, et des réponses tranchées.
-      </p>
-    </div>
+    {/* Colonne gauche : l'en-tête, qui reste collé pendant qu'on déplie les
+        questions à droite.
+
+        Il passe par SectionHeader, alors qu'il était réimplémenté ici. Deux
+        écarts en découlaient, mesurés sur la page vivante : aucun filet sous le
+        titre là où six sections de la home en ont un, et 24 px entre le titre et
+        le chapô contre 53 ailleurs. Le filet compte doublement ici, cette DA
+        n'ayant pas d'ombre pour marquer un rang : sans lui, le titre de la FAQ
+        se présentait comme un sous-titre de la section précédente.
+
+        `spacing="none"` parce que l'écart vers le contenu appartient au `gap` de
+        la grille — 40 px en mobile, 64 px au-delà de 1024. La marge basse par
+        défaut de SectionHeader s'y ajouterait au lieu de le remplacer, et
+        pousserait la première question 48 px plus bas sur téléphone.
+
+        Le compte de questions se lit dans le chapô : il se déduit toujours de la
+        source — le sur-titre retiré annonçait sept objections quand faq.ts en
+        portait quatre — mais il tient dans une phrase au lieu d'occuper une
+        ligne de petites capitales au-dessus du titre. */}
+    <SectionHeader
+      class="lg:sticky lg:top-28"
+      spacing="none"
+      title="Vos questions sur l'automatisation."
+      titleMaxWidth="20ch"
+      body={`${faqs.length} questions, et des réponses tranchées.`}
+      bodyMaxWidth="40ch"
+    />
 
     {/* Colonne droite : accordion.
         Le conteneur n'est plus un `.reveal` unique — les sept questions

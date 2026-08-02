@@ -3,9 +3,19 @@
  * MobileCTABar — barre d'action persistante en thumb-zone (mobile uniquement).
  *
  * Action primaire de conversion (PRODUCT.md : succès = réserver un appel).
- * Cachée par défaut, glisse depuis le bas dès que le hero quitte le viewport
- * (IntersectionObserver sur #hero). md:hidden — phones seulement. safe-area-inset
- * pour les encoches iOS. Discrète (papier + blur + filet) pour tenir le register brand.
+ * md:hidden — téléphones seulement. safe-area-inset pour les encoches iOS.
+ * Discrète (papier + flou + filet) pour tenir le register brand.
+ *
+ * Elle s'armait sur `#hero`, un identifiant que seule la home porte : sur les
+ * sept autres pages le composant sortait immédiatement, et il n'y était de toute
+ * façon pas importé. C'est exactement là qu'il manquait. Mesuré à 402 × 667, le
+ * premier bouton de réservation tombe à 2 993 px sur /cas-clients, 3 025 px sur
+ * /principes et 5 121 px sur /cas-clients/celeris — quatre à sept écrans de
+ * lecture sans un seul point de réservation.
+ *
+ * L'ancre d'armement est donc le `h1`, le seul élément qu'ont en commun les huit
+ * pages, toujours en tête de page et toujours unique. La barre attend qu'il
+ * quitte l'écran : tant que le titre est lu, la page n'a pas encore commencé.
  */
 ---
 
@@ -40,40 +50,76 @@
 
 <script>
   function initMobileCtaBar(): void {
-    const bar = document.getElementById('mobile-cta-bar');
-    const hero = document.getElementById('hero');
-    const contact = document.getElementById('contact');
-    if (!bar || !hero || bar.dataset.init === '1') return;
-    bar.dataset.init = '1';
+    const barre = document.getElementById('mobile-cta-bar');
+    // Le h1 est l'ancre d'armement commune aux huit pages (cf. en-tête).
+    const titre = document.querySelector('h1');
+    if (!barre || !titre || barre.dataset.init === '1') return;
+    barre.dataset.init = '1';
 
-    const link = bar.querySelector<HTMLAnchorElement>('a');
-    let heroVisible = true;
-    let contactVisible = false;
+    const lien = barre.querySelector<HTMLAnchorElement>('a');
 
-    function update(): void {
-      // Visible une fois le hero dépassé, MAIS cachée quand la section contact
-      // est à l'écran (sinon la barre recouvre le bouton de réservation et
-      // duplique le même CTA à deux endroits).
-      const visible = !heroVisible && !contactVisible;
-      bar!.classList.toggle('is-visible', visible);
-      bar!.setAttribute('aria-hidden', String(!visible));
-      if (link) link.tabIndex = visible ? 0 : -1;
+    /* Ce qui désarme la barre : les BOUTONS de réservation de la page, et le
+       pied de page. La barre est en `fixed` au ras du pouce — tant que l'un de
+       ces éléments est à l'écran, elle poserait un second « Réserver » à
+       quelques centaines de pixels du premier, ou recouvrirait le pied.
+       Le dernier bouton de réservation d'une page est toujours celui du bloc de
+       contact final : la règle couvre donc la condition demandée sans avoir à
+       reconnaître ce bloc, qui est une `<section id="contact">` sur la home,
+       une `<section class="bloc-lime">` sur cinq pages et une simple `<div>`
+       sur /principes.
+       `.btn-primary` et non tout lien vers cal.com : la home en compte neuf,
+       dont cinq `.link-cta`, c'est-à-dire des liens fléchés posés en fin de
+       paragraphe. Un lien dans le fil du texte ne fait pas le travail d'un
+       bouton, et les compter éteignait la barre sur 5 280 px de lecture — la
+       traversée des témoignages et toute la section outils. */
+    const concurrents: Element[] = [
+      ...document.querySelectorAll('main a.btn-primary[href*="cal.com"]'),
+      ...document.querySelectorAll('footer'),
+    ];
+
+    let titreVisible = true;
+    const concurrentsVisibles = new Set<Element>();
+
+    function afficher(): void {
+      const visible = !titreVisible && concurrentsVisibles.size === 0;
+      barre!.classList.toggle('is-visible', visible);
+      barre!.setAttribute('aria-hidden', String(!visible));
+      if (lien) lien.tabIndex = visible ? 0 : -1;
       // Signale l'état à la nav : le CTA central s'éteint quand la barre est
       // visible (une seule instance de « Réserver un appel » à la fois).
       document.body.classList.toggle('cta-bar-visible', visible);
     }
 
     new IntersectionObserver((entries) => {
-      entries.forEach((e) => { heroVisible = e.isIntersecting; });
-      update();
-    }, { threshold: 0 }).observe(hero);
+      entries.forEach((e) => { titreVisible = e.isIntersecting; });
+      afficher();
+    }, { threshold: 0 }).observe(titre);
 
-    if (contact) {
-      new IntersectionObserver((entries) => {
-        entries.forEach((e) => { contactVisible = e.isIntersecting; });
-        update();
-      }, { threshold: 0 }).observe(contact);
+    /* La zone d'influence d'un bouton déborde d'un écran au-dessus et en
+       dessous : il compte comme présent tant qu'il est à moins d'un écran de
+       défilement. Sans cette marge, la home faisait entrer et sortir la barre
+       six fois, dont deux fenêtres de 540 et 600 px — moins d'un écran, donc une
+       barre qui monte et redescend avant qu'on ait pu la viser. À un demi-écran
+       il en restait une de 300 px entre le bouton des offres et celui du
+       contact, distants de 2 060 px. À un écran plein, deux boutons séparés de
+       moins de 2 050 px forment une seule zone morte, et il ne reste sur chacune
+       des sept pages qu'une seule plage continue — 8 580 px sur la home.
+       Ce que cette marge coûte est mesuré : jusqu'à un écran sans aucune action
+       de réservation, juste avant que le vrai bouton n'entre. Le lecteur y est à
+       une hauteur d'écran d'un bouton pleine largeur ; l'inverse — une barre qui
+       clignote — se voit à chaque défilement. */
+    if (concurrents.length > 0) {
+      const observateur = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) concurrentsVisibles.add(e.target);
+          else concurrentsVisibles.delete(e.target);
+        });
+        afficher();
+      }, { threshold: 0, rootMargin: '100% 0px' });
+      concurrents.forEach((element) => observateur.observe(element));
     }
+
+    afficher();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMobileCtaBar);

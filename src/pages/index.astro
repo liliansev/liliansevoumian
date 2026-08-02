@@ -32,9 +32,12 @@ const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
       en heures que le lecteur règle lui-même. C'est l'étape « intérêt » qui
       manquait, et elle amène un CTA juste après le premier écran.
 
-      Hero premier et CTA dernier sont FIGÉS : MobileCTABar s'arme quand #hero
-      quitte l'écran et se recache quand #contact y entre. Les déplacer casse son
-      déclenchement. */}
+      L'ordre n'est plus contraint par la barre CTA mobile. Elle s'armait sur
+      #hero et se désarmait sur #contact, ce qui figeait la première et la
+      dernière section — et l'empêchait d'exister sur les sous-pages, où le
+      premier appel à l'action tombait jusqu'à 5 200 px de profondeur. Elle
+      s'ancre désormais sur le h1 et sur les boutons pleins de la page, deux
+      choses que toutes les pages ont. */}
   <main id="main-content" tabindex="-1" class="outline-none">
     <HeroManifesto />
     <ROICalculator />

@@ -18,7 +18,11 @@
          contre le blanc ; il prend des sections entières, ou il surligne.
        — Une seule police. Le monospace disparaît : c'était, avec les
          sur-titres en capitales, le tell « IA » n° 1 relevé à l'audit.
-       — Deux rayons : 0 et 9999. Si c'est rond, ça se clique.
+       — Deux rayons : 0 et 9999. Le rond dit « une unité » — une cible, un
+         état, un visage, un mot-étiquette ; le carré dit « une surface » —
+         une carte, une bande, un panneau, un champ, un bouton. La formule
+         précédente, « si c'est rond, ça se clique », décrivait six éléments
+         sur les soixante-neuf éléments ronds de la home.
      ======================================================================= */
 
   /* ── Polices ── */
@@ -62,19 +66,87 @@
   --text-title-lg: clamp(1.5rem, 1.5vw + 0.75rem, 1.875rem);
   --text-title: clamp(1.25rem, 1vw + 0.875rem, 1.5rem);
   --text-body-large: clamp(1.0625rem, 0.5vw + 0.875rem, 1.25rem);
-  --text-body: clamp(0.9375rem, 0.25vw + 0.875rem, 1rem);
+  /* 1rem fixe, et la courbe qui était écrite ici tombe pour la raison que ce
+     système applique déjà aux quatre rangs du dessous : elle ne parcourait
+     QU'UN pixel. Mesuré, `clamp(0.9375rem, 0.25vw + 0.875rem, 1rem)` rendait
+     16 px partout au-dessus de 800 px de large et ne descendait à 15 px que
+     sous 400 px — c'est-à-dire précisément là où le corps de texte doit être
+     le plus lisible. Un pixel de moins sur un téléphone, gagné nulle part.
+     Le plancher de 16 px est par ailleurs celui sous lequel iOS zoome un champ
+     de saisie et sous lequel une prose se lit à la loupe. */
+  --text-body: 1rem;
   --text-body-sm: 0.875rem;
   --text-mono-label: 0.75rem;
-  --text-mono-body: 0.8125rem;
+  /* Le libellé du bouton primaire, et lui seul.
+     Il valait --text-mono-label, soit 12 px : l'action la plus importante de la
+     page portait exactement la taille des liens secondaires, de « COPIER LE
+     LIEN DE CE CALCUL » et du deuxième plus petit rang du système. Sa hiérarchie
+     ne tenait plus que par l'aplat noir.
+     Pourquoi une courbe et non 0,875rem sec, alors que tout le bas de l'échelle
+     est fixe : « RÉSERVER MON DIAGNOSTIC · 20 MIN » est le libellé le plus long
+     du site, et à 14 px il réclame 298 px. Mesuré à 320 px sur la home, il n'en
+     a que 261, et quatre des six boutons passaient de 44 à 65 px de haut.
+     La pente est calée par le cas le plus serré du site, qui n'est pas celui-là :
+     le CTA de /principes vit dans un encart lime à 32 px de padding, et sa
+     colonne reste sous 300 px jusqu'à 480 px de fenêtre. Mesuré palier par
+     palier, 3,6vw le faisait déborder de 400 à 479 px là où il tenait avant ;
+     3,1vw reproduit exactement le comportement d'avant sur toutes les largeurs.
+     Plancher 12 px sous 387 px, plafond 14 px au-dessus de 452, une seule pente
+     monotone entre les deux. Vérifié de 320 à 1920 px sur les neuf pages : aucun
+     bouton ne déborde, aucun ne change de hauteur par rapport à l'état d'avant. */
+  --text-button: clamp(0.75rem, 3.1vw, 0.875rem);
+  /* --text-mono-body vaut désormais --text-body-sm, et le rang de 13 px
+     disparaît de l'échelle rendue. Il était à 1,08 de --text-body-sm et à 1,08
+     de --text-mono-label : trois rangs pour deux pixels, indiscernables. Pire,
+     MockupList et StackSovereign appelaient les DEUX jetons dans la même
+     maquette, à un pixel d'écart, ce qui ne peut rien signaler.
+     Le jeton survit comme alias parce que six maquettes l'appellent — même
+     dispositif que --font-mono, qui vaut la police de texte depuis que le
+     monospace a quitté la DA. Les six déclarations à remplacer :
+     StackConsole:13, StackZite:72, StackCodex:49, StackLovable:72,
+     MockupList:85, StackSovereign:55. */
+  --text-mono-body: var(--text-body-sm);
   --text-mono-caption: 0.6875rem;
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
   --spacing-grid-cell: 96px;
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Les deux défauts de Tailwind, ramenés sous les jetons du projet.
+     `--default-transition-timing-function` valait `cubic-bezier(0.4, 0, 0.2, 1)`,
+     qui est un ease-in-OUT : une accélération au départ, soit l'inverse exact de
+     ce que cette DA prescrit partout ailleurs (« répondre vite puis relâcher
+     lentement »). Toute classe `transition-*` de Tailwind l'héritait ; mesuré,
+     quatre éléments de la home s'animaient encore sur cette courbe.
+     La durée est alignée sur --duration-default (200 ms, la valeur que la règle
+     de base applique déjà aux liens et aux boutons) plutôt que sur les 150 ms de
+     Tailwind : les deux sources disent maintenant la même chose, ce qui rend le
+     passage de la règle d'élément sous @layer base sans effet visible. */
+  --default-transition-timing-function: var(--ease-out-quint);
+  --default-transition-duration: var(--duration-default);
+
   --duration-quick: 150ms;
   --duration-default: 200ms;
+  /* --duration-mount pilote RÉELLEMENT, contrairement à ce que sa position dans
+     le fichier laisse croire : il porte la cascade des `.reveal-stagger`, soit
+     six blocs sur la home (Témoignages, Offres) et une trentaine sur le site
+     (principes, cas-clients, mentions-légales, les deux pages outil). Ce qu'il
+     ne pilote pas, c'est le `.reveal` isolé — celui-ci a sa propre durée,
+     désormais nommée juste en dessous. */
   --duration-mount: 700ms;
+  /* Le fondu d'un bloc isolé. 380 ms était écrit en dur dans `.reveal`, et c'est
+     pourtant la durée la plus répandue de la page : mesuré, 22 des 39 `.reveal`
+     de la home s'animent dessus, contre 6 sur --duration-mount. La valeur la
+     plus vue du système était la seule à ne pas être un jeton. */
+  --duration-reveal: 380ms;
+  /* La descente de la FAQ. Deux valeurs qui doivent rester ÉGALES entre elles à
+     deux endroits chacune : la durée de transition de la question et celle de
+     l'animation `faq-surligne` qui la balaie (sinon la bande sort du cadre avant
+     ou après que la carte ait fini d'arriver), et le pas de `--rang` répété sur
+     la transition et sur l'`animation-delay`. Quatre littéraux couplés deux à
+     deux, qu'aucun outil ne signalait en cas de dérive. */
+  --duration-faq-balayage: 900ms;
+  --duration-faq-pas: 160ms;
 
   /* ── Rayons ── */
   --radius-none: 0px;
@@ -138,6 +210,24 @@
   /* ── Élévation : aucune. La structure vient des filets. ── */
   --shadow-card: 0 0 0 0 transparent;
   --shadow-card-hover: 0 0 0 0 transparent;
+}
+
+/* Troisième courbe du système, la plus douce des trois. Elle vivait en dur dans
+   LogoMarquee:185 et Stack:368, où elle pilote la teinte de marque qui apparaît
+   au survol d'un logo : une courbe recopiée deux fois échappe à toute reprise
+   globale, ce que DESIGN.md interdit pour les tailles et qui vaut identiquement
+   pour le motion. Ces deux composants sont hors périmètre ici ; le jeton les
+   attend.
+
+   `static` et non le bloc @theme du dessus, et c'est la seule raison de ce bloc
+   séparé : Tailwind v4 n'ÉMET un jeton de @theme que si quelque chose le
+   référence. Vérifié en runtime — déclaré dans le bloc principal,
+   `--ease-out-quart` ressortait à la chaîne vide, et le premier composant à
+   écrire `var(--ease-out-quart)` aurait reçu une valeur invalide, donc le `ease`
+   par défaut du navigateur, sans erreur ni avertissement. Un jeton posé pour
+   être adopté plus tard doit être forcé, sinon il n'existe pas. */
+@theme static {
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* =========================================================================
@@ -345,11 +435,24 @@ body {
    MICRO-INTERACTIONS — transitions par défaut
    ========================================================================= */
 
-a, button, input, textarea, select,
-[role="button"], [tabindex]:not([tabindex="-1"]) {
-  transition-property: color, background-color, border-color, transform, opacity;
-  transition-duration: var(--duration-default);
-  transition-timing-function: var(--ease-out-quint);
+/* DANS @layer base, troisième occurrence du même piège.
+   Écrite hors couche, cette règle battait toute classe utilitaire de Tailwind
+   quelle que soit la spécificité : les quatorze `transition-colors` posées dans
+   les composants sur des `<a>` ne pilotaient rien, et un futur `duration-300`
+   sur un lien aurait été ignoré sans erreur ni avertissement. Même cause que le
+   `<h2>` qui rendait 48 px au lieu de 30 et que le `max-w-[43ch]` qui rendait
+   72ch, troisième propriété.
+   Le passage sous @layer base est SANS effet visible parce que les deux défauts
+   de Tailwind ont été alignés sur les jetons du projet juste au-dessus : une
+   `transition-colors` rend maintenant 200 ms d'ease-out-quint, c'est-à-dire
+   exactement ce que cette règle rendait. */
+@layer base {
+  a, button, input, textarea, select,
+  [role="button"], [tabindex]:not([tabindex="-1"]) {
+    transition-property: color, background-color, border-color, transform, opacity;
+    transition-duration: var(--duration-default);
+    transition-timing-function: var(--ease-out-quint);
+  }
 }
 
 /* =========================================================================
@@ -501,7 +604,14 @@ a, button, input, textarea, select,
   background: var(--color-ink);
   color: var(--color-paper);
   font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
+  /* Un cran au-dessus des liens secondaires, et c'est le seul rang du système
+     qui sépare l'action primaire du reste. À 12 px, le bouton portait la taille
+     exacte de `.link-cta`, de `.nav-link` et de « COPIER LE LIEN DE CE CALCUL » :
+     la chose la plus importante de la page ne se distinguait plus que par son
+     fond noir. Le jeton monte à 14 px dès 389 px de large et retombe à 12 px
+     sur les écrans de 320, seule largeur où le libellé le plus long ne tient
+     pas sur une ligne. */
+  font-size: var(--text-button);
   font-weight: 500;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -569,8 +679,8 @@ a, button, input, textarea, select,
   /* On garde la transition de COULEUR : c'est un retour d'information, pas
      du mouvement. Le déplacement et l'échelle sautent, tous les deux. */
   .btn-primary {
-    transition: background-color var(--duration-quick) ease,
-                color var(--duration-quick) ease;
+    transition: background-color var(--duration-quick) var(--ease-out-quint),
+                color var(--duration-quick) var(--ease-out-quint);
   }
   .btn-primary:hover,
   .btn-primary:focus-visible { transform: none; }
@@ -809,7 +919,11 @@ a, button, input, textarea, select,
   border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
-  transition: background-color var(--duration-default);
+  /* Trois transitions du curseur — celle-ci et les deux poignées — omettaient
+     leur courbe et retombaient donc sur le `ease` du navigateur, un ease-in-out.
+     Le curseur du simulateur est l'élément le plus manipulé de la page ; il
+     n'avait aucune raison d'être le seul à répondre à l'envers. */
+  transition: background-color var(--duration-default) var(--ease-out-quint);
 }
 
 .roi-slider::-webkit-slider-thumb {
@@ -821,7 +935,8 @@ a, button, input, textarea, select,
   background: var(--color-lime);
   border: 2px solid var(--color-ink);
   cursor: pointer;
-  transition: border-color var(--duration-quick), transform var(--duration-quick);
+  transition: border-color var(--duration-quick) var(--ease-out-quint),
+              transform var(--duration-quick) var(--ease-out-quint);
 }
 
 .roi-slider::-webkit-slider-thumb:hover {
@@ -844,7 +959,8 @@ a, button, input, textarea, select,
   background: var(--color-lime);
   border: 2px solid var(--color-ink);
   cursor: pointer;
-  transition: border-color var(--duration-quick), transform var(--duration-quick);
+  transition: border-color var(--duration-quick) var(--ease-out-quint),
+              transform var(--duration-quick) var(--ease-out-quint);
 }
 
 .roi-slider::-moz-range-thumb:hover {
@@ -876,7 +992,7 @@ a, button, input, textarea, select,
    fondu court, sans déplacement — il apparaît, il ne monte pas. Les listes
    gardent la montée et la cascade, là où l'œil suit réellement une succession. */
 .reveal {
-  transition: opacity 380ms var(--ease-out-quint);
+  transition: opacity var(--duration-reveal) var(--ease-out-quint);
 }
 
 .reveal-stagger > .reveal {
@@ -1161,7 +1277,14 @@ a[href^="mailto:"] {
   padding: 20px 24px;
   cursor: pointer;
   list-style: none;
-  transition: color var(--duration-default);
+  /* La courbe manquait, et son absence n'est pas neutre : sans elle le
+     navigateur applique `ease`, c'est-à-dire cubic-bezier(0.25, 0.1, 0.25, 1),
+     un ease-in-out. Quatrième courbe hors jetons du fichier, et la seule qui
+     n'était écrite nulle part — elle venait du défaut CSS.
+     `summary` n'est pas couvert par la règle d'élément de @layer base, qui ne
+     liste que a/button/input/textarea/select : cette déclaration est bien la
+     seule à piloter le survol d'une question. */
+  transition: color var(--duration-default) var(--ease-out-quint);
 }
 
 .faq-summary::-webkit-details-marker {
@@ -1229,8 +1352,8 @@ a[href^="mailto:"] {
    plus lâche, on attend. Sur huit éléments, la descente complète dure environ
    deux secondes et demie. */
 .faq-liste > .reveal {
-  transition-duration: 900ms;
-  transition-delay: calc(var(--rang, 0) * 160ms);
+  transition-duration: var(--duration-faq-balayage);
+  transition-delay: calc(var(--rang, 0) * var(--duration-faq-pas));
 }
 
 .faq-item {
@@ -1258,8 +1381,8 @@ a[href^="mailto:"] {
    Pour un fondu ça n'a pas d'importance, pour une animation qui ne joue
    qu'une fois c'est rédhibitoire. */
 .faq-item.balaye::after {
-  animation: faq-surligne 900ms var(--ease-out-quint) both;
-  animation-delay: calc(var(--rang, 0) * 160ms);
+  animation: faq-surligne var(--duration-faq-balayage) var(--ease-out-quint) both;
+  animation-delay: calc(var(--rang, 0) * var(--duration-faq-pas));
 }
 
 @keyframes faq-surligne {

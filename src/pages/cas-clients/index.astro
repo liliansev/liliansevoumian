@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
+import MobileCTABar from '../../components/MobileCTABar.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { getCollection } from 'astro:content';
 
@@ -46,6 +47,24 @@ const collectionSchema = {
 };
 
 const total = displayStudies.length;
+
+/* Nombre de colonnes de la grille de cartes, déduit du nombre de cas.
+   Il était figé à `lg:grid-cols-3`, et le nombre de cas vient de la collection :
+   à quatre fiches, la grille rendait trois cartes en rang 1 et une orpheline en
+   rang 2. Mesuré à 1440 px, les deux cellules laissées vides faisaient
+   816 × 463 px de blanc au milieu de la page, soit un tiers de la grille — la
+   même page à 768 px, en deux colonnes, affichait un 2 × 2 sans trou.
+   La règle qui remplace la valeur figée compte les trous : on garde le nombre
+   de colonnes qui en laisse le moins, et on préfère la grille la plus dense à
+   égalité. 3 cas → 3 colonnes, 4 → 2 × 2, 5 → 3 + 2, 6 → 3 × 3, 8 → 2 × 4.
+   Aucune configuration ne peut plus laisser une rangée à moitié vide.
+   Les classes sont écrites en toutes lettres et non interpolées : Tailwind
+   scanne le source, une classe construite à la volée n'existerait pas au build. */
+const trous = (colonnes: number) => (colonnes - (total % colonnes)) % colonnes;
+const colonnesLg = total < 3 ? Math.max(total, 1) : trous(3) <= trous(2) ? 3 : 2;
+const classeLg =
+  colonnesLg === 3 ? 'lg:grid-cols-3' : colonnesLg === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1';
+const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
 /* Grille de KPI : une seule colonne, à toutes les tailles.
    Deux raisons mesurées. Le séparateur est le fond du conteneur qui
@@ -112,7 +131,7 @@ const total = displayStudies.length;
             </a>
           </div>
         ) : (
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
+          <div class:list={['grid grid-cols-1 gap-6 reveal-stagger', classeMd, classeLg]}>
             {displayStudies.map((cs) => {
               const tools = cs.tools || [];
               const kpis = cs.kpis || [];
@@ -200,4 +219,5 @@ const total = displayStudies.length;
   </main>
 
   <Footer />
+  <MobileCTABar />
 </Layout>

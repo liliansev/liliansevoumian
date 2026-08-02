@@ -682,19 +682,36 @@ const humblePlus = {
     filter: brightness(0);
     opacity: 0.9;
   }
-  @media (max-width: 899px) {
+  /* Le seuil de repli est calé sur la largeur dont la maquette a besoin, et non
+     sur une valeur ronde. Il valait 899 px, alors que WorkflowCanvas ne se replie
+     en pile qu'à 720 px de fenêtre : entre les deux, la diapositive restait en
+     deux colonnes et la colonne visuelle n'avait plus la place de porter le
+     schéma sans que rien ne se redéclenche. Mesuré sur la diapositive Humble+, en
+     deux colonnes : 900 px de fenêtre → colonne de 371 px, six nœuds tronqués et
+     le nom de fichier rogné de 92 px ; 1013 px → 421 px, quatre débordements ;
+     1180 px → 495 px, il reste 6 px sur « Pennylane ». La première largeur où
+     plus rien ne déborde nulle part est 1220 px, soit une colonne visuelle de
+     511 px. En dessous, la diapositive passe donc en une seule colonne et la
+     maquette récupère toute la largeur de la carte — 806 px à 1013 px de fenêtre
+     au lieu de 421.
+     Le plafond de lecture du paragraphe (48ch) est conservé dans cette plage :
+     lâché à toute la largeur comme il l'est sous 900 px, il produisait des lignes
+     de 110 caractères, très au-dessus des 65 à 75 lisibles. */
+  @media (max-width: 1219px) {
     .case-slide-grid {
       grid-template-columns: 1fr;
       min-height: 0;
     }
 
+    .case-copy h3 {
+      max-width: 24ch;
+    }
+  }
+
+  @media (max-width: 899px) {
     .case-copy,
     .case-description {
       max-width: none;
-    }
-
-    .case-copy h3 {
-      max-width: 24ch;
     }
   }
 
