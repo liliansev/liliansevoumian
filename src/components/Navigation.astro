@@ -15,6 +15,17 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
    dix-sept menaient à l'agenda et aucun à ces pages. La méthode en quatre
    étapes que PRODUCT.md promet existe pourtant, écrite, sur /principes : elle
    n'avait simplement aucun chemin. */
+// MENU MOBILE, SANS NUMÉRO : une navigation n'est pas une séquence. Le chiffre
+// annonçait un ordre que le lecteur ne suit pas — il clique là où il veut aller —
+// et il numérotait cinq entrées dont deux mènent à une autre page.
+//
+// Ce commentaire vit ici, en commentaires de LIGNE dans le frontmatter, et c'est
+// la réparation du bug qu'il décrivait. Il était posé dans le template sous la
+// forme `{/* … */}` et citait un `{/*` `*/}` littéral pour l'illustrer : ce `*/`
+// interne fermait le commentaire avant sa fin, et Astro rendait le reste du
+// texte comme du contenu — deux lignes de prose en haut du menu plein écran, sur
+// chaque page du site. Un bloc `/* … */` aurait le même défaut ; seuls des `//`
+// permettent d'écrire ces marqueurs sans les déclencher.
 const navLinks = [
   { href: "#roi", label: "Calcul" },
   { href: "/cas-clients", label: "Cas clients" },
@@ -143,12 +154,6 @@ const prefix = isHome ? '' : '/';
   tabindex="-1"
 >
   <div class="h-full flex flex-col px-[var(--spacing-section-x)] pt-[80px] pb-12">
-    {/* Sans numéro : une navigation n'est pas une séquence. Le chiffre annonçait
-        un ordre que le lecteur ne suit pas — il clique là où il veut aller — et
-        il numérotait cinq entrées dont deux mènent à une autre page.
-        (Commentaire posé ici et non dans la boucle : à l'intérieur d'une
-        expression Astro, un `{/* */}` est compilé comme une expression et casse
-        le rendu de toute la page.) */}
     <div class="flex-1 flex flex-col justify-center gap-6">
       {navLinks.map((link) => (
         <a
@@ -241,7 +246,10 @@ const prefix = isHome ? '' : '/';
     mobileMenu.setAttribute('aria-hidden', String(!willOpen));
     menuBtn.setAttribute('aria-expanded', String(willOpen));
     menuBtn.setAttribute('aria-label', willOpen ? 'Fermer le menu' : 'Ouvrir le menu');
-    document.body.style.overflow = willOpen ? 'hidden' : '';
+    // Verrou compté, partagé avec l'overlay cal.com (défini dans le script
+    // inline du <head> de Layout). Écrire `body.overflow` en direct ici
+    // relâchait le verrou de l'overlay quand les deux étaient ouverts.
+    window.__verrouDefilement?.('menu', willOpen);
     // L'icône bascule points ⇄ croix via le sélecteur CSS [aria-expanded].
 
     // Focus management : on focalise le CONTENEUR du dialog à l'ouverture (a11y,
@@ -280,6 +288,18 @@ const prefix = isHome ? '' : '/';
       // le scroll vers la section visée.
       toggleMenu(true);
     });
+  });
+
+  // Tout CTA de réservation ferme le menu, où qu'il soit. Les liens DU menu
+  // portent déjà `data-mobile-link` ; celui de la BARRE de nav, non — et la
+  // barre reste au-dessus du menu ouvert (z-50 contre z-49), donc son
+  // « Réserver un diagnostic » est tapable pendant que le menu est déployé.
+  // Sans ça, l'overlay cal.com se posait sur un menu resté ouvert, qu'on
+  // retrouvait intact en refermant l'agenda.
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (!target?.closest?.('a[href*="cal.com/lilian-sevoumian"]')) return;
+    if (mobileMenu?.classList.contains('is-open')) toggleMenu(true);
   });
 
   document.addEventListener('keydown', (e) => {
