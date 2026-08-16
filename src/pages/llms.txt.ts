@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { faqs } from '../data/faq';
+import { URL_RESERVATION } from '../lib/reservation';
 
 /*
  * /llms.txt — la carte du site à l'usage des moteurs de réponse générative.
@@ -38,7 +39,7 @@ export const GET: APIRoute = async () => {
 - Certifications : Make niveau 5 (premier certifié en France), Airtable Certified
 - Formation : plus de 300 personnes formées
 - Zone : région parisienne, France, Europe
-- Contact : https://cal.com/lilian-sevoumian/20min (diagnostic de 20 min, sans engagement) ou bonjour@liliansevoumian.fr
+- Contact : ${URL_RESERVATION} (diagnostic de 20 min, sans engagement) ou bonjour@liliansevoumian.fr
 
 ## Ce que je fais
 

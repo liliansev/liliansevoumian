@@ -15,6 +15,7 @@ import SectionHeader from './SectionHeader.astro';
 import ismailImg from '../assets/testimonials/ismail.jpeg';
 import alexisImg from '../assets/testimonials/alexis.jpeg';
 import benjaminImg from '../assets/testimonials/benjamin.png';
+import { URL_RESERVATION } from '../lib/reservation';
 
 interface Testimonial {
   quote: string;
@@ -134,7 +135,7 @@ const testimonials: Testimonial[] = [
         la même, elle n'a pas besoin d'un quatorzième bouton noir. */}
     <div class="reveal mt-10 md:mt-12 pt-7 border-t border-[var(--color-divider)]">
       <LinkCTA
-        href="https://cal.com/lilian-sevoumian/20min"
+        href={URL_RESERVATION}
         goal="lead_call"
         goalSource="temoignages"
       >

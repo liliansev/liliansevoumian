@@ -9,6 +9,7 @@ import MockupWindow from '../../components/mockups/MockupWindow.astro';
 import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
 import { brandColorFor } from '../../data/brands';
 import Outil from '../../components/Outil.astro';
+import BoutonReservation from '../../components/BoutonReservation.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -364,14 +365,9 @@ const articleSchema = {
         </div>
 
         <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <a
-            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-            class="btn-primary justify-center"
-            data-fast-goal="lead_call"
-            data-fast-goal-source="cas_article"
-          >
+          <BoutonReservation source="cas_article" class="btn-primary justify-center">
             Réserver mon diagnostic&nbsp;· 20&nbsp;min
-          </a>
+          </BoutonReservation>
         </div>
       </div>
     </section>

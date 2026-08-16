@@ -1238,6 +1238,36 @@ body {
   font-weight: 600;
 }
 
+/* CTA central mobile. Ici et non en style scopé dans Navigation.astro : le lien
+   est rendu par BoutonReservation, il ne porte donc pas le `data-astro-cid` de
+   la nav, et un sélecteur scopé ne l'atteindrait plus. */
+.nav-mid-cta {
+  white-space: nowrap;
+  transition: color var(--duration-default) var(--ease-out-quint),
+              opacity var(--duration-default) var(--ease-out-quint),
+              visibility var(--duration-default);
+}
+.nav-mid-cta:hover { color: var(--color-accent-text); }
+
+/* Une seule instance de « Réserver » visible à la fois. Deux surfaces peuvent
+   en poser une deuxième dans le même écran, et chacune éteint le CTA central :
+
+   — la MobileCTABar, quand elle remonte en thumb-zone ;
+   — le menu plein écran, qui porte son propre « Diagnostic · 20 min » en bas.
+
+   Le second cas manquait. La barre de nav reste au-dessus du menu (z-50 contre
+   z-49), donc « Réserver un diagnostic » et le bouton du menu s'affichaient
+   ensemble, à deux cents pixels l'un de l'autre — exactement le triple-CTA que
+   la première règle avait été écrite pour empêcher.
+
+   `visibility` retire aussi le lien de l'ordre de tabulation : menu ouvert, le
+   piège à focus ne peut pas laisser filer le clavier vers un lien de la barre. */
+body.cta-bar-visible .nav-mid-cta,
+body.menu-ouvert .nav-mid-cta {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* =========================================================================
    TOUCH TARGETS — WCAG 2.5.5 / Apple HIG / Google MD 44px minimum
    ========================================================================= */

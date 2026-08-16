@@ -1,0 +1,283 @@
+---
+/*
+ * PageExpertOutil — le gabarit commun de /expert-make et /expert-n8n.
+ *
+ * Les deux pages étaient écrites deux fois. Une fois le nom d'outil neutralisé,
+ * 121 lignes sur 280 étaient identiques au caractère près : six sections dans le
+ * même ordre, les mêmes conteneurs, les mêmes chaînes de classes à rallonge, la
+ * même FAQ, le même bloc de statistiques. Le contenu diffère — c'est voulu, ce
+ * ne sont pas des pages doublons — mais la CHARPENTE, elle, était copiée.
+ *
+ * Le coût n'était pas la longueur, il était la dérive. Deux titres de section
+ * portaient déjà des largeurs différentes (`max-w-[20ch]` d'un côté, `22ch` de
+ * l'autre) sans qu'une décision l'ait voulu. Une troisième page d'outil aurait
+ * recopié l'un des deux au hasard.
+ *
+ * Ce qui est passé en props et ce qui ne l'est pas : tout ce qui se répète est
+ * ici, tout ce qui se rédige reste dans la page. Deux endroits portent du
+ * balisage dans la prose — la ligne de preuves et le paragraphe du CTA final —
+ * et passent donc par des slots nommés plutôt que par des chaînes `set:html`.
+ */
+import Layout from './Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import MobileCTABar from '../components/MobileCTABar.astro';
+import BoutonReservation from '../components/BoutonReservation.astro';
+import { Icon } from 'astro-icon/components';
+
+interface Stat { label: string; valeur: string }
+interface Valeur { titre: string; texte: string; ia?: boolean }
+interface Question { q: string; a: string }
+
+interface Props {
+  /** Nom de l'outil tel qu'il s'écrit dans le texte : « Make », « n8n ». */
+  outil: string;
+  /** Chemin de la page, pour le fil d'Ariane. */
+  url: string;
+  titreSeo: string;
+  descriptionSeo: string;
+  serviceSchema: object;
+
+  /** Hero */
+  icone: string;
+  badge: string;
+  /** Le h1, avec son `<mark>`. Rendu en `set:html`. */
+  titreHtml: string;
+  chapo: string;
+
+  /** Sections */
+  titreValeur: string;
+  valeur: Valeur[];
+  titreCasUsage: string;
+  casUsage: string[];
+  titrePourquoi: string;
+  textePourquoi: string;
+  stats: Stat[];
+  titreFaq: string;
+  faqs: Question[];
+  /** Renvoi vers l'autre page d'outil, sous la FAQ. */
+  lienCroise: { question: string; href: string; libelle: string };
+  titreCtaFinal: string;
+}
+
+const {
+  outil, url, titreSeo, descriptionSeo, serviceSchema,
+  icone, badge, titreHtml, chapo,
+  titreValeur, valeur, titreCasUsage, casUsage,
+  titrePourquoi, textePourquoi, stats,
+  titreFaq, faqs, lienCroise, titreCtaFinal,
+} = Astro.props;
+
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: `Expert ${outil}`, url },
+];
+
+/* Une seule largeur de titre de section, `22ch`, et non plus deux. /expert-make
+   en portait une de 20ch aux deux mêmes emplacements que /expert-n8n en portait
+   une de 22 : deux caractères d'écart qu'aucune des deux pages ne revendiquait,
+   et que la mise en facteur oblige à trancher. 22ch est la valeur qu'on retrouve
+   partout ailleurs sur le site, y compris sur les quatre autres titres de ces
+   deux pages. */
+const LARGEUR_TITRE = 'max-w-[22ch]';
+
+/* La source du goal se déduit du chemin : `expert-make` en haut de page,
+   `expert-make-bottom` en bas. C'est exactement ce que les deux pages
+   écrivaient à la main, et une page d'outil de plus n'a plus à y penser. */
+const sourceCta = url.replace(/^\//, '');
+---
+
+<Layout
+  title={titreSeo}
+  description={descriptionSeo}
+  breadcrumbs={breadcrumbs}
+  faqSchema={faqs.map((f) => ({ question: f.q, answer: f.a }))}
+  articleSchema={serviceSchema}
+>
+  <Navigation />
+
+  <main id="main-content">
+
+    {/* ===== HERO ===== */}
+    <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+
+        <a href="/" class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8 tap-44">
+          <span aria-hidden="true">←</span> RETOUR À L'ACCUEIL
+        </a>
+
+        <div class="reveal mb-6 md:mb-8 inline-flex items-center gap-2.5 bg-[var(--color-paper)] py-1.5 pr-2">
+          <Icon name={icone} class="expert-hero-logo" aria-hidden="true" />
+          <span class="mono-caption text-[var(--color-ink-low)]">{badge}</span>
+        </div>
+
+        {/* Le voile est descendu du conteneur au paragraphe, comme sur la home
+            (HeroManifesto.astro) : englobé dans un `.reveal`, le h1 était peint
+            à opacity 0, disqualifié comme candidat LCP, et laissé invisible
+            2,5 s si le module de reveal échouait. La cascade reste sur le
+            sous-titre. */}
+        <div class="relative bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2">
+          <h1
+            class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[16ch]"
+            style="text-wrap: balance;"
+            set:html={titreHtml}
+          />
+          <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
+            {chapo}
+          </p>
+        </div>
+
+        <div class="reveal mt-8 md:mt-10 flex flex-col sm:flex-row sm:items-center gap-4">
+          <BoutonReservation source={sourceCta} class="btn-primary justify-center">
+            Réserver mon diagnostic · 20 min
+          </BoutonReservation>
+        </div>
+
+        <div class="reveal mono-caption text-[var(--color-ink-low)] mt-7">
+          <slot name="preuves" />
+        </div>
+      </div>
+    </section>
+
+    {/* ===== CE QUE JE FAIS AVEC L'OUTIL ===== */}
+    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-12 md:mb-16 pb-6 border-b border-[var(--color-divider)]">
+          <h2 class:list={['font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]', LARGEUR_TITRE]}>
+            {titreValeur}
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 reveal-stagger">
+          {valeur.map((v) => (
+            <div class="reveal relative card flex flex-col gap-3">
+              {/* L'en-tête reste une rangée même sans puce : /expert-make n'a
+                  aucun `ia`, et sans ce conteneur son h3 se plaçait autrement
+                  que celui de /expert-n8n pour la seule raison qu'aucune de ses
+                  cartes n'était marquée. */}
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
+                  {v.titre}
+                </h3>
+                {v.ia && <span class="chip chip-accent shrink-0">IA</span>}
+              </div>
+              <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
+                {v.texte}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* ===== CE QU'ON PEUT AUTOMATISER ===== */}
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-10 md:mb-12">
+          <h2 class:list={['font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]', LARGEUR_TITRE]}>
+            {titreCasUsage}
+          </h2>
+        </div>
+
+        <ul class="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-0 max-w-[1000px]">
+          {casUsage.map((c) => (
+            <li class="reveal flex items-start gap-3 py-4 border-b border-[var(--color-divider)]">
+              <span class="mono-label text-[var(--color-ink)] leading-[1.6] shrink-0" aria-hidden="true">+</span>
+              <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5]">{c}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    {/* ===== POURQUOI MOI ===== */}
+    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
+        <div class="reveal max-w-[55ch]">
+          <h2 class:list={['font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mb-6', LARGEUR_TITRE]}>
+            {titrePourquoi}
+          </h2>
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
+            {textePourquoi}
+          </p>
+        </div>
+        <dl class="reveal grid grid-cols-1 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden min-w-[200px]">
+          {stats.map((s) => (
+            <div class="bg-[var(--color-paper)] px-6 py-5">
+              <dt class="mono-caption text-[var(--color-ink-low)] mb-1">{s.label}</dt>
+              <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">{s.valeur}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    {/* ===== FAQ ===== */}
+    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal mb-10 md:mb-12">
+          <h2 class:list={['font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]', LARGEUR_TITRE]}>
+            {titreFaq}
+          </h2>
+        </div>
+
+        <div class="reveal max-w-[820px] flex flex-col gap-3">
+          {faqs.map((faq) => (
+            <div class="faq-item">
+              <details class="faq-details group">
+                <summary class="faq-summary">
+                  <span class="faq-question">{faq.q}</span>
+                  <span class="faq-caret" aria-hidden="true">+</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>{faq.a}</p>
+                </div>
+              </details>
+            </div>
+          ))}
+        </div>
+
+        <p class="reveal mono-caption text-[var(--color-ink-low)] mt-5">
+          {lienCroise.question}
+          <a href={lienCroise.href} class="text-[var(--color-ink)] hover:text-[var(--color-ink)] transition-colors ml-1 tap-44">
+            {lienCroise.libelle} <span aria-hidden="true">→</span>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    {/* ===== CTA FINAL ===== */}
+    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal max-w-[40ch] mb-10 md:mb-12">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]">
+            {titreCtaFinal}
+          </h2>
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 m-0">
+            <slot name="cta-texte" />
+          </p>
+        </div>
+        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
+          <BoutonReservation source={`${sourceCta}-bottom`} class="btn-primary justify-center">
+            Réserver mon diagnostic · 20 min
+          </BoutonReservation>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+  <MobileCTABar />
+</Layout>
+
+<style>
+  .expert-hero-logo {
+    width: 18px;
+    height: 18px;
+    /* Encre, pas lime : le lime tient 1,25:1 sur blanc, illisible à 18 px, et
+       la DA veut le lime en surface, jamais en couleur de trait. */
+    color: var(--color-ink);
+    flex-shrink: 0;
+  }
+</style>

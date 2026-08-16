@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import lilianPhoto from '../assets/lilian-photo.jpg';
+import BoutonReservation from './BoutonReservation.astro';
 
 /* L'ordre suit le DÉFILEMENT de la home, pas une hiérarchie d'importance. Le
    calculateur est passé en 2ᵉ section, il ouvre donc la liste. Toute permutation
@@ -37,8 +38,19 @@ const navLinks = [
 
 // Ancres relatives à la home : sur une sous-page, préfixer par "/" pour y revenir
 // (le « Me contacter » du header doit marcher depuis /expert-make, /cas-clients, etc.).
+//
+// Le préfixe ne vaut QUE pour les ancres, et c'est la réparation de quarante-quatre
+// liens morts. Il était appliqué à toute la liste, y compris aux deux entrées qui
+// sont déjà des chemins absolus — « Cas clients » (/cas-clients) et « Méthode »
+// (/principes). Sur les onze pages qui ne sont pas la home, elles sortaient en
+// `//cas-clients` et `//principes` : un navigateur y lit une URL sans schéma et
+// résout vers l'hôte `cas-clients`, pas vers une page du site. Quatre liens par
+// page — deux dans la barre, deux dans le menu — dont les seuls chemins vers
+// /principes depuis une sous-page.
+// Footer.astro tenait déjà le bon test ; la nav ne l'avait jamais eu.
 const isHome = Astro.url.pathname === '/';
 const prefix = isHome ? '' : '/';
+const lienNav = (href: string) => (href.startsWith('#') ? `${prefix}${href}` : href);
 
 /* `past-hero` posé DÈS LE RENDU sur toute page qui n'est pas la home, et c'est
    la réparation d'un défaut qui touchait dix pages sur douze. La classe était
@@ -101,21 +113,14 @@ const prefix = isHome ? '' : '/';
     </a>
 
     <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
-    <a
-      href="https://cal.com/lilian-sevoumian/20min"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]"
-      data-fast-goal="lead_call"
-      data-fast-goal-source="nav_mobile_cta"
-    >
+    <BoutonReservation source="nav_mobile_cta" class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
       Réserver un diagnostic <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
-    </a>
+    </BoutonReservation>
 
     <!-- Desktop links -->
     <div class="hidden lg:flex items-center gap-1">
       {navLinks.map((link) => (
-        <a href={`${prefix}${link.href}`} class="nav-link" data-nav-link>
+        <a href={lienNav(link.href)} class="nav-link" data-nav-link>
           {link.label}
         </a>
       ))}
@@ -123,10 +128,9 @@ const prefix = isHome ? '' : '/';
 
     <!-- Desktop CTA -->
     <div class="hidden lg:flex items-center gap-2">
-      <a
-        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary" data-fast-goal="lead_call" data-fast-goal-source="nav">
+      <BoutonReservation source="nav">
         Diagnostic&nbsp;· 20&nbsp;min
-      </a>
+      </BoutonReservation>
     </div>
 
     <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
@@ -157,7 +161,7 @@ const prefix = isHome ? '' : '/';
     <div class="flex-1 flex flex-col justify-center gap-6">
       {navLinks.map((link) => (
         <a
-          href={`${prefix}${link.href}`}
+          href={lienNav(link.href)}
           class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
           data-mobile-link
         >
@@ -173,10 +177,9 @@ const prefix = isHome ? '' : '/';
           menu resté ouvert, et sa fermeture relâchait le scroll lock que le menu
           exigeait encore : on retrouvait le menu plein écran, page scrollable
           derrière. Le listener du lien passe avant celui de `document`. */}
-      <a
-        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary justify-center w-full" data-mobile-link data-fast-goal="lead_call" data-fast-goal-source="nav">
+      <BoutonReservation source="nav" class="btn-primary justify-center w-full" data-mobile-link="">
         Diagnostic&nbsp;· 20&nbsp;min
-      </a>
+      </BoutonReservation>
     </div>
   </div>
 </div>
@@ -250,6 +253,8 @@ const prefix = isHome ? '' : '/';
     // inline du <head> de Layout). Écrire `body.overflow` en direct ici
     // relâchait le verrou de l'overlay quand les deux étaient ouverts.
     window.__verrouDefilement?.('menu', willOpen);
+    // Éteint le CTA de la barre pendant que le menu porte le sien (global.css).
+    document.body.classList.toggle('menu-ouvert', willOpen);
     // L'icône bascule points ⇄ croix via le sélecteur CSS [aria-expanded].
 
     // Focus management : on focalise le CONTENEUR du dialog à l'ouverture (a11y,
@@ -368,21 +373,10 @@ const prefix = isHome ? '' : '/';
   .nav-root.past-hero .nav-logo-l { opacity: 0; }
   .nav-root.past-hero .nav-logo-avatar { opacity: 1; }
 
-  /* CTA central mobile. */
-  .nav-mid-cta {
-    white-space: nowrap;
-    transition: color var(--duration-default) var(--ease-out-quint),
-                opacity var(--duration-default) var(--ease-out-quint),
-                visibility var(--duration-default);
-  }
-  .nav-mid-cta:hover { color: var(--color-accent-text); }
-  /* Quand la MobileCTABar est à l'écran, on éteint le CTA central : une seule
-     instance de « Réserver un appel » visible à la fois (anti triple-CTA).
-     visibility retire aussi le lien de l'ordre de tab. */
-  :global(body.cta-bar-visible) .nav-mid-cta {
-    opacity: 0;
-    visibility: hidden;
-  }
+  /* Le CTA central est rendu par BoutonReservation : il ne porte donc pas le
+     `data-astro-cid` de ce fichier, et un style scopé ici ne l'atteindrait pas.
+     `.nav-mid-cta` vit dans global.css, avec `.nav-root`, `.nav-link` et
+     `.mobile-link` — le reste de l'habillage de la barre y est déjà. */
 
   /* Déclencheur de menu : grille de 9 points (fermé) ⇄ croix (ouvert), sans carré. */
   .menu-trigger {

@@ -43,6 +43,7 @@ src/
 │   ├── MobileCTABar.astro     # barre fixe sous le hero, mobile
 │   ├── SectionHeader.astro    # label + titre + chapô, partagé
 │   ├── LinkCTA.astro          # lien secondaire fléché
+│   ├── BoutonReservation.astro # TOUT lien vers l'agenda passe par ici
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   └── mockups/               # mini-UI produit des cartes outils
 │       ├── MockupWindow.astro     # châssis fenêtre commun
@@ -51,13 +52,14 @@ src/
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
 ├── data/                      # brands.ts, faq.ts
-├── lib/                       # roi.ts, tool-chip.ts
+├── lib/                       # roi.ts, tool-chip.ts, reservation.ts
 ├── layouts/
-│   └── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
+│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
+│   └── PageExpertOutil.astro  # charpente commune des pages SEO par outil
 ├── pages/
 │   ├── index.astro
 │   ├── cas-clients/index.astro et [slug].astro
-│   ├── expert-make.astro · expert-n8n.astro   # pages SEO par outil
+│   ├── expert-make.astro · expert-n8n.astro   # contenu seul, charpente partagée
 │   ├── principes.astro · mentions-legales.astro
 │   └── llms.txt.ts            # fiche générée au build pour les moteurs IA
 ├── content.config.ts          # schéma Zod de la collection
@@ -83,6 +85,15 @@ Typography:
 
 ## Key Implementation Notes
 
+- Tout lien vers l'agenda passe par `BoutonReservation` : sa prop `source` est
+  requise, et c'est ce qui garantit que le goal `lead_call` est posé. Un `<a>`
+  écrit à la main vers cal.com ouvre bien l'overlay mais n'apparaît dans aucun
+  funnel. Hors composant (données du pied de page, réponses de FAQ, llms.txt),
+  l'URL vient de `lib/reservation.ts`.
+- Ne jamais citer les marqueurs `{/*` et `*/}` littéralement à l'intérieur d'un
+  commentaire : le `*/` interne le referme, et la fin du texte est rendue comme
+  du contenu. Écrire ce genre de note en commentaires de ligne, dans le
+  frontmatter.
 - All text content is in French
 - Single-page landing with smooth scroll navigation
 - JSON-LD structured data for SEO (Person + ProfessionalService schemas)

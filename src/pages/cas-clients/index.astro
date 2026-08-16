@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import MobileCTABar from '../../components/MobileCTABar.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { getCollection } from 'astro:content';
+import BoutonReservation from '../../components/BoutonReservation.astro';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -125,10 +126,9 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
             <p class="text-[var(--color-ink-mid)] mb-6 max-w-[44ch] mx-auto">
               Pour discuter d'un cas similaire au vôtre, le plus efficace est l'appel direct.
             </p>
-            <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary"
-               data-fast-goal="lead_call" data-fast-goal-source="cas_index_empty">
+            <BoutonReservation source="cas_index_empty">
               Réserver mon diagnostic · 20 min
-            </a>
+            </BoutonReservation>
           </div>
         ) : (
           <div class:list={['grid grid-cols-1 gap-6 reveal-stagger', classeMd, classeLg]}>
@@ -203,16 +203,9 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
         />
 
         <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <a
-            href="https://cal.com/lilian-sevoumian/20min"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-primary justify-center"
-            data-fast-goal="lead_call"
-            data-fast-goal-source="cas_index"
-          >
+          <BoutonReservation source="cas_index" class="btn-primary justify-center">
             Réserver mon diagnostic · 20 min
-          </a>
+          </BoutonReservation>
         </div>
       </div>
     </section>

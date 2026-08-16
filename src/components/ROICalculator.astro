@@ -24,6 +24,7 @@
  * en dessous, en toutes lettres.
  */
 import SectionHeader from './SectionHeader.astro';
+import BoutonReservation from './BoutonReservation.astro';
 import {
   compute, formatFR, inWorkWeeks, HOURLY_COST,
 } from '../lib/roi';
@@ -124,14 +125,9 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
         ))}
 
         <div class="roi-actions">
-          <a
-            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-            class="btn-primary justify-center w-full"
-            data-fast-goal="lead_call"
-            data-fast-goal-source="roi"
-          >
+          <BoutonReservation source="roi" class="btn-primary justify-center w-full">
             Récupérer ces heures
-          </a>
+          </BoutonReservation>
           <button
             type="button"
             data-roi-share
