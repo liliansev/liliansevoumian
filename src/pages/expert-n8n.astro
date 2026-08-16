@@ -2,26 +2,16 @@
 /*
  * /expert-n8n — landing SEO ciblée « expert n8n ».
  * Angle propre à n8n : self-hostable (RGPD / souveraineté), agents IA, code natif,
- * workflows versionnés. Réutilise le design system « Operator's Console ». Contenu
- * distinct de /expert-make (angles, cas d'usage et FAQ différents — pas un doublon).
+ * workflows versionnés. Contenu distinct de /expert-make (angles, cas d'usage et
+ * FAQ différents — pas un doublon) ; la charpente est partagée : voir PageExpertOutil.
  */
-import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro';
-import MobileCTABar from '../components/MobileCTABar.astro';
-import { Icon } from 'astro-icon/components';
-
-const breadcrumbs = [
-  { name: 'Accueil', url: '/' },
-  { name: 'Expert n8n', url: '/expert-n8n' },
-];
+import PageExpertOutil from '../layouts/PageExpertOutil.astro';
 
 // Ce que je fais avec n8n — props de valeur (angle n8n : self-host + IA + code).
 const valeur = [
   {
     titre: 'Self-hostable : vos données restent chez vous',
     texte: "Hébergé sur vos serveurs quand vos données l'exigent : RGPD strict, santé, finance, secteurs sensibles. Aucune donnée ne transite par un tiers que vous ne contrôlez pas.",
-    ia: false,
   },
   {
     titre: 'Des agents IA branchés à vos process',
@@ -31,12 +21,10 @@ const valeur = [
   {
     titre: 'Du code natif dans le workflow',
     texte: "Nœuds JavaScript/Python natifs, appels API sur-mesure, transformations de données complexes. Le traitement le plus fin reste dans le même outil que le déclencheur.",
-    ia: false,
   },
   {
     titre: 'Workflows versionnés, exportables en JSON',
     texte: "Chaque automatisation est versionnée et exportable : vous gardez la main sur votre logique métier. Couche d'erreur explicite (try/catch + alerte) sur chacune : une erreur remonte tout de suite.",
-    ia: false,
   },
 ];
 
@@ -85,201 +73,41 @@ const serviceSchema = {
   "knowsAbout": ["n8n", "Automatisation des processus", "Agents IA", "Self-hosting", "RGPD", "Intégration API", "Workflow", "Claude"],
   "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
+
+const stats = [
+  { label: 'EN PRODUCTION', valeur: 'Depuis 2020' },
+  { label: 'ARCHITECTURE', valeur: 'Self-hosted' },
+  { label: 'APRÈS LIVRAISON', valeur: 'Corrections incluses' },
+];
 ---
 
-<Layout
-  title="Expert n8n freelance · automatisation & agents IA | Lilian Sevoumian"
-  description="Expert n8n freelance. J'automatise vos processus et déploie des agents IA, en self-hosted quand vos données l'exigent (RGPD). Workflows versionnés, réponse sous 48 h."
-  breadcrumbs={breadcrumbs}
-  faqSchema={faqs.map((f) => ({ question: f.q, answer: f.a }))}
-  articleSchema={serviceSchema}
+<PageExpertOutil
+  outil="n8n"
+  url="/expert-n8n"
+  titreSeo="Expert n8n freelance · automatisation & agents IA | Lilian Sevoumian"
+  descriptionSeo="Expert n8n freelance. J'automatise vos processus et déploie des agents IA, en self-hosted quand vos données l'exigent (RGPD). Workflows versionnés, réponse sous 48 h."
+  serviceSchema={serviceSchema}
+  icone="simple-icons:n8n"
+  badge="EXPERT N8N · SELF-HOSTED & AGENTS IA"
+  titreHtml="Expert <mark>n8n</mark> freelance."
+  chapo="J'automatise vos processus et je déploie des agents IA avec n8n, hébergé chez vous quand vos données sont sensibles (RGPD), avec du code natif quand votre logique métier l'exige."
+  titreValeur="Souveraineté, agents IA et code natif."
+  valeur={valeur}
+  titreCasUsage="Ce qu'on peut automatiser avec n8n."
+  casUsage={casUsage}
+  titrePourquoi="n8n, rodé en production."
+  textePourquoi="J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Self-hosting maîtrisé, agents IA avec garde-fous, couche d'erreur explicite sur chaque workflow. Des automatisations versionnées, qui tiennent dans le temps."
+  stats={stats}
+  titreFaq="Les questions qui reviennent sur n8n."
+  faqs={faqs}
+  lienCroise={{ question: 'PLUTÔT UN BESOIN Make ?', href: '/expert-make', libelle: 'VOIR LA PAGE EXPERT MAKE' }}
+  titreCtaFinal="Un workflow n8n ou un agent IA en tête ?"
 >
-  <Navigation />
+  <Fragment slot="preuves">
+    <span class="text-[var(--color-accent-text)]">SELF-HOSTABLE</span> · <span class="text-[var(--color-accent-text)]">AGENTS IA</span> · 300+ PERSONNES FORMÉES · RÉPONSE SOUS 48&nbsp;H
+  </Fragment>
 
-  <main id="main-content">
-
-    {/* ===== HERO ===== */}
-    <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
-
-        <a href="/" class="inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8 tap-44">
-          <span aria-hidden="true">←</span> RETOUR À L'ACCUEIL
-        </a>
-
-        <div class="reveal mb-6 md:mb-8 inline-flex items-center gap-2.5 bg-[var(--color-paper)] py-1.5 pr-2">
-          <Icon name="simple-icons:n8n" class="expert-hero-logo" aria-hidden="true" />
-          <span class="mono-caption text-[var(--color-ink-low)]">EXPERT N8N · SELF-HOSTED & AGENTS IA</span>
-        </div>
-
-        {/* Le voile est descendu du conteneur au paragraphe, comme sur la home
-            (HeroManifesto.astro:36-47) : englobé dans un `.reveal`, le h1 était
-            peint à opacity 0, disqualifié comme candidat LCP, et laissé
-            invisible 2,5 s si le module de reveal échouait. La cascade reste
-            sur le sous-titre. */}
-        <div class="relative bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2">
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[16ch]" style="text-wrap: balance;">
-            Expert <mark>n8n</mark> freelance.
-          </h1>
-          <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[60ch]">
-            J'automatise vos processus et je déploie des agents IA avec n8n, hébergé chez vous quand vos données sont sensibles (RGPD), avec du code natif quand votre logique métier l'exige.
-          </p>
-        </div>
-
-        <div class="reveal mt-8 md:mt-10 flex flex-col sm:flex-row sm:items-center gap-4">
-          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-             class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="expert-n8n">
-            Réserver mon diagnostic · 20 min
-          </a>
-        </div>
-
-        <div class="reveal mono-caption text-[var(--color-ink-low)] mt-7">
-          <span class="text-[var(--color-accent-text)]">SELF-HOSTABLE</span> · <span class="text-[var(--color-accent-text)]">AGENTS IA</span> · 300+ PERSONNES FORMÉES · RÉPONSE SOUS 48&nbsp;H
-        </div>
-      </div>
-    </section>
-
-    {/* ===== CE QUE JE FAIS AVEC N8N ===== */}
-    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal mb-12 md:mb-16 pb-6 border-b border-[var(--color-divider)]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
-            Souveraineté, agents IA et code natif.
-          </h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-4 reveal-stagger">
-          {valeur.map((v) => (
-            <div class="reveal relative card flex flex-col gap-3">
-              <div class="flex items-start justify-between gap-3">
-                <h3 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
-                  {v.titre}
-                </h3>
-                {v.ia && <span class="chip chip-accent shrink-0">IA</span>}
-              </div>
-              <p class="text-[var(--color-ink-mid)] text-[length:var(--text-body-sm)] leading-[1.55] m-0">
-                {v.texte}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    {/* ===== CE QU'ON PEUT AUTOMATISER ===== */}
-    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal mb-10 md:mb-12">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
-            Ce qu'on peut automatiser avec n8n.
-          </h2>
-        </div>
-
-        <ul class="reveal-stagger grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-0 max-w-[1000px]">
-          {casUsage.map((c) => (
-            <li class="reveal flex items-start gap-3 py-4 border-b border-[var(--color-divider)]">
-              <span class="mono-label text-[var(--color-ink)] leading-[1.6] shrink-0" aria-hidden="true">+</span>
-              <span class="text-[var(--color-ink-mid)] text-[length:var(--text-body)] leading-[1.5]">{c}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-
-    {/* ===== POURQUOI MOI ===== */}
-    <section data-section class="relative bg-[var(--color-surface-low)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]">
-      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
-        <div class="reveal max-w-[55ch]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] mb-6 max-w-[22ch]">
-            n8n, rodé en production.
-          </h2>
-          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
-            J'automatise des process depuis 2020, pour des Heads of Ops, fondateurs et PME. Self-hosting maîtrisé, agents IA avec garde-fous, couche d'erreur explicite sur chaque workflow. Des automatisations versionnées, qui tiennent dans le temps.
-          </p>
-        </div>
-        <dl class="reveal grid grid-cols-1 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden min-w-[200px]">
-          <div class="bg-[var(--color-paper)] px-6 py-5">
-            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">EN PRODUCTION</dt>
-            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">Depuis 2020</dd>
-          </div>
-          <div class="bg-[var(--color-paper)] px-6 py-5">
-            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">ARCHITECTURE</dt>
-            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">Self-hosted</dd>
-          </div>
-          <div class="bg-[var(--color-paper)] px-6 py-5">
-            <dt class="mono-caption text-[var(--color-ink-low)] mb-1">APRÈS LIVRAISON</dt>
-            <dd class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] m-0">Corrections incluses</dd>
-          </div>
-        </dl>
-      </div>
-    </section>
-
-    {/* ===== FAQ ===== */}
-    <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal mb-10 md:mb-12">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[22ch]">
-            Les questions qui reviennent sur n8n.
-          </h2>
-        </div>
-
-        <div class="reveal max-w-[820px] flex flex-col gap-3">
-          {faqs.map((faq, i) => (
-            <div class="faq-item">
-              <details class="faq-details group">
-                <summary class="faq-summary">
-                  <span class="faq-question">{faq.q}</span>
-                  <span class="faq-caret" aria-hidden="true">+</span>
-                </summary>
-                <div class="faq-answer">
-                  <p>{faq.a}</p>
-                </div>
-              </details>
-            </div>
-          ))}
-        </div>
-
-        <p class="reveal mono-caption text-[var(--color-ink-low)] mt-5">
-          PLUTÔT UN BESOIN Make&nbsp;?
-          <a href="/expert-make" class="text-[var(--color-ink)] hover:text-[var(--color-ink)] transition-colors ml-1 tap-44">
-            VOIR LA PAGE EXPERT MAKE <span aria-hidden="true">→</span>
-          </a>
-        </p>
-      </div>
-    </section>
-
-    {/* ===== CTA FINAL ===== */}
-    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal max-w-[40ch] mb-10 md:mb-12">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]">
-            Un workflow n8n ou un agent IA en tête&nbsp;?
-          </h2>
-          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-5 m-0">
-            20&nbsp;min pour poser votre process à plat. Sans engagement. Votre scénario n8n existe déjà et il casse&nbsp;? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.
-          </p>
-        </div>
-        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
-          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-             class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="expert-n8n-bottom">
-            Réserver mon diagnostic · 20 min
-          </a>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <Footer />
-  <MobileCTABar />
-</Layout>
-
-<style>
-  .expert-hero-logo {
-    width: 18px;
-    height: 18px;
-    /* Encre, pas lime : le lime tient 1,25:1 sur blanc, illisible à 18 px, et
-       la DA veut le lime en surface, jamais en couleur de trait. */
-    color: var(--color-ink);
-    flex-shrink: 0;
-  }
-</style>
+  <Fragment slot="cta-texte">
+    20&nbsp;min pour poser votre process à plat. Sans engagement. Votre scénario n8n existe déjà et il casse&nbsp;? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.
+  </Fragment>
+</PageExpertOutil>

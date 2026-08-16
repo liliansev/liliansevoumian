@@ -1,5 +1,6 @@
 ---
 import LinkCTA from './LinkCTA.astro';
+import BoutonReservation from './BoutonReservation.astro';
 /*
  * Offres.astro — les formats de collaboration.
  *
@@ -134,14 +135,9 @@ const formats = [
 
     {/* Actions */}
     <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-      <a
-        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-        class="btn-primary justify-center"
-        data-fast-goal="lead_call"
-        data-fast-goal-source="offres"
-      >
+      <BoutonReservation source="offres" class="btn-primary justify-center">
         Réserver mon diagnostic&nbsp;· 20&nbsp;min
-      </a>
+      </BoutonReservation>
       {/* La page, pas l'ancre. `#cas` renvoyait le lecteur six mille pixels en
           arrière, au milieu d'un carrousel qu'il venait de dépasser : un lien
           qui remonte aussi loin se vit comme une perte de place, pas comme une

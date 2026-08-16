@@ -23,6 +23,7 @@ import StackCodex from './mockups/StackCodex.astro';
 import StackViews from './mockups/StackViews.astro';
 import StackZite from './mockups/StackZite.astro';
 import StackLovable from './mockups/StackLovable.astro';
+import { URL_RESERVATION } from '../lib/reservation';
 
 const MOCKS = {
   workflow: StackWorkflow,
@@ -115,7 +116,7 @@ const { layer, titreId } = Astro.props;
       vraiment le domaine — augmentes.fr, LinkedIn, YouTube. */}
   <div class="stack-layer-cta">
     <LinkCTA
-      href="https://cal.com/lilian-sevoumian/20min"
+      href={URL_RESERVATION}
       goal="lead_call"
       goalSource={layer.ctaSource}
     >{layer.cta}</LinkCTA>

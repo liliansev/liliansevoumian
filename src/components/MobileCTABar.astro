@@ -17,6 +17,7 @@
  * pages, toujours en tête de page et toujours unique. La barre attend qu'il
  * quitte l'écran : tant que le titre est lu, la page n'a pas encore commencé.
  */
+import BoutonReservation from './BoutonReservation.astro';
 ---
 
 <div
@@ -25,10 +26,9 @@
   aria-hidden="true"
 >
   <div class="border-t border-[var(--color-divider)] bg-[color-mix(in_oklch,var(--color-paper)_90%,transparent)] backdrop-blur-md px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-    <a
-      href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary w-full justify-center" data-fast-goal="lead_call" data-fast-goal-source="barre-mobile">
+    <BoutonReservation source="barre-mobile" class="btn-primary w-full justify-center">
         Réserver mon diagnostic
-      </a>
+      </BoutonReservation>
   </div>
 </div>
 

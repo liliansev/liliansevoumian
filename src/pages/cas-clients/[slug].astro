@@ -9,6 +9,7 @@ import MockupWindow from '../../components/mockups/MockupWindow.astro';
 import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
 import { brandColorFor } from '../../data/brands';
 import Outil from '../../components/Outil.astro';
+import BoutonReservation from '../../components/BoutonReservation.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -313,13 +314,17 @@ const articleSchema = {
         aucun cas et n'avait que ce bloc pour lecteur. Le jour où un client en
         donne un, il faudra un champ ET un bloc, écrits pour lui. */}
 
-    <!-- CAS VOISINS.
-         Le titre de cette grille était un sur-titre, le seul du site à ne
-         coiffer aucun titre : il servait d'en-tête tout en étant rendu comme un
-         libellé de onze pixels. La grille gagne son h2, la page gagne un niveau
-         de structure. (Commentaire HTML et non JSX : à l'intérieur d'une
-         expression Astro, un `{/* */}` est compilé comme une expression et
-         casse le rendu de toute la page.) -->
+    {/* CAS VOISINS.
+        Le titre de cette grille était un sur-titre, le seul du site à ne
+        coiffer aucun titre : il servait d'en-tête tout en étant rendu comme un
+        libellé de onze pixels. La grille gagne son h2, la page gagne un niveau
+        de structure.
+        (Commentaire JSX, et non HTML : le commentaire HTML est expédié au
+        client sur les quatre pages de cas. La raison invoquée pour l'éviter —
+        « une expression Astro casse le rendu » — visait un commentaire qui
+        citait les marqueurs de commentaire littéralement, ce qui refermait le
+        bloc plus tôt qu'écrit. C'est ce libellé littéral qui pose problème,
+        pas la forme JSX ; voir le frontmatter de Navigation.astro.) */}
     {voisins.length > 0 && (
       <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
         <div class="relative max-w-[1200px] mx-auto">
@@ -360,14 +365,9 @@ const articleSchema = {
         </div>
 
         <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <a
-            href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-            class="btn-primary justify-center"
-            data-fast-goal="lead_call"
-            data-fast-goal-source="cas_article"
-          >
+          <BoutonReservation source="cas_article" class="btn-primary justify-center">
             Réserver mon diagnostic&nbsp;· 20&nbsp;min
-          </a>
+          </BoutonReservation>
         </div>
       </div>
     </section>

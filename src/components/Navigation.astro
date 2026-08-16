@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import lilianPhoto from '../assets/lilian-photo.jpg';
+import BoutonReservation from './BoutonReservation.astro';
 
 /* L'ordre suit le DÉFILEMENT de la home, pas une hiérarchie d'importance. Le
    calculateur est passé en 2ᵉ section, il ouvre donc la liste. Toute permutation
@@ -15,6 +16,17 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
    dix-sept menaient à l'agenda et aucun à ces pages. La méthode en quatre
    étapes que PRODUCT.md promet existe pourtant, écrite, sur /principes : elle
    n'avait simplement aucun chemin. */
+// MENU MOBILE, SANS NUMÉRO : une navigation n'est pas une séquence. Le chiffre
+// annonçait un ordre que le lecteur ne suit pas — il clique là où il veut aller —
+// et il numérotait cinq entrées dont deux mènent à une autre page.
+//
+// Ce commentaire vit ici, en commentaires de LIGNE dans le frontmatter, et c'est
+// la réparation du bug qu'il décrivait. Il était posé dans le template sous la
+// forme `{/* … */}` et citait un `{/*` `*/}` littéral pour l'illustrer : ce `*/`
+// interne fermait le commentaire avant sa fin, et Astro rendait le reste du
+// texte comme du contenu — deux lignes de prose en haut du menu plein écran, sur
+// chaque page du site. Un bloc `/* … */` aurait le même défaut ; seuls des `//`
+// permettent d'écrire ces marqueurs sans les déclencher.
 const navLinks = [
   { href: "#roi", label: "Calcul" },
   { href: "/cas-clients", label: "Cas clients" },
@@ -26,8 +38,19 @@ const navLinks = [
 
 // Ancres relatives à la home : sur une sous-page, préfixer par "/" pour y revenir
 // (le « Me contacter » du header doit marcher depuis /expert-make, /cas-clients, etc.).
+//
+// Le préfixe ne vaut QUE pour les ancres, et c'est la réparation de quarante-quatre
+// liens morts. Il était appliqué à toute la liste, y compris aux deux entrées qui
+// sont déjà des chemins absolus — « Cas clients » (/cas-clients) et « Méthode »
+// (/principes). Sur les onze pages qui ne sont pas la home, elles sortaient en
+// `//cas-clients` et `//principes` : un navigateur y lit une URL sans schéma et
+// résout vers l'hôte `cas-clients`, pas vers une page du site. Quatre liens par
+// page — deux dans la barre, deux dans le menu — dont les seuls chemins vers
+// /principes depuis une sous-page.
+// Footer.astro tenait déjà le bon test ; la nav ne l'avait jamais eu.
 const isHome = Astro.url.pathname === '/';
 const prefix = isHome ? '' : '/';
+const lienNav = (href: string) => (href.startsWith('#') ? `${prefix}${href}` : href);
 
 /* `past-hero` posé DÈS LE RENDU sur toute page qui n'est pas la home, et c'est
    la réparation d'un défaut qui touchait dix pages sur douze. La classe était
@@ -90,21 +113,14 @@ const prefix = isHome ? '' : '/';
     </a>
 
     <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
-    <a
-      href="https://cal.com/lilian-sevoumian/20min"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]"
-      data-fast-goal="lead_call"
-      data-fast-goal-source="nav_mobile_cta"
-    >
+    <BoutonReservation source="nav_mobile_cta" class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
       Réserver un diagnostic <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
-    </a>
+    </BoutonReservation>
 
     <!-- Desktop links -->
     <div class="hidden lg:flex items-center gap-1">
       {navLinks.map((link) => (
-        <a href={`${prefix}${link.href}`} class="nav-link" data-nav-link>
+        <a href={lienNav(link.href)} class="nav-link" data-nav-link>
           {link.label}
         </a>
       ))}
@@ -112,10 +128,9 @@ const prefix = isHome ? '' : '/';
 
     <!-- Desktop CTA -->
     <div class="hidden lg:flex items-center gap-2">
-      <a
-        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary" data-fast-goal="lead_call" data-fast-goal-source="nav">
+      <BoutonReservation source="nav">
         Diagnostic&nbsp;· 20&nbsp;min
-      </a>
+      </BoutonReservation>
     </div>
 
     <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
@@ -143,16 +158,10 @@ const prefix = isHome ? '' : '/';
   tabindex="-1"
 >
   <div class="h-full flex flex-col px-[var(--spacing-section-x)] pt-[80px] pb-12">
-    {/* Sans numéro : une navigation n'est pas une séquence. Le chiffre annonçait
-        un ordre que le lecteur ne suit pas — il clique là où il veut aller — et
-        il numérotait cinq entrées dont deux mènent à une autre page.
-        (Commentaire posé ici et non dans la boucle : à l'intérieur d'une
-        expression Astro, un `{/* */}` est compilé comme une expression et casse
-        le rendu de toute la page.) */}
     <div class="flex-1 flex flex-col justify-center gap-6">
       {navLinks.map((link) => (
         <a
-          href={`${prefix}${link.href}`}
+          href={lienNav(link.href)}
           class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
           data-mobile-link
         >
@@ -168,10 +177,9 @@ const prefix = isHome ? '' : '/';
           menu resté ouvert, et sa fermeture relâchait le scroll lock que le menu
           exigeait encore : on retrouvait le menu plein écran, page scrollable
           derrière. Le listener du lien passe avant celui de `document`. */}
-      <a
-        href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer" class="btn-primary justify-center w-full" data-mobile-link data-fast-goal="lead_call" data-fast-goal-source="nav">
+      <BoutonReservation source="nav" class="btn-primary justify-center w-full" data-mobile-link="">
         Diagnostic&nbsp;· 20&nbsp;min
-      </a>
+      </BoutonReservation>
     </div>
   </div>
 </div>
@@ -241,7 +249,12 @@ const prefix = isHome ? '' : '/';
     mobileMenu.setAttribute('aria-hidden', String(!willOpen));
     menuBtn.setAttribute('aria-expanded', String(willOpen));
     menuBtn.setAttribute('aria-label', willOpen ? 'Fermer le menu' : 'Ouvrir le menu');
-    document.body.style.overflow = willOpen ? 'hidden' : '';
+    // Verrou compté, partagé avec l'overlay cal.com (défini dans le script
+    // inline du <head> de Layout). Écrire `body.overflow` en direct ici
+    // relâchait le verrou de l'overlay quand les deux étaient ouverts.
+    window.__verrouDefilement?.('menu', willOpen);
+    // Éteint le CTA de la barre pendant que le menu porte le sien (global.css).
+    document.body.classList.toggle('menu-ouvert', willOpen);
     // L'icône bascule points ⇄ croix via le sélecteur CSS [aria-expanded].
 
     // Focus management : on focalise le CONTENEUR du dialog à l'ouverture (a11y,
@@ -280,6 +293,18 @@ const prefix = isHome ? '' : '/';
       // le scroll vers la section visée.
       toggleMenu(true);
     });
+  });
+
+  // Tout CTA de réservation ferme le menu, où qu'il soit. Les liens DU menu
+  // portent déjà `data-mobile-link` ; celui de la BARRE de nav, non — et la
+  // barre reste au-dessus du menu ouvert (z-50 contre z-49), donc son
+  // « Réserver un diagnostic » est tapable pendant que le menu est déployé.
+  // Sans ça, l'overlay cal.com se posait sur un menu resté ouvert, qu'on
+  // retrouvait intact en refermant l'agenda.
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (!target?.closest?.('a[href*="cal.com/lilian-sevoumian"]')) return;
+    if (mobileMenu?.classList.contains('is-open')) toggleMenu(true);
   });
 
   document.addEventListener('keydown', (e) => {
@@ -348,21 +373,10 @@ const prefix = isHome ? '' : '/';
   .nav-root.past-hero .nav-logo-l { opacity: 0; }
   .nav-root.past-hero .nav-logo-avatar { opacity: 1; }
 
-  /* CTA central mobile. */
-  .nav-mid-cta {
-    white-space: nowrap;
-    transition: color var(--duration-default) var(--ease-out-quint),
-                opacity var(--duration-default) var(--ease-out-quint),
-                visibility var(--duration-default);
-  }
-  .nav-mid-cta:hover { color: var(--color-accent-text); }
-  /* Quand la MobileCTABar est à l'écran, on éteint le CTA central : une seule
-     instance de « Réserver un appel » visible à la fois (anti triple-CTA).
-     visibility retire aussi le lien de l'ordre de tab. */
-  :global(body.cta-bar-visible) .nav-mid-cta {
-    opacity: 0;
-    visibility: hidden;
-  }
+  /* Le CTA central est rendu par BoutonReservation : il ne porte donc pas le
+     `data-astro-cid` de ce fichier, et un style scopé ici ne l'atteindrait pas.
+     `.nav-mid-cta` vit dans global.css, avec `.nav-root`, `.nav-link` et
+     `.mobile-link` — le reste de l'habillage de la barre y est déjà. */
 
   /* Déclencheur de menu : grille de 9 points (fermé) ⇄ croix (ouvert), sans carré. */
   .menu-trigger {

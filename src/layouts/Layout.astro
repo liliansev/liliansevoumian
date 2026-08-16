@@ -123,6 +123,25 @@ const faqPageSchema = faqSchema ? {
       (function () {
         document.documentElement.classList.add('js-ready');
 
+        // VERROU DE DÉFILEMENT PARTAGÉ, compté par propriétaire.
+        // Deux surfaces bloquent le scroll — le menu mobile (Navigation) et
+        // l'overlay cal.com (plus bas) — et chacune écrivait `body.overflow`
+        // en direct, dont `''` à la fermeture. Le dernier à fermer relâchait
+        // donc le verrou de l'autre. Le chemin visible : menu ouvert, la barre
+        // de nav reste au-dessus (z-50 contre z-49) et son CTA « Réserver un
+        // diagnostic » reste tapable ; l'overlay se posait sur le menu, et le
+        // refermer laissait le menu plein écran avec la page qui défile
+        // derrière. Un compteur rend l'ordre des fermetures sans conséquence :
+        // le scroll ne revient qu'une fois le dernier propriétaire parti.
+        var verrous = {};
+        window.__verrouDefilement = function (proprietaire, actif) {
+          if (actif) verrous[proprietaire] = 1;
+          else delete verrous[proprietaire];
+          if (document.body) {
+            document.body.style.overflow = Object.keys(verrous).length ? 'hidden' : '';
+          }
+        };
+
         // Failsafe garanti, indépendant du module de reveal (fin de <body>).
         // .js-ready (posé ci-dessus) arme le cloak `opacity:0` des .reveal.
         // Si le module échoue (erreur JS, chunk bloqué, CSP), il ne dé-cloake
@@ -249,14 +268,14 @@ const faqPageSchema = faqSchema ? {
             lastFocused = document.activeElement;
             overlay.classList.add('is-open');
             overlay.setAttribute('aria-hidden', 'false');
-            document.body.style.overflow = 'hidden';
+            window.__verrouDefilement('cal', true);
             window.setTimeout(function () { overlay.focus(); }, 50);
           }
           function closeOverlay() {
             var wasOpen = overlay.classList.contains('is-open');
             overlay.classList.remove('is-open');
             overlay.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
+            window.__verrouDefilement('cal', false);
             if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
             lastFocused = null;
             if (wasOpen && !booked && typeof window.datafast === 'function') {

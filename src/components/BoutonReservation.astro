@@ -1,0 +1,46 @@
+---
+/*
+ * BoutonReservation — le lien vers l'agenda, partout où il apparaît.
+ *
+ * Dix-sept boutons écrivaient à la main la même séquence de six attributs :
+ * l'URL, `target`, `rel`, la classe, le goal et sa source. Quatre variantes
+ * d'attributs circulaient déjà, et l'inventaire du tracking ne tenait que par
+ * recopie attentive — `data-fast-goal` posé sur chaque lien est la SEULE chose
+ * qui distingue un CTA mesuré d'un CTA muet, et rien ne signalait un oubli : le
+ * bouton ouvrait l'agenda dans les deux cas.
+ *
+ * Ici `source` est requis par le typage. Un bouton sans source ne compile pas ;
+ * le goal, lui, n'est plus à écrire du tout.
+ *
+ * `class` remplace la classe par défaut plutôt que de s'y ajouter : le CTA
+ * central de la nav n'est pas un bouton plein mais un lien de barre, et le
+ * composant n'a pas à trancher entre les deux registres. Il garantit le lien,
+ * pas l'apparence.
+ *
+ * Le libellé passe par le slot. Les insécables varient d'un emplacement à
+ * l'autre — « diagnostic&nbsp;· 20&nbsp;min » dans les zones étroites, la forme
+ * simple ailleurs — et c'est une décision de composition, pas de composant.
+ */
+import { URL_RESERVATION, LIBELLE_RESERVATION } from '../lib/reservation';
+
+interface Props {
+  /** D'où vient le clic, en clair dans le funnel DataFast. Requis. */
+  source: string;
+  /** Remplace `btn-primary`. Passer la chaîne complète. */
+  class?: string;
+  /** Attributs libres : `data-mobile-link`, `id`… */
+  [attribut: string]: unknown;
+}
+
+const { source, class: classe = 'btn-primary', ...reste } = Astro.props;
+---
+
+<a
+  href={URL_RESERVATION}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={classe}
+  data-fast-goal="lead_call"
+  data-fast-goal-source={source}
+  {...reste}
+><slot>{LIBELLE_RESERVATION}</slot></a>

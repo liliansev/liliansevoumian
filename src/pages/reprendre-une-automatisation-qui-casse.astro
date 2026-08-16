@@ -25,6 +25,8 @@ import Footer from '../components/Footer.astro';
 import MobileCTABar from '../components/MobileCTABar.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import Outil from '../components/Outil.astro';
+import BoutonReservation from '../components/BoutonReservation.astro';
+import { URL_RESERVATION } from '../lib/reservation';
 
 const breadcrumbs = [
   { name: 'Accueil', url: '/' },
@@ -154,7 +156,7 @@ const sections = [
       'Vous décrivez le symptôme avec vos mots, sans préparation technique.',
       'Je vous dis si le sujet est de mon ressort et ce que l\'audit couvrirait.',
       'Vous repartez avec un avis clair, même quand la réponse est de ne rien toucher.',
-      'Réserver un diagnostic de 20 min : https://cal.com/lilian-sevoumian/20min'
+      `Réserver un diagnostic de 20 min : ${URL_RESERVATION}`
     ],
   }
 ];
@@ -165,7 +167,7 @@ const faqs = [
   { q: 'La personne qui a construit notre automatisation est partie. On fait quoi ?', a: 'Ce qui part avec elle, c\'est la logique métier. Je la reconstitue depuis le système lui-même et depuis vos équipes, puis je la remets à un endroit lisible : une table de configuration, une documentation, une vidéo de formation. Chez Fraich Touch, former un nouveau collaborateur prend 30 min, contre plusieurs heures avant la reprise.' },
   { q: 'Mon automatisation est sur Make. Faut-il passer sur n8n ?', a: 'L\'outil se choisit après l\'audit. Fraich Touch est resté sur Make, avec 4 scénarios propres et documentés à la place des 33. Humble+ est passé à n8n parce que le parcours mêlait lecture de documents par IA, contrôles déterministes et validations humaines. Le critère : ce que le flux doit faire, et qui maintiendra le système ensuite.' },
   { q: 'Comment savoir si mon automatisation est en dette ?', a: 'Trois signes suffisent. Vous découvrez les erreurs par hasard. Une modification simple se transforme en chantier. Personne ne sait dire à quoi sert la moitié des scénarios en place. Chez Fraich Touch, 28 des 33 scénarios du compte étaient des reliques inutilisées et 16 factures attendaient dans une file d\'erreurs que personne ne regardait. L\'appel de 20 min sert exactement à trancher.' },
-  { q: 'Que se passe-t-il pendant l\'appel de 20 min ?', a: 'Vous décrivez le symptôme avec vos mots : les factures ne partent plus, les commandes s\'accumulent, les chiffres ne tombent pas juste. Je pose des questions sur les outils branchés, sur ce qui a été construit et sur ce que vous voyez remonter comme erreurs. À la fin, vous savez si votre sujet est de mon ressort et ce que l\'audit couvrirait. Réservation sur https://cal.com/lilian-sevoumian/20min' }
+  { q: 'Que se passe-t-il pendant l\'appel de 20 min ?', a: 'Vous décrivez le symptôme avec vos mots : les factures ne partent plus, les commandes s\'accumulent, les chiffres ne tombent pas juste. Je pose des questions sur les outils branchés, sur ce qui a été construit et sur ce que vous voyez remonter comme erreurs. À la fin, vous savez si votre sujet est de mon ressort et ce que l\'audit couvrirait. Réservation sur ' + URL_RESERVATION }
 ];
 ---
 
@@ -199,10 +201,9 @@ const faqs = [
         <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[62ch]">Vos factures ne partent plus. Le scénario, lui, affiche toujours vert. Lilian Sevoumian reprend les automatisations <Outil icon="simple-icons:make">Make</Outil> et <Outil icon="simple-icons:n8n">n8n</Outil> déjà en place, y compris celles construites par quelqu'un d'autre, et remet le flux en marche.</p>
 
         <div class="reveal mt-8 md:mt-10">
-          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-             class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="reprise-hero">
+          <BoutonReservation source="reprise-hero" class="btn-primary justify-center">
             Réserver mon diagnostic&nbsp;· 20&nbsp;min
-          </a>
+          </BoutonReservation>
         </div>
       </div>
     </section>
@@ -265,10 +266,9 @@ const faqs = [
           titleMaxWidth="22ch"
         />
         <div class="reveal mt-8">
-          <a href="https://cal.com/lilian-sevoumian/20min" target="_blank" rel="noopener noreferrer"
-             class="btn-primary justify-center" data-fast-goal="lead_call" data-fast-goal-source="reprise-bottom">
+          <BoutonReservation source="reprise-bottom" class="btn-primary justify-center">
             Réserver mon diagnostic&nbsp;· 20&nbsp;min
-          </a>
+          </BoutonReservation>
         </div>
       </div>
     </section>
