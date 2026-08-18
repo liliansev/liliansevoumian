@@ -43,8 +43,20 @@ NOTES-SESSION.md
 *.pen
 images/
 
-# Impeccable design tooling (plugin skill + hooks + live config) — installé en local, hors repo
-.claude/skills/
+# Impeccable. Le SKILL est versionné depuis qu'il a été demandé au dépôt :
+# `.claude/skills/impeccable/`, 148 fichiers, 3,5 Mo, Apache 2.0. C'est le prix
+# à payer pour qu'une session distante ou une machine neuve y ait accès sans
+# réinstaller — l'installeur officiel (`npx impeccable install`) télécharge
+# depuis un CDN, ce qu'un conteneur derrière proxy ne peut pas toujours joindre.
+# Les autres skills locaux restent hors dépôt, d'où le motif plutôt que le
+# dossier entier.
+.claude/skills/*
+!.claude/skills/impeccable/
+
+# Ce qui reste MACHINE-LOCAL, et le reste par conception : le manifeste de hooks
+# (l'installeur amont l'écrit dans settings.local.json justement pour ça) et le
+# cache d'exécution du mode live.
+.claude/settings.local.json
 .impeccable/
 
 # Lock de scheduler de session (transitoire, ne pas versionner)
@@ -64,3 +76,6 @@ hero.png
 *.png
 !public/*.png
 !src/**/*.png
+
+# Sortie brute du détecteur impeccable, écrite à la demande pendant une revue.
+.impeccable-out/
