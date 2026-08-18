@@ -1,0 +1,173 @@
+---
+/*
+ * Automatisations — « ce que j'automatise », en process et non en outils.
+ *
+ * LA SECTION QUI MANQUAIT. La home répondait dix fois à « quelle est l'étape
+ * suivante » (dix-neuf points de réservation, une barre fixe, un bloc contact
+ * en trois temps) et jamais, en clair, à la première question que se pose un
+ * prospect : QUE SAIT-IL FAIRE. Le hero donnait une catégorie — n8n, Make,
+ * agents IA. La section « outils » liste des outils. La section « offres »
+ * liste des modes de collaboration : construire, reprendre, rendre la main.
+ * Aucune des trois ne nomme un process que le lecteur reconnaîtrait comme le
+ * sien.
+ *
+ * Cette liste existait pourtant, écrite, sur /expert-make et /expert-n8n
+ * (« synchroniser votre CRM », « générer devis et factures depuis un
+ * formulaire », « router les demandes entrantes »). Elle était invisible depuis
+ * la page d'accueil. Elle remonte ici, reformulée autour de ce que les quatre
+ * cas clients prouvent réellement.
+ *
+ * AUCUN LIEN VERS LES CAS ICI, et c'est une correction de la première version.
+ * Quatre des six lignes portaient le cas client qui les documente — Fraich
+ * Touch, Humble+, M Partners, Celeris — et la section des cas suit
+ * IMMÉDIATEMENT celle-ci. Le lecteur se voyait donc proposer quatre fois le
+ * même déplacement, plus un cinquième dans le pied de section, à quelques
+ * centaines de pixels du carrousel qui les montre en entier. Ces six lignes
+ * sont des exemples, pas des vignettes de preuve : la preuve est le bloc
+ * d'après, c'est son métier.
+ *
+ * Ce qui reste vrai de la règle de départ : aucune de ces six lignes n'avance
+ * de chiffre. Ce qui est chiffré est chiffré dans les cas, où la mesure est
+ * située et datée.
+ *
+ * Le pied appelle l'agenda plutôt qu'une page. Même dispositif que les quatre
+ * familles de la section outils : un lien fléché, la source du clic dans le
+ * funnel, et l'URL prise dans lib/reservation.
+ *
+ * SIX PROCESS, ET AUCUN MODE DE COLLABORATION. La sixième ligne a d'abord porté
+ * « Reprendre ce qui casse » — qui est le titre exact, au caractère près, d'un
+ * des trois formats de la section « offres », six sections plus bas. Deux h3
+ * identiques sur la même page, et surtout deux registres confondus : reprendre
+ * un existant n'est pas une famille de process, c'est une façon d'entrer dans
+ * une mission. C'est le métier de la section « offres », pas de celle-ci. Elle
+ * est remplacée par les demandes entrantes, qui manquaient à la liste et que
+ * /expert-n8n décrit déjà (« tri, qualification de leads, classification de
+ * demandes »).
+ *
+ * Placée juste après le hero et le bandeau d'outils, avant les cas : le lecteur
+ * doit pouvoir se reconnaître AVANT qu'on lui montre des clients qui ne sont
+ * pas lui.
+ */
+import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
+import { URL_RESERVATION } from '../lib/reservation';
+
+interface Famille {
+  titre: string;
+  corps: string;
+}
+
+const familles: Famille[] = [
+  {
+    titre: 'Facturation et devis',
+    corps:
+      'Du deal signé à la facture envoyée : échéances, TVA selon le pays, relances. La ressaisie disparaît, les erreurs remontent au lieu de dormir dans une file.',
+  },
+  {
+    titre: 'Commandes e-commerce B2B',
+    corps:
+      'Un bon de commande reçu en PDF ou en Excel devient une commande Shopify et une facture, avec les bons produits, les bonnes remises et le bon client.',
+  },
+  {
+    titre: 'Prospection et qualification',
+    corps:
+      'Sourcing des signaux, collecte des cibles, notation des profils par un agent IA, puis envoi dans le CRM et les séquences. Vous validez, la machine fait le reste.',
+  },
+  {
+    titre: 'Catalogue et données produit',
+    corps:
+      'Des fiches lues, structurées et créées directement dans votre ERP, en brouillon, pour qu’une personne valide avant publication.',
+  },
+  {
+    titre: 'Reporting et alertes',
+    corps:
+      'Les chiffres se consolident sans personne, et la panne se voit le jour où elle arrive : l’alerte tombe dans Slack, Notion ou votre boîte mail.',
+  },
+  {
+    titre: 'Demandes entrantes',
+    corps:
+      'Un mail ou un formulaire arrive : il est lu, qualifié, puis routé vers la bonne personne avec le contexte déjà rassemblé. Personne ne trie à la main.',
+  },
+];
+---
+
+<section
+  id="automatisations"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      title="Ce que j'automatise, <mark>concrètement.</mark>"
+      body="Six familles de process, celles qui reviennent le plus chez mes clients. Des exemples, pas un catalogue : ce qui compte est la forme du problème, pas la case dans laquelle il tombe."
+      titleMaxWidth="20ch"
+      bodyMaxWidth="62ch"
+    />
+
+    {/* Même dispositif que les formats de la section « offres » : un filet de
+        tête par item, jamais une carte. Le rythme de la page vient des traits,
+        et une grille de six cartes à icône est exactement le motif que ce site
+        évite partout ailleurs. */}
+    <div class="reveal-stagger process-grille">
+      {familles.map((f) => (
+        <div class="reveal process-item">
+          <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
+            {f.titre}
+          </h3>
+          <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
+            {f.corps}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <div class="reveal process-pied">
+      <p>
+        Votre process n'est dans aucune de ces six&nbsp;? C'est le cas le plus
+        fréquent&nbsp;: ce qui se répète chez vous ne ressemble à ce qui se
+        répète ailleurs que de loin. La question utile n'est pas de savoir dans
+        quelle famille il tombe, mais combien de temps il vous coûte.
+      </p>
+      <LinkCTA
+        href={URL_RESERVATION}
+        goal="lead_call"
+        goalSource="automatisations"
+      >Décrivez-moi le vôtre</LinkCTA>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .process-grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+  }
+
+  .process-item {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-divider);
+    padding: 1.75rem 0 0;
+  }
+
+  .process-pied {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-divider);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .process-pied p {
+    margin: 0;
+    max-width: 62ch;
+    font-size: var(--text-body-sm);
+    line-height: 1.6;
+    color: var(--color-ink-low);
+  }
+</style>

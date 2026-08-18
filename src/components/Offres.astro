@@ -151,8 +151,20 @@ const formats = [
 
     {/* Pont augmentes.fr — route l'intention « apprendre soi-même » vers la
         plateforme formations. Lien secondaire, jamais primaire. */}
-    <p class="reveal mt-8 mono-caption text-[var(--color-ink-low)]">
-      VOUS PRÉFÉREZ APPRENDRE À LE FAIRE VOUS-MÊME&nbsp;?
+    {/* CASSE NORMALE ET NON PETITES CAPITALES, et c'est la même correction aux
+        trois endroits du site où une PHRASE entière était composée en capitales
+        à onze pixels. Les capitales suppriment la silhouette des mots : l'œil ne
+        lit plus une forme, il déchiffre lettre à lettre. Passe encore sur un
+        libellé de bouton de trois mots ; sur quatre-vingts caractères, à la plus
+        petite taille du système et avec 0,06 em d'interlettrage, c'était la
+        ligne la moins lisible de la page. Le détecteur d'anti-patterns la
+        relève sous `all-caps-body`, et le site avait déjà pris cette décision
+        ailleurs — la réassurance de /reprendre-une-automatisation-qui-casse est
+        descendue du sur-titre dans le chapô pour exactement ce motif.
+        Le corps passe à --text-body-sm, la mesure que le cadre budget de cette
+        même section emploie déjà. */}
+    <p class="reveal mt-8 text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
+      Vous préférez apprendre à le faire vous-même&nbsp;?
       <a
         href="https://augmentes.fr"
         target="_blank"
@@ -161,7 +173,7 @@ const formats = [
         data-fast-goal="outbound_formations"
         data-fast-goal-source="offres"
       >
-        FORMATIONS MAKE &amp; N8N SUR AUGMENTES.FR&nbsp;<span aria-hidden="true">↗</span>
+        Formations Make &amp; n8n sur augmentes.fr&nbsp;<span aria-hidden="true">↗</span>
       </a>
     </p>
 

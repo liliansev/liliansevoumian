@@ -3,11 +3,11 @@ import { Image } from 'astro:assets';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import BoutonReservation from './BoutonReservation.astro';
 
-/* L'ordre suit le DÉFILEMENT de la home, pas une hiérarchie d'importance. Le
-   calculateur est passé en 2ᵉ section, il ouvre donc la liste. Toute permutation
-   dans src/pages/index.astro doit se répercuter ici, sinon la nav annonce un ordre
-   que la page ne tient pas. « Cas clients » mène à la page dédiée et non à l'ancre
-   de la home, mais sa place dans la liste reflète celle de la section.
+/* L'ordre suit le DÉFILEMENT de la home, pas une hiérarchie d'importance. Toute
+   permutation dans src/pages/index.astro doit se répercuter ici, sinon la nav
+   annonce un ordre que la page ne tient pas. « Cas clients » mène à la page
+   dédiée et non à l'ancre de la home, mais sa place dans la liste reflète celle
+   de la section.
    Les numéros `01`…`05` ont été retirés avec le reste de la numérotation du site. */
 /* « Méthode » mène à /principes, et cette entrée règle un cul-de-sac : quatre
    pages substantielles — /principes, /expert-n8n, /expert-make et la page sur
@@ -27,11 +27,29 @@ import BoutonReservation from './BoutonReservation.astro';
 // texte comme du contenu — deux lignes de prose en haut du menu plein écran, sur
 // chaque page du site. Un bloc `/* … */` aurait le même défaut ; seuls des `//`
 // permettent d'écrire ces marqueurs sans les déclencher.
+/* La liste suit le nouvel ordre de la home, qui suit lui-même les quatre
+   questions d'un prospect : « Process » (que sait-il faire), « Cas clients »
+   (peut-il résoudre mon problème), « Méthode » (comment). « Offres » et « FAQ »
+   ferment, et la réservation a sa propre pilule à droite.
+
+   Deux changements par rapport à la liste d'avant. « Méthode » ne mène plus à
+   /principes mais à la section #methode de la home, qui n'existait pas : la
+   page reste atteignable, par le lien de fin de cette section-là. Et « Calcul »
+   sort, parce que le calculateur est descendu en avant-dernière position : il
+   sert à justifier un budget, ce n'est plus une destination.
+
+   LE LIBELLÉ EST CONTRAINT PAR LA LARGEUR, et c'est ce qui a écarté
+   « Automatiser ». Mesuré dans Geist à 12 px avec l'interlettrage des liens de
+   nav : à 1024 px, la barre laisse 514 px aux six entrées une fois le wordmark,
+   la pilule de réservation et les gouttières déduits. « AUTOMATISER » porte le
+   jeu à 512 px, soit 1,3 px de marge — donc un débordement au premier arrondi.
+   « PROCESS » le laisse à 483 px, 30 px de marge. « CE QUE JE FAIS » et
+   « AUTOMATISATIONS » débordent franchement. */
 const navLinks = [
-  { href: "#roi", label: "Calcul" },
+  { href: "#automatisations", label: "Process" },
   { href: "/cas-clients", label: "Cas clients" },
+  { href: "#methode", label: "Méthode" },
   { href: "#stack", label: "Outils" },
-  { href: "/principes", label: "Méthode" },
   { href: "#offres", label: "Offres" },
   { href: "#faq", label: "FAQ" },
 ];

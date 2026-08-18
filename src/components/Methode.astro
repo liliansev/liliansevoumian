@@ -1,0 +1,139 @@
+---
+/*
+ * Methode — « comment ça se passe », en quatre étapes.
+ *
+ * LE TROU LE PLUS NET DE LA HOME. Un prospect se pose quatre questions avant
+ * d'engager un freelance : que sait-il faire, peut-il résoudre mon problème,
+ * comment, et quelle est l'étape suivante. La page répondait à la première
+ * (depuis l'ajout de la section « ce que j'automatise »), à la deuxième (les
+ * cas), à la quatrième dix fois — et à « comment » nulle part.
+ *
+ * La méthode existait pourtant, écrite : « Cadrage, conception, mise en
+ * production, transfert », deuxième des huit principes de /principes. Une page
+ * atteignable seulement par une entrée de nav. Elle remonte ici, dépliée en une
+ * ligne par étape.
+ *
+ * RIEN N'EST INVENTÉ, et c'est ce qui borne le texte de chaque étape. Le devis
+ * ferme après l'appel vient de la section « offres » et de la FAQ ; les
+ * contrôles déterministes autour de l'IA, du cas Humble+ (« l'IA extrait, mais
+ * les contrôles critiques restent déterministes ») ; l'alerte posée là où
+ * l'équipe regarde déjà, de la réponse FAQ sur les outils qui changent ; la
+ * documentation à la livraison et les corrections du mois qui suit, des
+ * principes 4 et 7. Aucune durée n'est annoncée : les quatre cas publiés vont
+ * de quatre semaines à plusieurs mois, et un délai unique serait faux trois
+ * fois sur quatre.
+ *
+ * POURQUOI DES NUMÉROS ICI, alors qu'ils ont été retirés des sections de la
+ * home, du menu mobile et des principes. Parce que la raison de leur retrait ne
+ * s'applique pas : on les avait posés sur des ensembles que le lecteur parcourt
+ * dans l'ordre qu'il veut — une navigation n'est pas une séquence, des
+ * principes non plus. Une méthode, si. L'étape 3 ne peut pas précéder l'étape
+ * 1, et le chiffre porte ici une information que la mise en page ne porte pas.
+ */
+import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
+
+const etapes = [
+  {
+    titre: 'Cadrage',
+    corps:
+      'On part de votre process réel : vos outils, vos données, ce qui casse aujourd’hui. Vous repartez avec le périmètre écrit et un devis ferme, pas une fourchette.',
+  },
+  {
+    titre: 'Conception',
+    corps:
+      'Je construis le workflow, ou l’agent et le workflow qui l’encadre. L’IA lit et interprète ; les règles métier, elles, restent déterministes et garantissent le résultat.',
+  },
+  {
+    titre: 'Mise en production',
+    corps:
+      'Test sur vos vrais dossiers, puis bascule progressive. Chaque erreur remonte là où votre équipe regarde déjà — Slack, Notion ou email — au lieu d’attendre dans une file que personne n’ouvre.',
+  },
+  {
+    titre: 'Transfert',
+    corps:
+      'Documentation et formation à la livraison : ajouter un destinataire ou changer un filtre, votre équipe le fait sans moi. Je corrige sans surcoût le mois qui suit.',
+  },
+];
+---
+
+<section
+  id="methode"
+  data-section
+  class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+
+    <SectionHeader
+      title="Comment ça se passe, <mark>du cadrage au transfert.</mark>"
+      body="Quatre étapes. Vous savez à chaque instant où en est le projet et ce qui vient ensuite. Aucune durée annoncée ici : elle dépend du périmètre, et c’est le cadrage qui la pose."
+      titleMaxWidth="22ch"
+      bodyMaxWidth="62ch"
+    />
+
+    <ol class="reveal-stagger methode-etapes">
+      {etapes.map((e) => (
+        <li class="reveal methode-etape">
+          <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
+            {e.titre}
+          </h3>
+          <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
+            {e.corps}
+          </p>
+        </li>
+      ))}
+    </ol>
+
+    <div class="reveal methode-pied">
+      <LinkCTA href="/principes">Les 8 principes que je suis sur chaque mission</LinkCTA>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .methode-etapes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(1.75rem, 4vw, 3rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: etape;
+  }
+
+  .methode-etape {
+    position: relative;
+    border-top: 1px solid var(--color-divider);
+    padding: 1.75rem 0 0;
+  }
+
+  /* Le numéro en compteur CSS et non en texte : la liste reste une <ol>
+     sémantique — un lecteur d'écran annonce déjà « 1 sur 4 » — et le chiffre ne
+     part pas dans le presse-papier avec la phrase. Même dispositif que les
+     trois étapes de la carte de réservation, à l'échelle d'une section.
+     Il est posé SUR le filet de tête, dans un pastille de papier : c'est ce qui
+     fait lire les quatre blocs comme une suite plutôt que comme quatre colonnes
+     voisines, sans ajouter un second trait au système. */
+  .methode-etape::before {
+    counter-increment: etape;
+    content: counter(etape);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-50%);
+    padding-right: 0.6rem;
+    background: var(--color-section-band);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--color-ink);
+  }
+
+  .methode-pied {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-divider);
+  }
+</style>
