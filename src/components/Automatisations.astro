@@ -17,12 +17,22 @@
  * la page d'accueil. Elle remonte ici, reformulée autour de ce que les quatre
  * cas clients prouvent réellement.
  *
- * D'OÙ LA COLONNE DE PREUVES. Quatre des six lignes portent le cas qui les
- * documente, et le lien y mène. C'est la règle qui tient cette section : une
- * capacité annoncée renvoie à la mission où elle a tourné, ou elle reste
- * délibérément sans chiffre. Les deux lignes qui n'ont pas de cas publié —
- * reporting et alertes, reprise d'un existant — n'avancent aucune métrique ;
- * l'une est adossée à une réponse de la FAQ, l'autre à sa propre page.
+ * AUCUN LIEN VERS LES CAS ICI, et c'est une correction de la première version.
+ * Quatre des six lignes portaient le cas client qui les documente — Fraich
+ * Touch, Humble+, M Partners, Celeris — et la section des cas suit
+ * IMMÉDIATEMENT celle-ci. Le lecteur se voyait donc proposer quatre fois le
+ * même déplacement, plus un cinquième dans le pied de section, à quelques
+ * centaines de pixels du carrousel qui les montre en entier. Ces six lignes
+ * sont des exemples, pas des vignettes de preuve : la preuve est le bloc
+ * d'après, c'est son métier.
+ *
+ * Ce qui reste vrai de la règle de départ : aucune de ces six lignes n'avance
+ * de chiffre. Ce qui est chiffré est chiffré dans les cas, où la mesure est
+ * située et datée.
+ *
+ * Le pied appelle l'agenda plutôt qu'une page. Même dispositif que les quatre
+ * familles de la section outils : un lien fléché, la source du clic dans le
+ * funnel, et l'URL prise dans lib/reservation.
  *
  * Placée juste après le hero et le bandeau d'outils, avant les cas : le lecteur
  * doit pouvoir se reconnaître AVANT qu'on lui montre des clients qui ne sont
@@ -30,12 +40,11 @@
  */
 import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
+import { URL_RESERVATION } from '../lib/reservation';
 
 interface Process {
   titre: string;
   corps: string;
-  /** Le cas qui documente cette ligne. Absent = aucun chiffre n'est avancé. */
-  preuve?: { libelle: string; href: string };
 }
 
 const process: Process[] = [
@@ -43,25 +52,21 @@ const process: Process[] = [
     titre: 'Facturation et devis',
     corps:
       'Du deal signé à la facture envoyée : échéances, TVA selon le pays, relances. La ressaisie disparaît, les erreurs remontent au lieu de dormir dans une file.',
-    preuve: { libelle: 'Fraich Touch', href: '/cas-clients/facturation-automatisee-fraich-touch' },
   },
   {
     titre: 'Commandes e-commerce B2B',
     corps:
       'Un bon de commande reçu en PDF ou en Excel devient une commande Shopify et une facture, avec les bons produits, les bonnes remises et le bon client.',
-    preuve: { libelle: 'Humble+', href: '/cas-clients/humble-plus' },
   },
   {
     titre: 'Prospection et qualification',
     corps:
       'Sourcing des signaux, collecte des cibles, notation des profils par un agent IA, puis envoi dans le CRM et les séquences. Vous validez, la machine fait le reste.',
-    preuve: { libelle: 'M Partners', href: '/cas-clients/m-partners' },
   },
   {
     titre: 'Catalogue et données produit',
     corps:
       'Des fiches lues, structurées et créées directement dans votre ERP, en brouillon, pour qu’une personne valide avant publication.',
-    preuve: { libelle: 'Celeris', href: '/cas-clients/celeris' },
   },
   {
     titre: 'Reporting et alertes',
@@ -72,7 +77,6 @@ const process: Process[] = [
     titre: 'Reprendre ce qui casse',
     corps:
       'Une automatisation construite par quelqu’un d’autre, qui tombe à chaque changement d’API. Je la relis, je la répare, je la rends suivable.',
-    preuve: { libelle: 'La page dédiée', href: '/reprendre-une-automatisation-qui-casse' },
   },
 ];
 ---
@@ -86,7 +90,7 @@ const process: Process[] = [
 
     <SectionHeader
       title="Ce que j'automatise, <mark>concrètement.</mark>"
-      body="Six familles de process, celles qui reviennent le plus. Quatre sont documentées en détail dans un cas client, avec l'avant, l'après et les chiffres mesurés."
+      body="Six familles de process, celles qui reviennent le plus chez mes clients. Des exemples, pas un catalogue : ce qui compte est la forme du problème, pas la case dans laquelle il tombe."
       titleMaxWidth="20ch"
       bodyMaxWidth="62ch"
     />
@@ -104,11 +108,6 @@ const process: Process[] = [
           <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
             {p.corps}
           </p>
-          {p.preuve && (
-            <p class="process-preuve">
-              <a class="lien-prose" href={p.preuve.href}>{p.preuve.libelle}</a>
-            </p>
-          )}
         </div>
       ))}
     </div>
@@ -120,7 +119,11 @@ const process: Process[] = [
         répète ailleurs que de loin. La question utile n'est pas de savoir dans
         quelle famille il tombe, mais combien de temps il vous coûte.
       </p>
-      <LinkCTA href="/cas-clients">Voir les quatre cas en entier</LinkCTA>
+      <LinkCTA
+        href={URL_RESERVATION}
+        goal="lead_call"
+        goalSource="automatisations"
+      >Décrivez-moi le vôtre</LinkCTA>
     </div>
 
   </div>
@@ -138,17 +141,6 @@ const process: Process[] = [
     flex-direction: column;
     border-top: 1px solid var(--color-divider);
     padding: 1.75rem 0 0;
-  }
-
-  /* La preuve se cale en bas de colonne, comme la note « On part de… » des
-     formats : les corps font trois ou quatre lignes selon la ligne, et un même
-     rôle posé à trois horizontales différentes se lit comme un désalignement
-     dans une grille explicitement filetée en colonnes. */
-  .process-preuve {
-    margin: auto 0 0;
-    padding-top: 1rem;
-    font-size: var(--text-body-sm);
-    color: var(--color-ink-low);
   }
 
   .process-pied {
