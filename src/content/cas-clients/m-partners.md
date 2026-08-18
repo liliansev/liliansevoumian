@@ -1,6 +1,6 @@
 ---
-title: "Scraping, sourcing et qualification alimentée par l'IA"
-seoTitle: "Prospection et qualification automatisées par agent IA : cas client"
+title: "Comment M Partners scrape et qualifie ses prospects avec un agent IA"
+seoTitle: "Scraping et qualification de prospects par agent IA : cas client Make"
 description: "M Partners qualifie 23 cibles en 7 minutes et scrape 300 entreprises par semaine, sourcing des signaux et notation des profils compris."
 secteur: "Executive Search · Tech & VC"
 date: 2026-05-05
@@ -58,7 +58,7 @@ Les bons moments sont détectés automatiquement : entreprises qui viennent de l
 
 ### Scraping des entreprises
 
-Un **agent navigateur** reproduit le workflow manuel : pour chaque entreprise, il parcourt la page d'équipe et extrait noms, postes et profils LinkedIn. Une page scrapée = une entreprise traitée, d'où le passage à l'échelle (300/semaine) sans surcoût de temps.
+Un **agent navigateur** reproduit le workflow manuel : pour chaque entreprise, il parcourt la page d'équipe et extrait noms, postes et profils **LinkedIn**. Une page scrapée = une entreprise traitée, d'où le passage à l'échelle (300/semaine) sans surcoût de temps.
 
 ### Qualification par agent IA
 

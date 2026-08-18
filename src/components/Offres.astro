@@ -17,8 +17,8 @@ import BoutonReservation from './BoutonReservation.astro';
  * définir un seul : ni livrable, ni périmètre, ni point de départ. C'était la
  * section la plus courte de la page — cinq fois moins haute que celle des
  * outils — et la seule qui vend. Ne rien décrire ne protégeait de rien : ça
- * repoussait la totalité de la décision au diagnostic, ce qui est l'inverse
- * de ce que la page promet.
+ * repoussait la totalité de la décision à l'appel de 20 min, ce qui est
+ * l'inverse de ce que la page promet.
  *
  * Le prix reste absent, et la position qui l'explique est désormais ÉNONCÉE ICI
  * plutôt que réservée à la FAQ. Elle y tenait la question « Combien coûte une
@@ -27,7 +27,7 @@ import BoutonReservation from './BoutonReservation.astro';
  * lecteur se pose la question au moment où il lit ce qu'on peut construire pour
  * lui, c'est-à-dire ici. Le fond ne change pas — le même énoncé vaut trois
  * jours chez l'un et trois mois chez l'autre, le devis est ferme et arrive
- * après le diagnostic — il devient seulement trouvable deux fois.
+ * après l'appel — il devient seulement trouvable deux fois.
  *
  * Les trois formats ne sont pas inventés : ils recouvrent ce que le site prouve
  * déjà ailleurs — les quatre cas clients (construire), la page « reprendre une
@@ -86,8 +86,8 @@ const formats = [
         </h2>
       </div>
       <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0 max-w-[56ch]">
-        Trois formats. Le vôtre est souvent un mélange des trois, et c’est le
-        diagnostic qui le décide.
+        Trois formats. Le vôtre est souvent un mélange des trois, et c’est
+        l’appel de 20 min qui le décide.
       </p>
     </div>
 
@@ -127,16 +127,16 @@ const formats = [
       <p class="offres-budget">
         <strong>Budget&nbsp;:</strong> pas de grille tarifaire, parce que le même
         énoncé vaut trois jours de travail chez l’un et trois mois chez l’autre.
-        Le devis est ferme et arrive après le diagnostic, une fois le périmètre
-        posé. Si c’est votre sujet principal, dites-le dès le début. Je vous dis
-        franchement si le projet tient dedans.
+        Le devis est ferme et arrive après l’appel de 20 min, une fois le
+        périmètre posé. Si c’est votre sujet principal, dites-le dès le début.
+        Je vous dis franchement si le projet tient dedans.
       </p>
     </div>
 
     {/* Actions */}
     <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
       <BoutonReservation source="offres" class="btn-primary justify-center">
-        Réserver mon diagnostic&nbsp;· 20&nbsp;min
+        Automatiser mon business
       </BoutonReservation>
       {/* La page, pas l'ancre. `#cas` renvoyait le lecteur six mille pixels en
           arrière, au milieu d'un carrousel qu'il venait de dépasser : un lien

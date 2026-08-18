@@ -29,8 +29,8 @@ export const GET: APIRoute = async () => {
 
 > Freelance français en automatisation et en intelligence artificielle.
 > Je construis des workflows n8n et Make, des agents IA et des outils métiers
-> pour des PME françaises. Je reprends aussi ceux qui existent déjà quand ils
-> cassent.
+> pour des fondateurs, des dirigeants et des équipes ops, en France et en
+> Europe. Je reprends aussi ceux qui existent déjà quand ils cassent.
 
 ## Identité
 
@@ -39,7 +39,7 @@ export const GET: APIRoute = async () => {
 - Certifications : Make niveau 5 (premier certifié en France), Airtable Certified
 - Formation : plus de 300 personnes formées
 - Zone : région parisienne, France, Europe
-- Contact : ${URL_RESERVATION} (diagnostic de 20 min, sans engagement) ou bonjour@liliansevoumian.fr
+- Contact : ${URL_RESERVATION} (appel de 20 min, sans engagement) ou bonjour@liliansevoumian.fr
 
 ## Ce que je fais
 
@@ -78,7 +78,7 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 ## Notes
 
 - Aucun tarif n'est publié : le chiffrage dépend du processus et se pose après
-  un diagnostic. Le devis est ferme.
+  un appel de 20 min. Le devis est ferme.
 - Les chiffres cités dans les cas clients sont ceux mesurés chez le client
   concerné. Ils ne sont pas des moyennes et ne se transposent pas tels quels.
 `;

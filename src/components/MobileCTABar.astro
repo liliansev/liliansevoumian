@@ -27,7 +27,7 @@ import BoutonReservation from './BoutonReservation.astro';
 >
   <div class="border-t border-[var(--color-divider)] bg-[color-mix(in_oklch,var(--color-paper)_90%,transparent)] backdrop-blur-md px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
     <BoutonReservation source="barre-mobile" class="btn-primary w-full justify-center">
-        Réserver mon diagnostic
+        Automatiser mon business
       </BoutonReservation>
   </div>
 </div>
@@ -86,7 +86,7 @@ import BoutonReservation from './BoutonReservation.astro';
       barre!.setAttribute('aria-hidden', String(!visible));
       if (lien) lien.tabIndex = visible ? 0 : -1;
       // Signale l'état à la nav : le CTA central s'éteint quand la barre est
-      // visible (une seule instance de « Réserver un appel » à la fois).
+      // visible (une seule instance du CTA de réservation à la fois).
       document.body.classList.toggle('cta-bar-visible', visible);
     }
 

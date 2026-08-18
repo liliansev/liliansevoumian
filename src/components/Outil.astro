@@ -22,6 +22,14 @@
  *    de haut et le décalage de 0,115 em le ramènent sur la hauteur d'x du texte
  *    voisin, qui est ce que l'œil compare réellement.
  *
+ * 4. LE NOM EST EN GRAS, à l'encre. C'est le mot-clé de la phrase — celui sur
+ *    lequel la recherche est faite et celui qu'un lecteur balaye — et il vivait
+ *    au poids et à la couleur du texte de liaison qui l'entoure, en ink-mid dans
+ *    le sous-titre du hero. Même valeur que le `strong` de la prose des fiches
+ *    (`.case-prose strong`), pour qu'un nom d'outil pèse pareil partout.
+ *    `var(--color-ink)` et non une valeur littérale : `.bloc-encre` remappe le
+ *    jeton en blanc, le nom suit sans variante à écrire.
+ *
  * L'icône est décorative : le nom porte seul le sens, et reste lu par les
  * lecteurs d'écran comme n'importe quel mot de la phrase.
  */
@@ -44,6 +52,8 @@ const { icon, class: className = '' } = Astro.props;
 <span class={`outil ${className}`} data-icone={icon}><Icon name={icon} class="outil-ic" aria-hidden="true" /><slot /></span><style>
   .outil {
     white-space: nowrap;
+    font-weight: 600;
+    color: var(--color-ink);
   }
 
   .outil-ic {

@@ -28,5 +28,30 @@ export const URL_RESERVATION = 'https://cal.com/lilian-sevoumian/20min';
  */
 export const SELECTEUR_RESERVATION = 'a[href*="cal.com/lilian-sevoumian"]';
 
-/** Libellé par défaut d'un bouton de réservation. Les insécables sont voulues. */
-export const LIBELLE_RESERVATION = 'Réserver mon diagnostic · 20 min';
+/**
+ * Libellé par défaut d'un bouton de réservation.
+ *
+ * IL NOMME CE QUE LE LECTEUR VEUT, PAS CE QU'IL SUBIT. Il a porté « Réserver
+ * mon diagnostic · 20 min », et ce libellé demandait deux efforts avant de
+ * promettre quoi que ce soit : réserver (un créneau à bloquer) et diagnostic
+ * (un examen, dont on ne ressort par définition pas indemne). L'objet du clic
+ * était la procédure ; le résultat, lui, n'était écrit nulle part sur le
+ * bouton. Il l'est maintenant — l'action, l'agenda et la durée sont inchangés.
+ *
+ * La durée est descendue dans la copy qui borde les boutons (« 20 min, sans
+ * engagement »), où elle rassure au lieu de tenir la moitié d'un libellé.
+ *
+ * LA LONGUEUR EST UNE CONTRAINTE, pas un détail de rédaction : `.btn-primary`
+ * rend son libellé en capitales, et global.css cale la courbe de --text-button
+ * pour qu'il tienne sur une ligne jusqu'à 320 px de large. Mesuré dans Geist à
+ * 14 px avec l'interlettrage du bouton, « AUTOMATISER MON BUSINESS » réclame
+ * 216 px, contre 266 px pour l'ancien libellé le plus long : la marge s'est
+ * agrandie de 50 px, elle ne s'est pas réduite. Le libellé plus long qui avait
+ * été envisagé — « Automatiser une partie de mon business », 326 px — repassait
+ * le bouton sur deux lignes dès 375 px de fenêtre.
+ *
+ * Un seul emplacement a demandé un réglage : le CTA central de la barre de nav,
+ * plus étroit que n'importe quel bouton. Il est traité dans global.css, au
+ * niveau de `.nav-mid-cta`.
+ */
+export const LIBELLE_RESERVATION = 'Automatiser mon business';

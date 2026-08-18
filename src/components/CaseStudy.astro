@@ -15,7 +15,20 @@
  *   · Celeris       → catalogue ERP enrichi par agent IA, en interne
  *   · Humble+       → order-to-cash B2B (PDF/XLS → Shopify → Pennylane)
  * Tout en monochrome (tokens projet) ; seul --color-success (fonctionnel) pointe
- * les statuts positifs. Copy et angle métier inchangés.
+ * les statuts positifs.
+ *
+ * LES TITRES SONT CEUX DES FICHES, au caractère près (src/content/cas-clients/).
+ * Ils sont écrits deux fois — ici pour le carrousel, là-bas pour le h1 de la
+ * fiche et les cartes de /cas-clients — et rien ne vérifie qu'ils concordent :
+ * toute reprise de l'un demande l'autre. Ils répondent tous les quatre à la
+ * même question, « comment tel client a automatisé quoi », parce qu'un titre de
+ * cas est lu hors contexte, en résultat de recherche comme dans une liste de
+ * quatre : il doit nommer le client, l'outil et l'objet du travail sans
+ * s'appuyer sur ce qui l'entoure.
+ *
+ * Les résumés nomment les outils de la mission et les posent en `strong`. C'est
+ * le seul endroit de la home où ils sont cités dans une phrase ; au poids du
+ * texte de liaison, ils s'y perdaient.
  */
 import SectionHeader from './SectionHeader.astro';
 import MockupWindow from './mockups/MockupWindow.astro';
@@ -29,9 +42,9 @@ const fraichTouch = {
   logo: '/logos/fraichtouch.svg',
   logoScale: 2.2,
   sector: 'AGENCE DE GESTION DE TALENTS',
-  title: 'Facturation complexe 100% automatisée depuis HubSpot',
+  title: 'Comment Fraich Touch a automatisé sa facturation HubSpot et Pennylane',
   description:
-    "Agence de gestion de talents (santé, sport, entrepreneuriat) qui pilote les partenariats marques de ses créateurs. J'ai repensé leur système de facturation : automatisé de bout en bout, documenté et surveillé. Les relances partent toutes seules, l'équipe se concentre sur ses talents.",
+    "Agence de gestion de talents (santé, sport, entrepreneuriat) qui pilote les partenariats marques de ses créateurs. J'ai reconstruit leur facturation dans <strong>Make</strong> : un deal signé dans <strong>HubSpot</strong> devient un devis puis jusqu'à douze factures <strong>Pennylane</strong>, suivies dans <strong>Notion</strong>. Les relances partent toutes seules, l'équipe se concentre sur ses talents.",
   /* Ce que le client a GAGNÉ — du temps, de l'effort en moins — et jamais ce
      que le système fait techniquement : « 0,00 € d'écart sur le cas test » ne
      dit rien à un dirigeant. Tout vient du .md correspondant, sans exception ;
@@ -44,9 +57,9 @@ const fraichTouch = {
 const mPartners = {
   client: 'M Partners',
   sector: 'EXECUTIVE SEARCH · TECH & VC',
-  title: "Scraping, sourcing et qualification alimentée par l'IA",
+  title: 'Comment M Partners scrape et qualifie ses prospects avec un agent IA',
   description:
-    "Cabinet de chasse de têtes spécialisé sur l'écosystème startup et capital-risque. J'ai industrialisé leur prospection : la collecte et l'enrichissement des cibles sont automatisés, puis un agent IA qualifie les bons dirigeants à approcher. L'équipe garde son temps pour la relation.",
+    "Cabinet de chasse de têtes spécialisé sur l'écosystème startup et capital-risque. J'ai industrialisé leur prospection dans <strong>Make</strong> : le <strong>scraping</strong> des pages d'équipe est automatisé, un <strong>agent IA</strong> qualifie les bons dirigeants, puis les cibles partent dans <strong>Attio</strong> et <strong>Instantly</strong>. L'équipe garde son temps pour la relation.",
   results: ['~10 MIN PAR RUN AU LIEU DE 1 À 3 H', '6× PLUS D’ENTREPRISES TRAITABLES PAR SEMAINE'],
   href: '/cas-clients/m-partners',
 };
@@ -54,9 +67,9 @@ const celeris = {
   client: 'Celeris',
   logo: '/logos/celeris.webp',
   sector: 'DISTRIBUTEUR IT B2B',
-  title: "Un catalogue produits qui s'enrichit tout seul.",
+  title: "Comment Celeris a automatisé l'enrichissement de son catalogue Odoo",
   description:
-    "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu un agent IA qui gère leur catalogue produits directement dans leur ERP. Il est pensé pour tourner en interne, avec une exigence forte de souveraineté des données.",
+    "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu deux <strong>agents IA</strong> sur <strong>n8n</strong> qui enrichissent leur catalogue produits directement dans <strong>Odoo</strong>. Le moteur est <strong>Mistral</strong>, une IA française, parce que les données doivent rester en Europe.",
   /* « EN TEST » vient de la fiche source (celeris.md:13, « 319 sur ~515, en
      test ») : le chiffre circulait sans sa réserve, ce qui le faisait passer
      pour un résultat de production. */
@@ -66,9 +79,9 @@ const celeris = {
 const humblePlus = {
   client: 'Humble+',
   sector: 'NUTRITION FONCTIONNELLE · E-COMMERCE B2B',
-  title: 'Des bons de commande B2B aux factures, sans ressaisie',
+  title: 'Comment Humble+ a automatisé ses commandes Shopify et ses factures B2B',
   description:
-    "Marque française de compléments alimentaires distribuée en direct et via un réseau B2B. J'ai porté leur scénario Make dans un workflow n8n qui lit les bons de commande PDF ou Excel, sécurise les montants, crée la commande Shopify puis la facture Pennylane, avec validation Slack pendant la phase de stabilisation.",
+    "Marque française de compléments alimentaires distribuée en direct et via un réseau <strong>e-commerce B2B</strong>. J'ai porté leur scénario <strong>Make</strong> dans un workflow <strong>n8n</strong> qui lit les bons de commande PDF ou Excel, sécurise les montants, crée la commande <strong>Shopify</strong> puis la facture <strong>Pennylane</strong>, avec validation <strong>Slack</strong> pendant la phase de stabilisation.",
   results: ['COMMANDE → FACTURE SANS RESSAISIE', 'LES COMMANDES S’ENCHAÎNENT SANS ATTENDRE'],
   href: '/cas-clients/humble-plus',
 };
@@ -152,7 +165,7 @@ const humblePlus = {
               <time class="case-date" datetime="2026-07-23">JUIL. 2026</time>
             </div>
             <h3>{humblePlus.title}</h3>
-            <p class="case-description">{humblePlus.description}</p>
+            <p class="case-description" set:html={humblePlus.description} />
             <p class="case-results">
               {humblePlus.results.map((result, i) => (
                 <Fragment>
@@ -203,7 +216,7 @@ const humblePlus = {
               <time class="case-date" datetime="2026-05-05">MAI 2026</time>
             </div>
             <h3>{mPartners.title}</h3>
-            <p class="case-description">{mPartners.description}</p>
+            <p class="case-description" set:html={mPartners.description} />
             <p class="case-results">
               {mPartners.results.map((result, i) => (
                 <Fragment>
@@ -251,7 +264,7 @@ const humblePlus = {
               <time class="case-date" datetime="2026-01-30">JANV. 2026</time>
             </div>
             <h3>{fraichTouch.title}</h3>
-            <p class="case-description">{fraichTouch.description}</p>
+            <p class="case-description" set:html={fraichTouch.description} />
             <p class="case-results">
               {fraichTouch.results.map((result, i) => (
                 <Fragment>
@@ -300,7 +313,7 @@ const humblePlus = {
               <time class="case-date" datetime="2026-06-20">JUIN 2026</time>
             </div>
             <h3>{celeris.title}</h3>
-            <p class="case-description">{celeris.description}</p>
+            <p class="case-description" set:html={celeris.description} />
             <p class="case-results">
               {celeris.results.map((result, i) => (
                 <Fragment>
@@ -569,6 +582,17 @@ const humblePlus = {
     color: var(--color-ink-mid);
     font-size: var(--text-body);
     line-height: 1.6;
+  }
+
+  /* Les mots-clés du résumé — outils, briques métier — sont posés à l'encre et
+     en 600, comme le `strong` de la prose des fiches. Le résumé est le seul
+     endroit de la home où l'on nomme les outils d'une mission ; en ink-mid et
+     au même poids que le reste, ils se lisaient comme du texte de liaison.
+     `:global` est requis : la description arrive par `set:html`, donc hors du
+     périmètre du style scopé. */
+  .case-description :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
   }
 
   /* Le point médian devient inutile dès que chaque résultat a son propre
