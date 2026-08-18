@@ -353,17 +353,31 @@ const humblePlus = {
           des pages de cas a été gardé, lui, parce qu'il dit une progression dans
           un article long — où j'en suis, combien il reste. Ici les quatre
           boutons sont visibles ensemble, avec le nom du client et le filet
-          d'état : le chiffre ne répondait à aucune question. */}
-      {['Humble+', 'M Partners', 'Fraich Touch', 'Celeris'].map((label, index) => (
+          d'état : le chiffre ne répondait à aucune question.
+
+          LE SECTEUR EST MONTÉ ICI, sous le nom du client, et c'est ce qui fait
+          de cette rangée autre chose qu'une commande de carrousel. La question
+          du lecteur à cet endroit est « est-ce que l'un de ces quatre me
+          ressemble ? », et « Celeris » ne lui apprend rien ; « distributeur IT
+          B2B », si. Le carrousel n'en montre qu'un à la fois — c'est le prix des
+          maquettes, qui ont besoin de la largeur — donc c'est cette rangée qui
+          doit rendre les quatre lisibles d'un coup d'œil, sans trois clics.
+
+          Les libellés ne sont plus une liste à part. Ils étaient recopiés à la
+          main dans un tableau de quatre chaînes, à côté des quatre objets qui
+          portent déjà `client` et `sector` : une troisième écriture des mêmes
+          noms, que rien ne vérifiait. */}
+      {[humblePlus, mPartners, fraichTouch, celeris].map((cas, index) => (
         <button
           type="button"
           class="case-carousel-dot"
-          aria-label={`Afficher le cas ${label}`}
+          aria-label={`Afficher le cas ${cas.client}, ${cas.sector}`}
           aria-current={index === 0 ? 'true' : undefined}
           data-case-dot
           data-case-index={index}
         >
-          <span class="case-carousel-dot-label">{label}</span>
+          <span class="case-carousel-dot-label">{cas.client}</span>
+          <span class="case-carousel-dot-secteur">{cas.sector}</span>
         </button>
       ))}
     </div>
@@ -638,9 +652,13 @@ const humblePlus = {
 
   .case-carousel-dot {
     position: relative;
+    /* Colonne et non rangée depuis que le secteur est passé sous le nom : en
+       `align-items: center`, les deux lignes se centraient l'une sur l'autre et
+       les quatre noms de clients cessaient de s'aligner entre eux. */
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
     min-height: 44px;
     padding: 0.75rem 0 0;
     color: var(--color-ink-low);
@@ -651,6 +669,21 @@ const humblePlus = {
     font-size: var(--text-mono-caption);
     letter-spacing: 0.02em;
     text-align: left;
+  }
+
+  /* Le secteur est le second rang, en encre plus claire : c'est lui qu'on
+     balaye pour se reconnaître, mais c'est le nom du client qui ancre la
+     colonne. `text-wrap: balance` parce que deux de ces quatre secteurs tiennent
+     sur deux lignes dans une colonne de quart de page, et qu'un mot orphelin en
+     seconde ligne désaligne toute la rangée. */
+  .case-carousel-dot-secteur {
+    color: var(--color-ink-faint);
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+
+  .case-carousel-dot[aria-current='true'] .case-carousel-dot-secteur {
+    color: var(--color-ink-low);
   }
 
   /* ink-faint et non divider : cette barre est le seul indicateur d'état des
