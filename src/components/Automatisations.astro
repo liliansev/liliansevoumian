@@ -34,6 +34,16 @@
  * familles de la section outils : un lien fléché, la source du clic dans le
  * funnel, et l'URL prise dans lib/reservation.
  *
+ * SIX PROCESS, ET AUCUN MODE DE COLLABORATION. La sixième ligne a d'abord porté
+ * « Reprendre ce qui casse » — qui est le titre exact, au caractère près, d'un
+ * des trois formats de la section « offres », six sections plus bas. Deux h3
+ * identiques sur la même page, et surtout deux registres confondus : reprendre
+ * un existant n'est pas une famille de process, c'est une façon d'entrer dans
+ * une mission. C'est le métier de la section « offres », pas de celle-ci. Elle
+ * est remplacée par les demandes entrantes, qui manquaient à la liste et que
+ * /expert-n8n décrit déjà (« tri, qualification de leads, classification de
+ * demandes »).
+ *
  * Placée juste après le hero et le bandeau d'outils, avant les cas : le lecteur
  * doit pouvoir se reconnaître AVANT qu'on lui montre des clients qui ne sont
  * pas lui.
@@ -42,12 +52,12 @@ import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
 import { URL_RESERVATION } from '../lib/reservation';
 
-interface Process {
+interface Famille {
   titre: string;
   corps: string;
 }
 
-const process: Process[] = [
+const familles: Famille[] = [
   {
     titre: 'Facturation et devis',
     corps:
@@ -74,9 +84,9 @@ const process: Process[] = [
       'Les chiffres se consolident sans personne, et la panne se voit le jour où elle arrive : l’alerte tombe dans Slack, Notion ou votre boîte mail.',
   },
   {
-    titre: 'Reprendre ce qui casse',
+    titre: 'Demandes entrantes',
     corps:
-      'Une automatisation construite par quelqu’un d’autre, qui tombe à chaque changement d’API. Je la relis, je la répare, je la rends suivable.',
+      'Un mail ou un formulaire arrive : il est lu, qualifié, puis routé vers la bonne personne avec le contexte déjà rassemblé. Personne ne trie à la main.',
   },
 ];
 ---
@@ -100,13 +110,13 @@ const process: Process[] = [
         et une grille de six cartes à icône est exactement le motif que ce site
         évite partout ailleurs. */}
     <div class="reveal-stagger process-grille">
-      {process.map((p) => (
+      {familles.map((f) => (
         <div class="reveal process-item">
           <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
-            {p.titre}
+            {f.titre}
           </h3>
           <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
-            {p.corps}
+            {f.corps}
           </p>
         </div>
       ))}
