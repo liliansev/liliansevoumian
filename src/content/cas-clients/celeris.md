@@ -1,6 +1,6 @@
 ---
-title: "Un catalogue produits qui s'enrichit tout seul"
-seoTitle: "Enrichir un catalogue produits par agent IA : cas client Odoo"
+title: "Comment Celeris a automatisé l'enrichissement de son catalogue Odoo"
+seoTitle: "Enrichir un catalogue produits Odoo par agent IA : cas client n8n"
 description: "Celeris enrichit son catalogue directement dans Odoo grâce à deux agents IA, pour 2 à 3 centimes par fiche et plus de 60 % de correspondances automatiques."
 secteur: "Distributeur IT B2B"
 date: 2026-06-20
@@ -27,7 +27,7 @@ draft: false
 
 ## L'entreprise
 
-Celeris est un distributeur IT B2B établi (PC, serveurs HPE, Dell, Lenovo), dont tout le catalogue et la gestion commerciale tournent sur Odoo. Un acteur avec une exigence forte : **garder la maîtrise de ses données**, dont une bonne partie doit rester en interne.
+Celeris est un distributeur IT B2B établi (PC, serveurs HPE, Dell, Lenovo), dont tout le catalogue et la gestion commerciale tournent sur **Odoo**. Un acteur avec une exigence forte : **garder la maîtrise de ses données**, dont une bonne partie doit rester en interne.
 
 ## Le problème
 

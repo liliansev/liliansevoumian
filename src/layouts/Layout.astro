@@ -128,8 +128,8 @@ const faqPageSchema = faqSchema ? {
         // l'overlay cal.com (plus bas) — et chacune écrivait `body.overflow`
         // en direct, dont `''` à la fermeture. Le dernier à fermer relâchait
         // donc le verrou de l'autre. Le chemin visible : menu ouvert, la barre
-        // de nav reste au-dessus (z-50 contre z-49) et son CTA « Réserver un
-        // diagnostic » reste tapable ; l'overlay se posait sur le menu, et le
+        // de nav reste au-dessus (z-50 contre z-49) et son CTA « Automatiser
+        // mon business » reste tapable ; l'overlay se posait sur le menu, et le
         // refermer laissait le menu plein écran avec la page qui défile
         // derrière. Un compteur rend l'ordre des fermetures sans conséquence :
         // le scroll ne revient qu'une fois le dernier propriétaire parti.
@@ -336,9 +336,9 @@ const faqPageSchema = faqSchema ? {
     <slot />
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
-    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label="Réserver un diagnostic · 20 min" aria-hidden="true" tabindex="-1">
+    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label="Réserver un appel de 20 min" aria-hidden="true" tabindex="-1">
       <div class="cal-overlay-bar">
-        <span class="cal-overlay-title">Diagnostic · 20 min</span>
+        <span class="cal-overlay-title">Appel · 20 min</span>
         <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
       </div>
       <div class="cal-overlay-body">

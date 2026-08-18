@@ -114,7 +114,7 @@ const lienNav = (href: string) => (href.startsWith('#') ? `${prefix}${href}` : h
 
     <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
     <BoutonReservation source="nav_mobile_cta" class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
-      Réserver un diagnostic <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
+      Automatiser mon business <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
     </BoutonReservation>
 
     <!-- Desktop links -->
@@ -129,7 +129,7 @@ const lienNav = (href: string) => (href.startsWith('#') ? `${prefix}${href}` : h
     <!-- Desktop CTA -->
     <div class="hidden lg:flex items-center gap-2">
       <BoutonReservation source="nav">
-        Diagnostic&nbsp;· 20&nbsp;min
+        Automatiser mon business
       </BoutonReservation>
     </div>
 
@@ -178,7 +178,7 @@ const lienNav = (href: string) => (href.startsWith('#') ? `${prefix}${href}` : h
           exigeait encore : on retrouvait le menu plein écran, page scrollable
           derrière. Le listener du lien passe avant celui de `document`. */}
       <BoutonReservation source="nav" class="btn-primary justify-center w-full" data-mobile-link="">
-        Diagnostic&nbsp;· 20&nbsp;min
+        Automatiser mon business
       </BoutonReservation>
     </div>
   </div>
@@ -298,7 +298,7 @@ const lienNav = (href: string) => (href.startsWith('#') ? `${prefix}${href}` : h
   // Tout CTA de réservation ferme le menu, où qu'il soit. Les liens DU menu
   // portent déjà `data-mobile-link` ; celui de la BARRE de nav, non — et la
   // barre reste au-dessus du menu ouvert (z-50 contre z-49), donc son
-  // « Réserver un diagnostic » est tapable pendant que le menu est déployé.
+  // « Automatiser mon business » est tapable pendant que le menu est déployé.
   // Sans ça, l'overlay cal.com se posait sur un menu resté ouvert, qu'on
   // retrouvait intact en refermant l'agenda.
   document.addEventListener('click', (e) => {

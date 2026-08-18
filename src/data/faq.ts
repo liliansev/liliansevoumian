@@ -29,11 +29,12 @@
  * accolées derrière lui, dans cet ordre parce que la seconde répond en
  * s'appuyant sur la première, et le moyen de prendre contact ferme la liste.
  *
- * Un seul nom pour le rendez-vous : « diagnostic », celui qui est écrit sur les
- * dix-neuf boutons de réservation du site. « Premier appel » et « premier
- * échange » désignaient le même objet ailleurs, et un lecteur qui croise trois
- * noms fait le rapprochement trois fois. Les réponses étant lues hors de la
- * page, il y est nommé en entier, « diagnostic de 20 minutes ».
+ * Un seul nom pour le rendez-vous : « l'appel de 20 minutes ». « Premier
+ * appel », « premier échange » et « diagnostic » ont tous désigné le même objet
+ * à un moment ou à un autre, et un lecteur qui croise trois noms fait le
+ * rapprochement trois fois. Les boutons ne le nomment plus du tout — ils
+ * nomment le résultat, « Automatiser mon business » (lib/reservation.ts) — donc
+ * c'est ici, dans la prose, que le rendez-vous porte son nom en entier.
  */
 
 export interface FaqItem {
@@ -46,7 +47,7 @@ export interface FaqItem {
 export const faqs: FaqItem[] = [
   {
     q: "Combien coûte une automatisation ?",
-    a: "Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après le diagnostic de 20 minutes, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.",
+    a: "Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après l'appel de 20 minutes, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.",
   },
   {
     q: "C'est quoi un agent IA ?",
@@ -66,6 +67,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Comment vous contacter rapidement ?",
-    a: "Le plus rapide est de réserver un diagnostic de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
+    a: "Le plus rapide est de réserver un appel de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
   },
 ];
