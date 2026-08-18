@@ -78,8 +78,13 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
           de l’heure chargée.
         </p>
 
-        <span data-roi-warning class="mono-caption block mt-4 text-[var(--color-error)]" hidden={!isCapped}>
-          [!] ESTIMATION PLAFONNÉE · L’AUDIT RÉEL DESCEND DANS LE DÉTAIL
+        {/* Casse normale, comme les deux ponts vers les formations : c'est un
+            avertissement, donc précisément le texte qu'il ne faut pas rendre
+            plus lent à lire. Le crochet « [!] » saute avec les capitales — il
+            faisait le travail d'un signe d'alerte dans une ligne qui n'en avait
+            pas d'autre, et la couleur d'erreur le porte déjà. */}
+        <span data-roi-warning class="block mt-4 text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-error)]" hidden={!isCapped}>
+          Estimation plafonnée : l’audit réel descend dans le détail.
         </span>
 
         {/* Une seule région live, hors du chiffre animé. L'ancien montage
