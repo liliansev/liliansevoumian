@@ -20,6 +20,12 @@ colors:
   text-on-dark-mid: "#c9c9c9"
   surface-on-dark: "#1c1c1c"
 typography:
+  home-hero:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "clamp(3.25rem, 5vw + 0.25rem, 5.25rem)"
+    fontWeight: 600
+    lineHeight: 0.94
+    letterSpacing: "-0.035em"
   display-hero:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(3.25rem, 6vw + 1.2rem, 6.25rem)"
@@ -104,7 +110,7 @@ components:
 
 # Design System: Lilian Sevoumian
 
-## 1. Overview
+## Overview
 
 **Le lime ne s'écrit pas. Il se pose.**
 
@@ -128,7 +134,8 @@ sont, dans cet ordre, les trois marqueurs les plus universels du site généré.
 **Caractéristiques clés :**
 
 - Le lime est une surface, jamais une couleur de texte.
-- Les deux expertises entrent ensemble et gardent le même poids visuel.
+- Sur la home, Lilian apparaît avant les offres ; les deux expertises gardent
+  ensuite le même poids dans leur routeur dédié.
 - Le vibe coding relie les deux pratiques ; il ne devient jamais un troisième
   panneau de service.
 - Les filets et les changements de surface portent la profondeur ; aucune ombre.
@@ -152,7 +159,7 @@ pied de page, un statut dans une maquette, le libellé d'un curseur. Le motif
 retiré est le sur-titre qui coiffe un titre en le répétant, pas la petite
 capitale en soi.
 
-## 2. Colors: Papier, encre, et un lime qui ne s'écrit jamais
+## Colors
 
 La palette n'a **aucune chroma résiduelle** : les gris sont de vrais gris. Un
 neutre teinté est une décision colorimétrique, discrète mais réelle, et le
@@ -190,7 +197,7 @@ les jetons de rôle : tout composant réutilisable s'y adapte sans variante à
 fixes**. Écrire `background: var(--color-ink)` dans un bloc qui redéfinit
 `--color-ink` produit un cycle, et la section devient blanche sur blanc.
 
-## 3. Typography
+## Typography
 
 **Une seule famille**, Geist Variable. `--font-mono` existe encore parce que onze
 composants l'appellent, mais il vaut la police de texte : le monospace a disparu
@@ -243,13 +250,14 @@ section et en casse une autre, sur une page qu'on ne regardait pas.
 Les titres de section descendent à `-0,035em` de chasse ; le plancher est
 `-0,04em`, en dessous les lettres se touchent.
 
-**Le double manifeste de la home porte un rang propre et symétrique.** Un seul
-`h1`, visuellement masqué, nomme la page pour les technologies d'assistance ;
-les deux titres visibles sont des `h2` et consomment tous deux
-`--text-home-service`, une courbe unique de 40 à 72 px. Aucun panneau ne reçoit
-un rang, un poids ou une taille dominante. `--text-display-hero` reste le rang
-des manifestes des landings spécialisées : lui aussi conserve une courbe unique,
-sans commutation de jeton au point de rupture.
+**La home incarnée possède son rang de titre.** Son `h1` est visible et consomme
+`--text-home-hero`, une courbe unique de 52 à 84 px. Il fait face au portrait de
+Lilian sur un contrechamp lime, sans devenir aussi monumental que les manifestes
+des landings spécialisées. Plus bas, les deux titres du routeur consomment
+`--text-home-service`, une courbe unique de 40 à 72 px : le rang est partagé par
+**Automatisation & IA** et **Sites web**, sans hiérarchie entre les deux chemins.
+`--text-display-hero` reste le rang des landings spécialisées. Aucun de ces rôles
+ne commute de jeton au point de rupture.
 
 ### La règle de couche, qui a déjà coûté deux bugs
 
@@ -276,7 +284,7 @@ caractères de médiane au lieu des 65 à 75 lisibles. Une ligne déplacée dans
 Pas de césure automatique sur les titres. À 96 px un tiret se voit de loin, et
 `hyphens: auto` coupait « freelance » en « free-lance ».
 
-## 4. Elevation
+## Elevation & Depth
 
 **Il n'y en a pas.** `--shadow-card` et `--shadow-card-hover` valent
 `0 0 0 0 transparent`. La structure vient des filets, d'un seul poids : 1 px.
@@ -391,27 +399,34 @@ celui qu'on voyait le moins. **Une animation liée au scroll ne porte que des
 propriétés compositables**, `transform` et `opacity` ; tout le reste se paie à
 chaque image, et se paie sur le seul geste que le visiteur fait en continu.
 
-## 5. Components
+## Components
 
-### Le double manifeste de la home
+### La home personnelle et son routeur de services
 
-Le premier viewport est un choix, pas une introduction. Sur desktop, il forme
-un diptyque strict `50 / 50` : lime pour **Automatisation & IA**, papier pour
-**Sites web**. Sur mobile, les deux panneaux deviennent deux rangées de hauteur
-égale. Ils gardent la même architecture de contenu, la même densité, le même
-poids typographique et une preuve courte chacun.
+Le premier viewport présente d'abord la personne qui construit. Sur desktop,
+le titre direct occupe la gauche et le portrait de Lilian la droite, cadré dans
+un rectangle `4 / 5` au filet d'encre, avec un contrechamp lime décalé de
+`1,25rem`. Sur tablette, l'image passe sous le texte en `16 / 10` ; sur petit
+mobile elle devient `4 / 3`. L'action primaire descend vers `#services` : elle
+oriente sans faire du hero un comparateur ni y dupliquer les deux offres.
 
-Chaque panneau est **une seule surface lien** vers sa landing dédiée —
-`/automatisations-ia` ou `/sites-web-abonnement` — sans lien imbriqué. Les
-mini-systèmes sont code-native, sans capture, ombre ni rayon :
-`Entrée → Workflow → Agent IA → Action` pour l'automatisation, et
-`Publier → Observer → Améliorer` pour le web. Le premier exprime un pipeline ;
-le second, un cycle d'amélioration continue.
+La section suivante compacte la légitimité en deux colonnes : trajectoire et
+méthode à gauche, quatre faits vérifiables à droite. Elle répond à « pourquoi
+vous confier le projet ? » avant de demander au visiteur de choisir un service.
 
-La navigation de la home reste volontairement réduite, car le choix de service
-vit déjà dans le hero. Après ce choix, le récit suit toujours
-**preuve → méthode → personne → contact**. Le vibe coding apparaît dans la
-méthode commune ; il ne doit jamais être mis au même rang que les deux offres.
+Le choix arrive ensuite dans un routeur à deux surfaces de même poids : lime
+pour **Automatisation & IA**, papier pour **Sites web**. Chaque carte garde la
+même hauteur minimale, la même densité, le même rang typographique, une preuve
+courte et une seule destination — `/automatisations-ia` ou
+`/sites-web-abonnement` — sans lien imbriqué. Sur mobile, les deux colonnes
+deviennent deux rangées séparées par le même filet de 1 px.
+
+Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops,
+les dirigeants de PME, puis les agences et studios à se reconnaître. La FAQ
+ferme la home en répondant aux questions de triage. La prise de rendez-vous
+n'appartient pas à cette page : chaque landing détaille son service, ses preuves
+et ses limites avant de convertir. Le vibe coding reste une méthode commune,
+jamais une troisième offre.
 
 **Le surlignage** est le dispositif signature. Une bande lime en pseudo-élément
 posée **derrière** le texte, avec `z-index: -1` et `isolation: isolate`. C'est la
@@ -463,17 +478,14 @@ défaut du navigateur, sans erreur ni avertissement.
 En dessous, seize caractères en capitales ne cohabitent pas avec un CTA central et
 un déclencheur de menu : l'emplacement tombe à 28 px et porte un « L » tant que le
 hero est à l'écran, puis le visage, en fondu croisé, une fois le hero sorti. Le
-« L » maintient l'identité pendant que le double manifeste donne toute la place
-au choix entre les deux expertises.
+« L » évite de répéter le portrait pendant qu'il est déjà visible en grand ; le
+visage reprend l'identité dans la barre dès que ce portrait quitte l'écran.
 
-Le portrait apparu dans le bloc contact ne le rend pas redondant, et le mobile
-n'en montre pas « deux » : les deux images ne répondent pas à la même question.
-Celle de 28 px répond à *chez qui suis-je*, dans le seul élément qui ne quitte
-jamais l'écran ; celle du bloc contact répond à *à qui vais-je parler*, une fois,
-au moment de réserver. À 28 px on ne lit pas un visage, on lit une marque. C'est
-aussi pourquoi le visage ne monte pas en desktop : il y serait le seul endroit
-du site où l'identité est énoncée deux fois dans le même empan, à côté du nom
-écrit.
+Les deux images ne répondent donc pas à la même échelle : celle du hero présente
+la personne, celle de 28 px devient ensuite un repère de marque persistant. À
+28 px on ne relit pas un portrait, on reconnaît une identité. C'est aussi pourquoi
+le visage ne monte pas en desktop : le wordmark complet y tient et reste la forme
+la plus nette de la marque dans la navigation.
 
 Le fondu croisé était piloté par un observateur sur `#hero`, que seule la home
 possède : vérifié en runtime, sur les **dix autres pages** le repère restait un
@@ -556,7 +568,7 @@ actions, `bascule` au moins trois lignes, `nomenclature` au moins six. **Un cas
 qui n'a pas la matière n'a pas le visuel** — un gabarit qu'on peut remplir à
 moitié invite à inventer pour l'équilibrer.
 
-## 6. L'identité hors-site
+### L'identité hors-site
 
 Vignette de partage, favicon, icône d'écran d'accueil. Ces trois actifs sont **les
 plus vus de la marque** — chaque lien posté sur LinkedIn, chaque onglet, chaque
@@ -565,11 +577,12 @@ porté pendant un temps un cube 3D blanc cassé aux logos multicolores : ni lime
 ni Geist, ni aucune trace de ce système, et trois des anti-références de
 `PRODUCT.md` cochées d'un coup.
 
-**La home possède sa vignette propre** (`public/og-home.png`, 1200 × 630) : le
-double manifeste y reste immédiatement lisible, avec le diptyque lime/papier,
-les deux titres de même poids et la navigation réduite. Elle est la miniature de
-la décision proposée au premier viewport, pas un retour à une promesse
-d'automatisation unique.
+**La home possède sa vignette propre** (`public/og-home.png`, 1200 × 630) : elle
+reprend le premier viewport livré, avec le titre personnel à gauche, le portrait
+à droite et son contrechamp lime. Sa provenance visuelle reste attachée au code
+de `HomeHeroPersonal.astro` et au portrait source
+`src/assets/lilian-photo.jpg` ; elle ne réinterprète pas la home avec une
+composition de campagne parallèle.
 
 **La vignette par défaut** (`public/og-image.png`, 1200 × 630) conserve l'autre
 expression de la marque : aplat lime, manifeste en Geist semibold, surlignage
@@ -586,7 +599,7 @@ reconnaissable au coin de l'œil. Rayon `0` — un carré ne se clique pas. Les
 trois sont générés depuis la même source SVG : **une seule identité**, là où le
 PNG et le SVG en portaient deux différentes.
 
-## 7. Do's and Don'ts
+## Do's and Don'ts
 
 **À faire**
 
@@ -600,8 +613,8 @@ PNG et le SVG en portaient deux différentes.
   montré est aussi une affirmation.
 - Montrer un projet public par une capture réelle, légendée et traçable ;
   cantonner sa palette à l'image.
-- Garder les deux panneaux de la home strictement symétriques en poids, en
-  hauteur et en nombre de surfaces interactives.
+- Garder les deux cartes du routeur de la home strictement égales en poids, en
+  hauteur minimale et en nombre de surfaces interactives.
 
 **À ne pas faire**
 
@@ -659,5 +672,5 @@ PNG et le SVG en portaient deux différentes.
 - Refaire à la main l'en-tête d'une section. `SectionHeader` porte le titre, le
   filet et le chapô, et le filet est ce qui donne son rang à la section — deux
   sections l'avaient réimplémenté et se présentaient comme des sous-parties.
-- Présenter le vibe coding comme une troisième offre, ou ajouter un lien interne
-  à l'un des panneaux du double manifeste.
+- Présenter le vibe coding comme une troisième offre, ou faire remonter le choix
+  entre les deux services dans le hero personnel.

@@ -13,6 +13,8 @@ interface Props {
   links?: NavigationLink[];
   ctaLabel?: string;
   ctaSource?: string;
+  /** Pour une page qui doit d'abord orienter, remplace la réservation par un lien interne. */
+  ctaHref?: string;
   /** La page porte un élément #hero dont la sortie pilote le repère mobile. */
   trackHero?: boolean;
 }
@@ -64,13 +66,14 @@ const defaultNavLinks: NavigationLink[] = [
   { href: "/sites-web-abonnement", label: "Sites web" },
   { href: "/cas-clients", label: "Réalisations" },
   { href: "/principes", label: "Méthode" },
-  { href: "/#a-propos", label: "À propos" },
+  { href: "/#qui-je-suis", label: "À propos" },
 ];
 
 const {
   links: suppliedLinks,
   ctaLabel = 'Parler de mon projet',
   ctaSource = 'nav',
+  ctaHref,
   trackHero,
 } = Astro.props;
 const navLinks = suppliedLinks ?? defaultNavLinks;
@@ -159,9 +162,15 @@ const lienNav = (href: string) => {
     </a>
 
     <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
-    <BoutonReservation source={mobileCtaSource} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
-      {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
-    </BoutonReservation>
+    {ctaHref ? (
+      <a href={lienNav(ctaHref)} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
+        {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
+      </a>
+    ) : (
+      <BoutonReservation source={mobileCtaSource} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
+        {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
+      </BoutonReservation>
+    )}
 
     <!-- Desktop links -->
     <div class="hidden lg:flex items-center gap-1">
@@ -174,9 +183,13 @@ const lienNav = (href: string) => {
 
     <!-- Desktop CTA -->
     <div class="hidden lg:flex items-center gap-2">
-      <BoutonReservation source={ctaSource}>
-        {ctaLabel}
-      </BoutonReservation>
+      {ctaHref ? (
+        <a href={lienNav(ctaHref)} class="btn-primary">{ctaLabel}</a>
+      ) : (
+        <BoutonReservation source={ctaSource}>
+          {ctaLabel}
+        </BoutonReservation>
+      )}
     </div>
 
     <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
@@ -223,9 +236,15 @@ const lienNav = (href: string) => {
           menu resté ouvert, et sa fermeture relâchait le scroll lock que le menu
           exigeait encore : on retrouvait le menu plein écran, page scrollable
           derrière. Le listener du lien passe avant celui de `document`. */}
-      <BoutonReservation source={ctaSource} class="btn-primary justify-center w-full" data-mobile-link="">
-        {ctaLabel}
-      </BoutonReservation>
+      {ctaHref ? (
+        <a href={lienNav(ctaHref)} class="btn-primary justify-center w-full" data-mobile-link>
+          {ctaLabel}
+        </a>
+      ) : (
+        <BoutonReservation source={ctaSource} class="btn-primary justify-center w-full" data-mobile-link="">
+          {ctaLabel}
+        </BoutonReservation>
+      )}
     </div>
   </div>
 </div>

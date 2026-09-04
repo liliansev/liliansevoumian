@@ -1,0 +1,117 @@
+---
+import SectionHeader from './SectionHeader.astro';
+
+const audiences = [
+  {
+    title: 'Fondateurs et équipes Ops',
+    body: 'Un process ralentit l’équipe, une donnée circule mal ou un agent IA doit entrer dans un vrai flux de travail.',
+    route: 'Commencez par Automatisation & IA.',
+    href: '/automatisations-ia',
+  },
+  {
+    title: 'Dirigeants de PME',
+    body: 'Votre activité grandit et vous avez besoin d’un site ou d’un système fiable, sans monter une équipe technique en interne.',
+    route: 'Le besoin détermine la page à ouvrir.',
+    href: '#services',
+  },
+  {
+    title: 'Agences et studios',
+    body: 'Une mission demande un renfort autonome capable de cadrer, construire et rendre une solution maintenable.',
+    route: 'Choisissez l’expertise à intégrer au projet.',
+    href: '#services',
+  },
+] as const;
+---
+
+<section
+  id="pour-qui"
+  data-section
+  class="bloc-encre relative px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
+>
+  <div class="relative mx-auto max-w-[1200px]">
+    <SectionHeader
+      title="Vous connaissez le problème métier. Je prends en charge <mark>la construction.</mark>"
+      body="Dites-moi ce qui bloque, ce qui prend du temps ou ce qui doit mieux convertir. Je transforme ce problème en périmètre de travail."
+      titleMaxWidth="24ch"
+      bodyMaxWidth="58ch"
+    />
+
+    <ul class="home-audiences">
+      {audiences.map((audience) => (
+        <li>
+          <h3>{audience.title}</h3>
+          <div>
+            <p>{audience.body}</p>
+            <a href={audience.href}>{audience.route} <span aria-hidden="true">→</span></a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .home-audiences {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border-strong);
+    list-style: none;
+  }
+
+  .home-audiences li {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.7fr) minmax(0, 1.3fr);
+    gap: clamp(2rem, 7vw, 7rem);
+    max-width: none;
+    padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .home-audiences h3 {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-title-lg);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  .home-audiences p {
+    max-width: 48ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    line-height: 1.6;
+  }
+
+  .home-audiences a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-lime);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+  }
+
+  .home-audiences a span {
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .home-audiences a:hover span {
+      transform: translateX(0.3rem);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .home-audiences li {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+</style>

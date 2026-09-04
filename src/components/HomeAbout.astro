@@ -1,60 +1,53 @@
 ---
-import { Image } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
-import lilianPhoto from '../assets/lilian-photo.jpg';
 
 const facts = [
   { label: 'Freelance depuis', value: '2020' },
-  { label: 'Certifications', value: 'Make niveau 5 · Airtable' },
+  { label: 'Make niveau 5', value: 'Premier certifié en France' },
   { label: 'Formation', value: '300+ personnes formées' },
-  { label: 'Travail', value: 'En direct, de la première question à la recette' },
+  { label: 'Preuves publiques', value: '4 cas clients · 6 sites en ligne' },
 ] as const;
 ---
 
 <section
-  id="a-propos"
+  id="qui-je-suis"
   data-section
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]"
+  class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
+  <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Un interlocuteur. Celui qui cadre <mark>construit aussi.</mark>"
-      body="Je travaille en direct. La personne qui écoute le besoin est celle qui choisit l’architecture, écrit, teste et livre."
+      title="Je cadre le projet. Je construis aussi <mark>la solution.</mark>"
+      body="Vous échangez avec la personne qui choisit l’architecture, écrit, teste et livre. Le projet ne change pas de mains après le rendez-vous."
       titleMaxWidth="22ch"
       bodyMaxWidth="58ch"
     />
 
-    <div class="home-about reveal">
-      <div class="home-about__portrait">
-        <Image
-          src={lilianPhoto}
-          alt="Lilian Sevoumian"
-          width={720}
-          height={720}
-          loading="lazy"
-        />
-      </div>
-
-      <div class="home-about__content">
+    <div class="home-about">
+      <div class="home-about__story">
         <p>
-          J’ai commencé par l’automatisation, puis l’IA a changé ma façon de
-          développer. Aujourd’hui, la même méthode sert à construire un workflow,
-          un agent ou un site&nbsp;: cadrer, produire vite, vérifier sérieusement.
+          Je travaille en freelance depuis 2020. Deux années chez Jellysmack
+          m’ont appris à maintenir en production les automatisations que
+          j’avais construites, puis j’ai obtenu la certification Make
+          niveau&nbsp;5, la première délivrée en France.
         </p>
         <p>
-          Quand un projet ne relève pas de mon périmètre, je le dis avant de
-          commencer. Quand il y entre, vous savez qui construit et qui répond.
+          Aujourd’hui, la même méthode sert un workflow, un agent IA, un outil
+          métier ou un site web&nbsp;: comprendre le besoin, construire vite,
+          vérifier sérieusement et laisser un système qui peut évoluer.
         </p>
-
-        <dl>
-          {facts.map((fact) => (
-            <div>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
+        <a href="/cas-clients" class="home-about__link">
+          Voir les missions documentées <span aria-hidden="true">→</span>
+        </a>
       </div>
+
+      <dl>
+        {facts.map((fact) => (
+          <div>
+            <dt>{fact.label}</dt>
+            <dd>{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </div>
 </section>
@@ -62,52 +55,50 @@ const facts = [
 <style>
   .home-about {
     display: grid;
-    grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.28fr);
-    gap: 4rem;
+    grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr);
+    gap: clamp(3rem, 8vw, 7rem);
     align-items: start;
   }
 
-  .home-about__portrait {
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    background: var(--color-surface-low);
-  }
-
-  .home-about__portrait :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 18%;
-    filter: grayscale(1) contrast(1.04);
-  }
-
-  .home-about__content > p {
-    max-width: 62ch;
+  .home-about__story p {
+    max-width: 52ch;
     margin: 0;
     color: var(--color-ink-mid);
     font-size: var(--text-body-large);
-    line-height: 1.6;
+    line-height: 1.62;
   }
 
-  .home-about__content > p + p { margin-top: 1.5rem; }
+  .home-about__story p + p {
+    margin-top: 1.5rem;
+  }
+
+  .home-about__link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-lime);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+  }
+
+  .home-about__link span {
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
 
   .home-about dl {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: 2.5rem 0 0;
+    margin: 0;
     border-top: 1px solid var(--color-border-strong);
   }
 
   .home-about dl > div {
-    min-width: 0;
-    padding: 1.1rem 1.25rem 1.1rem 0;
+    padding: 1.15rem 0;
     border-bottom: 1px solid var(--color-divider);
-  }
-
-  .home-about dl > div:nth-child(even) {
-    padding-right: 0;
-    padding-left: 1.25rem;
-    border-left: 1px solid var(--color-divider);
   }
 
   .home-about dt {
@@ -119,24 +110,23 @@ const facts = [
   }
 
   .home-about dd {
-    margin: 0.4rem 0 0;
+    margin: 0.45rem 0 0;
     color: var(--color-ink);
     font-size: var(--text-body-sm);
     font-weight: 550;
     line-height: 1.45;
   }
 
-  @media (max-width: 767px) {
-    .home-about { grid-template-columns: 1fr; gap: 2.5rem; }
-    .home-about__portrait { aspect-ratio: 16 / 10; }
+  @media (hover: hover) and (pointer: fine) {
+    .home-about__link:hover span {
+      transform: translateX(0.3rem);
+    }
   }
 
-  @media (max-width: 479px) {
-    .home-about dl { grid-template-columns: 1fr; }
-    .home-about dl > div,
-    .home-about dl > div:nth-child(even) {
-      padding: 1rem 0;
-      border-left: 0;
+  @media (max-width: 800px) {
+    .home-about {
+      grid-template-columns: 1fr;
+      gap: 2.75rem;
     }
   }
 </style>

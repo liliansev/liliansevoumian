@@ -1,6 +1,20 @@
 ---
-import { faqs } from '../data/faq';
+import { faqs as automationFaqs, type FaqItem } from '../data/faq';
 import SectionHeader from './SectionHeader.astro';
+
+interface Props {
+  items?: FaqItem[];
+  title?: string;
+  body?: string;
+  showTrainingLink?: boolean;
+}
+
+const {
+  items = automationFaqs,
+  title = "Vos questions sur l'automatisation.",
+  body = `${items.length} questions, et des réponses tranchées.`,
+  showTrainingLink = true,
+} = Astro.props;
 ---
 
 <section
@@ -31,9 +45,9 @@ import SectionHeader from './SectionHeader.astro';
     <SectionHeader
       class="lg:sticky lg:top-28"
       spacing="none"
-      title="Vos questions sur l'automatisation."
+      title={title}
       titleMaxWidth="20ch"
-      body={`${faqs.length} questions, et des réponses tranchées.`}
+      body={body}
       bodyMaxWidth="40ch"
     />
 
@@ -45,7 +59,7 @@ import SectionHeader from './SectionHeader.astro';
         chacune au moment où elle apparaît. Le geste est celui du dispositif de
         la DA, appliqué au temps plutôt qu'à un mot. */}
     <div class="faq-liste flex flex-col gap-3">
-      {faqs.map((faq, i) => (
+      {items.map((faq, i) => (
         <div class="faq-item reveal" style={`--rang:${i}`}>
 
           <details class="faq-details group">
@@ -64,7 +78,7 @@ import SectionHeader from './SectionHeader.astro';
           budget formation, distincte de la demande de mission. Lien secondaire. */}
       {/* Casse normale : même correction que le pont jumeau de la section
           « offres », où le motif est écrit en entier. */}
-      <p class="reveal text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)] mt-6 pt-6 border-t border-[var(--color-divider)]" style={`--rang:${faqs.length}`}>
+      {showTrainingLink && <p class="reveal text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)] mt-6 pt-6 border-t border-[var(--color-divider)]" style={`--rang:${items.length}`}>
         Budget serré ou envie d'apprendre vous-même ?
         <a
           href="https://augmentes.fr"
@@ -76,7 +90,7 @@ import SectionHeader from './SectionHeader.astro';
         >
           Mes formations Make &amp; n8n <span aria-hidden="true">↗</span>
         </a>
-      </p>
+      </p>}
     </div>
 
   </div>
