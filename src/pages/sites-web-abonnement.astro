@@ -80,19 +80,12 @@ const projectList = [
   projects.petiteStack,
 ] as const;
 
-const creationVisuals = [projects.youmanista, projects.augmentes, projects.petiteStack] as const;
-const subscriptionVisuals = [projects.lilian, projects.meilleursTools] as const;
-
-if (creationVisuals.length !== creationOffers.length || subscriptionVisuals.length !== subscriptionOffers.length) {
-  throw new Error('Chaque offre de site doit être associée à un visuel.');
-}
-
 const directionContract = `
-THESIS: Les sites déjà réalisés font la démonstration ; le texte explique simplement ce qui est créé, maintenu et amélioré.
-OWN-WORLD: Papier blanc, encre noire, lime posé en surface, grandes captures réelles, légendes fondues dans l’image, angles droits et une seule famille Geist.
-STORY: Le visiteur voit d’abord les réalisations, comprend les trois périmètres, compare Care et Growth, puis réserve un appel de 20 minutes.
-FIRST VIEWPORT: Promesse ample à gauche ; trois sites réels composent la moitié droite. Les prix restent lisibles sous l’action primaire.
-FORM: Portfolio de fabrication, structure classée 7, seed 244476c3, dense et éditorial, sans cadre décoratif ni simulation d’écran.
+THESIS: Le service mène la page : créer, maintenir, puis améliorer. Les réalisations n’apparaissent qu’une fois, comme preuve concentrée.
+OWN-WORLD: Papier blanc, encre noire, lime posé en surface, composition éditoriale, angles droits et une seule famille Geist.
+STORY: Le visiteur comprend le cycle de travail, compare trois périmètres de création et deux niveaux de suivi, puis découvre les réalisations avant de réserver.
+FIRST VIEWPORT: Promesse typographique sans capture ; le cycle créer, maintenir, améliorer donne immédiatement les trois repères commerciaux.
+FORM: Dossier de fabrication, structure classée 7, seed 244476c3, dense et éditorial, sans cadre décoratif ni simulation d’écran.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 `.trim();
 
@@ -162,14 +155,14 @@ const serviceSchema = {
   />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <section id="hero" class="bloc-lime relative px-[var(--spacing-section-x)] pt-28 pb-16 lg:pt-36 lg:pb-20 border-b border-[var(--color-divider)]">
+    <section id="hero" class="bloc-lime relative px-[var(--spacing-section-x)] pt-28 pb-14 lg:pt-36 lg:pb-16 border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] gap-12 lg:gap-16 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,0.55fr)] gap-12 lg:gap-20 items-end">
           <div class="min-w-0 reveal is-visible">
-            <h1 class="font-display font-semibold text-[length:var(--text-sites-hero)] leading-[0.95] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[10ch] text-balance">
+            <h1 class="font-display font-semibold text-[length:var(--text-sites-hero)] leading-[0.95] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[12ch] text-balance">
               Je crée votre site. Puis je le fais <mark class="inv">avancer.</mark>
             </h1>
-            <p class="mt-7 mb-0 max-w-[55ch] text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">
+            <p class="mt-7 mb-0 max-w-[58ch] text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">
               Je travaille le message, le design et le développement. Après la mise en ligne, Care couvre la maintenance et Growth réserve du temps pour les améliorations.
             </p>
 
@@ -179,33 +172,28 @@ const serviceSchema = {
               </BoutonReservation>
               <LinkCTA href="#realisations">Voir les réalisations</LinkCTA>
             </div>
+          </div>
 
-            <p class="mt-8 mb-0 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-low)] max-w-[58ch]">
-              Création dès {creationOffers[0].price} · suivi dès {subscriptionOffers[0].price} · périmètre défini avant le démarrage.
+          <aside class="reveal is-visible border-y lg:border-y-0 lg:border-l border-[var(--color-border-strong)] lg:pl-8" aria-label="Le cycle de travail">
+            <p class="hidden lg:block my-0 pb-5 text-[length:var(--text-body)] leading-[1.55] text-[var(--color-ink-mid)]">
+              Un seul partenaire, trois temps de travail.
             </p>
-          </div>
-
-          <div class="hero-portfolio reveal is-visible" role="group" aria-label="Aperçu de trois sites réalisés">
-            <ProjectVisual {...projects.lilian} ratio="wide" priority class="hero-portfolio__main" />
-            <ProjectVisual {...projects.augmentes} ratio="landscape" />
-            <ProjectVisual {...projects.youmanista} ratio="landscape" />
-          </div>
+            <dl class="m-0 grid grid-cols-3 lg:block lg:border-t border-[var(--color-border-strong)]">
+              <div class="flex flex-col gap-2 py-4 pr-3 border-r lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-5 lg:py-5 lg:pr-0 lg:border-r-0 lg:border-b border-[var(--color-divider)] lg:items-baseline">
+                <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Créer</dt>
+                <dd class="m-0 text-[length:var(--text-body-sm)] lg:text-right text-[var(--color-ink-mid)] tabular-nums">dès {creationOffers[0].price}</dd>
+              </div>
+              <div class="flex flex-col gap-2 py-4 px-3 border-r lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-5 lg:py-5 lg:px-0 lg:border-r-0 lg:border-b border-[var(--color-divider)] lg:items-baseline">
+                <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Maintenir</dt>
+                <dd class="m-0 text-[length:var(--text-body-sm)] lg:text-right text-[var(--color-ink-mid)] tabular-nums whitespace-nowrap">{subscriptionOffers[0].price.replace(' / mois', '/mois')}</dd>
+              </div>
+              <div class="flex flex-col gap-2 py-4 pl-3 lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-5 lg:py-5 lg:pl-0 lg:items-baseline">
+                <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Améliorer</dt>
+                <dd class="m-0 text-[length:var(--text-body-sm)] lg:text-right text-[var(--color-ink-mid)] tabular-nums whitespace-nowrap">{subscriptionOffers[1].price.replace(' / mois', '/mois')}</dd>
+              </div>
+            </dl>
+          </aside>
         </div>
-
-        <dl class="reveal is-visible mt-12 lg:mt-16 m-0 grid grid-cols-1 sm:grid-cols-3 border-y border-[var(--color-border-strong)]">
-          <div class="py-5 sm:pr-6 border-b sm:border-b-0 sm:border-r border-[var(--color-divider)]">
-            <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Build</dt>
-            <dd class="mt-1 mb-0 text-[length:var(--text-body-sm)] text-[var(--color-ink-mid)]">Concevoir et publier · dès {creationOffers[0].price}</dd>
-          </div>
-          <div class="py-5 sm:px-6 border-b sm:border-b-0 sm:border-r border-[var(--color-divider)]">
-            <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Care</dt>
-            <dd class="mt-1 mb-0 text-[length:var(--text-body-sm)] text-[var(--color-ink-mid)]">Maintenir · {subscriptionOffers[0].price}</dd>
-          </div>
-          <div class="py-5 sm:pl-6">
-            <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Growth</dt>
-            <dd class="mt-1 mb-0 text-[length:var(--text-body-sm)] text-[var(--color-ink-mid)]">Mesurer et améliorer · {subscriptionOffers[1].price}</dd>
-          </div>
-        </dl>
       </div>
     </section>
 
@@ -213,24 +201,41 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            Trois périmètres, avec le même niveau <mark>d’exigence.</mark>
+            Trois formats. La même <mark>exigence.</mark>
           </h2>
           <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
             Le prix évolue avec le nombre de pages, la profondeur des contenus et la complexité des parcours. Chaque format reçoit le même soin sur mobile, tablette et desktop.
           </p>
         </div>
 
-        <div class="reveal-stagger grid grid-cols-1 lg:grid-cols-3 gap-x-8">
+        <div class="reveal-stagger">
           {creationOffers.map((offer, index) => (
-            <article class="reveal py-9 lg:py-10 border-b lg:border-b-0 border-[var(--color-divider)] flex flex-col">
-              <ProjectVisual {...creationVisuals[index]} ratio="landscape" />
-              <p class="mt-6 mb-0 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-low)]">{offer.useCase}</p>
-              <h3 class="mt-4 mb-0 font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)]">{offer.name}</h3>
-              <p class="mt-3 mb-0 font-display font-semibold text-[length:var(--text-headline)] leading-none tracking-[-0.035em] text-[var(--color-ink)] tabular-nums">{offer.price}</p>
-              <p class="mt-6 mb-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">{offer.promise}</p>
-              <ul class="mt-7 mb-0 pt-5 border-t border-[var(--color-divider)] pl-5 space-y-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
-                {offer.includes.map((item) => <li>{item}</li>)}
-              </ul>
+            <article class="reveal grid grid-cols-1 lg:grid-cols-[minmax(12rem,0.72fr)_minmax(0,1.28fr)_minmax(13rem,0.58fr)] gap-7 lg:gap-12 py-9 lg:py-11 border-b border-[var(--color-divider)] items-start">
+              <div class="grid grid-cols-[2rem_minmax(0,1fr)] gap-4 items-start">
+                <span class="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-low)] tabular-nums" aria-hidden="true">{index + 1}</span>
+                <div>
+                  <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.12] tracking-[-0.025em] text-[var(--color-ink)] m-0">{offer.name}</h3>
+                  <p class="mt-3 mb-0 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-low)]">{offer.useCase}</p>
+                </div>
+              </div>
+
+              <div>
+                <p class="m-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">{offer.promise}</p>
+                <ul class="mt-5 mb-0 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-x-5 gap-y-2 pl-5 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
+                  {offer.includes.map((item) => <li>{item}</li>)}
+                </ul>
+              </div>
+
+              <p class="m-0 lg:text-right font-display font-semibold leading-none tracking-[-0.035em] text-[var(--color-ink)] tabular-nums">
+                {index === creationOffers.length - 1 ? (
+                  <>
+                    <span class="block mb-2 font-sans text-[length:var(--text-body-sm)] font-normal leading-[1.4] tracking-normal text-[var(--color-ink-low)]">À partir de</span>
+                    <span class="block text-[length:var(--text-title-lg)] whitespace-nowrap">{offer.price.replace('À partir de ', '')}</span>
+                  </>
+                ) : (
+                  <span class="block text-[length:var(--text-title-lg)] whitespace-nowrap">{offer.price}</span>
+                )}
+              </p>
             </article>
           ))}
         </div>
@@ -257,23 +262,23 @@ const serviceSchema = {
           </p>
         </div>
 
-        <div class="mt-3">
+        <div class="reveal-stagger grid grid-cols-1 lg:grid-cols-2 border-b border-[var(--color-border-strong)]">
           {subscriptionOffers.map((offer, index) => (
-            <article class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] gap-8 lg:gap-14 py-10 border-b border-[var(--color-divider)] items-center">
-              <ProjectVisual {...subscriptionVisuals[index]} ratio="wide" />
-              <div class="grid grid-cols-1 md:grid-cols-[minmax(0,0.65fr)_minmax(0,1fr)] gap-7 md:gap-10 items-start">
+            <article class:list={[
+              'reveal py-10 lg:py-12',
+              index === 0 ? 'lg:pr-12 lg:border-r border-[var(--color-divider)]' : 'border-t lg:border-t-0 lg:pl-12 border-[var(--color-divider)]',
+            ]}>
+              <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 pb-7 border-b border-[var(--color-divider)]">
                 <div>
                   <p class="m-0 text-[length:var(--text-body-sm)] text-[var(--color-ink-low)]">{offer.role}</p>
-                  <h3 class="mt-2 mb-0 font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)]">{offer.name}</h3>
-                  <p class="mt-3 mb-0 text-[length:var(--text-title)] font-medium text-[var(--color-ink)] tabular-nums">{offer.price}</p>
+                  <h3 class="mt-2 mb-0 font-display font-semibold text-[length:var(--text-headline)] leading-none tracking-[-0.035em] text-[var(--color-ink)]">{offer.name}</h3>
                 </div>
-                <div>
-                  <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">{offer.promise}</p>
-                  <ul class="mt-5 mb-0 pl-5 space-y-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
-                    {offer.includes.map((item) => <li>{item}</li>)}
-                  </ul>
-                </div>
+                <p class="m-0 text-[length:var(--text-title)] font-medium text-[var(--color-ink)] tabular-nums whitespace-nowrap">{offer.price}</p>
               </div>
+              <p class="mt-7 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">{offer.promise}</p>
+              <ul class="mt-6 mb-0 pl-5 space-y-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
+                {offer.includes.map((item) => <li>{item}</li>)}
+              </ul>
             </article>
           ))}
         </div>
@@ -300,11 +305,7 @@ const serviceSchema = {
           </p>
         </div>
 
-        <div class="reveal mt-10">
-          <ProjectVisual {...projects.augmentes} ratio="wide" />
-        </div>
-
-        <ol class="m-0 mt-6 p-0 list-none grid grid-cols-1 lg:grid-cols-2 gap-x-14">
+        <ol class="m-0 p-0 list-none grid grid-cols-1 lg:grid-cols-2 gap-x-14">
           {manufacturingSteps.map((step, index) => (
             <li class="reveal grid grid-cols-[auto_minmax(0,1fr)] gap-5 py-8 border-b border-[var(--color-divider)]">
               <span class="method-index" aria-hidden="true">{index + 1}</span>
@@ -321,7 +322,7 @@ const serviceSchema = {
 
     <section id="limites" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 lg:gap-16 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] gap-10 lg:gap-20 items-start">
           <div class="reveal">
             <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
               L’IA accélère. Je garde la <mark class="inv">responsabilité.</mark>
@@ -330,24 +331,20 @@ const serviceSchema = {
               J’utilise ces outils pour chercher, structurer et produire plus vite. Je vérifie ensuite les faits, les promesses, le ton, le SEO et le fonctionnement de chaque page.
             </p>
           </div>
-          <div class="reveal">
-            <ProjectVisual {...projects.flameborn} ratio="landscape" />
+          <div class="border-y border-[var(--color-border-strong)]">
+            <article class="reveal py-8 border-b border-[var(--color-divider)]">
+              <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)] m-0">Ce que je vérifie</h3>
+              <ul class="mt-6 mb-0 pl-5 space-y-3 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
+                {productionPromises.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+            <article class="reveal py-8">
+              <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)] m-0">Expertises à confier à un spécialiste</h3>
+              <ul class="mt-6 mb-0 pl-5 space-y-3 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
+                {refusedPromises.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
           </div>
-        </div>
-
-        <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 border-y border-[var(--color-border-strong)]">
-          <article class="reveal py-9 lg:pr-12 lg:border-r border-[var(--color-divider)]">
-            <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)] m-0">Ce que je vérifie</h3>
-            <ul class="mt-7 mb-0 pl-5 space-y-4 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
-              {productionPromises.map((item) => <li>{item}</li>)}
-            </ul>
-          </article>
-          <article class="reveal py-9 lg:pl-12 border-t lg:border-t-0 border-[var(--color-divider)]">
-            <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)] m-0">Expertises à confier à un spécialiste</h3>
-            <ul class="mt-7 mb-0 pl-5 space-y-4 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
-              {refusedPromises.map((item) => <li>{item}</li>)}
-            </ul>
-          </article>
         </div>
       </div>
     </section>
@@ -387,11 +384,6 @@ const serviceSchema = {
           </p>
         </div>
 
-        <div class="reveal mt-10 grid grid-cols-1 md:grid-cols-2 gap-5">
-          <ProjectVisual {...projects.youmanista} ratio="wide" />
-          <ProjectVisual {...projects.petiteStack} ratio="wide" />
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-14">
           {siteFaqs.map((faq) => (
             <article class="reveal py-8 border-b border-[var(--color-divider)]">
@@ -404,18 +396,17 @@ const serviceSchema = {
     </section>
 
     <section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] gap-10 lg:gap-16 items-center">
-        <div class="reveal">
-          <ProjectVisual {...projects.lilian} ratio="landscape" />
-        </div>
-        <div class="reveal">
+      <div class="relative max-w-[1200px] mx-auto reveal grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-9 lg:gap-16 items-end">
+        <div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
             En 20 minutes, définissons le site à <mark class="dark-mark">créer.</mark>
           </h2>
           <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
             Nous passons en revue l’offre, les pages nécessaires, les contenus disponibles et le niveau de suivi utile. Vous repartez avec un périmètre clair.
           </p>
-          <BoutonReservation source="sites_web_final" class="btn-primary justify-center mt-8 lg:min-w-[220px]">
+        </div>
+        <div class="lg:pb-1">
+          <BoutonReservation source="sites_web_final" class="btn-primary justify-center lg:min-w-[220px]">
             Parler de mon site
           </BoutonReservation>
         </div>
@@ -427,27 +418,9 @@ const serviceSchema = {
 </Layout>
 
 <style>
-  .hero-portfolio {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: clamp(0.5rem, 1vw, 0.75rem);
-    min-height: clamp(20rem, 43vw, 33rem);
-  }
-
-  .hero-portfolio :global(.project-visual) {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: auto;
-  }
-
-  .hero-portfolio :global(.hero-portfolio__main) {
-    grid-column: 1 / 3;
-  }
-
   .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(0.75rem, 1.4vw, 1rem);
   }
 
@@ -468,10 +441,6 @@ const serviceSchema = {
   }
 
   @media (max-width: 767px) {
-    .hero-portfolio {
-      min-height: clamp(17rem, 92vw, 26rem);
-    }
-
     .portfolio-grid {
       grid-template-columns: 1fr;
     }

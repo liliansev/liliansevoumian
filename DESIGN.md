@@ -484,8 +484,9 @@ dans le chrome du site.
 palette extérieure reste visible au repos : ici l'image n'est pas un décor mais
 la preuve. Le composant montre une vraie page publique et porte une légende
 composée du nom et de la nature du projet. Seules les six entrées du portfolio
-renvoient vers leur URL ; les répétitions qui illustrent une offre ou une étape
-restent des figures, pour éviter de multiplier les liens clavier. Il ne simule
+renvoient vers leur URL. Elles n'apparaissent nulle part ailleurs sur la page :
+une preuve montrée une fois gagne en autorité, tandis qu'une capture répétée dans
+le hero, les tarifs ou la méthode devient une texture décorative. Il ne simule
 ni fenêtre de navigateur ni appareil ; la capture reste une surface
 rectangulaire, sans ombre, dans les ratios `16 / 7`, `16 / 10` ou `4 / 5`.
 
