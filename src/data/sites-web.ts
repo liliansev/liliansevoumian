@@ -33,24 +33,24 @@ export const creationOffers: readonly CreationOffer[] = [
     price: '1\u00a0900\u00a0€\u00a0HT',
     schemaPrice: 1900,
     useCase: 'Une offre, une cible, une action principale.',
-    promise: 'Une page complète pour expliquer, rassurer et provoquer la prise de contact.',
-    includes: ['Cadrage du message', 'Design et intégration responsive', 'Socle SEO et mesure'],
+    promise: 'Une page complète pour présenter l’offre et guider le visiteur vers la prise de contact.',
+    includes: ['Message et structure', 'Design et intégration responsive', 'Socle SEO et mesure'],
   },
   {
     name: 'Site vitrine + blog',
     price: '3\u00a0500\u00a0€\u00a0HT',
     schemaPrice: 3500,
     useCase: 'Plusieurs offres ou un besoin éditorial durable.',
-    promise: 'Une architecture de pages qui sépare clairement expertise, preuves et contenus.',
-    includes: ['Pages structurantes', 'Base éditoriale', 'Maillage et indexabilité'],
+    promise: 'Un site qui organise vos offres, vos preuves et vos contenus dans des pages faciles à parcourir.',
+    includes: ['Pages principales', 'Base éditoriale', 'Maillage et indexabilité'],
   },
   {
-    name: 'Site plus complexe',
+    name: 'Site avec outil ou données',
     price: 'À partir de 5\u00a0500\u00a0€\u00a0HT',
     schemaPrice: 5500,
-    useCase: 'Intégrations, contenus ou parcours qui dépassent un site vitrine.',
-    promise: 'Un périmètre sur mesure, chiffré après avoir posé les flux et les contraintes.',
-    includes: ['Architecture spécifique', 'Intégrations métier', 'Recette adaptée au projet'],
+    useCase: 'Configurateur, catalogue, base de données ou espace interactif.',
+    promise: 'Un outil web pour rechercher, filtrer, comparer ou guider le visiteur à partir de vos données.',
+    includes: ['Modélisation des données', 'Interface interactive', 'Intégrations métier'],
   },
 ];
 
@@ -60,7 +60,7 @@ export const subscriptionOffers: readonly SubscriptionOffer[] = [
     price: '190\u00a0€\u00a0HT / mois',
     schemaPrice: 190,
     role: 'Maintenir',
-    promise: 'Le site reste propre, disponible et suivi après sa mise en ligne.',
+    promise: 'Je maintiens le site, corrige les problèmes mineurs et fais un point chaque mois.',
     includes: ['Maintenance technique', 'Corrections mineures', 'Point de contrôle mensuel'],
   },
   {
@@ -68,41 +68,41 @@ export const subscriptionOffers: readonly SubscriptionOffer[] = [
     price: '490\u00a0€\u00a0HT / mois',
     schemaPrice: 490,
     role: 'Améliorer',
-    promise: 'Les données de recherche et de conversion décident du prochain lot, pas une intuition.',
+    promise: 'J’utilise Search Console et les données de conversion pour prioriser le prochain lot d’améliorations.',
     includes: ['Tout Care', 'Analyse Search Console et OpenSEO', 'Lot mensuel d’améliorations priorisées'],
   },
 ];
 
 export const manufacturingSteps: readonly ManufacturingStep[] = [
   {
-    title: 'Cadrer ce qui doit être vrai',
-    description: 'Offre, cible, objections, différenciation, ton, témoignages et contraintes sont posés avant toute production.',
-    output: 'Un brief validé qui interdit à l’IA d’inventer le client.',
+    title: 'Valider les informations de départ',
+    description: 'Nous posons l’offre, la cible, les objections, le ton, les témoignages et les contraintes avant de produire les pages.',
+    output: 'Un brief commun qui sert de référence à tout le projet.',
   },
   {
-    title: 'Construire la base de connaissances',
-    description: 'Les informations commerciales, les preuves et les réponses utiles deviennent la source de vérité du projet.',
-    output: 'Un dossier de contenu relisible par vous et réutilisable ensuite.',
+    title: 'Rassembler la matière',
+    description: 'Je regroupe les informations commerciales, les preuves, les réponses utiles et les contenus à reprendre.',
+    output: 'Un dossier de contenu que vous pouvez relire et compléter.',
   },
   {
-    title: 'Choisir la structure et les messages',
-    description: 'Chaque page reçoit un rôle, une intention de recherche et une action. Le texte est produit en plusieurs passes puis critiqué.',
-    output: 'Une architecture et des messages, pas un remplissage de maquette.',
+    title: 'Écrire les pages',
+    description: 'Chaque page reçoit un rôle, un message et une action. Je rédige, je coupe et je reprends le texte avant de passer au design.',
+    output: 'Une architecture de pages et des messages validés.',
   },
   {
     title: 'Designer et intégrer',
-    description: 'Le site est conçu pour votre contenu réel, puis intégré en responsive avec les états, les performances et l’accessibilité nécessaires.',
-    output: 'Un site utilisable sur mobile, tablette et desktop.',
+    description: 'Je conçois le site avec le contenu réel, puis je l’intègre pour le mobile, la tablette et le desktop.',
+    output: 'Une version complète à tester dans le navigateur.',
   },
   {
-    title: 'Contrôler avant de publier',
-    description: 'Exactitude, naturel, liens, métadonnées, indexabilité, formulaires et mesure sont vérifiés. Vous validez les faits et les promesses.',
-    output: 'Une mise en ligne assumée par un humain, jamais un bouton “générer”.',
+    title: 'Tester et publier',
+    description: 'Je vérifie les faits, les liens, les métadonnées, l’indexabilité, les formulaires, la mesure et le rendu responsive.',
+    output: 'Une mise en ligne relue et testée sous contrôle humain.',
   },
   {
-    title: 'Mesurer ce qui mérite de changer',
-    description: 'Après publication, Search Console, les conversions et les retours commerciaux servent à prioriser la suite.',
-    output: 'Un site qui progresse par décisions documentées.',
+    title: 'Choisir la suite',
+    description: 'Après publication, Search Console, les conversions et vos retours commerciaux aident à choisir la prochaine amélioration.',
+    output: 'Une liste d’actions priorisée à partir des données disponibles.',
   },
 ];
 
@@ -113,35 +113,35 @@ export const siteFaqs: readonly SiteFaq[] = [
   },
   {
     q: 'Pourquoi ajouter un abonnement après la mise en ligne ?',
-    a: 'Parce qu’un site se dégrade ou stagne quand personne ne le suit. Care maintient le socle. Growth ajoute une boucle de mesure et d’amélioration. L’abonnement ne remplace pas la création : il commence après elle.',
+    a: 'Care couvre la maintenance après la mise en ligne. Growth ajoute une analyse des données et un lot d’améliorations chaque mois. Dans les deux cas, le périmètre mensuel est défini avant le démarrage.',
   },
   {
     q: 'Les textes sont-ils écrits par une IA ?',
-    a: 'L’IA accélère la recherche, la structure, la rédaction et la critique. Elle ne décide pas des faits. Je contrôle la cohérence, le naturel et le SEO, puis vous validez les informations, les tarifs, les témoignages et les promesses.',
+    a: 'J’utilise l’IA pour accélérer la recherche, la structure, la rédaction et la critique. Je contrôle ensuite la cohérence, le naturel et le SEO. Vous validez les informations, les tarifs, les témoignages et les promesses.',
   },
   {
     q: 'Pouvez-vous garantir une position sur Google ?',
-    a: 'Non. Je peux livrer un socle SEO solide, travailler à partir de données réelles et améliorer les pages dans le temps. Personne ne peut honnêtement garantir une position, un volume de trafic ou un chiffre d’affaires.',
+    a: 'Je livre un socle SEO solide et j’améliore les pages à partir de données réelles. Les positions, le trafic et le chiffre d’affaires dépendent ensuite du marché, de l’offre et de la concurrence.',
   },
   {
     q: 'Combien de temps faut-il pour mettre le site en ligne ?',
-    a: 'Le délai dépend du nombre de pages, de l’état des contenus et des validations nécessaires. Il est annoncé avec le périmètre, avant de commencer, plutôt que promis à l’aveugle sur cette page.',
+    a: 'Le délai dépend du nombre de pages, de l’état des contenus et des validations nécessaires. Il figure dans le devis après le cadrage du projet.',
   },
   {
-    q: 'Quels projets ne sont pas couverts par cette offre ?',
-    a: 'Le netlinking, la récupération après pénalité, les migrations SEO de centaines de pages, le SEO international et les contenus médicaux, financiers ou juridiques sensibles demandent des spécialistes dédiés. Je ne les vends pas sous cette formule.',
+    q: 'Quels projets demandent un spécialiste dédié ?',
+    a: 'Le netlinking, la récupération après pénalité, les migrations SEO de centaines de pages, le SEO international et les contenus médicaux, financiers ou juridiques sensibles sortent de ce périmètre.',
   },
 ];
 
 export const productionPromises = [
-  'Le contenu part d’informations validées, pas d’un prompt générique.',
-  'Les recommandations SEO utilisent des données OpenSEO et Search Console quand elles sont disponibles.',
-  'Un humain relit, teste et arbitre avant chaque publication.',
+  'Les informations de départ sont validées avec vous.',
+  'Les recommandations SEO s’appuient sur OpenSEO et Search Console quand les données sont disponibles.',
+  'Je relis, teste et arbitre avant chaque publication.',
 ] as const;
 
 export const refusedPromises = [
-  'Une première position sur Google.',
-  'Une croissance garantie du trafic ou des ventes.',
-  'Des articles publiés automatiquement sans contrôle.',
-  'Une expertise SEO avancée maquillée par des outils.',
+  'Netlinking et récupération après pénalité.',
+  'Migration SEO de plusieurs centaines de pages.',
+  'SEO international complexe.',
+  'Contenus médicaux, financiers ou juridiques sensibles.',
 ] as const;

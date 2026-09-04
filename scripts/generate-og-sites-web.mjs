@@ -23,9 +23,10 @@ const svg = `
   </style>
   <rect width="1200" height="630" fill="#cdf564"/>
   <text x="72" y="92" font-size="28" font-weight="650">Lilian Sevoumian</text>
-  <text x="72" y="258" font-size="88" font-weight="720" letter-spacing="-4">Un site qui ne</text>
-  <path d="M68 282 L789 288 L784 386 L72 380 Z" fill="#ffffff"/>
-  <text x="78" y="368" font-size="88" font-weight="720" letter-spacing="-4">cesse d’évoluer.</text>
+  <text x="72" y="248" font-size="88" font-weight="720" letter-spacing="-4">Je crée votre site.</text>
+  <text x="72" y="372" font-size="88" font-weight="720" letter-spacing="-4">Puis je le fais</text>
+  <path d="M616 290 L1080 296 L1075 390 L612 384 Z" fill="#ffffff"/>
+  <text x="630" y="372" font-size="88" font-weight="720" letter-spacing="-4">avancer.</text>
   <line x1="72" y1="480" x2="1128" y2="480" stroke="#111111" stroke-opacity="0.28"/>
   <text x="72" y="548" font-size="28" font-weight="620" letter-spacing="0.5">BUILD · CARE · GROWTH</text>
   <text x="1128" y="548" text-anchor="end" font-size="24" font-weight="520">dès 1 900 € HT</text>

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-04T11:27:15Z",
+  "title": "Design System: Lilian Sevoumian",
+  "extensions": {
+    "motion": [
+      {
+        "name": "project-visual-hover",
+        "value": "transform 200ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Agrandissement discret de la capture sur pointeur fin ; supprimé avec prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Project Visual",
+      "kind": "custom",
+      "refersTo": "project-visual",
+      "description": "Capture réelle d'un projet public, carrée dans sa forme et légendée dans l'image. Seules les entrées du portfolio sont reliées à leur source.",
+      "html": "<a class=\"ds-project-visual\" href=\"https://liliansevoumian.fr\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Voir Lilian Sevoumian, Site personnel (nouvel onglet)\"><img src=\"/sites-web/projects/liliansevoumian-home.webp\" alt=\"Page d'accueil du site Lilian Sevoumian, sur fond lime\"><span class=\"ds-project-visual__wash\" aria-hidden=\"true\"></span><span class=\"ds-project-visual__caption\"><strong>Lilian Sevoumian</strong><span>Site personnel</span></span></a>",
+      "css": ".ds-project-visual { position: relative; display: block; overflow: hidden; aspect-ratio: 16 / 10; margin: 0; background: var(--color-surface-low, #f7f7f7); color: #fff; text-decoration: none; isolation: isolate; border-radius: 0; } .ds-project-visual img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--duration-default, 200ms) var(--ease-out-quint, cubic-bezier(0.22, 1, 0.36, 1)); } .ds-project-visual.is-image-missing img { opacity: 0; } .ds-project-visual.is-image-missing::before { content: ''; position: absolute; inset: 0; background: #111; } .ds-project-visual__wash { position: absolute; inset: 35% 0 0; z-index: 1; background: linear-gradient(to bottom, transparent, color-mix(in srgb, #111 84%, transparent)); pointer-events: none; } .ds-project-visual__caption { position: absolute; inset: auto 0 0; z-index: 2; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding: clamp(1rem, 2.2vw, 1.5rem); color: #fff; } .ds-project-visual__caption strong { font-family: var(--font-display, system-ui, sans-serif); font-size: var(--text-title, 1.5rem); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; } .ds-project-visual__caption span { max-width: 18ch; font-size: var(--text-body-sm, 0.875rem); line-height: 1.35; text-align: right; color: rgb(255 255 255 / 0.82); } @media (max-width: 639px) { .ds-project-visual__caption span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; } } @media (hover: hover) and (pointer: fine) { .ds-project-visual:hover img { transform: scale(1.025); } } @media (prefers-reduced-motion: reduce) { .ds-project-visual img { transition: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Le lime ne s'écrit pas. Il se pose.",
+    "overview": "Le site vend une chose : des automatisations qui ne cassent pas. Il doit donc tenir debout tout seul, sans ornement pour rattraper une hiérarchie molle. La base est du papier blanc et de l'encre noire ; le contraste vient du poids typographique, de la taille et de l'espace.\n\nPar-dessus vit **une seule couleur**, un lime acide `#cdf564`. Elle ne peut pas porter de texte — 1,25:1 contre le blanc — et c'est cette contrainte qui fait tout le système : le lime est une **surface**. Il prend une section entière, ou il passe derrière un mot comme un coup de surligneur de travers.",
+    "keyCharacteristics": [
+      "Le lime est une surface, jamais une couleur de texte.",
+      "Les filets et les changements de surface portent la profondeur ; aucune ombre.",
+      "Le rond désigne une unité ; le carré, une surface.",
+      "Les artefacts publics peuvent garder leur palette dans une capture, jamais dans le chrome du site."
+    ],
+    "rules": [
+      {
+        "name": "La capture comme preuve",
+        "body": "Une capture de projet n'est admissible que si la page est publique, l'URL source est conservée et le fichier livré possède une provenance traçable. Sa palette reste enfermée dans l'image ; le cadre, la légende et les interactions continuent d'obéir au système Lilian Sevoumian.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Montrer un projet public par une capture réelle, légendée et traçable ; cantonner sa palette à l'image."
+    ],
+    "donts": [
+      "Entourer une capture de projet d'un faux navigateur ou d'un appareil, ni employer son dégradé de lisibilité ailleurs que sous sa légende."
+    ]
+  }
+}

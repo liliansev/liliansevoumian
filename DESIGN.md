@@ -90,6 +90,10 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.none}"
     padding: "20px"
+  project-visual:
+    backgroundColor: "{colors.surface-low}"
+    textColor: "{colors.text-on-dark}"
+    rounded: "{rounded.none}"
 ---
 
 # Design System: Lilian Sevoumian
@@ -111,6 +115,14 @@ il passe derrière un mot comme un coup de surligneur de travers.
 Trois choses ont été retirées en chemin, et l'absence est le geste : le
 monospace, les sur-titres en petites capitales espacées, et les arrondis. Ce
 sont, dans cet ordre, les trois marqueurs les plus universels du site généré.
+
+**Caractéristiques clés :**
+
+- Le lime est une surface, jamais une couleur de texte.
+- Les filets et les changements de surface portent la profondeur ; aucune ombre.
+- Le rond désigne une unité ; le carré, une surface.
+- Les artefacts publics peuvent garder leur palette dans une capture, jamais
+  dans le chrome du site.
 
 Ce paragraphe a longtemps décrit une intention plutôt qu'un état. Les sur-titres
 étaient posés au-dessus de neuf sections de la home et de onze autres endroits,
@@ -464,20 +476,45 @@ porte déjà son surlignage.
 **Les maquettes produit** (`MockupWindow` et les composants `Stack*`) sont des
 reconstitutions schématiques. Les écrans clients sont confidentiels : aucun
 visuel du site ne doit pouvoir passer pour une capture, et le châssis porte la
-mention quand le doute est possible. C'est le seul endroit où les couleurs de
-marque tierces sont **posées au repos** — on y montre l'outil réel.
+mention quand le doute est possible. Les couleurs de marque tierces y sont
+**posées au repos** parce qu'on montre l'outil réel, pas parce qu'elles entrent
+dans le chrome du site.
 
-**Une couleur de marque au survol n'est pas la même chose.** Trois dispositifs
-la font apparaître au pointeur et seulement là : les logos du bandeau
+**Les captures de projets publics** (`ProjectVisual`) sont l'autre cas où une
+palette extérieure reste visible au repos : ici l'image n'est pas un décor mais
+la preuve. Le composant montre une vraie page publique et porte une légende
+composée du nom et de la nature du projet. Seules les six entrées du portfolio
+renvoient vers leur URL ; les répétitions qui illustrent une offre ou une étape
+restent des figures, pour éviter de multiplier les liens clavier. Il ne simule
+ni fenêtre de navigateur ni appareil ; la capture reste une surface
+rectangulaire, sans ombre, dans les ratios `16 / 7`, `16 / 10` ou `4 / 5`.
+
+Le dégradé noir n'existe que dans le tiers bas de l'image, sous la légende. Il
+n'introduit pas une nouvelle matière de marque : c'est une protection de
+lisibilité sur des captures dont la luminance varie. Le survol agrandit l'image
+de `1,025` sur pointeur fin, la légende ne bouge pas, et le mouvement disparaît
+avec `prefers-reduced-motion`. Sur mobile, seul le nom reste visible ; la nature
+du projet demeure disponible aux technologies d'assistance. Une image absente
+devient un aplat d'encre, jamais une icône cassée.
+
+**La capture comme preuve.** Une capture de projet n'est admissible que si la
+page est publique, l'URL source est conservée et le fichier livré possède une
+provenance traçable. Sa palette reste enfermée dans l'image ; le cadre, la
+légende et les interactions continuent d'obéir au système Lilian Sevoumian.
+
+**Une couleur de marque au survol n'est pas la même chose.** Dans le chrome du
+site, trois dispositifs la font apparaître au pointeur et seulement là : les
+logos du bandeau
 (`LogoMarquee`), le logo en tête de carte outil (`Stack`), et les trois canaux
 du pied de page (`Footer`). Le raisonnement est écrit dans `LogoMarquee` :
 vingt-trois couleurs posées en permanence contrediraient la promesse d'un seul
 accent, la même couleur rendue au survol est un geste. La règle est donc :
-**au repos, tout est encre ; la marque tierce n'apparaît qu'au survol, et jamais
-sur pointeur grossier**, où elle ne manque à personne puisqu'elle ne porte pas
-de sens. Sur l'encre du pied de page, la teinte est celle que la plateforme
-publie pour les fonds sombres — le bleu LinkedIn des fonds clairs y tombe à
-3,32:1.
+**dans le chrome, au repos, tout est encre ; la marque tierce n'apparaît qu'au
+survol, et jamais sur pointeur grossier**, où elle ne manque à personne
+puisqu'elle ne porte pas de sens. Une capture de projet public est du contenu,
+pas du chrome, et relève de la règle précédente. Sur l'encre du pied de page, la
+teinte est celle que la plateforme publie pour les fonds sombres — le bleu
+LinkedIn des fonds clairs y tombe à 3,32:1.
 
 **Les pages de cas** découpent leur corps markdown en pièces, une par titre, sur
 des surfaces alternées dont la dernière est l'encre. Trois dispositifs y sont
@@ -522,6 +559,8 @@ PNG et le SVG en portaient deux différentes.
 - Faire porter le rythme par le changement de surface, pas par le vide.
 - Laisser une absence quand la matière manque. Sur ce site, ce qui n'est pas
   montré est aussi une affirmation.
+- Montrer un projet public par une capture réelle, légendée et traçable ;
+  cantonner sa palette à l'image.
 
 **À ne pas faire**
 
@@ -531,6 +570,8 @@ PNG et le SVG en portaient deux différentes.
   unités : une cible, un état, un visage, un mot-étiquette. Une carte, une
   bande, un panneau, un champ et un bouton restent à zéro.
 - Ajouter une ombre. L'élévation vient des filets.
+- Entourer une capture de projet d'un faux navigateur ou d'un appareil, ni
+  employer son dégradé de lisibilité ailleurs que sous sa légende.
 - Poser un sur-titre en petites capitales espacées au-dessus de chaque section,
   ni une numérotation `01 / 02 / 03` en écaille. C'est la grammaire du site
   généré, et elle a été retirée volontairement.

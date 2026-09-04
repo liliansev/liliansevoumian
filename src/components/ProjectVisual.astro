@@ -1,0 +1,184 @@
+---
+interface Props {
+  src: string;
+  href: string;
+  name: string;
+  detail: string;
+  alt: string;
+  ratio?: 'wide' | 'landscape' | 'portrait';
+  priority?: boolean;
+  interactive?: boolean;
+  class?: string;
+}
+
+const {
+  src,
+  href,
+  name,
+  detail,
+  alt,
+  ratio = 'landscape',
+  priority = false,
+  interactive = false,
+  class: className,
+} = Astro.props;
+
+const Root = interactive ? 'a' : 'figure';
+const rootAttributes = interactive
+  ? {
+      href,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      'aria-label': `Voir ${name}, ${detail} (nouvel onglet)`,
+    }
+  : {};
+---
+
+<Root
+  class:list={['project-visual group', `project-visual--${ratio}`, className]}
+  {...rootAttributes}
+  data-project-visual
+>
+  <img
+    src={src}
+    alt={alt}
+    width="1440"
+    height="900"
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    decoding="async"
+  />
+  <span class="project-visual__wash" aria-hidden="true"></span>
+  <span class="project-visual__caption">
+    <strong>{name}</strong>
+    <span>{detail}</span>
+  </span>
+</Root>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-project-visual]').forEach((visual) => {
+    const image = visual.querySelector('img');
+    if (!image || visual.dataset.imageFallbackReady === 'true') return;
+
+    visual.dataset.imageFallbackReady = 'true';
+    const showFallback = () => visual.classList.add('is-image-missing');
+
+    if (image.complete && image.naturalWidth === 0) showFallback();
+    image.addEventListener('error', showFallback, { once: true });
+  });
+</script>
+
+<style>
+  .project-visual {
+    position: relative;
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    background: var(--color-surface-low);
+    color: white;
+    text-decoration: none;
+    isolation: isolate;
+    margin: 0;
+  }
+
+  .project-visual--wide {
+    aspect-ratio: 16 / 7;
+  }
+
+  .project-visual--landscape {
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-visual--portrait {
+    aspect-ratio: 4 / 5;
+  }
+
+  .project-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  .project-visual.is-image-missing img {
+    opacity: 0;
+  }
+
+  .project-visual.is-image-missing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #111111;
+  }
+
+  .project-visual__wash {
+    position: absolute;
+    inset: 35% 0 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, #111111 84%, transparent));
+    pointer-events: none;
+  }
+
+  .project-visual__caption {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: clamp(1rem, 2.2vw, 1.5rem);
+    color: white;
+  }
+
+  .project-visual__caption strong {
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .project-visual__caption span {
+    max-width: 18ch;
+    font-size: var(--text-body-sm);
+    line-height: 1.35;
+    text-align: right;
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-visual:hover img {
+      transform: scale(1.025);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-visual img {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .project-visual__caption {
+      padding: 1rem;
+    }
+
+    .project-visual__caption span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .project-visual__caption strong {
+      font-size: var(--text-body-large);
+    }
+  }
+</style>
