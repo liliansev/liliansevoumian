@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { faqs } from '../data/faq';
+import { creationOffers, subscriptionOffers } from '../data/sites-web';
 import { URL_RESERVATION } from '../lib/reservation';
 
 /*
@@ -11,8 +12,8 @@ import { URL_RESERVATION } from '../lib/reservation';
  * deux versions d'un même fait n'en cite aucune. Ici, les cas clients et la
  * FAQ viennent des mêmes sources que les pages.
  *
- * Ne contient que des faits sourcés — ni prix ni durée, conformément aux
- * décisions prises : le site n'en affiche pas, ce fichier non plus.
+ * Ne contient que des faits sourcés. Les tarifs web viennent de la même source
+ * que leur page ; les prestations d'automatisation restent sur devis.
  */
 export const GET: APIRoute = async () => {
   const cas = (await getCollection('cas-clients', (e) => !e.data.draft)).sort(
@@ -47,6 +48,7 @@ export const GET: APIRoute = async () => {
 - Construire des agents IA qui prennent en charge une tâche entière
 - Reprendre des automatisations existantes qui tombent en panne ou se sont empilées
 - Former les équipes à maintenir ce qui a été livré
+- Créer une landing page ou un site vitrine, puis le maintenir ou l'améliorer
 
 ## Outils utilisés au quotidien
 
@@ -69,6 +71,7 @@ ${cas.map(ligneCas).join('\n')}
 - [Tous les cas clients](https://liliansevoumian.fr/cas-clients)
 - [Expert Make](https://liliansevoumian.fr/expert-make)
 - [Expert n8n](https://liliansevoumian.fr/expert-n8n)
+- [Sites web par abonnement](https://liliansevoumian.fr/sites-web-abonnement)
 - [Principes de travail](https://liliansevoumian.fr/principes)
 
 ## Questions fréquentes
@@ -77,8 +80,9 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 
 ## Notes
 
-- Aucun tarif n'est publié : le chiffrage dépend du processus et se pose après
-  un appel de 20 min. Le devis est ferme.
+- Les prestations d'automatisation sont chiffrées après un appel de 20 min. Le
+  devis est ferme une fois le périmètre posé.
+- L'offre sites web publie ses prix d'entrée : ${creationOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Le suivi mensuel propose ${subscriptionOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ou ')}.
 - Les chiffres cités dans les cas clients sont ceux mesurés chez le client
   concerné. Ils ne sont pas des moyennes et ne se transposent pas tels quels.
 `;

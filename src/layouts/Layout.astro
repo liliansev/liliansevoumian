@@ -12,9 +12,11 @@ interface Props {
   publishedDate?: string;
   modifiedDate?: string;
   articleSchema?: object;
+  pageSchema?: object;
   breadcrumbs?: Array<{ name: string; url: string }>;
   noindex?: boolean;
   faqSchema?: Array<{ question: string; answer: string }>;
+  directionContract?: string;
 }
 
 const {
@@ -28,10 +30,20 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   publishedDate,
   modifiedDate,
   articleSchema,
+  pageSchema,
   breadcrumbs,
   noindex = false,
-  faqSchema
+  faqSchema,
+  directionContract
 } = Astro.props;
+
+/* Impeccable demande que le contrat d'une nouvelle surface survive dans le
+   HTML produit, comme premier enfant du body. Le contenu vient du dépôt, pas
+   d'une entrée visiteur ; on neutralise quand même la seule séquence capable
+   de fermer un commentaire HTML avant l'heure. */
+const directionContractComment = directionContract
+  ? `<!-- ${directionContract.replaceAll('--', '—')} -->`
+  : null;
 
 /* Sans slash final, comme les 217 liens internes du site et comme le sitemap.
    `Astro.url.pathname` en porte un, si bien que le canonical déclarait une URL
@@ -201,6 +213,7 @@ const faqPageSchema = faqSchema ? {
     <script type="application/ld+json" set:html={safeJsonLd(websiteSchema)} />
     {breadcrumbSchema && <script type="application/ld+json" set:html={safeJsonLd(breadcrumbSchema)} />}
     {articleSchema && <script type="application/ld+json" set:html={safeJsonLd(articleSchema)} />}
+    {pageSchema && <script type="application/ld+json" set:html={safeJsonLd(pageSchema)} />}
     {faqPageSchema && <script type="application/ld+json" set:html={safeJsonLd(faqPageSchema)} />}
 
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -234,21 +247,73 @@ const faqPageSchema = faqSchema ? {
           // 3. Loader officiel de l'embed cal.com. Le stub `window.Cal` ne déclenche
           //    AUCUN réseau tant qu'on ne l'appelle pas : embed.js (~80 KB) n'est
           //    fetché qu'au premier clic CTA (bootCal), pas pour 100 % des visiteurs.
-          (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+          var CAL_SCRIPT_URL = "https://app.cal.com/embed/embed.js";
+          (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; let script = d.createElement("script"); script.src = A; script.dataset.calEmbedScript = ""; script.addEventListener("load", function () { script.dataset.calLoaded = "true"; }); d.head.appendChild(script); cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, CAL_SCRIPT_URL, "init");
 
-          var calBooted = false;
+          var calApiQueued = false;
+          var calLoadPromise = null;
           function bootCal() {
-            if (calBooted) return;
-            calBooted = true;
-            window.Cal("init", { origin: "https://cal.com" });
-            window.Cal("on", { action: "bookingSuccessful", callback: onBooked });
-            window.Cal("on", { action: "bookingSuccessfulV2", callback: onBooked });
+            if (!calApiQueued) {
+              window.Cal("init", { origin: "https://cal.com" });
+              window.Cal("on", { action: "bookingSuccessful", callback: onBooked });
+              window.Cal("on", { action: "bookingSuccessfulV2", callback: onBooked });
+              calApiQueued = true;
+            }
+
+            var script = document.querySelector('script[data-cal-embed-script]');
+            if (!script) {
+              // Après une erreur réseau, la file Cal existe encore : un nouveau
+              // script suffit à la rejouer sans dupliquer les listeners métier.
+              script = document.createElement('script');
+              script.src = CAL_SCRIPT_URL;
+              script.dataset.calEmbedScript = '';
+              script.addEventListener('load', function () { script.dataset.calLoaded = 'true'; });
+              document.head.appendChild(script);
+            }
+            if (script.dataset.calLoaded === 'true') return Promise.resolve();
+            if (calLoadPromise) return calLoadPromise;
+
+            calLoadPromise = new Promise(function (resolve, reject) {
+              var settled = false;
+              var timeout = window.setTimeout(function () {
+                finish(new Error('Cal.com load timeout'));
+              }, 10000);
+              function cleanup() {
+                window.clearTimeout(timeout);
+                script.removeEventListener('load', onLoad);
+                script.removeEventListener('error', onError);
+              }
+              function finish(error) {
+                if (settled) return;
+                settled = true;
+                cleanup();
+                if (error) reject(error);
+                else resolve();
+              }
+              function onLoad() {
+                script.dataset.calLoaded = 'true';
+                finish();
+              }
+              function onError() { finish(new Error('Cal.com load error')); }
+              script.addEventListener('load', onLoad);
+              script.addEventListener('error', onError);
+            }).catch(function (error) {
+              calLoadPromise = null;
+              script.remove();
+              throw error;
+            });
+            return calLoadPromise;
           }
 
           // Overlay plein écran : ouverture / fermeture + scroll lock + focus management
           // (dialog aria-modal : focus le CONTENEUR à l'open — pas le 1er focusable,
           // qui déclenche le cadre de focus noir iOS — trap Tab, restore au close).
           var closeBtn = overlay.querySelector('[data-cal-close]');
+          var retryBtn = overlay.querySelector('[data-cal-retry]');
+          var status = overlay.querySelector('[data-cal-status]');
+          var statusText = overlay.querySelector('[data-cal-status-text]');
+          var errorActions = overlay.querySelector('[data-cal-error-actions]');
+          var embedTarget = document.getElementById('cal-embed-target');
           var inited = false;
           var lastFocused = null;
           // Entre "lead_call" au clic et "call_booked" à la confirmation, tout se
@@ -256,20 +321,55 @@ const faqPageSchema = faqSchema ? {
           // invisible. `booked` distingue la fermeture qui suit une réservation
           // de celle qui l'abandonne — sans lui, les deux se ressemblent.
           var booked = false;
+          function setCalState(state) {
+            if (!status || !statusText || !errorActions || !embedTarget) return;
+            status.hidden = state === 'ready';
+            statusText.textContent = state === 'error'
+              ? 'Le calendrier ne peut pas se charger pour le moment.'
+              : 'Chargement du calendrier…';
+            errorActions.hidden = state !== 'error';
+            embedTarget.setAttribute('aria-busy', String(state === 'loading'));
+          }
+          function waitForEmbed() {
+            return new Promise(function (resolve, reject) {
+              var deadline = Date.now() + 10000;
+              function check() {
+                if (embedTarget && embedTarget.querySelector('iframe')) { resolve(); return; }
+                if (Date.now() >= deadline) { reject(new Error('Cal.com embed timeout')); return; }
+                window.setTimeout(check, 100);
+              }
+              check();
+            });
+          }
+          function mountCal() {
+            if (!embedTarget) return Promise.resolve();
+            if (inited && embedTarget.querySelector('iframe')) {
+              setCalState('ready');
+              return Promise.resolve();
+            }
+            setCalState('loading');
+            return bootCal()
+              .then(function () {
+                embedTarget.replaceChildren();
+                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: "light" } });
+                inited = true;
+                return waitForEmbed();
+              })
+              .then(function () { setCalState('ready'); })
+              .catch(function () {
+                inited = false;
+                embedTarget.replaceChildren();
+                setCalState('error');
+              });
+          }
           function openOverlay() {
             booked = false;
-            bootCal();
-            if (!inited) {
-              // Le site n'a plus qu'une surface : l'embed cal.com est figé en
-              // clair, il ne lit plus une classe qui n'existe plus.
-              window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: "light" } });
-              inited = true;
-            }
             lastFocused = document.activeElement;
             overlay.classList.add('is-open');
             overlay.setAttribute('aria-hidden', 'false');
             window.__verrouDefilement('cal', true);
             window.setTimeout(function () { overlay.focus(); }, 50);
+            mountCal();
           }
           function closeOverlay() {
             var wasOpen = overlay.classList.contains('is-open');
@@ -286,11 +386,18 @@ const faqPageSchema = faqSchema ? {
           // Trap Tab dans l'overlay ouvert (même pattern que le menu mobile).
           overlay.addEventListener('keydown', function (e) {
             if (!overlay.classList.contains('is-open') || e.key !== 'Tab') return;
-            var focusable = overlay.querySelectorAll('a, button, iframe, [tabindex]:not([tabindex="-1"])');
+            var focusable = Array.prototype.filter.call(
+              overlay.querySelectorAll('a, button, iframe, [tabindex]:not([tabindex="-1"])'),
+              function (el) { return !el.closest('[hidden]') && !el.hasAttribute('disabled'); }
+            );
             if (!focusable.length) return;
             var first = focusable[0];
             var last = focusable[focusable.length - 1];
-            if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+            if (document.activeElement === overlay) {
+              (e.shiftKey ? last : first).focus();
+              e.preventDefault();
+            }
+            else if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
             else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
           });
 
@@ -298,11 +405,13 @@ const faqPageSchema = faqSchema ? {
           document.addEventListener('click', function (ev) {
             var t = ev.target && ev.target.closest ? ev.target.closest('a[href*="cal.com/lilian-sevoumian"]') : null;
             if (!t) return;
+            if (t.hasAttribute('data-cal-direct')) return;
             ev.preventDefault();
             lastSource = t.getAttribute('data-fast-goal-source') || 'cal_embed';
             openOverlay();
           });
           if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
+          if (retryBtn) retryBtn.addEventListener('click', mountCal);
           document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeOverlay();
           });
@@ -329,6 +438,7 @@ const faqPageSchema = faqSchema ? {
     </script>
   </head>
   <body class="antialiased m-0 p-0 relative">
+    {directionContractComment && <Fragment set:html={directionContractComment} />}
     <a href="#main-content" class="skip-link">
       Aller au contenu principal
     </a>
@@ -342,7 +452,20 @@ const faqPageSchema = faqSchema ? {
         <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
       </div>
       <div class="cal-overlay-body">
-        <div id="cal-embed-target"></div>
+        <div class="cal-overlay-status" data-cal-status role="status" aria-live="polite">
+          <p data-cal-status-text>Chargement du calendrier…</p>
+          <div class="cal-overlay-error-actions" data-cal-error-actions hidden>
+            <button type="button" class="cal-overlay-action" data-cal-retry>Réessayer</button>
+            <a
+              class="cal-overlay-action"
+              href="https://cal.com/lilian-sevoumian/20min"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cal-direct
+            >Ouvrir Cal.com ↗</a>
+          </div>
+        </div>
+        <div id="cal-embed-target" aria-busy="true"></div>
       </div>
     </div>
 

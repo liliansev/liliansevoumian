@@ -1,0 +1,425 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import BoutonReservation from '../components/BoutonReservation.astro';
+import LinkCTA from '../components/LinkCTA.astro';
+import Footer from '../components/Footer.astro';
+import {
+  creationOffers,
+  manufacturingSteps,
+  productionPromises,
+  refusedPromises,
+  siteFaqs,
+  subscriptionOffers,
+} from '../data/sites-web';
+
+const navLinks = [
+  { href: '#tarifs', label: 'Création' },
+  { href: '#abonnements', label: 'Abonnements' },
+  { href: '#methode', label: 'Méthode' },
+  { href: '#limites', label: 'Limites' },
+  { href: '#preuves', label: 'Preuves' },
+  { href: '#faq', label: 'FAQ' },
+];
+
+const faqSchema = siteFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
+const pageDescription = `Landing page dès ${creationOffers[0].price}, site vitrine dès ${creationOffers[1].price}, puis maintenance Care ou amélioration Growth. IA assistée, contrôle humain.`;
+
+const directionContract = `
+THESIS: Un site n’est pas une livraison figée mais un système construit, maintenu puis amélioré ; cette surface refuse le hero d’agence générique et la grille de cartes décoratives.
+OWN-WORLD: Papier blanc, encre noire, lime posé en surface, filets de fabrication, angles droits et une seule famille Geist.
+STORY: Le visiteur comprend Build, Care et Growth, voit les prix et les limites, puis réserve un appel de 20 minutes.
+FIRST VIEWPORT: Promesse ample à gauche ; nomenclature Build, Care, Growth à droite, avec rôle, prix et état. L’action primaire reste dans la colonne de lecture.
+FORM: Le dossier de fabrication, structure classée 7, seed 244476c3.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+`.trim();
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': 'https://liliansevoumian.fr/sites-web-abonnement#service',
+  name: 'Création et amélioration de sites web',
+  description:
+    'Création de landing pages et sites vitrines, puis maintenance Care ou amélioration Growth à partir de données réelles.',
+  url: 'https://liliansevoumian.fr/sites-web-abonnement',
+  areaServed: { '@type': 'Country', name: 'France' },
+  provider: { '@id': 'https://liliansevoumian.fr/#person' },
+  serviceType: ['Création de site web', 'Landing page', 'Maintenance de site web', 'Optimisation continue'],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Création et abonnements',
+    itemListElement: [
+      ...creationOffers.map((offer, index) => ({
+        '@type': 'Offer',
+        name: offer.name,
+        description: offer.promise,
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          ...(index === creationOffers.length - 1
+            ? { minPrice: offer.schemaPrice }
+            : { price: offer.schemaPrice }),
+          priceCurrency: 'EUR',
+          valueAddedTaxIncluded: false,
+        },
+      })),
+      ...subscriptionOffers.map((offer) => ({
+        '@type': 'Offer',
+        name: offer.name,
+        description: `${offer.promise} Facturation mensuelle.`,
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: offer.schemaPrice,
+          priceCurrency: 'EUR',
+          billingDuration: 'P1M',
+          valueAddedTaxIncluded: false,
+        },
+      })),
+    ],
+  },
+};
+---
+
+<Layout
+  title="Création de site web par abonnement | Lilian Sevoumian"
+  description={pageDescription}
+  ogImage="/og-sites-web.png"
+  ogImageAlt="Un site qui ne cesse d’évoluer — création, Care et Growth par Lilian Sevoumian"
+  breadcrumbs={[
+    { name: 'Accueil', url: '/' },
+    { name: 'Sites web', url: '/sites-web-abonnement' },
+  ]}
+  faqSchema={faqSchema}
+  pageSchema={serviceSchema}
+  directionContract={directionContract}
+>
+  <Navigation
+    links={navLinks}
+    ctaLabel="Parler de mon site"
+    ctaSource="sites_web_nav"
+    trackHero={true}
+  />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <section
+      id="hero"
+      class="bloc-lime relative min-h-[100svh] px-[var(--spacing-section-x)] pt-28 pb-16 lg:pt-36 lg:pb-20 border-b border-[var(--color-divider)] flex items-center"
+    >
+      <div class="relative max-w-[1200px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] gap-14 lg:gap-20 items-center">
+        <div class="min-w-0 reveal is-visible">
+          <h1 class="font-display font-semibold text-[length:var(--text-sites-hero)] leading-[0.95] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[11ch] text-balance">
+            Un site qui ne <mark class="inv">cesse d’évoluer.</mark>
+          </h1>
+          <p class="mt-7 mb-0 max-w-[59ch] text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">
+            Je conçois le message, le design et le site. Puis Care le maintient,
+            ou Growth l’améliore à partir des données. L’abonnement finance du
+            travail réel, pas un simple droit d’hébergement.
+          </p>
+
+          <div class="mt-9 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <BoutonReservation source="sites_web_hero" class="btn-primary justify-center">
+              Parler de mon site
+            </BoutonReservation>
+            <LinkCTA href="#tarifs">Voir les tarifs</LinkCTA>
+          </div>
+
+          <p class="mt-8 mb-0 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-low)] max-w-[64ch]">
+            Création à partir de {creationOffers[0].price} · suivi à partir de
+            {subscriptionOffers[0].price} · périmètre confirmé avant de commencer.
+          </p>
+        </div>
+
+        <aside class="reveal is-visible lg:border-l border-[var(--color-divider)] lg:pl-10" aria-label="Nomenclature de l’offre">
+          <div class="flex items-baseline justify-between gap-6 pb-5 border-b border-[var(--color-border-strong)]">
+            <h2 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
+              Dossier de fabrication
+            </h2>
+            <span class="mono-caption text-[var(--color-ink-low)] whitespace-nowrap">OFFRE ACTIVE</span>
+          </div>
+
+          <dl class="fabrication-board m-0">
+            <div class="fabrication-row grid grid-cols-[minmax(0,1fr)_auto] gap-4 py-6 border-b border-[var(--color-divider)] items-start">
+              <dt class="min-w-0 grid grid-cols-[auto_minmax(0,1fr)] gap-4">
+                <span class="fabrication-dot" style="--fabrication-delay: 0s" aria-hidden="true"></span>
+                <span class="min-w-0">
+                  <span class="block font-display font-semibold text-[length:var(--text-title)] leading-[1.2] text-[var(--color-ink)]">Build</span>
+                  <span class="block mt-1 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">Concevoir et mettre en ligne</span>
+                </span>
+              </dt>
+              <dd class="m-0 text-right tabular-nums text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)] whitespace-nowrap">dès {creationOffers[0].price}</dd>
+            </div>
+            <div class="fabrication-row grid grid-cols-[minmax(0,1fr)_auto] gap-4 py-6 border-b border-[var(--color-divider)] items-start">
+              <dt class="min-w-0 grid grid-cols-[auto_minmax(0,1fr)] gap-4">
+                <span class="fabrication-dot" style="--fabrication-delay: 2s" aria-hidden="true"></span>
+                <span class="min-w-0">
+                  <span class="block font-display font-semibold text-[length:var(--text-title)] leading-[1.2] text-[var(--color-ink)]">Care</span>
+                  <span class="block mt-1 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">Maintenir le socle</span>
+                </span>
+              </dt>
+              <dd class="m-0 text-right tabular-nums text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)] whitespace-nowrap">{subscriptionOffers[0].price}</dd>
+            </div>
+            <div class="fabrication-row grid grid-cols-[minmax(0,1fr)_auto] gap-4 py-6 border-b border-[var(--color-divider)] items-start">
+              <dt class="min-w-0 grid grid-cols-[auto_minmax(0,1fr)] gap-4">
+                <span class="fabrication-dot" style="--fabrication-delay: 4s" aria-hidden="true"></span>
+                <span class="min-w-0">
+                  <span class="block font-display font-semibold text-[length:var(--text-title)] leading-[1.2] text-[var(--color-ink)]">Growth</span>
+                  <span class="block mt-1 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">Mesurer puis améliorer</span>
+                </span>
+              </dt>
+              <dd class="m-0 text-right tabular-nums text-[length:var(--text-body-sm)] font-medium text-[var(--color-ink)] whitespace-nowrap">{subscriptionOffers[1].price}</dd>
+            </div>
+          </dl>
+
+          <p class="mt-5 mb-0 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-low)]">
+            Build est le projet initial. Care ou Growth commence ensuite, selon
+            le niveau de suivi dont le site a réellement besoin.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="tarifs" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[17ch] text-balance">
+            Trois périmètres de création. <mark>Pas trois qualités.</mark>
+          </h2>
+          <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
+            Le niveau d’exigence ne change pas. Ce qui change, c’est le nombre
+            de pages, la profondeur du contenu et la complexité des parcours ou
+            des intégrations.
+          </p>
+        </div>
+
+        <div class="reveal-stagger grid grid-cols-1 lg:grid-cols-3 gap-x-10">
+          {creationOffers.map((offer) => (
+            <article class="reveal py-9 lg:py-10 border-b lg:border-b-0 border-[var(--color-divider)] flex flex-col">
+              <p class="m-0 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-low)]">{offer.useCase}</p>
+              <h3 class="mt-5 mb-0 font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)]">{offer.name}</h3>
+              <p class="mt-3 mb-0 font-display font-semibold text-[length:var(--text-headline)] leading-none tracking-[-0.035em] text-[var(--color-ink)] tabular-nums">{offer.price}</p>
+              <p class="mt-6 mb-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">{offer.promise}</p>
+              <ul class="mt-7 mb-0 pt-5 border-t border-[var(--color-divider)] pl-5 space-y-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
+                {offer.includes.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+
+        <div class="reveal mt-10 pt-7 border-t border-[var(--color-divider)] flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <p class="m-0 max-w-[64ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
+            Chaque prix suppose un contenu cadré et des validations disponibles.
+            Les intégrations, migrations et volumes exceptionnels sont chiffrés
+            dans le périmètre, jamais découverts sur la facture finale.
+          </p>
+          <BoutonReservation source="sites_web_tarifs" class="btn-primary justify-center shrink-0">
+            Cadrer mon site
+          </BoutonReservation>
+        </div>
+      </div>
+    </section>
+
+    <section id="abonnements" data-section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[16ch] text-balance">
+            Après le lancement, deux niveaux. Pas un abonnement <mark class="inv">vide.</mark>
+          </h2>
+          <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
+            Care protège ce qui existe. Growth décide ce qu’il faut améliorer.
+            Dans les deux cas, le périmètre mensuel est écrit et vérifiable.
+          </p>
+        </div>
+
+        <div class="mt-2">
+          {subscriptionOffers.map((offer) => (
+            <article class="reveal grid grid-cols-1 md:grid-cols-[minmax(0,0.55fr)_minmax(0,1fr)_minmax(0,0.75fr)] gap-5 md:gap-10 py-9 border-b border-[var(--color-divider)] items-start">
+              <div>
+                <p class="m-0 text-[length:var(--text-body-sm)] text-[var(--color-ink-low)]">{offer.role}</p>
+                <h3 class="mt-2 mb-0 font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)]">{offer.name}</h3>
+                <p class="mt-3 mb-0 text-[length:var(--text-title)] font-medium text-[var(--color-ink)] tabular-nums">{offer.price}</p>
+              </div>
+              <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">{offer.promise}</p>
+              <ul class="m-0 pl-5 space-y-2 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
+                {offer.includes.map((item) => <li>{item}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+
+        <div class="reveal mt-9 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-7 items-center">
+          <p class="m-0 max-w-[72ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
+            La production récurrente d’articles à la chaîne n’est pas vendue ici.
+            Je préfère ne pas commercialiser un volume de contenu avant d’avoir
+            suffisamment éprouvé le processus sur mes propres sites.
+          </p>
+          <BoutonReservation source="sites_web_abonnements" class="btn-primary justify-center">
+            Choisir le bon niveau
+          </BoutonReservation>
+        </div>
+      </div>
+    </section>
+
+    <section id="methode" data-section class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal max-w-[780px] pb-9 border-b border-[var(--color-border-strong)]">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[19ch] text-balance">
+            Le site sort avec un dossier. Pas une pile de <mark>fichiers.</mark>
+          </h2>
+          <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
+            Six passages, chacun avec une sortie tangible. L’IA accélère la
+            production entre les étapes ; elle ne remplace aucune validation.
+          </p>
+        </div>
+
+        <ol class="m-0 p-0 list-none">
+          {manufacturingSteps.map((step) => (
+            <li class="reveal grid grid-cols-1 md:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] gap-5 md:gap-14 py-8 border-b border-[var(--color-divider)]">
+              <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] text-[var(--color-ink)] m-0 max-w-[24ch]">{step.title}</h3>
+              <div>
+                <p class="m-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)] max-w-[70ch]">{step.description}</p>
+                <p class="mt-4 mb-0 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink)]"><strong>À la sortie&nbsp;:</strong> {step.output}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section id="limites" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal max-w-[820px]">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
+            L’IA produit vite. <mark class="inv">Elle ne valide rien.</mark>
+          </h2>
+          <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[65ch]">
+            Mon rôle est de cadrer les données, reconnaître un texte générique,
+            contrôler les promesses et refuser ce que les outils ne permettent
+            pas d’affirmer.
+          </p>
+        </div>
+
+        <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 border-y border-[var(--color-border-strong)]">
+          <article class="reveal py-9 lg:pr-12 lg:border-r border-[var(--color-divider)]">
+            <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)] m-0">Ce que le processus impose</h3>
+            <ul class="mt-7 mb-0 pl-5 space-y-4 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
+              {productionPromises.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+          <article class="reveal py-9 lg:pl-12 border-t lg:border-t-0 border-[var(--color-divider)]">
+            <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.15] tracking-[-0.025em] text-[var(--color-ink)] m-0">Ce que je ne promets pas</h3>
+            <ul class="mt-7 mb-0 pl-5 space-y-4 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
+              {refusedPromises.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="preuves" data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-12 lg:gap-20">
+        <div class="reveal">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[17ch] text-balance">
+            Ce que mes références <mark>prouvent vraiment.</mark>
+          </h2>
+          <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
+            Elles viennent de l’automatisation. Elles prouvent une façon de
+            cadrer, construire, documenter et contrôler un système. Je ne les
+            recycle pas en faux résultats SEO ou en portfolio de sites clients.
+          </p>
+        </div>
+
+        <dl class="reveal m-0 border-t border-[var(--color-border-strong)]">
+          <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2 sm:gap-6 py-6 border-b border-[var(--color-divider)] items-baseline">
+            <dt class="text-[length:var(--text-body)] text-[var(--color-ink-mid)]">Rigueur technique</dt>
+            <dd class="m-0 font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] sm:text-right">Make certifié N5</dd>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2 sm:gap-6 py-6 border-b border-[var(--color-divider)] items-baseline">
+            <dt class="text-[length:var(--text-body)] text-[var(--color-ink-mid)]">Transmission et documentation</dt>
+            <dd class="m-0 font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] sm:text-right tabular-nums">300+ personnes formées</dd>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2 sm:gap-6 py-6 border-b border-[var(--color-divider)] items-baseline">
+            <dt class="text-[length:var(--text-body)] text-[var(--color-ink-mid)]">Résultats publiés avec leur contexte</dt>
+            <dd class="m-0 font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)] sm:text-right tabular-nums">4 missions documentées</dd>
+          </div>
+        </dl>
+        <div class="mt-7 flex flex-col sm:flex-row gap-4 sm:gap-7">
+          <LinkCTA href="/cas-clients">Lire les cas clients</LinkCTA>
+          <LinkCTA href="/principes">Voir mes principes</LinkCTA>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <div class="reveal max-w-[760px] pb-9 border-b border-[var(--color-border-strong)]">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[17ch] text-balance">
+            Les questions à régler <mark class="inv">avant le devis.</mark>
+          </h2>
+          <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
+            Tout ce qui pourrait transformer le périmètre, la crédibilité ou le
+            budget doit être visible avant l’appel.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-14">
+          {siteFaqs.map((faq) => (
+            <article class="reveal py-8 border-b border-[var(--color-divider)]">
+              <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] text-[var(--color-ink)] m-0 max-w-[32ch]">{faq.q}</h3>
+              <p class="mt-4 mb-0 text-[length:var(--text-body)] leading-[1.65] text-[var(--color-ink-mid)] max-w-[68ch]">{faq.a}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-10 lg:gap-20 items-end">
+        <div class="reveal">
+          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[20ch] text-balance">
+            Votre site doit-il seulement sortir, ou continuer à <mark>progresser&nbsp;?</mark>
+          </h2>
+          <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
+            En 20 minutes, on pose l’offre, les pages nécessaires et le niveau
+            de suivi. Si le budget ou le périmètre ne tient pas, je vous le dis.
+          </p>
+        </div>
+        <BoutonReservation source="sites_web_final" class="btn-primary justify-center lg:min-w-[220px]">
+          Parler de mon site
+        </BoutonReservation>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .fabrication-dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    margin-top: 0.4rem;
+    border-radius: var(--radius-full);
+    background: var(--color-ink);
+    opacity: 0.22;
+    transform: scale(0.72);
+    animation: fabrication-pulse 6s var(--ease-out-quint) infinite;
+    animation-delay: var(--fabrication-delay);
+  }
+
+  .fabrication-row:hover .fabrication-dot {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @keyframes fabrication-pulse {
+    0%, 27% { opacity: 1; transform: scale(1); }
+    34%, 100% { opacity: 0.22; transform: scale(0.72); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fabrication-dot {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

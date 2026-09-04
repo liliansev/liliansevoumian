@@ -28,6 +28,7 @@ se passe sur cal.com (voir Limite plus bas).
 | `hero` · `nav` · `nav_mobile_cta` · `roi` · `temoignages` · `stack-automation` · `stack-productivite` · `stack-ia` · `stack-vibe-coding` · `offres` · `contact` · `footer` · `barre-mobile` | Landing `/` |
 | `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
 | `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
+| `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_tarifs` · `sites_web_abonnements` · `sites_web_final` | Offre `/sites-web-abonnement` |
 
 ### `call_booked` — réservation cal.com confirmée (embed on-site)
 La **vraie conversion appel** (pas juste le clic). Les boutons cal.com ouvrent une
