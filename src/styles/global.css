@@ -57,7 +57,10 @@
      home cessait d'être plus petit que le titre d'une page SEO (76 contre
      84 px). Vérifié : 3 lignes à 1440 px comme avant, aucun débordement. */
   --text-display-hero: clamp(3.25rem, 6vw + 1.2rem, 6.25rem);
-  --text-home-service: clamp(2.5rem, 4.2vw, 4.5rem);
+  --text-home-service: clamp(1.25rem, 8.6cqi, 2.75rem);
+  --spacing-home-hero-y: clamp(3rem, 5vw, 5rem);
+  --spacing-home-hero-gap: clamp(3rem, 5vw, 5rem);
+  --spacing-service-card: clamp(1.25rem, 3vw, 2.5rem);
   /* Le hero de l'offre web garde le plafond du manifeste tout en descendant à
      48 px sur iPhone : son fragment surligné reste ainsi dans la colonne sans
      rogner le dernier glyphe. La courbe vit ici, avec les autres rangs. */
@@ -1865,6 +1868,7 @@ h1 mark.inv::before { --angle: 1.1deg; }
   --color-focus: var(--color-lime);
 }
 
+.bloc-encre mark { color: #111111; }
 .bloc-encre mark::before { background: var(--color-lime); }
 .bloc-encre .btn-primary { background: var(--color-lime); color: #111111; }
 .bloc-encre .btn-primary:hover,
@@ -1928,3 +1932,42 @@ h1 mark.inv::before { --angle: 1.1deg; }
    des automatisations qui cassent. Le lien n'apparaissait qu'au survol, quand la
    couleur passe à l'encre : sur pointeur grossier, il n'apparaissait jamais. */
 .bloc-lime .lien-prose { border-bottom-color: #ffffff; }
+
+/* Un seul trait sous le lien entier, y compris l'espace avant sa flèche.
+   Le pseudo-élément évite les fragments produits par text-decoration sur flex. */
+.text-link-arrow {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.65rem;
+  padding-block: 0.65rem;
+  color: var(--color-ink);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.text-link-arrow::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.4rem;
+  height: 2px;
+  background: var(--color-lime);
+  transition: background-color var(--duration-default) var(--ease-out-quint);
+}
+
+.text-link-arrow > span:first-child { min-width: 0; }
+.text-link-arrow > [aria-hidden] {
+  flex-shrink: 0;
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+.bloc-lime .text-link-arrow::after { background: #ffffff; }
+
+@media (hover: hover) and (pointer: fine) {
+  .text-link-arrow:hover::after { background: currentColor; }
+  .text-link-arrow:hover > [aria-hidden] { transform: translateX(0.2rem); }
+}

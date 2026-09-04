@@ -42,7 +42,7 @@ const audiences = [
           <h3>{audience.title}</h3>
           <div>
             <p>{audience.body}</p>
-            <a href={audience.href}>{audience.route} <span aria-hidden="true">→</span></a>
+            <a href={audience.href} class="text-link-arrow"><span>{audience.route}</span><span aria-hidden="true">→</span></a>
           </div>
         </li>
       ))}
@@ -84,28 +84,7 @@ const audiences = [
   }
 
   .home-audiences a {
-    display: inline-flex;
-    min-height: 44px;
-    align-items: center;
-    gap: 0.65rem;
     margin-top: 0.8rem;
-    color: var(--color-ink);
-    font-size: var(--text-body-sm);
-    font-weight: 600;
-    text-decoration: underline;
-    text-decoration-color: var(--color-lime);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.3em;
-  }
-
-  .home-audiences a span {
-    transition: transform var(--duration-default) var(--ease-out-quint);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .home-audiences a:hover span {
-      transform: translateX(0.3rem);
-    }
   }
 
   @media (max-width: 700px) {

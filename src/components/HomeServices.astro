@@ -6,6 +6,7 @@ const services = [
     kind: 'automation',
     href: '/automatisations-ia',
     title: 'Automatisation & IA',
+    titleLines: ['Automatisation', '& IA'],
     signal: 'Vos équipes recopient, classent ou relancent encore à la main.',
     body: 'Workflows n8n et Make, agents IA, intégrations et outils métier construits autour de vos opérations.',
     details: ['Automatiser', 'Connecter', 'Construire un agent'],
@@ -16,12 +17,13 @@ const services = [
   {
     kind: 'web',
     href: '/sites-web-abonnement',
-    title: 'Sites web',
-    signal: 'Votre site doit être créé, repris ou amélioré dans la durée.',
-    body: 'Landing page, site vitrine ou outil web, avec un périmètre clair puis une vraie continuité après la mise en ligne.',
+    title: 'Landing pages et applications métiers',
+    titleLines: ['Landing pages', 'et applications métiers'],
+    signal: 'Vous avez besoin d’une page qui convertit ou d’un outil adapté à votre activité.',
+    body: 'Landing pages, dashboards, portails clients et applications métiers : je conçois, développe et fais évoluer vos outils web.',
     details: ['Créer', 'Maintenir', 'Améliorer'],
     proof: 'Portfolio : 6 réalisations publiques',
-    action: 'Explorer les sites web',
+    action: 'Explorer les projets web',
     source: 'home_services_web',
   },
 ] as const;
@@ -34,9 +36,9 @@ const services = [
 >
   <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Quel sujet voulez-vous <mark>faire avancer&nbsp;?</mark>"
-      body="Choisissez le terrain qui ressemble à votre projet. Chaque page détaille les services, les preuves et la façon de travailler avant de proposer un rendez-vous."
-      titleMaxWidth="21ch"
+      title="Quel sujet voulez-vous<br /><mark>faire avancer&nbsp;?</mark>"
+      body="Automatiser un processus, lancer une landing page ou construire un outil pour votre équipe."
+      titleMaxWidth="none"
       bodyMaxWidth="58ch"
     />
 
@@ -49,17 +51,15 @@ const services = [
           data-fast-goal-source={service.source}
         >
           <p class="home-service-card__signal">{service.signal}</p>
-          <h3>{service.title}</h3>
+          <h3>{service.titleLines.map((line, index) => <span>{line}{index === 0 ? ' ' : ''}</span>)}</h3>
           <p class="home-service-card__body">{service.body}</p>
 
           <ul aria-label={`Périmètre ${service.title}`}>
             {service.details.map((detail) => <li>{detail}</li>)}
           </ul>
 
-          <div class="home-service-card__foot">
-            <span>{service.proof}</span>
-            <strong>{service.action} <i aria-hidden="true">→</i></strong>
-          </div>
+          <span class="home-service-card__proof">{service.proof}</span>
+          <strong class="home-service-card__action">{service.action} <i aria-hidden="true">→</i></strong>
         </a>
       ))}
     </div>
@@ -70,15 +70,18 @@ const services = [
   .home-services {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto auto auto 1fr auto;
+    row-gap: 1.5rem;
     border: 1px solid var(--color-border-strong);
   }
 
   .home-service-card {
-    display: flex;
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 6;
     min-width: 0;
-    min-height: 34rem;
-    flex-direction: column;
-    padding: clamp(2rem, 4vw, 3.5rem);
+    min-height: 31rem;
+    padding: var(--spacing-service-card);
     background: var(--color-paper);
     color: var(--color-ink);
     text-decoration: none;
@@ -89,6 +92,8 @@ const services = [
 
   .home-service-card--automation {
     background: var(--color-lime);
+    --color-ink-mid: #2e2e2e;
+    --color-ink-low: #3a3a3a;
   }
 
   .home-service-card + .home-service-card {
@@ -96,7 +101,7 @@ const services = [
   }
 
   .home-service-card__signal {
-    max-width: 34ch;
+    max-width: 42ch;
     margin: 0;
     color: var(--color-ink-mid);
     font-size: var(--text-body-sm);
@@ -104,19 +109,26 @@ const services = [
   }
 
   .home-service-card h3 {
-    max-width: 10ch;
-    margin: 2.5rem 0 0;
+    container-type: inline-size;
+    max-width: none;
+    margin: 0;
     color: var(--color-ink);
-    font-size: var(--text-home-service);
+    font-size: inherit;
     font-weight: 600;
-    line-height: 0.94;
+    line-height: 1.05;
     letter-spacing: -0.035em;
     transition: transform var(--duration-default) var(--ease-out-quint);
   }
 
+  .home-service-card h3 span {
+    display: block;
+    font-size: var(--text-home-service);
+    white-space: nowrap;
+  }
+
   .home-service-card__body {
-    max-width: 38ch;
-    margin: 1.5rem 0 0;
+    max-width: 48ch;
+    margin: 0;
     color: var(--color-ink-mid);
     font-size: var(--text-body);
     line-height: 1.6;
@@ -125,8 +137,9 @@ const services = [
   .home-service-card ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 0;
-    margin: 2rem 0 0;
+    align-content: start;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
     padding: 1rem 0 0;
     border-top: 1px solid var(--color-border-strong);
     list-style: none;
@@ -140,28 +153,15 @@ const services = [
     text-transform: uppercase;
   }
 
-  .home-service-card li + li::before {
-    content: '·';
-    display: inline-block;
-    margin: 0 0.65rem;
-    color: var(--color-ink-low);
-  }
-
-  .home-service-card__foot {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: auto;
-    padding-top: 2.5rem;
-  }
-
-  .home-service-card__foot > span {
+  .home-service-card__proof {
+    align-self: end;
+    padding-top: 1rem;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
     font-variant-numeric: tabular-nums;
   }
 
-  .home-service-card__foot strong {
+  .home-service-card__action {
     display: flex;
     min-height: 44px;
     align-items: center;
@@ -175,7 +175,7 @@ const services = [
     text-transform: uppercase;
   }
 
-  .home-service-card__foot i {
+  .home-service-card__action i {
     font-style: normal;
     transition: transform var(--duration-default) var(--ease-out-quint);
   }
@@ -186,11 +186,11 @@ const services = [
       color: var(--color-paper);
     }
 
-    .home-service-card:hover :is(h3, p, li, .home-service-card__foot > span, .home-service-card__foot strong) {
+    .home-service-card:hover :is(h3, p, li, .home-service-card__proof, .home-service-card__action) {
       color: var(--color-paper);
     }
 
-    .home-service-card:hover :is(ul, .home-service-card__foot strong) {
+    .home-service-card:hover :is(ul, .home-service-card__action) {
       border-color: var(--color-paper);
     }
 
@@ -198,18 +198,23 @@ const services = [
       transform: translateY(-0.2rem);
     }
 
-    .home-service-card:hover .home-service-card__foot i {
+    .home-service-card:hover .home-service-card__action i {
       transform: translateX(0.35rem);
     }
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 899px) {
     .home-services {
       grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      row-gap: 0;
     }
 
     .home-service-card {
-      min-height: 30rem;
+      grid-template-rows: auto auto auto auto 1fr auto;
+      grid-row: auto;
+      gap: 1.5rem;
+      min-height: 0;
     }
 
     .home-service-card + .home-service-card {

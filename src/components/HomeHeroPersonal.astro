@@ -26,23 +26,24 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
         <LinkCTA href="#qui-je-suis">Pourquoi me confier le projet</LinkCTA>
       </div>
 
-      <p class="home-hero__signature">
-        Lilian Sevoumian · Freelance depuis 2020
-      </p>
     </div>
 
-    <div class="home-hero__portrait">
+    <figure class="home-hero__portrait">
       <Picture
         src={lilianPhoto}
         alt="Lilian Sevoumian, freelance en automatisation, IA et création de sites web"
         class="home-hero__picture"
         formats={['avif', 'webp']}
         widths={[480, 720, 960]}
-        sizes="(min-width: 1024px) 35vw, 100vw"
+        sizes="(min-width: 1440px) 430px, (min-width: 1024px) 35vw, (min-width: 640px) 480px, 100vw"
         loading="eager"
         fetchpriority="high"
       />
-    </div>
+      <figcaption>
+        <span>Lilian Sevoumian</span>
+        <span>Freelance depuis 2020</span>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
@@ -53,10 +54,9 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
   }
 
   .home-hero__inner {
-    grid-template-columns: minmax(0, 1.18fr) minmax(19rem, 0.82fr);
-    gap: clamp(3rem, 7vw, 7rem);
-    min-height: min(48rem, calc(100svh - 80px));
-    padding-block: clamp(3.5rem, 7vw, 7rem);
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.85fr);
+    gap: var(--spacing-home-hero-gap);
+    padding-block: var(--spacing-home-hero-y);
   }
 
   .home-hero__copy {
@@ -89,66 +89,45 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
     margin-top: 2rem;
   }
 
-  .home-hero__signature {
-    margin: 1.75rem 0 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-    font-weight: 550;
-  }
-
   .home-hero__portrait {
-    position: relative;
-    isolation: isolate;
-    margin-right: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .home-hero__portrait::before {
-    content: '';
-    position: absolute;
-    inset: 1.25rem -1.25rem -1.25rem 1.25rem;
-    z-index: -1;
-    background: var(--color-lime);
+    min-width: 0;
+    margin: 0;
   }
 
   .home-hero__picture {
     display: block;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-    border: 1px solid var(--color-border-strong);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    object-position: center 25%;
     background: var(--color-surface-low);
   }
 
-  .home-hero__picture :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 18%;
+  .home-hero__portrait figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding-top: 1rem;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .home-hero__portrait figcaption span:first-child {
+    color: var(--color-ink);
+    font-weight: 600;
   }
 
   @media (max-width: 1023px) {
     .home-hero__inner {
       grid-template-columns: 1fr;
       gap: 3rem;
-      min-height: 0;
-      padding-block: clamp(3rem, 8vw, 5rem);
     }
 
     .home-hero__portrait {
-      margin-right: 0.75rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .home-hero__portrait::before {
-      inset: 0.75rem -0.75rem -0.75rem 0.75rem;
-    }
-
-    .home-hero__picture {
-      aspect-ratio: 16 / 10;
-    }
-
-    .home-hero__picture :global(img) {
-      object-position: center 23%;
+      width: 100%;
+      max-width: 30rem;
     }
   }
 
@@ -167,8 +146,5 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
       justify-content: center;
     }
 
-    .home-hero__picture {
-      aspect-ratio: 4 / 3;
-    }
   }
 </style>

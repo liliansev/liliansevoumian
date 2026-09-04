@@ -34,9 +34,9 @@ typography:
     letterSpacing: "-0.035em"
   home-service:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(2.5rem, 4.2vw, 4.5rem)"
+    fontSize: "clamp(1.25rem, 8.6cqi, 2.75rem)"
     fontWeight: 600
-    lineHeight: 0.94
+    lineHeight: 1.05
     letterSpacing: "-0.035em"
   headline:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
@@ -252,10 +252,11 @@ Les titres de section descendent à `-0,035em` de chasse ; le plancher est
 
 **La home incarnée possède son rang de titre.** Son `h1` est visible et consomme
 `--text-home-hero`, une courbe unique de 52 à 84 px. Il fait face au portrait de
-Lilian sur un contrechamp lime, sans devenir aussi monumental que les manifestes
+Lilian, sans devenir aussi monumental que les manifestes
 des landings spécialisées. Plus bas, les deux titres du routeur consomment
-`--text-home-service`, une courbe unique de 40 à 72 px : le rang est partagé par
-**Automatisation & IA** et **Sites web**, sans hiérarchie entre les deux chemins.
+`--text-home-service`, une courbe de 20 à 44 px calculée sur la largeur disponible
+dans la carte. Le rang est partagé par **Automatisation & IA** et
+**Landing pages et applications métiers**, avec deux lignes explicites par titre.
 `--text-display-hero` reste le rang des landings spécialisées. Aucun de ces rôles
 ne commute de jeton au point de rupture.
 
@@ -404,10 +405,10 @@ chaque image, et se paie sur le seul geste que le visiteur fait en continu.
 ### La home personnelle et son routeur de services
 
 Le premier viewport présente d'abord la personne qui construit. Sur desktop,
-le titre direct occupe la gauche et le portrait de Lilian la droite, cadré dans
-un rectangle `4 / 5` au filet d'encre, avec un contrechamp lime décalé de
-`1,25rem`. Sur tablette, l'image passe sous le texte en `16 / 10` ; sur petit
-mobile elle devient `4 / 3`. L'action primaire descend vers `#services` : elle
+le titre direct occupe la gauche et le portrait de Lilian la droite. Le portrait
+est carré, sans bordure, ombre ou contrechamp ; son nom et son ancienneté figurent
+en légende. Sous 1024 px, l'image passe sous le texte et garde son ratio carré,
+avec une largeur maximale de 30 rem. L'action primaire descend vers `#services` : elle
 oriente sans faire du hero un comparateur ni y dupliquer les deux offres.
 
 La section suivante compacte la légitimité en deux colonnes : trajectoire et
@@ -415,11 +416,15 @@ méthode à gauche, quatre faits vérifiables à droite. Elle répond à « pour
 vous confier le projet ? » avant de demander au visiteur de choisir un service.
 
 Le choix arrive ensuite dans un routeur à deux surfaces de même poids : lime
-pour **Automatisation & IA**, papier pour **Sites web**. Chaque carte garde la
-même hauteur minimale, la même densité, le même rang typographique, une preuve
-courte et une seule destination — `/automatisations-ia` ou
-`/sites-web-abonnement` — sans lien imbriqué. Sur mobile, les deux colonnes
-deviennent deux rangées séparées par le même filet de 1 px.
+pour **Automatisation & IA**, papier pour **Landing pages et applications métiers**.
+Les cartes partagent six rangées via `subgrid` : besoin, titre, description,
+périmètre, preuve et action. Le conteneur de mesure typographique est le `h3`,
+dont les deux lignes consomment le jeton : le poser sur chaque carte empêcherait
+le partage des rangées de cette carte.
+Chaque carte garde une seule destination — `/automatisations-ia` ou
+`/sites-web-abonnement` — sans lien imbriqué. Sous 900 px, elles deviennent deux
+rangées séparées par le même filet de 1 px. Le texte web nomme les landing pages,
+dashboards, portails clients et applications métiers.
 
 Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops,
 les dirigeants de PME, puis les agences et studios à se reconnaître. La FAQ
@@ -434,6 +439,12 @@ bande qui penche, pas le `<mark>` : faire tourner l'élément inclinerait les
 lettres, or on veut un coup de surligneur de travers sur un texte droit.
 L'inclinaison alterne via une classe `.inv` posée à la main — `:nth-of-type` ne
 peut pas le faire, chaque `<mark>` étant seul dans son parent.
+
+Sur `.bloc-encre`, le texte du surlignage est explicitement sombre (`#111111`).
+Il ne doit pas hériter de `--color-ink`, remappé en blanc dans cette section.
+Les liens fléchés soulignés emploient `.text-link-arrow` : un seul pseudo-élément
+porte le trait continu sous le libellé, l'espace et la flèche. La cible conserve
+44 px de haut et le texte peut se répartir sur plusieurs lignes sur mobile.
 
 Contrainte dure : `white-space: nowrap`. Sur un fragment qui passe à la ligne, la
 bande couvre le rectangle englobant et produit un aplat informe. **Le fragment
@@ -579,7 +590,7 @@ ni Geist, ni aucune trace de ce système, et trois des anti-références de
 
 **La home possède sa vignette propre** (`public/og-home.png`, 1200 × 630) : elle
 reprend le premier viewport livré, avec le titre personnel à gauche, le portrait
-à droite et son contrechamp lime. Sa provenance visuelle reste attachée au code
+à droite sans contrechamp. Sa provenance visuelle reste attachée au code
 de `HomeHeroPersonal.astro` et au portrait source
 `src/assets/lilian-photo.jpg` ; elle ne réinterprète pas la home avec une
 composition de campagne parallèle.
