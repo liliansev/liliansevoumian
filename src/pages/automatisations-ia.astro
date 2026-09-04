@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import HeroManifesto from '../components/HeroManifesto.astro';
+import LogoMarquee from '../components/LogoMarquee.astro';
+import Automatisations from '../components/Automatisations.astro';
+import CaseStudy from '../components/CaseStudy.astro';
+import Methode from '../components/Methode.astro';
+import Testimonials from '../components/Testimonials.astro';
+import APropos from '../components/APropos.astro';
+import Stack from '../components/Stack.astro';
+import Offres from '../components/Offres.astro';
+import FAQ from '../components/FAQ.astro';
+import CTA from '../components/CTA.astro';
+import Footer from '../components/Footer.astro';
+import ROICalculator from '../components/ROICalculator.astro';
+import MobileCTABar from '../components/MobileCTABar.astro';
+import { faqs } from '../data/faq';
+
+const faqSchema = faqs.map((faq) => ({ question: faq.q, answer: faq.a }));
+
+const navLinks = [
+  { href: '#automatisations', label: 'Process' },
+  { href: '#cas', label: 'Cas clients' },
+  { href: '#methode', label: 'Méthode' },
+  { href: '#stack', label: 'Outils' },
+  { href: '#offres', label: 'Offres' },
+  { href: '#faq', label: 'FAQ' },
+];
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': 'https://liliansevoumian.fr/automatisations-ia#service',
+  name: 'Automatisation des processus et agents IA',
+  description:
+    'Automatisation des processus métier, agents IA, intégrations et reprise de workflows avec n8n, Make et Airtable.',
+  url: 'https://liliansevoumian.fr/automatisations-ia',
+  areaServed: { '@type': 'Country', name: 'France' },
+  provider: { '@id': 'https://liliansevoumian.fr/#person' },
+  serviceType: [
+    'Automatisation des processus',
+    'Agents IA',
+    'Intégration API',
+    'Reprise de workflows',
+    'Formation n8n et Make',
+  ],
+};
+---
+
+<Layout
+  title="Freelance automatisation & agents IA · n8n, Make · Lilian Sevoumian"
+  description="Freelance en automatisation et IA. Je construis et reprends des workflows n8n et Make, des agents IA et des outils métier."
+  breadcrumbs={[
+    { name: 'Accueil', url: '/' },
+    { name: 'Automatisation & IA', url: '/automatisations-ia' },
+  ]}
+  faqSchema={faqSchema}
+  pageSchema={serviceSchema}
+>
+  <Navigation
+    links={navLinks}
+    ctaLabel="Automatiser mon business"
+    ctaSource="automatisations_nav"
+    trackHero={true}
+  />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <HeroManifesto />
+    <LogoMarquee />
+    <Automatisations />
+    <CaseStudy />
+    <Methode />
+    <Testimonials />
+    <APropos />
+    <Stack />
+    <Offres />
+    <FAQ />
+    <ROICalculator />
+    <CTA />
+  </main>
+
+  <Footer />
+  <MobileCTABar />
+</Layout>

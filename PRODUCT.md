@@ -6,17 +6,17 @@ brand
 
 ## Users
 
-Décideurs opérationnels qui pilotent des process et savent reconnaître un bon outil quand ils en voient un :
+Décideurs qui veulent confier un système numérique à la personne qui va réellement le construire :
 
 - **Heads of Ops / RevOps / fondateurs de startups** (cible primaire). Tech-aware, à l'aise avec les notions d'API/webhook/workflow. Cherchent un partenaire qui parle leur langue, pas un consultant qui survend du « digital ».
-- **Dirigeants de PME en croissance** (cible secondaire). Pas devs, mais lassés des agences génériques. Doivent être rassurés par la **clarté du process** et les **résultats chiffrés**, pas par un ton chaleureux convenu.
+- **Dirigeants de PME en croissance** (cible secondaire). Ils viennent avec un process à automatiser ou un site à créer et faire évoluer. Pas devs, mais lassés des agences génériques. Doivent être rassurés par la **clarté du process**, les **preuves visibles** et les **résultats chiffrés**, pas par un ton chaleureux convenu.
 - **Agences / studios** qui sous-traitent l'automatisation à un expert (cible tertiaire).
 
 Contexte d'usage : ils arrivent depuis LinkedIn, YouTube ou une recommandation. Ils scrollent debout entre deux meetings ou tard le soir. Ils ont déjà vu 5 sites de freelance qui se ressemblent tous. Le job-to-be-done : décider en moins de 60 secondes si Lilian vaut un appel découverte.
 
 ## Product Purpose
 
-Positionner Lilian Sevoumian comme **l'expert no-code opinionated** pour les automatisations Make / n8n / Airtable + IA. Pas un freelance polyvalent qui prend tout, un spécialiste qui a une méthode et des avis.
+Positionner Lilian Sevoumian autour de **deux expertises de même poids** : les automatisations et agents IA d’un côté, les sites web conçus pour évoluer de l’autre. Le vibe coding est la méthode de production commune, pas une troisième offre. L’ensemble doit rester opinionated : deux terrains précis, une même exigence, pas un freelance polyvalent qui prend tout.
 
 Succès = le visiteur réserve un appel de découverte. Métriques secondaires : qualité des leads (ICP qui matche), taux d'acceptation des propales post-call.
 

@@ -1,0 +1,181 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
+import ProjectVisual from './ProjectVisual.astro';
+---
+
+<section
+  id="preuves"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      title="Des automatisations mesurées. Six sites <mark>en ligne.</mark>"
+      body="Je publie un résultat quand le contexte est documenté, et une réalisation quand elle peut être visitée."
+      titleMaxWidth="22ch"
+      bodyMaxWidth="58ch"
+    />
+
+    <div class="home-proofs reveal-stagger">
+      <article class="home-proof home-proof--automation reveal">
+        <div class="home-proof__head">
+          <h3>1 à 3&nbsp;h <span aria-hidden="true">→</span> ~10&nbsp;min</h3>
+          <p>M Partners · sourcing et qualification par agent IA</p>
+        </div>
+
+        <div class="home-proof__measure" aria-label="Temps par exécution réduit de une à trois heures à environ dix minutes">
+          <div>
+            <span>Avant</span>
+            <i style="--measure: 100%"></i>
+            <strong>1 à 3&nbsp;h</strong>
+          </div>
+          <div>
+            <span>Après</span>
+            <i style="--measure: 18%"></i>
+            <strong>~10&nbsp;min</strong>
+          </div>
+        </div>
+
+        <p class="home-proof__result">6× plus d’entreprises traitables par semaine, dans le contexte documenté de cette mission.</p>
+        <LinkCTA href="/cas-clients/m-partners">
+          Lire le cas M Partners
+        </LinkCTA>
+      </article>
+
+      <article class="home-proof home-proof--web reveal">
+        <ProjectVisual
+          src="/sites-web/projects/la-petite-stack-home.webp"
+          href="https://lapetitestack.fr"
+          name="La Petite Stack"
+          detail="Configurateur de logiciels"
+          alt="Page d’accueil du configurateur de logiciels La Petite Stack"
+          ratio="landscape"
+          interactive={true}
+        />
+        <div class="home-proof__web-copy">
+          <p>Landing pages, sites éditoriaux, catalogues et outils web. Les six réalisations sont publiques.</p>
+          <LinkCTA href="/sites-web-abonnement#realisations" goal="service_path_opened" goalSource="home_preuves">
+            Voir les réalisations
+          </LinkCTA>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-proofs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-border-strong);
+  }
+
+  .home-proof {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding: 2.5rem 0;
+  }
+
+  .home-proof:first-child {
+    padding-right: 3.5rem;
+    border-right: 1px solid var(--color-border-strong);
+  }
+
+  .home-proof:last-child { padding-left: 3.5rem; }
+
+  @media (max-width: 1023px) {
+    .home-proof { padding: 2rem 0; }
+    .home-proof:first-child { padding-right: 2rem; }
+    .home-proof:last-child { padding-left: 2rem; }
+  }
+
+  .home-proof__head h3 {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-headline);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .home-proof__head h3 span { color: var(--color-ink-low); }
+
+  .home-proof__head p,
+  .home-proof__result,
+  .home-proof__web-copy p {
+    max-width: 48ch;
+    margin: 0.8rem 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body);
+    line-height: 1.55;
+  }
+
+  .home-proof__measure {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--color-divider);
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .home-proof__measure > div {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 5.5rem;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .home-proof__measure span,
+  .home-proof__measure strong {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.2;
+  }
+
+  .home-proof__measure strong {
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .home-proof__measure i {
+    display: block;
+    width: var(--measure);
+    min-width: 0.5rem;
+    height: 0.7rem;
+    background: var(--color-ink);
+  }
+
+  .home-proof__measure > div:last-child i { background: var(--color-lime); }
+
+  .home-proof__result { margin: 0; }
+
+  .home-proof--web :global(.project-visual) { width: 100%; }
+
+  .home-proof__web-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .home-proof__web-copy p { margin: 0; }
+
+  @media (max-width: 767px) {
+    .home-proofs { grid-template-columns: 1fr; }
+
+    .home-proof:first-child {
+      padding-right: 0;
+      border-right: 0;
+      border-bottom: 1px solid var(--color-border-strong);
+    }
+
+    .home-proof:last-child { padding-left: 0; }
+  }
+</style>

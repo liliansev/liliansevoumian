@@ -1,0 +1,90 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import BoutonReservation from './BoutonReservation.astro';
+import LinkCTA from './LinkCTA.astro';
+---
+
+<section
+  id="contact"
+  data-section
+  class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      title="Quel projet voulez-vous <mark class='inv'>cadrer&nbsp;?</mark>"
+      body="Un process à automatiser, un agent IA à construire ou un site à créer. Vingt minutes pour poser le besoin et la première étape."
+      titleMaxWidth="20ch"
+      bodyMaxWidth="58ch"
+    />
+
+    <div class="home-contact reveal">
+      <div>
+        <BoutonReservation source="home_contact" class="btn-primary justify-center">
+          Parler de mon projet
+        </BoutonReservation>
+        <p>
+          Vous préférez écrire&nbsp;?
+          <a
+            href="mailto:bonjour@liliansevoumian.fr"
+            data-fast-goal="lead_email"
+            data-fast-goal-source="home_contact"
+            class="inline-flex min-h-[44px] items-center"
+          >bonjour@liliansevoumian.fr</a>
+        </p>
+      </div>
+
+      <div class="home-contact__routes">
+        <LinkCTA href="/automatisations-ia" goal="service_path_opened" goalSource="home_contact">
+          Explorer Automatisation &amp; IA
+        </LinkCTA>
+        <LinkCTA href="/sites-web-abonnement" goal="service_path_opened" goalSource="home_contact">
+          Explorer les sites web
+        </LinkCTA>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+    gap: 4rem;
+    align-items: end;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  .home-contact > div:first-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 1.75rem;
+    align-items: center;
+  }
+
+  .home-contact p {
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .home-contact p a {
+    color: var(--color-ink);
+    text-underline-offset: 0.2em;
+  }
+
+  .home-contact__routes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    align-items: flex-start;
+    padding-left: 2rem;
+    border-left: 1px solid var(--color-border-strong);
+  }
+
+  @media (max-width: 767px) {
+    .home-contact { grid-template-columns: 1fr; gap: 2.5rem; }
+    .home-contact__routes { padding-top: 2rem; padding-left: 0; border-top: 1px solid var(--color-divider); border-left: 0; }
+  }
+</style>

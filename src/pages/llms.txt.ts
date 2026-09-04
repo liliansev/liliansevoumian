@@ -28,15 +28,14 @@ export const GET: APIRoute = async () => {
 
   const corps = `# Lilian Sevoumian
 
-> Freelance français en automatisation et en intelligence artificielle.
-> Je construis des workflows n8n et Make, des agents IA et des outils métiers
-> pour des fondateurs, des dirigeants et des équipes ops, en France et en
-> Europe. Je reprends aussi ceux qui existent déjà quand ils cassent.
+> Freelance français en automatisation, intelligence artificielle et création
+> de sites web. Deux expertises de même niveau : automatiser les opérations et
+> concevoir des sites qui continuent d'évoluer après leur mise en ligne.
 
 ## Identité
 
 - Nom : Lilian Sevoumian
-- Activité : freelance en automatisation des processus et en IA, depuis 2020
+- Activité : freelance en automatisation, IA et création de sites web, depuis 2020
 - Certifications : Make niveau 5 (premier certifié en France), Airtable Certified
 - Formation : plus de 300 personnes formées
 - Zone : région parisienne, France, Europe
@@ -49,6 +48,11 @@ export const GET: APIRoute = async () => {
 - Reprendre des automatisations existantes qui tombent en panne ou se sont empilées
 - Former les équipes à maintenir ce qui a été livré
 - Créer une landing page ou un site vitrine, puis le maintenir ou l'améliorer
+
+## Méthode commune
+
+- Le vibe coding accélère la construction avec Claude Code et Codex.
+- Le cadrage, l'architecture, les contrôles et les choix de livraison restent humains.
 
 ## Outils utilisés au quotidien
 
@@ -67,14 +71,15 @@ ${cas.map(ligneCas).join('\n')}
 
 ## Pages
 
-- [Accueil](https://liliansevoumian.fr/) : offre, cas clients, calculateur, FAQ
+- [Accueil](https://liliansevoumian.fr/) : choix entre les deux expertises
+- [Automatisation et IA](https://liliansevoumian.fr/automatisations-ia) : services, cas clients, méthode, calculateur et FAQ
 - [Tous les cas clients](https://liliansevoumian.fr/cas-clients)
 - [Expert Make](https://liliansevoumian.fr/expert-make)
 - [Expert n8n](https://liliansevoumian.fr/expert-n8n)
 - [Sites web par abonnement](https://liliansevoumian.fr/sites-web-abonnement)
 - [Principes de travail](https://liliansevoumian.fr/principes)
 
-## Questions fréquentes
+## Questions fréquentes — automatisation et IA
 
 ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 

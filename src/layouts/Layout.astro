@@ -2,6 +2,7 @@
 import '@fontsource-variable/geist';
 import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import lilianPhoto from '../assets/lilian-photo.jpg';
 
 interface Props {
   title?: string;
@@ -20,8 +21,8 @@ interface Props {
 }
 
 const {
-  title = "Freelance automatisation & agents IA · n8n, Make · Lilian Sevoumian",
-  description = "Freelance en automatisation et IA. J'automatise vos processus métier avec n8n, Make et des agents IA sur-mesure. Make certifié niveau 5, réponse sous 48 h.",
+  title = "Automatisation, IA et sites web · Lilian Sevoumian",
+  description = "J'automatise vos opérations, je construis des agents IA et je conçois des sites web qui continuent d'évoluer après leur mise en ligne.",
   ogType = 'website',
   ogImage: customOgImage,
   // L'alt décrit la vignette telle qu'elle est, pas le site : elle porte la phrase
@@ -56,6 +57,7 @@ const canonicalURL = new URL(cheminCanonique, Astro.site);
 // une bande de surlignage — trois couleurs. Le JPEG y posait un halo sur chaque
 // bord de lettre pour 51 Ko ; le PNG-8 est net pour 14.
 const ogImage = customOgImage ? new URL(customOgImage, Astro.site) : new URL('/og-image.png', Astro.site);
+const personImage = new URL(lilianPhoto.src, Astro.site);
 
 const breadcrumbSchema = breadcrumbs ? {
   "@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -69,13 +71,13 @@ const personSchema = {
   "@context": "https://schema.org", "@type": "Person",
   "@id": "https://liliansevoumian.fr/#person",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
-  "image": ogImage.toString(),
-  "jobTitle": ["Freelance automatisation & IA", "Expert n8n & Make", "Consultant automatisation des processus", "Formateur no-code"],
-  "description": "Freelance et formateur en automatisation et IA : automatisation des processus métier avec n8n, Make, Airtable et agents IA sur-mesure.",
+  "image": personImage.toString(),
+  "jobTitle": ["Freelance automatisation & IA", "Expert n8n & Make", "Créateur de sites web", "Formateur no-code"],
+  "description": "Freelance en automatisation, intelligence artificielle et création de sites web évolutifs.",
   /* Les outils listés ici sont exactement ceux que la section « outils » de la
      home affiche : un moteur de réponse qui compare les deux ne doit pas
      trouver de liste plus courte dans le balisage que sur la page. */
-  "knowsAbout": ["Automatisation des processus", "Agents IA", "Make", "n8n", "Airtable", "Workflow", "Intégration API", "No-Code", "Claude", "Claude Code", "Codex", "Mistral AI", "Notion", "IA"],
+  "knowsAbout": ["Automatisation des processus", "Agents IA", "Make", "n8n", "Airtable", "Workflow", "Intégration API", "No-Code", "Vibe coding", "Création de sites web", "Astro", "Claude", "Claude Code", "Codex", "Mistral AI", "Notion", "IA"],
   "hasCredential": [
     { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
       "name": "Make Certified Niveau 5 (premier certifié en France)",
@@ -91,15 +93,23 @@ const personSchema = {
 const serviceSchema = {
   "@context": "https://schema.org", "@type": "ProfessionalService",
   "@id": "https://liliansevoumian.fr/#service",
-  "name": "Lilian Sevoumian - Automatisation No-Code",
-  "description": "Automatisation des processus métier, agents IA, intégration et formation no-code (n8n, Make, Airtable).",
-  "url": "https://liliansevoumian.fr", "image": ogImage.toString(),
+  "name": "Lilian Sevoumian - Automatisation, IA et sites web",
+  "description": "Automatisation des processus métier, agents IA et création de sites web évolutifs.",
+  "url": "https://liliansevoumian.fr", "image": new URL('/og-home.png', Astro.site).toString(),
   "areaServed": [
     { "@type": "Country", "name": "France" },
     { "@type": "Place", "name": "Île-de-France" },
     { "@type": "Place", "name": "Europe" }
   ],
-  "serviceType": ["Automatisation des processus", "Agents IA", "Intégration", "Workflow", "Conseil no-code", "Formation Make", "Formation n8n"],
+  "serviceType": ["Automatisation des processus", "Agents IA", "Intégration", "Workflow", "Création de sites web", "Maintenance de sites web"],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Expertises",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@id": "https://liliansevoumian.fr/automatisations-ia#service" } },
+      { "@type": "Offer", "itemOffered": { "@id": "https://liliansevoumian.fr/sites-web-abonnement#service" } }
+    ]
+  },
   "provider": { "@id": "https://liliansevoumian.fr/#person" }
 };
 

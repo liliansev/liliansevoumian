@@ -1,84 +1,76 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import HeroManifesto from '../components/HeroManifesto.astro';
-import LogoMarquee from '../components/LogoMarquee.astro';
-import Automatisations from '../components/Automatisations.astro';
-import CaseStudy from '../components/CaseStudy.astro';
-import Methode from '../components/Methode.astro';
-import Testimonials from '../components/Testimonials.astro';
-import APropos from '../components/APropos.astro';
-import Stack from '../components/Stack.astro';
-import Offres from '../components/Offres.astro';
-import FAQ from '../components/FAQ.astro';
-import CTA from '../components/CTA.astro';
+import HomeDualServices from '../components/HomeDualServices.astro';
+import HomeProofs from '../components/HomeProofs.astro';
+import HomeVibeCoding from '../components/HomeVibeCoding.astro';
+import HomeAbout from '../components/HomeAbout.astro';
+import HomeContact from '../components/HomeContact.astro';
 import Footer from '../components/Footer.astro';
-import ROICalculator from '../components/ROICalculator.astro';
-import MobileCTABar from '../components/MobileCTABar.astro';
-import { faqs } from '../data/faq';
 
-const faqSchema = faqs.map((f) => ({ question: f.q, answer: f.a }));
+const navLinks = [
+  { href: '#preuves', label: 'Réalisations' },
+  { href: '#methode', label: 'Vibe coding' },
+  { href: '#a-propos', label: 'À propos' },
+];
+
+const directionContract = `
+THESIS: Deux expertises entrent ensemble ; la home oriente au lieu d’empiler tous les services dans une landing unique.
+OWN-WORLD: Papier, encre et lime en aplats francs ; deux surfaces égales, filets de 1 px, Geist, angles droits et schémas code-native.
+STORY: Le visiteur choisit Automatisation & IA ou Sites web, voit une preuve de chaque pratique, comprend le rôle du vibe coding, puis contacte Lilian.
+FIRST VIEWPORT: Sous la navigation, un diptyque strict 50/50 remplit l’écran : lime à gauche, papier à droite, mêmes titres, densité, mini-systèmes et actions.
+FORM: Double manifeste, structure classée 6, seed be36f72f, comp approuvée home-double-manifeste.webp.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+`.trim();
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://liliansevoumian.fr/#home',
+  name: 'Automatisation, IA et sites web par Lilian Sevoumian',
+  description:
+    'Deux expertises : automatisation et agents IA, ou création et amélioration de sites web.',
+  url: 'https://liliansevoumian.fr/',
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        item: { '@id': 'https://liliansevoumian.fr/automatisations-ia#service' },
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        item: { '@id': 'https://liliansevoumian.fr/sites-web-abonnement#service' },
+      },
+    ],
+  },
+};
 ---
 
-<Layout faqSchema={faqSchema}>
-  <Navigation />
+<Layout
+  title="Automatisation, IA et sites web | Lilian Sevoumian"
+  description="J’automatise vos opérations, je construis des agents IA et je conçois des sites web qui continuent d’évoluer après leur mise en ligne."
+  ogImage="/og-home.png"
+  ogImageAlt="Automatisation, intelligence artificielle et sites web par Lilian Sevoumian"
+  pageSchema={pageSchema}
+  directionContract={directionContract}
+>
+  <Navigation
+    links={navLinks}
+    ctaLabel="Parler de mon projet"
+    ctaSource="home_nav"
+    trackHero={true}
+  />
 
-  {/* L'ORDRE SUIT LES QUATRE QUESTIONS D'UN PROSPECT, dans l'ordre où il se les
-      pose : que sait-il faire, peut-il résoudre mon problème, comment, et quelle
-      est l'étape suivante.
-
-      L'ordre précédent en répondait deux sur quatre. « Quelle est l'étape
-      suivante » était sur-répondue — dix-neuf points de réservation, une barre
-      fixe en mobile, un bloc contact en trois temps. « Que sait-il faire »
-      arrivait tard et en abstrait : la section outils liste des outils, la
-      section offres liste des modes de collaboration, et la seule liste de
-      process en langage prospect vivait sur /expert-make, invisible d'ici.
-      « Comment » n'était traitée nulle part : la méthode en quatre étapes
-      existait, écrite, sur /principes, atteignable par une entrée de nav.
-      D'où les deux sections neuves, `Automatisations` et `Methode`, qui portent
-      chacune une de ces deux questions et rien d'autre.
-
-      Le calculateur redescend de la 2ᵉ à la 10ᵉ place, et c'est le déplacement
-      qui coûte le plus à défendre parce qu'il annule une décision antérieure.
-      La raison a changé : posé juste après le hero, il demande du TRAVAIL — deux
-      curseurs à régler, plus un avertissement méthodologique sur les 55 % et les
-      48 semaines — avant que la moindre preuve n'ait été montrée. Il chiffre ce
-      qu'un process coûte, ce qui est un argument de justification : il sert à
-      quelqu'un déjà convaincu qui doit défendre un budget, pas à quelqu'un qui
-      découvre. Il se range donc avec les offres, pas avec le hero.
-
-      Il tombe APRÈS la FAQ et non juste après les offres, et c'est une
-      contrainte de surface, pas de discours : « offres » et le calculateur sont
-      les deux seules sections en bande grise de cette moitié de page, et le
-      calculateur ne porte pas de filet de tête. Collés, ils formaient un seul
-      aplat gris de deux hauteurs de section sans rien pour les séparer. La FAQ,
-      en papier, s'intercale — et l'ordre y gagne : les offres posent qu'il n'y a
-      pas de grille tarifaire, la FAQ répond à « combien ça coûte », le
-      calculateur laisse faire le calcul sur ses propres heures.
-
-      Le bandeau d'outils remonte en 2ᵉ position. Il était collé à la section
-      outils, à laquelle il ressemble : deux blocs d'affilée qui répondent tous
-      les deux « quels outils ». En bande fine sous le hero, il redevient ce
-      qu'il est — un repère de familiarité, pas une démonstration.
-
-      L'ordre n'est pas contraint par la barre CTA mobile : elle s'ancre sur le
-      h1 et sur les boutons pleins de la page, deux choses que toutes les pages
-      ont. */}
   <main id="main-content" tabindex="-1" class="outline-none">
-    <HeroManifesto />
-    <LogoMarquee />
-    <Automatisations />
-    <CaseStudy />
-    <Methode />
-    <Testimonials />
-    <APropos />
-    <Stack />
-    <Offres />
-    <FAQ />
-    <ROICalculator />
-    <CTA />
+    <HomeDualServices />
+    <HomeProofs />
+    <HomeVibeCoding />
+    <HomeAbout />
+    <HomeContact />
   </main>
 
   <Footer />
-  <MobileCTABar />
 </Layout>

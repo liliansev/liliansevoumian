@@ -1,0 +1,142 @@
+---
+import { Image } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import lilianPhoto from '../assets/lilian-photo.jpg';
+
+const facts = [
+  { label: 'Freelance depuis', value: '2020' },
+  { label: 'Certifications', value: 'Make niveau 5 · Airtable' },
+  { label: 'Formation', value: '300+ personnes formées' },
+  { label: 'Travail', value: 'En direct, de la première question à la recette' },
+] as const;
+---
+
+<section
+  id="a-propos"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      title="Un interlocuteur. Celui qui cadre <mark>construit aussi.</mark>"
+      body="Je travaille en direct. La personne qui écoute le besoin est celle qui choisit l’architecture, écrit, teste et livre."
+      titleMaxWidth="22ch"
+      bodyMaxWidth="58ch"
+    />
+
+    <div class="home-about reveal">
+      <div class="home-about__portrait">
+        <Image
+          src={lilianPhoto}
+          alt="Lilian Sevoumian"
+          width={720}
+          height={720}
+          loading="lazy"
+        />
+      </div>
+
+      <div class="home-about__content">
+        <p>
+          J’ai commencé par l’automatisation, puis l’IA a changé ma façon de
+          développer. Aujourd’hui, la même méthode sert à construire un workflow,
+          un agent ou un site&nbsp;: cadrer, produire vite, vérifier sérieusement.
+        </p>
+        <p>
+          Quand un projet ne relève pas de mon périmètre, je le dis avant de
+          commencer. Quand il y entre, vous savez qui construit et qui répond.
+        </p>
+
+        <dl>
+          {facts.map((fact) => (
+            <div>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-about {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.28fr);
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .home-about__portrait {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--color-surface-low);
+  }
+
+  .home-about__portrait :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 18%;
+    filter: grayscale(1) contrast(1.04);
+  }
+
+  .home-about__content > p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.6;
+  }
+
+  .home-about__content > p + p { margin-top: 1.5rem; }
+
+  .home-about dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 2.5rem 0 0;
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  .home-about dl > div {
+    min-width: 0;
+    padding: 1.1rem 1.25rem 1.1rem 0;
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .home-about dl > div:nth-child(even) {
+    padding-right: 0;
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--color-divider);
+  }
+
+  .home-about dt {
+    color: var(--color-ink-low);
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .home-about dd {
+    margin: 0.4rem 0 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 550;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 767px) {
+    .home-about { grid-template-columns: 1fr; gap: 2.5rem; }
+    .home-about__portrait { aspect-ratio: 16 / 10; }
+  }
+
+  @media (max-width: 479px) {
+    .home-about dl { grid-template-columns: 1fr; }
+    .home-about dl > div,
+    .home-about dl > div:nth-child(even) {
+      padding: 1rem 0;
+      border-left: 0;
+    }
+  }
+</style>

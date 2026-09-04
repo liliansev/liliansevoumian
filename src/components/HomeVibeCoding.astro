@@ -1,0 +1,107 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
+
+const steps = [
+  {
+    title: 'Cadrer',
+    body: 'Le besoin, les données et les limites sont posés avant la première ligne.',
+  },
+  {
+    title: 'Construire',
+    body: 'Claude Code et Codex accélèrent l’exploration, l’intégration et les reprises.',
+  },
+  {
+    title: 'Vérifier',
+    body: 'Je relis les choix techniques et j’exécute les parcours sur les vrais écrans.',
+  },
+  {
+    title: 'Faire évoluer',
+    body: 'Le système reste compréhensible, maintenable et prêt pour l’étape suivante.',
+  },
+] as const;
+---
+
+<section
+  id="methode"
+  data-section
+  class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+>
+  <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      title="Je code avec l’IA. Je vérifie comme si elle <mark>n’était pas là.</mark>"
+      body="Le vibe coding raccourcit les itérations. Le cadrage, l’architecture et la responsabilité restent de mon côté."
+      titleMaxWidth="23ch"
+      bodyMaxWidth="58ch"
+    />
+
+    <ol class="vibe-steps reveal-stagger">
+      {steps.map((step) => (
+        <li class="reveal">
+          <h3>{step.title}</h3>
+          <p>{step.body}</p>
+        </li>
+      ))}
+    </ol>
+
+    <div class="reveal mt-10 md:mt-12">
+      <LinkCTA href="/principes">Lire mes principes de travail</LinkCTA>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vibe-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-border-strong);
+    list-style: none;
+  }
+
+  .vibe-steps li {
+    min-width: 0;
+    padding: 2rem 1.5rem 2.25rem 0;
+  }
+
+  .vibe-steps li + li {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--color-divider);
+  }
+
+  .vibe-steps h3 {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .vibe-steps p {
+    margin: 1rem 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 900px) {
+    .vibe-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .vibe-steps li:nth-child(3) { border-top: 1px solid var(--color-divider); border-left: 0; }
+    .vibe-steps li:nth-child(4) { border-top: 1px solid var(--color-divider); }
+  }
+
+  @media (max-width: 520px) {
+    .vibe-steps { grid-template-columns: 1fr; }
+    .vibe-steps li,
+    .vibe-steps li + li {
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--color-divider);
+      border-left: 0;
+    }
+    .vibe-steps li:first-child { border-top: 0; }
+  }
+</style>

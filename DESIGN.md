@@ -1,6 +1,6 @@
 ---
 name: Lilian Sevoumian
-description: Freelance automatisation et IA. Papier blanc, encre noire, une seule couleur — un lime acide qui ne s'écrit jamais, qui prend des sections entières ou qui surligne un mot de travers.
+description: "Deux expertises : Automatisation & IA et Sites web. Papier blanc, encre noire, une seule couleur — un lime acide qui ne s'écrit jamais, qui prend des sections entières ou surligne un mot de travers."
 colors:
   paper: "#ffffff"
   surface-low: "#f7f7f7"
@@ -25,6 +25,12 @@ typography:
     fontSize: "clamp(3.25rem, 6vw + 1.2rem, 6.25rem)"
     fontWeight: 600
     lineHeight: 0.95
+    letterSpacing: "-0.035em"
+  home-service:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "clamp(2.5rem, 4.2vw, 4.5rem)"
+    fontWeight: 600
+    lineHeight: 0.94
     letterSpacing: "-0.035em"
   headline:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
@@ -102,10 +108,13 @@ components:
 
 **Le lime ne s'écrit pas. Il se pose.**
 
-Le site vend une chose : des automatisations qui ne cassent pas. Il doit donc
-tenir debout tout seul, sans ornement pour rattraper une hiérarchie molle. La
-base est du papier blanc et de l'encre noire ; le contraste vient du poids
-typographique, de la taille et de l'espace.
+Le site présente deux expertises de même poids : **Automatisation & IA** et
+**Sites web**. La home oriente vers l'une ou l'autre ; elle ne les dilue pas
+dans une offre généraliste. Le vibe coding est leur méthode de production
+commune, jamais une troisième offre. Le site doit tenir debout tout seul, sans
+ornement pour rattraper une hiérarchie molle. La base est du papier blanc et de
+l'encre noire ; le contraste vient du poids typographique, de la taille et de
+l'espace.
 
 Par-dessus vit **une seule couleur**, un lime acide `#cdf564`. Elle ne peut pas
 porter de texte — 1,25:1 contre le blanc — et c'est cette contrainte qui fait
@@ -119,6 +128,9 @@ sont, dans cet ordre, les trois marqueurs les plus universels du site généré.
 **Caractéristiques clés :**
 
 - Le lime est une surface, jamais une couleur de texte.
+- Les deux expertises entrent ensemble et gardent le même poids visuel.
+- Le vibe coding relie les deux pratiques ; il ne devient jamais un troisième
+  panneau de service.
 - Les filets et les changements de surface portent la profondeur ; aucune ombre.
 - Le rond désigne une unité ; le carré, une surface.
 - Les artefacts publics peuvent garder leur palette dans une capture, jamais
@@ -231,14 +243,13 @@ section et en casse une autre, sur une page qu'on ne regardait pas.
 Les titres de section descendent à `-0,035em` de chasse ; le plancher est
 `-0,04em`, en dessous les lettres se touchent.
 
-**Le manifeste du hero est une courbe unique, jamais deux jetons commutés.** Il y
-a eu une bascule à `1024px` vers un second jeton plus petit que le premier : le
-titre perdait 14,7 % en gagnant un pixel de largeur, et ne repassait au-dessus de
-sa taille de 1023 px que vers 1180. Toute la plage des iPad en paysage affichait
-un hero plus petit que sur une tablette. La courbe est calée à **×1,20 de
-`--text-display`** sur toute la plage : le titre de la home ne peut plus se
-retrouver plus petit que celui d'une page secondaire, ce qui était le cas
-(76 px contre 84).
+**Le double manifeste de la home porte un rang propre et symétrique.** Un seul
+`h1`, visuellement masqué, nomme la page pour les technologies d'assistance ;
+les deux titres visibles sont des `h2` et consomment tous deux
+`--text-home-service`, une courbe unique de 40 à 72 px. Aucun panneau ne reçoit
+un rang, un poids ou une taille dominante. `--text-display-hero` reste le rang
+des manifestes des landings spécialisées : lui aussi conserve une courbe unique,
+sans commutation de jeton au point de rupture.
 
 ### La règle de couche, qui a déjà coûté deux bugs
 
@@ -382,6 +393,26 @@ chaque image, et se paie sur le seul geste que le visiteur fait en continu.
 
 ## 5. Components
 
+### Le double manifeste de la home
+
+Le premier viewport est un choix, pas une introduction. Sur desktop, il forme
+un diptyque strict `50 / 50` : lime pour **Automatisation & IA**, papier pour
+**Sites web**. Sur mobile, les deux panneaux deviennent deux rangées de hauteur
+égale. Ils gardent la même architecture de contenu, la même densité, le même
+poids typographique et une preuve courte chacun.
+
+Chaque panneau est **une seule surface lien** vers sa landing dédiée —
+`/automatisations-ia` ou `/sites-web-abonnement` — sans lien imbriqué. Les
+mini-systèmes sont code-native, sans capture, ombre ni rayon :
+`Entrée → Workflow → Agent IA → Action` pour l'automatisation, et
+`Publier → Observer → Améliorer` pour le web. Le premier exprime un pipeline ;
+le second, un cycle d'amélioration continue.
+
+La navigation de la home reste volontairement réduite, car le choix de service
+vit déjà dans le hero. Après ce choix, le récit suit toujours
+**preuve → méthode → personne → contact**. Le vibe coding apparaît dans la
+méthode commune ; il ne doit jamais être mis au même rang que les deux offres.
+
 **Le surlignage** est le dispositif signature. Une bande lime en pseudo-élément
 posée **derrière** le texte, avec `z-index: -1` et `isolation: isolate`. C'est la
 bande qui penche, pas le `<mark>` : faire tourner l'élément inclinerait les
@@ -431,17 +462,18 @@ défaut du navigateur, sans erreur ni avertissement.
 1024 px il porte le wordmark, `LILIAN SEVOUMIAN` en toutes lettres, en permanence.
 En dessous, seize caractères en capitales ne cohabitent pas avec un CTA central et
 un déclencheur de menu : l'emplacement tombe à 28 px et porte un « L » tant que le
-hero est à l'écran — le hero y écrit déjà le nom entre 40 et 84 px, le repère y
-serait un doublon —, puis le visage, en fondu croisé, une fois le hero sorti.
+hero est à l'écran, puis le visage, en fondu croisé, une fois le hero sorti. Le
+« L » maintient l'identité pendant que le double manifeste donne toute la place
+au choix entre les deux expertises.
 
 Le portrait apparu dans le bloc contact ne le rend pas redondant, et le mobile
 n'en montre pas « deux » : les deux images ne répondent pas à la même question.
 Celle de 28 px répond à *chez qui suis-je*, dans le seul élément qui ne quitte
-jamais l'écran ; celle du bloc contact, à 72 px, répond à *à qui vais-je parler*,
-une fois, au moment de réserver, douze mille pixels plus bas. À 28 px on ne lit
-pas un visage, on lit une marque. C'est aussi pourquoi le visage ne monte pas en
-desktop : il y serait le seul endroit du site où l'identité est énoncée deux fois
-dans le même empan, à côté du nom écrit.
+jamais l'écran ; celle du bloc contact répond à *à qui vais-je parler*, une fois,
+au moment de réserver. À 28 px on ne lit pas un visage, on lit une marque. C'est
+aussi pourquoi le visage ne monte pas en desktop : il y serait le seul endroit
+du site où l'identité est énoncée deux fois dans le même empan, à côté du nom
+écrit.
 
 Le fondu croisé était piloté par un observateur sur `#hero`, que seule la home
 possède : vérifié en runtime, sur les **dix autres pages** le repère restait un
@@ -533,12 +565,18 @@ porté pendant un temps un cube 3D blanc cassé aux logos multicolores : ni lime
 ni Geist, ni aucune trace de ce système, et trois des anti-références de
 `PRODUCT.md` cochées d'un coup.
 
-**La vignette** (`public/og-image.png`, 1200 × 630) est la page en petit : aplat
-lime, la phrase du hero en Geist semibold, le surlignage blanc penché sur les
-trois derniers mots, le nom en haut, les outils en bas. Elle se lit à la taille
-d'une carte LinkedIn. En **PNG palettisé et non en JPEG** : trois couleurs, un
-aplat et de la typo — le JPEG posait un halo sur chaque bord de lettre pour 51 Ko,
-le PNG-8 est net pour 14. Son `alt` décrit la vignette, pas le site.
+**La home possède sa vignette propre** (`public/og-home.png`, 1200 × 630) : le
+double manifeste y reste immédiatement lisible, avec le diptyque lime/papier,
+les deux titres de même poids et la navigation réduite. Elle est la miniature de
+la décision proposée au premier viewport, pas un retour à une promesse
+d'automatisation unique.
+
+**La vignette par défaut** (`public/og-image.png`, 1200 × 630) conserve l'autre
+expression de la marque : aplat lime, manifeste en Geist semibold, surlignage
+blanc penché, nom en haut et outils en bas. Elle se lit à la taille d'une carte
+LinkedIn. En **PNG palettisé et non en JPEG** : trois couleurs, un aplat et de la
+typo — le JPEG posait un halo sur chaque bord de lettre pour 51 Ko, le PNG-8 est
+net pour 14. Son `alt` décrit la vignette, pas le site.
 
 **Les icônes** (`favicon_liliansevoumian.svg`, `favicon.png`, `apple-touch-icon.png`)
 sont le monogramme à l'encre sur un carré lime, à 62 % de la largeur. Le carré
@@ -562,6 +600,8 @@ PNG et le SVG en portaient deux différentes.
   montré est aussi une affirmation.
 - Montrer un projet public par une capture réelle, légendée et traçable ;
   cantonner sa palette à l'image.
+- Garder les deux panneaux de la home strictement symétriques en poids, en
+  hauteur et en nombre de surfaces interactives.
 
 **À ne pas faire**
 
@@ -619,3 +659,5 @@ PNG et le SVG en portaient deux différentes.
 - Refaire à la main l'en-tête d'une section. `SectionHeader` porte le titre, le
   filet et le chapô, et le filet est ce qui donne son rang à la section — deux
   sections l'avaient réimplémenté et se présentaient comme des sous-parties.
+- Présenter le vibe coding comme une troisième offre, ou ajouter un lien interne
+  à l'un des panneaux du double manifeste.

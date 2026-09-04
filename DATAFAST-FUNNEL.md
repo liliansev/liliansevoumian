@@ -6,7 +6,7 @@ seul canal, le **diagnostic de 20 min** réservé sur cal.com.
 Le tracking est posé en code : attributs `data-fast-goal` lus nativement par le
 script DataFast cookieless sur les liens cal.com, plus un appel JS sur la résa
 confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir des
-8 goals ci-dessous.
+9 goals ci-dessous.
 
 > ⚠️ **DataFast est cookieless** (empreinte IP+UA serveur, aucun `datafast_visitor_id`
 > exposé). Conséquence : impossible d'attribuer une conversion depuis un backend tiers
@@ -16,7 +16,12 @@ confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir 
 
 ---
 
-## 1. Les 8 goals (état réel du code)
+## 1. Les 9 goals (état réel du code)
+
+### `service_path_opened` — choix d'une expertise
+Émis depuis les deux moitiés de la home, les liens de preuve et le bloc contact.
+La prop `source` distingue `home_automation`, `home_sites_web`, `home_preuves`
+et `home_contact`.
 
 ### `lead_call` — clic « Réserver un appel » (cal.com)
 Émis nativement sur **tout lien cal.com** via `data-fast-goal="lead_call"`.
@@ -25,7 +30,8 @@ se passe sur cal.com (voir Limite plus bas).
 
 | Param `source` | Où |
 |----------------|-----|
-| `hero` · `nav` · `nav_mobile_cta` · `roi` · `temoignages` · `stack-automation` · `stack-productivite` · `stack-ia` · `stack-vibe-coding` · `offres` · `contact` · `footer` · `barre-mobile` | Landing `/` |
+| `automatisations_nav` · `automatisations_nav_mobile` · `automatisations` · `hero` · `roi` · `temoignages` · `stack-automation` · `stack-productivite` · `stack-ia` · `stack-vibe-coding` · `offres` · `contact` · `footer` · `barre-mobile` | Offre `/automatisations-ia` |
+| `home_nav` · `home_nav_mobile` · `home_contact` · `footer` | Accueil `/` |
 | `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
 | `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
 | `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_tarifs` · `sites_web_abonnements` · `sites_web_final` | Offre `/sites-web-abonnement` |
@@ -72,7 +78,7 @@ les liens de `/cas-clients` depuis À propos et Offres. Aucun n'était tagué.
 Sources : `offres`, `faq`. Ce n'est pas une perte : c'est l'intention « apprendre
 soi-même » qui trouve sa route.
 
-> Huit goals. La taxonomie `contact_lead` / `cta_contact_click` des anciennes
+> Neuf goals. La taxonomie `contact_lead` / `cta_contact_click` des anciennes
 > versions n'existe plus.
 >
 > **Ce qui reste volontairement absent : le scroll-depth et les goals
@@ -94,11 +100,17 @@ soi-même » qui trouve sa route.
 Les funnels DataFast sont par session : un visiteur qui voit l'URL puis fire le goal
 dans la même session compte comme converti.
 
-### Funnel A — « Landing → Call » (funnel complet en 4 étapes)
+### Funnel A — « Accueil → Expertise »
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
-| 1 | Visite landing | Page visit | URL equals `/` |
-| 2 | A **cliqué** Réserver | Goal | `lead_call` *(filtrer `source` ∈ hero, nav, nav_mobile_cta, roi, temoignages, stack-automation, stack-productivite, stack-ia, stack-vibe-coding, offres, contact, footer, barre-mobile)* |
+| 1 | Visite accueil | Page visit | URL equals `/` |
+| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_automation, home_sites_web)* |
+
+### Funnel A2 — « Automatisation → Call » (funnel complet en 4 étapes)
+| # | Étape | Type | Valeur |
+|---|-------|------|--------|
+| 1 | Visite landing | Page visit | URL equals `/automatisations-ia` |
+| 2 | A **cliqué** Réserver | Goal | `lead_call` *(filtrer `source` ∈ automatisations_nav, automatisations_nav_mobile, automatisations, hero, roi, temoignages, stack-automation, stack-productivite, stack-ia, stack-vibe-coding, offres, contact, footer, barre-mobile)* |
 | 3 | A **ouvert le calendrier sans réserver** | Goal | `cal_abandoned` *(étape de diagnostic, pas de conversion)* |
 | 4 | A **réservé** (résa confirmée) | Goal | `call_booked` |
 

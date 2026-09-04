@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Landing page for Lilian Sevoumian, a No-Code freelance expert specializing in Make, n8n, and Airtable automation. Built with Astro 5.x.
+Site for Lilian Sevoumian with two equal expertises: automation/AI and evolving websites. Built with Astro 5.x.
 
 ## Commands
 
@@ -29,6 +29,11 @@ pnpm preview    # Preview production build locally
 src/
 ├── components/
 │   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
+│   ├── HomeDualServices.astro # hero 50/50 des deux expertises
+│   ├── HomeProofs.astro       # preuves automation + sites
+│   ├── HomeVibeCoding.astro   # méthode commune
+│   ├── HomeAbout.astro        # présentation compacte
+│   ├── HomeContact.astro      # contact générique
 │   ├── HeroManifesto.astro    # aplat lime, typographie seule
 │   ├── LogoMarquee.astro      # bandeau d'outils défilant
 │   ├── CaseStudy.astro        # carrousel des 4 cas sur la home
@@ -58,6 +63,8 @@ src/
 │   └── PageExpertOutil.astro  # charpente commune des pages SEO par outil
 ├── pages/
 │   ├── index.astro
+│   ├── automatisations-ia.astro  # offre automation complète, ancienne home
+│   ├── sites-web-abonnement.astro # offre web complète
 │   ├── cas-clients/index.astro et [slug].astro
 │   ├── expert-make.astro · expert-n8n.astro   # contenu seul, charpente partagée
 │   ├── principes.astro · mentions-legales.astro
@@ -95,7 +102,7 @@ Typography:
   du contenu. Écrire ce genre de note en commentaires de ligne, dans le
   frontmatter.
 - All text content is in French
-- Single-page landing with smooth scroll navigation
+- Short dual-service home plus two dedicated offer pages
 - JSON-LD structured data for SEO (Person + ProfessionalService schemas)
 - Mobile-first responsive design with `md:` and `lg:` breakpoints
 - Custom scrollbar styling and infinite scroll animations in global.css
