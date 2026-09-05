@@ -159,11 +159,38 @@ const faqPageSchema = faqSchema ? {
         // derrière. Un compteur rend l'ordre des fermetures sans conséquence :
         // le scroll ne revient qu'une fois le dernier propriétaire parti.
         var verrous = {};
+        var defilementSauvegarde = null;
         window.__verrouDefilement = function (proprietaire, actif) {
           if (actif) verrous[proprietaire] = 1;
           else delete verrous[proprietaire];
-          if (document.body) {
-            document.body.style.overflow = Object.keys(verrous).length ? 'hidden' : '';
+          if (!document.body) return;
+          var body = document.body;
+          var root = document.documentElement;
+          if (Object.keys(verrous).length && !defilementSauvegarde) {
+            // overflow:hidden seul laisse passer certains gestes tactiles sur iOS.
+            // Fixer le document conserve la position derrière les deux overlays.
+            defilementSauvegarde = {
+              x: window.scrollX, y: window.scrollY,
+              overflow: body.style.overflow, position: body.style.position,
+              top: body.style.top, left: body.style.left, width: body.style.width,
+              rootOverflow: root.style.overflow,
+            };
+            body.style.overflow = 'hidden';
+            body.style.position = 'fixed';
+            body.style.top = -defilementSauvegarde.y + 'px';
+            body.style.left = -defilementSauvegarde.x + 'px';
+            body.style.width = '100%';
+            root.style.overflow = 'hidden';
+          } else if (!Object.keys(verrous).length && defilementSauvegarde) {
+            var previous = defilementSauvegarde;
+            defilementSauvegarde = null;
+            body.style.overflow = previous.overflow;
+            body.style.position = previous.position;
+            body.style.top = previous.top;
+            body.style.left = previous.left;
+            body.style.width = previous.width;
+            root.style.overflow = previous.rootOverflow;
+            window.scrollTo({ left: previous.x, top: previous.y, behavior: 'instant' });
           }
         };
 
@@ -381,7 +408,7 @@ const faqPageSchema = faqSchema ? {
             overlay.classList.add('is-open');
             overlay.setAttribute('aria-hidden', 'false');
             window.__verrouDefilement('cal', true);
-            window.setTimeout(function () { overlay.focus(); }, 50);
+            overlay.focus({ preventScroll: true });
             mountCal();
           }
           function closeOverlay() {
@@ -389,7 +416,7 @@ const faqPageSchema = faqSchema ? {
             overlay.classList.remove('is-open');
             overlay.setAttribute('aria-hidden', 'true');
             window.__verrouDefilement('cal', false);
-            if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+            if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus({ preventScroll: true });
             lastFocused = null;
             if (wasOpen && !booked && typeof window.datafast === 'function') {
               window.datafast('cal_abandoned', { source: lastSource });

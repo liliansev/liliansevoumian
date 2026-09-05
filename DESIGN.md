@@ -452,6 +452,15 @@ vers `/sites-web-abonnement#applications`, puis « Automatisation & IA » vers
 `/automatisations-ia`. Les ancres propres à la page viennent ensuite, sans
 répéter ces destinations. Le menu reste défilable et chaque lien le referme.
 
+Le menu utilise un dialogue natif plein écran : il isole l’arrière-plan et
+contient sa propre fermeture, accessible au clavier. L’en-tête et le bouton
+de contact restent visibles ; seule la liste défile, dans la hauteur dynamique
+du viewport et avec les zones de sécurité du téléphone. Les liens apparaissent
+immédiatement, sans cascade. Passer au format desktop ferme le menu et libère
+le défilement. Le verrou partagé avec Cal conserve la position de lecture.
+Dans le titre personnel, « opérations » et « métier » sont surlignés, avec
+des inclinaisons alternées et sans modifier les retours de ligne manuellement.
+
 La landing web distingue les sites commerciaux des applications métiers au
 moyen de deux ancres explicites. Les tarifs de création et les abonnements
 Care/Growth restent associés aux sites ; applications et suivi sont chiffrés

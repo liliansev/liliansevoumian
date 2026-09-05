@@ -1317,39 +1317,102 @@ body.menu-ouvert .nav-mid-cta {
   visibility: hidden;
 }
 
-/* =========================================================================
-   TOUCH TARGETS — WCAG 2.5.5 / Apple HIG / Google MD 44px minimum
-   ========================================================================= */
-
-.mobile-link {
-  min-height: 44px;
+/* Menu natif en top layer : aucune barre fixe de la page ne passe au-dessus.
+   L'en-tête et le CTA restent accessibles ; seule la liste défile. */
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  color: var(--color-ink);
+  background: var(--color-paper);
+}
+.mobile-menu::backdrop { background: var(--color-paper); }
+.mobile-menu__panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+}
+.mobile-menu__panel:focus { outline: none; }
+.mobile-menu__header,
+.mobile-menu__content,
+.mobile-menu__footer {
+  padding-inline: max(var(--spacing-section-x), env(safe-area-inset-left))
+    max(var(--spacing-section-x), env(safe-area-inset-right));
+}
+.mobile-menu__header {
   display: flex;
   align-items: center;
-  /* Entrée du menu : fondu + léger translateY en cascade à l'ouverture. */
-  opacity: 0;
-  transform: translateY(14px);
-  /* 260 ms et non 450 : DESIGN.md plafonne à 300 ms les animations qui
-     répondent à une intention, et un panneau de navigation est de l'intention
-     pure. Mesuré avant, le dernier lien arrivait à 740 ms — la réponse la plus
-     lente du site, sur le geste le plus impatient. */
-  transition: opacity 260ms var(--ease-out-quint),
-              transform 260ms var(--ease-out-quint);
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 64px;
+  padding-top: env(safe-area-inset-top);
+  border-bottom: 1px solid var(--color-divider);
 }
-#mobile-menu.is-open .mobile-link {
-  opacity: 1;
-  transform: translateY(0);
+.mobile-menu__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--color-ink);
+  font-size: var(--text-body-sm);
+  cursor: pointer;
 }
-#mobile-menu.is-open .mobile-link:nth-child(1) { transition-delay: 0ms; }
-#mobile-menu.is-open .mobile-link:nth-child(2) { transition-delay: 35ms; }
-#mobile-menu.is-open .mobile-link:nth-child(3) { transition-delay: 70ms; }
-#mobile-menu.is-open .mobile-link:nth-child(4) { transition-delay: 105ms; }
-#mobile-menu.is-open .mobile-link:nth-child(5) { transition-delay: 140ms; }
-#mobile-menu.is-open .mobile-link:nth-child(6) { transition-delay: 175ms; }
-/* Conteneur focalisé à l'ouverture (a11y) — jamais de cadre de focus disgracieux
-   sur un lien (iOS dessine un gros rectangle noir sur le focus programmatique). */
-#mobile-menu:focus { outline: none; }
-@media (prefers-reduced-motion: reduce) {
-  .mobile-link { opacity: 1; transform: none; transition: none; }
+.mobile-menu__content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 1.5rem 2rem;
+  -webkit-overflow-scrolling: touch;
+}
+.mobile-menu__offers { display: grid; }
+.mobile-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.mobile-menu__offer {
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--color-border-strong);
+  font-size: var(--text-title-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.mobile-menu__offer span { min-width: 0; }
+.mobile-menu__offer svg { flex-shrink: 0; }
+.mobile-menu__links {
+  display: grid;
+  margin-top: 2rem;
+}
+.mobile-menu__link {
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--color-divider);
+  font-size: var(--text-body-large);
+  line-height: 1.4;
+}
+.mobile-menu__footer {
+  padding-block: 1rem max(1rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-paper);
+}
+@media (hover: hover) and (pointer: fine) {
+  .mobile-link:hover,
+  .mobile-menu__close:hover { background: var(--color-accent-soft); }
 }
 
 footer a {
@@ -1649,7 +1712,12 @@ a[href^="mailto:"] {
   transition: opacity 150ms var(--ease-out-quint),
               visibility 150ms var(--ease-out-quint);
 }
-.cal-overlay.is-open { opacity: 1; visibility: visible; }
+.cal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  /* La visibilité doit être immédiate pour recevoir le focus dès l'ouverture. */
+  transition-property: opacity;
+}
 
 .cal-overlay-bar {
   flex-shrink: 0;

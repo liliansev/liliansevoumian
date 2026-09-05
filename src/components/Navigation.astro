@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import BoutonReservation from './BoutonReservation.astro';
 
@@ -222,49 +223,46 @@ const mobileNavLinks = navLinks.filter((link) => {
   </div>
 </nav>
 
-<!-- Mobile menu plein écran -->
-<div
+<!-- Le dialogue natif isole le menu de la page et de ses éléments fixes. -->
+<dialog
   id="mobile-menu"
-  class="fixed inset-0 z-[49] bg-[var(--color-paper)] opacity-0 invisible transition-[opacity,visibility] duration-150 lg:hidden"
-  role="dialog"
-  aria-modal="true"
+  class="mobile-menu"
   aria-label="Navigation principale"
-  aria-hidden="true"
-  tabindex="-1"
 >
-  <div class="h-full min-h-0 overflow-y-auto overscroll-contain flex flex-col px-[var(--spacing-section-x)] pt-[80px] pb-12">
-    <div class="flex flex-col shrink-0 gap-2 pb-6">
-      {mobileOfferLinks.map((link) => (
-        <a
-          href={link.href}
-          class="mobile-link flex items-center min-h-[44px] py-3 border-b border-[var(--color-border-strong)] font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)]"
-          data-mobile-link
-          data-fast-goal="service_path_opened"
-          data-fast-goal-source="nav_mobile_offers"
-        >
-          {link.label}
-        </a>
-      ))}
-    </div>
-    <div class="flex-1 flex flex-col justify-center gap-4 pb-6">
-      {mobileNavLinks.map((link) => (
-        <a
-          href={lienNav(link.href)}
-          class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
-          data-mobile-link
-        >
-          <span class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.2] tracking-[-0.025em] text-[var(--color-ink)]">
+  <div class="mobile-menu__panel" tabindex="-1" autofocus>
+    <header class="mobile-menu__header">
+      <a href="/" class="mono-label inline-flex items-center min-h-[44px]" data-mobile-link>
+        Lilian Sevoumian
+      </a>
+      <button type="button" class="mobile-menu__close" aria-label="Fermer le menu" data-menu-close>
+        <span>Fermer</span>
+        <Icon name="lucide:x" size={20} aria-hidden="true" />
+      </button>
+    </header>
+    <div class="mobile-menu__content">
+      <nav aria-label="Services" class="mobile-menu__offers">
+        {mobileOfferLinks.map((link) => (
+          <a
+            href={link.href}
+            class="mobile-link mobile-menu__offer"
+            data-mobile-link
+            data-fast-goal="service_path_opened"
+            data-fast-goal-source="nav_mobile_offers"
+          >
+            <span>{link.label}</span>
+            <Icon name="lucide:arrow-right" size={24} aria-hidden="true" />
+          </a>
+        ))}
+      </nav>
+      <nav aria-label="Explorer le site" class="mobile-menu__links">
+        {mobileNavLinks.map((link) => (
+          <a href={lienNav(link.href)} class="mobile-link mobile-menu__link" data-mobile-link>
             {link.label}
-          </span>
-        </a>
-      ))}
+          </a>
+        ))}
+      </nav>
     </div>
-    <div class="flex flex-col gap-4">
-      {/* `data-mobile-link` ferme le menu AVANT que le handler délégué de Layout
-          n'ouvre l'overlay cal.com. Sans lui, l'overlay se posait par-dessus un
-          menu resté ouvert, et sa fermeture relâchait le scroll lock que le menu
-          exigeait encore : on retrouvait le menu plein écran, page scrollable
-          derrière. Le listener du lien passe avant celui de `document`. */}
+    <div class="mobile-menu__footer">
       {ctaHref ? (
         <a href={lienNav(ctaHref)} class="btn-primary justify-center w-full" data-mobile-link>
           {ctaLabel}
@@ -276,7 +274,7 @@ const mobileNavLinks = navLinks.filter((link) => {
       )}
     </div>
   </div>
-</div>
+</dialog>
 
 <script>
   // Scroll state — borderbottom shifts at scroll > 60px
@@ -331,45 +329,41 @@ const mobileNavLinks = navLinks.filter((link) => {
   }
 
   // Mobile menu
-  const menuBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
+  const menuBtn = document.querySelector<HTMLButtonElement>('#mobile-menu-btn');
+  const mobileMenu = document.querySelector<HTMLDialogElement>('#mobile-menu');
+  const menuPanel = mobileMenu?.querySelector<HTMLElement>('.mobile-menu__panel');
+  const desktopViewport = window.matchMedia('(min-width: 1024px)');
 
-  function toggleMenu(forceClose = false) {
-    if (!mobileMenu || !menuBtn) return;
-    const willOpen = forceClose ? false : !mobileMenu.classList.contains('is-open');
-    mobileMenu.classList.toggle('is-open', willOpen);
-    mobileMenu.style.opacity = willOpen ? '1' : '0';
-    mobileMenu.style.visibility = willOpen ? 'visible' : 'hidden';
-    mobileMenu.setAttribute('aria-hidden', String(!willOpen));
-    menuBtn.setAttribute('aria-expanded', String(willOpen));
-    menuBtn.setAttribute('aria-label', willOpen ? 'Fermer le menu' : 'Ouvrir le menu');
-    // Verrou compté, partagé avec l'overlay cal.com (défini dans le script
-    // inline du <head> de Layout). Écrire `body.overflow` en direct ici
-    // relâchait le verrou de l'overlay quand les deux étaient ouverts.
-    window.__verrouDefilement?.('menu', willOpen);
-    // Éteint le CTA de la barre pendant que le menu porte le sien (global.css).
-    document.body.classList.toggle('menu-ouvert', willOpen);
-    // L'icône bascule points ⇄ croix via le sélecteur CSS [aria-expanded].
+  function syncMenuState(open: boolean) {
+    menuBtn?.setAttribute('aria-expanded', String(open));
+    window.__verrouDefilement?.('menu', open);
+    document.body.classList.toggle('menu-ouvert', open);
+  }
 
-    // Focus management : on focalise le CONTENEUR du dialog à l'ouverture (a11y,
-    // déplace le focus dans la modale pour le clavier/lecteur d'écran) — surtout
-    // PAS le 1er lien, qui déclenche un gros cadre de focus noir sur iOS au tactile.
-    // Retour au burger à la fermeture.
-    if (willOpen) {
-      window.setTimeout(() => mobileMenu.focus(), 50);
-    } else {
-      menuBtn.focus();
-    }
+  function closeMenu() {
+    if (!mobileMenu?.open) return;
+    mobileMenu.close();
+    // Synchrone : une ancre ou Cal doit récupérer la page avant son clic natif.
+    syncMenuState(false);
+  }
+
+  function openMenu() {
+    if (!mobileMenu || mobileMenu.open || desktopViewport.matches) return;
+    syncMenuState(true);
+    mobileMenu.showModal();
+    const content = mobileMenu.querySelector('.mobile-menu__content');
+    if (content) content.scrollTop = 0;
+    menuPanel?.focus({ preventScroll: true });
   }
 
   // Focus trap : Tab cycle uniquement dans le menu ouvert
   mobileMenu?.addEventListener('keydown', (e) => {
-    if (!mobileMenu.classList.contains('is-open') || e.key !== 'Tab') return;
+    if (!mobileMenu.open || e.key !== 'Tab') return;
     const focusable = mobileMenu.querySelectorAll<HTMLElement>('a, button, [tabindex]:not([tabindex="-1"])');
     if (focusable.length === 0) return;
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
-    if (document.activeElement === mobileMenu) {
+    if (document.activeElement === menuPanel) {
       (e.shiftKey ? last : first).focus();
       e.preventDefault();
     } else if (e.shiftKey && document.activeElement === first) {
@@ -381,33 +375,33 @@ const mobileNavLinks = navLinks.filter((link) => {
     }
   });
 
-  menuBtn?.addEventListener('click', () => toggleMenu());
+  menuBtn?.addEventListener('click', openMenu);
+  mobileMenu?.querySelector('[data-menu-close]')?.addEventListener('click', closeMenu);
+  mobileMenu?.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeMenu();
+  });
+  // Couvre également une fermeture native, sans voler le focus à Cal.
+  mobileMenu?.addEventListener('close', () => {
+    if (!mobileMenu.open) syncMenuState(false);
+  });
+
+  desktopViewport.addEventListener('change', (event) => {
+    if (event.matches && mobileMenu?.open) {
+      closeMenu();
+      document.getElementById('logo-link')?.focus({ preventScroll: true });
+    }
+  });
+  // Un retour via le cache arrière/avant ne doit pas restaurer un menu verrouillé.
+  window.addEventListener('pagehide', closeMenu);
 
   mobileMenu?.querySelectorAll('[data-mobile-link]').forEach((link) => {
     link.addEventListener('click', () => {
       // Fermer le menu SYNCHRONE (restaure body.overflow) AVANT que le navigateur
       // exécute le scroll d'ancre — sinon body{overflow:hidden} (menu ouvert) bloque
       // le scroll vers la section visée.
-      toggleMenu(true);
+      closeMenu();
     });
-  });
-
-  // Tout CTA de réservation ferme le menu, où qu'il soit. Les liens DU menu
-  // portent déjà `data-mobile-link` ; celui de la BARRE de nav, non — et la
-  // barre reste au-dessus du menu ouvert (z-50 contre z-49), donc son
-  // « Automatiser mon business » est tapable pendant que le menu est déployé.
-  // Sans ça, l'overlay cal.com se posait sur un menu resté ouvert, qu'on
-  // retrouvait intact en refermant l'agenda.
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement | null;
-    if (!target?.closest?.('a[href*="cal.com/lilian-sevoumian"]')) return;
-    if (mobileMenu?.classList.contains('is-open')) toggleMenu(true);
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileMenu?.classList.contains('is-open')) {
-      toggleMenu(true);
-    }
   });
 
   // Logo → si on est déjà sur "/", scroll to top sans navigation. Sinon, navigation native.
