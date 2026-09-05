@@ -3,6 +3,8 @@ import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import BoutonReservation from './BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { serviceNavigation } from '../data/service-navigation';
 
 interface NavigationLink {
   href: string;
@@ -63,8 +65,7 @@ interface Props {
    « PROCESS » le laisse à 483 px, 30 px de marge. « CE QUE JE FAIS » et
    « AUTOMATISATIONS » débordent franchement. */
 const defaultNavLinks: NavigationLink[] = [
-  { href: "/automatisations-ia", label: "Automatisation & IA" },
-  { href: "/sites-web-abonnement", label: "Sites web" },
+  ...serviceNavigation,
   { href: "/cas-clients", label: "Réalisations" },
   { href: "/principes", label: "Méthode" },
   { href: "/#qui-je-suis", label: "À propos" },
@@ -72,7 +73,7 @@ const defaultNavLinks: NavigationLink[] = [
 
 const {
   links: suppliedLinks,
-  ctaLabel = 'Parler de mon projet',
+  ctaLabel = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES} min`,
   ctaSource = 'nav',
   ctaHref,
   trackHero,
@@ -102,10 +103,7 @@ const lienNav = (href: string) => {
   return suppliedLinks ? href : `${prefix}${href}`;
 };
 
-const mobileOfferLinks: NavigationLink[] = [
-  { href: '/sites-web-abonnement#applications', label: 'Création d’applications' },
-  { href: '/automatisations-ia', label: 'Automatisation & IA' },
-];
+const mobileOfferLinks: NavigationLink[] = serviceNavigation;
 
 // Les offres restent accessibles même quand une landing fournit ses propres
 // ancres. Leur bloc remplace les entrées équivalentes de la liste mobile.
@@ -179,7 +177,7 @@ const mobileNavLinks = navLinks.filter((link) => {
     </a>
 
     <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
-    {ctaHref ? (
+    {!isHome && (ctaHref ? (
       <a href={lienNav(ctaHref)} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
         {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
       </a>
@@ -187,7 +185,7 @@ const mobileNavLinks = navLinks.filter((link) => {
       <BoutonReservation source={mobileCtaSource} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
         {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
       </BoutonReservation>
-    )}
+    ))}
 
     <!-- Desktop links -->
     <div class="hidden lg:flex items-center gap-1">
@@ -198,9 +196,20 @@ const mobileNavLinks = navLinks.filter((link) => {
       ))}
     </div>
 
-    <!-- Desktop CTA -->
-    <div class="hidden lg:flex items-center gap-2">
-      {ctaHref ? (
+    <!-- La home garde un seul bouton, partagé par les layouts mobile et desktop. -->
+    <div id={isHome ? 'contact' : undefined} class:list={[isHome ? 'nav-home-action' : 'hidden lg:flex shrink-0 items-center gap-2']}>
+      {isHome ? (
+        <BoutonReservation
+          source={ctaSource}
+          class="btn-primary"
+          aria-haspopup="dialog"
+          aria-controls="cal-overlay"
+          aria-describedby="home-booking-help"
+        >
+          <span>Choisir un créneau</span>
+          <span class="nav-home-action__duration">· {DUREE_RESERVATION_MINUTES} min</span>
+        </BoutonReservation>
+      ) : ctaHref ? (
         <a href={lienNav(ctaHref)} class="btn-primary">{ctaLabel}</a>
       ) : (
         <BoutonReservation source={ctaSource}>
@@ -208,6 +217,7 @@ const mobileNavLinks = navLinks.filter((link) => {
         </BoutonReservation>
       )}
     </div>
+    {isHome && <p id="home-booking-help" class="sr-only">Ouvre l’agenda pour choisir la date d’un appel de {DUREE_RESERVATION_MINUTES} minutes avec Lilian.</p>}
 
     <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
     <button
@@ -226,7 +236,7 @@ const mobileNavLinks = navLinks.filter((link) => {
 <!-- Le dialogue natif isole le menu de la page et de ses éléments fixes. -->
 <dialog
   id="mobile-menu"
-  class="mobile-menu"
+  class:list={['mobile-menu', { 'mobile-menu--navigation-only': isHome }]}
   aria-label="Navigation principale"
 >
   <div class="mobile-menu__panel" tabindex="-1" autofocus>
@@ -254,15 +264,15 @@ const mobileNavLinks = navLinks.filter((link) => {
           </a>
         ))}
       </nav>
-      <nav aria-label="Explorer le site" class="mobile-menu__links">
+      {mobileNavLinks.length > 0 && <nav aria-label="Explorer le site" class="mobile-menu__links">
         {mobileNavLinks.map((link) => (
           <a href={lienNav(link.href)} class="mobile-link mobile-menu__link" data-mobile-link>
             {link.label}
           </a>
         ))}
-      </nav>
+      </nav>}
     </div>
-    <div class="mobile-menu__footer">
+    {!isHome && <div class="mobile-menu__footer">
       {ctaHref ? (
         <a href={lienNav(ctaHref)} class="btn-primary justify-center w-full" data-mobile-link>
           {ctaLabel}
@@ -272,7 +282,7 @@ const mobileNavLinks = navLinks.filter((link) => {
           {ctaLabel}
         </BoutonReservation>
       )}
-    </div>
+    </div>}
   </div>
 </dialog>
 
@@ -415,6 +425,38 @@ const mobileNavLinks = navLinks.filter((link) => {
 </script>
 
 <style>
+  .nav-home-action {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+
+  .nav-home-action :global(.btn-primary) {
+    flex-wrap: wrap;
+    gap: 0 0.35rem;
+    max-width: 100%;
+    padding: 6px 10px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .nav-home-action__duration { white-space: nowrap; }
+
+  .mobile-menu--navigation-only .mobile-menu__panel {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .mobile-menu--navigation-only .mobile-menu__content {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 1024px) {
+    .nav-home-action { padding-inline: 0; }
+    .nav-home-action :global(.btn-primary) { padding: 11px 18px; }
+  }
+
   /* Marque mobile — conteneur de taille fixe (28px) qui empile « L » et avatar.
      La taille ne change jamais : la cellule de grille reste stable au scroll. */
   .nav-logo-mark {

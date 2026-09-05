@@ -5,23 +5,16 @@ import HomeHeroPersonal from '../components/HomeHeroPersonal.astro';
 import HomeAbout from '../components/HomeAbout.astro';
 import HomeServices from '../components/HomeServices.astro';
 import HomeAudience from '../components/HomeAudience.astro';
-import HomeContact from '../components/HomeContact.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
 import { homeFaqs } from '../data/home-faq';
-
-const navLinks = [
-  { href: '#qui-je-suis', label: 'Qui je suis' },
-  { href: '#services', label: 'Ce que je fais' },
-  { href: '#pour-qui', label: 'Pour qui' },
-  { href: '#faq', label: 'FAQ' },
-];
+import { serviceNavigation } from '../data/service-navigation';
 
 const directionContract = `
 THESIS: Lilian apparaît avant les offres ; une preuve compacte rend le choix crédible, puis deux chemins égaux orientent sans transformer le hero en comparateur.
 OWN-WORLD: Papier blanc, encre noire et lime en surface ; photo franche, filets de 1 px, Geist, angles droits et aucun décor de substitution.
 STORY: Le visiteur peut réserver directement, vérifier la légitimité de Lilian ou explorer les deux expertises avant de prendre contact.
-FIRST VIEWPORT: Un titre direct occupe la gauche, un portrait carré et sa légende la droite ; l'action principale ouvre la réservation, le lien secondaire mène aux services.
+FIRST VIEWPORT: Un titre direct occupe la gauche, un portrait carré et sa légende la droite ; un unique bouton de réservation reste dans l'en-tête fixe, le lien du hero mène aux services.
 FORM: Manifeste personnel suivi d'un routeur de services, structure explicitement choisie par l'utilisateur dans le monde visuel établi.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 `.trim();
@@ -56,7 +49,7 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
 
 <Layout
   title="Freelance automatisation, IA et sites web | Lilian Sevoumian"
-  description="J’automatise vos opérations et je construis vos applications métier. Sites web, dashboards, portails clients : découvrez mes services et mes réalisations."
+  description="Redonnez du temps à vos équipes avec des agents IA, des automatisations et des applications métier. Lilian Sevoumian : création et suivi mensuel de vos outils et sites."
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, freelance en automatisation, IA et création de sites web"
   pageSchema={pageSchema}
@@ -64,8 +57,7 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
   directionContract={directionContract}
 >
   <Navigation
-    links={navLinks}
-    ctaLabel="Soumettre un projet"
+    links={serviceNavigation}
     ctaSource="home_nav"
     trackHero={true}
   />
@@ -81,7 +73,6 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
       body=""
       showTrainingLink={false}
     />
-    <HomeContact />
   </main>
 
   <Footer />

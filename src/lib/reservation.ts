@@ -19,6 +19,9 @@ export const URL_RESERVATION = 'https://cal.com/lilian-sevoumian/20min';
 /** Durée de l'événement Cal.com ; son URL historique reste inchangée. */
 export const DUREE_RESERVATION_MINUTES = 45;
 
+/** Une seule action de contact en fin de page, commune aux deux expertises. */
+export const LIBELLE_CONTACT_RESERVATION = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES} min`;
+
 /**
  * Sélecteur des liens que l'overlay cal.com intercepte (Layout) et que le menu
  * mobile referme (Navigation). Il vise l'URL sans son créneau : un changement de
@@ -57,4 +60,4 @@ export const SELECTEUR_RESERVATION = 'a[href*="cal.com/lilian-sevoumian"]';
  * plus étroit que n'importe quel bouton. Il est traité dans global.css, au
  * niveau de `.nav-mid-cta`.
  */
-export const LIBELLE_RESERVATION = 'Automatiser mon business';
+export const LIBELLE_RESERVATION = LIBELLE_CONTACT_RESERVATION;

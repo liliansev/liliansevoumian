@@ -50,7 +50,6 @@
  */
 import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
-import { URL_RESERVATION } from '../lib/reservation';
 
 interface Famille {
   titre: string;
@@ -61,32 +60,32 @@ const familles: Famille[] = [
   {
     titre: 'Facturation et devis',
     corps:
-      'Du deal signé à la facture envoyée : échéances, TVA selon le pays, relances. La ressaisie disparaît, les erreurs remontent au lieu de dormir dans une file.',
+      'Créer les devis et les factures à partir de votre CRM, puis suivre les échéances et déclencher les relances.',
   },
   {
     titre: 'Commandes e-commerce B2B',
     corps:
-      'Un bon de commande reçu en PDF ou en Excel devient une commande Shopify et une facture, avec les bons produits, les bonnes remises et le bon client.',
+      'Lire un bon de commande PDF ou Excel pour préparer la commande Shopify et la facture, avec des contrôles sur les produits et les montants.',
   },
   {
     titre: 'Prospection et qualification',
     corps:
-      'Sourcing des signaux, collecte des cibles, notation des profils par un agent IA, puis envoi dans le CRM et les séquences. Vous validez, la machine fait le reste.',
+      'Collecter des prospects, les qualifier selon vos critères et préparer leur ajout dans le CRM. Votre équipe se concentre sur les échanges.',
   },
   {
     titre: 'Catalogue et données produit',
     corps:
-      'Des fiches lues, structurées et créées directement dans votre ERP, en brouillon, pour qu’une personne valide avant publication.',
+      'Extraire les informations des fiches fournisseurs et préparer les fiches produit dans votre ERP, à valider avant publication.',
   },
   {
     titre: 'Reporting et alertes',
     corps:
-      'Les chiffres se consolident sans personne, et la panne se voit le jour où elle arrive : l’alerte tombe dans Slack, Notion ou votre boîte mail.',
+      'Rassembler vos chiffres dans un même suivi et envoyer une alerte lorsqu’un dossier ou une erreur demande votre attention.',
   },
   {
     titre: 'Demandes entrantes',
     corps:
-      'Un mail ou un formulaire arrive : il est lu, qualifié, puis routé vers la bonne personne avec le contexte déjà rassemblé. Personne ne trie à la main.',
+      'Classer les emails et les formulaires, rassembler le contexte et transmettre chaque demande à la bonne personne.',
   },
 ];
 ---
@@ -99,8 +98,8 @@ const familles: Famille[] = [
   <div class="relative max-w-[1200px] mx-auto">
 
     <SectionHeader
-      title="Ce que j'automatise, <mark>concrètement.</mark>"
-      body="Six familles de process, celles qui reviennent le plus chez mes clients. Des exemples, pas un catalogue : ce qui compte est la forme du problème, pas la case dans laquelle il tombe."
+      title="Quelles tâches prennent <mark>trop de temps ?</mark>"
+      body="Voici quelques points de départ pour alléger le quotidien de vos équipes."
       titleMaxWidth="20ch"
       bodyMaxWidth="62ch"
     />
@@ -124,16 +123,9 @@ const familles: Famille[] = [
 
     <div class="reveal process-pied">
       <p>
-        Votre process n'est dans aucune de ces six&nbsp;? C'est le cas le plus
-        fréquent&nbsp;: ce qui se répète chez vous ne ressemble à ce qui se
-        répète ailleurs que de loin. La question utile n'est pas de savoir dans
-        quelle famille il tombe, mais combien de temps il vous coûte.
+        Nous partons de vos outils et de vos tâches réelles pour choisir ce qui mérite d’être automatisé.
       </p>
-      <LinkCTA
-        href={URL_RESERVATION}
-        goal="lead_call"
-        goalSource="automatisations"
-      >Décrivez-moi le vôtre</LinkCTA>
+      <LinkCTA href="#offres">Voir les offres et le suivi</LinkCTA>
     </div>
 
   </div>

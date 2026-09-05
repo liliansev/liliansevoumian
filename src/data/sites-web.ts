@@ -1,17 +1,10 @@
+import { webSubscriptions, maintenanceScope } from './maintenance';
+
 export interface CreationOffer {
   name: string;
   price: string;
   schemaPrice: number;
   useCase: string;
-  promise: string;
-  includes: readonly string[];
-}
-
-export interface SubscriptionOffer {
-  name: string;
-  price: string;
-  schemaPrice: number;
-  role: string;
   promise: string;
   includes: readonly string[];
 }
@@ -32,120 +25,84 @@ export const creationOffers: readonly CreationOffer[] = [
     name: 'Landing page',
     price: '1\u00a0900\u00a0€\u00a0HT',
     schemaPrice: 1900,
-    useCase: 'Une offre, une cible, une action principale.',
-    promise: 'Une page complète pour présenter l’offre et guider le visiteur vers la prise de contact.',
-    includes: ['Message et structure', 'Design et intégration responsive', 'Socle SEO et mesure'],
+    useCase: 'Présenter une offre et recevoir des demandes.',
+    promise: 'Votre offre, vos références et les réponses aux questions de vos prospects, réunies sur une page.',
+    includes: ['Textes et structure', 'Design adapté au mobile', 'Bases SEO et suivi des visites'],
   },
   {
     name: 'Site vitrine + blog',
     price: '3\u00a0500\u00a0€\u00a0HT',
     schemaPrice: 3500,
-    useCase: 'Plusieurs offres ou un besoin éditorial durable.',
-    promise: 'Un site qui organise vos offres, vos preuves et vos contenus dans des pages faciles à parcourir.',
-    includes: ['Pages principales', 'Base éditoriale', 'Maillage et indexabilité'],
+    useCase: 'Présenter vos services et publier vos articles.',
+    promise: 'Des pages dédiées à vos offres, vos réalisations et vos contenus pour aider chaque visiteur à trouver ce qui le concerne.',
+    includes: ['Pages de présentation', 'Blog prêt à publier', 'Navigation et bases SEO'],
   },
   {
     name: 'Site avec outil ou données',
     price: 'À partir de 5\u00a0500\u00a0€\u00a0HT',
     schemaPrice: 5500,
-    useCase: 'Configurateur, catalogue ou recherche dans vos données.',
-    promise: 'Un outil web pour rechercher, filtrer, comparer ou guider le visiteur à partir de vos données.',
-    includes: ['Modélisation des données', 'Interface interactive', 'Intégrations métier'],
+    useCase: 'Aider vos visiteurs à choisir ou à trouver une information.',
+    promise: 'Un catalogue, un comparateur ou un configurateur construit à partir de vos données et relié aux outils utiles au projet.',
+    includes: ['Organisation des données', 'Recherche et filtres', 'Connexions à vos outils'],
   },
 ];
 
-export const subscriptionOffers: readonly SubscriptionOffer[] = [
-  {
-    name: 'Care',
-    price: '190\u00a0€\u00a0HT / mois',
-    schemaPrice: 190,
-    role: 'Maintenir',
-    promise: 'Je maintiens le site, corrige les problèmes mineurs et fais un point chaque mois.',
-    includes: ['Maintenance technique', 'Corrections mineures', 'Point de contrôle mensuel'],
-  },
-  {
-    name: 'Growth',
-    price: '490\u00a0€\u00a0HT / mois',
-    schemaPrice: 490,
-    role: 'Améliorer',
-    promise: 'J’utilise Search Console et les données de conversion pour prioriser le prochain lot d’améliorations.',
-    includes: ['Tout Care', 'Analyse Search Console et OpenSEO', 'Lot mensuel d’améliorations priorisées'],
-  },
-];
+export const subscriptionOffers = webSubscriptions;
 
 export const manufacturingSteps: readonly ManufacturingStep[] = [
   {
-    title: 'Valider les informations de départ',
-    description: 'Nous posons l’offre, la cible, les objections, le ton, les témoignages et les contraintes avant de produire les pages.',
-    output: 'Un brief commun qui sert de référence à tout le projet.',
+    title: 'Comprendre ce qu’il faut créer',
+    description: 'Vous me montrez votre activité, vos outils et ce qui vous manque. Nous choisissons les pages ou les fonctionnalités prioritaires.',
+    output: 'Un devis avec le contenu du projet, son budget et son calendrier.',
   },
   {
-    title: 'Rassembler la matière',
-    description: 'Je regroupe les informations commerciales, les preuves, les réponses utiles et les contenus à reprendre.',
-    output: 'Un dossier de contenu que vous pouvez relire et compléter.',
+    title: 'Valider les contenus et les parcours',
+    description: 'Pour un site, nous travaillons les textes et les références à montrer. Pour une application, nous définissons les écrans, les données et les actions de chaque utilisateur.',
+    output: 'Une structure validée ensemble avant le développement.',
   },
   {
-    title: 'Écrire les pages',
-    description: 'Chaque page reçoit un rôle, un message et une action. Je rédige, je coupe et je reprends le texte avant de passer au design.',
-    output: 'Une architecture de pages et des messages validés.',
+    title: 'Construire et tester',
+    description: 'Je réalise le design et le développement. Vous essayez une première version ; je vérifie les liens, les formulaires, les parcours et le rendu sur mobile avant publication.',
+    output: 'Votre site ou votre application, testé puis mis en ligne.',
   },
   {
-    title: 'Designer et intégrer',
-    description: 'Je conçois le site avec le contenu réel, puis je l’intègre pour le mobile, la tablette et le desktop.',
-    output: 'Une version complète à tester dans le navigateur.',
-  },
-  {
-    title: 'Tester et publier',
-    description: 'Je vérifie les faits, les liens, les métadonnées, l’indexabilité, les formulaires, la mesure et le rendu responsive.',
-    output: 'Une mise en ligne relue et testée sous contrôle humain.',
-  },
-  {
-    title: 'Choisir la suite',
-    description: 'Après publication, Search Console, les conversions et vos retours commerciaux aident à choisir la prochaine amélioration.',
-    output: 'Une liste d’actions priorisée à partir des données disponibles.',
+    title: 'Assurer le suivi',
+    description: 'Je prends en charge l’hébergement, la maintenance et les petits ajustements de ce qui a été livré. Les nouveaux besoins sont chiffrés à part.',
+    output: 'Le suivi mensuel prévu au devis.',
   },
 ];
 
 export const siteFaqs: readonly SiteFaq[] = [
   {
     q: 'Qu’est-ce qui est inclus dans la création du site ?',
-    a: 'Le cadrage, la conception des messages, le design, l’intégration responsive, le socle SEO, la mesure et la mise en ligne. Le périmètre exact, les contenus à reprendre et les intégrations sont écrits dans le devis avant le démarrage.',
+    a: 'Les textes, le design, le développement, les bases SEO, le suivi des visites et la mise en ligne. Nous précisons dans le devis les pages, les contenus à reprendre et les outils à connecter.',
   },
   {
-    q: 'Le prix de création du site inclut-il un abonnement ?',
-    a: 'La création du site et son suivi sont deux postes distincts. Le prix de création couvre le périmètre initial défini au devis. Après la mise en ligne, Care couvre la maintenance ; Growth ajoute une analyse des données et un lot d’améliorations chaque mois. Le périmètre du suivi mensuel est défini avant son démarrage.',
+    q: 'L’abonnement est-il obligatoire ?',
+    a: `Oui, il fait partie de chaque projet et se règle en plus de la création : ${webSubscriptions.map((offer) => `${offer.name.toLowerCase()} ${offer.price}`).join(' ; ')}. Il couvre l’hébergement, la maintenance et les petits ajustements. ${maintenanceScope}`,
   },
   {
     q: 'Les tarifs des sites couvrent-ils une application métier ?',
-    a: 'Les trois formats affichés concernent les sites commerciaux, y compris un catalogue ou un configurateur. Un dashboard, un portail client ou une application métier fait l’objet d’un devis spécifique : utilisateurs, données, droits d’accès, parcours et intégrations déterminent le périmètre. Le suivi de l’application est lui aussi défini au devis, séparément de Care et Growth.',
+    a: 'Les grilles concernent les sites web. Pour un dashboard, un portail client ou une application métier, la création et l’abonnement sont sur devis. Nous les chiffrons selon les fonctionnalités, les utilisateurs, les données et les outils à connecter.',
   },
   {
-    q: 'Les textes sont-ils écrits par une IA ?',
-    a: 'J’utilise l’IA pour accélérer la recherche, la structure, la rédaction et la critique. Je contrôle ensuite la cohérence, le naturel et le SEO. Vous validez les informations, les tarifs, les témoignages et les promesses.',
+    q: 'L’abonnement blog comprend-il la rédaction des articles ?',
+    a: `La rédaction d’articles se chiffre séparément. L’abonnement à ${webSubscriptions[2].price} couvre l’hébergement, la maintenance et les petits ajustements du site et de son blog.`,
   },
   {
-    q: 'Pouvez-vous garantir une position sur Google ?',
-    a: 'Pour les sites commerciaux, je livre un socle SEO et j’améliore les pages à partir de données réelles. Les positions, le trafic et le chiffre d’affaires dépendent ensuite du marché, de l’offre et de la concurrence.',
+    q: 'Que dois-je fournir pour démarrer ?',
+    a: 'Vos offres, vos contenus existants et vos références. Pour une application, quelques exemples de dossiers ou de tâches à traiter nous aident à définir les écrans. Je vous indique pendant le cadrage les éléments à rassembler.',
+  },
+  {
+    q: 'Que prévoyez-vous pour le référencement Google ?',
+    a: 'Je travaille la structure des pages, leurs titres, leurs liens et leur accessibilité aux moteurs de recherche. Le classement dépend aussi de vos contenus, de votre marché et de la concurrence : aucune position précise n’est garantie.',
   },
   {
     q: 'Combien de temps faut-il pour mettre le site en ligne ?',
-    a: 'Le délai dépend du nombre de pages, de l’état des contenus et des validations nécessaires. Il figure dans le devis après le cadrage du projet.',
+    a: 'Le calendrier est fixé dans le devis, selon le nombre de pages, les fonctionnalités et les contenus disponibles. Nous prévoyons aussi les moments où vous relisez ou testez le projet.',
   },
   {
-    q: 'Quels projets demandent un spécialiste dédié ?',
-    a: 'Le netlinking, la récupération après pénalité, les migrations SEO de centaines de pages, le SEO international et les contenus médicaux, financiers ou juridiques sensibles sortent de ce périmètre.',
+    q: 'Quels besoins SEO se traitent séparément ?',
+    a: 'L’acquisition de liens, les pénalités Google, les grosses migrations et le référencement international demandent une mission dédiée. Les contenus médicaux, financiers ou juridiques sensibles nécessitent aussi une expertise spécialisée.',
   },
 ];
-
-export const productionPromises = [
-  'Les informations de départ sont validées avec vous.',
-  'Les recommandations SEO s’appuient sur OpenSEO et Search Console quand les données sont disponibles.',
-  'Je relis, teste et arbitre avant chaque publication.',
-] as const;
-
-export const refusedPromises = [
-  'Netlinking et récupération après pénalité.',
-  'Migration SEO de plusieurs centaines de pages.',
-  'SEO international complexe.',
-  'Contenus médicaux, financiers ou juridiques sensibles.',
-] as const;

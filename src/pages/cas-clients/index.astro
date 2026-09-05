@@ -6,7 +6,7 @@ import MobileCTABar from '../../components/MobileCTABar.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { getCollection } from 'astro:content';
 import BoutonReservation from '../../components/BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES } from '../../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../../lib/reservation';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -214,7 +214,7 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
         <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <BoutonReservation source="cas_index" class="btn-primary justify-center">
-            Parler de mon projet
+            {LIBELLE_CONTACT_RESERVATION}
           </BoutonReservation>
         </div>
       </div>

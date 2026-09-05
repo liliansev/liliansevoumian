@@ -1,6 +1,8 @@
 ---
 import LinkCTA from './LinkCTA.astro';
 import BoutonReservation from './BoutonReservation.astro';
+import SubscriptionGrid from './SubscriptionGrid.astro';
+import { automationSubscriptions, webSubscriptions, maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 /*
  * Offres.astro — les formats de collaboration.
@@ -11,7 +13,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
  * à un seul endroit ; le répéter ici crée une deuxième vérité qui se périme
  * sans que rien ne le signale.
  *
- * Trois formats décrits, et toujours pas de grille tarifaire.
+ * Trois formats décrits ; création sur devis et grilles de suivi mensuel.
  *
  * La version précédente tenait en cinquante mots et citait quatre formats
  * (« Régie, mission cadrée, mentoring d'équipe, coaching ponctuel… ») sans en
@@ -21,14 +23,8 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
  * repoussait la totalité de la décision à l'appel de 20 min, ce qui est
  * l'inverse de ce que la page promet.
  *
- * Le prix reste absent, et la position qui l'explique est désormais ÉNONCÉE ICI
- * plutôt que réservée à la FAQ. Elle y tenait la question « Combien coûte une
- * automatisation ? », qui était cinquième sur six et repliée dans un accordéon,
- * à 9 500 px du haut de page : personne ne se budget-qualifiait dessus. Le
- * lecteur se pose la question au moment où il lit ce qu'on peut construire pour
- * lui, c'est-à-dire ici. Le fond ne change pas — le même énoncé vaut trois
- * jours chez l'un et trois mois chez l'autre, le devis est ferme et arrive
- * après l'appel — il devient seulement trouvable deux fois.
+ * Le prix de création dépend du périmètre. Les tarifs de suivi mensuel sont
+ * partagés avec la home et la FAQ via data/maintenance.ts.
  *
  * Les trois formats ne sont pas inventés : ils recouvrent ce que le site prouve
  * déjà ailleurs — les quatre cas clients (construire), la page « reprendre une
@@ -41,22 +37,22 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
 const formats = [
   {
-    titre: 'Construire ce qui n’existe pas',
+    titre: 'Créer une automatisation',
     corps:
-      'Un workflow ou un agent, de la première brique à la mise en production dans vos outils. Vous repartez avec la documentation, et je corrige sans surcoût le mois qui suit la livraison.',
-    depart: 'On part du process qui vous coûte le plus de temps.',
+      'Un workflow ou un agent, du cadrage à la mise en production dans vos outils. Je documente la solution et j’en assure ensuite le suivi avec un abonnement mensuel.',
+    depart: 'Pour une tâche encore traitée à la main.',
   },
   {
-    titre: 'Reprendre ce qui casse',
+    titre: 'Fiabiliser l’existant',
     corps:
-      'Une automatisation héritée de quelqu’un d’autre, qui tombe à chaque changement d’API. Je la relis, je la répare, et je la laisse dans un état où votre équipe peut la suivre.',
-    depart: 'On part de ce qui tourne déjà, mal.',
+      'J’examine votre automatisation, identifie les points de panne et reprends les connexions ou les règles qui posent problème.',
+    depart: 'Pour un workflow devenu difficile à utiliser ou à maintenir.',
   },
   {
-    titre: 'Rendre la main à votre équipe',
+    titre: 'Former votre équipe',
     corps:
-      'Des sessions sur vos propres scénarios, pas sur des cas d’école. Certifié formateur Make, plus de trois cents personnes formées depuis 2020.',
-    depart: 'On part de ce que personne chez vous n’ose encore toucher.',
+      'Des sessions sur vos scénarios pour comprendre leur fonctionnement, les utiliser et repérer les problèmes.',
+    depart: 'Pour faciliter la prise en main des outils livrés.',
   },
 ];
 ---
@@ -83,12 +79,11 @@ const formats = [
           que le sien. */}
       <div class="offres-header">
         <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
-          Construire, reprendre, ou <mark>rendre la main</mark>.
+          Une solution à créer ou <mark>à reprendre.</mark>
         </h2>
       </div>
       <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0 max-w-[56ch]">
-        Trois formats. Le vôtre est souvent un mélange des trois, et c’est
-        l’appel de {DUREE_RESERVATION_MINUTES} min qui le décide.
+        Nous partons de ce qui existe chez vous et de ce que vous voulez améliorer.
       </p>
     </div>
 
@@ -122,22 +117,26 @@ const formats = [
         repère au balayage sans ajouter un sur-titre en capitales. */}
     <div class="reveal offres-cadre">
       <p>
-        En régie ou en mission cadrée, selon ce qui vous arrange. La durée dépend
-        du périmètre.
+        Le devis précise le travail à réaliser et le calendrier. Le suivi est prévu dès le départ.
       </p>
       <p class="offres-budget">
-        <strong>Budget&nbsp;:</strong> pas de grille tarifaire, parce que le même
-        énoncé vaut trois jours de travail chez l’un et trois mois chez l’autre.
-        Le devis est ferme et arrive après l’appel de {DUREE_RESERVATION_MINUTES} min, une fois le
-        périmètre posé. Si c’est votre sujet principal, dites-le dès le début.
-        Je vous dis franchement si le projet tient dedans.
+        <strong>Création sur devis.</strong> Nous priorisons les workflows et les agents
+        pendant l’appel de {DUREE_RESERVATION_MINUTES} min. Vous recevez ensuite un devis
+        pour le périmètre convenu, distinct de l’abonnement de suivi.
       </p>
+    </div>
+
+    <div class="mt-12" id="abonnements">
+      <h3 class="m-0 mb-5 font-semibold text-[length:var(--text-title-lg)] text-[var(--color-ink)]">Un suivi prévu dès le départ.</h3>
+      <p class="m-0 mb-8 max-w-[65ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">Chaque automatisation livrée s’accompagne d’un abonnement mensuel. Hébergement, maintenance et petits ajustements de l’existant sont inclus.</p>
+      <SubscriptionGrid offers={automationSubscriptions} label="Abonnements automatisations et IA" />
+      <p class="mt-6 mb-0 max-w-[65ch] text-[length:var(--text-body-sm)] leading-relaxed text-[var(--color-ink-mid)]">{maintenanceScope}</p>
     </div>
 
     {/* Actions */}
     <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
       <BoutonReservation source="offres" class="btn-primary justify-center">
-        Automatiser mon business
+        Choisir un créneau · {DUREE_RESERVATION_MINUTES} min
       </BoutonReservation>
       {/* La page, pas l'ancre. `#cas` renvoyait le lecteur six mille pixels en
           arrière, au milieu d'un carrousel qu'il venait de dépasser : un lien
@@ -147,16 +146,15 @@ const formats = [
       {/* Pas de `goal` en attribut ici : le listener délégué de Layout tague
           déjà tout lien vers /cas-clients en `case_opened`, et deux goals sur
           le même clic compteraient la même intention deux fois. */}
-      <LinkCTA href="/cas-clients">Ou voir les résultats clients</LinkCTA>
+      <LinkCTA href="/cas-clients">Voir les cas clients</LinkCTA>
     </div>
 
     {/* L'offre web reste une route distincte : ce pont qualifie l'intention sans
         ajouter un septième lien dans la barre de navigation de la home. */}
     <div class="reveal mt-10 pt-7 border-t border-[var(--color-divider)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
       <p class="m-0 max-w-[58ch] text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
-        Vous cherchez plutôt un site conçu pour continuer à évoluer après sa
-        mise en ligne&nbsp;? La création commence à 1&nbsp;900&nbsp;€ HT, puis
-        Care ou Growth prend le relais si le projet le justifie.
+        Pour un site web, la création commence à 1&nbsp;900&nbsp;€ HT, puis
+        l’abonnement de suivi commence à {webSubscriptions[0].schemaPrice}&nbsp;€ HT / mois pour une landing page.
       </p>
       <LinkCTA href="/sites-web-abonnement">Voir l’offre sites web</LinkCTA>
     </div>
@@ -185,7 +183,7 @@ const formats = [
         data-fast-goal="outbound_formations"
         data-fast-goal-source="offres"
       >
-        Formations Make &amp; n8n sur augmentes.fr&nbsp;<span aria-hidden="true">↗</span>
+        Voir les formations Make et n8n&nbsp;<span aria-hidden="true">↗</span>
       </a>
     </p>
 

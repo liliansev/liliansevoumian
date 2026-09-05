@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import BoutonReservation from './BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 ---
 
 <section
@@ -16,8 +16,8 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
         annonçait une deuxième fois ce que la phrase dit déjà, et la section
         porte l'ancre `#contact` pour la navigation. */}
     <SectionHeader
-      title="Parlons de votre projet d’<mark class='inv'>automatisation.</mark>"
-      body={`${DUREE_RESERVATION_MINUTES} minutes pour poser votre process à plat et savoir ce qui s’automatise.`}
+      title="Qu’est-ce qui vous prend <mark class='inv'>trop de temps ?</mark>"
+      body={`${DUREE_RESERVATION_MINUTES} minutes pour examiner le problème et choisir par quoi commencer.`}
       titleMaxWidth="22ch"
       bodyMaxWidth="60ch"
       class="!mb-0"
@@ -60,38 +60,22 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
       <!-- Statement passionné -->
       <p class="text-[length:var(--text-body-large)] leading-[1.55] m-0 text-[var(--color-ink)] max-w-[58ch]">
-        Montrez-moi votre tâche la plus pénible&nbsp;: c’est celle que je préfère.
+        Venez avec un exemple de tâche, de document ou de dossier.
+        Cela nous aidera à comprendre ce qui bloque au quotidien.
       </p>
 
-      {/* La porte écrite, posée du côté de la signature et non sous le bouton.
-          Le commentaire de la colonne droite explique pourquoi la formule
-          « même si ce n'est pas avec moi » a été retirée : elle envisageait
-          l'échec de la vente à l'instant précis où l'on demande le clic. Une
-          alternative placée sous le bouton ferait exactement la même chose.
-          Ici, elle se lit avec le nom — un moyen de me joindre, pas un repli. */}
-      <p class="text-[length:var(--text-body-sm)] leading-[1.5] m-0 text-[var(--color-ink-mid)]">
-        Vous préférez écrire&nbsp;?
-        <a
-          href="mailto:bonjour@liliansevoumian.fr"
-          class="contact-mail"
-          data-fast-goal="lead_email"
-          data-fast-goal-source="contact"
-        >bonjour@liliansevoumian.fr</a>
-      </p>
       </div>
       <!-- /colonne gauche -->
 
       <!-- Colonne droite : la réservation. Le formulaire a été retiré au profit
            d'un canal unique. Un créneau posé vaut un rendez-vous tenu, là où
            un message envoyé attend une réponse. Ce qui remplace les champs,
-           c'est la raison de cliquer : ce qu'on construit pendant ces 20
+           c'est la raison de cliquer : ce qu'on construit pendant ces 45
            minutes, et le fait d'en sortir avec un plan. -->
       <div class="w-full">
         <div class="appel-carte">
-          <span class="mono-caption text-[var(--color-ink-low)]">APPEL · {DUREE_RESERVATION_MINUTES} MIN · SANS ENGAGEMENT</span>
-
           <h3 class="appel-titre font-display font-semibold text-[var(--color-ink)]">
-            On dessine votre automatisation ensemble.
+            Ce que nous verrons pendant l’appel
           </h3>
 
           {/* Les trois étapes décrivent ce qu'on va CONSTRUIRE, pas ce dont on
@@ -102,14 +86,15 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
               le clic, et elle sous-entendait qu'un autre pourrait faire mieux.
               Elle affirme désormais la suite du travail. */}
           <ol class="appel-etapes">
-            <li><span>Vous me décrivez le process qui vous coûte le plus de temps.</span></li>
-            <li><span>On dessine l’agent IA ou le workflow qui va le prendre en charge.</span></li>
-            <li><span>Vous repartez en sachant ce qu’on construit et par quoi on commence.</span></li>
+            <li><span>Les tâches qui vous occupent et les outils que vous utilisez.</span></li>
+            <li><span>Les automatisations ou agents à prioriser, et ce qui est faisable.</span></li>
+            <li><span>Le périmètre à chiffrer et la suite à donner au projet.</span></li>
           </ol>
 
           <BoutonReservation source="contact" class="btn-primary justify-center w-full">
-            Automatiser mon business
+            {LIBELLE_CONTACT_RESERVATION}
           </BoutonReservation>
+          <p class="m-0 text-[length:var(--text-body-sm)] leading-relaxed text-[var(--color-ink-mid)]">Le bouton ouvre mon agenda. Vous choisissez la date et l’heure de notre échange, sans engagement.</p>
 
         </div>
       </div>
@@ -199,17 +184,4 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
     }
   }
 
-  /* Le soulignement porte l'affordance : sur l'aplat lime, un lien ne peut pas
-     se signaler par la couleur. Il est déjà à l'encre comme tout le reste. */
-  .contact-mail {
-    color: var(--color-ink);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-    transition: text-decoration-thickness var(--duration-default) var(--ease-out-quint);
-  }
-  .contact-mail:hover,
-  .contact-mail:focus-visible {
-    text-decoration-thickness: 2px;
-  }
 </style>

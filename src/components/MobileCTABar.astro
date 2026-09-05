@@ -18,12 +18,13 @@
  * quitte l'écran : tant que le titre est lu, la page n'a pas encore commencé.
  */
 import BoutonReservation from './BoutonReservation.astro';
+import { LIBELLE_RESERVATION } from '../lib/reservation';
 
 interface Props {
   label?: string;
 }
 
-const { label = 'Automatiser mon business' } = Astro.props;
+const { label = LIBELLE_RESERVATION } = Astro.props;
 ---
 
 <div

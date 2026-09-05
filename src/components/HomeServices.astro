@@ -1,6 +1,6 @@
 ---
 import SectionHeader from './SectionHeader.astro';
-import BoutonReservation from './BoutonReservation.astro';
+import { automationSubscriptions, webSubscriptions } from '../data/maintenance';
 
 const services = [
   {
@@ -8,10 +8,10 @@ const services = [
     href: '/automatisations-ia',
     title: 'Automatisation & IA',
     titleLines: ['Automatisation', '& IA'],
-    signal: 'Trop de ressaisies, de classements ou de relances manuelles.',
+    signal: 'Moins de temps passé sur les tâches à faible valeur ajoutée.',
     body: 'Workflows n8n et Make, agents IA et intégrations dans vos outils.',
     details: ['Automatiser', 'Connecter', 'Construire un agent'],
-    proof: 'Cas publié : 1 à 3 h → 7 à 10 min',
+    proof: `Suivi : ${automationSubscriptions[0].schemaPrice} € HT/mois sans IA · ${automationSubscriptions[1].schemaPrice} € avec IA`,
     action: 'Explorer Automatisation & IA',
     source: 'home_services_automation',
   },
@@ -20,10 +20,10 @@ const services = [
     href: '/sites-web-abonnement',
     title: 'Sites & applications web',
     titleLines: ['Sites &', 'applications web'],
-    signal: 'Une offre à présenter ou un outil pour votre équipe.',
+    signal: 'Un outil métier pour vous et votre équipe.',
     body: 'Landing pages, dashboards, portails clients et applications métier, de la conception aux évolutions.',
     details: ['Créer', 'Maintenir', 'Améliorer'],
-    proof: 'Portfolio : 6 réalisations publiques',
+    proof: `Suivi des sites dès ${webSubscriptions[0].schemaPrice} € HT/mois · Applications sur devis`,
     action: 'Explorer les projets web',
     source: 'home_services_web',
   },
@@ -37,7 +37,7 @@ const services = [
 >
   <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Deux expertises pour <mark>vos projets.</mark>"
+      title="Vos équipes ont <mark>mieux à faire.</mark>"
       titleMaxWidth="none"
     />
 
@@ -63,9 +63,12 @@ const services = [
       ))}
     </div>
 
-    <div class="mt-8">
-      <BoutonReservation source="home_services" class="btn-primary">Parler de mon projet</BoutonReservation>
-    </div>
+    <p class="mt-7 mb-0 max-w-[75ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">
+      Chaque projet comprend une création, puis un abonnement de suivi, facturés séparément.
+      Hébergement, maintenance et petits ajustements de l’existant sont inclus.
+      Les nouveaux besoins sont chiffrés à part.
+    </p>
+
   </div>
 </section>
 

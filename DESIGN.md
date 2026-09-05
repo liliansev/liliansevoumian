@@ -408,19 +408,22 @@ Le premier viewport présente d'abord la personne qui construit. Sur desktop,
 le titre direct occupe la gauche et le portrait de Lilian la droite. Le portrait
 est carré, sans bordure, ombre ou contrechamp ; son nom et son ancienneté figurent
 en légende. Sous 1024 px, l'image passe sous le texte et garde son ratio carré,
-avec une largeur maximale de 30 rem. L'action primaire « Parler de mon projet »
-ouvre la réservation Cal.com ; le lien secondaire « Voir les services » descend
-vers `#services`. Le visiteur déjà convaincu peut prendre rendez-vous sans
-parcourir une landing supplémentaire.
+avec une largeur maximale de 30 rem. L'unique bouton commercial de la home,
+« Choisir un créneau · 45 min », ouvre l'agenda Cal.com depuis l'en-tête fixe.
+Le même élément est rendu sur desktop et mobile, avec un fond noir identifiable.
+Le lien secondaire du hero « Voir les services » descend vers `#services`.
+Le visiteur déjà convaincu peut prendre rendez-vous sans parcourir une landing.
 
-La section suivante compacte la légitimité en deux colonnes : trajectoire et
-méthode à gauche, quatre faits vérifiables à droite. Elle répond à « pourquoi
-vous confier le projet ? » avant de demander au visiteur de choisir un service.
+La section suivante présente Lilian sur un ton personnel : « Moi, c’est Lilian. »
+Un paragraphe sur son intérêt pour le quotidien des équipes et son passage chez
+Jellysmack remplace le descriptif du déroulé de mission. Deux repères restent à
+droite : freelance depuis 2020 et 300+ personnes formées. La certification Make
+est retirée de cette section ; le lien vers les cas clients est conservé.
 
 Le choix arrive ensuite dans un routeur à deux surfaces de même poids : lime
 pour **Automatisation & IA**, papier pour **Sites & applications web**.
 Les cartes partagent six rangées via `subgrid` : besoin, titre, description,
-périmètre, preuve et action. Le conteneur de mesure typographique est le `h3`,
+périmètre, repère de suivi mensuel et action. Le conteneur de mesure typographique est le `h3`,
 dont les deux lignes consomment le jeton : le poser sur chaque carte empêcherait
 le partage des rangées de cette carte.
 Chaque carte garde une seule destination — `/automatisations-ia` ou
@@ -432,12 +435,14 @@ Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops
 les dirigeants de PME, puis les agences et studios à se reconnaître. La FAQ
 répond aux questions de triage. Les textes gardent les preuves et les périmètres,
 mais retirent les listes répétées et les explications de navigation. La home
-compte environ 440 mots, réponses de FAQ incluses, contre 764 avant cette passe.
-La navigation « Soumettre un projet », le hero et le rappel après les deux
-cartes ouvrent directement la réservation. Un bloc contact ferme la home avec
-ce même agenda ou un brief prérempli dans la messagerie du visiteur. L’envoi
-reste une action explicite du visiteur dans sa messagerie ; le site ne simule
-aucune soumission.
+se termine après la FAQ, qui explique le choix du créneau et le déroulé de l'appel.
+Aucun bouton de réservation ne se répète dans le hero, après les services ou
+en bas de la home. Le menu home reste un écran de navigation ; sa fermeture
+redonne accès au bouton persistant. Les autres pages gardent une seule action
+de contact terminale : « Choisir un créneau · 45 min », vers ce même agenda.
+Le footer conserve les liens de navigation, de contenu et les mentions légales,
+sans répéter le contact. Seule la page légale, sans bloc contact, y affiche le
+bouton. L’adresse email obligatoire reste dans les informations légales.
 Chaque landing détaille son service, ses preuves et ses limites avant de
 convertir. Le vibe coding reste une méthode commune, jamais une troisième offre.
 
@@ -447,25 +452,46 @@ La durée affichée par le site vient de `DUREE_RESERVATION_MINUTES`, dans
 conservé pour préserver les liens déjà partagés ; il ne définit pas la durée.
 L’embed et son lien de secours dérivent de la même `URL_RESERVATION`.
 
-Le menu mobile commence par deux accès permanents : « Création d’applications »
-vers `/sites-web-abonnement#applications`, puis « Automatisation & IA » vers
-`/automatisations-ia`. Les ancres propres à la page viennent ensuite, sans
+La navbar de la home propose les deux offres : « Automatisations & IA » vers
+`/automatisations-ia`, puis « Applications métier » vers
+`/sites-web-abonnement#applications`. Le menu mobile reprend ces mêmes accès,
+dans le même ordre, depuis `src/data/service-navigation.ts`.
+Sur les landings, les ancres propres à la page viennent ensuite, sans
 répéter ces destinations. Le menu reste défilable et chaque lien le referme.
 
 Le menu utilise un dialogue natif plein écran : il isole l’arrière-plan et
-contient sa propre fermeture, accessible au clavier. L’en-tête et le bouton
-de contact restent visibles ; seule la liste défile, dans la hauteur dynamique
+contient sa propre fermeture, accessible au clavier. L’en-tête et, hors home,
+le bouton de contact restent visibles ; seule la liste défile, dans la hauteur dynamique
 du viewport et avec les zones de sécurité du téléphone. Les liens apparaissent
 immédiatement, sans cascade. Passer au format desktop ferme le menu et libère
 le défilement. Le verrou partagé avec Cal conserve la position de lecture.
-Dans le titre personnel, « opérations » et « métier » sont surlignés, avec
-des inclinaisons alternées et sans modifier les retours de ligne manuellement.
+Le titre personnel « Redonnez du temps à vos équipes » met le bénéfice en premier.
+« vos équipes » est surligné ; le chapô nomme agents IA, automatisations et applications métier.
 
 La landing web distingue les sites commerciaux des applications métiers au
 moyen de deux ancres explicites. Les tarifs de création et les abonnements
-Care/Growth restent associés aux sites ; applications et suivi sont chiffrés
+restent associés aux sites ; applications et suivi sont chiffrés
 selon leur périmètre. Les références visuelles demeurent regroupées dans le
 portfolio, sans nouvelles captures dans les offres.
+
+Les grilles mensuelles utilisent `SubscriptionGrid` : deux colonnes pour les
+automatisations (90 € HT sans IA, 190 € HT avec IA/agents, coûts IA inclus), trois
+pour les sites (landing page dès 90, multipage 190, blog 390 € HT/mois).
+Les tarifs et inclusions vivent dans `src/data/maintenance.ts`. Les rangées de
+titres, prix, descriptions et inclusions sont alignées via subgrid ; sous 900 px,
+les offres s'empilent. Aucun bouton par carte : un seul accès à l'agenda sous la grille.
+La création reste facturée séparément. Chaque projet inclut un abonnement
+d'hébergement, maintenance et petits ajustements de l'existant. Les nouveaux
+besoins sont sur devis ; la rédaction récurrente d'articles est distincte du suivi blog.
+
+Les deux landing pages parlent d'abord des usages et des décisions à prendre.
+La LP automatisation conserve les cas et témoignages, remplace le long catalogue
+de maquettes d'outils par quatre descriptions courtes et présente le déroulé
+de l'appel sans promettre une solution déjà conçue en 45 minutes. La LP web
+distingue « Un site pour vos clients. Une app pour vos équipes. », ramène la
+méthode à quatre étapes et garde les limites SEO dans sa FAQ. Les prix de
+création et les témoignages restent inchangés. Tous leurs liens de réservation
+portent le même libellé explicite, sans ajouter de nouvelle action commerciale.
 
 Un cas d’application métier peut documenter un premier lot sans KPI, capture
 ni témoignage. Le gabarit accepte une catégorie et une note de périmètre ;

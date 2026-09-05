@@ -23,6 +23,7 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import MobileCTABar from '../components/MobileCTABar.astro';
 import BoutonReservation from '../components/BoutonReservation.astro';
+import { LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 import { Icon } from 'astro-icon/components';
 
 interface Stat { label: string; valeur: string }
@@ -259,7 +260,7 @@ const sourceCta = url.replace(/^\//, '');
         </div>
         <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4">
           <BoutonReservation source={`${sourceCta}-bottom`} class="btn-primary justify-center">
-            Automatiser mon business
+            {LIBELLE_CONTACT_RESERVATION}
           </BoutonReservation>
         </div>
       </div>

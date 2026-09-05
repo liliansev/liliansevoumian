@@ -1,0 +1,60 @@
+---
+import type { MaintenanceOffer } from '../data/maintenance';
+
+interface Props {
+  offers: readonly MaintenanceOffer[];
+  label: string;
+}
+const { offers, label } = Astro.props;
+---
+
+<div class:list={['subscription-grid', { 'subscription-grid--three': offers.length === 3 }]} role="group" aria-label={label}>
+  {offers.map((offer) => (
+    <article class="subscription-plan">
+      <h3>{offer.name}</h3>
+      <p class="subscription-plan__price">
+        <span>{offer.minimum ? 'Dès ' : ''}{offer.schemaPrice} €</span>
+        <span class="subscription-plan__period">HT / mois</span>
+      </p>
+      <p class="subscription-plan__description">{offer.promise}</p>
+      <ul>{offer.includes.map((item) => <li>{item}</li>)}</ul>
+    </article>
+  ))}
+</div>
+
+<style>
+  .subscription-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-block: 1px solid var(--color-border-strong);
+  }
+  .subscription-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .subscription-plan {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    gap: 1.5rem;
+    min-width: 0;
+    padding: var(--spacing-service-card);
+  }
+  .subscription-plan + .subscription-plan { border-left: 1px solid var(--color-divider); }
+  .subscription-plan h3 {
+    margin: 0;
+    font-size: var(--text-title);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .subscription-plan__price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.6rem; margin: 0; color: var(--color-ink); font-size: var(--text-headline); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .subscription-plan__price > span:first-child { white-space: nowrap; }
+  .subscription-plan__period { font-size: var(--text-body-sm); font-weight: 400; }
+  .subscription-plan__description { margin: 0; color: var(--color-ink-mid); font-size: var(--text-body); line-height: 1.6; }
+  .subscription-plan ul { margin: 0; padding: 1.5rem 0 0; list-style: none; border-top: 1px solid var(--color-divider); color: var(--color-ink-mid); font-size: var(--text-body); line-height: 1.6; }
+  .subscription-plan li + li { margin-top: 0.5rem; }
+  @media (max-width: 899px) {
+    .subscription-grid { grid-template-columns: 1fr; }
+    .subscription-plan { grid-template-rows: auto; grid-row: auto; }
+    .subscription-plan + .subscription-plan { border-left: 0; border-top: 1px solid var(--color-divider); }
+  }
+</style>

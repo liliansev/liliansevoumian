@@ -1,6 +1,6 @@
 ---
 /*
- * Simulateur de temps — version vanilla JS (Astro <script>).
+ * Simulateur de temps — version JavaScript native Astro.
  *
  * Trois choses ont changé par rapport à la version « calculateur ROI » :
  *
@@ -25,6 +25,7 @@
  */
 import SectionHeader from './SectionHeader.astro';
 import BoutonReservation from './BoutonReservation.astro';
+import { LIBELLE_RESERVATION } from '../lib/reservation';
 import {
   compute, formatFR, inWorkWeeks, HOURLY_COST,
 } from '../lib/roi';
@@ -47,8 +48,8 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     {/* Sans sur-titre : deux curseurs et un résultat chiffré disent d'eux-mêmes
         qu'on est devant un simulateur, et le titre annonce ce qu'il calcule. */}
     <SectionHeader
-      title="Le temps que vos équipes peuvent <mark class='inv'>récupérer.</mark>"
-      body="Deux réglages suffisent. L'estimation retient 55 % des heures manuelles comme récupérables et 48 semaines de travail effectif par an. Au-delà de 20 h/sem ou 10 personnes, elle est plafonnée."
+      title="Et si vous récupériez une partie de <mark class='inv'>ce temps ?</mark>"
+      body="Une simulation, pas une promesse de résultat : elle suppose 55 % du temps manuel récupéré sur 48 semaines, avec un plafond à 20 h/semaine et 10 personnes. Le gain réel dépend des tâches retenues."
       titleMaxWidth="24ch"
       bodyMaxWidth="60ch"
     />
@@ -84,7 +85,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
             faisait le travail d'un signe d'alerte dans une ligne qui n'en avait
             pas d'autre, et la couleur d'erreur le porte déjà. */}
         <span data-roi-warning class="block mt-4 text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-error)]" hidden={!isCapped}>
-          Estimation plafonnée : l’audit réel descend dans le détail.
+          Estimation plafonnée : les besoins réels seront examinés pendant l’appel.
         </span>
 
         {/* Une seule région live, hors du chiffre animé. L'ancien montage
@@ -131,7 +132,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
 
         <div class="roi-actions">
           <BoutonReservation source="roi" class="btn-primary justify-center w-full">
-            Récupérer ces heures
+            {LIBELLE_RESERVATION}
           </BoutonReservation>
           <button
             type="button"

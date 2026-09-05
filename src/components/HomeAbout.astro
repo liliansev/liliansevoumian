@@ -1,14 +1,9 @@
 ---
 import SectionHeader from './SectionHeader.astro';
-import { getCollection } from 'astro:content';
-
-const publishedCases = await getCollection('cas-clients', ({ data }) => !data.draft);
 
 const facts = [
   { label: 'Freelance depuis', value: '2020' },
-  { label: 'Make niveau 5', value: 'Premier certifié en France' },
   { label: 'Formation', value: '300+ personnes formées' },
-  { label: 'Preuves publiques', value: `${publishedCases.length} cas clients · 6 sites en ligne` },
 ] as const;
 ---
 
@@ -19,20 +14,17 @@ const facts = [
 >
   <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Je cadre, construis et <mark>livre.</mark>"
+      title="Moi, c’est <mark>Lilian.</mark>"
       titleMaxWidth="22ch"
     />
 
     <div class="home-about">
       <div class="home-about__story">
         <p>
-          Deux années chez Jellysmack m’ont appris à maintenir en production
-          les automatisations que j’avais construites.
-        </p>
-        <p>
-          Je pars de votre besoin métier, choisis l’architecture et développe
-          la solution. Je teste les parcours avant de livrer, puis accompagne
-          les évolutions prévues.
+          J’aime comprendre comment les gens travaillent et trouver ce qui
+          pourrait leur simplifier la journée. C’est ce qui me passionne dans
+          l’IA et l’automatisation. J’ai notamment passé deux ans chez Jellysmack
+          à développer des automatisations pour les équipes.
         </p>
         <a href="/cas-clients" class="home-about__link text-link-arrow">
           <span>Voir les cas clients</span><span aria-hidden="true">→</span>
@@ -65,10 +57,6 @@ const facts = [
     color: var(--color-ink-mid);
     font-size: var(--text-body-large);
     line-height: 1.62;
-  }
-
-  .home-about__story p + p {
-    margin-top: 1.5rem;
   }
 
   .home-about__link {

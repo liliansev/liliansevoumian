@@ -22,7 +22,7 @@ import Footer from '../components/Footer.astro';
 import MobileCTABar from '../components/MobileCTABar.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import BoutonReservation from '../components/BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 
 const principes = [
   {
@@ -58,7 +58,7 @@ const principes = [
   {
     label: "LA QUALITÉ SE MESURE EN PRODUCTION",
     headline: "Un workflow se juge après 6 mois en production.",
-    body: "Le vrai test, c'est la première mise à jour d'API. D’où les corrections incluses le mois qui suit la livraison, et mon numéro pour le reste.",
+    body: "Chaque projet s’accompagne d’un abonnement mensuel pour l’hébergement, la maintenance et les petits ajustements de la solution livrée. Les nouveaux processus, agents et fonctionnalités sont chiffrés séparément.",
   },
   {
     label: "LE BON MATCH AVANT LE PROJET",
@@ -132,7 +132,7 @@ const breadcrumbs = [
             qui s'automatise. Sans engagement.
           </p>
           <BoutonReservation source="principes" class="btn-primary w-full sm:w-auto sm:self-start">
-            Automatiser mon business
+            {LIBELLE_CONTACT_RESERVATION}
           </BoutonReservation>
         </div>
 

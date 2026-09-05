@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { faqs } from '../data/faq';
 import { creationOffers, subscriptionOffers } from '../data/sites-web';
+import { automationSubscriptions, maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 
 /*
@@ -47,7 +48,7 @@ export const GET: APIRoute = async () => {
 - Automatiser un processus métier de bout en bout (n8n, Make)
 - Construire des agents IA qui prennent en charge une tâche entière
 - Reprendre des automatisations existantes qui tombent en panne ou se sont empilées
-- Former les équipes à maintenir ce qui a été livré
+- Former les équipes à utiliser et comprendre ce qui a été livré
 - Créer une landing page ou un site vitrine, puis le maintenir ou l'améliorer
 - Construire des dashboards, portails clients et applications métiers, sur un périmètre chiffré séparément
 
@@ -59,13 +60,12 @@ export const GET: APIRoute = async () => {
 ## Outils utilisés au quotidien
 
 - n8n : workflows et agents IA, auto-hébergeables
-- Make : scénarios d'intégration visuels ; plateforme européenne, hébergement UE
+- Make : scénarios d'intégration visuels
 - Notion : base clients et suivi des opérations
 - Airtable : base relationnelle et vues métier (certifié Airtable)
 - Claude Code (Anthropic) : développement d'outils internes sur mesure
 - Codex (OpenAI) : tâches de développement déléguées, relues avant livraison
-- Claude Cowork (Anthropic) : pilotage des automatisations par les équipes, sans code
-- Mistral : traitement de documents sensibles sans sortie d'Europe
+- Mistral : extraction et enrichissement de données dans les cas clients présentés
 
 ## Cas clients documentés
 
@@ -90,7 +90,9 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 - Les prestations d'automatisation sont chiffrées après un appel de ${DUREE_RESERVATION_MINUTES} min. Le
   devis est ferme une fois le périmètre posé.
 - L'offre sites web publie ses prix d'entrée : ${creationOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Le suivi mensuel propose ${subscriptionOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ou ')}.
-- La création du site et son suivi mensuel sont facturés séparément. Les applications métiers et leur suivi font l'objet d'un devis adapté au périmètre.
+- Chaque projet livré s'accompagne d'un abonnement de suivi, facturé séparément de la création. Les applications métiers et leur suivi font l'objet d'un devis adapté au périmètre.
+- Abonnements automatisation : ${automationSubscriptions.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Les coûts IA sont inclus dans l'offre IA et agents.
+- Le suivi comprend hébergement, maintenance et petits ajustements de l'existant. ${maintenanceScope} La rédaction récurrente d'articles est distincte de l'abonnement blog.
 - Les chiffres cités dans les cas clients sont ceux mesurés chez le client
   concerné. Ils ne sont pas des moyennes et ne se transposent pas tels quels.
 `;

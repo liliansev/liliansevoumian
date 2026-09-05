@@ -1,15 +1,16 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { URL_RESERVATION } from '../lib/reservation';
+import BoutonReservation from './BoutonReservation.astro';
+import { LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 
 const year = new Date().getFullYear();
 
 interface Props {
-  /** Sur la home, les landings spécialisées qualifient le besoin avant l'appel. */
-  serviceFirst?: boolean;
+  /** Uniquement pour les pages sans bloc de contact final. */
+  showContact?: boolean;
 }
 
-const { serviceFirst = false } = Astro.props;
+const { showContact = false } = Astro.props;
 
 interface Channel {
   label: string;
@@ -22,9 +23,6 @@ interface Channel {
 interface NavLink {
   label: string;
   href: string;
-  external?: boolean;
-  goal?: string;
-  goalSource?: string;
 }
 
 interface NavColumn {
@@ -40,16 +38,6 @@ const channels: Channel[] = [
   { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
   { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", icon: "lucide:mail", color: "#FF6719" },
 ];
-
-const contactLinks: NavLink[] = serviceFirst
-  ? [
-      { label: "Choisir Automatisation & IA", href: "/automatisations-ia", goal: "service_path_opened", goalSource: "footer" },
-      { label: "Choisir Sites & applications web", href: "/sites-web-abonnement", goal: "service_path_opened", goalSource: "footer" },
-    ]
-  : [
-      { label: "Parler de mon projet", href: URL_RESERVATION, external: true, goal: "lead_call", goalSource: "footer" },
-      { label: "Écrire un email", href: "mailto:bonjour@liliansevoumian.fr", goal: "lead_email", goalSource: "footer" },
-    ];
 
 const navColumns: NavColumn[] = [
   {
@@ -76,10 +64,6 @@ const navColumns: NavColumn[] = [
     ],
   },
   {
-    title: "CONTACT",
-    links: contactLinks,
-  },
-  {
     title: "LECTURE",
     links: [
       { label: "Principes", href: "/principes" },
@@ -88,8 +72,6 @@ const navColumns: NavColumn[] = [
   },
 ];
 
-// Ancres home-relatives : préfixées par '/' hors de la home.
-const prefix = Astro.url.pathname === '/' ? '' : '/';
 ---
 
 <footer class="bloc-encre relative bg-[var(--color-paper)] border-t border-[var(--color-divider)] px-[var(--spacing-section-x)]">
@@ -104,6 +86,11 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
         <p class="text-[var(--color-ink-mid)] max-w-md">
           Automatisation, agents IA, sites et applications web. Du cadrage au développement, un seul interlocuteur.
         </p>
+        {showContact && (
+          <BoutonReservation source="footer" class="btn-primary justify-center mt-6 w-full sm:w-auto">
+            {LIBELLE_CONTACT_RESERVATION}
+          </BoutonReservation>
+        )}
       </div>
 
       <div>
@@ -131,7 +118,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
 
     <!-- Middle: nav columns -->
     <!--
-      Les liens de ces quatre colonnes faisaient déjà 44 px de haut — la règle
+      Les liens de ces colonnes faisaient déjà 44 px de haut — la règle
       d'élément `footer a` de global.css les passe en inline-flex avec un
       plancher de hauteur — mais 26 à 40 px de large seulement : « FAQ » 26,
       « Outils » 37, « Calcul » et « Offres » 40. Une cible de 26 × 44 rate le
@@ -142,7 +129,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
       décalage du texte et sans toucher à la grille — mesuré, aucune colonne ne
       descend sous 80 px, même à 375 px de fenêtre.
     -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-8 md:gap-12 py-12">
       {navColumns.map((col) => (
         <div>
           <div class="mono-caption text-[var(--color-ink-low)] mb-4">{col.title}</div>
@@ -150,11 +137,7 @@ const prefix = Astro.url.pathname === '/' ? '' : '/';
             {col.links.map((link) => (
               <li>
                 <a
-                  href={link.href.startsWith('#') ? `${prefix}${link.href}` : link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  data-fast-goal={link.goal}
-                  data-fast-goal-source={link.goalSource}
+                  href={link.href}
                   class="min-w-[44px] text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[length:var(--text-body-sm)] break-words"
                 >
                   {link.label}

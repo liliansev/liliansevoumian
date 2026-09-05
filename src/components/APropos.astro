@@ -1,55 +1,12 @@
 ---
-/*
- * APropos — le bloc de légitimité, et le seul endroit du site où le nom de
- * l'entité figure dans un titre.
- *
- * Deux fonctions à la fois :
- *  — pour le lecteur : il vient de voir quatre cas et trois recommandations,
- *    « qui est ce type » est exactement sa question suivante, et elle doit
- *    trouver sa réponse avant le calculateur, qui demande un effort ;
- *  — pour les moteurs de réponse : c'est le bloc qu'ils citeront pour
- *    répondre « qui est-il ». D'où la fiche de faits en <dl> sous le texte,
- *    chaque ligne autonome et extractible hors de son contexte.
- *
- * Le bloc raconte une TRAJECTOIRE, pas des missions : les cas clients sont
- * juste au-dessus, les répéter ici ne prouvait rien de plus et volait la place
- * de la seule question à laquelle cette section doit répondre — pourquoi lui.
- *
- * Chaque paragraphe s'ouvre sur une année en encre pleine, et chacune est
- * sourcée dans profile.md, section « Parcours Chronologique » : découverte du
- * no-code en 2020 ; passage en freelance, premiers clients et Slack NoCode
- * France en 2021 ; Jellysmack et la certification niveau 4 en 2022 ; niveau 5
- * premier français, Make Trainer et refonte d'apprendre-make.com en 2023 ;
- * agents IA aujourd'hui (aussi dans CTA.astro, « le plus clair de mon temps
- * sur des agents IA et des outils internes »). Rien n'est ajouté hors de ces
- * sources : ni date, ni chiffre, ni nom de client. Le site vend la rigueur,
- * une seule année fabriquée ferait tomber tout le bloc.
- *
- * TROIS PARAGRAPHES ET NON SIX. Le bloc en comptait six, soit 392 mots — le
- * plus long de la home après les cas — et il tombait entre la preuve et
- * l'offre, c'est-à-dire à l'endroit exact où le lecteur cherche ce qu'on lui
- * vend. Les six sont devenus trois : 2021 et 2022 sont repliés dans les
- * paragraphes voisins plutôt que supprimés, aucun fait ne disparaît, et les
- * millésimes conservés restent les trois qui portent une bascule — la
- * découverte, la certification, l'IA. La fiche de faits en <dl>, elle, ne
- * bouge pas : c'est elle que les moteurs de réponse citent.
- *
- * 2024 et 2025 sont volontairement sautés : profile.md n'y documente presque
- * que les formations, et la formation ne peut figurer ici que comme PREUVE de
- * maîtrise (former oblige à comprendre pourquoi une chose tient), jamais comme
- * l'activité vendue. Un saut de deux ans coûte moins cher qu'un bloc qui
- * laisse croire qu'on vend des cours.
- */
+/* Présentation personnelle compacte ; faits issus du parcours fourni par Lilian. */
 import SectionHeader from './SectionHeader.astro';
 
 const faits = [
   { cle: 'Depuis', valeur: '2020' },
   // Insécables en caractère littéral (U+00A0), pas en entité : ce sont des
   // chaînes JS, un &nbsp; y ressortirait tel quel à l'écran.
-  { cle: 'Certifications', valeur: 'Make niveau 5, premier certifié en France · Airtable' },
   { cle: 'Formation', valeur: '300+ personnes formées' },
-  { cle: 'Aujourd’hui', valeur: 'Agents IA et outils internes, sur n8n et Make' },
-  { cle: 'Zone', valeur: 'Région parisienne · France · Europe' },
 ];
 ---
 
@@ -62,37 +19,24 @@ const faits = [
     {/* Sans sur-titre : « À PROPOS » nommait en petit ce que le titre dit en
         grand, avec le nom, le métier et la date en plus. */}
     <SectionHeader
-      title="Lilian Sevoumian, freelance automatisation &amp; IA <mark>depuis 2020.</mark>"
+      title="Moi, c’est <mark>Lilian.</mark>"
       titleMaxWidth="24ch"
     />
 
     <div class="reveal apropos">
       <div class="apropos-texte">
         <p>
-          <strong class="annee">2020.</strong> Je découvre le no-code, deux ans
-          avant que l'IA générative n'entre dans les entreprises. Je passe
-          freelance l'année suivante, et je réponds en parallèle aux questions
-          des autres sur le Slack NoCode France&nbsp;: plus de 14&nbsp;000
-          messages bénévoles, et des centaines de scénarios vus casser que je
-          n'avais pas écrits.
+          J’aime comprendre comment une équipe travaille et chercher ce qui
+          pourrait lui simplifier la journée. C’est ce qui me passionne dans
+          l’IA et l’automatisation.
         </p>
 
         <p>
-          <strong class="annee">2023.</strong> Certification Make
-          niveau&nbsp;5, <mark class="inv">premier en France</mark> à
-          l'obtenir, après deux ans passés chez Jellysmack à maintenir sur la
-          durée ce que j'avais construit moi-même. Je refonds apprendre-make.com
-          et plus de 300&nbsp;personnes s'y forment. Enseigner oblige à savoir
-          pourquoi une solution tient.
+          Chez Jellysmack, j’ai passé deux ans à construire et maintenir des
+          automatisations. Je partage aussi ce que j’apprends en formant des
+          équipes à ces outils.
         </p>
 
-        <p>
-          <strong class="annee">2026.</strong> L'IA a changé ce que je
-          construis, pas ma méthode. Elle classe, rédige, qualifie&nbsp;; les
-          workflows exécutent. Je travaille en direct, donc la personne qui vous
-          répond est celle qui construit&nbsp;— et quand un projet n'est pas
-          pour moi, je le dis avant de commencer.
-        </p>
       </div>
 
       <dl class="apropos-faits">
@@ -107,7 +51,7 @@ const faits = [
           {/* « chiffres à l'appui » signait un chèque que deux des quatre cas
               n'encaissent pas : Celeris et Humble+ ne contiennent aucune durée
               de travail humain, et Celeris n'est pas encore en production. */}
-          <dd><a class="lien-prose" href="/cas-clients">4 missions documentées, avant/après détaillé</a></dd>
+          <dd><a class="lien-prose" href="/cas-clients">Voir les cas clients</a></dd>
         </div>
       </dl>
     </div>

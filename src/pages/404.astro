@@ -18,7 +18,7 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import LinkCTA from '../components/LinkCTA.astro';
 import BoutonReservation from '../components/BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 ---
 
 <Layout
@@ -45,7 +45,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
         <div class="mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
           <BoutonReservation source="404" class="btn-primary justify-center">
-            Automatiser mon business
+            {LIBELLE_CONTACT_RESERVATION}
           </BoutonReservation>
           <LinkCTA href="/">Ou revenir à l’accueil</LinkCTA>
         </div>

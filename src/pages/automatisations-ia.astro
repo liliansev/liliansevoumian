@@ -16,11 +16,13 @@ import Footer from '../components/Footer.astro';
 import ROICalculator from '../components/ROICalculator.astro';
 import MobileCTABar from '../components/MobileCTABar.astro';
 import { faqs } from '../data/faq';
+import { LIBELLE_RESERVATION } from '../lib/reservation';
+import { automationSubscriptions } from '../data/maintenance';
 
 const faqSchema = faqs.map((faq) => ({ question: faq.q, answer: faq.a }));
 
 const navLinks = [
-  { href: '#automatisations', label: 'Process' },
+  { href: '#automatisations', label: 'Besoins' },
   { href: '#cas', label: 'Cas clients' },
   { href: '#methode', label: 'Méthode' },
   { href: '#stack', label: 'Outils' },
@@ -45,12 +47,28 @@ const serviceSchema = {
     'Reprise de workflows',
     'Formation n8n et Make',
   ],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Suivi mensuel des automatisations',
+    itemListElement: automationSubscriptions.map((offer) => ({
+      '@type': 'Offer',
+      name: offer.name,
+      description: `${offer.promise} ${offer.includes.join(', ')}. Création sur devis, facturée séparément.`,
+      priceSpecification: {
+        '@type': 'UnitPriceSpecification',
+        price: offer.schemaPrice,
+        priceCurrency: 'EUR',
+        billingDuration: 'P1M',
+        valueAddedTaxIncluded: false,
+      },
+    })),
+  },
 };
 ---
 
 <Layout
   title="Freelance automatisation & agents IA · n8n, Make · Lilian Sevoumian"
-  description="Freelance en automatisation et IA. Je construis et reprends des workflows n8n et Make, des agents IA et des outils métier."
+  description="Vos équipes passent trop de temps à ressaisir, trier ou relancer ? Je crée vos automatisations n8n, Make et agents IA, puis j’en assure le suivi mensuel."
   breadcrumbs={[
     { name: 'Accueil', url: '/' },
     { name: 'Automatisation & IA', url: '/automatisations-ia' },
@@ -60,7 +78,7 @@ const serviceSchema = {
 >
   <Navigation
     links={navLinks}
-    ctaLabel="Automatiser mon business"
+    ctaLabel={LIBELLE_RESERVATION}
     ctaSource="automatisations_nav"
     trackHero={true}
   />
@@ -75,7 +93,7 @@ const serviceSchema = {
     <APropos />
     <Stack />
     <Offres />
-    <FAQ />
+    <FAQ body="" />
     <ROICalculator />
     <CTA />
   </main>
