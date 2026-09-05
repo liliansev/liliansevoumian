@@ -3,6 +3,9 @@ import '@fontsource-variable/geist';
 import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
+import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
+
+const cheminReservation = new URL(URL_RESERVATION).pathname.replace(/^\//, '');
 
 interface Props {
   title?: string;
@@ -361,7 +364,7 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: "lilian-sevoumian/20min", config: { layout: "month_view", theme: "light" } });
+                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.calLink, config: { layout: "month_view", theme: "light" } });
                 inited = true;
                 return waitForEmbed();
               })
@@ -456,9 +459,9 @@ const faqPageSchema = faqSchema ? {
     <slot />
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
-    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label="Réserver un appel de 20 min" aria-hidden="true" tabindex="-1">
+    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label={`Réserver un appel de ${DUREE_RESERVATION_MINUTES} min`} aria-hidden="true" tabindex="-1" data-cal-link={cheminReservation}>
       <div class="cal-overlay-bar">
-        <span class="cal-overlay-title">Appel · 20 min</span>
+        <span class="cal-overlay-title">Appel · {DUREE_RESERVATION_MINUTES} min</span>
         <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
       </div>
       <div class="cal-overlay-body">
@@ -468,7 +471,7 @@ const faqPageSchema = faqSchema ? {
             <button type="button" class="cal-overlay-action" data-cal-retry>Réessayer</button>
             <a
               class="cal-overlay-action"
-              href="https://cal.com/lilian-sevoumian/20min"
+              href={URL_RESERVATION}
               target="_blank"
               rel="noopener noreferrer"
               data-cal-direct

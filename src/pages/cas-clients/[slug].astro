@@ -10,6 +10,7 @@ import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
 import { brandColorFor } from '../../data/brands';
 import Outil from '../../components/Outil.astro';
 import BoutonReservation from '../../components/BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../../lib/reservation';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -366,7 +367,7 @@ const articleSchema = {
             Un projet <mark>similaire&nbsp;?</mark>
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-3 max-w-[55ch]">
-            20&nbsp;min pour parler de votre besoin et voir comment je peux vous aider.
+            {DUREE_RESERVATION_MINUTES}&nbsp;min pour parler de votre besoin et voir comment je peux vous aider.
           </p>
         </div>
 

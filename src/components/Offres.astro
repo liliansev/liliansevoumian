@@ -1,6 +1,7 @@
 ---
 import LinkCTA from './LinkCTA.astro';
 import BoutonReservation from './BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 /*
  * Offres.astro — les formats de collaboration.
  *
@@ -87,7 +88,7 @@ const formats = [
       </div>
       <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0 max-w-[56ch]">
         Trois formats. Le vôtre est souvent un mélange des trois, et c’est
-        l’appel de 20 min qui le décide.
+        l’appel de {DUREE_RESERVATION_MINUTES} min qui le décide.
       </p>
     </div>
 
@@ -127,7 +128,7 @@ const formats = [
       <p class="offres-budget">
         <strong>Budget&nbsp;:</strong> pas de grille tarifaire, parce que le même
         énoncé vaut trois jours de travail chez l’un et trois mois chez l’autre.
-        Le devis est ferme et arrive après l’appel de 20 min, une fois le
+        Le devis est ferme et arrive après l’appel de {DUREE_RESERVATION_MINUTES} min, une fois le
         périmètre posé. Si c’est votre sujet principal, dites-le dès le début.
         Je vous dis franchement si le projet tient dedans.
       </p>

@@ -3,22 +3,22 @@ import type { FaqItem } from './faq';
 export const homeFaqs: FaqItem[] = [
   {
     q: 'Par quel service commencer ?',
-    a: 'Automatisation & IA concerne les tâches manuelles, les outils à connecter et les agents IA. Sites & applications web concerne les landing pages, les sites commerciaux, les dashboards et les portails clients. Un projet peut réunir les deux : une interface pour votre équipe et des automatisations en arrière-plan.',
+    a: 'Automatisation & IA pour connecter vos outils et réduire les tâches manuelles. Sites & applications web pour créer une interface. Les deux peuvent se combiner.',
   },
   {
     q: 'Quels projets prenez-vous en charge ?',
-    a: 'Je prends en charge les automatisations n8n et Make, les agents IA, les intégrations, les outils métier et les sites web. Le projet doit avoir un objectif métier identifiable et un périmètre que je peux assumer en direct. Le premier échange sert à confirmer que le sujet entre bien dans l’une de ces deux expertises.',
+    a: 'Un objectif métier clair et un périmètre que je peux prendre en charge directement. Nous le vérifions au premier échange.',
   },
   {
     q: 'Travaillez-vous seul ?',
-    a: 'Oui. Je reste votre interlocuteur du cadrage à la livraison, puis pendant les améliorations prévues. Cette organisation évite la perte d’information entre le rendez-vous commercial et la réalisation. Les besoins qui demandent une équipe plus large sont identifiés avant le démarrage.',
+    a: 'Oui, du cadrage aux améliorations prévues. Si le projet demande une équipe plus large, nous le déterminons avant de démarrer.',
   },
   {
     q: 'Le vibe coding change quoi pour mon projet ?',
-    a: 'Le vibe coding accélère l’exploration, l’intégration et les reprises grâce à Claude Code et Codex. Je garde la responsabilité du cadrage, de l’architecture, des tests et de la mise en production. L’IA raccourcit les itérations ; elle ne décide ni du besoin métier ni du niveau de qualité attendu.',
+    a: 'Claude Code et Codex accélèrent les itérations. Je garde la responsabilité du cadrage, de l’architecture, des tests et de la mise en production.',
   },
   {
     q: 'Comment se passe le premier échange ?',
-    a: 'Vous pouvez m’envoyer un brief par email ou réserver un échange de 20 minutes. Nous parlons du besoin, des outils en place et de votre échéance. L’objectif est de vérifier que je peux vous aider et de définir la prochaine étape. Le périmètre et le devis viennent ensuite.',
+    a: 'Vous présentez votre besoin, vos outils et votre échéance. Nous définissons la prochaine étape ; le périmètre et le devis viennent ensuite.',
   },
 ];

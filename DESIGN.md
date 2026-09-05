@@ -408,8 +408,10 @@ Le premier viewport présente d'abord la personne qui construit. Sur desktop,
 le titre direct occupe la gauche et le portrait de Lilian la droite. Le portrait
 est carré, sans bordure, ombre ou contrechamp ; son nom et son ancienneté figurent
 en légende. Sous 1024 px, l'image passe sous le texte et garde son ratio carré,
-avec une largeur maximale de 30 rem. L'action primaire descend vers `#services` : elle
-oriente sans faire du hero un comparateur ni y dupliquer les deux offres.
+avec une largeur maximale de 30 rem. L'action primaire « Parler de mon projet »
+ouvre la réservation Cal.com ; le lien secondaire « Voir les services » descend
+vers `#services`. Le visiteur déjà convaincu peut prendre rendez-vous sans
+parcourir une landing supplémentaire.
 
 La section suivante compacte la légitimité en deux colonnes : trajectoire et
 méthode à gauche, quatre faits vérifiables à droite. Elle répond à « pourquoi
@@ -428,13 +430,27 @@ dashboards, portails clients et applications métiers.
 
 Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops,
 les dirigeants de PME, puis les agences et studios à se reconnaître. La FAQ
-répond aux questions de triage. Un bloc contact ferme la home : la navigation
-« Soumettre un projet » y mène, puis le visiteur peut réserver l’échange de
-20 minutes existant ou ouvrir un brief prérempli dans sa messagerie. L’envoi
+répond aux questions de triage. Les textes gardent les preuves et les périmètres,
+mais retirent les listes répétées et les explications de navigation. La home
+compte environ 440 mots, réponses de FAQ incluses, contre 764 avant cette passe.
+La navigation « Soumettre un projet », le hero et le rappel après les deux
+cartes ouvrent directement la réservation. Un bloc contact ferme la home avec
+ce même agenda ou un brief prérempli dans la messagerie du visiteur. L’envoi
 reste une action explicite du visiteur dans sa messagerie ; le site ne simule
-aucune soumission. Le hero conserve son action vers le choix des services.
+aucune soumission.
 Chaque landing détaille son service, ses preuves et ses limites avant de
 convertir. Le vibe coding reste une méthode commune, jamais une troisième offre.
+
+Le rendez-vous Cal.com dure 45 minutes et présente les deux offres sans prix.
+La durée affichée par le site vient de `DUREE_RESERVATION_MINUTES`, dans
+`src/lib/reservation.ts`. Le chemin historique `/lilian-sevoumian/20min` est
+conservé pour préserver les liens déjà partagés ; il ne définit pas la durée.
+L’embed et son lien de secours dérivent de la même `URL_RESERVATION`.
+
+Le menu mobile commence par deux accès permanents : « Création d’applications »
+vers `/sites-web-abonnement#applications`, puis « Automatisation & IA » vers
+`/automatisations-ia`. Les ancres propres à la page viennent ensuite, sans
+répéter ces destinations. Le menu reste défilable et chaque lien le referme.
 
 La landing web distingue les sites commerciaux des applications métiers au
 moyen de deux ancres explicites. Les tarifs de création et les abonnements

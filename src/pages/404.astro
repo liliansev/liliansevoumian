@@ -18,11 +18,12 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import LinkCTA from '../components/LinkCTA.astro';
 import BoutonReservation from '../components/BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 ---
 
 <Layout
   title="Page introuvable · Lilian Sevoumian"
-  description="Cette page n'existe pas ou a été déplacée. Les cas clients, la méthode et l'appel de 20 minutes sont accessibles depuis ici."
+  description={`Cette page n'existe pas ou a été déplacée. Les cas clients, la méthode et l'appel de ${DUREE_RESERVATION_MINUTES} minutes sont accessibles depuis ici.`}
   noindex
 >
   <Navigation />

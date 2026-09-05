@@ -16,6 +16,9 @@
 /** L'agenda. Une seule écriture pour tout le site. */
 export const URL_RESERVATION = 'https://cal.com/lilian-sevoumian/20min';
 
+/** Durée de l'événement Cal.com ; son URL historique reste inchangée. */
+export const DUREE_RESERVATION_MINUTES = 45;
+
 /**
  * Sélecteur des liens que l'overlay cal.com intercepte (Layout) et que le menu
  * mobile referme (Navigation). Il vise l'URL sans son créneau : un changement de
@@ -36,10 +39,10 @@ export const SELECTEUR_RESERVATION = 'a[href*="cal.com/lilian-sevoumian"]';
  * promettre quoi que ce soit : réserver (un créneau à bloquer) et diagnostic
  * (un examen, dont on ne ressort par définition pas indemne). L'objet du clic
  * était la procédure ; le résultat, lui, n'était écrit nulle part sur le
- * bouton. Il l'est maintenant — l'action, l'agenda et la durée sont inchangés.
+ * bouton. Il l'est maintenant ; la durée affichée vient de la constante ci-dessus.
  *
- * La durée est descendue dans la copy qui borde les boutons (« 20 min, sans
- * engagement »), où elle rassure au lieu de tenir la moitié d'un libellé.
+ * La durée est descendue dans la copy qui borde les boutons, où elle rassure
+ * au lieu de tenir la moitié d'un libellé.
  *
  * LA LONGUEUR EST UNE CONTRAINTE, pas un détail de rédaction : `.btn-primary`
  * rend son libellé en capitales, et global.css cale la courbe de --text-button

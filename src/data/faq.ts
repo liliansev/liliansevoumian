@@ -37,6 +37,8 @@
  * c'est ici, dans la prose, que le rendez-vous porte son nom en entier.
  */
 
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+
 export interface FaqItem {
   /** Question affichée. */
   q: string;
@@ -47,7 +49,7 @@ export interface FaqItem {
 export const faqs: FaqItem[] = [
   {
     q: "Combien coûte une automatisation ?",
-    a: "Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après l'appel de 20 minutes, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.",
+    a: `Aucun tarif n'est affiché ici parce que « automatiser la facturation » représente trois jours de travail chez l'un et trois mois chez l'autre. Le devis est ferme et arrive après l'appel de ${DUREE_RESERVATION_MINUTES} minutes, une fois le périmètre posé. Si le budget est votre sujet principal, dites-le dès le début : je vous dis franchement si le projet tient dedans.`,
   },
   {
     q: "C'est quoi un agent IA ?",
@@ -67,6 +69,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Comment vous contacter rapidement ?",
-    a: "Le plus rapide est de réserver un appel de 20 minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.",
+    a: `Le plus rapide est de réserver un appel de ${DUREE_RESERVATION_MINUTES} minutes dans mon agenda, sans engagement. Vous décrivez le process qui vous coûte le plus de temps, je vous dis ce qui s'automatise et par quoi commencer. La personne qui vous répond est celle qui construit ensuite.`,
   },
 ];

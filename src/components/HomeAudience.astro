@@ -4,21 +4,15 @@ import SectionHeader from './SectionHeader.astro';
 const audiences = [
   {
     title: 'Fondateurs et équipes Ops',
-    body: 'Un process ralentit l’équipe, une donnée circule mal ou un agent IA doit entrer dans un vrai flux de travail.',
-    route: 'Commencez par Automatisation & IA.',
-    href: '/automatisations-ia',
+    body: 'Connecter vos outils et automatiser les tâches qui ralentissent l’équipe.',
   },
   {
     title: 'Dirigeants de PME',
-    body: 'Votre activité grandit et vous avez besoin d’un site ou d’un système fiable, sans monter une équipe technique en interne.',
-    route: 'Le besoin détermine la page à ouvrir.',
-    href: '#services',
+    body: 'Un site ou une application fiable, sans équipe technique à recruter.',
   },
   {
     title: 'Agences et studios',
-    body: 'Une mission demande un renfort autonome capable de cadrer, construire et rendre une solution maintenable.',
-    route: 'Choisissez l’expertise à intégrer au projet.',
-    href: '#services',
+    body: 'Un renfort autonome pour vos missions, du cadrage à la livraison.',
   },
 ] as const;
 ---
@@ -30,20 +24,15 @@ const audiences = [
 >
   <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Vous connaissez le problème métier. Je prends en charge <mark>la construction.</mark>"
-      body="Dites-moi ce qui bloque, ce qui prend du temps ou ce qui doit mieux convertir. Je transforme ce problème en périmètre de travail."
+      title="Un renfort pour <mark>votre équipe.</mark>"
       titleMaxWidth="24ch"
-      bodyMaxWidth="58ch"
     />
 
     <ul class="home-audiences">
       {audiences.map((audience) => (
         <li>
           <h3>{audience.title}</h3>
-          <div>
-            <p>{audience.body}</p>
-            <a href={audience.href} class="text-link-arrow"><span>{audience.route}</span><span aria-hidden="true">→</span></a>
-          </div>
+          <p>{audience.body}</p>
         </li>
       ))}
     </ul>
@@ -81,10 +70,6 @@ const audiences = [
     margin: 0;
     color: var(--color-ink-mid);
     line-height: 1.6;
-  }
-
-  .home-audiences a {
-    margin-top: 0.8rem;
   }
 
   @media (max-width: 700px) {

@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import SectionHeader from './SectionHeader.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import BoutonReservation from './BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 ---
 
 <section
@@ -16,7 +17,7 @@ import BoutonReservation from './BoutonReservation.astro';
         porte l'ancre `#contact` pour la navigation. */}
     <SectionHeader
       title="Parlons de votre projet d’<mark class='inv'>automatisation.</mark>"
-      body="Vingt minutes pour poser votre process à plat et savoir ce qui s’automatise."
+      body={`${DUREE_RESERVATION_MINUTES} minutes pour poser votre process à plat et savoir ce qui s’automatise.`}
       titleMaxWidth="22ch"
       bodyMaxWidth="60ch"
       class="!mb-0"
@@ -87,7 +88,7 @@ import BoutonReservation from './BoutonReservation.astro';
            minutes, et le fait d'en sortir avec un plan. -->
       <div class="w-full">
         <div class="appel-carte">
-          <span class="mono-caption text-[var(--color-ink-low)]">APPEL · 20 MIN · SANS ENGAGEMENT</span>
+          <span class="mono-caption text-[var(--color-ink-low)]">APPEL · {DUREE_RESERVATION_MINUTES} MIN · SANS ENGAGEMENT</span>
 
           <h3 class="appel-titre font-display font-semibold text-[var(--color-ink)]">
             On dessine votre automatisation ensemble.

@@ -101,6 +101,22 @@ const lienNav = (href: string) => {
   return suppliedLinks ? href : `${prefix}${href}`;
 };
 
+const mobileOfferLinks: NavigationLink[] = [
+  { href: '/sites-web-abonnement#applications', label: 'Création d’applications' },
+  { href: '/automatisations-ia', label: 'Automatisation & IA' },
+];
+
+// Les offres restent accessibles même quand une landing fournit ses propres
+// ancres. Leur bloc remplace les entrées équivalentes de la liste mobile.
+const mobileNavLinks = navLinks.filter((link) => {
+  const target = new URL(lienNav(link.href), Astro.url);
+  return !mobileOfferLinks.some((offer) => {
+    const offerTarget = new URL(offer.href, Astro.url);
+    return target.pathname === offerTarget.pathname
+      && (!target.hash || target.hash === offerTarget.hash);
+  });
+});
+
 /* `past-hero` posé DÈS LE RENDU sur toute page qui n'est pas la home, et c'est
    la réparation d'un défaut qui touchait dix pages sur douze. La classe était
    posée uniquement par l'IntersectionObserver du bas de ce fichier, qui observe
@@ -217,14 +233,27 @@ const lienNav = (href: string) => {
   tabindex="-1"
 >
   <div class="h-full min-h-0 overflow-y-auto overscroll-contain flex flex-col px-[var(--spacing-section-x)] pt-[80px] pb-12">
-    <div class="flex-1 flex flex-col justify-center gap-6">
-      {navLinks.map((link) => (
+    <div class="flex flex-col shrink-0 gap-2 pb-6">
+      {mobileOfferLinks.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-link flex items-center min-h-[44px] py-3 border-b border-[var(--color-border-strong)] font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)]"
+          data-mobile-link
+          data-fast-goal="service_path_opened"
+          data-fast-goal-source="nav_mobile_offers"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+    <div class="flex-1 flex flex-col justify-center gap-4 pb-6">
+      {mobileNavLinks.map((link) => (
         <a
           href={lienNav(link.href)}
           class="mobile-link group flex items-baseline gap-4 py-2 border-b border-[var(--color-divider)]"
           data-mobile-link
         >
-          <span class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)]">
+          <span class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.2] tracking-[-0.025em] text-[var(--color-ink)]">
             {link.label}
           </span>
         </a>

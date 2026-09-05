@@ -6,6 +6,7 @@ import LinkCTA from '../components/LinkCTA.astro';
 import ProjectVisual from '../components/ProjectVisual.astro';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 import {
   creationOffers,
   manufacturingSteps,
@@ -452,7 +453,7 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto reveal grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-9 lg:gap-16 items-end">
         <div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            20 minutes pour parler de votre <mark class="dark-mark">projet.</mark>
+            {DUREE_RESERVATION_MINUTES} minutes pour parler de votre <mark class="dark-mark">projet.</mark>
           </h2>
           <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
             Site commercial ou application métier : vous me présentez le besoin, les personnes concernées et les outils en place. Nous identifions la prochaine étape pour avancer.

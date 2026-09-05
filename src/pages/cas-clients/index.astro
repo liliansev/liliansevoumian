@@ -6,6 +6,7 @@ import MobileCTABar from '../../components/MobileCTABar.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import { getCollection } from 'astro:content';
 import BoutonReservation from '../../components/BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../../lib/reservation';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -205,7 +206,7 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
       <div class="relative max-w-[1200px] mx-auto">
         <SectionHeader
           title="Un projet qui ressemble à <mark class='inv'>l'un de ceux-là ?</mark>"
-          body="20 min pour parler de votre besoin et voir comment je peux vous aider."
+          body={`${DUREE_RESERVATION_MINUTES} min pour parler de votre besoin et voir comment je peux vous aider.`}
           titleMaxWidth="22ch"
           bodyMaxWidth="60ch"
           class="!mb-0"

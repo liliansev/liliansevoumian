@@ -6,6 +6,7 @@
  * FAQ différents) ; la charpente, elle, est partagée : voir PageExpertOutil.
  */
 import PageExpertOutil from '../layouts/PageExpertOutil.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
 // Ce que je fais avec Make — props de valeur (angle Make : visuel + maintenable).
 const valeur = [
@@ -48,7 +49,7 @@ const faqs = [
   },
   {
     q: 'Combien de temps pour un premier scénario ?',
-    a: "On valide le périmètre pendant l'appel de 20 minutes, avant de lancer quoi que ce soit. Le délai dépend du nombre d'outils à connecter et de la logique métier. Je vous l'annonce à ce moment-là.",
+    a: `On valide le périmètre pendant l'appel de ${DUREE_RESERVATION_MINUTES} minutes, avant de lancer quoi que ce soit. Le délai dépend du nombre d'outils à connecter et de la logique métier. Je vous l'annonce à ce moment-là.`,
   },
   {
     q: 'Make est-il assez puissant pour mon besoin ?',
@@ -107,6 +108,6 @@ const stats = [
   </Fragment>
 
   <Fragment slot="cta-texte">
-    20&nbsp;min pour poser votre process à plat. Sans engagement. Votre scénario Make existe déjà et il casse&nbsp;? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.
+    {DUREE_RESERVATION_MINUTES}&nbsp;min pour poser votre process à plat. Sans engagement. Votre scénario Make existe déjà et il casse&nbsp;? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.
   </Fragment>
 </PageExpertOutil>

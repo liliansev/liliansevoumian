@@ -22,6 +22,7 @@ import Footer from '../components/Footer.astro';
 import MobileCTABar from '../components/MobileCTABar.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import BoutonReservation from '../components/BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
 const principes = [
   {
@@ -47,7 +48,7 @@ const principes = [
   {
     label: "LE GAIN DE TEMPS D'ABORD",
     headline: "Je lance une automatisation quand elle vous fait gagner du temps.",
-    body: "On le regarde ensemble à l'appel de 20 min : le temps que vous récupérez face à ce que ce process vous coûte aujourd'hui en temps. Le calcul décide.",
+    body: `On le regarde ensemble à l'appel de ${DUREE_RESERVATION_MINUTES} min : le temps que vous récupérez face à ce que ce process vous coûte aujourd'hui en temps. Le calcul décide.`,
   },
   {
     label: "DU SUR-MESURE, À CHAQUE FOIS",
@@ -62,7 +63,7 @@ const principes = [
   {
     label: "LE BON MATCH AVANT LE PROJET",
     headline: "Je prends les projets que je sais livrer.",
-    body: "Secteur trop spécialisé (santé, défense, certains régulés), contraintes que je ne maîtrise pas, équipe qui vise une internalisation rapide : je vous le dis dès l'appel de 20 min et je vous redirige.",
+    body: `Secteur trop spécialisé (santé, défense, certains régulés), contraintes que je ne maîtrise pas, équipe qui vise une internalisation rapide : je vous le dis dès l'appel de ${DUREE_RESERVATION_MINUTES} min et je vous redirige.`,
   },
 ];
 
@@ -127,7 +128,7 @@ const breadcrumbs = [
         <div class="reveal bloc-lime mt-20 md:mt-24 p-8 md:p-10 flex flex-col gap-5">
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
             <span class="text-[var(--color-ink)]">Vous trouvez ça aligné ?</span>
-            En 20 min, on regarde un de vos process ensemble, et je vous dis ce
+            En {DUREE_RESERVATION_MINUTES} min, on regarde un de vos process ensemble, et je vous dis ce
             qui s'automatise. Sans engagement.
           </p>
           <BoutonReservation source="principes" class="btn-primary w-full sm:w-auto sm:self-start">

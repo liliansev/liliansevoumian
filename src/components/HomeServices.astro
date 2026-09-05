@@ -1,5 +1,6 @@
 ---
 import SectionHeader from './SectionHeader.astro';
+import BoutonReservation from './BoutonReservation.astro';
 
 const services = [
   {
@@ -7,8 +8,8 @@ const services = [
     href: '/automatisations-ia',
     title: 'Automatisation & IA',
     titleLines: ['Automatisation', '& IA'],
-    signal: 'Vos équipes recopient, classent ou relancent encore à la main.',
-    body: 'Workflows n8n et Make, agents IA, intégrations et outils métier construits autour de vos opérations.',
+    signal: 'Trop de ressaisies, de classements ou de relances manuelles.',
+    body: 'Workflows n8n et Make, agents IA et intégrations dans vos outils.',
     details: ['Automatiser', 'Connecter', 'Construire un agent'],
     proof: 'Cas publié : 1 à 3 h → 7 à 10 min',
     action: 'Explorer Automatisation & IA',
@@ -19,8 +20,8 @@ const services = [
     href: '/sites-web-abonnement',
     title: 'Sites & applications web',
     titleLines: ['Sites &', 'applications web'],
-    signal: 'Vous avez besoin d’une page qui convertit ou d’un outil adapté à votre activité.',
-    body: 'Landing pages, dashboards, portails clients et applications métiers : je conçois, développe et fais évoluer vos outils web.',
+    signal: 'Une offre à présenter ou un outil pour votre équipe.',
+    body: 'Landing pages, dashboards, portails clients et applications métier, de la conception aux évolutions.',
     details: ['Créer', 'Maintenir', 'Améliorer'],
     proof: 'Portfolio : 6 réalisations publiques',
     action: 'Explorer les projets web',
@@ -36,10 +37,8 @@ const services = [
 >
   <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Quel sujet voulez-vous<br /><mark>faire avancer&nbsp;?</mark>"
-      body="Automatiser un processus, lancer une landing page ou construire un outil pour votre équipe."
+      title="Deux expertises pour <mark>vos projets.</mark>"
       titleMaxWidth="none"
-      bodyMaxWidth="58ch"
     />
 
     <div class="home-services">
@@ -62,6 +61,10 @@ const services = [
           <strong class="home-service-card__action">{service.action} <i aria-hidden="true">→</i></strong>
         </a>
       ))}
+    </div>
+
+    <div class="mt-8">
+      <BoutonReservation source="home_services" class="btn-primary">Parler de mon projet</BoutonReservation>
     </div>
   </div>
 </section>

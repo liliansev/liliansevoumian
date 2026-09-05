@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { faqs } from '../data/faq';
 import { creationOffers, subscriptionOffers } from '../data/sites-web';
-import { URL_RESERVATION } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 
 /*
  * /llms.txt — la carte du site à l'usage des moteurs de réponse générative.
@@ -40,7 +40,7 @@ export const GET: APIRoute = async () => {
 - Certifications : Make niveau 5 (premier certifié en France), Airtable Certified
 - Formation : plus de 300 personnes formées
 - Zone : région parisienne, France, Europe
-- Contact : ${URL_RESERVATION} (appel de 20 min, sans engagement) ou bonjour@liliansevoumian.fr
+- Contact : ${URL_RESERVATION} (appel de ${DUREE_RESERVATION_MINUTES} min, sans engagement) ou bonjour@liliansevoumian.fr
 
 ## Ce que je fais
 
@@ -87,7 +87,7 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 
 ## Notes
 
-- Les prestations d'automatisation sont chiffrées après un appel de 20 min. Le
+- Les prestations d'automatisation sont chiffrées après un appel de ${DUREE_RESERVATION_MINUTES} min. Le
   devis est ferme une fois le périmètre posé.
 - L'offre sites web publie ses prix d'entrée : ${creationOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Le suivi mensuel propose ${subscriptionOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ou ')}.
 - La création du site et son suivi mensuel sont facturés séparément. Les applications métiers et leur suivi font l'objet d'un devis adapté au périmètre.
