@@ -48,7 +48,7 @@ export const creationOffers: readonly CreationOffer[] = [
     name: 'Site avec outil ou données',
     price: 'À partir de 5\u00a0500\u00a0€\u00a0HT',
     schemaPrice: 5500,
-    useCase: 'Configurateur, catalogue, base de données ou espace interactif.',
+    useCase: 'Configurateur, catalogue ou recherche dans vos données.',
     promise: 'Un outil web pour rechercher, filtrer, comparer ou guider le visiteur à partir de vos données.',
     includes: ['Modélisation des données', 'Interface interactive', 'Intégrations métier'],
   },
@@ -112,8 +112,12 @@ export const siteFaqs: readonly SiteFaq[] = [
     a: 'Le cadrage, la conception des messages, le design, l’intégration responsive, le socle SEO, la mesure et la mise en ligne. Le périmètre exact, les contenus à reprendre et les intégrations sont écrits dans le devis avant le démarrage.',
   },
   {
-    q: 'Pourquoi ajouter un abonnement après la mise en ligne ?',
-    a: 'Care couvre la maintenance après la mise en ligne. Growth ajoute une analyse des données et un lot d’améliorations chaque mois. Dans les deux cas, le périmètre mensuel est défini avant le démarrage.',
+    q: 'Le prix de création du site inclut-il un abonnement ?',
+    a: 'La création du site et son suivi sont deux postes distincts. Le prix de création couvre le périmètre initial défini au devis. Après la mise en ligne, Care couvre la maintenance ; Growth ajoute une analyse des données et un lot d’améliorations chaque mois. Le périmètre du suivi mensuel est défini avant son démarrage.',
+  },
+  {
+    q: 'Les tarifs des sites couvrent-ils une application métier ?',
+    a: 'Les trois formats affichés concernent les sites commerciaux, y compris un catalogue ou un configurateur. Un dashboard, un portail client ou une application métier fait l’objet d’un devis spécifique : utilisateurs, données, droits d’accès, parcours et intégrations déterminent le périmètre. Le suivi de l’application est lui aussi défini au devis, séparément de Care et Growth.',
   },
   {
     q: 'Les textes sont-ils écrits par une IA ?',
@@ -121,7 +125,7 @@ export const siteFaqs: readonly SiteFaq[] = [
   },
   {
     q: 'Pouvez-vous garantir une position sur Google ?',
-    a: 'Je livre un socle SEO solide et j’améliore les pages à partir de données réelles. Les positions, le trafic et le chiffre d’affaires dépendent ensuite du marché, de l’offre et de la concurrence.',
+    a: 'Pour les sites commerciaux, je livre un socle SEO et j’améliore les pages à partir de données réelles. Les positions, le trafic et le chiffre d’affaires dépendent ensuite du marché, de l’offre et de la concurrence.',
   },
   {
     q: 'Combien de temps faut-il pour mettre le site en ligne ?',

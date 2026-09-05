@@ -5,6 +5,7 @@ import BoutonReservation from '../components/BoutonReservation.astro';
 import LinkCTA from '../components/LinkCTA.astro';
 import ProjectVisual from '../components/ProjectVisual.astro';
 import Footer from '../components/Footer.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import {
   creationOffers,
   manufacturingSteps,
@@ -15,16 +16,16 @@ import {
 } from '../data/sites-web';
 
 const navLinks = [
-  { href: '#tarifs', label: 'Création' },
-  { href: '#abonnements', label: 'Abonnements' },
+  { href: '#tarifs', label: 'Sites' },
+  { href: '#applications', label: 'Applications' },
+  { href: '#abonnements', label: 'Suivi des sites' },
   { href: '#methode', label: 'Méthode' },
-  { href: '#limites', label: 'Limites' },
   { href: '#realisations', label: 'Réalisations' },
   { href: '#faq', label: 'FAQ' },
 ];
 
 const faqSchema = siteFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
-const pageDescription = `Landing page dès ${creationOffers[0].price}, site vitrine dès ${creationOffers[1].price}, puis maintenance Care ou amélioration Growth. IA assistée, contrôle humain.`;
+const pageDescription = `Landing pages et sites web dès ${creationOffers[0].price}. Dashboards, portails clients et applications métiers sur devis. Conception, développement et suivi.`;
 
 const projects = {
   lilian: {
@@ -81,10 +82,10 @@ const projectList = [
 ] as const;
 
 const directionContract = `
-THESIS: Le service mène la page : créer, maintenir, puis améliorer. Les réalisations n’apparaissent qu’une fois, comme preuve concentrée.
+THESIS: La page distingue les sites commerciaux des applications métiers ; les tarifs de création et de suivi des sites ne promettent pas une application complète.
 OWN-WORLD: Papier blanc, encre noire, lime posé en surface, composition éditoriale, angles droits et une seule famille Geist.
-STORY: Le visiteur comprend le cycle de travail, compare trois périmètres de création et deux niveaux de suivi, puis découvre les réalisations avant de réserver.
-FIRST VIEWPORT: Promesse typographique sans capture ; le cycle créer, maintenir, améliorer donne immédiatement les trois repères commerciaux.
+STORY: Le visiteur choisit sites ou applications, lit le périmètre correspondant, puis découvre les réalisations avant de parler de son projet.
+FIRST VIEWPORT: Promesse typographique sans capture ; deux liens orientent vers sites et applications, et les repères de prix sont explicitement réservés aux sites.
 FORM: Dossier de fabrication, structure classée 7, seed 244476c3, dense et éditorial, sans cadre décoratif ni simulation d’écran.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 `.trim();
@@ -93,16 +94,16 @@ const serviceSchema = {
   '@context': 'https://schema.org',
   '@type': 'Service',
   '@id': 'https://liliansevoumian.fr/sites-web-abonnement#service',
-  name: 'Création et amélioration de sites web',
+  name: 'Création de sites web et d’applications métiers',
   description:
-    'Création de landing pages et sites vitrines, puis maintenance Care ou amélioration Growth à partir de données réelles.',
+    'Création de landing pages et sites commerciaux, puis maintenance Care ou amélioration Growth. Dashboards, portails clients et applications métiers avec création et suivi sur devis.',
   url: 'https://liliansevoumian.fr/sites-web-abonnement',
   areaServed: { '@type': 'Country', name: 'France' },
   provider: { '@id': 'https://liliansevoumian.fr/#person' },
-  serviceType: ['Création de site web', 'Landing page', 'Maintenance de site web', 'Optimisation continue'],
+  serviceType: ['Création de site web', 'Landing page', 'Maintenance de site web', 'Optimisation continue', 'Développement d’applications métiers', 'Dashboard', 'Portail client'],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'Création et abonnements',
+    name: 'Création et suivi des sites commerciaux',
     itemListElement: [
       ...creationOffers.map((offer, index) => ({
         '@type': 'Offer',
@@ -135,13 +136,13 @@ const serviceSchema = {
 ---
 
 <Layout
-  title="Création de site web par abonnement | Lilian Sevoumian"
+  title="Sites web et applications métiers | Lilian Sevoumian"
   description={pageDescription}
   ogImage="/og-sites-web.png"
   ogImageAlt="Création, maintenance Care et amélioration Growth par Lilian Sevoumian"
   breadcrumbs={[
     { name: 'Accueil', url: '/' },
-    { name: 'Sites web', url: '/sites-web-abonnement' },
+    { name: 'Sites web et applications métiers', url: '/sites-web-abonnement' },
   ]}
   faqSchema={faqSchema}
   pageSchema={serviceSchema}
@@ -149,7 +150,7 @@ const serviceSchema = {
 >
   <Navigation
     links={navLinks}
-    ctaLabel="Parler de mon site"
+    ctaLabel="Parler de mon projet"
     ctaSource="sites_web_nav"
     trackHero={true}
   />
@@ -160,23 +161,28 @@ const serviceSchema = {
         <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,0.55fr)] gap-12 lg:gap-20 items-end">
           <div class="min-w-0 reveal is-visible">
             <h1 class="font-display font-semibold text-[length:var(--text-sites-hero)] leading-[0.95] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[12ch] text-balance">
-              Je crée votre site. Puis je le fais <mark class="inv">avancer.</mark>
+              Sites web et applications <mark class="inv">métiers.</mark>
             </h1>
             <p class="mt-7 mb-0 max-w-[58ch] text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">
-              Je travaille le message, le design et le développement. Après la mise en ligne, Care couvre la maintenance et Growth réserve du temps pour les améliorations.
+              Une landing page pour présenter votre offre, un site pour développer votre activité, une application pour votre équipe. Je conçois, développe et fais évoluer votre projet.
             </p>
+
+            <nav aria-label="Choisir le type de projet web" class="mt-6 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-x-7">
+              <LinkCTA href="#tarifs">Sites et landing pages</LinkCTA>
+              <LinkCTA href="#applications">Applications métiers</LinkCTA>
+            </nav>
 
             <div class="mt-9 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <BoutonReservation source="sites_web_hero" class="btn-primary justify-center">
-                Parler de mon site
+                Parler de mon projet
               </BoutonReservation>
               <LinkCTA href="#realisations">Voir les réalisations</LinkCTA>
             </div>
           </div>
 
-          <aside class="reveal is-visible border-y lg:border-y-0 lg:border-l border-[var(--color-border-strong)] lg:pl-8" aria-label="Le cycle de travail">
-            <p class="hidden lg:block my-0 pb-5 text-[length:var(--text-body)] leading-[1.55] text-[var(--color-ink-mid)]">
-              Un seul partenaire, trois temps de travail.
+          <aside class="reveal is-visible border-y lg:border-y-0 lg:border-l border-[var(--color-border-strong)] lg:pl-8" aria-label="Création et suivi des sites web">
+            <p class="my-0 py-5 lg:pt-0 text-[length:var(--text-body)] leading-[1.55] text-[var(--color-ink-mid)]">
+              Pour les sites : création, puis suivi mensuel.
             </p>
             <dl class="m-0 grid grid-cols-3 lg:block lg:border-t border-[var(--color-border-strong)]">
               <div class="flex flex-col gap-2 py-4 pr-3 border-r lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-5 lg:py-5 lg:pr-0 lg:border-r-0 lg:border-b border-[var(--color-divider)] lg:items-baseline">
@@ -192,6 +198,9 @@ const serviceSchema = {
                 <dd class="m-0 text-[length:var(--text-body-sm)] lg:text-right text-[var(--color-ink-mid)] tabular-nums whitespace-nowrap">{subscriptionOffers[1].price.replace(' / mois', '/mois')}</dd>
               </div>
             </dl>
+            <p class="my-0 py-5 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-mid)]">
+              Applications métiers : création et suivi sur devis.
+            </p>
           </aside>
         </div>
       </div>
@@ -201,10 +210,10 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            Trois formats. La même <mark>exigence.</mark>
+            Trois formats pour votre <mark>site web.</mark>
           </h2>
           <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Le prix évolue avec le nombre de pages, la profondeur des contenus et la complexité des parcours. Chaque format reçoit le même soin sur mobile, tablette et desktop.
+            Landing page, site vitrine ou site avec un outil interactif : le prix de création dépend des pages, des contenus et des parcours. Le suivi mensuel est présenté séparément.
           </p>
         </div>
 
@@ -242,11 +251,49 @@ const serviceSchema = {
 
         <div class="reveal mt-10 pt-7 border-t border-[var(--color-divider)] flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <p class="m-0 max-w-[64ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
-            Le devis précise les contenus à reprendre, les intégrations, les migrations et les validations attendues. Vous connaissez le périmètre complet avant le démarrage.
+            Le devis précise les contenus, les intégrations et les validations attendues. Un portail client ou une application métier relève d’un périmètre spécifique, présenté ci-dessous.
           </p>
           <BoutonReservation source="sites_web_tarifs" class="btn-primary justify-center shrink-0">
-            Cadrer mon site
+            Parler de mon site
           </BoutonReservation>
+        </div>
+      </div>
+    </section>
+
+    <section id="applications" data-section class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 lg:gap-20 items-start">
+        <div>
+          <SectionHeader
+            title="Une application pour votre <mark>travail quotidien.</mark>"
+            body="Votre équipe a besoin de consulter, saisir ou traiter des données dans ses propres parcours. Je construis l’interface autour de cet usage et des outils déjà en place."
+            titleMaxWidth="20ch"
+            bodyMaxWidth="58ch"
+            spacing="none"
+          />
+          <div class="reveal mt-8">
+            <BoutonReservation source="sites_web_applications" class="btn-primary justify-center">
+              Parler de mon application
+            </BoutonReservation>
+          </div>
+        </div>
+        <div class="reveal">
+          <dl class="m-0 border-t border-[var(--color-border-strong)]">
+            <div class="py-6 border-b border-[var(--color-divider)]">
+              <dt class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em]">Dashboard</dt>
+              <dd class="mt-3 mb-0 ml-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">Rassembler les informations utiles, suivre une activité et retrouver les dossiers qui demandent une action.</dd>
+            </div>
+            <div class="py-6 border-b border-[var(--color-divider)]">
+              <dt class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em]">Portail client</dt>
+              <dd class="mt-3 mb-0 ml-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">Donner à vos clients un espace pour consulter leurs documents, suivre une demande ou transmettre les éléments attendus.</dd>
+            </div>
+            <div class="py-6 border-b border-[var(--color-divider)]">
+              <dt class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em]">Interface connectée à vos outils</dt>
+              <dd class="mt-3 mb-0 ml-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">Créer un parcours de saisie, de validation ou de suivi relié à votre CRM, à vos données et à vos automatisations.</dd>
+            </div>
+          </dl>
+          <p class="mt-7 mb-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink)]">
+            La création et le suivi sont chiffrés sur devis, selon les utilisateurs, les données, les droits d’accès et les intégrations. Nous définissons les parcours et les fonctionnalités avant de fixer le périmètre.
+          </p>
         </div>
       </div>
     </section>
@@ -258,7 +305,7 @@ const serviceSchema = {
             Le site continue après sa <mark class="inv dark-mark">mise en ligne.</mark>
           </h2>
           <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Care prend en charge l’entretien. Avec Growth, j’analyse les données et je consacre chaque mois un lot de travail à une amélioration prioritaire.
+            Ces deux abonnements concernent les sites commerciaux, après leur création. Care prend en charge l’entretien ; Growth ajoute l’analyse des données et un lot mensuel d’améliorations.
           </p>
         </div>
 
@@ -285,7 +332,7 @@ const serviceSchema = {
 
         <div class="reveal mt-9 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-7 items-center">
           <p class="m-0 max-w-[72ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
-            L’offre couvre aujourd’hui la maintenance et l’amélioration du site. La production récurrente d’articles viendra après validation du processus sur mes propres sites.
+            Care et Growth couvrent la maintenance et l’amélioration du site. Le suivi d’une application métier est défini dans son propre devis. La production récurrente d’articles ne fait pas partie du périmètre actuel.
           </p>
           <BoutonReservation source="sites_web_abonnements" class="btn-primary justify-center">
             Choisir le bon niveau
@@ -298,10 +345,10 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            Six étapes, du brief à la <mark>mise en ligne.</mark>
+            Votre site, du brief à la <mark>mise en ligne.</mark>
           </h2>
           <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Je vous montre la structure, puis le contenu, puis le site. Chaque étape produit un livrable à relire avant de passer à la suivante.
+            Pour un site commercial, je vous montre la structure, puis le contenu, puis les pages. Ces six étapes produisent chacune un livrable à relire avant de passer à la suivante.
           </p>
         </div>
 
@@ -328,7 +375,7 @@ const serviceSchema = {
               L’IA accélère. Je garde la <mark class="inv">responsabilité.</mark>
             </h2>
             <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-              J’utilise ces outils pour chercher, structurer et produire plus vite. Je vérifie ensuite les faits, les promesses, le ton, le SEO et le fonctionnement de chaque page.
+              Pour les sites commerciaux, j’utilise ces outils pour chercher, structurer et produire plus vite. Je vérifie ensuite les faits, les promesses, le ton, le SEO et le fonctionnement de chaque page.
             </p>
           </div>
           <div class="border-y border-[var(--color-border-strong)]">
@@ -399,15 +446,15 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto reveal grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-9 lg:gap-16 items-end">
         <div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            En 20 minutes, définissons le site à <mark class="dark-mark">créer.</mark>
+            20 minutes pour parler de votre <mark class="dark-mark">projet.</mark>
           </h2>
           <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
-            Nous passons en revue l’offre, les pages nécessaires, les contenus disponibles et le niveau de suivi utile. Vous repartez avec un périmètre clair.
+            Site commercial ou application métier : vous me présentez le besoin, les personnes concernées et les outils en place. Nous identifions la prochaine étape pour avancer.
           </p>
         </div>
         <div class="lg:pb-1">
           <BoutonReservation source="sites_web_final" class="btn-primary justify-center lg:min-w-[220px]">
-            Parler de mon site
+            Parler de mon projet
           </BoutonReservation>
         </div>
       </div>

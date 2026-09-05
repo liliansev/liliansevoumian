@@ -5,6 +5,7 @@ import HomeHeroPersonal from '../components/HomeHeroPersonal.astro';
 import HomeAbout from '../components/HomeAbout.astro';
 import HomeServices from '../components/HomeServices.astro';
 import HomeAudience from '../components/HomeAudience.astro';
+import HomeContact from '../components/HomeContact.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
 import { homeFaqs } from '../data/home-faq';
@@ -66,7 +67,7 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
     links={navLinks}
     ctaLabel="Soumettre un projet"
     ctaSource="home_nav"
-    ctaHref="#services"
+    ctaHref="#contact"
     trackHero={true}
   />
 
@@ -78,10 +79,11 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
     <FAQ
       items={homeFaqs}
       title="Les questions avant de choisir un service."
-      body="Des réponses courtes pour identifier le bon point d’entrée avant d’ouvrir la landing correspondante."
+      body="Le périmètre des missions, ma façon de travailler et le premier échange."
       showTrainingLink={false}
     />
+    <HomeContact />
   </main>
 
-  <Footer serviceFirst={true} />
+  <Footer />
 </Layout>

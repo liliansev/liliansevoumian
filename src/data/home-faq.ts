@@ -3,7 +3,7 @@ import type { FaqItem } from './faq';
 export const homeFaqs: FaqItem[] = [
   {
     q: 'Par quel service commencer ?',
-    a: 'La page Automatisation & IA correspond aux process manuels, aux outils qui communiquent mal et aux agents IA à intégrer dans vos opérations. La page Sites web correspond à une création, une refonte, un outil web ou un site à faire évoluer. Chaque page montre ensuite les cas, le périmètre et la manière de travailler.',
+    a: 'Automatisation & IA concerne les tâches manuelles, les outils à connecter et les agents IA. Sites & applications web concerne les landing pages, les sites commerciaux, les dashboards et les portails clients. Un projet peut réunir les deux : une interface pour votre équipe et des automatisations en arrière-plan.',
   },
   {
     q: 'Quels projets prenez-vous en charge ?',
@@ -19,6 +19,6 @@ export const homeFaqs: FaqItem[] = [
   },
   {
     q: 'Comment se passe le premier échange ?',
-    a: 'Chaque landing page détaille d’abord le service, ses cas et ses limites. Vous pouvez ensuite réserver un appel de 20 minutes pour présenter votre besoin. Je vous indique le bon point de départ, le périmètre à cadrer et si le projet correspond à mon terrain.',
+    a: 'Vous pouvez m’envoyer un brief par email ou réserver un échange de 20 minutes. Nous parlons du besoin, des outils en place et de votre échéance. L’objectif est de vérifier que je peux vous aider et de définir la prochaine étape. Le périmètre et le devis viennent ensuite.',
   },
 ];

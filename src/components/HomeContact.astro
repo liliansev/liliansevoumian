@@ -2,6 +2,19 @@
 import SectionHeader from './SectionHeader.astro';
 import BoutonReservation from './BoutonReservation.astro';
 import LinkCTA from './LinkCTA.astro';
+
+const briefSubject = 'Mon projet — site, application ou automatisation';
+const briefBody = `Bonjour Lilian,
+
+Voici mon projet :
+
+Entreprise et activité :
+Besoin ou problème à résoudre :
+Outils utilisés aujourd’hui :
+Échéance envisagée :
+
+Merci !`;
+const briefHref = `mailto:bonjour@liliansevoumian.fr?subject=${encodeURIComponent(briefSubject)}&body=${encodeURIComponent(briefBody)}`;
 ---
 
 <section
@@ -11,35 +24,29 @@ import LinkCTA from './LinkCTA.astro';
 >
   <div class="relative max-w-[1200px] mx-auto">
     <SectionHeader
-      title="Quel projet voulez-vous <mark class='inv'>cadrer&nbsp;?</mark>"
-      body="Un process à automatiser, un agent IA à construire ou un site à créer. Vingt minutes pour poser le besoin et la première étape."
+      title="Parlons de <mark class='inv'>votre projet.</mark>"
+      body="Envoyez-moi votre besoin par email ou réservez un échange de 20 minutes pour en parler."
       titleMaxWidth="20ch"
       bodyMaxWidth="58ch"
     />
 
     <div class="home-contact reveal">
-      <div>
+      <div class="home-contact__actions">
         <BoutonReservation source="home_contact" class="btn-primary justify-center">
-          Parler de mon projet
+          Réserver un échange
         </BoutonReservation>
-        <p>
-          Vous préférez écrire&nbsp;?
-          <a
-            href="mailto:bonjour@liliansevoumian.fr"
-            data-fast-goal="lead_email"
-            data-fast-goal-source="home_contact"
-            class="inline-flex min-h-[44px] items-center"
-          >bonjour@liliansevoumian.fr</a>
-        </p>
+        <LinkCTA href={briefHref} goal="lead_email" goalSource="home_contact_brief">
+          Envoyer mon brief par email
+        </LinkCTA>
+        <p>Le lien email ouvre un message à compléter dans votre messagerie.</p>
       </div>
 
-      <div class="home-contact__routes">
-        <LinkCTA href="/automatisations-ia" goal="service_path_opened" goalSource="home_contact">
-          Explorer Automatisation &amp; IA
-        </LinkCTA>
-        <LinkCTA href="/sites-web-abonnement" goal="service_path_opened" goalSource="home_contact">
-          Explorer les sites web
-        </LinkCTA>
+      <div class="home-contact__brief">
+        <h3>Pour commencer</h3>
+        <p>Votre activité, le problème à résoudre, les outils utilisés et l’échéance envisagée suffisent pour ouvrir la discussion.</p>
+        <a href="mailto:bonjour@liliansevoumian.fr" data-fast-goal="lead_email" data-fast-goal-source="home_contact" class="text-link-arrow">
+          <span>bonjour@liliansevoumian.fr</span><span aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
   </div>
@@ -50,41 +57,49 @@ import LinkCTA from './LinkCTA.astro';
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
     gap: 4rem;
-    align-items: end;
+    align-items: start;
     padding-top: 2.5rem;
     border-top: 1px solid var(--color-border-strong);
   }
 
-  .home-contact > div:first-child {
+  .home-contact__actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem 1.75rem;
-    align-items: center;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+    min-width: 0;
   }
 
   .home-contact p {
     margin: 0;
     color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
+    font-size: var(--text-body);
     line-height: 1.5;
   }
 
-  .home-contact p a {
-    color: var(--color-ink);
-    text-underline-offset: 0.2em;
+  .home-contact h3 {
+    margin: 0;
+    font-size: var(--text-title);
+    font-weight: 600;
+    line-height: 1.2;
   }
 
-  .home-contact__routes {
+  .home-contact__brief {
     display: flex;
     flex-direction: column;
-    gap: 1.15rem;
+    gap: 1rem;
     align-items: flex-start;
+    min-width: 0;
     padding-left: 2rem;
     border-left: 1px solid var(--color-border-strong);
   }
 
+  .home-contact__brief a {
+    overflow-wrap: anywhere;
+  }
+
   @media (max-width: 767px) {
     .home-contact { grid-template-columns: 1fr; gap: 2.5rem; }
-    .home-contact__routes { padding-top: 2rem; padding-left: 0; border-top: 1px solid var(--color-divider); border-left: 0; }
+    .home-contact__brief { padding-top: 2rem; padding-left: 0; border-top: 1px solid var(--color-divider); border-left: 0; }
   }
 </style>

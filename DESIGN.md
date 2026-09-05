@@ -416,7 +416,7 @@ méthode à gauche, quatre faits vérifiables à droite. Elle répond à « pour
 vous confier le projet ? » avant de demander au visiteur de choisir un service.
 
 Le choix arrive ensuite dans un routeur à deux surfaces de même poids : lime
-pour **Automatisation & IA**, papier pour **Landing pages et applications métiers**.
+pour **Automatisation & IA**, papier pour **Sites & applications web**.
 Les cartes partagent six rangées via `subgrid` : besoin, titre, description,
 périmètre, preuve et action. Le conteneur de mesure typographique est le `h3`,
 dont les deux lignes consomment le jeton : le poser sur chaque carte empêcherait
@@ -428,10 +428,19 @@ dashboards, portails clients et applications métiers.
 
 Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops,
 les dirigeants de PME, puis les agences et studios à se reconnaître. La FAQ
-ferme la home en répondant aux questions de triage. La prise de rendez-vous
-n'appartient pas à cette page : chaque landing détaille son service, ses preuves
-et ses limites avant de convertir. Le vibe coding reste une méthode commune,
-jamais une troisième offre.
+répond aux questions de triage. Un bloc contact ferme la home : la navigation
+« Soumettre un projet » y mène, puis le visiteur peut réserver l’échange de
+20 minutes existant ou ouvrir un brief prérempli dans sa messagerie. L’envoi
+reste une action explicite du visiteur dans sa messagerie ; le site ne simule
+aucune soumission. Le hero conserve son action vers le choix des services.
+Chaque landing détaille son service, ses preuves et ses limites avant de
+convertir. Le vibe coding reste une méthode commune, jamais une troisième offre.
+
+La landing web distingue les sites commerciaux des applications métiers au
+moyen de deux ancres explicites. Les tarifs de création et les abonnements
+Care/Growth restent associés aux sites ; applications et suivi sont chiffrés
+selon leur périmètre. Les références visuelles demeurent regroupées dans le
+portfolio, sans nouvelles captures dans les offres.
 
 **Le surlignage** est le dispositif signature. Une bande lime en pseudo-élément
 posée **derrière** le texte, avec `z-index: -1` et `isolation: isolate`. C'est la
