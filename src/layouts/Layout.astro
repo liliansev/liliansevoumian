@@ -391,7 +391,7 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.calLink, config: { layout: "month_view", theme: "light" } });
+                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: { layout: "month_view", theme: "light" } });
                 inited = true;
                 return waitForEmbed();
               })
@@ -486,7 +486,8 @@ const faqPageSchema = faqSchema ? {
     <slot />
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
-    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label={`Réserver un appel de ${DUREE_RESERVATION_MINUTES} min`} aria-hidden="true" tabindex="-1" data-cal-link={cheminReservation}>
+    <!-- data-cal-link est réservé à Cal : le poser ici ouvre aussi sa popup au clic Fermer. -->
+    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label={`Réserver un appel de ${DUREE_RESERVATION_MINUTES} min`} aria-hidden="true" tabindex="-1" data-reservation-path={cheminReservation}>
       <div class="cal-overlay-bar">
         <span class="cal-overlay-title">Appel · {DUREE_RESERVATION_MINUTES} min</span>
         <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
