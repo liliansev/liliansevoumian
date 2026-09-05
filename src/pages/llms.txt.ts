@@ -23,7 +23,8 @@ export const GET: APIRoute = async () => {
   const ligneCas = (c: (typeof cas)[number]) => {
     const kpi = c.data.kpis[0] ? ` · ${c.data.kpis[0].value} ${c.data.kpis[0].label}` : '';
     const outils = c.data.tools.length ? ` (${c.data.tools.join(', ')})` : '';
-    return `- [${c.data.title}](https://liliansevoumian.fr/cas-clients/${c.id})${outils}${kpi}`;
+    const scope = c.data.scopeNote ? ` — ${c.data.scopeNote}` : '';
+    return `- [${c.data.title}](https://liliansevoumian.fr/cas-clients/${c.id})${outils}${kpi}${scope}`;
   };
 
   const corps = `# Lilian Sevoumian

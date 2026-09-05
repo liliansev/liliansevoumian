@@ -18,6 +18,12 @@
  * quitte l'écran : tant que le titre est lu, la page n'a pas encore commencé.
  */
 import BoutonReservation from './BoutonReservation.astro';
+
+interface Props {
+  label?: string;
+}
+
+const { label = 'Automatiser mon business' } = Astro.props;
 ---
 
 <div
@@ -27,7 +33,7 @@ import BoutonReservation from './BoutonReservation.astro';
 >
   <div class="border-t border-[var(--color-divider)] bg-[color-mix(in_oklch,var(--color-paper)_90%,transparent)] backdrop-blur-md px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
     <BoutonReservation source="barre-mobile" class="btn-primary w-full justify-center">
-        Automatiser mon business
+        {label}
       </BoutonReservation>
   </div>
 </div>

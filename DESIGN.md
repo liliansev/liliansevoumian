@@ -442,6 +442,14 @@ Care/Growth restent associés aux sites ; applications et suivi sont chiffrés
 selon leur périmètre. Les références visuelles demeurent regroupées dans le
 portfolio, sans nouvelles captures dans les offres.
 
+Un cas d’application métier peut documenter un premier lot sans KPI, capture
+ni témoignage. Le gabarit accepte une catégorie et une note de périmètre ;
+cette dernière reste visible dans le hero, l’index et la fiche des moteurs IA.
+La date affichée est explicitement une date de publication. Le cas Deuxième
+Souffle relie l’offre Applications à la gestion des sessions et au pointage,
+sans présenter l’affectation humaine comme un appariement automatique. Le
+compteur de cas de la home est calculé depuis la collection publiée.
+
 **Le surlignage** est le dispositif signature. Une bande lime en pseudo-élément
 posée **derrière** le texte, avec `z-index: -1` et `isolation: isolate`. C'est la
 bande qui penche, pas le `<mark>` : faire tourner l'élément inclinerait les

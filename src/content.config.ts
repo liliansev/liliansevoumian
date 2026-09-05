@@ -17,6 +17,8 @@ const casClients = defineCollection({
     // cherche une phrase autonome, il trouvait un dump.
     seoTitle: z.string().optional(),
     description: z.string().optional(),
+    category: z.enum(['automation', 'application']).default('automation'),
+    scopeNote: z.string().optional(),
     secteur: z.string().optional(),
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),

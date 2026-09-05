@@ -22,6 +22,8 @@ const displayStudies = entries.map((entry) => ({
   tags: entry.data.tags,
   tools: entry.data.tools,
   kpis: entry.data.kpis,
+  description: entry.data.description,
+  scopeNote: entry.data.scopeNote,
 }));
 
 const breadcrumbs = [
@@ -32,8 +34,8 @@ const breadcrumbs = [
 const collectionSchema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": "Cas clients Automatisation - Lilian Sevoumian",
-  "description": "Cas clients d'automatisation Make, n8n et Airtable. Workflows réels, métriques mesurées, contexte chiffré.",
+  "name": "Cas clients : automatisations et applications métiers - Lilian Sevoumian",
+  "description": "Projets Make, n8n et Glide : contexte, fonctionnalités réalisées et résultats disponibles. Cas clients d’automatisation et d’applications métiers.",
   "url": "https://liliansevoumian.fr/cas-clients",
   "mainEntity": {
     "@type": "ItemList",
@@ -79,12 +81,12 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 ---
 
 <Layout
-  title="Cas clients Automatisation Make & n8n | Lilian Sevoumian"
-  description="Cas clients d'automatisation Make, n8n et Airtable. Workflows réels, métriques mesurées, contexte chiffré."
+  title="Cas clients : automatisations et applications | Lilian Sevoumian"
+  description="Projets Make, n8n et Glide : contexte, fonctionnalités réalisées et résultats disponibles. Cas clients d’automatisation et d’applications métiers."
   breadcrumbs={breadcrumbs}
   articleSchema={collectionSchema}
 >
-  <Navigation />
+  <Navigation ctaLabel="Parler de mon projet" />
 
   <main id="main-content">
     <section
@@ -103,7 +105,7 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
         <div class="reveal mb-6 md:mb-8 inline-block bg-[var(--color-paper)] py-1.5 pr-2">
           <span class="mono-caption text-[var(--color-ink-low)]">
-            CAS CLIENTS · {total} WORKFLOW{total > 1 ? 'S' : ''} DOCUMENTÉ{total > 1 ? 'S' : ''}
+            CAS CLIENTS · {total} PROJET{total > 1 ? 'S' : ''} DOCUMENTÉ{total > 1 ? 'S' : ''}
           </span>
         </div>
 
@@ -112,11 +114,11 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
             peint à opacity 0, disqualifié comme candidat LCP, et laissé
             invisible 2,5 s si le module de reveal échouait. */}
         <div class="mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[18ch]">
-            Des workflows en production, documentés.
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch]">
+            Des projets métier, documentés.
           </h1>
           <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-5 max-w-[60ch]">
-            Pour chaque cas : le contexte chiffré, l'architecture retenue, les métriques mesurées et les outils utilisés.
+            Automatisations et applications : le besoin de départ, la solution réalisée et les résultats disponibles, avec leur contexte.
           </p>
         </div>
 
@@ -127,7 +129,7 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
               Pour discuter d'un cas similaire au vôtre, le plus efficace est l'appel direct.
             </p>
             <BoutonReservation source="cas_index_empty">
-              Automatiser mon business
+              Parler de mon projet
             </BoutonReservation>
           </div>
         ) : (
@@ -153,6 +155,13 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
                   <h2 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
                     {cs.title}
                   </h2>
+
+                  {kpis.length === 0 && cs.description && (
+                    <p class="m-0 leading-relaxed text-[var(--color-ink-mid)]">{cs.description}</p>
+                  )}
+                  {cs.scopeNote && (
+                    <p class="m-0 mt-auto text-sm leading-relaxed text-[var(--color-ink-low)]">{cs.scopeNote}</p>
+                  )}
 
                   {kpis.length > 0 && (
                     <div class="grid grid-cols-1 gap-px bg-[var(--color-divider)] mt-auto">
@@ -196,7 +205,7 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
       <div class="relative max-w-[1200px] mx-auto">
         <SectionHeader
           title="Un projet qui ressemble à <mark class='inv'>l'un de ceux-là ?</mark>"
-          body="20 min pour décider si on travaille ensemble. On regarde un de vos process, je vous dis ce qui est automatisable."
+          body="20 min pour parler de votre besoin et voir comment je peux vous aider."
           titleMaxWidth="22ch"
           bodyMaxWidth="60ch"
           class="!mb-0"
@@ -204,7 +213,7 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
         <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <BoutonReservation source="cas_index" class="btn-primary justify-center">
-            Automatiser mon business
+            Parler de mon projet
           </BoutonReservation>
         </div>
       </div>
@@ -212,5 +221,5 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
   </main>
 
   <Footer />
-  <MobileCTABar />
+  <MobileCTABar label="Parler de mon projet" />
 </Layout>

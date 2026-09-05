@@ -1,11 +1,14 @@
 ---
 import SectionHeader from './SectionHeader.astro';
+import { getCollection } from 'astro:content';
+
+const publishedCases = await getCollection('cas-clients', ({ data }) => !data.draft);
 
 const facts = [
   { label: 'Freelance depuis', value: '2020' },
   { label: 'Make niveau 5', value: 'Premier certifié en France' },
   { label: 'Formation', value: '300+ personnes formées' },
-  { label: 'Preuves publiques', value: '4 cas clients · 6 sites en ligne' },
+  { label: 'Preuves publiques', value: `${publishedCases.length} cas clients · 6 sites en ligne` },
 ] as const;
 ---
 

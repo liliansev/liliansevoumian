@@ -21,6 +21,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 await render(entry);
 const cs = entry.data;
+const subject = cs.category === 'application' ? 'Application métier' : 'Automatisation des processus';
 
 /*
  * Le corps du cas était rendu d'un seul tenant : 5 000 px de prose grise sans
@@ -113,7 +114,7 @@ const pageOutil = cs.tools.includes('n8n')
 
 // La description redigee prime. A defaut, on compose, mais on coupe au
 // dernier espace avant 155 caracteres au lieu de trancher en plein mot.
-const brut = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}Automatisation ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`;
+const brut = `${cs.title}. ${cs.kpis.length > 0 ? `Résultats : ${cs.kpis.map((k) => `${k.value} ${k.label}`).join(', ')}. ` : ''}${subject} ${cs.tools.length > 0 ? `avec ${cs.tools.join(', ')} ` : ''}${cs.secteur ? `pour un projet ${cs.secteur}` : ''}.`;
 const seoDescription =
   cs.description ??
   (brut.length <= 155 ? brut : brut.slice(0, brut.lastIndexOf(' ', 155)) + '…');
@@ -133,11 +134,11 @@ const articleSchema = {
   publisher: { '@id': 'https://liliansevoumian.fr/#person' },
   image: 'https://liliansevoumian.fr/og-image.png',
   datePublished: dateISO,
-  about: [{ '@type': 'Thing', name: 'Automatisation des processus' }],
+  about: [{ '@type': 'Thing', name: subject }],
   mentions: cs.tools.map((t) => ({ '@type': 'Thing', name: t })),
   mainEntityOfPage: { '@type': 'WebPage', '@id': `https://liliansevoumian.fr/cas-clients/${entry.id}` },
   articleSection: 'Cas client',
-  keywords: ['automatisation', 'cas client', cs.secteur, ...cs.tags, ...cs.tools].filter(Boolean).join(', '),
+  keywords: [subject, 'cas client', cs.secteur, ...cs.tags, ...cs.tools].filter(Boolean).join(', '),
 };
 ---
 
@@ -149,7 +150,7 @@ const articleSchema = {
   articleSchema={articleSchema}
   breadcrumbs={breadcrumbs}
 >
-  <Navigation />
+  <Navigation ctaLabel="Parler de mon projet" />
 
   <main id="main-content">
 
@@ -176,7 +177,7 @@ const articleSchema = {
           )}
           <>
             <span aria-hidden="true">·</span>
-            <span>{cs.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }).toUpperCase()}</span>
+            <span>Publié en {cs.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })}</span>
           </>
         </div>
 
@@ -185,9 +186,14 @@ const articleSchema = {
             le titre du cas est le message de la page, il ne peut pas dépendre
             d'un module JavaScript ni être disqualifié comme candidat LCP. */}
         <div class="mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0">
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0">
             {cs.title}
           </h1>
+          {cs.scopeNote && (
+            <p class="mt-6 mb-0 max-w-[55ch] text-[length:var(--text-body-large)] leading-relaxed text-[var(--color-ink-mid)]">
+              {cs.scopeNote}
+            </p>
+          )}
         </div>
 
         <!-- KPIs row -->
@@ -345,7 +351,7 @@ const articleSchema = {
 
           {pageOutil && (
             <p class="voisin-outil">
-              Ce projet tourne sur <Outil icon={pageOutil.icone}><a href={pageOutil.href}>{pageOutil.nom}</a></Outil>.
+              Expertise associée : <Outil icon={pageOutil.icone}><a href={pageOutil.href}>{pageOutil.nom}</a></Outil>.
             </p>
           )}
         </div>
@@ -360,13 +366,13 @@ const articleSchema = {
             Un projet <mark>similaire&nbsp;?</mark>
           </h2>
           <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-3 max-w-[55ch]">
-            20&nbsp;min pour poser votre process à plat. Sans engagement.
+            20&nbsp;min pour parler de votre besoin et voir comment je peux vous aider.
           </p>
         </div>
 
         <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <BoutonReservation source="cas_article" class="btn-primary justify-center">
-            Automatiser mon business
+            Parler de mon projet
           </BoutonReservation>
         </div>
       </div>
@@ -375,7 +381,7 @@ const articleSchema = {
   </main>
 
   <Footer />
-  <MobileCTABar />
+  <MobileCTABar label="Parler de mon projet" />
 </Layout>
 
 <style>
