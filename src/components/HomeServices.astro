@@ -1,6 +1,8 @@
 ---
 import SectionHeader from './SectionHeader.astro';
-import { automationSubscriptions, webSubscriptions } from '../data/maintenance';
+import { Image } from 'astro:assets';
+import automationVisual from '../assets/home-services/automation.png';
+import planningVisual from '../assets/home-services/planning.png';
 
 const services = [
   {
@@ -8,11 +10,12 @@ const services = [
     href: '/automatisations-ia',
     title: 'Automatisation & IA',
     titleLines: ['Automatisation', '& IA'],
+    image: automationVisual,
+    imageAlt: 'Illustration : un flux relie la réception d’une commande à sa création et à la préparation de la facture.',
     signal: 'Moins de temps passé sur les tâches à faible valeur ajoutée.',
     body: 'Workflows n8n et Make, agents IA et intégrations dans vos outils.',
     details: ['Automatiser', 'Connecter', 'Construire un agent'],
-    proof: `Suivi : ${automationSubscriptions[0].schemaPrice} € HT/mois sans IA · ${automationSubscriptions[1].schemaPrice} € avec IA`,
-    action: 'Explorer Automatisation & IA',
+    action: 'Voir l’offre et les tarifs',
     source: 'home_services_automation',
   },
   {
@@ -20,11 +23,12 @@ const services = [
     href: '/sites-web-abonnement',
     title: 'Sites & applications web',
     titleLines: ['Sites &', 'applications web'],
+    image: planningVisual,
+    imageAlt: 'Illustration : une application métier permet de consulter et d’organiser le planning d’une équipe.',
     signal: 'Un outil métier pour vous et votre équipe.',
     body: 'Landing pages, dashboards, portails clients et applications métier, de la conception aux évolutions.',
     details: ['Créer', 'Maintenir', 'Améliorer'],
-    proof: `Suivi des sites dès ${webSubscriptions[0].schemaPrice} € HT/mois · Applications sur devis`,
-    action: 'Explorer les projets web',
+    action: 'Voir l’offre et les tarifs',
     source: 'home_services_web',
   },
 ] as const;
@@ -37,7 +41,7 @@ const services = [
 >
   <div class="relative mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Vos équipes ont <mark>mieux à faire.</mark>"
+      title="Des automatisations et des <mark>applications métier.</mark>"
       titleMaxWidth="none"
     />
 
@@ -51,13 +55,23 @@ const services = [
         >
           <p class="home-service-card__signal">{service.signal}</p>
           <h3>{service.titleLines.map((line, index) => <span>{line}{index === 0 ? ' ' : ''}</span>)}</h3>
+          <Image
+            src={service.image}
+            alt={service.imageAlt}
+            widths={[384, 640, 960, 1200]}
+            sizes="(min-width: 1440px) 520px, (min-width: 900px) 40vw, 85vw"
+            format="webp"
+            quality={85}
+            loading="lazy"
+            decoding="async"
+            class="home-service-card__visual"
+          />
           <p class="home-service-card__body">{service.body}</p>
 
           <ul aria-label={`Périmètre ${service.title}`}>
             {service.details.map((detail) => <li>{detail}</li>)}
           </ul>
 
-          <span class="home-service-card__proof">{service.proof}</span>
           <strong class="home-service-card__action">{service.action} <i aria-hidden="true">→</i></strong>
         </a>
       ))}
@@ -140,6 +154,14 @@ const services = [
     line-height: 1.6;
   }
 
+  .home-service-card :global(.home-service-card__visual) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
   .home-service-card ul {
     display: flex;
     flex-wrap: wrap;
@@ -157,14 +179,6 @@ const services = [
     font-weight: 550;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-  }
-
-  .home-service-card__proof {
-    align-self: end;
-    padding-top: 1rem;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-    font-variant-numeric: tabular-nums;
   }
 
   .home-service-card__action {
@@ -192,7 +206,7 @@ const services = [
       color: var(--color-paper);
     }
 
-    .home-service-card:hover :is(h3, p, li, .home-service-card__proof, .home-service-card__action) {
+    .home-service-card:hover :is(h3, p, li, .home-service-card__action) {
       color: var(--color-paper);
     }
 

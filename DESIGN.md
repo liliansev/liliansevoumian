@@ -63,6 +63,8 @@ typography:
     lineHeight: 1.4
     letterSpacing: "0.06em"
 rounded:
+  cta: "8px"
+  diagram: "12px"
   none: "0px"
   full: "9999px"
 spacing:
@@ -72,7 +74,7 @@ components:
   button-primary:
     backgroundColor: "{colors.ink}"
     textColor: "{colors.paper}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.cta}"
     padding: "14px 24px"
     fontSize: "clamp(0.75rem, 3.1vw, 0.875rem)"
     textTransform: "uppercase"
@@ -110,6 +112,20 @@ components:
 
 # Design System: Lilian Sevoumian
 
+## Scènes de travail et schémas des cas clients
+
+La page `/automatisations-ia` associe trois scènes photoréalistes à six usages :
+dossiers et reporting, commandes et catalogue, prospection et demandes entrantes.
+Images illustratives de personnes fictives générées par IA ; provenance et prompts
+conservés dans `src/assets/work-scenes/README.md`. Photos rectangulaires en 3:2,
+WebP responsive et chargement différé, trois colonnes puis empilement sous 900 px.
+
+Les quatre visuels du carrousel utilisent `CaseIllustration.astro` : trois étapes
+reliées, outils nommés et logos de marque disponibles. Les outils sans logo utilisent
+une icône fonctionnelle. Les nœuds techniques ont un rayon de 12 px, exception
+propre aux schémas ; les CTA gardent leur rayon de 8 px. Sous 380 px, le schéma
+passe à la verticale. M Partners cite Loxo dans le texte, le schéma et sa fiche.
+
 ## Overview
 
 **Le lime ne s'écrit pas. Il se pose.**
@@ -128,8 +144,8 @@ tout le système : le lime est une **surface**. Il prend une section entière, o
 il passe derrière un mot comme un coup de surligneur de travers.
 
 Trois choses ont été retirées en chemin, et l'absence est le geste : le
-monospace, les sur-titres en petites capitales espacées, et les arrondis. Ce
-sont, dans cet ordre, les trois marqueurs les plus universels du site généré.
+monospace, les sur-titres en petites capitales espacées, et les arrondis de
+surface. Les CTA font exception avec un rayon discret de 8 px.
 
 **Caractéristiques clés :**
 
@@ -256,7 +272,7 @@ Lilian, sans devenir aussi monumental que les manifestes
 des landings spécialisées. Plus bas, les deux titres du routeur consomment
 `--text-home-service`, une courbe de 20 à 44 px calculée sur la largeur disponible
 dans la carte. Le rang est partagé par **Automatisation & IA** et
-**Landing pages et applications métiers**, avec deux lignes explicites par titre.
+**Sites & applications web**, avec deux lignes explicites par titre.
 `--text-display-hero` reste le rang des landings spécialisées. Aucun de ces rôles
 ne commute de jeton au point de rupture.
 
@@ -329,31 +345,12 @@ cassent. Il n'apparaissait qu'au survol, c'est-à-dire jamais sur pointeur
 grossier. Sur l'aplat lime, le trait passe au blanc, comme `mark` et
 `.link-cta__label` le font déjà.
 
-**Deux rayons**, `0` et `9999px`. Tous les `--radius-*` valent zéro sauf
-`--radius-full`.
-
-La règle se disait *si c'est rond, ça se clique*, et ce document déclarait dans
-son propre frontmatter `chip-accent` en `{rounded.full}`. Recensé sur la home :
-soixante-neuf éléments ronds, dont **soixante-trois ne se cliquent pas** — vingt-
-cinq pastilles d'état dans les maquettes produit, quinze pastilles de châssis de
-fenêtre, dix chips de rôle, trois portraits. La règle décrivait six éléments sur
-soixante-neuf. Elle n'a jamais gouverné le site, et elle interdisait par écrit ce
-que la section 2 de ce document autorise par ailleurs noir sur blanc, en rangeant
-la « pastille d'état » parmi les usages légitimes du lime.
-
-La règle réelle, celle qui rend compte des soixante-neuf, tient dans une autre
-phrase : ***le rond dit « une unité », le carré dit « une surface »***. Une unité
-est une chose entière et indivisible — une cible qu'on presse, un état, un
-visage, un mot-étiquette. Une surface est une chose qui en contient d'autres :
-une carte, un panneau, une bande, un champ, un bouton, un châssis de maquette.
-Le rayon ne signale donc pas l'interaction, il signale la nature de l'objet ;
-c'est pour cela qu'un bouton — qui se clique pourtant — est carré, et qu'un
-portrait — qui ne se clique pas — est rond.
-
-Ce que la règle continue d'interdire est inchangé, et c'était son vrai objet :
-**une bande de surlignage arrondie devient un badge**, une carte arrondie devient
-un composant de bibliothèque, un champ arrondi devient un formulaire générique.
-Ce sont des surfaces, elles restent à zéro.
+**Trois rayons** : `0` pour les surfaces, `8px` pour les CTA
+(`--radius-cta`), `9999px` pour les unités rondes. Les autres `--radius-*`
+restent à zéro. Le rayon de 8 px adoucit les boutons de réservation,
+d’inscription et l’action « Voir la vidéo », à la demande de Lilian.
+Les cartes, photographies, champs et bandes de surlignage gardent leurs angles
+droits. Les liens éditoriaux soulignés restent des liens texte.
 
 La profondeur, quand elle est nécessaire, vient du **changement de surface** :
 papier, bande grise, aplat lime, aplat encre.
@@ -405,35 +402,60 @@ chaque image, et se paie sur le seul geste que le visiteur fait en continu.
 ### La home personnelle et son routeur de services
 
 Le premier viewport présente d'abord la personne qui construit. Sur desktop,
-le titre direct occupe la gauche et le portrait de Lilian la droite. Le portrait
+le titre « Gagnez du temps avec l’IA et l’automatisation. » occupe la gauche
+et le portrait de Lilian la droite ; « l’automatisation » est surligné. Le portrait
 est carré, sans bordure, ombre ou contrechamp ; son nom et son ancienneté figurent
 en légende. Sous 1024 px, l'image passe sous le texte et garde son ratio carré,
 avec une largeur maximale de 30 rem. L'unique bouton commercial de la home,
-« Choisir un créneau · 45 min », ouvre l'agenda Cal.com depuis l'en-tête fixe.
-Le même élément est rendu sur desktop et mobile, avec un fond noir identifiable.
+« Parlons de votre projet », ouvre l'agenda Cal.com depuis l'en-tête fixe.
+Le même élément est rendu sur desktop et mobile, avec un fond lime identifiable.
 Le lien secondaire du hero « Voir les services » descend vers `#services`.
 Le visiteur déjà convaincu peut prendre rendez-vous sans parcourir une landing.
 
 La section suivante présente Lilian sur un ton personnel : « Moi, c’est Lilian. »
-Un paragraphe sur son intérêt pour le quotidien des équipes et son passage chez
-Jellysmack remplace le descriptif du déroulé de mission. Deux repères restent à
-droite : freelance depuis 2020 et 300+ personnes formées. La certification Make
-est retirée de cette section ; le lien vers les cas clients est conservé.
+Le récit part de son expérience de COO chez La Capsule et de l’automatisation
+des processus opérationnels. Deux repères sous le texte rappellent La Capsule
+et ses deux ans chez Jellysmack ; le lien vers les cas clients est conservé.
+Une photo réelle dans son espace de travail occupe la droite, puis passe sous
+le récit sur mobile. `src/assets/lilian-au-bureau.jpg` est une copie du fichier
+fourni `/Users/a1207/Pictures/lilian dans son bureau.jpg` ; cette provenance
+reste attachée à l’actif. Les deux photos de la home sont optimisées par Astro,
+le portrait chargé en priorité et la photo de bureau chargée à la demande.
 
 Le choix arrive ensuite dans un routeur à deux surfaces de même poids : lime
 pour **Automatisation & IA**, papier pour **Sites & applications web**.
-Les cartes partagent six rangées via `subgrid` : besoin, titre, description,
-périmètre, repère de suivi mensuel et action. Le conteneur de mesure typographique est le `h3`,
+Les cartes partagent cinq rangées via `subgrid` : besoin, titre, description,
+périmètre et action. Aucun prix ne figure sur ces cartes ; les offres dédiées
+portent les détails. Le conteneur de mesure typographique est le `h3`,
 dont les deux lignes consomment le jeton : le poser sur chaque carte empêcherait
 le partage des rangées de cette carte.
+Les cartes de services portent chacune un visuel photoréaliste en 3:2, placé
+entre le titre et le descriptif : flux de commande sur un ordinateur portable,
+planning d’équipe sur un écran. Ce sont des illustrations générées, avec
+interfaces fictives, sans attribution à un client. Leur provenance vit dans
+`src/assets/home-services/README.md` et dans les métadonnées PNG. Astro sert des
+WebP responsives chargées à la demande. Les deux images gardent leurs angles
+droits et leur ratio complet ; elles ne changent pas au survol.
+
 Chaque carte garde une seule destination — `/automatisations-ia` ou
 `/sites-web-abonnement` — sans lien imbriqué. Sous 900 px, elles deviennent deux
 rangées séparées par le même filet de 1 px. Le texte web nomme les landing pages,
 dashboards, portails clients et applications métiers.
 
 Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops,
-les dirigeants de PME, puis les agences et studios à se reconnaître. La FAQ
-répond aux questions de triage. Les textes gardent les preuves et les périmètres,
+les dirigeants de PME, puis les agences et studios à se reconnaître. Avant la
+FAQ, deux colonnes ont chacune leur titre : « Ma dernière vidéo YouTube »
+à gauche et « La newsletter » à droite. Les titres et filets sont alignés grâce
+à une sous-grille commune ; la vignette 16:9 et le bloc lime commencent au même
+niveau. Le bloc lime garde sa hauteur naturelle, avec texte, champ et bouton
+pleine largeur regroupés. Les deux ensembles s’empilent sur mobile.
+Le titre vidéo reste court : « Créer avec Reflare ». La vidéo a été vérifiée le
+6 septembre 2026 ; cette sélection est fixe, sans actualisation automatique.
+L’encart annonce un mail hebdomadaire sur les cas d’usage, les outils et
+l’actualité IA. Tant que l’URL Lumail manque, le champ email et « S’inscrire »
+sont désactivés, avec une mention d’indisponibilité : l’inscription n’est pas
+fonctionnelle. La FAQ répond aux questions de triage.
+Les textes gardent les preuves et les périmètres,
 mais retirent les listes répétées et les explications de navigation. La home
 se termine après la FAQ, qui explique le choix du créneau et le déroulé de l'appel.
 Aucun bouton de réservation ne se répète dans le hero, après les services ou
@@ -452,10 +474,10 @@ La durée affichée par le site vient de `DUREE_RESERVATION_MINUTES`, dans
 conservé pour préserver les liens déjà partagés ; il ne définit pas la durée.
 L’embed et son lien de secours dérivent de la même `URL_RESERVATION`.
 
-La navbar de la home propose les deux offres : « Automatisations & IA » vers
-`/automatisations-ia`, puis « Applications métier » vers
-`/sites-web-abonnement#applications`. Le menu mobile reprend ces mêmes accès,
-dans le même ordre, depuis `src/data/service-navigation.ts`.
+La navbar de la home porte le nom lisible « Lilian Sevoumian », puis trois
+liens : « Expertises » vers `#services`, « Réalisations » vers `/cas-clients`
+et « Contenus » vers `#contenus`. Le menu mobile reprend ces liens et conserve
+les accès aux deux offres depuis `src/data/service-navigation.ts`.
 Sur les landings, les ancres propres à la page viennent ensuite, sans
 répéter ces destinations. Le menu reste défilable et chaque lien le referme.
 
@@ -465,8 +487,8 @@ le bouton de contact restent visibles ; seule la liste défile, dans la hauteur 
 du viewport et avec les zones de sécurité du téléphone. Les liens apparaissent
 immédiatement, sans cascade. Passer au format desktop ferme le menu et libère
 le défilement. Le verrou partagé avec Cal conserve la position de lecture.
-Le titre personnel « Redonnez du temps à vos équipes » met le bénéfice en premier.
-« vos équipes » est surligné ; le chapô nomme agents IA, automatisations et applications métier.
+Le titre personnel nomme l’IA et l’automatisation au service du gain de temps ;
+le chapô précise agents IA, automatisations et applications métier.
 
 La landing web distingue les sites commerciaux des applications métiers au
 moyen de deux ancres explicites. Les tarifs de création et les abonnements
@@ -553,7 +575,8 @@ premier composant à l'appeler recevrait une valeur vide, donc le `ease` par
 défaut du navigateur, sans erreur ni avertissement.
 
 **Le repère de navigation est un emplacement, pas deux objets.** Au-dessus de
-1024 px il porte le wordmark, `LILIAN SEVOUMIAN` en toutes lettres, en permanence.
+1024 px il porte le nom en toutes lettres, en permanence : « Lilian Sevoumian »
+sur la home, `LILIAN SEVOUMIAN` sur les autres pages.
 En dessous, seize caractères en capitales ne cohabitent pas avec un CTA central et
 un déclencheur de menu : l'emplacement tombe à 28 px et porte un « L » tant que le
 hero est à l'écran, puis le visage, en fondu croisé, une fois le hero sorti. Le
@@ -699,9 +722,8 @@ PNG et le SVG en portaient deux différentes.
 
 - Écrire du texte en lime. Jamais, nulle part, quelle que soit la taille.
 - Poser un anneau de focus lime : il est invisible.
-- Arrondir une surface. Deux valeurs existent, et le rond est réservé aux
-  unités : une cible, un état, un visage, un mot-étiquette. Une carte, une
-  bande, un panneau, un champ et un bouton restent à zéro.
+- Arrondir une surface éditoriale. Une carte, une bande, un panneau et un champ
+  restent à zéro. Les CTA utilisent exclusivement `--radius-cta` (8 px).
 - Ajouter une ombre. L'élévation vient des filets.
 - Entourer une capture de projet d'un faux navigateur ou d'un appareil, ni
   employer son dégradé de lisibilité ailleurs que sous sa légende.

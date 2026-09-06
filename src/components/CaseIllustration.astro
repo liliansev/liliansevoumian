@@ -1,0 +1,167 @@
+---
+import { Icon } from 'astro-icon/components';
+import { brandColorFor } from '../data/brands';
+
+interface Props {
+  steps: [Step, Step, Step];
+}
+
+interface Step {
+  icon: string;
+  tool: string;
+  action: string;
+}
+
+const { steps } = Astro.props;
+const description = steps.map(({ tool, action }) => `${tool} : ${action}`).join(' → ');
+---
+
+<div class="case-illustration" role="img" aria-label={`Process simplifié. ${description}`}>
+  <ol class="case-flow" aria-hidden="true">
+    {steps.map((step) => (
+      <li class="case-flow__step">
+        <div class="case-flow__node" style={{ color: brandColorFor(step.icon) }}>
+          <Icon name={step.icon} />
+        </div>
+        <span class="case-flow__tool">{step.tool}</span>
+        <span class="case-flow__action">{step.action}</span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .case-illustration {
+    --flow-node-size: 4.5rem;
+    min-width: 0;
+    padding: 3.5rem 0.5rem;
+    color: var(--color-ink);
+  }
+
+  .case-flow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .case-flow__step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    text-align: center;
+  }
+
+  .case-flow__step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--flow-node-size) / 2);
+    left: calc(50% + var(--flow-node-size) / 2);
+    width: calc(100% - var(--flow-node-size));
+    border-top: 1px solid var(--color-ink-low);
+  }
+
+  .case-flow__step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--flow-node-size) / 2 - 3px);
+    left: calc(150% - var(--flow-node-size) / 2 - 6px);
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid var(--color-ink-low);
+    border-right: 1px solid var(--color-ink-low);
+    transform: rotate(45deg);
+  }
+
+  .case-flow__node {
+    display: grid;
+    place-items: center;
+    width: var(--flow-node-size);
+    height: var(--flow-node-size);
+    border: 1px solid var(--color-ink-low);
+    border-radius: var(--radius-diagram);
+    background: var(--color-surface-high);
+  }
+
+  .case-flow__node :global(svg) {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .case-flow__tool {
+    margin-top: 1rem;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .case-flow__action {
+    max-width: 12ch;
+    margin-top: 0.375rem;
+    padding-inline: 0.25rem;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 639px) {
+    .case-illustration {
+      --flow-node-size: 3.5rem;
+      padding: 1.5rem 0;
+    }
+
+    .case-flow__node :global(svg) {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  @media (max-width: 379px) {
+    .case-flow {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+
+    .case-flow__step {
+      display: grid;
+      grid-template-columns: var(--flow-node-size) minmax(0, 1fr);
+      column-gap: 1rem;
+      text-align: left;
+    }
+
+    .case-flow__node {
+      grid-row: span 2;
+    }
+
+    .case-flow__tool {
+      margin-top: 0;
+      align-self: end;
+    }
+
+    .case-flow__action {
+      max-width: none;
+      padding: 0;
+      align-self: start;
+      text-wrap: initial;
+    }
+
+    .case-flow__step:not(:last-child)::before {
+      top: var(--flow-node-size);
+      left: calc(var(--flow-node-size) / 2);
+      width: 0;
+      height: calc(100% - var(--flow-node-size) + 1.5rem);
+      border-top: 0;
+      border-left: 1px solid var(--color-ink-low);
+    }
+
+    .case-flow__step:not(:last-child)::after {
+      top: calc(100% + 1.5rem - 6px);
+      left: calc(var(--flow-node-size) / 2 - 3px);
+      transform: rotate(135deg);
+    }
+  }
+</style>

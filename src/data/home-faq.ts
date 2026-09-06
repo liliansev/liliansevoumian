@@ -1,6 +1,6 @@
 import type { FaqItem } from './faq';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
-import { automationSubscriptions, webSubscriptions, maintenanceScope } from './maintenance';
+import { maintenanceScope } from './maintenance';
 
 export const homeFaqs: FaqItem[] = [
   {
@@ -9,7 +9,7 @@ export const homeFaqs: FaqItem[] = [
   },
   {
     q: 'Comment se répartit le budget ?',
-    a: `La création est chiffrée au devis, puis un abonnement assure le suivi. Pour les automatisations : ${automationSubscriptions[0].price} sans IA, ${automationSubscriptions[1].price} avec IA ou agents, coûts IA inclus. Pour les sites : ${webSubscriptions.map((offer) => `${offer.name.toLowerCase()} ${offer.price}`).join(' ; ')}. Les applications métier et leur suivi sont chiffrés sur devis.`,
+    a: 'La création est chiffrée sur devis, puis un abonnement assure le suivi. Les montants et le périmètre sont détaillés sur les pages de chaque offre. Les applications métier et leur suivi sont chiffrés sur devis.',
   },
   {
     q: 'Travaillez-vous seul ?',
@@ -21,6 +21,6 @@ export const homeFaqs: FaqItem[] = [
   },
   {
     q: 'Comment se passe le premier échange ?',
-    a: `Le bouton « Choisir un créneau » ouvre mon agenda pour réserver un appel de ${DUREE_RESERVATION_MINUTES} minutes. Nous décortiquons ce qui vous prend du temps, priorisons les automatisations ou les outils à construire, et je vous explique ce qui est faisable et pourquoi. Le devis vient ensuite.`,
+    a: `Le bouton « Parlons de votre projet » ouvre mon agenda pour réserver un appel de ${DUREE_RESERVATION_MINUTES} minutes. Nous décortiquons ce qui vous prend du temps, priorisons les automatisations ou les outils à construire, et je vous explique ce qui est faisable et pourquoi. Le devis vient ensuite.`,
   },
 ];

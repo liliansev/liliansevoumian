@@ -64,8 +64,8 @@ export default defineConfig({
          restreint. La liste est complétée pour que la config décrive ce qui est
          réellement rendu. */
       include: {
-        lucide: ['arrow-left', 'arrow-right', 'bell', 'building-2', 'calculator', 'clock', 'git-fork', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'receipt-text', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
-        'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello'],
+        lucide: ['arrow-left', 'arrow-right', 'bell', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'receipt-text', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
+        'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'odoo', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello'],
         /* Lovable ne figure pas dans simple-icons. La variante `-plain` de
            devicon est monochrome, donc elle prend currentColor comme tous les
            autres logos du site ; le jeu devicon standard, lui, dessine un

@@ -1,40 +1,7 @@
 ---
-/*
- * CaseStudy.astro — les quatre cas clients, en carrousel.
- *
- * Pas de numéro de section dans cet en-tête : il portait « §02 » quand l'ordre
- * de la home en faisait la deuxième, et elle y est troisième depuis que le
- * calculateur est remonté avant elle. L'ordre vit dans index.astro, à un seul
- * endroit ; le répéter ici crée une deuxième vérité qui se périme sans que rien
- * ne le signale.
- *
- * Carrousel chronologique (projet le plus récent en premier), avec un mockup
- * sur-mesure par mission pour rendre concret CE QUE FAIT l'automatisation :
- *   · Fraich Touch  → panneau facturation (factures payées / relance auto)
- *   · M Partners    → canvas de workflow (sourcing → agent IA → CRM)
- *   · Celeris       → catalogue ERP enrichi par agent IA, en interne
- *   · Humble+       → order-to-cash B2B (PDF/XLS → Shopify → Pennylane)
- * Tout en monochrome (tokens projet) ; seul --color-success (fonctionnel) pointe
- * les statuts positifs.
- *
- * LES TITRES SONT CEUX DES FICHES, au caractère près (src/content/cas-clients/).
- * Ils sont écrits deux fois — ici pour le carrousel, là-bas pour le h1 de la
- * fiche et les cartes de /cas-clients — et rien ne vérifie qu'ils concordent :
- * toute reprise de l'un demande l'autre. Ils répondent tous les quatre à la
- * même question, « comment tel client a automatisé quoi », parce qu'un titre de
- * cas est lu hors contexte, en résultat de recherche comme dans une liste de
- * quatre : il doit nommer le client, l'outil et l'objet du travail sans
- * s'appuyer sur ce qui l'entoure.
- *
- * Les résumés nomment les outils de la mission et les posent en `strong`. C'est
- * le seul endroit de la home où ils sont cités dans une phrase ; au poids du
- * texte de liaison, ils s'y perdaient.
- */
+/* Cas clients : preuves éditoriales et illustrations statiques, sans écran simulé. */
 import SectionHeader from './SectionHeader.astro';
-import MockupWindow from './mockups/MockupWindow.astro';
-import MockupList from './mockups/MockupList.astro';
-import WorkflowCanvas from './mockups/WorkflowCanvas.astro';
-import { brandColorFor } from '../data/brands';
+import CaseIllustration from './CaseIllustration.astro';
 import { Icon } from 'astro-icon/components';
 
 const fraichTouch = {
@@ -59,7 +26,7 @@ const mPartners = {
   sector: 'EXECUTIVE SEARCH · TECH & VC',
   title: 'Comment M Partners scrape et qualifie ses prospects avec un agent IA',
   description:
-    "Cabinet de chasse de têtes spécialisé sur l'écosystème startup et capital-risque. J'ai industrialisé leur prospection dans <strong>Make</strong> : le <strong>scraping</strong> des pages d'équipe est automatisé, un <strong>agent IA</strong> qualifie les bons dirigeants, puis les cibles partent dans <strong>Attio</strong> et <strong>Instantly</strong>. L'équipe garde son temps pour la relation.",
+    "Cabinet de chasse de têtes spécialisé sur l'écosystème startup et capital-risque. J'ai industrialisé leur prospection dans <strong>Make</strong> : le <strong>scraping</strong> des pages d'équipe est automatisé, un <strong>agent IA</strong> qualifie les bons dirigeants, puis <strong>Loxo</strong> centralise le CRM et les séquences de prospection. L'équipe garde son temps pour la relation.",
   results: ['~10 MIN PAR RUN AU LIEU DE 1 À 3 H', '6× PLUS D’ENTREPRISES TRAITABLES PAR SEMAINE'],
   href: '/cas-clients/m-partners',
 };
@@ -181,21 +148,11 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="commandes · b2b.order-to-cash" status="actif" statusTone="success" schema flush>
-              <WorkflowCanvas
-                describe="Schéma simplifié du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow orchestre la commande Shopify, la facture Pennylane et la validation humaine des cas sensibles dans Slack."
-                trigger={{ icon: 'simple-icons:gmail', color: brandColorFor('simple-icons:gmail'), kicker: 'Mail reçu', title: 'PDF + XLS', sub: 'pharmacie · salles' }}
-                agent={{ icon: 'simple-icons:mistralai', color: brandColorFor('simple-icons:mistralai'), kicker: 'OCR + IA', title: 'Extrait & contrôle', sub: 'EAN · montants · client' }}
-                actions={[
-                  { icon: 'simple-icons:shopify', color: brandColorFor('simple-icons:shopify'), kicker: 'Shopify', title: 'Commande' },
-                  { icon: 'lucide:receipt-text', kicker: 'Pennylane', title: 'Facture' },
-                  { icon: 'simple-icons:slack', color: brandColorFor('simple-icons:slack'), kicker: 'Contrôle', title: 'Validation humaine' },
-                ]}
-              />
-              <Fragment slot="footer">
-                <span>Sécurité anti-doublon</span>
-              </Fragment>
-            </MockupWindow>
+            <CaseIllustration steps={[
+              { icon: 'simple-icons:n8n', tool: 'n8n', action: 'Lire et contrôler le bon de commande' },
+              { icon: 'simple-icons:shopify', tool: 'Shopify', action: 'Créer la commande' },
+              { icon: 'lucide:receipt-text', tool: 'Pennylane', action: 'Préparer la facture' },
+            ]} />
           </div>
         </div>
       </article>
@@ -232,18 +189,11 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="prospection · sourcing-to-crm.flow" status="actif" statusTone="success" schema flush>
-              <WorkflowCanvas
-                describe="Schéma du workflow de prospection : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les meilleurs dirigeants sont poussés dans le CRM avec une shortlist priorisée et des alertes."
-                trigger={{ icon: 'lucide:users', kicker: 'Sourcing', title: 'Cibles collectées', sub: 'LinkedIn · bases' }}
-                agent={{ icon: 'simple-icons:anthropic', color: brandColorFor('simple-icons:anthropic'), kicker: 'Agent IA', title: 'Qualifie & score', sub: 'fit · séniorité · signaux' }}
-                actions={[
-                  { icon: 'simple-icons:hubspot', color: brandColorFor('simple-icons:hubspot'), kicker: 'CRM', title: 'À approcher' },
-                  { icon: 'lucide:list-checks', kicker: 'Shortlist', title: 'Top 20 %' },
-                  { icon: 'lucide:bell', kicker: 'Alerte', title: 'Nouveau signal' },
-                ]}
-              />
-            </MockupWindow>
+            <CaseIllustration steps={[
+              { icon: 'lucide:globe', tool: 'Sites web', action: 'Repérer les décideurs' },
+              { icon: 'simple-icons:make', tool: 'Make + IA', action: 'Qualifier les profils' },
+              { icon: 'lucide:contact-round', tool: 'Loxo', action: 'CRM et prospection' },
+            ]} />
           </div>
         </div>
       </article>
@@ -280,19 +230,11 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="facturation · clients.auto" status="3 payées" statusTone="success" schema>
-              <MockupList
-                items={[
-                  { label: 'Brand × Créateur', sub: 'INV-2041', value: '4 200 €', status: 'done' },
-                  { label: 'Partenariat sport', sub: 'INV-2042', value: '1 850 €', status: 'done' },
-                  { label: 'Relance J+7', sub: 'INV-2043', value: '2 600 €', status: 'pending' },
-                ]}
-              />
-              <Fragment slot="footer">
-                <span>▸ RELANCES AUTO · J+7 / J+14</span>
-                <span class="ml-auto">0 RETARD</span>
-              </Fragment>
-            </MockupWindow>
+            <CaseIllustration steps={[
+              { icon: 'simple-icons:hubspot', tool: 'HubSpot', action: 'Détecter le deal signé' },
+              { icon: 'simple-icons:make', tool: 'Make', action: 'Calculer les échéances' },
+              { icon: 'lucide:receipt-text', tool: 'Pennylane', action: 'Créer la facture' },
+            ]} />
           </div>
         </div>
       </article>
@@ -329,19 +271,11 @@ const humblePlus = {
           </div>
 
           <div class="case-visual">
-            <MockupWindow file="catalogue · erp.sync" status="synchronisé" statusTone="success" schema>
-              <MockupList
-                items={[
-                  { label: 'Onduleur 3000 VA', sub: 'SKU-44821', value: '+12 champs', status: 'done' },
-                  { label: 'Switch 48 ports', sub: 'SKU-44822', value: '+9 champs', status: 'done' },
-                  { label: 'NAS 4 baies', sub: 'SKU-44823', value: 'en cours', status: 'pending' },
-                ]}
-              />
-              <Fragment slot="footer">
-                <span>▸ AGENT IA · EN INTERNE</span>
-                <span class="ml-auto">SOUVERAINETÉ ✓</span>
-              </Fragment>
-            </MockupWindow>
+            <CaseIllustration steps={[
+              { icon: 'lucide:files', tool: 'Fournisseurs', action: 'Récupérer les données produit' },
+              { icon: 'simple-icons:n8n', tool: 'n8n + IA', action: 'Enrichir les fiches' },
+              { icon: 'simple-icons:odoo', tool: 'Odoo', action: 'Créer un brouillon à valider' },
+            ]} />
           </div>
         </div>
       </article>
@@ -359,8 +293,8 @@ const humblePlus = {
           de cette rangée autre chose qu'une commande de carrousel. La question
           du lecteur à cet endroit est « est-ce que l'un de ces quatre me
           ressemble ? », et « Celeris » ne lui apprend rien ; « distributeur IT
-          B2B », si. Le carrousel n'en montre qu'un à la fois — c'est le prix des
-          maquettes, qui ont besoin de la largeur — donc c'est cette rangée qui
+          B2B », si. Le carrousel n'en montre qu'un à la fois — c'est le choix de
+          présenter chaque mission avec son contexte — donc c'est cette rangée qui
           doit rendre les quatre lisibles d'un coup d'œil, sans trois clics.
 
           Les libellés ne sont plus une liste à part. Ils étaient recopiés à la
@@ -539,10 +473,9 @@ const humblePlus = {
 
   .case-slide-grid {
     display: grid;
-    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
     gap: clamp(2rem, 5vw, 4.5rem);
     align-items: center;
-    min-height: clamp(430px, 40vw, 520px);
   }
 
   .case-copy {
@@ -636,11 +569,6 @@ const humblePlus = {
 
   .case-visual {
     min-width: 0;
-  }
-
-  .case-slide:not([data-case-active]) :global(.wf-wire-flow),
-  .case-slide:not([data-case-active]) :global(.wf-node.is-accent .wf-dot) {
-    animation-play-state: paused;
   }
 
   .case-carousel-pagination {
@@ -825,22 +753,7 @@ const humblePlus = {
     filter: brightness(0);
     opacity: 0.9;
   }
-  /* Le seuil de repli est calé sur la largeur dont la maquette a besoin, et non
-     sur une valeur ronde. Il valait 899 px, alors que WorkflowCanvas ne se replie
-     en pile qu'à 720 px de fenêtre : entre les deux, la diapositive restait en
-     deux colonnes et la colonne visuelle n'avait plus la place de porter le
-     schéma sans que rien ne se redéclenche. Mesuré sur la diapositive Humble+, en
-     deux colonnes : 900 px de fenêtre → colonne de 371 px, six nœuds tronqués et
-     le nom de fichier rogné de 92 px ; 1013 px → 421 px, quatre débordements ;
-     1180 px → 495 px, il reste 6 px sur « Pennylane ». La première largeur où
-     plus rien ne déborde nulle part est 1220 px, soit une colonne visuelle de
-     511 px. En dessous, la diapositive passe donc en une seule colonne et la
-     maquette récupère toute la largeur de la carte — 806 px à 1013 px de fenêtre
-     au lieu de 421.
-     Le plafond de lecture du paragraphe (48ch) est conservé dans cette plage :
-     lâché à toute la largeur comme il l'est sous 900 px, il produisait des lignes
-     de 110 caractères, très au-dessus des 65 à 75 lisibles. */
-  @media (max-width: 1219px) {
+  @media (max-width: 899px) {
     .case-slide-grid {
       grid-template-columns: 1fr;
       min-height: 0;

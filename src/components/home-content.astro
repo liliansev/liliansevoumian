@@ -1,0 +1,65 @@
+---
+import { Icon } from 'astro-icon/components';
+import SectionHeader from './SectionHeader.astro';
+
+interface Props {
+  newsletterUrl?: string;
+}
+
+const { newsletterUrl } = Astro.props;
+// Dernière vidéo longue vérifiée le 6 septembre 2026 sur le flux officiel :
+// https://www.youtube.com/feeds/videos.xml?channel_id=UCGH0eGI6I9EFsaKpuXXIisg
+const video = {
+  title: 'Créer avec Reflare',
+  url: 'https://www.youtube.com/watch?v=g9NvMEE7NK4',
+  thumbnail: 'https://i.ytimg.com/vi/g9NvMEE7NK4/maxresdefault.jpg',
+};
+---
+
+<section id="contenus" aria-label="Vidéos et newsletter" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
+  <div class="mx-auto max-w-[1200px]">
+    <div class="content-columns grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-12 lg:gap-y-8">
+      <article class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
+        <SectionHeader title="Ma dernière vidéo YouTube" titleMaxWidth="none" spacing="none" class="h-full" />
+        <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
+          <div class="relative aspect-video overflow-hidden bg-[var(--color-ink)]">
+            <img src={video.thumbnail} alt="" width="1280" height="720" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none" />
+            <span class="video-play absolute bottom-4 left-4 flex min-h-11 items-center gap-2 rounded-cta bg-[var(--color-paper)] px-4 text-[var(--color-ink)] text-sm font-medium">
+              <Icon name="lucide:youtube" size={20} aria-hidden="true" /> Voir la vidéo
+            </span>
+          </div>
+          <h3 class="mt-5 text-[length:var(--text-title-lg)] leading-tight tracking-[-0.02em]">{video.title}</h3>
+        </a>
+      </article>
+      <aside aria-label="La newsletter" class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
+        <SectionHeader title="La newsletter" titleMaxWidth="none" spacing="none" class="h-full" />
+        <div class="bloc-lime grid gap-6 self-start p-6 lg:p-8">
+          <p class="m-0 max-w-[36ch] text-[length:var(--text-body-large)] leading-relaxed">Un mail par semaine : cas d’usage, outils et actualité IA.</p>
+          {!newsletterUrl && <fieldset disabled class="m-0 min-w-0 border-0 p-0" aria-describedby="newsletter-unavailable">
+            <label for="newsletter-email" class="mb-2 block text-base font-medium">Votre adresse email</label>
+            <div class="grid gap-3">
+              <input id="newsletter-email" type="email" name="email" autocomplete="email" placeholder="vous@entreprise.fr" class="min-h-12 min-w-0 w-full border border-[var(--color-ink)] bg-[var(--color-surface-high)] px-4 text-base text-[var(--color-ink)] placeholder:text-[var(--color-ink-mid)] disabled:cursor-not-allowed" />
+              <button type="button" disabled class="btn-primary newsletter-action w-full">S’inscrire</button>
+            </div>
+            <p id="newsletter-unavailable" class="mb-0 mt-4 text-sm leading-relaxed">Les inscriptions sont momentanément indisponibles.</p>
+          </fieldset>}
+          {newsletterUrl && <a href={newsletterUrl} target="_blank" rel="noopener noreferrer" class="btn-primary newsletter-action w-full" data-fast-goal="newsletter_opened" data-fast-goal-source="home_content">Recevoir la newsletter <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></a>}
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .content-columns :global(.section-header-row) { height: 100%; }
+  .newsletter-action { min-height: 48px; text-transform: none; letter-spacing: normal; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .video-link:hover img { transform: scale(1.025); }
+    .video-link:hover h3 { text-decoration: underline; text-underline-offset: 0.18em; }
+    .video-link:hover .video-play { background: var(--color-lime); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .video-link:hover img { transform: none; }
+  }
+</style>

@@ -5,10 +5,15 @@ import HomeHeroPersonal from '../components/HomeHeroPersonal.astro';
 import HomeAbout from '../components/HomeAbout.astro';
 import HomeServices from '../components/HomeServices.astro';
 import HomeAudience from '../components/HomeAudience.astro';
+import HomeContent from '../components/home-content.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
 import { homeFaqs } from '../data/home-faq';
-import { serviceNavigation } from '../data/service-navigation';
+const homeNavigation = [
+  { href: '#services', label: 'Expertises' },
+  { href: '/cas-clients', label: 'Réalisations' },
+  { href: '#contenus', label: 'Contenus' },
+];
 
 const directionContract = `
 THESIS: Lilian apparaît avant les offres ; une preuve compacte rend le choix crédible, puis deux chemins égaux orientent sans transformer le hero en comparateur.
@@ -57,7 +62,7 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
   directionContract={directionContract}
 >
   <Navigation
-    links={serviceNavigation}
+    links={homeNavigation}
     ctaSource="home_nav"
     trackHero={true}
   />
@@ -67,6 +72,7 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
     <HomeAbout />
     <HomeServices />
     <HomeAudience />
+    <HomeContent />
     <FAQ
       items={homeFaqs}
       title="Avant de travailler ensemble."

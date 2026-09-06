@@ -131,7 +131,7 @@ const mobileNavLinks = navLinks.filter((link) => {
 
 <nav
   id="main-nav"
-  class:list={['nav-root', 'px-[var(--spacing-section-x)]', { 'past-hero': !hasTrackedHero }]}
+  class:list={['nav-root', 'px-[var(--spacing-section-x)]', { 'past-hero': !hasTrackedHero, 'nav-home': isHome }]}
   aria-label="Navigation principale"
 >
   <div class="max-w-[1200px] mx-auto h-full grid grid-cols-[auto_1fr_auto] items-stretch lg:flex lg:items-center lg:justify-between lg:gap-4">
@@ -142,7 +142,7 @@ const mobileNavLinks = navLinks.filter((link) => {
       class="inline-flex items-center gap-2.5 text-[var(--color-ink)] group min-h-[44px] pr-4 border-r border-[var(--color-divider)] lg:pr-0 lg:border-r-0"
       aria-label="Lilian Sevoumian, accueil"
     >
-      <span class="mono-label hidden lg:inline">LILIAN SEVOUMIAN</span>
+      <span class="nav-wordmark mono-label hidden lg:inline">{isHome ? 'Lilian Sevoumian' : 'LILIAN SEVOUMIAN'}</span>
       <!-- Mobile : « L » et avatar empilés dans une cellule de taille fixe (pas de saut
            de layout au scroll). Crossfade en opacité dès qu'on a dépassé le Hero.
 
@@ -206,8 +206,8 @@ const mobileNavLinks = navLinks.filter((link) => {
           aria-controls="cal-overlay"
           aria-describedby="home-booking-help"
         >
-          <span>Choisir un créneau</span>
-          <span class="nav-home-action__duration">· {DUREE_RESERVATION_MINUTES} min</span>
+          <span class="nav-home-action__label">Parlons de votre projet</span>
+          <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
         </BoutonReservation>
       ) : ctaHref ? (
         <a href={lienNav(ctaHref)} class="btn-primary">{ctaLabel}</a>
@@ -324,6 +324,14 @@ const mobileNavLinks = navLinks.filter((link) => {
   if (sections.length > 0) {
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
+        if (!e.isIntersecting) {
+          navLinks.forEach((a) => {
+            if (a.getAttribute('href') === `#${(e.target as HTMLElement).id}`) {
+              a.classList.remove('is-active');
+              a.removeAttribute('aria-current');
+            }
+          });
+        }
         if (e.isIntersecting) {
           const id = (e.target as HTMLElement).id;
           navLinks.forEach((a) => {
@@ -425,6 +433,42 @@ const mobileNavLinks = navLinks.filter((link) => {
 </script>
 
 <style>
+  .nav-home {
+    background: var(--color-paper);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .nav-home .nav-wordmark {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-transform: none;
+  }
+  .nav-home .nav-link {
+    min-height: 44px;
+    font-size: var(--text-body-sm);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .nav-home .nav-link:hover { background: var(--color-surface-low); }
+  .nav-home .nav-home-action :global(.btn-primary) {
+    background: var(--color-lime);
+    color: var(--color-ink);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    gap: 0.75rem;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .nav-home .nav-home-action :global(.btn-primary:hover) {
+      background: var(--color-ink);
+      color: var(--color-paper);
+    }
+  }
+  @media (max-width: 479px) {
+    .nav-home .nav-home-action :global(svg) { display: none; }
+  }
   .nav-home-action {
     display: flex;
     min-width: 0;

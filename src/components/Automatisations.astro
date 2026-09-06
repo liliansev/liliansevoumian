@@ -1,55 +1,10 @@
 ---
-/*
- * Automatisations — « ce que j'automatise », en process et non en outils.
- *
- * LA SECTION QUI MANQUAIT. La home répondait dix fois à « quelle est l'étape
- * suivante » (dix-neuf points de réservation, une barre fixe, un bloc contact
- * en trois temps) et jamais, en clair, à la première question que se pose un
- * prospect : QUE SAIT-IL FAIRE. Le hero donnait une catégorie — n8n, Make,
- * agents IA. La section « outils » liste des outils. La section « offres »
- * liste des modes de collaboration : construire, reprendre, rendre la main.
- * Aucune des trois ne nomme un process que le lecteur reconnaîtrait comme le
- * sien.
- *
- * Cette liste existait pourtant, écrite, sur /expert-make et /expert-n8n
- * (« synchroniser votre CRM », « générer devis et factures depuis un
- * formulaire », « router les demandes entrantes »). Elle était invisible depuis
- * la page d'accueil. Elle remonte ici, reformulée autour de ce que les quatre
- * cas clients prouvent réellement.
- *
- * AUCUN LIEN VERS LES CAS ICI, et c'est une correction de la première version.
- * Quatre des six lignes portaient le cas client qui les documente — Fraich
- * Touch, Humble+, M Partners, Celeris — et la section des cas suit
- * IMMÉDIATEMENT celle-ci. Le lecteur se voyait donc proposer quatre fois le
- * même déplacement, plus un cinquième dans le pied de section, à quelques
- * centaines de pixels du carrousel qui les montre en entier. Ces six lignes
- * sont des exemples, pas des vignettes de preuve : la preuve est le bloc
- * d'après, c'est son métier.
- *
- * Ce qui reste vrai de la règle de départ : aucune de ces six lignes n'avance
- * de chiffre. Ce qui est chiffré est chiffré dans les cas, où la mesure est
- * située et datée.
- *
- * Le pied appelle l'agenda plutôt qu'une page. Même dispositif que les quatre
- * familles de la section outils : un lien fléché, la source du clic dans le
- * funnel, et l'URL prise dans lib/reservation.
- *
- * SIX PROCESS, ET AUCUN MODE DE COLLABORATION. La sixième ligne a d'abord porté
- * « Reprendre ce qui casse » — qui est le titre exact, au caractère près, d'un
- * des trois formats de la section « offres », six sections plus bas. Deux h3
- * identiques sur la même page, et surtout deux registres confondus : reprendre
- * un existant n'est pas une famille de process, c'est une façon d'entrer dans
- * une mission. C'est le métier de la section « offres », pas de celle-ci. Elle
- * est remplacée par les demandes entrantes, qui manquaient à la liste et que
- * /expert-n8n décrit déjà (« tri, qualification de leads, classification de
- * demandes »).
- *
- * Placée juste après le hero et le bandeau d'outils, avant les cas : le lecteur
- * doit pouvoir se reconnaître AVANT qu'on lui montre des clients qui ne sont
- * pas lui.
- */
+// Scènes illustratives générées par IA, distinctes des vrais cas clients.
+import { Image } from 'astro:assets';
+import dossiers from '../assets/work-scenes/dossiers.png';
+import commandes from '../assets/work-scenes/commandes.png';
+import appel from '../assets/work-scenes/appel.png';
 import SectionHeader from './SectionHeader.astro';
-import LinkCTA from './LinkCTA.astro';
 
 interface Famille {
   titre: string;
@@ -60,33 +15,39 @@ const familles: Famille[] = [
   {
     titre: 'Facturation et devis',
     corps:
-      'Créer les devis et les factures à partir de votre CRM, puis suivre les échéances et déclencher les relances.',
+      '<strong>Créer les devis et les factures</strong> à partir de votre CRM, puis suivre les échéances et déclencher les relances.',
   },
   {
     titre: 'Commandes e-commerce B2B',
     corps:
-      'Lire un bon de commande PDF ou Excel pour préparer la commande Shopify et la facture, avec des contrôles sur les produits et les montants.',
+      'Lire un bon de commande PDF ou Excel pour <strong>préparer la commande Shopify et la facture</strong>, avec des contrôles sur les produits et les montants.',
   },
   {
     titre: 'Prospection et qualification',
     corps:
-      'Collecter des prospects, les qualifier selon vos critères et préparer leur ajout dans le CRM. Votre équipe se concentre sur les échanges.',
+      'Collecter des prospects, <strong>les qualifier selon vos critères</strong> et préparer leur ajout dans le CRM. Votre équipe se concentre sur les échanges.',
   },
   {
     titre: 'Catalogue et données produit',
     corps:
-      'Extraire les informations des fiches fournisseurs et préparer les fiches produit dans votre ERP, à valider avant publication.',
+      'Extraire les informations des fiches fournisseurs et <strong>préparer les fiches produit dans votre ERP</strong>, à valider avant publication.',
   },
   {
     titre: 'Reporting et alertes',
     corps:
-      'Rassembler vos chiffres dans un même suivi et envoyer une alerte lorsqu’un dossier ou une erreur demande votre attention.',
+      '<strong>Rassembler vos chiffres dans un même suivi</strong> et envoyer une alerte lorsqu’un dossier ou une erreur demande votre attention.',
   },
   {
     titre: 'Demandes entrantes',
     corps:
-      'Classer les emails et les formulaires, rassembler le contexte et transmettre chaque demande à la bonne personne.',
+      'Classer les emails et les formulaires, rassembler le contexte et <strong>transmettre chaque demande à la bonne personne.</strong>',
   },
+];
+
+const scenes = [
+  { image: dossiers, alt: 'Une professionnelle consulte ses dossiers devant son ordinateur.', familles: [familles[0], familles[4]] },
+  { image: commandes, alt: 'Un professionnel prépare une commande sur ordinateur dans une réserve.', familles: [familles[1], familles[3]] },
+  { image: appel, alt: 'Une professionnelle au téléphone prend des notes à son bureau.', familles: [familles[2], familles[5]] },
 ];
 ---
 
@@ -104,28 +65,38 @@ const familles: Famille[] = [
       bodyMaxWidth="62ch"
     />
 
-    {/* Même dispositif que les formats de la section « offres » : un filet de
-        tête par item, jamais une carte. Le rythme de la page vient des traits,
-        et une grille de six cartes à icône est exactement le motif que ce site
-        évite partout ailleurs. */}
-    <div class="reveal-stagger process-grille">
-      {familles.map((f) => (
-        <div class="reveal process-item">
-          <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
-            {f.titre}
-          </h3>
-          <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
-            {f.corps}
-          </p>
+    <div class="process-grille">
+      {scenes.map((scene) => (
+        <div class="process-group">
+          <Image
+            src={scene.image}
+            alt={scene.alt}
+            width={768}
+            widths={[384, 768, 1200]}
+            sizes="(min-width: 1340px) 368px, (min-width: 900px) 29vw, (min-width: 768px) 90vw, calc(100vw - 48px)"
+            format="webp"
+            quality={82}
+            loading="lazy"
+            decoding="async"
+            class="process-photo"
+          />
+          {scene.familles.map((f) => (
+            <div class="process-item">
+              <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
+                {f.titre}
+              </h3>
+              <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0" set:html={f.corps} />
+            </div>
+          ))}
         </div>
       ))}
     </div>
 
     <div class="reveal process-pied">
       <p>
-        Nous partons de vos outils et de vos tâches réelles pour choisir ce qui mérite d’être automatisé.
+        Nous partons de <strong>vos outils et de vos tâches réelles</strong> pour choisir ce qui mérite d’être automatisé.
       </p>
-      <LinkCTA href="#offres">Voir les offres et le suivi</LinkCTA>
+      <a href="#offres" class="btn-primary">Voir les offres et le suivi <span aria-hidden="true">→</span></a>
     </div>
 
   </div>
@@ -134,15 +105,40 @@ const familles: Famille[] = [
 <style>
   .process-grille {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: clamp(1.75rem, 4vw, 3.5rem);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
   }
 
-  .process-item {
-    display: flex;
-    flex-direction: column;
+  .process-group {
+    display: grid;
+    grid-template-rows: auto 1fr 1fr;
+    gap: 1.5rem;
+    min-width: 0;
+  }
+
+  .process-group :global(.process-photo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    background: var(--color-surface-low);
+  }
+
+  .process-item + .process-item {
     border-top: 1px solid var(--color-divider);
-    padding: 1.75rem 0 0;
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 899px) {
+    .process-grille {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 3rem;
+    }
+
+    .process-group {
+      grid-template-rows: auto auto auto;
+    }
   }
 
   .process-pied {
@@ -158,7 +154,7 @@ const familles: Famille[] = [
   .process-pied p {
     margin: 0;
     max-width: 62ch;
-    font-size: var(--text-body-sm);
+    font-size: var(--text-body);
     line-height: 1.6;
     color: var(--color-ink-low);
   }

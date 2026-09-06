@@ -5,7 +5,7 @@ description: "M Partners qualifie 23 cibles en 7 minutes et scrape 300 entrepris
 secteur: "Executive Search · Tech & VC"
 date: 2026-05-05
 tags: ["Sales", "Ops"]
-tools: ["Make", "Claude", "Apollo", "Attio", "Instantly"]
+tools: ["Make", "Claude", "Apollo", "Loxo"]
 kpis:
   - value: "~10 min"
     label: "Par run, contre 1 à 3 h pour 50 entreprises à la main"
@@ -14,11 +14,11 @@ kpis:
   - value: "23"
     label: "Cibles qualifiées sur 4 entreprises (run mesuré, ~7 min)"
 flow:
-  describe: "Schéma du workflow de prospection M Partners : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les dirigeants retenus partent dans le CRM avec une shortlist priorisée et des alertes."
+  describe: "Schéma du workflow de prospection M Partners : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les dirigeants retenus partent dans Loxo, qui centralise le CRM et les séquences de prospection."
   trigger: { icon: "lucide:users", kicker: "Sourcing", title: "Cibles collectées", sub: "LinkedIn · bases" }
   agent: { icon: "simple-icons:anthropic", kicker: "Agent IA", title: "Qualifie & score", sub: "fit · séniorité · signaux" }
   actions:
-    - { icon: "simple-icons:hubspot", kicker: "CRM", title: "À approcher" }
+    - { icon: "lucide:contact-round", kicker: "Loxo", title: "À approcher" }
     - { icon: "lucide:list-checks", kicker: "Shortlist", title: "Top 20 %" }
     - { icon: "lucide:bell", kicker: "Alerte", title: "Nouveau signal" }
 bascule:
@@ -32,8 +32,8 @@ nomenclature:
   - { etape: "Filtrage de la page collectée", outil: "Agent IA", role: "controle" }
   - { etape: "Notation et grade des profils", outil: "Claude", role: "agent" }
   - { etape: "Validation avant lancement des séquences", outil: "Make", role: "controle" }
-  - { etape: "Poussée des cibles dans le CRM", outil: "Attio", role: "action" }
-  - { etape: "Séquences email et LinkedIn", outil: "Instantly", role: "action" }
+  - { etape: "Poussée des cibles dans le CRM", outil: "Loxo", role: "action" }
+  - { etape: "Séquences de prospection", outil: "Loxo", role: "action" }
   - { etape: "Récapitulatif de fin de run", outil: "Email", role: "controle" }
 draft: false
 ---
@@ -66,7 +66,7 @@ Un **agent IA** note chaque profil selon sa pertinence : il repère les décideu
 
 ### CRM & campagnes
 
-Les cibles qualifiées sont poussées automatiquement dans le **CRM (Attio)** avec le bon mapping, puis dans les **séquences multicanales (Instantly)** : email et LinkedIn. Un email récapitulatif tombe après chaque exécution avec les statistiques du run.
+Les cibles qualifiées sont ajoutées automatiquement dans **Loxo**, qui centralise le **CRM et les séquences de prospection**. Un email récapitulatif tombe après chaque exécution avec les statistiques du run.
 
 ## Les résultats
 
