@@ -1,4 +1,4 @@
-import { signupNewsletter } from '../src/lib/newsletter-signup';
+import { signupNewsletter } from '../src/lib/newsletter-signup.js';
 
 // A Web handler export is recognized by Vercel's Node runtime.
 export function POST(request: Request): Promise<Response> {
