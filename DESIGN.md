@@ -1,9 +1,13 @@
 ---
 name: Lilian Sevoumian
-description: "Deux expertises : Automatisation & IA et Sites web. Papier blanc, encre noire, une seule couleur — un lime acide qui ne s'écrit jamais, qui prend des sections entières ou surligne un mot de travers."
+description: "Deux expertises : Automatisation & IA et Sites web. Papier blanc, gris clair, encre noire et bleu nuit presque noir ; lime en surlignage derrière les mots et en petits accents."
 colors:
   paper: "#ffffff"
-  surface-low: "#f7f7f7"
+  surface-low: "#f7f8fa"
+  night: "#111827"
+  night-soft: "#263449"
+  dark-cta-hover: "#e8edf4"
+  service-border: "#dce1e8"
   ink: "#111111"
   ink-soft: "#1f1f1f"
   ink-mid: "#595959"
@@ -22,7 +26,7 @@ colors:
 typography:
   home-hero:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(3.25rem, 5vw + 0.25rem, 5.25rem)"
+    fontSize: "clamp(2.75rem, 5vw + 0.25rem, 5.25rem)"
     fontWeight: 600
     lineHeight: 0.94
     letterSpacing: "-0.035em"
@@ -70,33 +74,39 @@ rounded:
 spacing:
   section-y: "clamp(5rem, 8vw, 8rem)"
   section-x: "clamp(1.5rem, 5vw, 7.5rem)"
+  service-card: "clamp(1.25rem, 3vw, 2.5rem)"
 components:
   button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.cta}"
-    padding: "14px 24px"
-    fontSize: "clamp(0.75rem, 3.1vw, 0.875rem)"
-    textTransform: "uppercase"
-  button-primary-hover:
     backgroundColor: "{colors.lime}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.night}"
+    rounded: "{rounded.cta}"
+    padding: "11px 18px"
+  button-primary-hover:
+    backgroundColor: "{colors.lime-deep}"
+    textColor: "{colors.night}"
+  button-on-dark:
+    backgroundColor: "{colors.lime}"
+    textColor: "{colors.night}"
+    rounded: "{rounded.cta}"
+  button-on-dark-hover:
+    backgroundColor: "{colors.lime-deep}"
+    textColor: "{colors.night}"
   chip-accent:
     backgroundColor: "{colors.accent-soft}"
     textColor: "{colors.ink}"
     rounded: "{rounded.full}"
     padding: "4px 10px"
   mark:
-    backgroundColor: "{colors.lime}"
+    backgroundColor: "transparent"
     textColor: "{colors.ink}"
     rounded: "{rounded.none}"
     padding: "0.02em 0.2em"
   bloc-lime:
-    backgroundColor: "{colors.lime}"
+    backgroundColor: "{colors.surface-low}"
     textColor: "{colors.ink}"
     rounded: "{rounded.none}"
   bloc-encre:
-    backgroundColor: "{colors.ink}"
+    backgroundColor: "{colors.night}"
     textColor: "{colors.text-on-dark}"
     rounded: "{rounded.none}"
   card:
@@ -128,7 +138,7 @@ passe à la verticale. M Partners cite Loxo dans le texte, le schéma et sa fich
 
 ## Overview
 
-**Le lime ne s'écrit pas. Il se pose.**
+**Papier clair, bleu nuit, surlignages lime.**
 
 Le site présente deux expertises de même poids : **Automatisation & IA** et
 **Sites web**. La home oriente vers l'une ou l'autre ; elle ne les dilue pas
@@ -138,10 +148,13 @@ ornement pour rattraper une hiérarchie molle. La base est du papier blanc et de
 l'encre noire ; le contraste vient du poids typographique, de la taille et de
 l'espace.
 
-Par-dessus vit **une seule couleur**, un lime acide `#cdf564`. Elle ne peut pas
-porter de texte — 1,25:1 contre le blanc — et c'est cette contrainte qui fait
-tout le système : le lime est une **surface**. Il prend une section entière, ou
-il passe derrière un mot comme un coup de surligneur de travers.
+Les textes principaux sont noirs. Le bleu nuit presque noir porte les libellés
+des CTA lime et les panneaux sombres. Les
+surfaces claires restent papier ou gris très clair. Le lime ne porte pas de
+texte sur ces surfaces ; il forme une bande pleine derrière les mots surlignés
+ou un petit accent. La direction explicite du 13 septembre 2026 retire les grands aplats
+lime de l’interface. Les anciennes classes sont conservées quand leur nom
+assure la compatibilité, pas leur ancienne couleur.
 
 Trois choses ont été retirées en chemin, et l'absence est le geste : le
 monospace, les sur-titres en petites capitales espacées, et les arrondis de
@@ -149,7 +162,7 @@ surface. Les CTA font exception avec un rayon discret de 8 px.
 
 **Caractéristiques clés :**
 
-- Le lime est une surface, jamais une couleur de texte.
+- Aucun fond de section lime ; les mots gardent leur surlignage lime et les petits accents restent autorisés.
 - Sur la home, Lilian apparaît avant les offres ; les deux expertises gardent
   ensuite le même poids dans leur routeur dédié.
 - Le vibe coding relie les deux pratiques ; il ne devient jamais un troisième
@@ -177,25 +190,31 @@ capitale en soi.
 
 ## Colors
 
-La palette n'a **aucune chroma résiduelle** : les gris sont de vrais gris. Un
-neutre teinté est une décision colorimétrique, discrète mais réelle, et le
-système n'en a qu'une à faire.
+Le papier et l’encre conservent leur rôle de lecture. Le bleu nuit presque
+noir apporte la profondeur, avec un gris clair légèrement froid pour les
+panneaux secondaires. Ces nuances remplacent la règle historique des gris
+strictement neutres.
 
 | Rôle | Valeur | Usage |
 |---|---|---|
 | `paper` | `#ffffff` | Fond général |
-| `surface-low` | `#f7f7f7` | Bande de section, une sur deux, pour le rythme vertical |
-| `ink` | `#111111` | Texte principal, bordures fortes, aplat sombre |
+| `surface-low` | `#f7f8fa` | Newsletter, fond des médias et sections claires héritées |
+| `night` | `#111827` | CTA, titres de services, audience et panneaux sombres |
+| `night-soft` | `#263449` | Survol des CTA sur surface claire |
+| `dark-cta-hover` | `#e8edf4` | Survol bleu pâle intentionnel des CTA blancs sur fond sombre ; valeur CSS locale documentée |
+| `service-border` | `#dce1e8` | Filet au repos des cartes de services |
+| `ink` | `#111111` | Texte principal et bordures fortes |
 | `ink-mid` | `#595959` | Corps de texte secondaire — 7,0:1 sur papier |
 | `ink-low` | `#6b6b6b` | Légendes, libellés — 5,33:1 |
 | `ink-faint` | `#949494` | Traits, puces creuses, jamais du texte lisible |
 | `divider` | `#e5e5e5` | Filets, un seul poids : 1 px |
-| `lime` | `#cdf564` | **Surface uniquement.** Aplats, bandes de surlignage, pastilles d'état |
+| `lime` | `#cdf564` | Surlignages derrière les mots et petits accents, jamais un fond de section |
 | `accent-soft` | `#f2fbd8` | Fond de chip. Encre dessus : 17,59:1 |
 | `focus` | `#111111` | Anneau de focus |
 
-**Le lime ne porte jamais de texte.** 1,25:1 sur blanc. Un mot « en lime » est
-illisible ; un mot **sur** du lime tient 15,14:1.
+**Le lime ne porte pas de texte sur papier.** Son contraste de 1,25:1 sur blanc
+le réserve aux accents. Les exceptions locales sur fond sombre, notamment
+les schémas d’offre et leur focus, restent décrites avec ces composants.
 
 **L'anneau de focus est de l'encre, pas l'accent.** Un anneau lime serait
 invisible sur papier. L'encre tient sur les deux surfaces : 18,88:1 sur blanc,
@@ -207,11 +226,11 @@ d'identité. Les deux états passent en encre, portés par un libellé. L'erreur
 revanche, garde un rouge `#b3261e` : il n'est pas de la même famille, il ne
 concurrence rien, et il tient 5,24:1 sur lime.
 
-**Deux surfaces inversent la palette.** `.bloc-lime` et `.bloc-encre` remappent
-les jetons de rôle : tout composant réutilisable s'y adapte sans variante à
-écrire. Piège vérifié deux fois : le remap ne doit lire que des **valeurs
-fixes**. Écrire `background: var(--color-ink)` dans un bloc qui redéfinit
-`--color-ink` produit un cycle, et la section devient blanche sur blanc.
+**Deux classes remappent les rôles.** `.bloc-lime` est désormais une classe
+historique à fond gris clair, jamais un panneau lime. `.bloc-encre` utilise
+le bleu nuit et remappe le texte en blanc. Un fond ne doit pas lire un jeton
+qu’il redéfinit lui-même : le bleu nuit possède son jeton indépendant pour
+éviter le cycle qui avait produit du blanc sur blanc.
 
 ## Typography
 
@@ -241,7 +260,8 @@ jeton survit comme alias de `--text-body-sm`, sur le modèle de `--font-mono` qu
 vaut la police de texte depuis que le monospace a quitté la DA.
 
 Il reste un rapport de 1,09, entre les deux rangs de petites capitales (11 et
-12 px), et il est le suivant sur la liste. Les résorber demande de fusionner
+12 px). C’est un avis du détecteur, pas un défaut bloquant de cette passe.
+Les résorber demanderait de fusionner
 `.mono-caption` et `.mono-label`, qui ne diffèrent alors plus que par leur nom,
 et de reprendre une quinzaine de fichiers — dont une trentaine d'étiquettes
 serrées dans les maquettes.
@@ -257,8 +277,8 @@ courbe n'existe que pour tenir les largeurs étroites : 12 px sous 387 px, 14 px
 au-dessus de 452, une seule pente monotone entre les deux.
 
 La pente n'est pas calée sur la home mais sur le cas le plus serré du site, et
-c'est ce qui l'a fait passer de 3,6vw à 3,1vw : le CTA de `/principes` vit dans
-un encart lime à 32 px de padding, et sa colonne reste sous 300 px jusqu'à 480 px
+c'est ce qui l'a fait passer de 3,6vw à 3,1vw : le CTA de `/principes` a été mesuré dans
+un encart alors lime à 32 px de padding, et sa colonne reste sous 300 px jusqu'à 480 px
 de fenêtre. **Une courbe typographique se cale sur le conteneur le plus étroit
 qui la porte, pas sur la page où on l'a écrite** — sans quoi elle règle une
 section et en casse une autre, sur une page qu'on ne regardait pas.
@@ -267,7 +287,7 @@ Les titres de section descendent à `-0,035em` de chasse ; le plancher est
 `-0,04em`, en dessous les lettres se touchent.
 
 **La home incarnée possède son rang de titre.** Son `h1` est visible et consomme
-`--text-home-hero`, une courbe unique de 52 à 84 px. Il fait face au portrait de
+`--text-home-hero`, une courbe unique de 44 à 84 px. Il fait face au portrait de
 Lilian, sans devenir aussi monumental que les manifestes
 des landings spécialisées. Plus bas, les deux titres du routeur consomment
 `--text-home-service`, une courbe de 20 à 44 px calculée sur la largeur disponible
@@ -325,8 +345,8 @@ comblerait un jour au jugé.
 
 **Un seul poids de filet, et une exception qui n'en est pas une.** Le
 soulignement d'un lien de prose (`.lien-prose`) fait 2 px. Un filet sépare ou
-encadre une surface ; celui-ci souligne des mots, et c'est le seul endroit où le
-lime a le droit d'être un trait plutôt qu'une surface. L'argument facile serait
+encadre une surface ; celui-ci souligne des mots. Les traits lime sont désormais
+la forme d’accent principale. L'argument facile serait
 « le lime est trop clair pour tenir à 1 px » — il est faux, et calculé : le lime
 rend 1,25:1 sur papier, `divider` en rend 1,26. Même contraste. Le vrai motif est
 ailleurs : mesuré sur la home, ce lien fait 297 px de large et le filet de
@@ -337,7 +357,7 @@ par la seule couleur n'en est pas une. Le soulignement au survol d'une question
 de FAQ, du bloc contact ou de la 404 relève de la même décision, en
 `text-decoration-thickness`.
 
-**Corollaire, et il a coûté un lien invisible.** `.lime` lu en dur ne suit pas le
+**Historique, avant les surfaces claires de septembre 2026.** `.lime` lu en dur ne suivait pas le
 remap de `.bloc-lime`, qui ne redéfinit pas ce jeton. Le soulignement de
 `.lien-prose` était donc du lime sur du lime — 1,00:1 — sur les deux pages outil,
 où « Je le reprends » est le seul chemin vers la page des automatisations qui
@@ -349,11 +369,11 @@ grossier. Sur l'aplat lime, le trait passe au blanc, comme `mark` et
 (`--radius-cta`), `9999px` pour les unités rondes. Les autres `--radius-*`
 restent à zéro. Le rayon de 8 px adoucit les boutons de réservation,
 d’inscription et l’action « Voir la vidéo », à la demande de Lilian.
-Les cartes, photographies, champs et bandes de surlignage gardent leurs angles
-droits. Les liens éditoriaux soulignés restent des liens texte.
+Les cartes, photographies et traits de soulignement gardent leurs angles
+droits. Le champ newsletter reprend le rayon de 8 px des CTA. Les liens éditoriaux soulignés restent des liens texte.
 
 La profondeur, quand elle est nécessaire, vient du **changement de surface** :
-papier, bande grise, aplat lime, aplat encre.
+papier, bande grise et panneau bleu nuit.
 
 **Une seule maille de grille sur le site**, 96 px (`--spacing-grid-cell`). Elle
 court dans les gouttières de chaque page et entre dans l'aplat du hero ; une
@@ -408,7 +428,7 @@ est carré, sans bordure, ombre ou contrechamp ; son nom et son ancienneté figu
 en légende. Sous 1024 px, l'image passe sous le texte et garde son ratio carré,
 avec une largeur maximale de 30 rem. L'unique bouton commercial de la home,
 « Parlons de votre projet », ouvre l'agenda Cal.com depuis l'en-tête fixe.
-Le même élément est rendu sur desktop et mobile, avec un fond lime identifiable.
+Le même élément est rendu sur desktop et mobile, avec un fond lime et un texte bleu nuit.
 Le lien secondaire du hero « Voir les services » descend vers `#services`.
 Le visiteur déjà convaincu peut prendre rendez-vous sans parcourir une landing.
 
@@ -422,39 +442,75 @@ fourni `/Users/a1207/Pictures/lilian dans son bureau.jpg` ; cette provenance
 reste attachée à l’actif. Les deux photos de la home sont optimisées par Astro,
 le portrait chargé en priorité et la photo de bureau chargée à la demande.
 
-Le choix arrive ensuite dans un routeur à deux surfaces de même poids : lime
-pour **Automatisation & IA**, papier pour **Sites & applications web**.
-Les cartes partagent cinq rangées via `subgrid` : besoin, titre, description,
-périmètre et action. Aucun prix ne figure sur ces cartes ; les offres dédiées
-portent les détails. Le conteneur de mesure typographique est le `h3`,
+Le choix arrive ensuite dans deux cartes blanches de même poids :
+**Automatisation & IA** et **Sites & applications web**. Les cartes partagent
+quatre rangées via `subgrid` : titre, description, média et pied prix/action.
+La grille a deux colonnes égales et un écart de 1,5 rem. Le padding vertical et
+les marges latérales du texte suivent `--spacing-service-card` ; les médias
+atteignent les bords latéraux de la carte. Le conteneur de mesure typographique est le `h3`,
 dont les deux lignes consomment le jeton : le poser sur chaque carte empêcherait
 le partage des rangées de cette carte.
-Les cartes de services portent chacune un visuel photoréaliste en 3:2, placé
-entre le titre et le descriptif : flux de commande sur un ordinateur portable,
-planning d’équipe sur un écran. Ce sont des illustrations générées, avec
-interfaces fictives, sans attribution à un client. Leur provenance vit dans
-`src/assets/home-services/README.md` et dans les métadonnées PNG. Astro sert des
-WebP responsives chargées à la demande. Les deux images gardent leurs angles
-droits et leur ratio complet ; elles ne changent pas au survol.
+Les cartes de services portent chacune une interface en 3:2, placée après
+le titre et le descriptif, sans ordinateur ni scène photographique.
+À gauche, `ServiceWorkflowVisual` affiche la capture Make originale de Lilian
+(`interfaces/workflow-make-source.png`) : le recadrage CSS masque le fond
+décoratif CleanShot et conserve les modules, connexions et branches.
+Un en-tête blanc natif nomme le scénario ; le pied rappelle les outils utilisés
+et disparaît lorsque le visuel mesure au plus 380 px de large.
+À droite, `interfaces/commercial-dashboard.png` représente un suivi commercial
+généré avec imagegen, aux couleurs papier, encre et lime. Les données sont
+fictives et portent la mention « Données de démonstration ».
+Les anciens montages `automation-make.png` et `planning.png` restent archivés.
+La provenance des deux PNG affichés est intégrée à leurs métadonnées et
+documentée dans `src/assets/home-services/README.md`. Astro sert des WebP
+responsives chargées à la demande. Les visuels gardent leurs angles droits
+et ne changent pas au survol. Le pied affiche « À partir de 900 € HT » pour
+l’automatisation et « À partir de 1 500 € HT » pour le web, avec « En savoir plus »
+à droite. Ces prix viennent de `src/data/service-pricing.ts`, partagé avec les
+pages d’offre. Le paragraphe d’abonnement sous les cartes est retiré.
+
+Au pointeur fin, le filet devient bleu nuit, l’action se souligne et sa flèche
+avance de 0,2 rem, sur 200 ms ; la surface ne change pas de couleur. Le mouvement
+réduit supprime ces transitions. Sous 900 px, les cartes s’empilent avec 2 rem
+entre elles et 1,5 rem entre leurs quatre rangées.
+
+### Schémas éditoriaux : état courant et historique
+
+La section `#temps-retrouve` et son animation sont retirées de la home le
+13 septembre 2026. Le parcours passe directement des services aux publics.
+Les compositions « Aujourd’hui / Demain / Et vous », puis le relais sur papier,
+sont historiques ; leurs images et preuves ne décrivent plus la page active.
+Les deux schémas d’offre restent décrits plus bas. Les cas clients gardent
+leurs diagrammes factuels et aucune mesure n’est inventée.
 
 Chaque carte garde une seule destination — `/automatisations-ia` ou
 `/sites-web-abonnement` — sans lien imbriqué. Sous 900 px, elles deviennent deux
-rangées séparées par le même filet de 1 px. Le texte web nomme les landing pages,
+cartes distinctes. Le texte web nomme les landing pages,
 dashboards, portails clients et applications métiers.
 
 Après ce routeur, une liste sur aplat encre aide les fondateurs et équipes Ops,
 les dirigeants de PME, puis les agences et studios à se reconnaître. Avant la
 FAQ, deux colonnes ont chacune leur titre : « Ma dernière vidéo YouTube »
 à gauche et « La newsletter » à droite. Les titres et filets sont alignés grâce
-à une sous-grille commune ; la vignette 16:9 et le bloc lime commencent au même
-niveau. Le bloc lime garde sa hauteur naturelle, avec texte, champ et bouton
+à une sous-grille commune ; la vignette 16:9 et le panneau gris clair commencent au même
+niveau. Le panneau garde sa hauteur naturelle, avec texte, champ et bouton
 pleine largeur regroupés. Les deux ensembles s’empilent sur mobile.
 Le titre vidéo reste court : « Créer avec Reflare ». La vidéo a été vérifiée le
 6 septembre 2026 ; cette sélection est fixe, sans actualisation automatique.
 L’encart annonce un mail hebdomadaire sur les cas d’usage, les outils et
-l’actualité IA. Tant que l’URL Lumail manque, le champ email et « S’inscrire »
-sont désactivés, avec une mention d’indisponibilité : l’inscription n’est pas
-fonctionnelle. La FAQ répond aux questions de triage.
+l’actualité IA. Le formulaire actif envoie vers `/api/newsletter` puis Lumail
+avec double opt-in. Le champ email et le bouton « Recevoir la newsletter » ont
+une hauteur minimale de 48 px et un rayon de 8 px ; le panneau reste carré.
+Le chargement désactive le bouton et annonce l’envoi. Le succès demande la
+confirmation par email ; l’échec conserve la saisie, restaure le bouton et
+explique comment réessayer via un statut accessible.
+Les destinataires désinscrits, en rebond, bannis, ayant signalé du spam ou
+réservés au transactionnel ne sont pas réinscrits. La lecture après un vrai
+POST local sur une adresse de test documentée par Lumail confirme
+`PENDING_CONFIRMATION` et le tag `newsletter`. Les exclusions et erreurs
+serveur ont été vérifiées avec réponses simulées ; réception réelle et clic
+de confirmation ne sont pas testés. Preuves :
+`.impeccable/review/newsletter-lumail-runtime.json`. La FAQ répond aux questions de triage.
 Les textes gardent les preuves et les périmètres,
 mais retirent les listes répétées et les explications de navigation. La home
 se termine après la FAQ, qui explique le choix du créneau et le déroulé de l'appel.
@@ -523,15 +579,12 @@ Souffle relie l’offre Applications à la gestion des sessions et au pointage,
 sans présenter l’affectation humaine comme un appariement automatique. Le
 compteur de cas de la home est calculé depuis la collection publiée.
 
-**Le surlignage** est le dispositif signature. Une bande lime en pseudo-élément
-posée **derrière** le texte, avec `z-index: -1` et `isolation: isolate`. C'est la
-bande qui penche, pas le `<mark>` : faire tourner l'élément inclinerait les
-lettres, or on veut un coup de surligneur de travers sur un texte droit.
-L'inclinaison alterne via une classe `.inv` posée à la main — `:nth-of-type` ne
-peut pas le faire, chaque `<mark>` étant seul dans son parent.
-
-Sur `.bloc-encre`, le texte du surlignage est explicitement sombre (`#111111`).
-Il ne doit pas hériter de `--color-ink`, remappé en blanc dans cette section.
+**Le surlignage lime** est une bande pleine derrière les mots, en pseudo-élément
+avec `z-index: -1` et `isolation: isolate`. La bande penche, les lettres restent
+droites. Les retraits sont `0.06em 0 0.1em`, resserrés à `0.14em 0 0.16em` dans
+le hero. L’inclinaison alterne via `.inv`. Sur `.bloc-encre`, les mots surlignés
+prennent une encre noire pour rester lisibles sur le lime. Cette emphase est
+conservée ; l’interdiction des fonds lime concerne les sections et les cartes.
 Les liens fléchés soulignés emploient `.text-link-arrow` : un seul pseudo-élément
 porte le trait continu sous le libellé, l'espace et la flèche. La cible conserve
 44 px de haut et le texte peut se répartir sur plusieurs lignes sur mobile.
@@ -541,8 +594,10 @@ bande couvre le rectangle englobant et produit un aplat informe. **Le fragment
 fait donc de 1 à 4 mots**, à toutes les tailles. C'est aux mots d'être courts,
 pas à la bande de se déformer.
 
-**Le bouton primaire** est noir au repos et passe au lime au survol. Sur un aplat
-lime il passe au blanc : le survol doit toujours changer quelque chose.
+**Le bouton primaire** est lime, avec un texte bleu nuit et un rayon de 8 px.
+Le survol utilise le lime profond et conserve le texte bleu nuit. Cette règle
+reste identique sur les panneaux sombres ; le texte courant et les titres
+restent en encre noire sur les fonds clairs.
 
 Le changement se fait en **fondu croisé**, et le lime ne balaie jamais la
 largeur. La tentation d'y retrouver le geste du surligneur est forte, mais une
@@ -686,8 +741,8 @@ de `HomeHeroPersonal.astro` et au portrait source
 `src/assets/lilian-photo.jpg` ; elle ne réinterprète pas la home avec une
 composition de campagne parallèle.
 
-**La vignette par défaut** (`public/og-image.png`, 1200 × 630) conserve l'autre
-expression de la marque : aplat lime, manifeste en Geist semibold, surlignage
+**La vignette par défaut historique** (`public/og-image.png`, 1200 × 630), non
+modifiée par cette passe d’interface, conserve l’ancienne expression de la marque : aplat lime, manifeste en Geist semibold, surlignage
 blanc penché, nom en haut et outils en bas. Elle se lit à la taille d'une carte
 LinkedIn. En **PNG palettisé et non en JPEG** : trois couleurs, un aplat et de la
 typo — le JPEG posait un halo sur chaque bord de lettre pour 51 Ko, le PNG-8 est
@@ -705,8 +760,8 @@ PNG et le SVG en portaient deux différentes.
 
 **À faire**
 
-- Poser le lime comme surface : un aplat de section, une bande de surlignage, une
-  pastille d'état.
+- Garder le surlignage lime derrière les mots et les petits accents ; réserver les fonds de section
+  en papier, gris clair ou bleu nuit.
 - Vérifier chaque contraste par le calcul, jamais à l'œil. Toutes les valeurs de
   ce document sont calculées.
 - Garder les fragments surlignés entre 1 et 4 mots, et alterner l'inclinaison.
@@ -720,10 +775,10 @@ PNG et le SVG en portaient deux différentes.
 
 **À ne pas faire**
 
-- Écrire du texte en lime. Jamais, nulle part, quelle que soit la taille.
-- Poser un anneau de focus lime : il est invisible.
+- Écrire du texte en lime sur une surface claire, ou réintroduire un grand fond lime.
+- Poser un anneau de focus lime sur papier : il est invisible.
 - Arrondir une surface éditoriale. Une carte, une bande, un panneau et un champ
-  restent à zéro. Les CTA utilisent exclusivement `--radius-cta` (8 px).
+  restent à zéro. Les CTA et le champ newsletter utilisent `--radius-cta` (8 px).
 - Ajouter une ombre. L'élévation vient des filets.
 - Entourer une capture de projet d'un faux navigateur ou d'un appareil, ni
   employer son dégradé de lisibilité ailleurs que sous sa légende.
@@ -732,11 +787,8 @@ PNG et le SVG en portaient deux différentes.
   généré, et elle a été retirée volontairement.
 - Lire un jeton de rôle dans `.bloc-lime` ou `.bloc-encre` : le remap ne lit que
   des valeurs fixes, sinon il produit un cycle.
-- **Écrire `var(--color-lime)` dans un composant qui peut se retrouver sur
-  `.bloc-lime`** — le piège inverse du précédent. Ce jeton n'est pas remappé, il
-  reste le lime, et le composant devient lime sur lime, 1,00:1. Trois
-  dispositifs prévoient déjà l'inversion (`mark`, `.link-cta__label`,
-  `.lien-prose`) ; tout nouveau trait ou aplat lime doit la prévoir aussi.
+- Déduire la couleur d’une surface du nom historique `.bloc-lime` : cette
+  classe affiche désormais du gris clair.
 - **Animer autre chose que `transform` ou `opacity` sur une timeline de scroll.**
   Le reste n'est pas compositable : chaque image de défilement repasse par la
   peinture et la rastérisation. Mesuré sur les gouttières, une seule propriété
@@ -775,3 +827,70 @@ PNG et le SVG en portaient deux différentes.
   sections l'avaient réimplémenté et se présentaient comme des sous-parties.
 - Présenter le vibe coding comme une troisième offre, ou faire remonter le choix
   entre les deux services dans le hero personnel.
+
+## Three.js : laboratoire et schémas intégrés
+
+La route `/explorations-3d` réunit trois études manipulables, **Orbites**,
+**Flux** et **Structure**, pour permettre à Lilian de choisir une piste. Elle
+reste expérimentale, en `noindex` et hors sitemap. Après le choix de **Flux**,
+les offres conservent deux scènes intégrées : Flux et Structure. Le 9 septembre
+2026, Lilian avait remplacé la 3D de la home par un schéma noir sur papier.
+Le 13 septembre, il retire toute cette section. Three.js reste limité aux
+deux pages d’offre et au laboratoire.
+
+Le laboratoire reprend les jetons encre, papier, gris et lime, la police Geist,
+les filets et les volumes mats des schémas. Sur son fond encre uniquement, les
+libellés d’accent, la sélection de scène et le focus clavier peuvent être lime.
+Cette exception locale ne modifie pas les règles de texte et de focus sur les
+surfaces claires du site. Aucun effet de verre, halo ou nouvelle palette.
+
+Un seul moteur WebGL affiche une scène à la fois ; les libellés et commandes
+restent en HTML. Rotation libre, transition continue et reprise après erreur
+appartiennent au laboratoire. Son contrat initial reste conservé dans
+`.impeccable/surfaces/src-pages-explorations-3d-astro.md` ;
+aucun nouveau jeton de marque n’est ajouté à `.impeccable/design.json`.
+
+### Home : section de relais retirée
+
+Le relais SVG/CSS documenté le 9 septembre n’est plus monté par
+`src/pages/index.astro`. Le composant conservé dans le dépôt est un ancien
+artefact, pas une section à réintroduire. Les contrats et preuves `paper-home-*`
+restent historiques ; le contrat courant est `night-home-contract.md`.
+
+### Deux schémas d’offre : règles communes
+
+Les deux offres conservent leur rendu Three.js et leur fallback HTML/SVG.
+Les schémas factuels des cas clients conservent leur système existant.
+
+**La règle du mouvement fini sur les offres.** Flux et Structure parcourent
+leurs deux états en 4,6 secondes puis s’arrêtent. Deux boutons affichent
+directement les extrémités ; la lecture peut être suspendue, reprise ou rejouée.
+Une légère parallaxe à la souris conserve le cadrage. Le défilement tactile
+reste libre. Avec mouvement réduit, l’état final est statique, le replay est
+masqué et les extrémités restent accessibles.
+
+**La règle du schéma autonome.** Le titre, les légendes et le schéma statique
+HTML/SVG portent le sens avant le chargement de la 3D et en cas d’échec.
+Les textes projetés sont du HTML en Geist, aux tailles de corps existantes ;
+une réserve de fond encre protège leur lecture au croisement des contours.
+Un échec remet le HTML/SVG statique. Les commandes conservent les cibles de
+44 px et le rayon des CTA.
+
+**La règle du lime sur encre.** Les accents des libellés, l’état sélectionné et
+le focus clavier peuvent être lime dans ces deux schémas à fond encre. Les
+titres et le texte courant restent blancs ou gris. Cette exception locale
+n’autorise ni texte lime ni focus lime sur les surfaces claires ; le focus
+des commandes reste limité au pointeur fin. Les volumes mats, filets et
+incrustations utilisent la palette existante, sans halo, verre ni nouvelle
+couleur. Les deux figures d’offre gardent le rayon des schémas.
+
+Les compositions, seuils de chargement, adaptations et preuves sont décrits dans
+`.impeccable/surfaces/site-scenes.md` et `src/lib/site-scenes/README.md`.
+Leurs cadrages et durées ne deviennent pas des jetons globaux.
+Le [contrat courant](.impeccable/review/night-home-contract.md) et son
+[verdict](.impeccable/review/night-home-finish-review.md) concluent `ship` pour
+le raffinement local des cartes, du bleu nuit et de la newsletter. Les captures
+couvrent 402, 834, 1194, 1440 et 1854 px ; les deux destinations et l’absence de
+débordement horizontal ont été vérifiées localement. Les preuves `paper-home-*`
+et `scroll-scenes-*` restent historiques. Cette passe ne constitue ni une
+nouvelle QA complète des offres ni un déploiement en production.

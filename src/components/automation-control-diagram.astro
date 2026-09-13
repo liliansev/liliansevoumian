@@ -1,0 +1,121 @@
+---
+import ThreeScene from './three-scene.astro';
+
+const steps = [
+  { label: 'Vos outils', detail: '', accent: false, optional: false },
+  { label: 'Automatisation', detail: '', accent: false, optional: false },
+  { label: 'Contrôles', detail: '', accent: true, optional: false },
+  { label: 'Votre équipe', detail: 'Valide si nécessaire', accent: true, optional: true },
+  { label: 'Action', detail: '', accent: false, optional: false },
+];
+---
+
+<figure class="control-diagram m-0 mt-12 rounded-[var(--radius-diagram)] bg-[var(--color-ink)] p-5 text-[var(--color-text-on-dark)] sm:p-8" aria-labelledby="control-diagram-caption">
+  <figcaption id="control-diagram-caption" class="m-0 mb-6 max-w-[66ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-on-dark-mid)]">
+    Un principe de conception : contrôler avant d’agir, avec une validation humaine lorsque le besoin le demande.
+  </figcaption>
+  <ThreeScene
+    scene="flux"
+    description="Des demandes traversent un traitement puis deviennent des actions. Les contrôles, et la validation par votre équipe si nécessaire, encadrent cette automatisation."
+    startLabel="Tâches dispersées"
+    endLabel="Flux organisé"
+  >
+    <ol slot="fallback" class="control-flow" aria-label="Schéma de principe des contrôles avant une action automatisée">
+      {steps.map((step) => (
+        <li class:list={['control-step', { 'control-step--accent': step.accent, 'control-step--optional': step.optional }]}>
+          <svg class="control-ring" viewBox="0 0 160 160" fill="none" aria-hidden="true">
+            <circle cx="80" cy="80" r="78" vector-effect="non-scaling-stroke" />
+          </svg>
+          <span class="control-label">
+            <span>{step.label}</span>
+            {step.detail && <span class="control-detail">{step.detail}</span>}
+          </span>
+        </li>
+      ))}
+    </ol>
+  </ThreeScene>
+</figure>
+
+<style>
+  .control-flow {
+    display: grid;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 20rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .control-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .control-ring {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-text-on-dark-mid);
+    stroke: currentColor;
+    stroke-width: 1;
+  }
+
+  .control-step--accent .control-ring { color: var(--color-lime); }
+  .control-step--optional .control-ring { stroke-dasharray: 5 4; }
+
+  .control-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 2.5rem;
+    left: 1.25rem;
+    height: 1.25rem;
+    border-left: 1px solid var(--color-text-on-dark-mid);
+  }
+
+  .control-label {
+    display: grid;
+    gap: 0.25rem;
+    color: var(--color-text-on-dark);
+    font-size: var(--text-body);
+    line-height: 1.3;
+    font-weight: 500;
+  }
+
+  .control-detail {
+    color: var(--color-text-on-dark-mid);
+    font-weight: 400;
+  }
+
+  @media (min-width: 1024px) {
+    .control-flow {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 1.5rem;
+      max-width: 64rem;
+    }
+
+    .control-step { display: grid; grid-template-columns: 1fr; gap: 0; }
+    .control-ring { width: 100%; height: auto; }
+    .control-label {
+      position: absolute;
+      inset: 0;
+      align-content: center;
+      justify-items: center;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    .control-detail { max-width: 10ch; }
+    .control-step:not(:last-child)::after {
+      top: 50%;
+      left: 100%;
+      width: 1.5rem;
+      height: 0;
+      border-left: 0;
+      border-top: 1px solid var(--color-text-on-dark-mid);
+    }
+  }
+</style>

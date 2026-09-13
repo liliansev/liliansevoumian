@@ -1,50 +1,34 @@
 ---
 import SectionHeader from './SectionHeader.astro';
 import { Image } from 'astro:assets';
-import automationVisual from '../assets/home-services/automation.png';
-import planningVisual from '../assets/home-services/planning.png';
+import { Icon } from 'astro-icon/components';
+import ServiceWorkflowVisual from './service-workflow-visual.astro';
+import dashboardVisual from '../assets/home-services/interfaces/commercial-dashboard.png';
+import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
 
 const services = [
   {
     kind: 'automation',
     href: '/automatisations-ia',
-    title: 'Automatisation & IA',
     titleLines: ['Automatisation', '& IA'],
-    image: automationVisual,
-    imageAlt: 'Illustration : un flux relie la réception d’une commande à sa création et à la préparation de la facture.',
-    signal: 'Moins de temps passé sur les tâches à faible valeur ajoutée.',
     body: 'Workflows n8n et Make, agents IA et intégrations dans vos outils.',
-    details: ['Automatiser', 'Connecter', 'Construire un agent'],
-    action: 'Voir l’offre et les tarifs',
+    price: automationStartingPrice,
     source: 'home_services_automation',
   },
   {
     kind: 'web',
     href: '/sites-web-abonnement',
-    title: 'Sites & applications web',
     titleLines: ['Sites &', 'applications web'],
-    image: planningVisual,
-    imageAlt: 'Illustration : une application métier permet de consulter et d’organiser le planning d’une équipe.',
-    signal: 'Un outil métier pour vous et votre équipe.',
     body: 'Landing pages, dashboards, portails clients et applications métier, de la conception aux évolutions.',
-    details: ['Créer', 'Maintenir', 'Améliorer'],
-    action: 'Voir l’offre et les tarifs',
+    price: webStartingPrice,
     source: 'home_services_web',
   },
 ] as const;
 ---
 
-<section
-  id="services"
-  data-section
-  class="relative border-b border-[var(--color-border-strong)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
->
+<section id="services" data-section class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
   <div class="relative mx-auto max-w-[1200px]">
-    <SectionHeader
-      title="Des automatisations et des <mark>applications métier.</mark>"
-      titleMaxWidth="none"
-    />
-
+    <SectionHeader title="Des automatisations et des <mark>applications métier.</mark>" titleMaxWidth="none" />
     <div class="home-services">
       {services.map((service) => (
         <a
@@ -53,36 +37,28 @@ const services = [
           data-fast-goal="service_path_opened"
           data-fast-goal-source={service.source}
         >
-          <p class="home-service-card__signal">{service.signal}</p>
           <h3>{service.titleLines.map((line, index) => <span>{line}{index === 0 ? ' ' : ''}</span>)}</h3>
-          <Image
-            src={service.image}
-            alt={service.imageAlt}
-            widths={[384, 640, 960, 1200]}
-            sizes="(min-width: 1440px) 520px, (min-width: 900px) 40vw, 85vw"
-            format="webp"
-            quality={85}
-            loading="lazy"
-            decoding="async"
-            class="home-service-card__visual"
-          />
           <p class="home-service-card__body">{service.body}</p>
-
-          <ul aria-label={`Périmètre ${service.title}`}>
-            {service.details.map((detail) => <li>{detail}</li>)}
-          </ul>
-
-          <strong class="home-service-card__action">{service.action} <i aria-hidden="true">→</i></strong>
+          <span class="home-service-card__media">
+            {service.kind === 'automation' ? <ServiceWorkflowVisual /> : <Image
+              src={dashboardVisual}
+              alt="Exemple de dashboard commercial : chiffre d’affaires, opportunités, pipeline et prochaines relances. Données de démonstration."
+              widths={[384, 640, 960, 1200]}
+              sizes="(min-width: 1440px) 585px, (min-width: 900px) 45vw, 90vw"
+              format="webp"
+              quality={85}
+              loading="lazy"
+              decoding="async"
+              class="home-service-card__visual"
+            />}
+          </span>
+          <span class="home-service-card__footer">
+            <span class="home-service-card__price"><span>À partir de</span><strong>{service.price.toLocaleString('fr-FR')} € <small>HT</small></strong></span>
+            <span class="home-service-card__action">En savoir plus <Icon name="lucide:arrow-right" aria-hidden="true" /></span>
+          </span>
         </a>
       ))}
     </div>
-
-    <p class="mt-7 mb-0 max-w-[75ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">
-      Chaque projet comprend une création, puis un abonnement de suivi, facturés séparément.
-      Hébergement, maintenance et petits ajustements de l’existant sont inclus.
-      Les nouveaux besoins sont chiffrés à part.
-    </p>
-
   </div>
 </section>
 
@@ -90,70 +66,52 @@ const services = [
   .home-services {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto auto auto 1fr auto;
-    row-gap: 1.5rem;
-    border: 1px solid var(--color-border-strong);
+    grid-template-rows: auto auto 1fr auto;
+    gap: 1.5rem;
   }
-
   .home-service-card {
     display: grid;
     grid-template-rows: subgrid;
-    grid-row: span 6;
+    grid-row: span 4;
     min-width: 0;
-    min-height: 31rem;
-    padding: var(--spacing-service-card);
+    padding-block: var(--spacing-service-card);
+    border: 1px solid var(--color-service-border);
     background: var(--color-paper);
     color: var(--color-ink);
     text-decoration: none;
-    transition:
-      background-color var(--duration-default) var(--ease-out-quint),
-      color var(--duration-default) var(--ease-out-quint);
+    overflow: hidden;
+    transition: border-color var(--duration-default) var(--ease-out-quint);
   }
-
-  .home-service-card--automation {
-    background: var(--color-lime);
-    --color-ink-mid: #2e2e2e;
-    --color-ink-low: #3a3a3a;
-  }
-
-  .home-service-card + .home-service-card {
-    border-left: 1px solid var(--color-border-strong);
-  }
-
-  .home-service-card__signal {
-    max-width: 42ch;
+  .home-service-card > :is(h3, p, .home-service-card__footer) {
     margin: 0;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-    line-height: 1.55;
+    margin-inline: var(--spacing-service-card);
   }
-
   .home-service-card h3 {
     container-type: inline-size;
-    max-width: none;
-    margin: 0;
     color: var(--color-ink);
     font-size: inherit;
     font-weight: 600;
     line-height: 1.05;
     letter-spacing: -0.035em;
-    transition: transform var(--duration-default) var(--ease-out-quint);
   }
-
   .home-service-card h3 span {
     display: block;
     font-size: var(--text-home-service);
     white-space: nowrap;
   }
-
   .home-service-card__body {
     max-width: 48ch;
-    margin: 0;
     color: var(--color-ink-mid);
     font-size: var(--text-body);
     line-height: 1.6;
   }
-
+  .home-service-card__media {
+    display: block;
+    overflow: hidden;
+    border-block: 1px solid var(--color-divider);
+    background: var(--color-surface-low);
+  }
+  .home-service-card__media :global(.workflow-visual) { border: 0; }
   .home-service-card :global(.home-service-card__visual) {
     display: block;
     width: 100%;
@@ -161,85 +119,46 @@ const services = [
     aspect-ratio: 3 / 2;
     object-fit: cover;
   }
-
-  .home-service-card ul {
+  .home-service-card__footer {
     display: flex;
-    flex-wrap: wrap;
-    align-content: start;
-    gap: 0.5rem 1.25rem;
-    margin: 0;
-    padding: 1rem 0 0;
-    border-top: 1px solid var(--color-border-strong);
-    list-style: none;
-  }
-
-  .home-service-card li {
-    color: var(--color-ink);
-    font-size: var(--text-mono-label);
-    font-weight: 550;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-  }
-
-  .home-service-card__action {
-    display: flex;
-    min-height: 44px;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    border-top: 1px solid var(--color-border-strong);
-    padding-top: 1rem;
-    font-size: var(--text-button);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
   }
-
-  .home-service-card__action i {
-    font-style: normal;
+  .home-service-card__price { display: grid; gap: 0.25rem; }
+  .home-service-card__price > span { color: var(--color-ink-mid); font-size: var(--text-body-sm); }
+  .home-service-card__price strong {
+    font-size: var(--text-title-lg);
+    font-weight: 600;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+  .home-service-card__price small { font-size: var(--text-body-sm); font-weight: 400; }
+  .home-service-card__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    font-size: var(--text-body-sm);
+    font-weight: 550;
+    white-space: nowrap;
+  }
+  .home-service-card__action :global(svg) {
+    width: 1.125rem;
+    height: 1.125rem;
     transition: transform var(--duration-default) var(--ease-out-quint);
   }
-
   @media (hover: hover) and (pointer: fine) {
-    .home-service-card:hover {
-      background: var(--color-ink);
-      color: var(--color-paper);
-    }
-
-    .home-service-card:hover :is(h3, p, li, .home-service-card__action) {
-      color: var(--color-paper);
-    }
-
-    .home-service-card:hover :is(ul, .home-service-card__action) {
-      border-color: var(--color-paper);
-    }
-
-    .home-service-card:hover h3 {
-      transform: translateY(-0.2rem);
-    }
-
-    .home-service-card:hover .home-service-card__action i {
-      transform: translateX(0.35rem);
-    }
+    .home-service-card:hover { border-color: var(--color-night); }
+    .home-service-card:hover .home-service-card__action { text-decoration: underline; text-underline-offset: 0.3em; }
+    .home-service-card:hover .home-service-card__action :global(svg) { transform: translateX(0.2rem); }
   }
-
   @media (max-width: 899px) {
-    .home-services {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto;
-      row-gap: 0;
-    }
-
-    .home-service-card {
-      grid-template-rows: auto auto auto auto 1fr auto;
-      grid-row: auto;
-      gap: 1.5rem;
-      min-height: 0;
-    }
-
-    .home-service-card + .home-service-card {
-      border-top: 1px solid var(--color-border-strong);
-      border-left: 0;
-    }
+    .home-services { grid-template-columns: 1fr; grid-template-rows: auto; gap: 2rem; }
+    .home-service-card { grid-template-rows: auto auto auto auto; grid-row: auto; gap: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-service-card, .home-service-card__action :global(svg) { transition: none; }
   }
 </style>

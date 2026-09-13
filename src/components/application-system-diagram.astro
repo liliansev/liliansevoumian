@@ -1,0 +1,71 @@
+---
+import ThreeScene from './three-scene.astro';
+---
+
+<figure class="application-system m-0 rounded-[var(--radius-diagram)] p-5 sm:p-8" aria-labelledby="application-system-caption">
+  <ThreeScene
+    scene="structure"
+    description="Trois niveaux s’assemblent : les données, une application métier et votre équipe. Les informations dispersées deviennent une vue commune."
+    startLabel="Données séparées"
+    endLabel="Vue commune"
+  >
+    <svg
+      slot="fallback"
+      class="mx-auto block h-auto max-h-[330px] w-full max-w-[360px]"
+      viewBox="0 0 400 420"
+      role="img"
+      aria-labelledby="application-system-title application-system-description"
+    >
+      <title id="application-system-title">Vos informations réunies dans une application métier</title>
+      <desc id="application-system-description">Les fichiers, les demandes et les outils sont reliés à une application métier centrale. Votre équipe y retrouve une vue commune.</desc>
+
+      <g class="application-system__connections" fill="none" stroke-width="1.25">
+        <path d="M62 118 C62 168 105 210 130 210" />
+        <path d="M200 118 V140" />
+        <path d="M338 118 C338 168 295 210 270 210" />
+        <path d="M200 280 V314" />
+      </g>
+
+      <g class="application-system__nodes" fill="none" stroke-width="1.25">
+        <circle cx="62" cy="64" r="54" />
+        <circle cx="200" cy="64" r="54" />
+        <circle cx="338" cy="64" r="54" />
+        <circle cx="200" cy="358" r="44" />
+      </g>
+      <circle class="application-system__center" cx="200" cy="210" r="70" fill="none" stroke-width="1.5" />
+
+      <g class="application-system__labels" text-anchor="middle" dominant-baseline="middle" font-size="22">
+        <text x="62" y="64">Fichiers</text>
+        <text x="200" y="64" font-size="20">Demandes</text>
+        <text x="338" y="64">Outils</text>
+        <text x="200" y="198" font-weight="600">Application</text>
+        <text x="200" y="225" font-weight="600">métier</text>
+        <text x="200" y="358">Équipe</text>
+      </g>
+    </svg>
+  </ThreeScene>
+  <figcaption id="application-system-caption" class="mx-auto mb-0 mt-6 max-w-[42ch] text-center text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-on-dark-mid)]">
+    Vos fichiers, demandes et outils reliés à une application. Une vue commune pour votre équipe.
+  </figcaption>
+</figure>
+
+<style>
+  .application-system {
+    background: var(--color-ink);
+    color: var(--color-text-on-dark);
+  }
+
+  .application-system__connections,
+  .application-system__nodes {
+    stroke: var(--color-text-on-dark-mid);
+  }
+
+  .application-system__center {
+    stroke: var(--color-lime);
+  }
+
+  .application-system__labels {
+    fill: currentColor;
+    font-family: inherit;
+  }
+</style>

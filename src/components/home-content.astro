@@ -2,11 +2,6 @@
 import { Icon } from 'astro-icon/components';
 import SectionHeader from './SectionHeader.astro';
 
-interface Props {
-  newsletterUrl?: string;
-}
-
-const { newsletterUrl } = Astro.props;
 // Dernière vidéo longue vérifiée le 6 septembre 2026 sur le flux officiel :
 // https://www.youtube.com/feeds/videos.xml?channel_id=UCGH0eGI6I9EFsaKpuXXIisg
 const video = {
@@ -33,17 +28,19 @@ const video = {
       </article>
       <aside aria-label="La newsletter" class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
         <SectionHeader title="La newsletter" titleMaxWidth="none" spacing="none" class="h-full" />
-        <div class="bloc-lime grid gap-6 self-start p-6 lg:p-8">
+        <div class="newsletter-panel grid gap-6 self-start border border-[var(--color-divider)] bg-[var(--color-surface-low)] p-6 text-[var(--color-ink)] lg:p-8">
           <p class="m-0 max-w-[36ch] text-[length:var(--text-body-large)] leading-relaxed">Un mail par semaine : cas d’usage, outils et actualité IA.</p>
-          {!newsletterUrl && <fieldset disabled class="m-0 min-w-0 border-0 p-0" aria-describedby="newsletter-unavailable">
+          <form id="newsletter-form" action="/api/newsletter" method="post" class="m-0 min-w-0" aria-describedby="newsletter-note newsletter-status">
             <label for="newsletter-email" class="mb-2 block text-base font-medium">Votre adresse email</label>
             <div class="grid gap-3">
-              <input id="newsletter-email" type="email" name="email" autocomplete="email" placeholder="vous@entreprise.fr" class="min-h-12 min-w-0 w-full border border-[var(--color-ink)] bg-[var(--color-surface-high)] px-4 text-base text-[var(--color-ink)] placeholder:text-[var(--color-ink-mid)] disabled:cursor-not-allowed" />
-              <button type="button" disabled class="btn-primary newsletter-action w-full">S’inscrire</button>
+              <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" class="min-h-12 min-w-0 w-full rounded-cta border border-[var(--color-border-strong)] bg-[var(--color-paper)] px-4 text-base text-[var(--color-ink)] placeholder:text-[var(--color-ink-mid)]" />
+              <button type="submit" class="btn-primary newsletter-action w-full">Recevoir la newsletter <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></button>
             </div>
-            <p id="newsletter-unavailable" class="mb-0 mt-4 text-sm leading-relaxed">Les inscriptions sont momentanément indisponibles.</p>
-          </fieldset>}
-          {newsletterUrl && <a href={newsletterUrl} target="_blank" rel="noopener noreferrer" class="btn-primary newsletter-action w-full" data-fast-goal="newsletter_opened" data-fast-goal-source="home_content">Recevoir la newsletter <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></a>}
+            <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
+            <p id="newsletter-note" class="mb-0 mt-4 text-sm leading-relaxed text-[var(--color-ink-mid)]">Un email pour confirmer votre inscription. Désinscription en un clic.</p>
+            <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" class="newsletter-status mb-0 mt-3 text-sm leading-relaxed" hidden></p>
+            <noscript><p class="mb-0 mt-4 text-sm">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
+          </form>
         </div>
       </aside>
     </div>
@@ -53,13 +50,67 @@ const video = {
 <style>
   .content-columns :global(.section-header-row) { height: 100%; }
   .newsletter-action { min-height: 48px; text-transform: none; letter-spacing: normal; }
+  .newsletter-action:disabled { cursor: wait; }
+  .newsletter-status[data-state="error"] { color: var(--color-error); }
 
   @media (hover: hover) and (pointer: fine) {
     .video-link:hover img { transform: scale(1.025); }
     .video-link:hover h3 { text-decoration: underline; text-underline-offset: 0.18em; }
-    .video-link:hover .video-play { background: var(--color-lime); }
+    .video-link:hover .video-play { background: var(--color-night); color: var(--color-paper); }
   }
   @media (prefers-reduced-motion: reduce) {
     .video-link:hover img { transform: none; }
   }
 </style>
+
+<script>
+  import { z } from 'astro/zod';
+
+  const resultSchema = z.object({ status: z.enum(['pending', 'subscribed', 'error']), message: z.string().min(1) });
+  const form = document.querySelector<HTMLFormElement>('#newsletter-form');
+  const email = form?.querySelector<HTMLInputElement>('#newsletter-email');
+  const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const status = form?.querySelector<HTMLParagraphElement>('#newsletter-status');
+  if (form && email && button && status) {
+    const originalButton = button.innerHTML;
+    let submitting = false;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (submitting || !form.reportValidity()) return;
+      submitting = true;
+      button.disabled = true;
+      button.textContent = 'Inscription en cours…';
+      form.setAttribute('aria-busy', 'true');
+      status.hidden = false;
+      status.dataset.state = 'loading';
+      status.textContent = 'Votre demande est en cours d’envoi.';
+      email.removeAttribute('aria-invalid');
+
+      const submit = async () => {
+        try {
+          const data = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: data.get('email'), website: data.get('website') }),
+            signal: AbortSignal.timeout(25_000),
+          });
+          const result = resultSchema.safeParse(await response.json());
+          if (!result.success) throw new Error('Invalid signup response');
+          status.dataset.state = result.data.status;
+          status.textContent = result.data.message;
+          if (response.status === 422) email.setAttribute('aria-invalid', 'true');
+          if (response.ok && result.data.status !== 'error') form.reset();
+        } finally {
+          submitting = false;
+          button.disabled = false;
+          button.innerHTML = originalButton;
+          form.removeAttribute('aria-busy');
+        }
+      };
+      submit().catch(() => {
+        status.dataset.state = 'error';
+        status.textContent = 'La connexion a été interrompue. Vérifiez votre connexion puis réessayez.';
+      });
+    });
+  }
+</script>

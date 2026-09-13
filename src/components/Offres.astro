@@ -3,6 +3,7 @@ import LinkCTA from './LinkCTA.astro';
 import BoutonReservation from './BoutonReservation.astro';
 import SubscriptionGrid from './SubscriptionGrid.astro';
 import { automationSubscriptions, webSubscriptions, maintenanceScope } from '../data/maintenance';
+import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 /*
  * Offres.astro — les formats de collaboration.
@@ -120,7 +121,7 @@ const formats = [
         Le devis précise le travail à réaliser et le calendrier. Le suivi est prévu dès le départ.
       </p>
       <p class="offres-budget">
-        <strong>Création sur devis.</strong> Nous priorisons les workflows et les agents
+        <strong>Création à partir de {automationStartingPrice.toLocaleString('fr-FR')}&nbsp;€ HT, sur devis.</strong> Nous priorisons les workflows et les agents
         pendant l’appel de {DUREE_RESERVATION_MINUTES} min. Vous recevez ensuite un devis
         pour le périmètre convenu, distinct de l’abonnement de suivi.
       </p>
@@ -153,7 +154,7 @@ const formats = [
         ajouter un septième lien dans la barre de navigation de la home. */}
     <div class="reveal mt-10 pt-7 border-t border-[var(--color-divider)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
       <p class="m-0 max-w-[58ch] text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
-        Pour un site web, la création commence à 1&nbsp;900&nbsp;€ HT, puis
+        Pour un site web, la création commence à {webStartingPrice.toLocaleString('fr-FR')}&nbsp;€ HT, puis
         l’abonnement de suivi commence à {webSubscriptions[0].schemaPrice}&nbsp;€ HT / mois pour une landing page.
       </p>
       <LinkCTA href="/sites-web-abonnement">Voir l’offre sites web</LinkCTA>

@@ -1,6 +1,41 @@
 # Visuels des services de la homepage
 
-Illustrations photoréalistes générées avec image_gen le 6 septembre 2026. Interfaces fictives illustrant les usages, sans attribution à un client. Sources conservées en PNG ; rendu WebP responsive via Astro. Ratio 3:2, sans recadrage sur le site.
+## Visuels affichés depuis le 13 septembre 2026
+
+Les deux cartes affichent directement des interfaces, sans écran physique, dans leurs emplacements 3:2 existants. La passe finale du 13 septembre affiche les médias bord à bord dans deux cartes blanches : titre et description, média, puis prix et « En savoir plus ». Les quatre rangées sont alignées via subgrid ; les prix commencent à 900 € HT et 1 500 € HT. Le paragraphe d’abonnement sous les cartes est retiré. Sources PNG avec provenance intégrée ; rendu WebP responsive chargé à la demande via Astro.
+
+- **Automatisation & IA :** `interfaces/workflow-make-source.png`, copie de la capture fournie `/Users/a1207/Pictures/CleanShot 2026-09-07 at 17.00.39.png`. Les pixels décodés sont identiques à la source ; seules les métadonnées de provenance ont été ajoutées. `src/components/service-workflow-visual.astro` masque le décor CleanShot par recadrage CSS, en conservant tous les modules et leurs connexions. Un en-tête blanc natif affiche « Scénario Make » ; le pied « HubSpot · Notion · Gmail » est masqué lorsque le visuel mesure au plus 380 px de large.
+- **Sites & applications web :** `interfaces/commercial-dashboard.png`, interface de suivi commercial générée avec l’outil intégré imagegen à partir du prompt exact conservé dans `interfaces/commercial-dashboard.prompt.txt`. Aucun appareil ni environnement photographique. Les noms et chiffres sont fictifs ; la mention « Données de démonstration » les identifie comme tels. Ce visuel n’est pas une réalisation client.
+
+Validation locale : `http://localhost:4324/#services`, TypeScript, chargement responsive et clics des deux cartes vérifiés. Verdict `ship` dans `.impeccable/review/service-interfaces-verdict.md`, preuves dans `.impeccable/review/service-interfaces-runtime.json`. La passe finale de palette et de mise en page est documentée dans `.impeccable/review/night-home-contract.md` et `night-home-finish-review.md` (`ship`). Aucun déploiement en production réalisé pour ces changements.
+
+## Archives photographiques, non affichées
+
+Les photographies illustratives initiales ont été générées avec image_gen le 6 septembre 2026, sans attribution à un client. Elles restent conservées en PNG avec les retouches du 7 septembre : `automation-make.png`, `automation-n8n.png`, `automation.png` et `planning.png`.
+
+`automation-make.png` était le montage Make affiché sur la homepage ; `planning.png` était le planning fictif de la carte Sites & applications web. `automation-n8n.png` reste une variante et `automation.png` la source photographique des montages. Aucun de ces quatre fichiers n’est désormais utilisé dans les cartes de services de la homepage.
+
+Les retouches ont été réalisées avec l’outil intégré image_gen (mode compositing), pas avec la CLI. Elles représentent les workflows fournis et ne doivent pas servir de documentation technique au pixel près. La scène photographique reste générée.
+
+## Retouche Make — automation-make.png
+
+Source écran : `/Users/a1207/Pictures/CleanShot 2026-09-07 at 17.00.39.png`.
+Source photographique : `automation.png`.
+
+Prompt final :
+
+> Use case: compositing. Image 1 is the photograph to edit. Image 2 is the actual user-supplied Make automation screenshot to insert on the laptop display. Replace ONLY the active display content in image 1 with the real workflow canvas from image 2: remove the surrounding decorative gradient and rounded presentation frame from screenshot 2, use just its light grey application canvas with the connected colorful Make nodes. Match laptop screen four-corner perspective accurately. Preserve the exact topology, branching, relative positions, node count, connections and brand icons of the supplied workflow; do not invent, simplify or redraw a different workflow. Fit the complete diagram into the display with neutral light grey margins as needed instead of cropping workflow branches. Absolutely remove all previous fake three-node interface and fake sidebar from image 1. Keep the photograph otherwise identical: same framing, landscape 3:2, laptop body and bezel, camera angle, desk, papers, natural hand, light and texture. Subtle realistic screen luminance without glare covering the diagram. High fidelity screen replacement, not a new photograph, no extra captions or logos.
+
+## Variante n8n — automation-n8n.png
+
+Source écran : `/Users/a1207/Pictures/CleanShot 2026-09-07 at 17.01.27.png`.
+Source photographique : `automation.png`.
+
+Prompt final :
+
+> Use case: compositing. Image 1 is the photograph to edit. Image 2 is the user's real n8n automation screenshot, a very wide network, to insert into the laptop display. Replace ONLY the active display content in image 1 with the real workflow canvas from image 2: exclude the surrounding decorative blue purple gradient and rounded presentation frame, use only the inner light grey application canvas and its connected square n8n nodes. Fit the ENTIRE very wide screenshot proportionally into the screen, centered vertically with plain light grey screen margins above and below; do not stretch it vertically or crop branches. Preserve supplied topology, node count, branching and connections, relative positions and icons exactly; invent no new nodes or interface. Accurate screen four-corner perspective. Remove all the old fake three-node UI and sidebar. Keep all other pixels of photograph as close as possible: identical landscape 3:2 composition, laptop, bezel, hand, papers, desk, illumination, textures and background. Screen replacement only, not a new photo. Restrained realistic display brightness; no new captions.
+
+La capture `CleanShot 2026-09-07 at 16.58.35.png` montre une erreur de configuration et une fenêtre de filtre. Elle n’est pas utilisée dans le visuel d’offre ; elle conviendrait à un contenu de dépannage.
 
 ## automation.png
 

@@ -5,6 +5,47 @@ import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 
+/** @returns {import('vite').Plugin} */
+function newsletterDevApi() {
+  return {
+    name: 'newsletter-dev-api',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (req.url?.split('?')[0] !== '/api/newsletter') return next();
+        const run = async () => {
+          const { signupNewsletterFromDev } = await server.ssrLoadModule('/src/lib/newsletter-signup.ts');
+          const headers = new Headers();
+          for (const [key, value] of Object.entries(req.headers)) {
+            if (value !== undefined) headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+          }
+          const chunks = [];
+          let length = 0;
+          for await (const chunk of req) {
+            length += chunk.length;
+            if (length > 4096) {
+              res.writeHead(413, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ status: 'error', message: 'La demande est trop volumineuse.' }));
+              return;
+            }
+            chunks.push(chunk);
+          }
+          const body = Buffer.concat(chunks);
+          const request = new Request(`http://${req.headers.host}${req.url}`, {
+            method: req.method,
+            headers,
+            ...(body.length ? { body } : {}),
+          });
+          const response = await signupNewsletterFromDev(request);
+          res.writeHead(response.status, Object.fromEntries(response.headers));
+          res.end(await response.text());
+        };
+        run().catch(next);
+      });
+    },
+  };
+}
+
 /* Les cas clients sont les seules pages du site à porter une date de
    publication réelle. On la lit ici pour alimenter le `lastmod` du sitemap
    (motif détaillé au niveau de `serialize`, plus bas).
@@ -46,7 +87,7 @@ export default defineConfig({
   },
   vite: {
     // @ts-expect-error -- type mismatch entre @tailwindcss/vite (Plugin<any>[]) et la version Vite embarquée par Astro (PluginOption). Compatible runtime.
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), newsletterDevApi()],
     server: {
       watch: {
         usePolling: true,
@@ -54,6 +95,7 @@ export default defineConfig({
       }
     },
     optimizeDeps: {
+      include: ['three', 'three/addons/controls/OrbitControls.js'],
       exclude: ['@tailwindcss/vite']
     }
   },
@@ -64,7 +106,7 @@ export default defineConfig({
          restreint. La liste est complétée pour que la config décrive ce qui est
          réellement rendu. */
       include: {
-        lucide: ['arrow-left', 'arrow-right', 'bell', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'receipt-text', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
+        lucide: ['arrow-left', 'arrow-right', 'bell', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'pause', 'receipt-text', 'rotate-ccw', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
         'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'odoo', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello'],
         /* Lovable ne figure pas dans simple-icons. La variante `-plain` de
            devicon est monochrome, donc elle prend currentColor comme tous les
@@ -77,7 +119,7 @@ export default defineConfig({
     sitemap({
       // Elle est en noindex,nofollow : la declarer au sitemap est un signal
       // contradictoire, et Search Console le remonte comme avertissement.
-      filter: (page) => !page.includes('/mentions-legales'),
+      filter: (page) => !['/mentions-legales', '/explorations-3d'].some((path) => page.includes(path)),
       /* UN SEUL `serialize` : deux clés du même nom dans un littéral d'objet
          ne lèvent aucune erreur, la seconde écrase simplement la première.
          L'URL est normalisée sans slash final, comme le canonical et comme les

@@ -1,0 +1,121 @@
+---
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import workflowCapture from '../assets/home-services/interfaces/workflow-make-source.png';
+---
+
+<span
+  class="workflow-visual"
+  role="img"
+  aria-label="Capture du scénario Make de Lilian : des modules HubSpot, Notion et Gmail reliés par plusieurs branches d’automatisation."
+>
+  <span class="workflow-visual__header" aria-hidden="true">
+    <span class="workflow-visual__title"><Icon name="simple-icons:make" /> Scénario Make</span>
+    <span class="workflow-visual__view">Vue d’ensemble</span>
+  </span>
+  <span class="workflow-visual__canvas" aria-hidden="true">
+    <span class="workflow-visual__crop">
+      <Image
+        src={workflowCapture}
+        alt=""
+        widths={[640, 960, 1280, 1600]}
+        sizes="(min-width: 1440px) 595px, (min-width: 900px) 46vw, 100vw"
+        format="webp"
+        quality={90}
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+  </span>
+  <span class="workflow-visual__footer" aria-hidden="true">
+    <span>HubSpot · Notion · Gmail</span>
+    <span>Workflow réel</span>
+  </span>
+</span>
+
+<style>
+  .workflow-visual {
+    container-type: inline-size;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-width: 0;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border: 1px solid var(--color-divider);
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  .workflow-visual__header,
+  .workflow-visual__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+  }
+
+  .workflow-visual__header {
+    border-bottom: 1px solid var(--color-divider);
+  }
+
+  .workflow-visual__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+  }
+
+  .workflow-visual__title :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .workflow-visual__view,
+  .workflow-visual__footer {
+    font-size: var(--text-mono-label);
+    color: var(--color-ink-mid);
+  }
+
+  .workflow-visual__canvas {
+    display: grid;
+    align-content: center;
+    min-height: 0;
+    background: #ebebeb;
+  }
+
+  /* Display only the canvas inside the supplied CleanShot presentation.
+     The source pixels and the complete workflow are kept unchanged. */
+  .workflow-visual__crop {
+    position: relative;
+    display: block;
+    aspect-ratio: 2120 / 960;
+    overflow: hidden;
+  }
+
+  .workflow-visual__crop :global(img) {
+    position: absolute;
+    width: calc(100% * 2447 / 2120);
+    max-width: none;
+    height: auto;
+    left: calc(-100% * 164 / 2120);
+    top: calc(-100% * 175 / 960);
+  }
+
+  .workflow-visual__footer {
+    border-top: 1px solid var(--color-divider);
+    padding-block: 0.625rem;
+  }
+
+  @container (max-width: 380px) {
+    .workflow-visual__header {
+      padding-block: 0.5rem;
+    }
+
+    .workflow-visual__footer {
+      display: none;
+    }
+  }
+</style>

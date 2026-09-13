@@ -177,7 +177,10 @@
 
   /* ── Surfaces ── */
   --color-paper: #ffffff;
-  --color-surface-low: #f7f7f7;
+  --color-surface-low: #f7f8fa;
+  --color-night: #111827;
+  --color-night-soft: #263449;
+  --color-service-border: #dce1e8;
   --color-surface-high: #ffffff;
   --color-section-band: #f7f7f7;
 
@@ -208,6 +211,7 @@
      l'encre, pas du lime, qui y serait illisible. Dans cette DA l'emphase
      ne vient jamais d'un texte coloré mais d'un surlignage. */
   --color-lime: #cdf564;
+  --color-lime-deep: #b8e043;
   --color-accent: #cdf564;
   --color-accent-text: #111111;
   --color-accent-soft: #f2fbd8;
@@ -648,8 +652,8 @@ body {
   justify-content: center;
   gap: 8px;
   min-height: 44px;
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--color-lime);
+  color: var(--color-night);
   font-family: var(--font-mono);
   /* Un cran au-dessus des liens secondaires, et c'est le seul rang du système
      qui sépare l'action primaire du reste. À 12 px, le bouton portait la taille
@@ -689,26 +693,14 @@ body {
               transform var(--duration-default) var(--ease-out-quint);
 }
 
-/* LE LIME APPARAÎT AU SURVOL. Le bouton est noir au repos ; la couleur de
-   marque arrive quand la main arrive, au lieu de décorer en permanence.
-   C'est le seul endroit du site où elle bouge.
-   Le bouton monte d'un pixel : à cette échelle le déplacement ne se lit pas
-   comme un mouvement, il se lit comme une réponse. */
+/* Le CTA garde son texte bleu nuit sur lime ; le survol approfondit le lime
+   et monte d'un pixel sans changer la couleur du libellé. */
 .btn-primary:hover,
 .btn-primary:focus-visible {
-  background: var(--color-lime);
-  color: var(--color-ink);
+  background: var(--color-lime-deep);
+  color: var(--color-night);
   transform: translateY(-1px);
   transition-duration: var(--duration-quick);
-}
-
-/* Sur un aplat lime, ce geste ne peut pas fonctionner : du lime sur du lime
-   disparaît (1,00:1). C'est le blanc qui prend le relais — même geste, autre
-   matière selon le fond. */
-.bloc-lime .btn-primary:hover,
-.bloc-lime .btn-primary:focus-visible {
-  background: #ffffff;
-  color: var(--color-ink);
 }
 
 /* `translateY(0)` explicite : le pressé écrase la montée d'un pixel plutôt que
@@ -1580,7 +1572,7 @@ a[href^="mailto:"] {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: var(--color-lime);
+  background: var(--color-surface-low);
   /* Au repos la bande est hors cadre à gauche ; elle traverse à l'apparition
      puis sort à droite. `transform` seul : aucune propriété de layout animée. */
   transform: translateX(-101%);
@@ -1867,21 +1859,22 @@ mark.inv::before { --angle: 1.5deg; }
 h1 mark::before { --angle: -1.3deg; inset: 0.14em 0 0.16em; }
 h1 mark.inv::before { --angle: 1.1deg; }
 
-/* Sur un aplat lime, c'est le blanc qui surligne — sinon le mot disparaîtrait
-   dans le fond. */
-.bloc-lime mark::before { background: #ffffff; }
+/* Les anciens blocs lime sont désormais clairs ; les mots gardent leur
+   surlignage lime comme sur le papier blanc. */
+.bloc-lime mark::before { background: var(--color-lime); }
 
 /* ── L'aplat lime ──
    Il remappe les jetons de rôle : tout composant réutilisable s'y adapte sans
    variante. Le remap ne lit que des valeurs fixes — lire un rôle produirait un
    cycle, et la section entière deviendrait lime sur lime. */
 .bloc-lime {
-  background: var(--color-lime);
+  /* Legacy class retained for offer-page compatibility; never a lime panel. */
+  background: #f7f8fa;
 
-  --color-paper: var(--color-lime);
-  --color-surface-low: var(--color-lime);
+  --color-paper: #f7f8fa;
+  --color-surface-low: #f7f8fa;
   --color-surface-high: #ffffff;
-  --color-section-band: var(--color-lime);
+  --color-section-band: #f7f8fa;
   --color-divider: rgba(17, 17, 17, 0.18);
   --color-grid-line: rgba(17, 17, 17, 0.12);
   --color-ink-mid: #2e2e2e;
@@ -1902,9 +1895,7 @@ h1 mark.inv::before { --angle: 1.1deg; }
    seuls cas concernés.
    ========================================================================= */
 
-.bloc-lime .btn-primary {
-  color: #ffffff;
-}
+.bloc-lime .btn-primary { color: var(--color-night); }
 
 /* =========================================================================
    L'APLAT ENCRE — le pied de page. Même mécanique que .bloc-lime : on remappe
@@ -1918,10 +1909,10 @@ h1 mark.inv::before { --angle: 1.1deg; }
      `background: var(--color-ink)` à côté de `--color-ink: <blanc>` donnait
      un pied blanc avec du texte blanc dessus. C'est le même cycle que celui
      déjà évité sur .bloc-lime — je l'ai reproduit ici. */
-  background: #111111;
+  background: var(--color-night);
   color: #ffffff;
 
-  --color-paper: #111111;
+  --color-paper: #111827;
   --color-surface-low: var(--color-surface-on-dark);
   --color-surface-high: var(--color-surface-on-dark);
   --color-section-band: var(--color-ink);
@@ -1940,9 +1931,9 @@ h1 mark.inv::before { --angle: 1.1deg; }
 
 .bloc-encre mark { color: #111111; }
 .bloc-encre mark::before { background: var(--color-lime); }
-.bloc-encre .btn-primary { background: var(--color-lime); color: #111111; }
+.bloc-encre .btn-primary { background: var(--color-lime); color: var(--color-night); }
 .bloc-encre .btn-primary:hover,
-.bloc-encre .btn-primary:focus-visible { background: #ffffff; }
+.bloc-encre .btn-primary:focus-visible { background: var(--color-lime-deep); }
 
 /* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
    `nowrap` qui protege la bande devient une cause de debordement. La bande

@@ -1,4 +1,5 @@
 import { webSubscriptions, maintenanceScope } from './maintenance';
+import { webStartingPrice } from './service-pricing';
 
 export interface CreationOffer {
   name: string;
@@ -23,8 +24,8 @@ export interface SiteFaq {
 export const creationOffers: readonly CreationOffer[] = [
   {
     name: 'Landing page',
-    price: '1\u00a0900\u00a0€\u00a0HT',
-    schemaPrice: 1900,
+    price: `${webStartingPrice.toLocaleString('fr-FR')}\u00a0€\u00a0HT`,
+    schemaPrice: webStartingPrice,
     useCase: 'Présenter une offre et recevoir des demandes.',
     promise: 'Votre offre, vos références et les réponses aux questions de vos prospects, réunies sur une page.',
     includes: ['Textes et structure', 'Design adapté au mobile', 'Bases SEO et suivi des visites'],

@@ -1,0 +1,179 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+import { sceneContent } from '../lib/three-lab/content';
+
+const directionContract = `MODE: Experience. Established black/lime brand, code-led Three.js studies requested by Lilian.
+FIRST VIEWPORT: an actual, large, rotatable WebGL sculpture, three plainly named choices and one sentence explaining its business meaning.
+SIGNATURE: the visitor turns the scene and moves from dispersed elements to an organized system with a continuous slider.
+QUALITY BAR: precise fine linework, selective matte lime volumes, no bloom, no glass, readable HTML labels and responsive framing.
+CONSTRAINTS: isolated noindex demonstration; only one renderer; visible loading/error recovery; keyboard controls; motion stops offscreen and respects reduced motion.
+UNRESOLVED: which scene, placement and motion Lilian will approve.`;
+---
+
+<Layout title="Explorations 3D · Lilian Sevoumian" noindex directionContract={directionContract}>
+  <header class="lab-header">
+    <a href="/" class="lab-signature">Lilian Sevoumian</a>
+    <a href="/#services" class="lab-back">Retour au site <Icon name="lucide:arrow-right" class="size-4 -rotate-45" aria-hidden="true" /></a>
+  </header>
+
+  <main id="main-content" class="lab-main">
+    <div class="lab-intro">
+      <h1>Le site, en trois dimensions.</h1>
+      <p>Trois pistes à explorer. Faites-les tourner, puis jouez avec leur transformation.</p>
+    </div>
+
+    <three-lab class="lab" data-state="loading">
+      <nav class="lab-choices" aria-label="Choisir une scène">
+        {Object.entries(sceneContent).map(([id, scene], index) => (
+          <button type="button" data-scene={id} aria-pressed={index === 0} aria-controls="lab-stage">
+            <span class="lab-choice-shape" data-shape={id} aria-hidden="true"></span>
+            {scene.name}
+          </button>
+        ))}
+      </nav>
+
+      <div id="lab-stage" class="lab-stage">
+        <div class="lab-viewport">
+          <canvas tabindex="0" role="img" aria-label={sceneContent.orbites.summary} aria-describedby="lab-gesture"></canvas>
+          <div class="lab-labels" aria-hidden="true"></div>
+          <div class="lab-status" role="status" aria-live="polite">
+            <p data-status-text>La scène se prépare…</p>
+            <button type="button" data-reload hidden>Recharger la scène</button>
+          </div>
+          <noscript><p class="lab-no-script">Activez JavaScript pour manipuler les scènes 3D.</p></noscript>
+          <p id="lab-gesture" class="lab-gesture">Glisser pour tourner <span aria-hidden="true">·</span> Flèches au clavier</p>
+        </div>
+
+        <aside class="lab-story" aria-live="polite" aria-atomic="true">
+          <h2 data-title>{sceneContent.orbites.title}</h2>
+          <p class="lab-description" data-description>{sceneContent.orbites.description}</p>
+          <p class="lab-placement" data-placement>{sceneContent.orbites.placement}</p>
+        </aside>
+      </div>
+
+      <fieldset class="lab-controls" disabled>
+        <legend class="sr-only">Explorer la scène</legend>
+        <div class="lab-transition">
+          <label for="lab-progress">Faire évoluer la scène</label>
+          <input id="lab-progress" type="range" min="0" max="100" value="100" step="1" aria-valuetext="Chacun trouve sa place" />
+          <div class="lab-range-ends"><span data-before>{sceneContent.orbites.before}</span><span data-after>{sceneContent.orbites.after}</span></div>
+        </div>
+        <div class="lab-actions">
+          <button type="button" data-replay>Rejouer la transition</button>
+          <button type="button" data-pause aria-pressed="false">Mettre en pause</button>
+          <button type="button" data-reset>Vue initiale</button>
+        </div>
+      </fieldset>
+      <p class="lab-note">Études visuelles pour le site. Chaque scène illustre une idée, sans représenter un workflow client.</p>
+    </three-lab>
+  </main>
+</Layout>
+
+<script>
+  import('../lib/three-lab/lab').catch((error: unknown) => {
+    const lab = document.querySelector<HTMLElement>('three-lab');
+    const message = lab?.querySelector<HTMLElement>('[data-status-text]');
+    const retry = lab?.querySelector<HTMLButtonElement>('[data-reload]');
+    if (lab) lab.dataset.state = 'error';
+    if (message) message.textContent = 'Le chargement de la 3D a été interrompu. Rechargez la scène pour réessayer.';
+    if (retry) {
+      retry.hidden = false;
+      retry.onclick = () => window.location.reload();
+    }
+    console.error('Three.js module loading failed:', error);
+  });
+</script>
+
+<style>
+  :global(body:has(three-lab) .technical-grid) { display: none; }
+  .lab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 72px;
+    padding-inline: var(--spacing-section-x);
+    border-bottom: 1px solid var(--color-divider);
+    gap: 24px;
+  }
+  .lab-header a { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--text-body-sm); text-decoration: none; }
+  .lab-signature { font-weight: 600; }
+  .lab-back { display: flex; align-items: center; gap: 12px; }
+  .lab-back:hover { text-decoration: underline; text-underline-offset: 5px; }
+  .lab-main { background: var(--color-ink); color: var(--color-text-on-dark); min-height: calc(100svh - 72px); padding: 40px var(--spacing-section-x) 24px; }
+  .lab-intro, .lab { max-width: 1440px; margin-inline: auto; }
+  .lab-intro { display: flex; gap: 32px; align-items: end; justify-content: space-between; padding-bottom: 32px; }
+  .lab-intro h1 { color: var(--color-text-on-dark); font-size: var(--text-headline); line-height: 1.05; letter-spacing: -0.035em; font-weight: 500; max-width: 680px; }
+  .lab-intro p { font-size: var(--text-body); color: var(--color-text-on-dark-mid); max-width: 340px; line-height: 1.5; }
+  .lab { display: block; }
+  .lab-choices { display: flex; border-block: 1px solid var(--color-ink-mid); gap: 32px; }
+  .lab-choices button { position: relative; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px 4px; color: var(--color-text-on-dark-mid); font-size: var(--text-body); cursor: pointer; transition: color 180ms ease, background-color 180ms ease; }
+  .lab-choices button::after { content: ''; position: absolute; bottom: -1px; height: 2px; background: var(--color-lime); left: 0; right: 0; transform: scaleX(0); transform-origin: left; transition: transform 220ms ease; }
+  .lab-choices button[aria-pressed='true'] { color: var(--color-lime); }
+  .lab-choices button[aria-pressed='true']::after { transform: scaleX(1); }
+  .lab-choices button:hover { color: var(--color-text-on-dark); }
+  .lab-choice-shape { width: 18px; height: 18px; border: 1px solid currentColor; display: block; }
+  .lab-choice-shape[data-shape='orbites'] { border-radius: 50%; transform: rotate(-35deg) scaleX(.68); }
+  .lab-choice-shape[data-shape='flux'] { border-radius: 50%; border-left-color: transparent; border-right-color: transparent; transform: rotate(-25deg); }
+  .lab-choice-shape[data-shape='structure'] { transform: rotate(30deg) skewY(-15deg) scale(.82); }
+  .lab-stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, .39fr); gap: 32px; align-items: center; }
+  .lab-viewport { position: relative; min-width: 0; height: min(58vh, 560px); min-height: 390px; }
+  canvas { width: 100%; height: 100%; display: block; cursor: grab; border-radius: var(--radius-diagram); }
+  canvas:active { cursor: grabbing; }
+  .lab-labels { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .lab-labels :global(.lab-label) { position: absolute; top: 0; left: 0; padding: 3px 7px; background: var(--color-ink); font-size: var(--text-body-sm); line-height: 1.3; color: var(--color-text-on-dark-mid); white-space: nowrap; }
+  .lab-labels :global(.lab-label--accent) { color: var(--color-lime); }
+  .lab-gesture { position: absolute; bottom: 16px; inset-inline: 0; max-width: none; text-align: center; color: var(--color-ink-faint); font-size: var(--text-body-sm); pointer-events: none; }
+  .lab-gesture span { padding: 0 8px; }
+  .lab-status { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; padding: 24px; background: var(--color-ink); text-align: center; }
+  .lab[data-state='ready'] .lab-status, .lab[data-state='error'] .lab-gesture { display: none; }
+  .lab-no-script { position: absolute; inset: 40% 16px auto; text-align: center; background: var(--color-ink); }
+  .lab-story { min-width: 0; padding-block: 32px; }
+  .lab-story h2 { color: var(--color-text-on-dark); font-size: var(--text-headline); font-weight: 500; letter-spacing: -.035em; line-height: 1.05; }
+  .lab-description { margin-top: 24px; color: var(--color-text-on-dark-mid); line-height: 1.6; font-size: var(--text-body); }
+  .lab-placement { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--color-ink-mid); color: var(--color-ink-faint); line-height: 1.5; font-size: var(--text-body-sm); }
+  .lab-controls { border: 0; border-top: 1px solid var(--color-ink-mid); padding: 24px 0 0; display: flex; align-items: center; justify-content: space-between; gap: 40px; min-width: 0; }
+  .lab-controls:disabled { opacity: .5; }
+  .lab-transition { flex: 1; min-width: 0; max-width: 530px; }
+  .lab-transition label { font-size: var(--text-body-sm); font-weight: 500; }
+  .lab-transition input { display: block; width: 100%; height: 32px; accent-color: var(--color-lime); margin-block: 4px; cursor: pointer; }
+  .lab-range-ends { display: flex; justify-content: space-between; gap: 20px; color: var(--color-text-on-dark-mid); font-size: var(--text-body-sm); }
+  .lab-range-ends span:last-child { text-align: right; }
+  .lab-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: end; }
+  .lab-actions button, [data-reload] { min-height: 44px; padding: 10px 14px; border: 1px solid var(--color-ink-faint); border-radius: var(--radius-cta); color: var(--color-text-on-dark); font-size: var(--text-body-sm); cursor: pointer; transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+  .lab-actions button:hover, [data-reload]:hover { border-color: var(--color-lime); background: var(--color-lime); color: var(--color-ink); }
+  .lab-actions button:disabled { cursor: not-allowed; }
+  .lab-note { margin-top: 24px; color: var(--color-ink-faint); font-size: var(--text-body-sm); line-height: 1.5; }
+  @media (hover: hover) and (pointer: fine) {
+    .lab :is(button, input, canvas):focus-visible { outline: 2px solid var(--color-lime); outline-offset: 5px; }
+  }
+  @media (max-width: 1050px) {
+    .lab-intro { align-items: start; flex-direction: column; gap: 16px; }
+    .lab-intro p { max-width: 560px; }
+    .lab-stage { gap: 20px; grid-template-columns: minmax(0, 1fr) minmax(200px, .5fr); }
+    .lab-story h2 { font-size: var(--text-title-lg); }
+    .lab-controls { align-items: start; gap: 24px; }
+    .lab-actions { max-width: 290px; }
+  }
+  @media (max-width: 700px) {
+    .lab-main { padding-top: 32px; }
+    .lab-intro { padding-bottom: 24px; }
+    .lab-choices { gap: 0; justify-content: space-between; }
+    .lab-choices button { gap: 8px; min-height: 60px; }
+    .lab-choice-shape { width: 14px; height: 14px; }
+    .lab-stage { display: flex; flex-direction: column; gap: 0; align-items: stretch; }
+    .lab-viewport { height: 350px; min-height: 0; margin-inline: -12px; }
+    .lab-labels :global(.lab-label) { font-size: var(--text-body-sm); }
+    .lab-gesture { font-size: var(--text-mono-label); bottom: 8px; }
+    .lab-story { padding: 20px 0 28px; }
+    .lab-story h2 { font-size: var(--text-headline); max-width: 440px; }
+    .lab-description { margin-top: 16px; }
+    .lab-placement { margin-top: 20px; padding-top: 16px; }
+    .lab-controls { flex-direction: column; gap: 24px; }
+    .lab-transition { width: 100%; max-width: none; }
+    .lab-actions { max-width: none; justify-content: start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lab *, .lab *::after { transition: none !important; }
+  }
+</style>
