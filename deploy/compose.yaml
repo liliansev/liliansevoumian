@@ -1,0 +1,31 @@
+name: liliansevoumian
+services:
+  app:
+    container_name: liliansevoumian-app
+    image: ${APP_IMAGE:?tested image required}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    env_file:
+      - path: /opt/liliansevoumian/secrets/runtime.env
+        format: raw
+    environment:
+      NODE_ENV: production
+      PORT: '3000'
+    networks:
+      - ingress
+    ports:
+      - '127.0.0.1:3100:3000'
+    mem_limit: 384m
+    cpus: 0.50
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '3'
+networks:
+  ingress:
+    external: true
+    name: agenceafk_default
