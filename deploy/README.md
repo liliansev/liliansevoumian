@@ -8,14 +8,20 @@ candidate container, then updates the app. A failed cutover restores the previou
 image. /docker/liliansevoumian/.env.previous preserves the last rollback image.
 
 Runtime secret: /opt/liliansevoumian/secrets/runtime.env (LUMAIL_API_KEY).
-Never put secrets in the image or archive. Caddy overwrites X-Real-IP and proxies
-to liliansevoumian-app:3000 on agenceafk_default. The app only publishes localhost:3100.
+Never put secrets in the image or archive. The shared Caddy proxy (/opt/edge)
+overwrites X-Real-IP and proxies to liliansevoumian-app:3000 on the external
+`edge` network. The app only publishes localhost:3100. Never join agenceafk_default:
+the AFK API trusts forwarded headers from any neighbour on that network.
 
 Deployment scripts and Compose are operator-provisioned files. Updating files in
 this folder alone does not update the installed scripts or Compose: review and
 copy those explicitly before the next deployment. This prevents uploaded commits
-from changing the SSH receiver. Do not overwrite shared ingress during AFK deploys.
-Keep the liliansevoumian site blocks in /opt/agenceafk/current/deploy/Caddyfile.
+from changing the SSH receiver.
+
+HTTPS routes live in /opt/edge/caddy/sites/liliansevoumian.caddy (shared proxy,
+one file per site, versioned with git in /opt/edge). After an edit:
+`docker exec edge-caddy-1 caddy validate --config /etc/caddy/Caddyfile`, then
+`docker exec edge-caddy-1 caddy reload --config /etc/caddy/Caddyfile`.
 
 Validation: pnpm exec tsc --noEmit; node --test deploy/server.test.mjs;
 Docker build (includes Astro production build and tests), then check actual HTTPS
