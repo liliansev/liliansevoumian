@@ -4,6 +4,7 @@ import Navigation from '../components/Navigation.astro';
 import BoutonReservation from '../components/BoutonReservation.astro';
 import LinkCTA from '../components/LinkCTA.astro';
 import ProjectVisual from '../components/ProjectVisual.astro';
+import { projectList } from '../data/realisations';
 import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import SubscriptionGrid from '../components/SubscriptionGrid.astro';
@@ -30,63 +31,10 @@ const faqSchema = siteFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
 const pageDescription = `Création de sites web dès ${creationOffers[0].price}, avec abonnement de suivi. Applications métier, dashboards et portails clients sur devis. Échange de ${DUREE_RESERVATION_MINUTES} min.`;
 const bookingLabel = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES} min`;
 
-const projects = {
-  lilian: {
-    src: '/sites-web/projects/liliansevoumian-home.webp',
-    href: 'https://liliansevoumian.fr',
-    name: 'Lilian Sevoumian',
-    detail: 'Site personnel',
-    alt: 'Page d’accueil du site Lilian Sevoumian, sur fond lime',
-  },
-  augmentes: {
-    src: '/sites-web/projects/augmentes-home.webp',
-    href: 'https://augmentes.fr',
-    name: 'augmentés',
-    detail: 'Plateforme de formation',
-    alt: 'Page d’accueil sombre du site augmentés',
-  },
-  youmanista: {
-    src: '/sites-web/projects/youmanista-home.webp',
-    href: 'https://youmanista.com',
-    name: 'Youmanista',
-    detail: 'Cabinet de recrutement',
-    alt: 'Page d’accueil colorée du cabinet Youmanista',
-  },
-  meilleursTools: {
-    src: '/sites-web/projects/meilleurs-tools-home.webp',
-    href: 'https://meilleurs.tools',
-    name: 'meilleurs.tools',
-    detail: 'Catalogue éditorial',
-    alt: 'Page d’accueil du catalogue meilleurs.tools',
-  },
-  flameborn: {
-    src: '/sites-web/projects/flameborn-home.webp',
-    href: 'https://flameborn.fr',
-    name: 'Flameborn',
-    detail: 'Base de données de jeu',
-    alt: 'Page d’accueil sombre de la base de données Flameborn',
-  },
-  petiteStack: {
-    src: '/sites-web/projects/la-petite-stack-home.webp',
-    href: 'https://lapetitestack.fr',
-    name: 'La Petite Stack',
-    detail: 'Configurateur de logiciels',
-    alt: 'Page d’accueil du configurateur La Petite Stack',
-  },
-} as const;
-
-const projectList = [
-  projects.lilian,
-  projects.augmentes,
-  projects.youmanista,
-  projects.meilleursTools,
-  projects.flameborn,
-  projects.petiteStack,
-] as const;
 
 const directionContract = `
 THESIS: La page distingue les sites commerciaux des applications métiers ; les tarifs de création et de suivi des sites ne promettent pas une application complète.
-OWN-WORLD: Papier blanc, encre noire, lime posé en surface, composition éditoriale, angles droits et une seule famille Geist.
+OWN-WORLD: Fond bleu nuit, texte blanc, pêche posée en surface et en accent, panneau clair inversé en île arrondie, composition éditoriale, surfaces arrondies et une seule famille Geist.
 STORY: Le visiteur choisit sites ou applications, lit le périmètre correspondant, puis découvre les réalisations avant de parler de son projet.
 FIRST VIEWPORT: Promesse typographique sans capture ; deux liens orientent vers sites et applications, et les repères de prix sont explicitement réservés aux sites.
 FORM: Dossier de fabrication, structure classée 7, seed 244476c3, dense et éditorial, sans cadre décoratif ni simulation d’écran.
@@ -162,7 +110,11 @@ const serviceSchema = {
     <section id="hero" class="bloc-lime relative px-[var(--spacing-section-x)] pt-28 pb-14 lg:pt-36 lg:pb-16 border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto w-full">
         <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,0.55fr)] gap-12 lg:gap-20 items-end">
-          <div class="min-w-0 reveal is-visible">
+          {/* L'entrée d'auteur : le titre, le chapô, les deux portes et les actions
+              arrivent l'un après l'autre, puis le surlignage se trace. Des
+              keyframes CSS jouées au chargement — sans script, la colonne est
+              peinte dans son état final. */}
+          <div class="min-w-0 entree">
             <h1 class="font-display font-semibold text-[length:var(--text-sites-hero)] leading-[0.95] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
               Un site pour vos clients. Une app pour <mark class="inv">vos équipes.</mark>
             </h1>
@@ -183,24 +135,30 @@ const serviceSchema = {
             </div>
           </div>
 
-          <aside class="reveal is-visible border-y lg:border-y-0 lg:border-l border-[var(--color-border-strong)] lg:pl-8" aria-label="Création et suivi des sites web">
-            <p class="my-0 py-5 lg:pt-0 text-[length:var(--text-body)] leading-[1.55] text-[var(--color-ink-mid)]">
-              Pour votre site web : un budget de création, puis un abonnement mensuel obligatoire.
-            </p>
-            <dl class="m-0 lg:border-t border-[var(--color-border-strong)]">
-              <div class="flex flex-col gap-2 py-4 border-b lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-5 lg:py-5 border-[var(--color-divider)] lg:items-baseline">
-                <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Création</dt>
-                <dd class="m-0 text-[length:var(--text-body-sm)] lg:text-right text-[var(--color-ink-mid)] tabular-nums">dès {creationOffers[0].price}</dd>
-              </div>
-              <div class="flex flex-col gap-2 py-4 border-b lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-5 lg:py-5 border-[var(--color-divider)] lg:items-baseline">
-                <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Suivi</dt>
-                <dd class="m-0 text-[length:var(--text-body-sm)] lg:text-right text-[var(--color-ink-mid)] tabular-nums">{subscriptionOffers[0].price}</dd>
-              </div>
-            </dl>
-            <p class="my-0 py-5 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-mid)]">
-              Application métier : création et suivi sur devis.
-            </p>
-          </aside>
+          {/* Les repères de prix forment un seul objet, qui entre d'un bloc après
+              le titre. L'enveloppe porte `.entree` parce que le geste anime des
+              enfants directs : posé sur l'aside, il aurait fait arriver les
+              trois lignes dans un cadre déjà là, vide. */}
+          <div class="min-w-0 entree">
+            <aside class="hero-reperes" style="--i: 3" aria-label="Création et suivi des sites web">
+              <p class="m-0 pb-5 text-[length:var(--text-body)] leading-[1.55] text-[var(--color-ink-mid)]">
+                Pour votre site web : un budget de création, puis un abonnement mensuel obligatoire.
+              </p>
+              <dl class="m-0 border-t border-[var(--color-divider)]">
+                <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 py-4 border-b border-[var(--color-divider)]">
+                  <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Création</dt>
+                  <dd class="pastille-prix">dès {creationOffers[0].price}</dd>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 py-4 border-b border-[var(--color-divider)]">
+                  <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Suivi</dt>
+                  <dd class="pastille-prix">{subscriptionOffers[0].price}</dd>
+                </div>
+              </dl>
+              <p class="m-0 pt-5 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-mid)]">
+                Application métier : création et suivi sur devis.
+              </p>
+            </aside>
+          </div>
         </div>
       </div>
     </section>
@@ -229,7 +187,7 @@ const serviceSchema = {
 
               <div>
                 <p class="m-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">{offer.promise}</p>
-                <ul class="mt-5 mb-0 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-x-5 gap-y-2 pl-5 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
+                <ul class="inclus mt-5 mb-0 p-0 list-none flex flex-wrap gap-2">
                   {offer.includes.map((item) => <li>{item}</li>)}
                 </ul>
               </div>
@@ -259,7 +217,9 @@ const serviceSchema = {
       </div>
     </section>
 
-    <section id="applications" data-section class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+    {/* Pas de filet bas : la section suivante est un panneau détaché et arrondi,
+        et un trait droit à vingt pixels de son arrondi lui servait de couvercle. */}
+    <section id="applications" data-section class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 lg:gap-20 items-start">
         <div>
           <SectionHeader
@@ -306,18 +266,22 @@ const serviceSchema = {
       </div>
     </section>
 
-    <section id="abonnements" data-section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+    <section id="abonnements" data-section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[16ch] text-balance">
-            Votre site est en ligne. Je m’occupe du <mark class="inv dark-mark">suivi.</mark>
+            Votre site est en ligne. Je m’occupe du <mark class="inv">suivi.</mark>
           </h2>
           <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
             Hébergement, maintenance et petits ajustements des pages livrées : l’abonnement fait partie de chaque projet. Son tarif dépend du format de votre site.
           </p>
         </div>
 
-        <SubscriptionGrid offers={subscriptionOffers} label="Abonnements de suivi des sites web" />
+        {/* La grille est un cadre arrondi : elle se détache du filet de l'en-tête
+            au lieu de s'y coller, comme la grille de réalisations plus bas. */}
+        <div class="reveal mt-10">
+          <SubscriptionGrid offers={subscriptionOffers} label="Abonnements de suivi des sites web" />
+        </div>
 
         <div class="reveal mt-9 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-7 items-center">
           <p class="m-0 max-w-[72ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
@@ -380,7 +344,8 @@ const serviceSchema = {
       </div>
     </section>
 
-    <section id="faq" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+    {/* Même raison que plus haut : pas de filet bas avant un panneau arrondi. */}
+    <section id="faq" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
         <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[17ch] text-balance">
@@ -403,7 +368,7 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto reveal grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-9 lg:gap-16 items-end">
         <div>
           <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            Que voulez-vous <mark class="dark-mark">simplifier ?</mark>
+            Que voulez-vous <mark>simplifier ?</mark>
           </h2>
           <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
             En {DUREE_RESERVATION_MINUTES} minutes, vous me montrez votre besoin. Nous faisons le tri dans les priorités et je vous explique ce qui est faisable, avec quel type de site ou d’application. Le bouton ouvre mon agenda pour choisir votre créneau.
@@ -440,8 +405,45 @@ const serviceSchema = {
     color: var(--color-ink);
   }
 
-  .dark-mark {
-    color: #111111;
+  /* `.dark-mark` a été retirée : elle forçait un noir neutre sur les fragments
+     surlignés des deux panneaux clairs, du temps où `mark` héritait sa couleur.
+     `mark` lit désormais la nuit partout, et la classe ne faisait plus que
+     court-circuiter le tracé du surligneur. */
+
+  /* ── Les repères de prix du hero ──
+     Un objet posé sur la bande, à la place d'un filet vertical : c'est la seule
+     surface du premier écran, et elle est arrondie. Rayon de grande carte, les
+     filets internes restent droits. */
+  .hero-reperes {
+    padding: clamp(1.25rem, 2.2vw, 1.75rem);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-high);
+  }
+
+  /* Une étiquette, donc ronde. Pêche sur accent-soft : 6,93:1. */
+  .pastille-prix {
+    margin: 0;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-full);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-text);
+    font-size: var(--text-body-sm);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  /* Ce que chaque formule comprend : trois étiquettes, pas une liste à puces
+     répartie sur trois colonnes où la plus longue passait à la ligne. Elles ne
+     se cliquent pas, donc aucun survol. */
+  .inclus li {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-full);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.4;
   }
 
   @media (max-width: 767px) {

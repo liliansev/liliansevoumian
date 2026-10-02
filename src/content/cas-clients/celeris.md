@@ -1,5 +1,5 @@
 ---
-title: "Comment Celeris a automatisé l'enrichissement de son catalogue Odoo"
+title: "Comment Celeris a automatisé l’enrichissement de son catalogue Odoo"
 seoTitle: "Enrichir un catalogue produits Odoo par agent IA : cas client n8n"
 description: "Celeris enrichit son catalogue directement dans Odoo grâce à deux agents IA, pour 2 à 3 centimes par fiche et plus de 60 % de correspondances automatiques."
 secteur: "Distributeur IT B2B"

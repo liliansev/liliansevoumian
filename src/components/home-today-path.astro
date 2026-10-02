@@ -1,0 +1,317 @@
+---
+/*
+ * home-today-path — pourquoi lui, et d'où il vient.
+ *
+ * C'est le dernier temps du récit de la page : après « vous perdez votre
+ * temps » et « voilà ce que je fais », Lilian dit pourquoi lui. Il l'a
+ * formulé ainsi : il fait ça depuis six ans, il l'a appliqué dans ses propres
+ * activités, et il sait ce que c'est d'avoir une équipe et des clients à
+ * livrer en perdant du temps, ou sans les bons outils métier.
+ *
+ * Deux colonnes qui se lisent ensemble : à gauche, lui (un portrait, ce
+ * texte, quatre faits), dans le seul panneau clair de la page ; à droite, la
+ * frise de 2020 à aujourd'hui. Le panneau reste en place pendant que la
+ * frise défile : on garde sous les yeux qui parle pendant qu'on lit par où
+ * il est passé.
+ *
+ * La frise porte le geste de cette section : un rail pêche qui se trace à
+ * mesure qu'on la lit. Il avance avec le milieu de la fenêtre, et chaque année
+ * s'allume quand il l'atteint. Il est lié au défilement en CSS seul ; là où
+ * `animation-timeline` n'existe pas, ou en mouvement réduit, il est tracé en
+ * entier. Les années sont des numéros qui portent une information : l'ordre
+ * est le sujet.
+ */
+import { Image } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import lilianPhoto from '../assets/lilian-photo.jpg';
+import { faits, parcours } from '../data/parcours';
+---
+
+<section
+  id="pourquoi-moi"
+  data-section
+  class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
+>
+  <div class="duo relative mx-auto max-w-[1200px]">
+    <div class="duo__auj bloc-encre">
+      <div class="moi__tete">
+        <Image src={lilianPhoto} alt="Portrait de Lilian Sevoumian" width={160} class="moi__portrait" loading="lazy" />
+        <SectionHeader title="Pourquoi <mark>moi.</mark>" titleMaxWidth="12ch" rule={false} spacing="none" />
+      </div>
+
+      <p class="moi__texte">
+        Six ans que j’automatise le travail des entreprises, et d’abord le mien. J’ai cofondé un studio de podcast, lancé
+        une activité de formation, puis une agence&nbsp;: à chaque fois avec une équipe, des clients à livrer, et des
+        journées mangées par des tâches qui n’avançaient rien. Cette contrainte, je la connais de l’intérieur. C’est pour
+        ça que je pars de vos processus réels, pas d’une liste d’outils.
+      </p>
+
+      <ul class="moi__faits">
+        {faits.map((fait) => (
+          <li>
+            <strong>{fait.titre}</strong>
+            <span>{fait.detail}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div id="parcours" class="duo__parcours">
+      <SectionHeader title="D’où <mark>je viens.</mark>" titleMaxWidth="14ch" rule={false} spacing="none" />
+
+      <ol class="frise">
+        {parcours.map((periode) => (
+          <li class="frise__annee">
+            <h3 class="frise__an">{periode.annee}</h3>
+            <ul class="frise__etapes">
+              {periode.etapes.map((etape) => (
+                <li>
+                  {etape.quand && <span class="frise__quand">{etape.quand}</span>}
+                  <strong>{etape.titre}</strong>
+                  {etape.detail && <span class="frise__detail">{etape.detail}</span>}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .duo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: start;
+  }
+
+  /* Le panneau clair, ici une carte et non une île : il n'occupe qu'une
+     colonne, donc pas de marge de section. Il ne reste en place que sur un
+     écran assez haut pour le montrer en entier (voir plus bas). */
+  .duo__auj {
+    margin: 0;
+    padding: clamp(1.5rem, 2.4vw, 2rem);
+  }
+
+  .duo__parcours {
+    padding-top: clamp(1.5rem, 2.4vw, 2rem);
+    scroll-margin-top: 96px;
+  }
+
+  .moi__tete {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .moi__portrait {
+    flex-shrink: 0;
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    object-position: center 18%;
+  }
+
+  .moi__texte {
+    max-width: 46ch;
+    margin: clamp(1.25rem, 2vw, 1.5rem) 0 0;
+    color: var(--color-ink-mid);
+    line-height: 1.6;
+  }
+
+  /* Quatre faits, en deux colonnes séparées par des filets. */
+  .moi__faits {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: clamp(1.25rem, 2vw, 1.5rem) 0 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border-strong);
+    list-style: none;
+  }
+
+  .moi__faits li {
+    display: grid;
+    align-content: start;
+    gap: 0.2rem;
+    max-width: none;
+    padding: 0.9rem 0.75rem 0.9rem 0;
+  }
+
+  .moi__faits li:nth-child(even) {
+    padding-left: 1rem;
+    border-left: 1px solid var(--color-divider);
+  }
+
+  .moi__faits li:nth-child(n + 3) {
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .moi__faits strong {
+    color: var(--color-ink);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .moi__faits span {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.4;
+  }
+
+  .frise {
+    --rail: 0.5rem;
+    position: relative;
+    margin: clamp(1.75rem, 3vw, 2.5rem) 0 0;
+    padding: 0 0 0 clamp(2rem, 4vw, 3.25rem);
+    list-style: none;
+  }
+
+  /* Le rail au repos, puis son tracé pêche par-dessus. */
+  .frise::before,
+  .frise::after {
+    content: '';
+    position: absolute;
+    top: 0.9rem;
+    bottom: 0.25rem;
+    left: var(--rail);
+    width: 2px;
+    margin-left: -1px;
+    border-radius: var(--radius-full);
+  }
+
+  .frise::before {
+    background: var(--color-divider);
+  }
+
+  .frise::after {
+    background: var(--color-peche);
+    transform-origin: top center;
+  }
+
+  .frise__annee {
+    position: relative;
+    max-width: none;
+    padding-bottom: clamp(2.25rem, 5vw, 3.5rem);
+  }
+
+  .frise__annee:last-child {
+    padding-bottom: 0;
+  }
+
+  /* Le repère de l'année, posé sur le rail. */
+  .frise__annee::before {
+    content: '';
+    position: absolute;
+    top: 0.72rem;
+    left: calc(-1 * clamp(2rem, 4vw, 3.25rem) + var(--rail));
+    z-index: 1;
+    width: 11px;
+    height: 11px;
+    margin-left: -5.5px;
+    border: 2px solid var(--color-paper);
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+  }
+
+  .frise__an {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .frise__etapes {
+    display: grid;
+    gap: 1.25rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .frise__etapes li {
+    display: grid;
+    gap: 0.3rem;
+    max-width: 52ch;
+  }
+
+  .frise__quand {
+    color: var(--color-accent-text);
+    font-size: var(--text-mono-caption);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .frise__etapes strong {
+    color: var(--color-ink);
+    font-size: var(--text-body-large);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  .frise__detail {
+    color: var(--color-ink-mid);
+    line-height: 1.55;
+  }
+
+  /* Le tracé suit le milieu de la fenêtre : `cover 50vh` est l'instant où le
+     haut de la frise passe ce milieu, `cover calc(100% - 50vh)` celui où son
+     bas le passe. Entre les deux, la part tracée est exactement la part lue. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .frise {
+        view-timeline: --frise block;
+      }
+
+      .frise::after {
+        animation: frise-trace linear both;
+        animation-timeline: --frise;
+        animation-range: cover 50vh cover calc(100% - 50vh);
+      }
+
+      .frise__annee::before {
+        animation: frise-repere linear both;
+        animation-timeline: view();
+        animation-range: cover calc(50vh - 2rem) cover 50vh;
+      }
+    }
+  }
+
+  @keyframes frise-trace {
+    from { transform: scaleY(0); }
+  }
+
+  @keyframes frise-repere {
+    from { background: var(--color-ink-faint); transform: scale(0.7); }
+  }
+
+  /* Deux colonnes et un écran d'au moins 740 px de haut : le panneau tient en
+     entier sous la barre, il peut rester en place. Sinon il défile avec la
+     page, plutôt que de garder sa dernière ligne hors de l'écran. */
+  @media (min-width: 1024px) and (min-height: 740px) {
+    .duo__auj {
+      position: sticky;
+      top: 88px;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .duo {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .duo__parcours {
+      padding-top: 0;
+    }
+  }
+
+</style>

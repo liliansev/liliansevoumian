@@ -6,7 +6,12 @@
  * primaire d'une zone reste un .btn-primary plein (une seule par zone).
  *
  * La flèche est décorative (aria-hidden) ; le libellé passe via <slot/>.
+ * C'est une icône Lucide, comme les flèches des boutons et des listes : un
+ * glyphe typographique à côté d'icônes dessinées donnait deux dessins de
+ * flèche sur une même page.
  */
+import { Icon } from 'astro-icon/components';
+
 interface Props {
   href: string;
   external?: boolean;
@@ -14,8 +19,6 @@ interface Props {
   goal?: string;
   goalSource?: string;
   prefill?: string;
-  /** Glyphe de flèche. '↗' pour un lien externe, '→' par défaut. */
-  arrow?: string;
 }
 
 const {
@@ -25,7 +28,6 @@ const {
   goal,
   goalSource,
   prefill,
-  arrow = '→',
 } = Astro.props;
 ---
 
@@ -39,5 +41,5 @@ const {
   class={`link-cta ${className}`}
 >
   <span class="link-cta__label"><slot /></span>
-  <span class="link-cta__arrow" aria-hidden="true">{arrow}</span>
+  <Icon name={external ? 'lucide:arrow-up-right' : 'lucide:arrow-right'} class="link-cta__arrow" aria-hidden="true" />
 </a>

@@ -106,7 +106,7 @@ export default defineConfig({
          restreint. La liste est complétée pour que la config décrive ce qui est
          réellement rendu. */
       include: {
-        lucide: ['arrow-left', 'arrow-right', 'bell', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'pause', 'receipt-text', 'rotate-ccw', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
+        lucide: ['arrow-down', 'arrow-left', 'arrow-right', 'arrow-up-right', 'bell', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'pause', 'receipt-text', 'rotate-ccw', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
         'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'odoo', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello'],
         /* Lovable ne figure pas dans simple-icons. La variante `-plain` de
            devicon est monochrome, donc elle prend currentColor comme tous les
@@ -119,7 +119,7 @@ export default defineConfig({
     sitemap({
       // Elle est en noindex,nofollow : la declarer au sitemap est un signal
       // contradictoire, et Search Console le remonte comme avertissement.
-      filter: (page) => !['/mentions-legales', '/explorations-3d'].some((path) => page.includes(path)),
+      filter: (page) => !['/mentions-legales', '/explorations-3d', '/explorations-blocs'].some((path) => page.includes(path)),
       /* UN SEUL `serialize` : deux clés du même nom dans un littéral d'objet
          ne lèvent aucune erreur, la seconde écrase simplement la première.
          L'URL est normalisée sans slash final, comme le canonical et comme les

@@ -1,7 +1,32 @@
 ---
+/*
+ * HomeHeroPersonal — le premier écran de l'accueil : les preuves d'abord.
+ *
+ * La page ouvre sur trois résultats mesurés chez des clients, en très grand,
+ * et ne dit qu'ensuite qui les a obtenus. C'est la structure choisie par
+ * Lilian : un visiteur qui vient vérifier à qui il a affaire lit d'abord ce
+ * qui a été fait.
+ *
+ * Les résultats viennent de la collection `cas-clients` : les trois cas les
+ * plus récents dont le premier indicateur est un chiffre. Un cas dont le
+ * premier indicateur est un statut (« Brouillon ») ou qui n'a rien mesuré n'y
+ * figure pas ; il reste dans la liste complète, à un lien d'ici.
+ *
+ * Le nom est le titre principal de la page et vient en premier dans le
+ * document, pour un lecteur d'écran comme pour un moteur. C'est la grille qui
+ * le pose à droite, sous le portrait.
+ */
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
 import { Picture } from 'astro:assets';
 import LinkCTA from './LinkCTA.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
+import { faits } from '../data/parcours';
+
+const resultats = (await getCollection('cas-clients', (entree) => !entree.data.draft))
+  .filter((entree) => /\d/.test(entree.data.kpis[0]?.value ?? ''))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
 ---
 
 <section
@@ -9,119 +34,276 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
   data-section
   class="home-hero relative px-[var(--spacing-section-x)] pt-[80px] md:pt-[88px]"
 >
-  <div class="home-hero__inner relative mx-auto grid max-w-[1200px] items-center">
-    <div class="home-hero__copy">
-      <h1>
-        Gagnez du temps avec l’IA et <mark>l’automatisation.</mark>
-      </h1>
-
-      <p class="home-hero__intro">
-        Votre activité grandit, les tâches s’accumulent.
-        Je crée des agents IA, des automatisations et des applications métier
-        pour alléger le travail de vos équipes.
+  <div class="home-hero__inner relative mx-auto max-w-[1200px]">
+    <div class="home-hero__nom entree">
+      <h1>Lilian Sevoumian.</h1>
+      <p>
+        Je construis, je forme, je publie. Depuis 2020, j’enlève les tâches
+        répétitives du quotidien des entreprises.
       </p>
+    </div>
 
-      <div class="home-hero__actions">
-        <LinkCTA href="#services">Voir les services</LinkCTA>
+    <div class="home-hero__resultats">
+      <ul class="entree" aria-label="Trois résultats mesurés chez des clients">
+        {resultats.map((entree) => {
+          const kpi = entree.data.kpis[0];
+          return (
+            <li>
+              <a href={`/cas-clients/${entree.id}`} class="resultat">
+                <span class="resultat__chiffre"><mark>{kpi.value}</mark></span>
+                <span class="resultat__texte">
+                  <span class="resultat__mesure">{kpi.label}</span>
+                  <span class="resultat__cas">
+                    {entree.data.title}
+                    <Icon name="lucide:arrow-right" class="resultat__fleche" aria-hidden="true" />
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      <div class="home-hero__suite entree">
+        <LinkCTA href="/cas-clients">Lire tous les cas clients</LinkCTA>
       </div>
-
     </div>
 
     <figure class="home-hero__portrait">
-      <Picture
-        src={lilianPhoto}
-        alt="Lilian Sevoumian, freelance en automatisation, IA et création de sites web"
-        class="home-hero__picture"
-        formats={['avif', 'webp']}
-        widths={[480, 720, 960]}
-        sizes="(min-width: 1440px) 430px, (min-width: 1024px) 35vw, (min-width: 640px) 480px, 100vw"
-        loading="eager"
-        fetchpriority="high"
-      />
-      <figcaption>
-        <span>Lilian Sevoumian</span>
-        <span>Freelance depuis 2020</span>
-      </figcaption>
+      <div class="home-hero__frame entree-portrait">
+        <Picture
+          src={lilianPhoto}
+          alt="Portrait de Lilian Sevoumian"
+          class="home-hero__picture"
+          formats={['avif', 'webp']}
+          widths={[360, 480, 720]}
+          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 420px, 100vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
     </figure>
   </div>
+
+  {/* Les titres et les faits, en texte : pas de chiffres géants, ceux du haut
+      suffisent. La liste arrive après les résultats. */}
+  <ul class="home-hero__faits entree relative mx-auto max-w-[1200px]" aria-label="En quelques faits">
+    {faits.map((fait, index) => (
+      <li style={`--i: ${index + 6}`}>
+        <strong>{fait.titre}</strong>
+        <span>{fait.detail}</span>
+      </li>
+    ))}
+  </ul>
 </section>
 
 <style>
   .home-hero {
-    border-bottom: 1px solid var(--color-border-strong);
+    border-bottom: 1px solid var(--color-divider);
     background: var(--color-paper);
   }
 
+  /* Deux tiers pour les résultats, un tiers pour celui qui les a obtenus. Le
+     nom vient en premier dans le document ; les zones de la grille le posent à
+     droite, sous le portrait. */
   .home-hero__inner {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.85fr);
-    gap: var(--spacing-home-hero-gap);
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-areas:
+      'resultats portrait'
+      'resultats nom';
+    grid-template-rows: auto 1fr;
+    gap: 1.5rem var(--spacing-home-hero-gap);
+    align-items: start;
     padding-block: var(--spacing-home-hero-y);
   }
 
-  .home-hero__copy {
-    min-width: 0;
-  }
+  .home-hero__resultats { grid-area: resultats; min-width: 0; }
+  .home-hero__portrait { grid-area: portrait; min-width: 0; margin: 0; }
+  .home-hero__nom { grid-area: nom; min-width: 0; }
 
-  .home-hero h1 {
-    max-width: 15ch;
+  .home-hero__resultats ul {
     margin: 0;
-    color: var(--color-ink);
-    font-size: var(--text-home-hero);
-    line-height: 0.94;
-    letter-spacing: -0.035em;
-    overflow-wrap: break-word;
+    padding: 0;
+    border-top: 1px solid var(--color-border-strong);
+    list-style: none;
   }
 
-  .home-hero__intro {
-    max-width: 42ch;
-    margin: clamp(2rem, 4vw, 3rem) 0 0;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-large);
-    line-height: 1.55;
+  .home-hero__resultats li {
+    max-width: none;
+    border-bottom: 1px solid var(--color-divider);
   }
 
-  .home-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
+  .home-hero__suite {
+    margin-top: 1rem;
+  }
+
+  .home-hero__suite > :global(*) {
+    --i: 4;
+  }
+
+  /* Un résultat est une ligne entière, cliquable : le chiffre à gauche, ce
+     qu'il mesure et le cas dont il vient à droite. */
+  .resultat {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     align-items: center;
-    gap: 1rem 1.5rem;
-    margin-top: 2rem;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    padding: clamp(1.1rem, 2.2vw, 1.6rem) clamp(0.5rem, 1vw, 0.9rem);
+    margin-inline: calc(-1 * clamp(0.5rem, 1vw, 0.9rem));
+    border-radius: var(--radius-md);
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: background-color var(--duration-default) var(--ease-out-quint);
   }
 
-  .home-hero__portrait {
+  .resultat__chiffre {
+    font-size: var(--text-home-hero);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* À ce corps, la bande est resserrée comme celle d'un titre principal. */
+  .resultat__chiffre mark::before {
+    --angle: -1.3deg;
+    inset: 0.12em 0 0.12em;
+  }
+
+  /* Le surligneur trace les trois chiffres l'un après l'autre : c'est le geste
+     de ce premier écran. Le retard de chaque ligne s'ajoute à celui de
+     l'entrée, pour que le chiffre soit écrit au moment où sa ligne arrive. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-ready) .home-hero__resultats li:nth-child(1) mark { animation-delay: 380ms; }
+    :global(.js-ready) .home-hero__resultats li:nth-child(2) mark { animation-delay: 640ms; }
+    :global(.js-ready) .home-hero__resultats li:nth-child(3) mark { animation-delay: 900ms; }
+  }
+
+  .resultat__texte {
+    display: grid;
+    gap: 0.45rem;
     min-width: 0;
-    margin: 0;
+  }
+
+  .resultat__mesure {
+    color: var(--color-ink);
+    font-size: var(--text-body-large);
+    font-weight: 550;
+    line-height: 1.35;
+  }
+
+  .resultat__cas {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  .resultat__cas :global(.resultat__fleche) {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-left: 0.3em;
+    vertical-align: -0.12em;
+    color: var(--color-accent-text);
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .resultat:hover {
+      background: var(--color-surface-low);
+    }
+    .resultat:hover .resultat__cas {
+      color: var(--color-ink);
+    }
+    .resultat:hover :global(.resultat__fleche) {
+      transform: translateX(4px);
+    }
+  }
+
+  /* Le cadre porte l'arrondi et le rognage : c'est lui qui s'ouvre à l'entrée,
+     pendant que l'image, à l'intérieur, se pose. */
+  .home-hero__frame {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-low);
   }
 
   .home-hero__picture {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 1;
+    aspect-ratio: 5 / 4;
     object-fit: cover;
-    object-position: center 25%;
-    background: var(--color-surface-low);
+    object-position: center 22%;
   }
 
-  .home-hero__portrait figcaption {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0.25rem 1rem;
-    padding-top: 1rem;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-  }
-
-  .home-hero__portrait figcaption span:first-child {
+  /* Le nom est le titre principal de la page, mais pas son plus gros texte :
+     ce premier écran donne le grand corps aux résultats. */
+  .home-hero__nom h1 {
+    margin: 0;
     color: var(--color-ink);
-    font-weight: 600;
+    font-size: var(--text-headline);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
   }
 
+  .home-hero__nom p {
+    max-width: 34ch;
+    margin: 0.9rem 0 0;
+    color: var(--color-ink-mid);
+    line-height: 1.55;
+  }
+
+  /* Une ligne de faits, séparés par des filets : la structure de ce site vient
+     des traits, pas de cartes. */
+  .home-hero__faits {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-block: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-border-strong);
+    list-style: none;
+  }
+
+  .home-hero__faits li {
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+    max-width: none;
+    padding: 1.1rem 1.5rem 1.5rem 0;
+  }
+
+  .home-hero__faits li + li {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--color-divider);
+  }
+
+  .home-hero__faits strong {
+    color: var(--color-ink);
+    font-size: var(--text-body-large);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .home-hero__faits span {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  /* Sous 1024 px, une colonne : le nom d'abord, en une ligne de présentation,
+     puis les résultats, puis le portrait. */
   @media (max-width: 1023px) {
     .home-hero__inner {
       grid-template-columns: 1fr;
-      gap: 3rem;
+      grid-template-areas:
+        'nom'
+        'resultats'
+        'portrait';
+      grid-template-rows: auto;
+      gap: 2.25rem;
     }
 
     .home-hero__portrait {
@@ -130,15 +312,43 @@ import lilianPhoto from '../assets/lilian-photo.jpg';
     }
   }
 
+  @media (max-width: 860px) {
+    .home-hero__faits {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* `li + li:nth-child(odd)` et non `li:nth-child(odd)` : à sélecteur plus
+       court, la règle `li + li` du dessus l'emportait d'un élément, et la
+       troisième cellule gardait son filet et son retrait. */
+    .home-hero__faits li + li:nth-child(odd) {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .home-hero__faits li:nth-child(n + 3) {
+      border-top: 1px solid var(--color-divider);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .resultat {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+  }
+
   @media (max-width: 520px) {
-    .home-hero h1 {
-      max-width: 13ch;
+    .home-hero__faits li {
+      padding-right: 1rem;
     }
 
-    .home-hero__actions {
-      align-items: stretch;
-      flex-direction: column;
+    .home-hero__faits li + li:nth-child(even) {
+      padding-left: 1rem;
     }
+  }
 
+  @media (prefers-reduced-motion: reduce) {
+    .resultat__cas :global(.resultat__fleche) { transition: none; }
+    .resultat:hover :global(.resultat__fleche) { transform: none; }
   }
 </style>

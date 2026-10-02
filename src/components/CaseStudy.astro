@@ -363,7 +363,7 @@ const humblePlus = {
 
   .case-carousel-arrow:hover:not(:disabled),
   .case-carousel-arrow:focus-visible:not(:disabled) {
-    color: var(--color-ink);
+    color: var(--color-night);
     background: var(--color-accent);
     border-color: var(--color-accent);
     transform: translateY(-1px);
@@ -546,10 +546,15 @@ const humblePlus = {
      aplat : deux pastilles séparées se lisent sans séparateur. */
   .case-results > span[aria-hidden='true'] { display: none; }
 
+  /* Une étiquette est ronde, comme tout ce qui porte un libellé court dans
+     cette DA. Le retrait latéral monte de 0,7 à 0,9em : sur mobile les plus
+     longs résultats passent sur deux lignes, et à 0,7em la première lettre
+     venait toucher l'arrondi. */
   .case-results > span:not([aria-hidden='true']) {
-    background: var(--color-lime);
-    color: var(--color-ink);
-    padding: 0.4em 0.7em;
+    background: var(--color-peche);
+    color: var(--color-night);
+    padding: 0.4em 0.9em;
+    border-radius: var(--radius-full);
   }
 
   .case-results {
@@ -558,6 +563,11 @@ const humblePlus = {
     align-items: center;
     gap: 0.4rem 0.5rem;
     margin: 0;
+    /* Le plafond de 46ch des paragraphes se calcule ici sur un corps de 11 px,
+       soit 330 px : le plus long résultat s'y repliait sur deux lignes alors
+       que la colonne en offre presque le double. Une étiquette ronde se lit
+       mieux d'un seul tenant ; elle ne se replie plus que sur mobile. */
+    max-width: 100%;
     color: var(--color-ink-mid);
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
@@ -711,21 +721,21 @@ const humblePlus = {
                 border-color var(--duration-default) var(--ease-out-quint),
                 color var(--duration-default) var(--ease-out-quint);
   }
-  /* La flèche passe à l'encre, pas au papier : sur un fond lime, du blanc tient
-     1,25:1 et le glyphe disparaissait pendant tout le survol. Le lime est une
-     surface, ce qui se pose dessus est de l'encre. */
+  /* La flèche passe à la nuit : sur la pêche, du blanc tient 1,74:1 et le
+     glyphe disparaîtrait pendant tout le survol. Ce qui se pose sur l'accent
+     est toujours la nuit, 10,19:1. */
   .case-cta:hover .case-cta-dot,
   .case-cta:focus-visible .case-cta-dot {
     background: var(--color-accent);
     border-color: var(--color-accent);
-    color: var(--color-ink);
+    color: var(--color-night);
   }
   .case-cta-arrow {
     transition: transform var(--duration-default) var(--ease-out-quint);
   }
   .case-cta:hover .case-cta-arrow,
   .case-cta:focus-visible .case-cta-arrow {
-    transform: translateX(2px);
+    transform: translateX(3px);
   }
   .case-cta-text {
     font-family: var(--font-mono);
@@ -742,15 +752,21 @@ const humblePlus = {
   }
   @media (prefers-reduced-motion: reduce) {
     .case-cta-dot, .case-cta-arrow, .case-cta-text { transition: none; }
+    .case-cta:hover .case-cta-arrow,
+    .case-cta:focus-visible .case-cta-arrow { transform: none; }
   }
 
-  /* Logo client — silhouette monochrome (encre / blanc en dark). */
+  /* Logo client : silhouette monochrome, BLANCHE. `brightness(0)` seul la
+     rendait noire, ce qui valait sur l'ancien papier ; sur la carte nuit le
+     logo de Fraich Touch et celui de Celeris étaient à peu près invisibles.
+     `invert(1)` retourne ce noir en blanc. À revoir si la section passe un
+     jour dans un panneau clair. */
   .case-logo {
     height: calc(26px * var(--logo-scale, 1));
     width: auto;
     max-width: 180px;
     object-fit: contain;
-    filter: brightness(0);
+    filter: brightness(0) invert(1);
     opacity: 0.9;
   }
   @media (max-width: 899px) {
@@ -809,6 +825,14 @@ const humblePlus = {
     .case-carousel-arrow,
     .case-carousel-dot::before {
       transition: none;
+    }
+
+    /* Couper la transition ne suffisait pas : le déplacement d'un pixel et
+       l'échelle à l'appui jouaient encore, simplement sans durée. */
+    .case-carousel-arrow:hover:not(:disabled),
+    .case-carousel-arrow:focus-visible:not(:disabled),
+    .case-carousel-arrow:active:not(:disabled) {
+      transform: none;
     }
   }
 </style>

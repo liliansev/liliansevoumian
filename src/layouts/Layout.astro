@@ -4,6 +4,7 @@ import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
+import { organisations, resume } from '../data/parcours';
 
 const cheminReservation = new URL(URL_RESERVATION).pathname.replace(/^\//, '');
 
@@ -29,7 +30,7 @@ const {
   ogType = 'website',
   ogImage: customOgImage,
   // L'alt décrit la vignette telle qu'elle est, pas le site : elle porte la phrase
-// du hero sur l'aplat lime, c'est ce que lit qui ne voit pas l'image.
+// du hero sur le fond nuit, c'est ce que lit qui ne voit pas l'image.
 ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — Lilian Sevoumian, freelance automatisation et agents IA",
   publishedDate,
   modifiedDate,
@@ -56,7 +57,7 @@ const directionContractComment = directionContract
    La racine reste « / », elle ne se normalise pas. */
 const cheminCanonique = Astro.url.pathname.replace(/(.+)\/$/, '$1');
 const canonicalURL = new URL(cheminCanonique, Astro.site);
-// PNG palettisé et non JPEG : la vignette est un aplat lime avec de la typo et
+// PNG palettisé et non JPEG : la vignette est un aplat nuit avec de la typo et
 // une bande de surlignage — trois couleurs. Le JPEG y posait un halo sur chaque
 // bord de lettre pour 51 Ko ; le PNG-8 est net pour 14.
 const ogImage = customOgImage ? new URL(customOgImage, Astro.site) : new URL('/og-image.png', Astro.site);
@@ -75,8 +76,18 @@ const personSchema = {
   "@id": "https://liliansevoumian.fr/#person",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "image": personImage.toString(),
-  "jobTitle": ["Freelance automatisation & IA", "Expert n8n & Make", "Créateur de sites web", "Formateur no-code"],
-  "description": "Freelance en automatisation, intelligence artificielle, sites et applications web.",
+  "jobTitle": ["Fondateur d’agenceafk", "Fondateur et formateur chez Augmentés", "Freelance en automatisation et agents IA", "Créateur de sites web"],
+  /* Le résumé et les deux structures viennent de data/parcours.ts, la source
+     que lisent aussi la page d'accueil et /llms.txt. */
+  "description": resume,
+  "worksFor": organisations.map((organisation) => ({
+    "@type": "Organization",
+    "name": organisation.nom,
+    "url": organisation.url,
+    "description": organisation.description,
+    "foundingDate": organisation.fondation,
+    "founder": { "@id": "https://liliansevoumian.fr/#person" }
+  })),
   /* Les outils listés ici sont exactement ceux que la section « outils » de la
      home affiche : un moteur de réponse qui compare les deux ne doit pas
      trouver de liste plus courte dans le balisage que sur la page. */
@@ -90,7 +101,7 @@ const personSchema = {
       "recognizedBy": { "@type": "Organization", "name": "Airtable", "url": "https://airtable.com" } }
   ],
   "address": { "@type": "PostalAddress", "addressRegion": "Ile-de-France", "addressCountry": "FR" },
-  "sameAs": ["https://www.linkedin.com/in/liliansevoumian/", "https://github.com/liliansev", "https://www.youtube.com/@lilian.sevoumian", "https://liliansevoumian.substack.com/"]
+  "sameAs": ["https://www.linkedin.com/in/liliansevoumian/", "https://github.com/liliansev", "https://www.youtube.com/@lilian.sevoumian"]
 };
 
 const serviceSchema = {
@@ -221,7 +232,7 @@ const faqPageSchema = faqSchema ? {
     </script>
 
     <meta charset="UTF-8" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#111827" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -391,7 +402,7 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: { layout: "month_view", theme: "light" } });
+                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: { layout: "month_view", theme: "dark" } });
                 inited = true;
                 return waitForEmbed();
               })
@@ -642,6 +653,7 @@ const faqPageSchema = faqSchema ? {
          6) "faq_opened"    → première ouverture d'une question, libellé en prop.
          7) "case_opened"   → clic vers un cas client, href en prop.
          8) "outbound_formations" → sortie vers augmentes.fr.
+         9) "outbound_agence" → sortie vers agenceafk.fr, depuis l'accueil.
          Le goal "lead_form" n'est plus émis : le formulaire de contact a été
          retiré au profit du créneau. Les funnels du dashboard qui en dépendaient
          tomberont à zéro à partir de cette mise en ligne — c'est attendu, ce

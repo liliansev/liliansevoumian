@@ -1,65 +1,45 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import HomeHeroPersonal from '../components/HomeHeroPersonal.astro';
-import HomeAbout from '../components/HomeAbout.astro';
-import HomeServices from '../components/HomeServices.astro';
-import HomeAudience from '../components/HomeAudience.astro';
+import HomeHero from '../components/home-hero.astro';
+import HomeStory from '../components/home-story.astro';
+import HomeTodayPath from '../components/home-today-path.astro';
+import HomeServices from '../components/home-services.astro';
 import HomeContent from '../components/home-content.astro';
-import FAQ from '../components/FAQ.astro';
+import Testimonials from '../components/Testimonials.astro';
+import HomeOffers from '../components/home-offers.astro';
 import Footer from '../components/Footer.astro';
-import { homeFaqs } from '../data/home-faq';
+import { resume, resumeCourt } from '../data/parcours';
+
+/* La barre nomme les quatre métiers : avant même de défiler, on lit ce que
+   fait Lilian. Chaque lien mène au bloc du métier, dans `home-services`. */
 const homeNavigation = [
-  { href: '#services', label: 'Expertises' },
-  { href: '/cas-clients', label: 'Réalisations' },
-  { href: '#contenus', label: 'Contenus' },
+  { href: '#automatisation', label: 'Automatisation' },
+  { href: '#agents-ia', label: 'Agents IA' },
+  { href: '#formations', label: 'Formations' },
+  { href: '#sites', label: 'Sites web' },
 ];
 
-const directionContract = `
-THESIS: Lilian apparaît avant les offres ; une preuve compacte rend le choix crédible, puis deux chemins égaux orientent sans transformer le hero en comparateur.
-OWN-WORLD: Papier blanc, encre noire et bleu nuit ; lime en surlignage derrière les mots et en petits accents, filets de 1 px, Geist et angles droits.
-STORY: Le visiteur peut réserver directement, vérifier la légitimité de Lilian ou explorer les deux expertises avant de prendre contact.
-FIRST VIEWPORT: Un titre direct occupe la gauche, un portrait carré et sa légende la droite ; un unique bouton de réservation reste dans l'en-tête fixe, le lien du hero mène aux services.
-FORM: Manifeste personnel suivi d'un routeur de services, structure explicitement choisie par l'utilisateur dans le monde visuel établi.
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
-`.trim();
-
+/* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
+   doit rattacher à l'entité `Person` déclarée par Layout.astro. */
 const pageSchema = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
+  '@type': 'ProfilePage',
   '@id': 'https://liliansevoumian.fr/#home',
-  name: 'Freelance automatisation, IA et sites web · Lilian Sevoumian',
-  description:
-    'Lilian Sevoumian automatise les opérations, construit des agents IA, des outils métier et des sites web.',
+  name: 'Lilian Sevoumian · Automatisation, IA et formation',
+  description: resume,
   url: 'https://liliansevoumian.fr/',
-  mainEntity: {
-    '@type': 'ItemList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        item: { '@id': 'https://liliansevoumian.fr/automatisations-ia#service' },
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        item: { '@id': 'https://liliansevoumian.fr/sites-web-abonnement#service' },
-      },
-    ],
-  },
+  inLanguage: 'fr-FR',
+  mainEntity: { '@id': 'https://liliansevoumian.fr/#person' },
 };
-
-const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
 ---
 
 <Layout
-  title="Freelance automatisation, IA et sites web | Lilian Sevoumian"
-  description="Redonnez du temps à vos équipes avec des agents IA, des automatisations et des applications métier. Lilian Sevoumian : création et suivi mensuel de vos outils et sites."
+  title="Lilian Sevoumian | Automatisation, IA, formations Make et n8n"
+  description={resumeCourt}
   ogImage="/og-home.png"
-  ogImageAlt="Lilian Sevoumian, freelance en automatisation, IA et création de sites web"
+  ogImageAlt="Trois résultats mesurés chez des clients de Lilian Sevoumian, et son portrait"
   pageSchema={pageSchema}
-  faqSchema={faqSchema}
-  directionContract={directionContract}
 >
   <Navigation
     links={homeNavigation}
@@ -67,19 +47,94 @@ const faqSchema = homeFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
     trackHero={true}
   />
 
-  <main id="main-content" tabindex="-1" class="outline-none">
-    <HomeHeroPersonal />
-    <HomeAbout />
-    <HomeServices />
-    <HomeAudience />
-    <HomeContent />
-    <FAQ
-      items={homeFaqs}
-      title="Avant de travailler ensemble."
-      body=""
-      showTrainingLink={false}
-    />
+  <main id="main-content" tabindex="-1" class="accueil outline-none">
+    <HomeHero />
+    <div class="accueil__suite">
+      <HomeStory />
+      <HomeServices />
+      <HomeTodayPath />
+      <HomeContent />
+      <Testimonials />
+      <HomeOffers />
+    </div>
   </main>
 
   <Footer />
 </Layout>
+
+<style is:global>
+  /*
+   * La direction de l'accueil, validée par Lilian le 2 octobre 2026 : « tech
+   * moderne, propre », sur une grille. Ces règles la tiennent d'un bout à
+   * l'autre de la page, y compris dans les sections qui servent aussi à
+   * d'autres pages et gardent là-bas leur ancienne allure.
+   *
+   *   le fond     la nuit la plus profonde, partout ;
+   *   la grille   deux filets verticaux qui longent la colonne, du récit
+   *               jusqu'aux offres ;
+   *   les titres  une graisse moyenne : c'est la taille qui parle ;
+   *   le surligné une pastille pêche, droite et ronde, à la place de la
+   *               bande penchée.
+   */
+  .accueil {
+    --color-paper: var(--color-night-deep);
+    --color-divider: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    background: var(--color-night-deep);
+  }
+
+  /* Ce qui dépasse de la page prend la même nuit : la gouttière de la barre de
+     défilement et le rebond d'iOS montraient sinon le bleu du reste du site. */
+  html:has(.accueil),
+  html:has(.accueil) body {
+    background: var(--color-night-deep);
+  }
+
+  .accueil__suite {
+    --marge: clamp(1rem, 2.2vw, 2rem);
+    position: relative;
+  }
+
+  .accueil__suite::before,
+  .accueil__suite::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 1px;
+    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    pointer-events: none;
+  }
+
+  /* Le bord de la colonne de 1200 px, ou de la marge de page quand l'écran
+     est plus étroit qu'elle. */
+  .accueil__suite::before {
+    left: calc(max(var(--spacing-section-x), (100% - 1200px) / 2) - var(--marge));
+  }
+
+  .accueil__suite::after {
+    right: calc(max(var(--spacing-section-x), (100% - 1200px) / 2) - var(--marge));
+  }
+
+  @media (max-width: 1023px) {
+    .accueil__suite::before,
+    .accueil__suite::after {
+      display: none;
+    }
+  }
+
+  .accueil :is(h2, h3) {
+    font-weight: 500;
+  }
+
+  .accueil mark {
+    --angle: 0deg;
+    --radius-bande: 9999px;
+    display: inline-block;
+    padding: 0.02em 0.36em 0.08em;
+  }
+
+  .accueil mark::before {
+    inset: 0;
+  }
+</style>

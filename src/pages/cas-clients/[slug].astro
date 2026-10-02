@@ -157,18 +157,23 @@ const articleSchema = {
 
     <!-- HERO -->
     <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-12">
+      {/* `.entree` : le fil de retour, la ligne de contexte, le titre puis les
+          chiffres montent l'un après l'autre, dans l'ordre de lecture. Ce sont
+          des `@keyframes` jouées au chargement et non un voile levé par
+          script : les `.reveal` que portaient la ligne de contexte et les
+          chiffres sont partis, on n'empile pas deux entrées. */}
+      <div class="entree relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-12">
 
         <a
           href="/cas-clients"
-          class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+          class="group tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
         >
-          <span aria-hidden="true">←</span>
+          <span aria-hidden="true" class="inline-block transition-transform motion-safe:group-hover:-translate-x-[0.2rem]">←</span>
           RETOUR AUX CAS
         </a>
 
         <!-- Meta header -->
-        <div class="reveal flex flex-wrap items-center gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-6 md:mb-8">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-6 md:mb-8">
           {cs.secteur && <span>{cs.secteur.toUpperCase()}</span>}
           {cs.tags.length > 0 && (
             <>
@@ -183,9 +188,9 @@ const articleSchema = {
         </div>
 
         <!-- Title -->
-        {/* Pas de `.reveal` sur ce bloc, comme sur la home (HeroManifesto.astro:36-47) :
-            le titre du cas est le message de la page, il ne peut pas dépendre
-            d'un module JavaScript ni être disqualifié comme candidat LCP. */}
+        {/* Pas de `.reveal` sur ce bloc : le titre du cas est le message de la
+            page, il ne peut pas dépendre d'un module JavaScript. Son entrée
+            vient de `.entree`, en CSS seul — sans script il est simplement là. */}
         <div class="mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
           <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0">
             {cs.title}
@@ -198,8 +203,10 @@ const articleSchema = {
         </div>
 
         <!-- KPIs row -->
+        {/* Les trois chiffres s'arrondissent comme UN bloc : le rayon et le
+            rognage sont sur le conteneur, les cellules restent d'équerre. */}
         {cs.kpis.length > 0 && (
-          <div class="reveal grid grid-cols-1 sm:grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden max-w-3xl">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden max-w-3xl">
             {cs.kpis.map((kpi) => (
               <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
                 <div class="font-display font-semibold tabular-nums text-3xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none">
@@ -216,11 +223,9 @@ const articleSchema = {
 
     <!-- CORPS DU CAS (Markdown) -->
     {/* Une pièce par <h2>, chacune sur sa propre surface. Les surfaces
-        alternent papier / bande grise pour donner un rythme vertical, et la
-        DERNIÈRE passe sur l'encre : c'est le pic de la page, et c'est là que
-        sont les résultats. Elle ne peut pas être en lime — le CTA de pied l'est
-        déjà, et deux aplats lime à 1 500 px d'écart font un motif, pas un
-        geste. Sur l'encre, une bande de surlignage tient 14:1. */}
+        alternent nuit / bande relevée pour donner un rythme vertical, et la
+        DERNIÈRE passe sur le panneau clair inversé : c'est le pic de la page,
+        et c'est là que sont les résultats. */}
     {pieces.map((piece, i) => (
       <section
         data-section
@@ -386,6 +391,10 @@ const articleSchema = {
 </Layout>
 
 <style>
+  /* Le voisin n'a pas de boîte : un filet au-dessus, et c'est lui qui répond.
+     Il reste droit — on n'arrondit pas un trait — et passe à la pêche au
+     survol comme au clavier. La transition du filet vient de la règle de base
+     des liens. */
   .voisin {
     display: flex;
     flex-direction: column;
@@ -393,6 +402,10 @@ const articleSchema = {
     border-top: 2px solid var(--color-ink);
     padding-top: 1rem;
     text-decoration: none;
+  }
+  .voisin:focus-visible { border-top-color: var(--color-peche); }
+  @media (hover: hover) and (pointer: fine) {
+    .voisin:hover { border-top-color: var(--color-peche); }
   }
   .voisin-secteur {
     font-size: var(--text-mono-caption);
@@ -411,9 +424,10 @@ const articleSchema = {
   .voisin-kpi {
     margin-top: 0.35rem;
     align-self: flex-start;
-    background: var(--color-lime);
-    color: var(--color-ink);
+    background: var(--color-peche);
+    color: var(--color-night);
     padding: 0.3em 0.6em;
+    border-radius: var(--radius-xs);
     font-size: var(--text-body-sm);
     font-weight: 600;
   }
@@ -424,7 +438,7 @@ const articleSchema = {
   .voisin-outil a {
     color: var(--color-ink);
     font-weight: 600;
-    border-bottom: 2px solid var(--color-lime);
+    border-bottom: 2px solid var(--color-peche);
   }
 </style>
 
@@ -470,6 +484,10 @@ const articleSchema = {
     gap: 0.5rem 1rem;
     padding: 0.7rem 0;
     border-bottom: 1px solid var(--color-divider);
+    /* La règle de base plafonne tout `li` à 46ch, une mesure de prose. Ici la
+       ligne est une rangée de tableau : plafonnée, elle s'arrêtait à 488 px
+       sous un en-tête de 763, et le relevé avait deux bords droits. */
+    max-width: none;
   }
 
   .nomenclature-rang,
@@ -505,11 +523,14 @@ const articleSchema = {
     padding: 0.15rem 0.5rem;
   }
 
-  /* Le lime ne marque QUE le contrôle. Encre littérale : sur une pièce posée
-     sur l'encre, le jeton de rôle vaudrait le blanc, illisible sur la bande. */
+  /* La pêche ne marque QUE le contrôle. Son texte lit `--color-night`, le seul
+     des deux jetons qu'aucun bloc ne remappe : `--color-ink` vaut blanc sur la
+     nuit, 1,74:1 sur la pastille. Elle prend le plus petit rayon, celui d'un
+     détail. */
   .nomenclature-role.est-controle {
-    background: var(--color-lime);
-    color: #111111;
+    background: var(--color-peche);
+    color: var(--color-night);
+    border-radius: var(--radius-xs);
     font-weight: 600;
   }
 
@@ -573,11 +594,10 @@ const articleSchema = {
      le texte occupe toute la largeur, pas dans un titre. */
   .bascule-ligne dd :global(mark) {
     white-space: normal;
-    /* Encre LITTÉRALE, pas var(--color-ink). Sur `.bloc-encre` le jeton de rôle
-       est remappé en blanc : le texte du surlignage sortait blanc sur lime,
-       illisible. La bande est toujours lime, quelle que soit la surface qui la
-       porte, donc son texte est toujours l'encre. 15,14:1. */
-    color: #111111;
+    /* `--color-night`, pas `--color-ink` : la bande est toujours pêche, quelle
+       que soit la surface qui la porte, donc son texte est toujours la nuit —
+       le seul des deux jetons qu'aucun bloc ne remappe. 10,19:1. */
+    color: var(--color-night);
   }
 
   @media (max-width: 34rem) {
@@ -641,10 +661,9 @@ const articleSchema = {
     color: var(--color-ink);
   }
 
-  /* Sur l'encre, les jetons de rôle sont déjà remappés par `.bloc-encre` : la
-     prose, les titres et les filets suivent sans variante à écrire. Seule
-     l'icône a besoin d'être forcée, sa couleur étant posée en dur ci-dessus. */
-  .bloc-encre .piece-icone { color: var(--color-text-on-dark); }
+  /* Sur le panneau inversé, les jetons de rôle sont déjà remappés par
+     `.bloc-encre` : la prose, les titres, les filets et l'icône suivent sans
+     variante à écrire. */
 
   /* Corps Markdown des cas — calé sur les tokens du site. */
   .case-prose :global(h2) {
@@ -698,7 +717,10 @@ const articleSchema = {
     width: 6px;
     height: 6px;
     border-radius: var(--radius-full);
-    background: var(--color-accent);
+    /* accent-text et non accent : la dernière pièce d'un cas est un panneau
+       clair, où une puce pêche de 6 px ne tient que 1,64:1. Ce jeton vaut la
+       pêche sur la nuit et la nuit sur le clair. */
+    background: var(--color-accent-text);
   }
 
   /* Le lime dit un gain, partout ailleurs sur le site. Dans « Le problème » il
@@ -728,7 +750,9 @@ const articleSchema = {
     padding: 1em 1.25em;
     border: 1px solid var(--color-border-strong);
     background: var(--color-surface-low);
-    border-radius: var(--radius-sm);
+    /* Une ligne encadrée de la largeur de la colonne : le rayon d'une carte,
+       celui des questions de la FAQ, et non celui d'une vignette. */
+    border-radius: var(--radius-md);
     color: var(--color-ink-mid);
   }
 

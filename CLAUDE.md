@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Site for Lilian Sevoumian with two equal expertises: automation/AI and evolving websites. Built with Astro 5.x.
+Personal brand site for Lilian Sevoumian: the reference point for his track record and everything he does today (client work, videos, newsletter, training, agency). The two offers (automation/AI and websites) stay, in the background. Product truth lives in `PRODUCT.md`. Built with Astro 5.x.
 
 ## Commands
 
@@ -29,11 +29,13 @@ pnpm preview    # Preview production build locally
 src/
 ├── components/
 │   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
-│   ├── HomeDualServices.astro # hero 50/50 des deux expertises
-│   ├── HomeProofs.astro       # preuves automation + sites
-│   ├── HomeVibeCoding.astro   # méthode commune
-│   ├── HomeAbout.astro        # présentation compacte
-│   ├── HomeContact.astro      # contact générique
+│   ├── home-hero.astro        # accueil : titre seul centré, grille, défilé clients
+│   ├── home-story.astro       # accueil : récit en 3 actes + scène PDF → facture
+│   ├── home-services.astro    # accueil : 4 métiers, une forme 3D en verre chacun
+│   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours
+│   ├── home-content.astro     # accueil : dernière vidéo + newsletter
+│   ├── home-offers.astro      # accueil : « Combien ça coûte »
+│   ├── Home*.astro (PascalCase) # ancienne home, plus importés nulle part
 │   ├── HeroManifesto.astro    # aplat lime, typographie seule
 │   ├── LogoMarquee.astro      # bandeau d'outils défilant
 │   ├── CaseStudy.astro        # carrousel des 4 cas sur la home
@@ -56,8 +58,8 @@ src/
 │       └── Stack*.astro           # une maquette par outil
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
-├── data/                      # brands.ts, faq.ts
-├── lib/                       # roi.ts, tool-chip.ts, reservation.ts
+├── data/                      # brands.ts, faq.ts, clients.ts, realisations.ts, parcours.ts
+├── lib/                       # roi.ts, reservation.ts, blocs/atelier.ts (formes 3D en verre)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
 │   └── PageExpertOutil.astro  # charpente commune des pages SEO par outil
@@ -78,17 +80,27 @@ api/
 
 ## Design System
 
-Colors (zinc-based palette):
-- Background: `zinc-100`
-- Cards/Surfaces: `white`
-- Text primary: `zinc-900`
-- Text secondary: `zinc-500`
-- Text muted: `zinc-400`
-- Borders: `zinc-200`
+`DESIGN.md` is the source of truth; tokens live in the `@theme` block of
+`src/styles/global.css`. In short ("nuit et pêche", October 2026):
+
+- Background: night blue `#111827`; white text, greys tinted toward the night
+- One accent: peach `#ffb38a` (highlights, CTAs, accent text, focus ring)
+- Any text placed ON peach reads `--color-night`, never `--color-ink` (white)
+- Light only in the inverted panel `.bloc-encre` (a rounded island);
+  `.bloc-lime` is a raised night band. Both class names are legacy
+- No sharp corners: radius scale `--radius-xs` to `--radius-xl`, pill controls
+- Motion: traced highlighter (`<mark>`), hero entrance (`.entree`),
+  scroll-opened media (`.media-ouvre`), cross-page view transitions
 
 Typography:
-- Sans: Geist (`font-sans`)
-- Mono: Geist Mono (`font-mono`)
+- One family: Geist (`--font-display`, `--font-body`); no monospace
+
+Home page only ("tech propre", validated 2 October 2026; see the section
+*L'accueil* in `DESIGN.md`): deep night `#0c121f`, everything laid on a grid,
+two page-level frame lines, `mark` as a straight pill, `h2`/`h3` at weight 500,
+one glass 3D shape per service (`src/lib/blocs/atelier.ts`, Three.js). These
+rules live in the `.accueil` block of `src/pages/index.astro`. The other pages
+still carry the previous look until Lilian asks to propagate it.
 
 ## Key Implementation Notes
 

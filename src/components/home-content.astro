@@ -17,7 +17,7 @@ const video = {
       <article class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
         <SectionHeader title="Ma dernière vidéo YouTube" titleMaxWidth="none" spacing="none" class="h-full" />
         <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
-          <div class="relative aspect-video overflow-hidden bg-[var(--color-ink)]">
+          <div class="media-ouvre relative aspect-video bg-[var(--color-surface-low)]">
             <img src={video.thumbnail} alt="" width="1280" height="720" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none" />
             <span class="video-play absolute bottom-4 left-4 flex min-h-11 items-center gap-2 rounded-cta bg-[var(--color-paper)] px-4 text-[var(--color-ink)] text-sm font-medium">
               <Icon name="lucide:youtube" size={20} aria-hidden="true" /> Voir la vidéo
@@ -26,9 +26,9 @@ const video = {
           <h3 class="mt-5 text-[length:var(--text-title-lg)] leading-tight tracking-[-0.02em]">{video.title}</h3>
         </a>
       </article>
-      <aside aria-label="La newsletter" class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
+      <aside id="newsletter" aria-label="La newsletter" class="grid min-w-0 scroll-mt-24 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
         <SectionHeader title="La newsletter" titleMaxWidth="none" spacing="none" class="h-full" />
-        <div class="newsletter-panel grid gap-6 self-start border border-[var(--color-divider)] bg-[var(--color-surface-low)] p-6 text-[var(--color-ink)] lg:p-8">
+        <div class="newsletter-panel grid gap-6 self-start rounded-[var(--radius-lg)] border border-[var(--color-divider)] bg-[var(--color-surface-low)] p-6 text-[var(--color-ink)] lg:p-8">
           <p class="m-0 max-w-[36ch] text-[length:var(--text-body-large)] leading-relaxed">Un mail par semaine : cas d’usage, outils et actualité IA.</p>
           <form id="newsletter-form" action="/api/newsletter" method="post" class="m-0 min-w-0" aria-describedby="newsletter-note newsletter-status">
             <label for="newsletter-email" class="mb-2 block text-base font-medium">Votre adresse email</label>
@@ -56,7 +56,7 @@ const video = {
   @media (hover: hover) and (pointer: fine) {
     .video-link:hover img { transform: scale(1.025); }
     .video-link:hover h3 { text-decoration: underline; text-underline-offset: 0.18em; }
-    .video-link:hover .video-play { background: var(--color-night); color: var(--color-paper); }
+    .video-link:hover .video-play { background: var(--color-peche); color: var(--color-night); }
   }
   @media (prefers-reduced-motion: reduce) {
     .video-link:hover img { transform: none; }

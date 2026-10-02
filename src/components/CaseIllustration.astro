@@ -17,9 +17,12 @@ const description = steps.map(({ tool, action }) => `${tool} : ${action}`).join(
 ---
 
 <div class="case-illustration" role="img" aria-label={`Process simplifié. ${description}`}>
-  <ol class="case-flow" aria-hidden="true">
+  {/* Les trois étapes arrivent dans l'ordre du process : c'est une vraie suite,
+      et la cascade dit le sens de lecture que le trait dessine ensuite. Sans
+      script, les trois sont là d'emblée. */}
+  <ol class="case-flow reveal-stagger" aria-hidden="true">
     {steps.map((step) => (
-      <li class="case-flow__step">
+      <li class="case-flow__step reveal">
         <div class="case-flow__node" style={{ color: brandColorFor(step.icon) }}>
           <Icon name={step.icon} />
         </div>

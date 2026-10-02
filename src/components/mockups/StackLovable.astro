@@ -58,9 +58,12 @@
      lieu de l’élargir. */
   .lv-champ {
     overflow: hidden;
-    padding: 5px 9px;
+    /* Un champ est rond, comme ceux du site ; le retrait latéral suit pour que
+       la première lettre ne touche pas l’arrondi. */
+    padding: 5px 12px;
     background: var(--color-surface-low);
     border: 1px solid var(--color-divider);
+    border-radius: var(--radius-full);
   }
   .lv-phrase {
     display: block;
@@ -83,6 +86,7 @@
     gap: 4px;
     padding: 7px 11px;
     border: 1px solid var(--color-divider);
+    border-radius: var(--radius-sm);
   }
 
   /* Blocs muets : un wireframe, pas une capture. Aucun libellé d’interface
@@ -91,11 +95,13 @@
     height: 9px;
     width: 54%;
     background: var(--color-ink);
+    border-radius: var(--radius-full);
   }
   .lv-ligne {
     height: 4px;
     width: 78%;
     background: var(--color-ink-faint);
+    border-radius: var(--radius-full);
   }
   .lv-ligne.is-court { width: 58%; }
 
@@ -107,6 +113,7 @@
     height: 14px;
     width: 32%;
     background: var(--brand, var(--color-accent));
+    border-radius: var(--radius-full);
   }
 
   .lv-section {
@@ -114,6 +121,7 @@
     margin-top: 2px;
     padding: 4px 8px;
     border: 1px solid var(--color-divider);
+    border-radius: var(--radius-xs);
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
     letter-spacing: 0.05em;
@@ -157,9 +165,12 @@
     animation-delay: var(--d), var(--d);
   }
 
+  /* La frappe rogne la phrase au lieu d’en animer la largeur : `width` relançait
+     une mise en page à chacun des vingt-six pas, `clip-path` ne coûte qu’une
+     composition. Le pas reste d’un caractère, la phrase mesurant 26ch. */
   @keyframes lv-frappe {
-    0%        { width: 0; }
-    22%, 100% { width: 26ch; }
+    0%        { clip-path: inset(0 100% 0 0); }
+    22%, 100% { clip-path: inset(0 0 0 0); }
   }
   @keyframes lv-sortie {
     0%, 92%   { opacity: 1; }
@@ -181,6 +192,7 @@
       animation: none;
       width: auto;
       opacity: 1;
+      clip-path: none;
       /* La coupe nette sert la frappe ; au repos, une phrase trop longue mérite
          des points de suspension. */
       text-overflow: ellipsis;

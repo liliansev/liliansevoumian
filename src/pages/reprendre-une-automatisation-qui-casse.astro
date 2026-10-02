@@ -183,24 +183,27 @@ const faqs = [
   <main id="main-content">
 
     <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+      {/* `.entree` : le fil de retour, le libellé, le titre, le chapô puis
+          l'action montent l'un après l'autre, et le surlignage se trace une
+          fois le titre arrivé. Des `@keyframes` jouées au chargement : le h1
+          n'attend aucun script, et sans JS l'en-tête est peint dans son état
+          final. Le chapô et l'action ont rendu leur `.reveal` — on n'empile
+          pas deux entrées. */}
+      <div class="entree relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
 
-        <a href="/" class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8">
-          <span aria-hidden="true">←</span> RETOUR À L’ACCUEIL
+        <a href="/" class="group tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8">
+          <span aria-hidden="true" class="inline-block transition-transform motion-safe:group-hover:-translate-x-[0.2rem]">←</span> RETOUR À L’ACCUEIL
         </a>
 
         <div class="mono-caption text-[var(--color-ink-low)] mb-6">REPRISE · MAKE ET N8N</div>
 
-        {/* Le h1 n’est pas un `.reveal` : peint à opacity 0 il serait
-            définitivement disqualifié comme candidat LCP, comme cela s’est
-            produit sur la home. */}
         <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.045em] text-[var(--color-ink)] m-0 max-w-[18ch]" style="text-wrap: balance;">
           <Fragment set:html={TITRE_H1} />
         </h1>
 
-        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[62ch]">Vos factures ne partent plus. Le scénario, lui, affiche toujours vert. Lilian Sevoumian reprend les automatisations <Outil icon="simple-icons:make">Make</Outil> et <Outil icon="simple-icons:n8n">n8n</Outil> déjà en place, y compris celles construites par quelqu'un d'autre, et remet le flux en marche.</p>
+        <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-6 max-w-[62ch]">Vos factures ne partent plus. Le scénario, lui, affiche toujours vert. Lilian Sevoumian reprend les automatisations <Outil icon="simple-icons:make">Make</Outil> et <Outil icon="simple-icons:n8n">n8n</Outil> déjà en place, y compris celles construites par quelqu'un d'autre, et remet le flux en marche.</p>
 
-        <div class="reveal mt-8 md:mt-10">
+        <div class="mt-8 md:mt-10">
           <BoutonReservation source="reprise-hero" class="btn-primary justify-center">
             Automatiser mon business
           </BoutonReservation>
@@ -217,7 +220,10 @@ const faqs = [
         ]}
       >
         <div class="relative max-w-[72ch] mx-auto">
-          <h2 class="reprise-titre font-display font-semibold text-[var(--color-ink)]">
+          {/* Le titre apparaît avec sa section, comme ses paragraphes : un
+              fondu, sans déplacement. C'est ce `.reveal` qui laisse le
+              surlignage du dernier titre se tracer à l'arrivée. */}
+          <h2 class="reveal reprise-titre font-display font-semibold text-[var(--color-ink)]">
             <Fragment set:html={s.h2} />
           </h2>
           {s.paragraphes.map((p) => (

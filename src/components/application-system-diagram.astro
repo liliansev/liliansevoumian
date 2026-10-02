@@ -2,7 +2,7 @@
 import ThreeScene from './three-scene.astro';
 ---
 
-<figure class="application-system m-0 rounded-[var(--radius-diagram)] p-5 sm:p-8" aria-labelledby="application-system-caption">
+<figure class="application-system m-0 p-5 sm:p-8" aria-labelledby="application-system-caption">
   <ThreeScene
     scene="structure"
     description="Trois niveaux s’assemblent : les données, une application métier et votre équipe. Les informations dispersées deviennent une vue commune."
@@ -50,8 +50,16 @@ import ThreeScene from './three-scene.astro';
 </figure>
 
 <style>
+  /* Le schéma est un média de 720 px : il prend le rayon fluide des médias, et
+     non plus les 16 px fixes de `--radius-diagram`, qui le laissaient plus
+     anguleux que les vignettes de la même page. Le filet le détache de la
+     bande, dont son fond n'est séparé que d'un cran de nuit.
+     Pas d'enveloppe `.media-ouvre` : la scène 3D a déjà son propre mouvement,
+     et un rognage lié au défilement se battrait avec lui. */
   .application-system {
-    background: var(--color-ink);
+    border: 1px solid var(--color-divider-dark);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-on-dark);
     color: var(--color-text-on-dark);
   }
 
@@ -61,7 +69,7 @@ import ThreeScene from './three-scene.astro';
   }
 
   .application-system__center {
-    stroke: var(--color-lime);
+    stroke: var(--color-peche);
   }
 
   .application-system__labels {

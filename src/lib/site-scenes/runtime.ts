@@ -38,10 +38,10 @@ export function mountScene(host: HTMLElement): () => void {
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const styles = getComputedStyle(host);
   const palette: ScenePalette = {
-    lime: styles.getPropertyValue('--color-lime').trim(),
-    paper: styles.getPropertyValue('--color-paper').trim(),
-    muted: styles.getPropertyValue('--color-ink-faint').trim(),
-    dark: styles.getPropertyValue('--color-ink').trim(),
+    lime: styles.getPropertyValue('--color-peche').trim(),
+    paper: styles.getPropertyValue('--color-text-on-dark').trim(),
+    muted: styles.getPropertyValue('--color-text-on-dark-faint').trim(),
+    dark: styles.getPropertyValue('--color-surface-on-dark').trim(),
   };
   const id = host.dataset.scene;
   const abort = new AbortController();

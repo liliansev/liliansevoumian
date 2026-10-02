@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 import BoutonReservation from './BoutonReservation.astro';
 import { LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
+import { audience, organisations } from '../data/parcours';
 
 const year = new Date().getFullYear();
 
@@ -17,12 +18,16 @@ interface Channel {
   metric: string;
   href: string;
   icon: string;
-  color: string; // couleur officielle de la plateforme (hover)
+  /** Couleur officielle de la plateforme, au survol. Absente pour un canal
+      tenu sur le site lui-même : il prend alors l'accent. */
+  color?: string;
 }
 
 interface NavLink {
   label: string;
   href: string;
+  /** Sortie vers un autre site : nouvel onglet, flèche, objectif mesuré. */
+  goal?: string;
 }
 
 interface NavColumn {
@@ -32,11 +37,13 @@ interface NavColumn {
 
 const channels: Channel[] = [
   // Le bleu LinkedIn pour fond sombre (#70B5F9), pas le #0A66C2 des fonds clairs :
-  // sur l'encre du footer, le bleu de base tient 3,32:1 et le libellé s'effaçait
-  // au survol. La variante sombre est officielle et tient 8,7:1.
-  { label: "LinkedIn", metric: "11 K+ ABONNÉS", href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#70B5F9" },
-  { label: "YouTube", metric: "120+ VIDÉOS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
-  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "https://liliansevoumian.substack.com/", icon: "lucide:mail", color: "#FF6719" },
+  // sur la nuit profonde du footer, le bleu de base tient 3,29:1 et le libellé
+  // s'effaçait au survol. La variante sombre est officielle et tient 8,62:1.
+  { label: "LinkedIn", metric: audience.linkedin.affiche.toUpperCase(), href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#70B5F9" },
+  { label: "YouTube", metric: "TUTOS ET CAS CONCRETS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
+  // La newsletter de référence est celle du formulaire de la home (Lumail), pas
+  // l'ancien Substack : le lien ramène donc à l'inscription, sur le site.
+  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "/#newsletter", icon: "lucide:mail" },
 ];
 
 const navColumns: NavColumn[] = [
@@ -48,12 +55,21 @@ const navColumns: NavColumn[] = [
        barre parce qu'il n'est plus une destination, pas parce qu'il devrait
        cesser d'être atteignable. */
     links: [
+      { label: "Parcours", href: "/#parcours" },
+      { label: "Cas clients", href: "/cas-clients" },
       { label: "Automatisation & IA", href: "/automatisations-ia" },
       { label: "Sites & applications web", href: "/sites-web-abonnement" },
-      { label: "Cas clients", href: "/cas-clients" },
-      { label: "Principes", href: "/principes" },
-      { label: "À propos", href: "/#qui-je-suis" },
     ],
+  },
+  {
+    /* Les deux structures de Lilian. Le site est le point de référence sur lui :
+       ce qu'il a fondé doit s'y retrouver depuis n'importe quelle page. */
+    title: "AILLEURS",
+    links: organisations.map((organisation) => ({
+      label: organisation.nom,
+      href: organisation.url,
+      goal: organisation.goal,
+    })),
   },
   {
     title: "EXPERTISE",
@@ -74,7 +90,7 @@ const navColumns: NavColumn[] = [
 
 ---
 
-<footer class="bloc-encre relative bg-[var(--color-paper)] border-t border-[var(--color-divider)] px-[var(--spacing-section-x)]">
+<footer class="relative bg-[var(--color-night-deep)] border-t border-[var(--color-divider)] px-[var(--spacing-section-x)]">
   <div class="relative max-w-[1200px] mx-auto py-16 md:py-20">
 
     <!-- Top: brand + content channels -->
@@ -84,7 +100,7 @@ const navColumns: NavColumn[] = [
           <span class="mono-label">LILIAN SEVOUMIAN</span>
         </div>
         <p class="text-[var(--color-ink-mid)] max-w-md">
-          Automatisation, agents IA, sites et applications web. Du cadrage au développement, un seul interlocuteur.
+          Freelance depuis 2020, fondateur d’agenceafk et d’Augmentés. Je construis, je forme, je publie.
         </p>
         {showContact && (
           <BoutonReservation source="footer" class="btn-primary justify-center mt-6 w-full sm:w-auto">
@@ -96,22 +112,25 @@ const navColumns: NavColumn[] = [
       <div>
         <div class="mono-caption text-[var(--color-ink-low)] mb-4">CONTENU</div>
         <ul class="space-y-2">
-          {channels.map((ch) => (
+          {channels.map((ch) => {
+            const externe = ch.href.startsWith('http');
+            return (
             <li>
               <a
                 href={ch.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={`--chan:${ch.color}`}
+                target={externe ? '_blank' : undefined}
+                rel={externe ? 'noopener noreferrer' : undefined}
+                style={ch.color ? `--chan:${ch.color}` : undefined}
                 class="channel-link group inline-flex items-center gap-2.5 text-[var(--color-ink)] transition-colors min-h-[44px] py-2"
               >
                 <Icon name={ch.icon} class="channel-ic size-4 text-[var(--color-ink-mid)] shrink-0" aria-hidden="true" />
                 <span class="mono-label">{ch.label}</span>
                 <span class="mono-caption text-[var(--color-ink-low)]">{ch.metric}</span>
-                <span class="mono-label opacity-40 group-hover:opacity-100 transition-opacity">↗</span>
+                <Icon name={externe ? 'lucide:arrow-up-right' : 'lucide:arrow-right'} class="size-3.5 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
               </a>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </div>
@@ -129,7 +148,7 @@ const navColumns: NavColumn[] = [
       décalage du texte et sans toucher à la grille — mesuré, aucune colonne ne
       descend sous 80 px, même à 375 px de fenêtre.
     -->
-    <div class="grid grid-cols-2 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-8 md:gap-12 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 py-12">
       {navColumns.map((col) => (
         <div>
           <div class="mono-caption text-[var(--color-ink-low)] mb-4">{col.title}</div>
@@ -138,9 +157,15 @@ const navColumns: NavColumn[] = [
               <li>
                 <a
                   href={link.href}
-                  class="min-w-[44px] text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[length:var(--text-body-sm)] break-words"
+                  target={link.goal ? '_blank' : undefined}
+                  rel={link.goal ? 'noopener noreferrer' : undefined}
+                  data-fast-goal={link.goal}
+                  data-fast-goal-source={link.goal ? 'footer' : undefined}
+                  class="min-w-[44px] gap-1.5 text-[var(--color-ink-mid)] hover:text-[var(--color-ink)] transition-colors text-[length:var(--text-body-sm)] break-words"
                 >
                   {link.label}
+                  {link.goal && <Icon name="lucide:arrow-up-right" class="size-3.5 shrink-0" aria-hidden="true" />}
+                  {link.goal && <span class="sr-only"> (nouvel onglet)</span>}
                 </a>
               </li>
             ))}

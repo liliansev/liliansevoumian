@@ -76,11 +76,13 @@ const services = [
     min-width: 0;
     padding-block: var(--spacing-service-card);
     border: 1px solid var(--color-service-border);
+    border-radius: var(--radius-lg);
     background: var(--color-paper);
     color: var(--color-ink);
     text-decoration: none;
     overflow: hidden;
-    transition: border-color var(--duration-default) var(--ease-out-quint);
+    transition: border-color var(--duration-default) var(--ease-out-quint),
+                background-color var(--duration-default) var(--ease-out-quint);
   }
   .home-service-card > :is(h3, p, .home-service-card__footer) {
     margin: 0;
@@ -119,6 +121,12 @@ const services = [
     aspect-ratio: 3 / 2;
     object-fit: cover;
   }
+  /* Le visuel avance vers le lecteur au survol : la carte entière est un lien,
+     c'est son contenu qui répond, pas seulement son filet. Sortie plus lente
+     que l'entrée, comme le bouton primaire. */
+  .home-service-card__media > :global(*) {
+    transition: transform 600ms var(--ease-out-expo);
+  }
   .home-service-card__footer {
     display: flex;
     align-items: center;
@@ -150,7 +158,8 @@ const services = [
     transition: transform var(--duration-default) var(--ease-out-quint);
   }
   @media (hover: hover) and (pointer: fine) {
-    .home-service-card:hover { border-color: var(--color-night); }
+    .home-service-card:hover { border-color: var(--color-peche); background: var(--color-section-band); }
+    .home-service-card:hover .home-service-card__media > :global(*) { transform: scale(1.03); transition-duration: 350ms; }
     .home-service-card:hover .home-service-card__action { text-decoration: underline; text-underline-offset: 0.3em; }
     .home-service-card:hover .home-service-card__action :global(svg) { transform: translateX(0.2rem); }
   }
@@ -159,6 +168,7 @@ const services = [
     .home-service-card { grid-template-rows: auto auto auto auto; grid-row: auto; gap: 1.5rem; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .home-service-card, .home-service-card__action :global(svg) { transition: none; }
+    .home-service-card, .home-service-card__action :global(svg), .home-service-card__media > :global(*) { transition: none; }
+    .home-service-card:hover .home-service-card__media > :global(*) { transform: none; }
   }
 </style>

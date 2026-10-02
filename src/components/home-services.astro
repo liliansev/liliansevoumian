@@ -1,0 +1,443 @@
+---
+/*
+ * home-services — ce que fait Lilian, en quatre métiers.
+ *
+ * Il l'a demandé en clair : en passant sur la page, on doit comprendre qu'il
+ * fait de l'automatisation, de l'IA, des formations et des sites web ou des
+ * tableaux de bord. Quatre blocs donc, un par métier, et chacun porte sa
+ * sculpture de verre. Il a aimé le circuit et demandé des formes plus
+ * inventives que des dalles : chaque sculpture a donc sa silhouette.
+ *
+ *   automatisation   le circuit : une sphère déclenche, une gemme pêche
+ *                    décide, trois objets reçoivent ;
+ *   agents IA        le gyroscope : une sphère pêche, trois anneaux, et les
+ *                    outils qui tournent autour ;
+ *   formations       les anneaux à empiler : ils tombent un à un sur leur
+ *                    tige, un niveau après l'autre ;
+ *   sites web        la vitre : un tableau de bord posé sur du verre.
+ *
+ * Les sculptures sont dessinées par `lib/blocs/atelier.ts`. Three.js n'est
+ * chargé que lorsqu'un cadre approche de l'écran, et chaque sculpture se met
+ * en pause dès qu'elle en sort.
+ *
+ * Rien n'est affirmé qui ne soit dans PRODUCT.md : les preuves viennent des
+ * cas clients publiés et des faits du parcours ; les prix, de
+ * `data/service-pricing`. Les trois sites montrés sont les trois premiers de
+ * la liste commune, hors ce site-ci.
+ */
+import LinkCTA from './LinkCTA.astro';
+import ProjectVisual from './ProjectVisual.astro';
+import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
+import { projects } from '../data/realisations';
+
+const prix = (montant: number) => `À partir de ${montant.toLocaleString('fr-FR')} € HT`;
+
+const metiers = [
+  {
+    id: 'automatisation',
+    forme: 'circuit',
+    nom: 'Automatisation',
+    phrase: 'Je relie vos outils, et les ressaisies disparaissent.',
+    texte:
+      'Commandes, factures, relances, reporting : je construis les workflows Make et n8n qui font passer l’information d’un outil à l’autre. Je pars de vos processus réels et je livre un système qui tourne en production.',
+    preuve: { chiffre: '0 ressaisie', suite: 'du bon de commande à la facture, chez Humble+.', href: '/cas-clients/humble-plus' },
+    note: prix(automationStartingPrice),
+    lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_services_automation' },
+    description: 'Sculpture de verre : une sphère, une gemme pêche et trois objets reliés par des fils, parcourus par un grain de lumière.',
+  },
+  {
+    id: 'agents-ia',
+    forme: 'agent',
+    nom: 'Agents IA',
+    phrase: 'Un agent qui lit, trie et qualifie à votre place.',
+    texte:
+      'Un agent branché sur vos données et vos outils : il lit un document, qualifie un prospect, prépare une réponse. L’IA extrait ; les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
+    preuve: { chiffre: '~10 min', suite: 'par run, contre 1 à 3 h pour 50 entreprises à la main, chez M Partners.', href: '/cas-clients/m-partners' },
+    lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
+    description: 'Sculpture de verre : une sphère pêche entourée de trois anneaux qui tournent, et les outils de l’agent en orbite.',
+  },
+  {
+    id: 'formations',
+    forme: 'anneaux',
+    nom: 'Formations',
+    phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
+    texte:
+      'Des formations pratiques à Make, n8n et à l’IA, en ligne ou directement avec vos équipes. On construit sur vos cas, pas sur des exemples d’école.',
+    preuve: { chiffre: 'Plus de 300', suite: 'personnes formées, par le premier Français certifié Make niveau 5.' },
+    lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
+    description: 'Sculpture de verre : cinq anneaux qui tombent un à un sur leur tige, du plus large au plus petit.',
+  },
+  {
+    id: 'sites',
+    forme: 'page',
+    nom: 'Sites web et dashboards',
+    phrase: 'Des landing pages qui convertissent, des tableaux de bord qui servent.',
+    texte:
+      'Landing pages, sites vitrines, portails clients et tableaux de bord métier, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
+    note: prix(webStartingPrice),
+    lien: { href: '/sites-web-abonnement', label: 'Voir l’offre sites web', goal: 'service_path_opened', source: 'home_services_web' },
+    description: 'Sculpture de verre : une vitre debout portant un graphique en anneau, des barres, une courbe et un bouton.',
+  },
+] as const;
+
+const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
+---
+
+<section id="services" data-section class="metiers relative px-[var(--spacing-section-x)]">
+  <div class="metiers__cadre relative mx-auto max-w-[1200px]">
+    <header class="metiers__tete reveal">
+      <h2>Je fais <mark>quatre choses.</mark></h2>
+      <ul>
+        {metiers.map((metier) => (
+          <li><a href={`#${metier.id}`}>{metier.nom}</a></li>
+        ))}
+      </ul>
+    </header>
+
+    {metiers.map((metier, index) => (
+      <article id={metier.id} class:list={['metier', { 'metier--miroir': index % 2 === 1 }]}>
+        <div class="metier__texte reveal">
+          <h3>{metier.nom}</h3>
+          <p class="metier__phrase">{metier.phrase}</p>
+          <p class="metier__corps">{metier.texte}</p>
+
+          {'preuve' in metier && (
+            <p class="metier__preuve">
+              <strong>{metier.preuve.chiffre}</strong>
+              <span>
+                {metier.preuve.suite}
+                {'href' in metier.preuve && (
+                  <>
+                    {' '}
+                    <a href={metier.preuve.href}>Lire le cas</a>
+                  </>
+                )}
+              </span>
+            </p>
+          )}
+
+          <div class="metier__suite">
+            <LinkCTA
+              href={metier.lien.href}
+              external={'externe' in metier.lien}
+              goal={metier.lien.goal}
+              goalSource={metier.lien.source}
+            >
+              {metier.lien.label}
+            </LinkCTA>
+            {'note' in metier && <span class="metier__note">{metier.note}</span>}
+          </div>
+        </div>
+
+        <div class="metier__scene reveal">
+          <span class="repere repere--hg" aria-hidden="true"></span>
+          <span class="repere repere--hd" aria-hidden="true"></span>
+          <span class="repere repere--bg" aria-hidden="true"></span>
+          <span class="repere repere--bd" aria-hidden="true"></span>
+          <canvas data-forme={metier.forme} role="img" aria-label={metier.description}></canvas>
+        </div>
+
+        {metier.id === 'sites' && (
+          <div class="metier__sites reveal-stagger">
+            {sites.map((site) => (
+              <ProjectVisual {...site} ratio="landscape" class="reveal" interactive />
+            ))}
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .metiers {
+    --trait: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    --marge: clamp(1rem, 2.2vw, 2rem);
+    border-bottom: 1px solid var(--trait);
+    background: var(--color-night-deep);
+  }
+
+  .metiers__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    padding-block: var(--spacing-section-y) clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .metiers__tete h2 {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-story);
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+  }
+
+  .metiers__tete mark {
+    --angle: 0deg;
+    --radius-bande: 9999px;
+    display: inline-block;
+    padding: 0.02em 0.36em 0.08em;
+  }
+
+  .metiers__tete mark::before {
+    inset: 0;
+  }
+
+  /* Les quatre métiers, nommés d'emblée : la liste est aussi un sommaire. */
+  .metiers__tete ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 0.4rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .metiers__tete li {
+    max-width: none;
+  }
+
+  .metiers__tete a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color var(--duration-default) var(--ease-out-quint),
+      border-color var(--duration-default) var(--ease-out-quint),
+      color var(--duration-default);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .metiers__tete a:hover {
+      border-color: var(--color-peche);
+      background: var(--color-peche);
+      color: var(--color-night);
+    }
+  }
+
+  .metier {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+    padding-block: clamp(3rem, 7vw, 6rem);
+    scroll-margin-top: 64px;
+  }
+
+  .metier::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: calc(-1 * var(--marge));
+    left: calc(-1 * var(--marge));
+    height: 1px;
+    background: var(--trait);
+  }
+
+  .metier::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: calc(-1 * var(--marge) - 5px);
+    width: 11px;
+    height: 11px;
+    background:
+      linear-gradient(var(--color-ink-low), var(--color-ink-low)) 50% 50% / 100% 1px no-repeat,
+      linear-gradient(var(--color-ink-low), var(--color-ink-low)) 50% 50% / 1px 100% no-repeat;
+  }
+
+  .metier--miroir .metier__texte { order: 2; }
+  .metier--miroir .metier__scene { order: 1; }
+
+  .metier__texte {
+    display: grid;
+    justify-items: start;
+    gap: 1.1rem;
+    min-width: 0;
+  }
+
+  .metier h3 {
+    margin: 0;
+    color: var(--color-accent-text);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* Le nom du métier est petit, et c'est la phrase qui parle : elle dit ce
+     que le métier change, pas comment il s'appelle. */
+  .metier__phrase {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .metier__corps {
+    max-width: 46ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    line-height: 1.6;
+  }
+
+  .metier__preuve {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.9rem;
+    max-width: 46ch;
+    margin: 0.4rem 0 0;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--trait);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .metier__preuve strong {
+    color: var(--color-ink);
+    font-size: var(--text-title);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .metier__preuve a {
+    color: var(--color-ink);
+    text-underline-offset: 0.2em;
+  }
+
+  .metier__suite {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .metier__note {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  /* Le cadre de la sculpture : le même que celui de la scène du récit. */
+  .metier__scene {
+    position: relative;
+    min-width: 0;
+    aspect-ratio: 4 / 3;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--color-night-deep);
+  }
+
+  .metier__scene canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 900ms var(--ease-out-quint);
+  }
+
+  .metier__scene canvas[data-pret] {
+    opacity: 1;
+  }
+
+  .repere {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--color-ink-low);
+    pointer-events: none;
+  }
+
+  .repere--hg { top: -7px; left: -7px; border-top-width: 1px; border-left-width: 1px; }
+  .repere--hd { top: -7px; right: -7px; border-top-width: 1px; border-right-width: 1px; }
+  .repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
+  .repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
+
+  /* Trois sites, sous le métier qui les a faits. */
+  .metier__sites {
+    grid-column: 1 / -1;
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 899px) {
+    .metier {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .metier--miroir .metier__texte { order: 1; }
+    .metier--miroir .metier__scene { order: 2; }
+
+    .metier__phrase {
+      max-width: 20ch;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .metier__sites {
+      grid-template-columns: 1fr;
+    }
+
+    .metier::after {
+      display: none;
+    }
+
+    /* Le prix passe toujours sous le lien : selon la longueur du libellé il
+       tenait tantôt à côté, tantôt dessous, d'un métier à l'autre. */
+    .metier__suite {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  /* Three.js n'est chargé que lorsqu'une sculpture approche de l'écran. */
+  import type { FormeBloc } from '../lib/blocs/atelier';
+
+  const toiles = [...document.querySelectorAll<HTMLCanvasElement>('.metier__scene canvas[data-forme]')];
+  if (toiles.length) {
+    const montees = new WeakSet<HTMLCanvasElement>();
+    const monter = async (toile: HTMLCanvasElement) => {
+      if (montees.has(toile)) return;
+      montees.add(toile);
+      try {
+        const { monterBlocs } = await import('../lib/blocs/atelier');
+        monterBlocs(toile, { style: 'verre', forme: toile.dataset.forme as FormeBloc, decor: 'studio' });
+      } catch (erreur) {
+        console.error('Sculpture 3D indisponible :', erreur);
+      }
+    };
+    const verifier = () => {
+      toiles.forEach((toile) => {
+        const r = toile.getBoundingClientRect();
+        if (r.top < window.innerHeight + 400 && r.bottom > -400) void monter(toile);
+      });
+    };
+    window.addEventListener('scroll', verifier, { passive: true });
+    window.addEventListener('resize', verifier, { passive: true });
+    verifier();
+  }
+</script>

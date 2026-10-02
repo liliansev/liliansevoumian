@@ -68,18 +68,24 @@ const scenes = [
     <div class="process-grille">
       {scenes.map((scene) => (
         <div class="process-group">
-          <Image
-            src={scene.image}
-            alt={scene.alt}
-            width={768}
-            widths={[384, 768, 1200]}
-            sizes="(min-width: 1340px) 368px, (min-width: 900px) 29vw, (min-width: 768px) 90vw, calc(100vw - 48px)"
-            format="webp"
-            quality={82}
-            loading="lazy"
-            decoding="async"
-            class="process-photo"
-          />
+          {/* L'enveloppe porte le rayon et le rognage, et c'est elle qui s'ouvre
+              au défilement pendant que la photo se pose (geste n° 3 de
+              global.css). Sans `animation-timeline`, la photo est simplement
+              là, arrondie. */}
+          <div class="media-ouvre process-media">
+            <Image
+              src={scene.image}
+              alt={scene.alt}
+              width={768}
+              widths={[384, 768, 1200]}
+              sizes="(min-width: 1340px) 368px, (min-width: 900px) 29vw, (min-width: 768px) 90vw, calc(100vw - 48px)"
+              format="webp"
+              quality={82}
+              loading="lazy"
+              decoding="async"
+              class="process-photo"
+            />
+          </div>
           {scene.familles.map((f) => (
             <div class="process-item">
               <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
@@ -96,7 +102,7 @@ const scenes = [
       <p>
         Nous partons de <strong>vos outils et de vos tâches réelles</strong> pour choisir ce qui mérite d’être automatisé.
       </p>
-      <a href="#offres" class="btn-primary">Voir les offres et le suivi <span aria-hidden="true">→</span></a>
+      <a href="#offres" class="btn-primary">Voir les offres et le suivi <span class="process-fleche" aria-hidden="true">→</span></a>
     </div>
 
   </div>
@@ -116,13 +122,18 @@ const scenes = [
     min-width: 0;
   }
 
+  /* Le fond d'attente passe sur l'enveloppe : posé sur l'image, il dépassait
+     du rayon pendant le chargement. */
+  .process-media {
+    background: var(--color-surface-low);
+  }
+
   .process-group :global(.process-photo) {
     display: block;
     width: 100%;
     height: auto;
     aspect-ratio: 3 / 2;
     object-fit: cover;
-    background: var(--color-surface-low);
   }
 
   .process-item + .process-item {
@@ -157,5 +168,22 @@ const scenes = [
     font-size: var(--text-body);
     line-height: 1.6;
     color: var(--color-ink-low);
+  }
+
+  /* La flèche du bouton avance au survol, comme celle des autres CTA. La règle
+     de global.css ne vise que les `svg` ; celle-ci est un glyphe, elle restait
+     donc immobile. `inline-block` : un inline ne se transforme pas. */
+  .process-fleche {
+    display: inline-block;
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+  .btn-primary:hover .process-fleche,
+  .btn-primary:focus-visible .process-fleche {
+    transform: translateX(3px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .process-fleche { transition: none; }
+    .btn-primary:hover .process-fleche,
+    .btn-primary:focus-visible .process-fleche { transform: none; }
   }
 </style>

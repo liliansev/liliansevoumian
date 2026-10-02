@@ -64,15 +64,19 @@ const sections = [
     <section class="relative pt-[80px] md:pt-[88px]">
       <div class="relative max-w-[820px] mx-auto px-[var(--spacing-section-x)] pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
 
-        <a
-          href="/"
-          class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
-        >
-          <span aria-hidden="true">←</span>
-          RETOUR À L'ACCUEIL
-        </a>
+        {/* `.entree` : le fil de retour puis le titre montent à leur tour, et
+            le surlignage se trace une fois le titre arrivé. Le h1 vivait dans
+            un `.reveal`, donc peint à opacity 0 tant que le script n'avait pas
+            tourné ; ces `@keyframes` jouent au chargement, sans lui. */}
+        <div class="entree mb-10 md:mb-12">
+          <a
+            href="/"
+            class="group tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+          >
+            <span aria-hidden="true" class="inline-block transition-transform motion-safe:group-hover:-translate-x-[0.2rem]">←</span>
+            RETOUR À L'ACCUEIL
+          </a>
 
-        <div class="reveal mb-10 md:mb-12 inline-block bg-[var(--color-paper)] py-2 pr-2 relative">
           {/* Le sur-titre « 00 · LÉGAL » cumulait les deux motifs retirés du
               site, les petites capitales espacées et la numérotation, pour
               annoncer ce que le titre dit en toutes lettres juste dessous.
@@ -80,14 +84,20 @@ const sections = [
               Et le titre passe à l'échelle des autres h1 : il rendait 48 px là
               où ceux de toutes les autres pages en font 84, ce qui le faisait
               lire comme un titre de section sur sa propre page. */}
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0">
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 py-2">
             <mark>Mentions légales</mark>
           </h1>
         </div>
 
-        <div class="flex flex-col gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden reveal-stagger">
+        {/* Les six rubriques s'arrondissent comme UN bloc, au rayon d'une grande
+            carte : le rognage est sur le conteneur, les filets entre rubriques
+            restent droits.
+            Ces filets sont des bordures, plus un fond qui transparaît entre les
+            rubriques : tant qu'une rubrique attendait son tour dans la cascade,
+            ce fond se voyait à sa place, un aplat gris-bleu de sa hauteur. */}
+        <div class="flex flex-col divide-y divide-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-lg)] overflow-hidden reveal-stagger">
           {sections.map((section) => (
-            <article class="reveal bg-[var(--color-paper)] p-6 md:p-8">
+            <article class="reveal p-6 md:p-8">
               <div class="flex items-baseline gap-4 mb-4">
                 <span class="mono-caption text-[var(--color-ink-low)] shrink-0 min-w-[24px]">{section.label}</span>
                 <h2 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">

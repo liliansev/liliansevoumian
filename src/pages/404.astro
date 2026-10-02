@@ -29,8 +29,15 @@ import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/r
   <Navigation />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <section class="bloc-lime relative min-h-[70vh] flex items-center py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto w-full">
+    {/* La barre de navigation est fixe, et elle mangeait la moitié de la marge
+        haute : « ERREUR 404 » arrivait collé sous elle, avec deux fois plus de
+        vide en bas qu'en haut. La section prend le même dégagement que les
+        autres pages, et le pas de section passe sur le conteneur. */}
+    <section class="bloc-lime relative min-h-[70vh] flex items-center pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
+      {/* `.entree` : le libellé, le titre, la phrase, les deux actions puis les
+          quatre liens montent l'un après l'autre, et le surlignage se trace une
+          fois le titre arrivé. En CSS seul : sans script, tout est déjà là. */}
+      <div class="entree relative max-w-[1200px] mx-auto w-full py-[var(--spacing-section-y)]">
 
         <p class="mono-caption text-[var(--color-ink-low)] m-0">ERREUR 404</p>
 
@@ -65,8 +72,8 @@ import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/r
 </Layout>
 
 <style>
-  /* Soulignement et non couleur : sur l'aplat lime, un lien ne peut pas se
-     signaler par la teinte — elle est déjà celle du fond. */
+  /* Soulignement et non couleur seule : un lien se signale par un trait, pas
+     uniquement par sa teinte. */
   .lien-404 {
     display: inline-flex;
     align-items: center;

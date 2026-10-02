@@ -61,7 +61,10 @@ const { file, status, statusTone = 'neutral', schema = false, flush = false, bar
     width: 100%;
     background: var(--color-surface-high);
     border: 1px solid var(--color-divider);
-    border-radius: var(--radius-lg);
+    /* Fenêtre de maquette : rayon de média. `--mw-radius` laisse l'hôte le
+       réduire quand la fenêtre est elle-même logée dans une carte arrondie :
+       un rayon intérieur égal au rayon extérieur se lit comme un défaut. */
+    border-radius: var(--mw-radius, var(--radius-lg));
     box-shadow: var(--shadow-card);
     overflow: hidden;
   }

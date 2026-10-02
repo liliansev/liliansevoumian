@@ -54,8 +54,12 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
       bodyMaxWidth="60ch"
     />
 
+    {/* Rayon de grande carte, le même que la grille d'abonnements et que les
+        cartes de cas plus haut : à 16 px fixes elle se lisait encore comme un
+        rectangle à 1 200 px de large. Ses deux moitiés peignent jusqu'au bord,
+        d'où `overflow-hidden`. */}
     <div
-      class="roi-carte card-soft reveal border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden"
+      class="roi-carte reveal border border-[var(--color-divider)] rounded-[var(--radius-lg)] overflow-hidden"
       data-roi-calc
     >
       <!-- Le résultat en tête : il est visible dès l'entrée dans la section, et
@@ -251,7 +255,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
     /* Les deux colonnes d'une grille prennent la hauteur de la plus haute :
-       sans ce centrage, le chiffre se collait en haut de l'aplat lime et
+       sans ce centrage, le chiffre se collait en haut du panneau et
        laissait un grand vide sous lui. */
     .roi-sortie {
       display: flex;

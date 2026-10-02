@@ -29,7 +29,9 @@ const tools: Tool[] = [
   { name: 'n8n', icon: 'simple-icons:n8n', color: '#EA4B71' },
   { name: 'Make', icon: 'simple-icons:make', color: '#6D00CC' },
   { name: 'Airtable', icon: 'simple-icons:airtable' , color: '#18BFFF' },
-  { name: 'Notion', icon: 'simple-icons:notion' , color: '#000000' },
+  // Sans teinte : la couleur de marque de Notion et de Typeform est un noir,
+  // et au survol le logo disparaissait dans la nuit. Ils restent à l'encre.
+  { name: 'Notion', icon: 'simple-icons:notion' },
   { name: 'Google Sheets', icon: 'simple-icons:googlesheets', color: '#0F9D58' },
   { name: 'Slack', icon: 'simple-icons:slack' , color: '#4A154B' },
   { name: 'HubSpot', icon: 'simple-icons:hubspot', color: '#FF7A59' },
@@ -42,7 +44,7 @@ const tools: Tool[] = [
   { name: 'Google Calendar', icon: 'simple-icons:googlecalendar' , color: '#4285F4' },
   { name: 'Calendly', icon: 'simple-icons:calendly', color: '#006BFF' },
   { name: 'Shopify', icon: 'simple-icons:shopify' , color: '#7AB55C' },
-  { name: 'Typeform', icon: 'simple-icons:typeform' , color: '#262627' },
+  { name: 'Typeform', icon: 'simple-icons:typeform' },
   { name: 'WhatsApp', icon: 'simple-icons:whatsapp' , color: '#25D366' },
   { name: 'Telegram', icon: 'simple-icons:telegram' , color: '#26A5E4' },
   { name: 'Discord', icon: 'simple-icons:discord' , color: '#5865F2' },
@@ -181,13 +183,27 @@ const loop = [...tools, ...tools];
    n'y apparaît jamais, et c'est acceptable, elle n'est pas porteuse de sens. */
 .lm-tool-ic.is-tinted { color: var(--color-ink); }
 
+/* Durée et courbe passent sur les jetons : `--ease-out-quart` a été posé dans
+   global.css précisément pour cette teinte, et la valeur recopiée ici échappait
+   à toute reprise globale. La transition porte aussi `transform` et `opacity`,
+   sinon cette déclaration, plus spécifique que celle de `.lm-tool-ic`, coupait
+   net le zoom et l'éclaircissement du logo sur les appareils à souris. */
 @media (hover: hover) and (pointer: fine) {
-  .lm-tool-ic.is-tinted { transition: color 0.18s cubic-bezier(0.25, 1, 0.5, 1); }
-  .lm-tool:hover .lm-tool-ic.is-tinted { color: var(--tool-c); }
+  .lm-tool-ic.is-tinted {
+    transition: color var(--duration-default) var(--ease-out-quart),
+                transform var(--duration-default) var(--ease-out-quint),
+                opacity var(--duration-default) var(--ease-out-quint);
+  }
+  /* La teinte de marque est relevée de 30 % de blanc : plusieurs marques sont
+     sombres (l'aubergine de Slack, le violet d'OpenAI) et, posées telles
+     quelles sur la nuit, elles éteignaient le logo qu'on venait de viser. */
+  .lm-tool:hover .lm-tool-ic.is-tinted { color: color-mix(in oklab, var(--tool-c) 70%, white); }
 }
 
+/* Mouvement réduit : la teinte et l'opacité répondent encore, le zoom saute. */
 @media (prefers-reduced-motion: reduce) {
   .lm-tool-ic.is-tinted { transition: none; }
+  .lm-tool:hover .lm-tool-ic { transform: none; }
 }
 
   /* Logos monochromes-foncés → inversés en blanc sur fond sombre. */

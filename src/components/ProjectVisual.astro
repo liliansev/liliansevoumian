@@ -24,6 +24,13 @@ const {
 } = Astro.props;
 
 const Root = interactive ? 'a' : 'figure';
+
+// Le dernier mot du nom reste soudé à la flèche. Une espace insécable n'y
+// suffit pas : le navigateur s'autorise à couper devant un élément en ligne
+// remplacé, et la flèche se retrouvait seule sur la deuxième ligne.
+const mots = name.split(' ');
+const dernierMot = mots.pop() ?? name;
+const debutNom = mots.join(' ');
 const rootAttributes = interactive
   ? {
       href,
@@ -35,22 +42,34 @@ const rootAttributes = interactive
 ---
 
 <Root
-  class:list={['project-visual group', `project-visual--${ratio}`, className]}
+  class:list={[
+    'project-visual group',
+    `project-visual--${ratio}`,
+    { 'project-visual--lien': interactive },
+    className,
+  ]}
   {...rootAttributes}
   data-project-visual
 >
-  <img
-    src={src}
-    alt={alt}
-    width="1440"
-    height="900"
-    loading={priority ? 'eager' : 'lazy'}
-    fetchpriority={priority ? 'high' : 'auto'}
-    decoding="async"
-  />
-  <span class="project-visual__wash" aria-hidden="true"></span>
+  <span class="project-visual__image">
+    <img
+      src={src}
+      alt={alt}
+      width="1440"
+      height="900"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      decoding="async"
+    />
+  </span>
   <span class="project-visual__caption">
-    <strong>{name}</strong>
+    {/* Le tracé de la flèche est celui de Lucide `arrow-up-right`. Il est
+        écrit ici pour rester soudé au dernier mot du nom : une icône en
+        composant serait un élément remplacé, devant lequel le navigateur
+        s'autorise à couper. */}
+    <strong>{debutNom && `${debutNom} `}<span class="project-visual__fin">{dernierMot}{interactive && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+    )}</span></strong>
     <span>{detail}</span>
   </span>
 </Root>
@@ -69,116 +88,166 @@ const rootAttributes = interactive
 </script>
 
 <style>
+  /* Une vignette est un média : elle prend le rayon des médias, et c'est elle
+     qui rogne — l'image avance au survol sans jamais sortir de son arrondi. */
   .project-visual {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     overflow: hidden;
-    background: var(--color-surface-low);
-    color: white;
+    border-radius: var(--radius-lg);
+    background: var(--color-night-deep);
+    color: var(--color-text-on-dark);
     text-decoration: none;
     isolation: isolate;
     margin: 0;
   }
 
-  .project-visual--wide {
+  /* Le filet est un calque posé par-dessus la vignette, et non sa bordure.
+     Deux raisons. La vignette reçoit souvent `.reveal` de son parent, dont la
+     transition (opacité, montée) et le délai de cascade écraseraient ou
+     retarderaient celle du filet. Et une bordure extérieure laisserait l'image
+     mordre dessus dès qu'elle grossit. */
+  .project-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border: 1px solid var(--color-service-border);
+    border-radius: inherit;
+    pointer-events: none;
+    transition: border-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* La capture a sa propre fenêtre, qui porte le format et le rognage. */
+  .project-visual__image {
+    display: block;
+    overflow: hidden;
+    background: var(--color-surface-low);
+  }
+
+  .project-visual--wide .project-visual__image {
     aspect-ratio: 16 / 7;
   }
 
-  .project-visual--landscape {
-    aspect-ratio: 16 / 10;
+  /* 16 / 9,4 et non 16 / 10 : les captures font 1440 × 900, et l'une d'elles
+     finit sur une bande noire de 48 px. Le cadre, un peu moins haut que la
+     capture, rogne ce bas — l'image est calée en haut. */
+  .project-visual--landscape .project-visual__image {
+    aspect-ratio: 16 / 9.4;
   }
 
-  .project-visual--portrait {
+  .project-visual--portrait .project-visual__image {
     aspect-ratio: 4 / 5;
   }
 
+  /* La sortie est plus lente que l'entrée : le repos porte la durée longue, le
+     survol la courte. Mêmes valeurs que les cartes de service de la home. */
   .project-visual img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: top center;
-    transition: transform var(--duration-default) var(--ease-out-quint);
+    transition: transform 600ms var(--ease-out-expo);
   }
 
   .project-visual.is-image-missing img {
     opacity: 0;
   }
 
-  .project-visual.is-image-missing::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: #111111;
-  }
-
-  .project-visual__wash {
-    position: absolute;
-    inset: 35% 0 0;
-    z-index: 1;
-    background: linear-gradient(to bottom, transparent, color-mix(in srgb, #111111 84%, transparent));
-    pointer-events: none;
-  }
-
+  /* La légende est un pied plein, sous la capture, et non un texte posé dessus.
+     Elle a d'abord été incrustée sur un voile : sur les trois captures claires
+     le voile virait au gris, le texte de la capture transparaissait dessous, et
+     le détail tombait sous 4,5:1. Sur son propre fond nuit, le nom tient
+     18,72:1 et le détail 11,25:1, quelle que soit la capture. */
   .project-visual__caption {
-    position: absolute;
-    inset: auto 0 0;
-    z-index: 2;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: clamp(1rem, 2.2vw, 1.5rem);
-    color: white;
+    display: grid;
+    gap: 0.3rem;
+    padding: clamp(0.9rem, 1.8vw, 1.15rem) clamp(1rem, 2vw, 1.35rem);
+    border-top: 1px solid var(--color-divider-dark);
+    background: var(--color-night-deep);
+    color: var(--color-text-on-dark);
   }
 
   .project-visual__caption strong {
     font-family: var(--font-display);
     font-size: var(--text-title);
     font-weight: 600;
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: -0.02em;
   }
 
-  .project-visual__caption span {
-    max-width: 18ch;
+  .project-visual__fin {
+    white-space: nowrap;
+  }
+
+  .project-visual__caption strong svg {
+    display: inline-block;
+    width: 0.8em;
+    height: 0.8em;
+    margin-left: 0.25em;
+    vertical-align: -0.06em;
+    transition: transform var(--duration-default) var(--ease-out-quint),
+                color var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* Le détail tient sur une ligne sous le nom, à toutes les largeurs. */
+  .project-visual__caption > span {
+    overflow: hidden;
+    color: var(--color-text-on-dark-mid);
     font-size: var(--text-body-sm);
     line-height: 1.35;
-    text-align: right;
-    color: rgb(255 255 255 / 0.82);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* La vignette entière est un lien : c'est son contenu qui répond. Le filet
+     passe à la pêche, la capture avance, la flèche part vers l'extérieur. Le
+     clavier reçoit la même réponse que la souris. */
+  .project-visual--lien:focus-visible::after {
+    border-color: var(--color-peche);
+  }
+
+  .project-visual--lien:focus-visible img {
+    transform: scale(1.03);
+    transition-duration: 350ms;
+  }
+
+  .project-visual--lien:focus-visible strong svg {
+    color: var(--color-peche);
+    transform: translate(0.15rem, -0.15rem);
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .project-visual:hover img {
-      transform: scale(1.025);
+    .project-visual--lien:hover::after {
+      border-color: var(--color-peche);
+    }
+
+    .project-visual--lien:hover img {
+      transform: scale(1.03);
+      transition-duration: 350ms;
+    }
+
+    .project-visual--lien:hover strong svg {
+      color: var(--color-peche);
+      transform: translate(0.15rem, -0.15rem);
     }
   }
 
+  /* Mouvement réduit : le déplacement saute, la couleur du filet et de la
+     flèche reste — c'est elle qui dit « ceci se clique ». */
   @media (prefers-reduced-motion: reduce) {
     .project-visual img {
       transition: none;
     }
-  }
 
-  @media (max-width: 639px) {
-    .project-visual__caption {
-      padding: 1rem;
-    }
-
-    .project-visual__caption span {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .project-visual__caption strong {
-      font-size: var(--text-body-large);
+    .project-visual--lien:hover img,
+    .project-visual--lien:focus-visible img,
+    .project-visual--lien:hover strong svg,
+    .project-visual--lien:focus-visible strong svg {
+      transform: none;
     }
   }
 </style>

@@ -1,28 +1,32 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   DESIGN SYSTEM — "The Operator's Console"
-   Refonte avril 2026 — Vercel-grade grid, two-voice palette, no elevation.
+   DESIGN SYSTEM — « Nuit et pêche »
+   Octobre 2026 — fond nuit, un seul accent pêche, aucune élévation.
    Source: DESIGN.md / DESIGN.json
    ========================================================================= */
 
 @theme {
   /* =======================================================================
-     DA « LIME » appliquée au contenu de main.
+     DA « NUIT ET PÊCHE » appliquée au contenu de main.
      Les NOMS de jetons sont ceux que les 25 composants consomment déjà : on
      ne change que les valeurs, et toute la page bascule d'un coup. Les
      composants n'ont pas à savoir que la direction artistique a changé.
 
      Trois règles qui gouvernent tout :
-       — Le lime est une SURFACE, jamais du texte. Il ne porte que 1,25:1
-         contre le blanc ; il prend des sections entières, ou il surligne.
+       — Le site vit sur le bleu nuit, pas sur le papier blanc. Le clair
+         devient l'exception : il ne revient que dans `.bloc-encre`, le
+         panneau inversé.
+       — La pêche tient 10,19:1 sur la nuit : elle surligne, elle porte les
+         CTA, et elle a aussi le droit d'être du texte et un trait. Sur un
+         panneau clair elle retombe à 1,64:1 et redevient une surface seule.
        — Une seule police. Le monospace disparaît : c'était, avec les
          sur-titres en capitales, le tell « IA » n° 1 relevé à l'audit.
-       — Deux rayons : 0 et 9999. Le rond dit « une unité » — une cible, un
-         état, un visage, un mot-étiquette ; le carré dit « une surface » —
-         une carte, une bande, un panneau, un champ, un bouton. La formule
-         précédente, « si c'est rond, ça se clique », décrivait six éléments
-         sur les soixante-neuf éléments ronds de la home.
+       — Plus d'angle vif. Une surface s'arrondit selon sa taille — 16 px
+         pour une carte, jusqu'à 32 px pour un panneau — et ce qui se clique
+         est rond : bouton, champ, étiquette. Les deux rayons d'origine, 0 et
+         9999, donnaient un site « trop carré » : c'est le retour explicite
+         du 1er octobre 2026.
      ======================================================================= */
 
   /* ── Polices ── */
@@ -66,6 +70,14 @@
      rogner le dernier glyphe. La courbe vit ici, avec les autres rangs. */
   --text-sites-hero: clamp(2.5rem, 7.5vw, 5.5rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
+  /* Le récit qui ouvre l'accueil : des phrases qui se disent en grand, une par
+     écran, dans une demi-largeur. La pente suit la largeur, et la hauteur de la
+     fenêtre la borne : six lignes doivent tenir sur un écran de portable. */
+  --text-story: clamp(2rem, min(3.6vw + 0.5rem, 8svh), 4rem);
+  /* La phrase qui ouvre l'accueil, seule et centrée : le plus grand corps du
+     site. Le plancher est réglé pour que « Vous avez raison. », insécable,
+     tienne dans un écran de 360 px. */
+  --text-affiche: clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem);
   /* --text-signature a été retiré. Même plancher et même pente que
      --text-headline, seul son plafond différait : les deux rendaient
      exactement 32 px sous 700 px de large. Deux jetons pour une valeur, et un
@@ -104,7 +116,7 @@
      cas, plus serré — c'est le seul réglage qui ne redevient pas faux si un
      libellé plus long revient un jour.
      La pente est calée par le cas le plus serré du site, qui n'est pas celui-là :
-     le CTA de /principes vit dans un encart lime à 32 px de padding, et sa
+     le CTA de /principes vit dans un encart à 32 px de padding, et sa
      colonne reste sous 300 px jusqu'à 480 px de fenêtre. Mesuré palier par
      palier, 3,6vw le faisait déborder de 400 à 479 px là où il tenait avant ;
      3,1vw reproduit exactement le comportement d'avant sur toutes les largeurs.
@@ -164,71 +176,105 @@
      deux, qu'aucun outil ne signalait en cas de dérive. */
   --duration-faq-balayage: 900ms;
   --duration-faq-pas: 160ms;
+  /* Le coup de surligneur qui se trace, et l'entrée du hero : deux entrées
+     d'auteur, jouées une fois, jamais un retour d'interaction. */
+  --duration-trace: 700ms;
+  --duration-entree: 900ms;
 
-  /* ── Rayons ── */
-  --radius-none: 0px;
-  --radius-xs: 0px;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-cta: 8px;
-  --radius-diagram: 12px;
+  /* ── Rayons ──
+     Le rayon suit la taille de la surface : un détail de maquette (xs), un
+     champ ou une vignette (sm), une carte (md), un média ou une grande carte
+     (lg), un panneau (xl). Les deux derniers sont fluides : 24 et 32 px sur un
+     panneau de 343 px de large le transformeraient en gélule. */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: clamp(1rem, 0.6rem + 1.2vw, 1.5rem);
+  --radius-xl: clamp(1.25rem, 0.6rem + 2vw, 2rem);
+  --radius-cta: 9999px;
+  /* La bande du surligneur : proportionnelle au corps du mot qu'elle porte. */
+  --radius-bande: 0.14em;
+  --radius-diagram: 16px;
   --radius-full: 9999px;
 
-  /* ── Surfaces ── */
-  --color-paper: #ffffff;
-  --color-surface-low: #f7f8fa;
+  /* ── Surfaces ──
+     Le fond général est le bleu nuit. Une surface monte en s'éclaircissant :
+     bande de section, puis carte ou média, puis surface haute. `night` et
+     `night-deep` sont des valeurs FIXES, qu'aucun bloc ne remappe : ce sont
+     elles qu'un composant lit quand il veut la nuit quel que soit son parent
+     (libellé d'un CTA pêche, pied de page, panneau toujours sombre). */
+  --color-paper: #111827;
+  --color-surface-low: #1a2439;
   --color-night: #111827;
   --color-night-soft: #263449;
-  --color-service-border: #dce1e8;
-  --color-surface-high: #ffffff;
-  --color-section-band: #f7f7f7;
+  --color-night-deep: #0c121f;
+  --color-service-border: #2f3b52;
+  --color-surface-high: #1f2a42;
+  --color-section-band: #161f32;
 
-  /* ── Encres. Le gris tient 7,0:1 sur blanc, le gris clair 4,6:1. ── */
-  --color-ink: #111111;
-  --color-ink-mid: #595959;
-  --color-ink-low: #6b6b6b;
-  --color-ink-faint: #949494;
+  /* ── Encres, teintées vers la nuit plutôt que grises. Sur le fond général :
+     10,67:1 pour le texte secondaire, 7,75:1 pour les légendes. `ink-faint`
+     reste un trait, pas du texte, à 4,88:1. ── */
+  --color-ink: #ffffff;
+  --color-ink-mid: #c3c9d4;
+  --color-ink-low: #a3acbb;
+  --color-ink-faint: #7c8799;
 
   /* ── Filets ── */
-  --color-divider: #e5e5e5;
-  --color-grid-line: #ededed;
-  --color-grid-line-active: #c4c4c4;
-  --color-border-strong: #111111;
+  --color-divider: #2a3548;
+  --color-grid-line: #1d2739;
+  --color-grid-line-active: #3d4a62;
+  /* 5,57:1 sur la nuit, donc au-dessus des 3:1 exigés pour un contour de
+     composant. Un filet blanc pur d'un pixel éblouissait autour de chaque
+     question de la FAQ. */
+  --color-border-strong: #8591a6;
 
-  /* ── Texte sur fond sombre (pied de page, panneaux noirs) ── */
+  /* ── Texte sur fond sombre, pour les panneaux qui restent sombres quel que
+     soit leur parent. Mêmes valeurs que les encres du fond général. ── */
   --color-text-on-dark: #ffffff;
-  --color-text-on-dark-mid: #c9c9c9;
-  --color-text-on-dark-low: #a8a8a8;
-  --color-text-on-dark-faint: #7d7d7d;
-  --color-divider-dark: #333333;
-  --color-grid-line-dark: #2b2b2b;
-  --color-surface-on-dark: #1c1c1c;
+  --color-text-on-dark-mid: #c3c9d4;
+  --color-text-on-dark-low: #a3acbb;
+  --color-text-on-dark-faint: #7c8799;
+  --color-divider-dark: #2a3548;
+  --color-surface-on-dark: #1a2439;
 
   /* ── L'accent ──
-     --color-accent est un FOND : c'est le lime. --color-accent-text est ce
-     qu'on écrit quand un composant veut du texte accentué — et c'est de
-     l'encre, pas du lime, qui y serait illisible. Dans cette DA l'emphase
-     ne vient jamais d'un texte coloré mais d'un surlignage. */
-  --color-lime: #cdf564;
-  --color-lime-deep: #b8e043;
-  --color-accent: #cdf564;
-  --color-accent-text: #111111;
-  --color-accent-soft: #f2fbd8;
+     --color-accent est la pêche en FOND : surlignage, CTA, pastille. Son
+     libellé est toujours la nuit, 10,19:1. --color-accent-text est ce qu'on
+     écrit quand un composant veut du texte accentué : sur la nuit c'est la
+     pêche elle-même, sur un panneau clair `.bloc-encre` le remappe en nuit. */
+  /* La lumière. Sur l'accueil, la nuit est éclairée : la pêche en est la
+     source chaude, et une lueur froide lui donne de la profondeur. La lueur
+     froide n'est jamais une couleur de texte ni de bouton : elle n'existe que
+     dans les halos, derrière les choses. Le grain évite que ces dégradés ne
+     se découpent en bandes. */
+  --color-lueur-froide: #6f7cff;
+  --color-braise: #ff8a65;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* La feuille de papier de la scène d'accueil : le bon de commande est le
+     seul objet clair posé sur la nuit, avec ses filets et ses barres de texte. */
+  --color-feuille: #f7f8fa;
+  --color-feuille-trait: #dce1e8;
+  --color-feuille-barre: #c3c9d4;
+  --color-peche: #ffb38a;
+  --color-peche-clair: #ffc4a3;
+  --color-accent: #ffb38a;
+  --color-accent-text: #ffb38a;
+  /* 18 % de pêche dans la nuit. Le texte blanc y tient 12,05:1. */
+  --color-accent-soft: #3c3439;
 
-  /* L'anneau de focus ne peut pas être le lime : 1,25:1 sur blanc. L'encre
-     tient sur les deux surfaces — 18,88:1 sur blanc, 15,14:1 sur lime. */
-  --color-focus: #111111;
+  /* La pêche tient 10,19:1 sur la nuit : l'anneau de focus peut être l'accent.
+     Sur un panneau clair, où elle tombe à 1,64:1, `.bloc-encre` le remappe. */
+  --color-focus: #ffb38a;
 
-  /* Le lime étant la couleur de marque, il ne peut pas signifier « valide » :
-     un état correct serait indiscernable d'un élément de marque. Les deux
-     états passent en encre, portés par un libellé. */
-  /* Un rouge ne concurrence pas le lime : ils ne sont pas de la même
-     famille. L'argument « le lime ne peut plus dire valide » vaut pour le
-     succès, pas pour l'échec. 5,24:1 sur lime, 6,53:1 sur blanc (la valeur
-     8,8:1 notée ici était fausse, recalculée en runtime). */
-  --color-error: #b3261e;
-  --color-success: #111111;
+  /* La pêche étant la couleur de marque, elle ne peut pas signifier
+     « valide » : un état correct serait indiscernable d'un élément de marque.
+     Le succès passe en encre, porté par un libellé. */
+  /* L'erreur garde un rouge, éclairci pour le fond sombre : 7,25:1 sur la
+     nuit. Il est voisin de la pêche en teinte, donc jamais seul : l'état
+     d'erreur est toujours porté par une phrase. */
+  --color-error: #ff8073;
+  --color-success: #ffffff;
 
   /* ── Élévation : aucune. La structure vient des filets. ──
      Les deux jetons ne rendent rien et c'est leur rôle : ils tiennent la place
@@ -306,7 +352,7 @@ body {
 /* Selection */
 ::selection {
   background-color: var(--color-accent);
-  color: var(--color-paper);
+  color: var(--color-night);
 }
 
 /* =========================================================================
@@ -652,7 +698,7 @@ body {
   justify-content: center;
   gap: 8px;
   min-height: 44px;
-  background: var(--color-lime);
+  background: var(--color-peche);
   color: var(--color-night);
   font-family: var(--font-mono);
   /* Un cran au-dessus des liens secondaires, et c'est le seul rang du système
@@ -666,7 +712,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  padding: 11px 18px;
+  padding: 11px 22px;
   border: none;
   border-radius: var(--radius-cta);
   cursor: pointer;
@@ -682,10 +728,10 @@ body {
      matière qui cède. C'est ici l'état de repos qui porte la durée longue,
      l'état de survol qui porte la courte.
 
-     Pas de balayage du lime sur la largeur, malgré la tentation d'y retrouver
-     le geste du surligneur : une bande qui traverse laisse forcément le
-     libellé à cheval sur les deux fonds, blanc sur lime d'un côté ou encre sur
-     encre de l'autre, soit un texte illisible pendant tout le milieu du geste.
+     Pas de balayage de l'accent sur la largeur, malgré la tentation d'y
+     retrouver le geste du surligneur : une bande qui traverse laisse forcément
+     le libellé à cheval sur deux fonds, donc illisible d'un côté ou de l'autre
+     pendant tout le milieu du geste.
      Le fondu croisé n'a pas ce défaut : le fond et le texte se croisent, donc
      leur écart de luminance ne s'effondre à aucune image. */
   transition: background-color var(--duration-default) var(--ease-out-quint),
@@ -693,14 +739,26 @@ body {
               transform var(--duration-default) var(--ease-out-quint);
 }
 
-/* Le CTA garde son texte bleu nuit sur lime ; le survol approfondit le lime
-   et monte d'un pixel sans changer la couleur du libellé. */
+/* Le CTA garde son texte bleu nuit sur pêche ; le survol ÉCLAIRCIT la pêche
+   et monte d'un pixel sans changer la couleur du libellé. Sur un fond sombre,
+   un survol qui fonce éteindrait le bouton : il doit gagner de la lumière, et
+   le libellé y gagne aussi, 11,55:1 contre 10,19:1 au repos. */
 .btn-primary:hover,
 .btn-primary:focus-visible {
-  background: var(--color-lime-deep);
+  background: var(--color-peche-clair);
   color: var(--color-night);
   transform: translateY(-1px);
   transition-duration: var(--duration-quick);
+}
+
+/* La flèche d'un bouton avance au survol, comme celle des liens secondaires :
+   le même geste pour « ceci mène quelque part », quel que soit le rang. */
+.btn-primary :where(svg) {
+  transition: transform var(--duration-default) var(--ease-out-quint);
+}
+.btn-primary:hover :where(svg),
+.btn-primary:focus-visible :where(svg) {
+  transform: translateX(3px);
 }
 
 /* `translateY(0)` explicite : le pressé écrase la montée d'un pixel plutôt que
@@ -724,6 +782,8 @@ body {
   .btn-primary:hover,
   .btn-primary:focus-visible { transform: none; }
   .btn-primary:active { transform: none; }
+  .btn-primary:hover :where(svg),
+  .btn-primary:focus-visible :where(svg) { transform: none; }
 }
 
 .btn-primary:disabled {
@@ -761,14 +821,8 @@ body {
    droite : correct, mais c'était le seul endroit du site où quelque chose
    s'anime sans rien devoir à la marque. Le coup de surligneur penché est LE
    dispositif de cette DA ; posé ici, il relie l'emphase du texte au geste du
-   clic, et il met du lime là où l'action se joue — sans toucher au bouton
-   primaire, qui ne peut pas en porter.
-
-   Pourquoi c'est permis ici et interdit sur un bouton : DESIGN.md refuse que le
-   lime balaie la largeur d'un bouton parce que son libellé est BLANC, et qu'il
-   traverserait alors deux fonds en devenant illisible au milieu du geste. Le
-   libellé d'un lien secondaire est de l'encre : 18,88:1 sur papier, 15,14:1 une
-   fois la bande passée. Il ne descend sous aucun seuil, à aucune image.
+   clic, et il met de la pêche là où l'action se joue — sans toucher au bouton
+   primaire, qui est déjà un aplat de pêche et n'a rien à balayer.
 
    Même inclinaison et mêmes retraits que `mark`, pour que ce soit reconnu comme
    le même objet. L'échelle part de la gauche : la bande se pose, elle
@@ -777,13 +831,14 @@ body {
   position: relative;
   isolation: isolate;
   padding: 0.02em 0.2em;
+  transition: color var(--duration-default) var(--ease-out-quint);
 }
 
 .link-cta__label::before {
   content: '';
   position: absolute;
   inset: 0.06em 0 0.1em;
-  background: var(--color-lime);
+  background: var(--color-peche);
   transform: rotate(-1.8deg) scaleX(0);
   transform-origin: left center;
   z-index: -1;
@@ -795,14 +850,20 @@ body {
   transform: rotate(-1.8deg) scaleX(1);
 }
 
-/* Sur l'aplat lime, la bande passe au blanc — exactement comme les `mark` de
-   ces sections, qui s'y inversent déjà. Une bande lime sur fond lime ne
-   signalerait rien. */
-.bloc-lime .link-cta__label::before {
-  background: #ffffff;
+/* Le libellé est blanc sur la nuit, et le blanc ne tient que 1,74:1 sur la
+   pêche : il passe donc en nuit pendant que la bande se pose. Les deux
+   transitions ont la même durée et la même courbe, le texte n'est illisible à
+   aucune image — il est blanc tant que la nuit est derrière lui, nuit dès que
+   la pêche l'a recouvert. */
+.link-cta:hover .link-cta__label,
+.link-cta:focus-visible .link-cta__label {
+  color: var(--color-night);
 }
 
 .link-cta__arrow {
+  width: 1.15em;
+  height: 1.15em;
+  flex-shrink: 0;
   transition: transform var(--duration-default) var(--ease-out-quint);
 }
 
@@ -813,6 +874,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .link-cta__label,
   .link-cta__label::before,
   .link-cta__arrow { transition: none; }
 }
@@ -854,18 +916,16 @@ body {
 
 .chip-accent {
   background: var(--color-accent-soft);
-  /* Encre pleine : sur accent-soft (#f2fbd8) elle donne 17,59:1, très au-delà de
-     l'AA exigé pour un mono-caption de 11 px. Le color-mix qui figurait ici
-     visait l'ancien accent flamme, où le texte de marque plafonnait à 4,1:1 ;
-     depuis la bascule lime, --color-accent-text vaut l'encre et le mix
-     mélangeait #111111 avec lui-même. */
+  /* Pêche sur accent-soft (#3c3439) : 6,93:1, au-delà de l'AA exigé pour un
+     mono-caption de 11 px. Sur un panneau clair, les deux jetons sont
+     remappés et la chip passe en nuit sur pêche pâle. */
   color: var(--color-accent-text);
   border-color: transparent;
 }
 
 /* .chip:hover l'emporte en spécificité (0,2,0 contre 0,1,0) et repeignait le
    fond en surface-low : survoler une chip de rôle lui faisait perdre sa teinte
-   lime. Les chips de rôle ne sont pas cliquables, ce survol n'avait rien à
+   d'accent. Les chips de rôle ne sont pas cliquables, ce survol n'avait rien à
    signaler — et il retirait de la couleur à la seule section qui en manquait. */
 .chip-accent:hover {
   background-color: var(--color-accent-soft);
@@ -926,16 +986,16 @@ body {
   position: relative;
 }
 
-/* Le survol revendique la cellule par son filet, et par lui seul. La ligne
-   `box-shadow: var(--shadow-card-hover)` qui l'accompagnait peignait du
-   transparent sur du transparent. */
+/* Le survol revendique la cellule par son filet, et par lui seul : il passe à
+   l'accent, comme sur les cartes de services de la home. Sur la nuit,
+   `ink-faint` ne se distinguait presque pas du filet de repos. */
 .card-interactive:hover {
-  border-color: var(--color-ink-faint);
+  border-color: var(--color-accent);
 }
 
 /* Clavier : le focus revendique sa cellule comme le hover. */
 .card-interactive:focus-visible {
-  border-color: var(--color-ink-faint);
+  border-color: var(--color-accent);
 }
 
 /* Il y avait ici un bloc `prefers-reduced-motion` qui coupait une animation sur
@@ -970,7 +1030,7 @@ body {
   /* Track avec fill accent entre min et current value, via --slider-progress
      mis à jour par le JS du composant ROI à chaque input event. */
   background-image:
-    linear-gradient(var(--color-lime), var(--color-lime)),
+    linear-gradient(var(--color-peche), var(--color-peche)),
     linear-gradient(var(--color-ink), var(--color-ink));
   background-repeat: no-repeat;
   background-size: var(--slider-progress, 0%) 10px, 100% 4px;
@@ -991,7 +1051,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
-  background: var(--color-lime);
+  background: var(--color-peche);
   border: 2px solid var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-quick) var(--ease-out-quint),
@@ -1015,7 +1075,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: var(--radius-full);
-  background: var(--color-lime);
+  background: var(--color-peche);
   border: 2px solid var(--color-ink);
   cursor: pointer;
   transition: border-color var(--duration-quick) var(--ease-out-quint),
@@ -1409,6 +1469,31 @@ body.menu-ouvert .nav-mid-cta {
   .mobile-menu__close:hover { background: var(--color-accent-soft); }
 }
 
+/* L'ouverture du menu. Il se posait d'un coup, plein écran : une coupe franche
+   sur la surface la plus grande du site. Le voile se fond, puis les liens
+   arrivent l'un après l'autre — c'est une liste, la cascade y est à sa place.
+   Seule l'ouverture est animée : la fermeture reste immédiate, on ne fait pas
+   attendre quelqu'un qui s'en va. Des `@keyframes` sur `[open]`, donc rien à
+   brancher côté script, et rien de masqué si l'animation ne joue pas. */
+@media (prefers-reduced-motion: no-preference) {
+  .mobile-menu[open] {
+    animation: menu-ouvre 260ms var(--ease-out-quint) backwards;
+  }
+  .mobile-menu[open] .mobile-link {
+    animation: menu-lien 560ms var(--ease-out-expo) backwards;
+    animation-delay: calc(70ms + var(--rang, 0) * 50ms);
+  }
+  .mobile-menu__offers .mobile-link:nth-child(2) { --rang: 1; }
+  .mobile-menu__links .mobile-link:nth-child(1) { --rang: 2; }
+  .mobile-menu__links .mobile-link:nth-child(2) { --rang: 3; }
+  .mobile-menu__links .mobile-link:nth-child(3) { --rang: 4; }
+  .mobile-menu__links .mobile-link:nth-child(4) { --rang: 5; }
+  .mobile-menu__links .mobile-link:nth-child(n + 5) { --rang: 6; }
+}
+
+@keyframes menu-ouvre { from { opacity: 0; } }
+@keyframes menu-lien { from { opacity: 0; transform: translateY(14px); } }
+
 footer a {
   display: inline-flex;
   align-items: center;
@@ -1430,8 +1515,7 @@ a[href^="mailto:"] {
   background: var(--color-paper);
   /* border-strong : >=3:1 vs paper (WCAG 1.4.11 non-text), vs ink-faint 1.97:1. */
   border: 1px solid var(--color-border-strong);
-  /* Angles vifs (sans arrondi) sur la FAQ — choix produit. */
-  border-radius: var(--radius-none);
+  border-radius: var(--radius-md);
   /* Même nettoyage qu'au-dessus sur `.card` : l'ombre transparente et sa
      transition ne rendaient rien. Le filet, lui, passe bien à `ink-low` au
      survol — c'est la seule chose à animer. */
@@ -1495,9 +1579,8 @@ a[href^="mailto:"] {
   display: none;
 }
 
-/* --color-accent-text vaut l'encre, et l'état de repos aussi : ce survol ne
-   changeait strictement rien sur les sept questions. Il devient un
-   soulignement, qui dit « cliquable » sans introduire de couleur. */
+/* Le survol d'une question est un soulignement : il dit « cliquable » sans
+   repeindre le texte. */
 .faq-summary:hover {
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -1547,7 +1630,7 @@ a[href^="mailto:"] {
 }
 
 /* ── L'entrée de la FAQ : un surligneur qui descend la liste ──
-   Chaque question monte à son tour, et une bande lime la balaie de gauche à
+   Chaque question monte à son tour, et une bande claire la balaie de gauche à
    droite pendant qu'elle arrive. C'est le dispositif de la DA joué dans le
    temps : ailleurs le surligneur marque un mot, ici il parcourt une liste.
 
@@ -1599,8 +1682,8 @@ a[href^="mailto:"] {
    papier de la carte et le texte, comme un surligneur sous l'encre. Un fond
    opaque ici masquerait complètement le balayage — c'est le piège, et il ne se
    voit pas au code, seulement à l'écran.
-   L'encre sur le lime donne 15,14:1, la question reste lisible pendant le
-   passage. */
+   La bande est `surface-low`, à peine plus claire que la carte : la question
+   reste lisible pendant tout le passage. */
 .faq-details {
   position: relative;
   z-index: 2;
@@ -1738,7 +1821,7 @@ a[href^="mailto:"] {
   height: 44px;
   /* ink-low et non divider : à 1,26:1 le contour du bouton de fermeture était
      dessiné sans être visible, sur la seule sortie de la modale de réservation.
-     WCAG 1.4.11 demande 3:1 pour un composant d'interface, ink-low tient 5,33:1. */
+     WCAG 1.4.11 demande 3:1 pour un composant d'interface, ink-low tient 7,75:1. */
   border: 1px solid var(--color-ink-low);
   border-radius: var(--radius-sm);
   background: transparent;
@@ -1818,7 +1901,7 @@ a[href^="mailto:"] {
 }
 
 /* =========================================================================
-   LE DISPOSITIF DE LA DA — le surlignage penché et les aplats lime.
+   LE DISPOSITIF DE LA DA — le surlignage penché, la bande et le panneau inversé.
    ========================================================================= */
 
 /* La bande est un pseudo-élément posé DERRIÈRE le texte, et c'est lui seul qui
@@ -1831,7 +1914,10 @@ mark {
   position: relative;
   isolation: isolate;
   background: none;
-  color: inherit;
+  /* La nuit, et non `inherit` : le texte courant est blanc, et le blanc sur la
+     pêche tombe à 1,74:1. `--color-night` n'est remappé par aucun bloc, le
+     fragment surligné reste donc lisible partout, 10,19:1. */
+  color: var(--color-night);
   padding: 0.02em 0.2em;
   white-space: nowrap;
 }
@@ -1840,10 +1926,63 @@ mark::before {
   content: '';
   position: absolute;
   inset: 0.06em 0 0.1em;
-  background: var(--color-lime);
+  background: var(--color-peche);
+  border-radius: var(--radius-bande);
   transform: rotate(var(--angle, -1.8deg));
   transform-origin: center;
   z-index: -1;
+}
+
+/* ── Le surligneur se trace ──
+   C'est LE mouvement d'auteur du site : la bande ne s'allume pas, elle est
+   passée de gauche à droite, comme on surligne. Une seule variable la pilote,
+   `--draw`, de 0 à 1.
+
+   La bande est rognée par un `clip-path` plutôt qu'étirée par un `scaleX`. Le
+   rognage se calcule dans le repère de la bande AVANT sa rotation : elle reste
+   donc penchée autour de son centre, exactement où elle est au repos. Un
+   `scaleX` partant de la gauche aurait déplacé le pivot, et une bande de
+   400 px se serait retrouvée douze pixels plus bas à son extrémité droite.
+
+   Le texte, lui, ne change jamais de couleur : il est de la nuit, toujours.
+   Sur le fond nuit, le fragment est donc invisible tant que la pêche n'est pas
+   passée derrière lui — c'est le surligneur qui fait apparaître le mot, lettre
+   après lettre, et le texte n'est illisible à aucune image puisqu'il n'existe
+   que là où la bande est déjà. Sur le panneau clair, le mot est simplement là
+   et la bande se pose dessous.
+   Une première version peignait le texte par un dégradé rogné aux glyphes
+   (`background-clip: text`) pour le faire passer du blanc à la nuit au fil de
+   la bande. Elle tenait sur l'ordre de peinture entre le fond d'un élément en
+   ligne et son enfant d'indice négatif, que les moteurs ne garantissent pas
+   de la même façon : un mot surligné pouvait finir sous sa propre bande.
+
+   Enregistrer la propriété est ce qui permet de l'animer : sans `@property`,
+   une variable passe de 0 à 1 d'un coup, et le mot apparaît surligné sans
+   transition. Le dispositif n'est armé que sous `.js-ready`. */
+@property --draw {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+.js-ready mark {
+  transition: --draw var(--duration-trace) var(--ease-out-expo);
+}
+
+.js-ready mark::before {
+  clip-path: inset(0 calc((1 - var(--draw)) * 100%) 0 0 round var(--radius-bande));
+}
+
+/* Le fragment attend son bloc : tant que le `.reveal` qui le porte n'est pas
+   entré à l'écran, la bande n'est pas tracée. Le bloc est de toute façon
+   voilé à ce moment-là ; le court retard laisse le reste du titre apparaître
+   avant que le surligneur n'écrive le mot. */
+.js-ready .reveal:not(.is-visible) mark { --draw: 0; }
+.js-ready .reveal.is-visible mark { transition-delay: 140ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js-ready mark { transition: none; }
+  .js-ready .reveal:not(.is-visible) mark { --draw: 1; }
 }
 
 /* Un surlignage sur deux penche dans l'autre sens, et la classe est posée à la
@@ -1859,81 +1998,83 @@ mark.inv::before { --angle: 1.5deg; }
 h1 mark::before { --angle: -1.3deg; inset: 0.14em 0 0.16em; }
 h1 mark.inv::before { --angle: 1.1deg; }
 
-/* Les anciens blocs lime sont désormais clairs ; les mots gardent leur
-   surlignage lime comme sur le papier blanc. */
-.bloc-lime mark::before { background: var(--color-lime); }
-
-/* ── L'aplat lime ──
-   Il remappe les jetons de rôle : tout composant réutilisable s'y adapte sans
-   variante. Le remap ne lit que des valeurs fixes — lire un rôle produirait un
-   cycle, et la section entière deviendrait lime sur lime. */
+/* ── La bande ──
+   `.bloc-lime` est un nom hérité : la classe n'a plus rien de lime depuis
+   septembre 2026, et elle n'est plus claire non plus. Sur le fond nuit elle
+   désigne une bande légèrement relevée — hero des pages d'offre, témoignages,
+   bloc de contact — qui rythme la page sans changer de monde.
+   Elle remappe les jetons de rôle : tout composant réutilisable s'y adapte
+   sans variante. Le remap ne lit que des valeurs fixes — lire un rôle
+   produirait un cycle. */
 .bloc-lime {
-  /* Legacy class retained for offer-page compatibility; never a lime panel. */
-  background: #f7f8fa;
+  background: #161f32;
 
-  --color-paper: #f7f8fa;
-  --color-surface-low: #f7f8fa;
-  --color-surface-high: #ffffff;
-  --color-section-band: #f7f8fa;
-  --color-divider: rgba(17, 17, 17, 0.18);
-  --color-grid-line: rgba(17, 17, 17, 0.12);
-  --color-ink-mid: #2e2e2e;
-  --color-ink-low: #3a3a3a;
-  --color-ink-faint: #5c5c5c;
-  --color-accent: #111111;
-  --color-accent-soft: rgba(17, 17, 17, 0.08);
+  --color-paper: #161f32;
+  --color-surface-low: #1a2439;
+  --color-surface-high: #1f2a42;
+  --color-section-band: #161f32;
+  --color-divider: rgba(255, 255, 255, 0.14);
+  --color-grid-line: rgba(255, 255, 255, 0.08);
 }
 
-::selection { background: var(--color-lime); color: #111111; }
-.bloc-lime ::selection { background: #ffffff; color: #111111; }
+::selection { background: var(--color-peche); color: var(--color-night); }
 
 /* =========================================================================
-   Les consommateurs de --color-paper en COULEUR (et non en fond).
-   Le remap .bloc-lime fait de --color-paper le lime : tout composant qui
-   l'écrit en `color:` ou en remplissage de champ hérite alors du lime, et
-   devient illisible sur son propre fond. Ces deux règles rattrapent les
-   seuls cas concernés.
-   ========================================================================= */
-
-.bloc-lime .btn-primary { color: var(--color-night); }
-
-/* =========================================================================
-   L'APLAT ENCRE — le pied de page. Même mécanique que .bloc-lime : on remappe
-   les jetons de rôle, et les composants suivent sans variante. La page cesse
-   ainsi de finir sur du blanc.
+   LE PANNEAU INVERSÉ — `.bloc-encre`, autre nom hérité. Sur l'ancien papier
+   blanc c'était l'aplat sombre ; sur la nuit, c'est le seul endroit où le
+   clair revient. Même mécanique que la bande : on remappe les jetons de rôle,
+   et les composants suivent sans variante.
    ========================================================================= */
 
 .bloc-encre {
   /* Valeurs LITTÉRALES ici, jamais var(--color-ink) : un remap se résout
      contre la NOUVELLE valeur posée sur le même élément. Écrire
-     `background: var(--color-ink)` à côté de `--color-ink: <blanc>` donnait
-     un pied blanc avec du texte blanc dessus. C'est le même cycle que celui
-     déjà évité sur .bloc-lime — je l'ai reproduit ici. */
-  background: var(--color-night);
-  color: #ffffff;
+     `color: var(--color-ink)` à côté de `--color-ink: <nuit>` est le cycle
+     déjà rencontré deux fois dans ce fichier. */
+  background: #f7f8fa;
+  color: #111827;
+  /* Une île, pas une bande. Bord à bord, le panneau clair coupait la page en
+     trois à angle droit ; détaché et arrondi, il se lit comme un objet posé
+     sur la nuit. La marge est petite et fluide : c'est un liseré de nuit, pas
+     une gouttière, et le contenu garde son alignement dès que la fenêtre
+     dépasse la colonne de 1 200 px. */
+  margin: clamp(0.5rem, 1.5vw, 1.25rem);
+  border: 0;
+  border-radius: var(--radius-xl);
 
-  --color-paper: #111827;
-  --color-surface-low: var(--color-surface-on-dark);
-  --color-surface-high: var(--color-surface-on-dark);
-  --color-section-band: var(--color-ink);
-  --color-ink: #ffffff;
-  --color-ink-mid: var(--color-text-on-dark-mid);
-  --color-ink-low: var(--color-text-on-dark-low);
-  --color-ink-faint: var(--color-text-on-dark-faint);
-  --color-divider: var(--color-divider-dark);
-  --color-grid-line: var(--color-grid-line-dark);
-  --color-border-strong: var(--color-text-on-dark-low);
-  /* Sur l'encre, le lime redevient lisible : 15,14:1. C'est le seul endroit
-     du site où il a le droit d'être du texte. */
-  --color-accent-text: var(--color-lime);
-  --color-focus: var(--color-lime);
+  --color-paper: #f7f8fa;
+  --color-surface-low: #eef0f4;
+  --color-surface-high: #ffffff;
+  --color-section-band: #eef0f4;
+  --color-service-border: #dce1e8;
+  /* Encres teintées vers la nuit : 16,69:1, 7,09:1 et 5,38:1 sur ce panneau. */
+  --color-ink: #111827;
+  --color-ink-mid: #4b5565;
+  --color-ink-low: #5d6777;
+  --color-ink-faint: #8b94a3;
+  --color-divider: #dce1e8;
+  --color-grid-line: #e6e9ef;
+  --color-grid-line-active: #c3c9d4;
+  --color-border-strong: #111827;
+  /* Sur le clair, la pêche retombe à 1,64:1 : elle reste une surface — la
+     bande d'un mot surligné — et ne porte ni texte, ni trait, ni focus. */
+  --color-accent-text: #111827;
+  --color-accent-soft: #ffe9dd;
+  --color-focus: #111827;
+  --color-error: #b3261e;
+  --color-success: #111827;
 }
 
-.bloc-encre mark { color: #111111; }
-.bloc-encre mark::before { background: var(--color-lime); }
-.bloc-encre .btn-primary { background: var(--color-lime); color: var(--color-night); }
+/* Un bouton pêche sur panneau clair n'aurait que 1,64:1 de contour. L'action
+   primaire y passe donc en nuit, libellé blanc, 16,69:1 contre le panneau. */
+.bloc-encre .btn-primary { background: var(--color-night); color: #ffffff; }
 .bloc-encre .btn-primary:hover,
-.bloc-encre .btn-primary:focus-visible { background: var(--color-lime-deep); }
+.bloc-encre .btn-primary:focus-visible { background: var(--color-night-soft); color: #ffffff; }
+
+/* Même raison pour les deux traits d'accent : la pêche d'un pixel ou deux ne
+   se voit pas sur le clair, le trait y repasse en nuit. */
+.bloc-encre .lien-prose { border-bottom-color: #111827; }
+.bloc-encre .text-link-arrow::after { background: #111827; }
 
 /* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
    `nowrap` qui protege la bande devient une cause de debordement. La bande
@@ -1949,50 +2090,30 @@ h1 mark.inv::before { --angle: 1.1deg; }
    — `white-space: normal` laissait le fragment surligné passer à la ligne, or
      la bande est un pseudo-élément unique posé derrière : sur deux lignes elle
      couvre le rectangle englobant, donc aussi le vide à droite de la première
-     ligne. Un aplat lime informe au milieu du titre.
+     ligne. Un aplat de couleur informe au milieu du titre.
 
    La contrainte reste donc celle du dispositif : un fragment surligné tient sur
    une ligne, à toutes les tailles. C'est aux fragments d'être courts, pas à la
    bande de se déformer. */
 
 
-/* Lien dans une phrase de prose : souligné d'un trait lime, qui passe à l'encre
-   au survol. Le lime ne porte jamais le texte, seulement le trait.
+/* Lien dans une phrase de prose : souligné d'un trait pêche, qui passe à
+   l'encre au survol.
 
    POURQUOI 2 PX ET NON 1, dans un système qui déclare « des filets, d'un seul
    poids : 1 px ». Ce n'en est pas un. Un filet sépare ou encadre une surface ;
-   ceci souligne des mots, et c'est le seul endroit où le lime a le droit d'être
-   un trait plutôt qu'une surface.
-   L'argument qu'on serait tenté d'écrire — « le lime est trop clair pour tenir
-   à 1 px » — est faux, vérifié par le calcul : le lime rend 1,25:1 sur papier
-   et `divider` (#e5e5e5), le filet standard du site, 1,26:1. Les deux traits
-   ont le MÊME contraste de luminance. C'est justement le problème : mesuré sur
-   la home, ce lien fait 297 px de large et le filet de séparation de la fiche
-   qui l'entoure, 314 px — deux traits de même longueur, de même contraste, à
-   douze pixels l'un de l'autre. À poids égal, la seule chose qui distinguerait
-   « ceci se clique » de « ceci sépare » serait la teinte, et une information
-   portée par la seule couleur n'en est pas une (WCAG 1.4.1). Le pixel de plus
-   est ce qui fait la différence, et il ne coûte rien à personne. */
+   ceci souligne des mots. Sur la nuit la pêche tient 10,19:1, le trait se lit
+   donc sans peine ; le pixel de plus sert à le distinguer d'un filet de
+   séparation par autre chose que la teinte, une information portée par la
+   seule couleur n'en étant pas une (WCAG 1.4.1). Sur un panneau clair, où la
+   pêche ne tient plus que 1,64:1, `.bloc-encre` repasse le trait en nuit. */
 .lien-prose {
   color: inherit;
   text-decoration: none;
-  border-bottom: 2px solid var(--color-lime);
+  border-bottom: 2px solid var(--color-peche);
   padding-bottom: 1px;
 }
 .lien-prose:hover { border-bottom-color: var(--color-ink); }
-
-/* Sur l'aplat lime, le trait passe au blanc — exactement comme `mark::before` et
-   `.link-cta__label::before`, qui s'y inversent déjà. Et l'inversion conserve la
-   force du signal : le lime rend 1,25:1 sur papier, le blanc rend 1,25:1 sur
-   lime. Le trait a rigoureusement le même poids perceptif des deux côtés, ce qui
-   n'est pas une coïncidence mais la définition d'une inversion réussie.
-   Ce n'était pas un raffinement mais une réparation : `.lien-prose` lit
-   `var(--color-lime)` en dur, et `.bloc-lime` ne remappe pas ce jeton-là. Le
-   soulignement était donc du lime sur du lime, 1,00:1, littéralement invisible —
-   sur les deux pages outil, où « Je le reprends » est le seul chemin vers la page
-   des automatisations qui cassent. Le lien n'apparaissait qu'au survol, quand la
-   couleur passe à l'encre : sur pointeur grossier, il n'apparaissait jamais. */
-.bloc-lime .lien-prose { border-bottom-color: #ffffff; }
 
 /* Un seul trait sous le lien entier, y compris l'espace avant sa flèche.
    Le pseudo-élément évite les fragments produits par text-decoration sur flex. */
@@ -2017,7 +2138,7 @@ h1 mark.inv::before { --angle: 1.1deg; }
   inset-inline: 0;
   bottom: 0.4rem;
   height: 2px;
-  background: var(--color-lime);
+  background: var(--color-peche);
   transition: background-color var(--duration-default) var(--ease-out-quint);
 }
 
@@ -2026,9 +2147,165 @@ h1 mark.inv::before { --angle: 1.1deg; }
   flex-shrink: 0;
   transition: transform var(--duration-default) var(--ease-out-quint);
 }
-.bloc-lime .text-link-arrow::after { background: #ffffff; }
 
 @media (hover: hover) and (pointer: fine) {
   .text-link-arrow:hover::after { background: currentColor; }
   .text-link-arrow:hover > [aria-hidden] { transform: translateX(0.2rem); }
+}
+
+/* =========================================================================
+   MOUVEMENT D'AUTEUR — trois gestes, et pas un de plus.
+
+   1. Le surligneur qui se trace (plus haut, avec `mark`).
+   2. L'entrée du hero : la page arrive, elle ne s'affiche pas.
+   3. Les médias qui s'ouvrent au défilement.
+
+   Tout le reste — survols, FAQ, liens — est du retour d'interaction et vit
+   avec son composant.
+   ========================================================================= */
+
+/* ── 2. L'entrée du hero ──
+   Chaque enfant direct de `.entree` monte, se dévoile et fait le point, l'un
+   après l'autre. Des `@keyframes` jouées au chargement, et non un voile levé
+   par JS : sans script, sans observateur, la page est peinte dans son état
+   final, et l'animation n'est jamais ce qui conditionne l'affichage.
+   `backwards` et non `both` : une fois l'entrée jouée, il ne reste ni filtre
+   ni transformation sur le titre — un `filter: blur(0)` conservé suffirait à
+   faire rastériser le texte par certains moteurs. */
+@media (prefers-reduced-motion: no-preference) {
+  .entree > * {
+    animation: entree-monte var(--duration-entree) var(--ease-out-expo) backwards;
+    animation-delay: calc(var(--i, 0) * 110ms);
+  }
+  .entree > :nth-child(2) { --i: 1; }
+  .entree > :nth-child(3) { --i: 2; }
+  .entree > :nth-child(4) { --i: 3; }
+  .entree > :nth-child(5) { --i: 4; }
+  .entree > :nth-child(n + 6) { --i: 5; }
+
+  /* Le surlignage du titre se trace une fois le titre arrivé : le mot
+     surligné est le dernier à apparaître, écrit par la bande. */
+  .js-ready .entree mark {
+    animation: mark-trace var(--duration-trace) var(--ease-out-expo) backwards;
+    animation-delay: 420ms;
+  }
+
+  /* Le portrait se découvre de bas en haut pendant que l'image se pose. */
+  .entree-portrait {
+    animation: entree-ouvre 1100ms var(--ease-out-expo) backwards;
+    animation-delay: 180ms;
+  }
+  .entree-portrait :where(img) {
+    animation: entree-pose 1400ms var(--ease-out-expo) backwards;
+    animation-delay: 180ms;
+  }
+}
+
+/* 0,01 et non 0 : un élément à opacité nulle n'est pas candidat au LCP, et le
+   titre du hero ne serait mesuré qu'à la fin de son entrée. À un centième il
+   est compté dès la première image, et l'œil ne voit aucune différence. */
+@keyframes entree-monte {
+  from { opacity: 0.01; transform: translateY(18px); filter: blur(6px); }
+}
+@keyframes mark-trace {
+  from { --draw: 0; }
+}
+@keyframes entree-ouvre {
+  from { clip-path: inset(100% 0 0 0 round var(--radius-lg)); }
+  to   { clip-path: inset(0 round var(--radius-lg)); }
+}
+@keyframes entree-pose {
+  from { transform: scale(1.14); }
+}
+
+/* ── 3. Les médias s'ouvrent au défilement ──
+   Une photo ou une capture entre légèrement rognée et grossie, puis s'ouvre et
+   se pose à mesure qu'elle monte dans la fenêtre. Le mouvement est lié au
+   défilement lui-même — c'est le lecteur qui l'ouvre — et il est écrit en CSS
+   seul : là où `animation-timeline` n'existe pas, le média est simplement là.
+   Rien n'est jamais masqué en entier : au pire de sa course, il reste visible
+   à plus de 80 %. */
+.media-ouvre {
+  /* `clip` et non `hidden`. `overflow: hidden` fait de l'enveloppe un conteneur
+     de défilement : le `view()` de l'image se résolvait alors contre elle, et
+     non contre la fenêtre, si bien que l'image restait figée à la fin de sa
+     course — elle ne « se posait » jamais. `clip` rogne sans créer de
+     conteneur de défilement. */
+  overflow: clip;
+  border-radius: var(--radius-lg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .media-ouvre {
+      animation: media-ouvre linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 38%;
+    }
+    .media-ouvre :where(img, video) {
+      animation: media-pose linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 45%;
+    }
+  }
+}
+
+@keyframes media-ouvre {
+  from { clip-path: inset(9% 5% round var(--radius-lg)); }
+  to   { clip-path: inset(0 round var(--radius-lg)); }
+}
+@keyframes media-pose {
+  from { transform: scale(1.12); }
+}
+
+/* =========================================================================
+   D'UNE PAGE À L'AUTRE — la navigation se fond au lieu de couper.
+   Transition entre documents, sans routeur ni script : chaque page reste un
+   chargement complet, et les scripts de page n'ont rien à réinitialiser. La
+   barre de navigation porte son propre nom et ne clignote donc pas pendant
+   que le contenu change. Là où le navigateur ne connaît pas `@view-transition`,
+   on retrouve la coupe d'avant.
+   ========================================================================= */
+@view-transition { navigation: auto; }
+
+.nav-root { view-transition-name: barre-nav; }
+
+::view-transition-old(root) {
+  animation: page-sort 160ms var(--ease-out-quint) both;
+}
+::view-transition-new(root) {
+  animation: page-entre 420ms var(--ease-out-expo) both;
+}
+
+@keyframes page-sort { to { opacity: 0; } }
+@keyframes page-entre { from { opacity: 0; transform: translateY(10px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+
+/* =========================================================================
+   IMPRESSION — le navigateur n'imprime pas les fonds par défaut, et le texte
+   du site est blanc : sans ce bloc, une page imprimée sortait blanc sur blanc.
+   On redonne aux jetons de rôle les valeurs du panneau clair, et tout le site
+   s'imprime en encre sur papier sans variante à écrire.
+   ========================================================================= */
+@media print {
+  :root {
+    --color-paper: #ffffff;
+    --color-surface-low: #ffffff;
+    --color-surface-high: #ffffff;
+    --color-section-band: #ffffff;
+    --color-ink: #111827;
+    --color-ink-mid: #4b5565;
+    --color-ink-low: #5d6777;
+    --color-ink-faint: #8b94a3;
+    --color-divider: #dce1e8;
+    --color-border-strong: #111827;
+    --color-accent-text: #111827;
+  }
+  html, body, .bloc-lime { background: #ffffff; }
+  .nav-root, .technical-grid { display: none; }
 }

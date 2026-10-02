@@ -111,16 +111,24 @@ const { trigger, agent, actions, describe } = Astro.props;
   .wf-col { display: flex; flex-direction: column; gap: 10px; }
 
   .wf-node {
+    /* La teinte de marque est relevée d'un tiers de blanc avant d'être posée sur
+       la nuit : l'aubergine de Slack ou le bleu marine de Pennylane y tenaient
+       moins de 1,5:1, et le logo comme le filet du nœud disparaissaient. Les
+       marques déjà claires (Shopify, Gmail) ne bougent presque pas. */
+    --node-teinte: color-mix(in oklab, var(--node-brand) 66%, white);
     background: var(--color-surface-high);
     /* Bordure tintée par la couleur de marque du logo dans le nœud (--node-brand),
        fondue dans le divider pour rester discrète. Pas de marque → divider pur. */
-    border: 1px solid color-mix(in oklab, var(--node-brand, var(--color-divider)) 45%, var(--color-divider));
-    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in oklab, var(--node-teinte, var(--color-divider)) 45%, var(--color-divider));
+    /* `sm` et non `md` : le nœud vit dans une fenêtre dont le rayon descend à
+       16 px sur mobile, soit exactement `md`. L'intérieur reste plus petit que
+       l'extérieur à toutes les largeurs. */
+    border-radius: var(--radius-sm);
     padding: 10px 12px;
     box-shadow: var(--shadow-card);
   }
   .wf-node.is-accent {
-    border-color: color-mix(in oklab, var(--node-brand, var(--color-border-strong)) 60%, var(--color-border-strong));
+    border-color: color-mix(in oklab, var(--node-teinte, var(--color-border-strong)) 60%, var(--color-border-strong));
     box-shadow: var(--shadow-card-hover);
   }
 
@@ -134,7 +142,7 @@ const { trigger, agent, actions, describe } = Astro.props;
   .wf-node.is-accent .wf-dot { animation: wf-pulse 1.9s ease-in-out infinite; }
   @keyframes wf-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-  .wf-icon { width: 14px; height: 14px; color: var(--node-brand, var(--color-ink-mid)); flex-shrink: 0; }
+  .wf-icon { width: 14px; height: 14px; color: var(--node-teinte, var(--color-ink-mid)); flex-shrink: 0; }
   .wf-kicker {
     font-family: var(--font-mono);
     font-size: var(--text-mono-caption);

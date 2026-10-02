@@ -112,6 +112,7 @@ const couches = [
     gap: 10px;
     padding: 2px 9px;
     border: 1px solid transparent;
+    border-radius: var(--radius-sm);
     animation: zt-scan 6s ease-in-out infinite;
   }
   .zt-couche:nth-child(2) { animation-delay: 1.15s; }
@@ -133,9 +134,10 @@ const couches = [
     min-width: 0;
   }
 
-  /* Pièces à angles vifs, bordées sur leurs quatre côtés : les pastilles rondes
-     du système servent aux statuts, et ce ne sont pas des statuts mais des
-     morceaux d’application. Un liseré latéral coloré est proscrit par le design
+  /* Pièces bordées sur leurs quatre côtés, au plus petit rayon de l’échelle et
+     non en gélule : les pastilles rondes du système servent aux statuts, et ce
+     ne sont pas des statuts mais des morceaux d’application. L’angle vif, lui,
+     a quitté la DA. Un liseré latéral coloré est proscrit par le design
      system, et n’aurait rien dit de plus ici. */
   .zt-piece {
     max-width: 100%;
@@ -145,6 +147,7 @@ const couches = [
     color: var(--color-ink-mid);
     background: var(--color-paper);
     border: 1px solid var(--color-divider);
+    border-radius: var(--radius-xs);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

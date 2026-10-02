@@ -96,29 +96,34 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
     >
       <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
 
-        <a
-          href="/"
-          class="tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
-        >
-          <span aria-hidden="true">←</span>
-          RETOUR À L'ACCUEIL
-        </a>
+        {/* L'en-tête arrive, il ne s'affiche pas : `.entree` fait monter ses
+            enfants directs l'un après l'autre, dans l'ordre où on les lit.
+            Ce sont des `@keyframes` jouées au chargement, pas un voile levé par
+            script : sans JS le h1 est peint dans son état final, ce que le
+            `.reveal` d'avant ne garantissait qu'au paragraphe.
+            La mesure de 64ch est remontée du bloc titre à l'enveloppe, et son
+            retrait droit sur le titre et le chapô : le titre coupe aux mêmes
+            mots qu'avant. Le libellé est un bloc, sinon il partage la ligne du
+            fil de retour. */}
+        <div class="entree max-w-[64ch] mb-10 md:mb-12">
+          <a
+            href="/"
+            class="group tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
+          >
+            <span aria-hidden="true" class="inline-block transition-transform motion-safe:group-hover:-translate-x-[0.2rem]">←</span>
+            RETOUR À L'ACCUEIL
+          </a>
 
-        <div class="reveal mb-6 md:mb-8 inline-block bg-[var(--color-paper)] py-1.5 pr-2">
-          <span class="mono-caption text-[var(--color-ink-low)]">
-            CAS CLIENTS · {total} PROJET{total > 1 ? 'S' : ''} DOCUMENTÉ{total > 1 ? 'S' : ''}
-          </span>
-        </div>
+          <div class="mb-6 md:mb-8 py-1.5">
+            <span class="mono-caption text-[var(--color-ink-low)]">
+              CAS CLIENTS · {total} PROJET{total > 1 ? 'S' : ''} DOCUMENTÉ{total > 1 ? 'S' : ''}
+            </span>
+          </div>
 
-        {/* Le voile est descendu du conteneur au paragraphe, comme sur la home
-            (HeroManifesto.astro:36-47) : englobé dans un `.reveal`, le h1 était
-            peint à opacity 0, disqualifié comme candidat LCP, et laissé
-            invisible 2,5 s si le module de reveal échouait. */}
-        <div class="mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch]">
+          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0 pt-2 pr-2 max-w-[18ch]">
             Des projets métier, documentés.
           </h1>
-          <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-5 max-w-[60ch]">
+          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-5 pb-2 pr-2 max-w-[60ch]">
             Automatisations et applications : le besoin de départ, la solution réalisée et les résultats disponibles, avec leur contexte.
           </p>
         </div>
@@ -139,10 +144,14 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
               const tools = cs.tools || [];
               const kpis = cs.kpis || [];
               const tags = cs.tags || [];
+              // L'enveloppe porte l'entrée en cascade, la carte porte le survol.
+              // Sur un seul élément, la transition de `.reveal-stagger` écrasait
+              // celle de `.card` : le filet changeait de couleur d'un coup.
               return (
+                <div class="reveal flex">
                 <a
                   href={`/cas-clients/${cs.slug}`}
-                  class="reveal relative card card-interactive bg-[var(--color-paper)] flex flex-col gap-5"
+                  class="cas-carte card card-interactive bg-[var(--color-paper)] flex flex-col gap-5 w-full"
                 >
 
                   {(cs.secteur || tags.length > 0) && (
@@ -190,9 +199,10 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
                   <span class="mono-caption text-[var(--color-accent-text)] inline-flex items-center gap-1.5 mt-2">
                     LIRE LE DÉTAIL
-                    <span aria-hidden="true">→</span>
+                    <span class="cas-carte__fleche" aria-hidden="true">→</span>
                   </span>
                 </a>
+                </div>
               );
             })}
           </div>
@@ -224,3 +234,29 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
   <Footer />
   <MobileCTABar label="Parler de mon projet" />
 </Layout>
+
+<style>
+  /* La carte entière est un lien : elle répond par son filet, qui passe à la
+     pêche, et par sa flèche, qui avance. Rien ne se soulève, il n'y a pas
+     d'élévation dans ce système. `.card-interactive` porte déjà la transition
+     du filet ; cette règle ne fait que choisir la couleur d'arrivée, au survol
+     comme au clavier. */
+  .cas-carte:focus-visible { border-color: var(--color-peche); }
+
+  .cas-carte__fleche {
+    display: inline-block;
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cas-carte:hover { border-color: var(--color-peche); }
+    .cas-carte:hover .cas-carte__fleche { transform: translateX(0.2rem); }
+  }
+  .cas-carte:focus-visible .cas-carte__fleche { transform: translateX(0.2rem); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cas-carte__fleche { transition: none; }
+    .cas-carte:hover .cas-carte__fleche,
+    .cas-carte:focus-visible .cas-carte__fleche { transform: none; }
+  }
+</style>

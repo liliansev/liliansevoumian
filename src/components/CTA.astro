@@ -111,10 +111,15 @@ import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/r
     flex-direction: column;
     gap: 1.25rem;
     padding: clamp(1.5rem, 4vw, 2.25rem);
-    /* Sur l'aplat lime, la carte se détache en papier : c'est la seule surface
-       de la section où l'on agit, elle ne peut pas être du même ton que le fond. */
-    background: var(--color-paper);
-    border: 1px solid var(--color-ink);
+    /* La carte est la seule surface de la section où l'on agit : elle ne peut
+       pas être du même ton que le fond. Or `.bloc-lime` remappe `--color-paper`
+       sur sa propre teinte, et la carte ne tenait plus que par un filet blanc
+       pur, à angles vifs. Elle monte d'un cran (`surface-high`, comme les
+       cartes des cas clients), prend le rayon d'une grande carte et un filet
+       discret : c'est la surface qui la détache, plus le trait. */
+    background: var(--color-surface-high);
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-lg);
   }
 
   .appel-titre {

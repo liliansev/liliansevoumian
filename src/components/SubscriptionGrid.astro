@@ -23,10 +23,24 @@ const { offers, label } = Astro.props;
 </div>
 
 <style>
+  /* UN cadre arrondi pour toute la grille, et des filets droits à l'intérieur.
+     Les deux traits forts qui la bordaient en haut et en bas en faisaient un
+     tableau ouvert, à angle droit, posé dans un panneau arrondi. Fermée, elle
+     devient un objet : les formules se comparent toujours colonne à colonne,
+     mais ce qui se voit d'abord est une forme, pas une trame.
+     Le rayon est celui d'une grande carte, donc plus petit que celui du
+     panneau qui la porte sur /sites-web-abonnement. `overflow: hidden` parce
+     que les filets internes courent jusqu'au bord et doivent s'arrêter à
+     l'arrondi. Aucune valeur propre à un fond : le cadre lit les jetons de
+     rôle, il suit donc le panneau clair comme la bande nuit de
+     /automatisations-ia. */
   .subscription-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-block: 1px solid var(--color-border-strong);
+    overflow: hidden;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-high);
   }
   .subscription-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .subscription-plan {
@@ -37,6 +51,7 @@ const { offers, label } = Astro.props;
     min-width: 0;
     padding: var(--spacing-service-card);
   }
+  /* Un filet de séparation reste droit : on n'arrondit pas un trait. */
   .subscription-plan + .subscription-plan { border-left: 1px solid var(--color-divider); }
   .subscription-plan h3 {
     margin: 0;

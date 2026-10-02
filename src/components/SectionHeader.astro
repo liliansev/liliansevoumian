@@ -54,6 +54,12 @@ interface Props {
    * l'ordre des classes écrites. `mb-0` perdrait, silencieusement.
    */
   spacing?: 'section' | 'none';
+  /**
+   * Le filet sous le titre. À couper quand le contenu annoncé ouvre lui-même
+   * par un filet (un registre, une liste de lignes) : deux traits à soixante
+   * pixels l'un de l'autre, sans rien entre eux, se lisent comme une erreur.
+   */
+  rule?: boolean;
 }
 
 const {
@@ -64,6 +70,7 @@ const {
   class: className = '',
   as: Heading = 'h2',
   spacing = 'section',
+  rule = true,
 } = Astro.props;
 
 const spacingClass = spacing === 'section' ? 'mb-12 md:mb-16' : '';
@@ -74,7 +81,7 @@ const spacingClass = spacing === 'section' ? 'mb-12 md:mb-16' : '';
       coin. Le titre respire avec son max-width, le filet du dessous porte la
       structure. Pas de border outer ni corners — la grille technique 1px en
       background suffit. */}
-  <div class="section-header-row">
+  <div class:list={['section-header-row', { 'section-header-row--nu': !rule }]}>
     {/* La TAILLE suit le niveau, elle n'est plus codée en dur.
         `as="h1"` ne changeait que la balise : le titre de /principes rendait
         48 px là où les h1 de toutes les autres pages font 84 px, soit 43 % de
@@ -106,6 +113,37 @@ const spacingClass = spacing === 'section' ? 'mb-12 md:mb-16' : '';
   .section-header-row {
     position: relative;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-divider);
+  }
+
+  /* Le filet est un pseudo-élément et non une bordure, pour pouvoir se tirer.
+     L'en-tête d'une section arrive en trois temps, dans l'ordre où on le lit :
+     le titre apparaît, son fragment est surligné, puis le trait se tire de
+     gauche à droite et pose la section. Sans JS, ou mouvement réduit, il est
+     simplement là — c'est une bordure, dessinée autrement. */
+  .section-header-row::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: var(--color-divider);
+    transform-origin: left center;
+    transition: transform var(--duration-entree) var(--ease-out-expo) 120ms;
+  }
+
+  :global(.js-ready) .reveal:not(.is-visible) .section-header-row::after {
+    transform: scaleX(0);
+  }
+
+  .section-header-row--nu {
+    padding-bottom: 0;
+  }
+
+  .section-header-row--nu::after {
+    content: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section-header-row::after { transition: none; }
+    :global(.js-ready) .reveal:not(.is-visible) .section-header-row::after { transform: none; }
   }
 </style>

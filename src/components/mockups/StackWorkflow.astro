@@ -54,9 +54,10 @@ import { brandColorFor } from '../../data/brands';
   .sw-node:nth-child(5) { animation-delay: 1s; }
   @keyframes sw-step {
     0%, 30%, 100% { box-shadow: var(--shadow-card); transform: translateY(0); }
+    /* Un anneau, pas un halo : la seconde couche était une ombre portée
+       teintée, dans une DA qui n'en a aucune. */
     10% {
-      box-shadow: 0 0 0 1.5px var(--brand, var(--color-accent)),
-                  0 6px 16px -6px color-mix(in oklch, var(--brand, var(--color-accent)) 45%, transparent);
+      box-shadow: 0 0 0 1.5px var(--brand, var(--color-accent));
       transform: translateY(-2px);
     }
   }

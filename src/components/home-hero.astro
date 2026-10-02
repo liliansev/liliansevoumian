@@ -1,0 +1,475 @@
+---
+/*
+ * home-hero — le premier écran de l'accueil : Lilian se présente, sur une
+ * grille.
+ *
+ * Il l'a voulu ainsi : le titre seul, centré, et au bas de l'écran le défilé
+ * des entreprises avec lesquelles il a travaillé. Pas de portrait, pas de
+ * bouton, pas de chapô, et pas de sculpture non plus : il l'a essayée sous le
+ * titre et l'a jugée de trop. Les sculptures de verre vivent plus bas, une
+ * par métier. Le titre est la phrase qu'il a dictée : « Salut, je
+ * m'appelle Lilian Sevoumian et je suis expert en Automatisations & Agents
+ * IA ». L'esperluette est la sienne. Le récit qui suit (`home-story`) porte
+ * le propos : vous perdez votre temps, voilà pourquoi.
+ *
+ * La direction est « tech moderne, propre » : une grille fine tient tout
+ * l'écran, centrée sur le titre. Trois choses s'y passent, toutes discrètes.
+ * Des faisceaux de lumière pêche courent le long des lignes, comme une donnée
+ * qui circule. Quelques cellules s'allument l'une après l'autre. Et la grille
+ * s'éclaire sous le pointeur. Des croix marquent quelques intersections,
+ * comme sur un plan.
+ *
+ * Le métier est posé dans une pastille pêche, qui arrive après le reste de la
+ * phrase. Sur un écran étroit elle se replie sur deux lignes, chacune avec
+ * ses bouts ronds.
+ *
+ * Sans script, la phrase et la grille sont là ; il ne manque que l'éclairage
+ * sous le pointeur. En mouvement réduit, rien ne bouge.
+ *
+ */
+import { clients } from '../data/clients';
+
+const question = 'Salut, je m’appelle Lilian Sevoumian et je suis expert en'.split(' ');
+const reponse = 'Automatisations & Agents IA';
+
+/* Tout se place en mailles, comptées depuis le centre de l'écran : `x` et `y`
+   désignent une ligne de la grille (les lignes passent à une demi-maille du
+   centre, le titre est donc au milieu d'une cellule). */
+const faisceaux = [
+  { sens: 'v', ligne: -4, duree: 9, delai: 0 },
+  { sens: 'v', ligne: 3, duree: 11, delai: -4 },
+  { sens: 'v', ligne: 6, duree: 8, delai: -6.5 },
+  { sens: 'h', ligne: -3, duree: 12, delai: -2 },
+  { sens: 'h', ligne: 2, duree: 10, delai: -7 },
+];
+
+const croix = [
+  { x: -5, y: -3 }, { x: 4, y: -3 }, { x: -5, y: 2 }, { x: 4, y: 2 },
+  { x: -8, y: 0 }, { x: 7, y: -1 },
+];
+
+/* Les cellules qui s'allument, dans l'ordre : un trajet qui traverse l'écran
+   de gauche à droite en contournant le titre par le bas. */
+const cellules = [
+  { x: -7, y: 1 }, { x: -6, y: 1 }, { x: -6, y: 2 }, { x: -5, y: 2 }, { x: -4, y: 2 },
+  { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 5, y: 1 }, { x: 6, y: 1 },
+];
+---
+
+<section id="hero" data-section data-affiche class="affiche relative px-[var(--spacing-section-x)]">
+  <div class="affiche__grille" aria-hidden="true">
+    <div class="affiche__eclairage"></div>
+    {cellules.map((c, i) => (
+      <span class="cellule" style={`--x: ${c.x}; --y: ${c.y}; --i: ${i}`}></span>
+    ))}
+    {faisceaux.map((f) => (
+      <span
+        class:list={['faisceau', `faisceau--${f.sens}`]}
+        style={`--ligne: ${f.ligne}; --duree: ${f.duree}s; --delai: ${f.delai}s`}
+      ></span>
+    ))}
+    {croix.map((c) => (
+      <span class="croix" style={`--x: ${c.x}; --y: ${c.y}`}></span>
+    ))}
+  </div>
+
+  <div class="affiche__centre">
+    <h1 class="affiche__titre" style={`--mots: ${question.length}`}>
+      <span class="affiche__question">
+        {question.map((mot, i) => (
+          <>
+            <span class="mot" style={`--i: ${i}`}>{mot}</span>{' '}
+          </>
+        ))}
+      </span>
+      <span class="affiche__reponse">{reponse}</span>
+    </h1>
+  </div>
+
+  <div class="defile" aria-label="Entreprises avec lesquelles j’ai travaillé">
+    <p class="defile__titre">J’ai travaillé avec</p>
+    <div class="defile__fenetre">
+      <ul class="defile__piste">
+        {[0, 1].map((tour) =>
+          clients.map((client) => (
+            <li aria-hidden={tour === 1 ? 'true' : undefined}>
+              {client.logo ? (
+                <img
+                  src={client.logo.src}
+                  width={client.logo.largeur}
+                  height={client.logo.hauteur}
+                  alt={client.nom}
+                  loading="eager"
+                  decoding="async"
+                  style={client.logo.echelle ? `--echelle: ${client.logo.echelle}` : undefined}
+                />
+              ) : (
+                <span>{client.nom}</span>
+              )}
+            </li>
+          )),
+        )}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .affiche {
+    --maille: clamp(3.5rem, 5.6vw, 5.5rem);
+    --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100svh;
+    padding-top: 64px;
+    overflow: clip;
+    background: var(--color-night-deep);
+    isolation: isolate;
+  }
+
+  /* ── La grille ──
+     Deux réseaux de lignes centrés sur l'écran, qui s'effacent vers les
+     bords. Tout ce qui s'y pose (faisceaux, cellules, croix) se place en
+     mailles depuis le centre et s'efface avec elle. */
+  .affiche__grille {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(var(--trait) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille),
+      linear-gradient(90deg, var(--trait) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille);
+    -webkit-mask-image: radial-gradient(ellipse 78% 74% at 50% 46%, var(--color-night) 30%, transparent 82%);
+    mask-image: radial-gradient(ellipse 78% 74% at 50% 46%, var(--color-night) 30%, transparent 82%);
+  }
+
+  /* La même grille, plus claire et teintée de pêche, visible seulement sous
+     le pointeur : on éclaire le plan en le survolant. */
+  .affiche__eclairage {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(color-mix(in srgb, var(--color-peche) 46%, transparent) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-peche) 46%, transparent) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille),
+      radial-gradient(circle at var(--px, 50%) var(--py, 30%), color-mix(in srgb, var(--color-peche) 9%, transparent), transparent 22rem);
+    -webkit-mask-image: radial-gradient(circle 17rem at var(--px, 50%) var(--py, 30%), var(--color-night), transparent);
+    mask-image: radial-gradient(circle 17rem at var(--px, 50%) var(--py, 30%), var(--color-night), transparent);
+  }
+
+  /* Une cellule : la maille (x, y) comptée depuis le centre. Les lignes
+     passent à une demi-maille du centre, d'où le décalage. */
+  .cellule {
+    position: absolute;
+    top: calc(50% + (var(--y) - 0.5) * var(--maille));
+    left: calc(50% + (var(--x) - 0.5) * var(--maille));
+    width: var(--maille);
+    height: var(--maille);
+    background: color-mix(in srgb, var(--color-peche) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-peche) 34%, transparent);
+    opacity: 0;
+  }
+
+  .croix {
+    position: absolute;
+    top: calc(50% + (var(--y) - 0.5) * var(--maille) - 5px);
+    left: calc(50% + (var(--x) - 0.5) * var(--maille) - 5px);
+    width: 11px;
+    height: 11px;
+    background:
+      linear-gradient(var(--color-ink-faint), var(--color-ink-faint)) 50% 50% / 100% 1px no-repeat,
+      linear-gradient(var(--color-ink-faint), var(--color-ink-faint)) 50% 50% / 1px 100% no-repeat;
+  }
+
+  /* Un faisceau : un court trait de lumière qui suit une ligne de la grille. */
+  .faisceau {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .faisceau--v {
+    top: -12rem;
+    left: calc(50% + (var(--ligne) - 0.5) * var(--maille));
+    width: 1px;
+    height: 12rem;
+    background: linear-gradient(to bottom, transparent, var(--color-peche) 70%, var(--color-ink));
+  }
+
+  .faisceau--h {
+    top: calc(50% + (var(--ligne) - 0.5) * var(--maille));
+    left: -16rem;
+    width: 16rem;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-peche) 70%, var(--color-ink));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .faisceau {
+      opacity: 1;
+      animation: var(--duree) linear var(--delai) infinite;
+    }
+
+    .faisceau--v { animation-name: faisceau-v; }
+    .faisceau--h { animation-name: faisceau-h; }
+
+    .cellule {
+      animation: cellule-passe 9s var(--ease-out-quint) infinite;
+      animation-delay: calc(var(--i) * 420ms + 2s);
+    }
+
+    .affiche__grille {
+      animation: grille-leve 1800ms var(--ease-out-expo) backwards;
+    }
+  }
+
+  @keyframes faisceau-v {
+    to { transform: translateY(calc(100svh + 24rem)); }
+  }
+
+  @keyframes faisceau-h {
+    to { transform: translateX(calc(100vw + 32rem)); }
+  }
+
+  @keyframes cellule-passe {
+    0%, 14%, 100% { opacity: 0; }
+    4% { opacity: 1; }
+  }
+
+  @keyframes grille-leve {
+    from { opacity: 0; }
+  }
+
+  /* ── La phrase ── */
+  .affiche__centre {
+    display: grid;
+    place-items: center;
+    padding-block: clamp(2.5rem, 6svh, 5rem);
+  }
+
+  .affiche__titre {
+    max-width: 15.5em;
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-affiche);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+    text-align: center;
+  }
+
+  .affiche__question {
+    display: block;
+    text-wrap: balance;
+  }
+
+  .mot {
+    display: inline-block;
+  }
+
+  /* Le métier est une pastille : la pêche pleine, la nuit pour l'encre. Elle
+     est en ligne, pour pouvoir se replier : chaque fragment garde alors ses
+     bouts ronds. */
+  .affiche__question {
+    padding-bottom: 0.2em;
+  }
+
+  .affiche__reponse {
+    padding: 0.04em 0.4em 0.1em;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 45%, transparent),
+      0 14px 60px -18px color-mix(in srgb, var(--color-peche) 70%, transparent);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    color: var(--color-night);
+    line-height: 1.34;
+  }
+
+  @media (min-width: 900px) {
+    .affiche__reponse {
+      white-space: nowrap;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .affiche .mot {
+      animation: mot-pose 1000ms var(--ease-out-expo) backwards;
+      animation-delay: calc(var(--i) * 70ms + 250ms);
+    }
+
+    /* Un temps, puis la pastille se pose. */
+    .affiche__reponse {
+      animation: reponse-pose 1100ms var(--ease-out-expo) backwards;
+      animation-delay: calc(var(--mots) * 70ms + 900ms);
+    }
+
+    .defile {
+      animation: entree-monte 1100ms var(--ease-out-expo) backwards;
+      animation-delay: calc(var(--mots) * 70ms + 1500ms);
+    }
+  }
+
+  @keyframes mot-pose {
+    from { opacity: 0.01; transform: translateY(0.4em); filter: blur(12px); }
+  }
+
+  @keyframes reponse-pose {
+    from { opacity: 0; filter: blur(10px); }
+  }
+
+  /* ── Le défilé ── */
+  .defile {
+    --mots: 8;
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin-inline: calc(-1 * var(--spacing-section-x));
+    padding: clamp(1.1rem, 2.4svh, 1.6rem) 0 clamp(1.1rem, 2.4svh, 1.6rem) var(--spacing-section-x);
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+    background: var(--color-night-deep);
+  }
+
+  .defile__titre {
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    white-space: nowrap;
+  }
+
+  .defile__fenetre {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, var(--color-night) 6%, var(--color-night) 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, var(--color-night) 6%, var(--color-night) 92%, transparent);
+  }
+
+  .defile__piste {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .defile__piste li {
+    display: flex;
+    align-items: center;
+    max-width: none;
+    padding-inline: clamp(1.25rem, 2.6vw, 2.25rem);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  /* Un logo est ramené à une silhouette claire et à la hauteur des lettres,
+     corrigée à l'œil par `--echelle` (voir `data/clients.ts`). Les attributs
+     `width` et `height` donnent le rapport : la piste a sa largeur finale
+     avant que les fichiers n'arrivent. */
+  .defile__piste img {
+    display: block;
+    width: auto;
+    max-width: none;
+    height: calc(1.5em * var(--echelle, 1));
+    filter: brightness(0) invert(1);
+    opacity: 0.78;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .defile__piste {
+      animation: defile 46s linear infinite;
+    }
+
+    .defile__fenetre:hover .defile__piste,
+    .defile__fenetre:focus-within .defile__piste {
+      animation-play-state: paused;
+    }
+  }
+
+  @keyframes defile {
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .defile {
+      grid-template-columns: 1fr;
+      padding-right: var(--spacing-section-x);
+    }
+
+    .defile__fenetre {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .defile__piste {
+      flex-wrap: wrap;
+      width: auto;
+      row-gap: 1rem;
+    }
+
+    .defile__piste li {
+      padding-inline: 0 1.5rem;
+    }
+
+    .defile__piste li[aria-hidden='true'] {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .affiche {
+      --maille: 3rem;
+    }
+
+    .defile {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+      padding-left: 0;
+    }
+
+    .defile__titre {
+      padding-left: var(--spacing-section-x);
+    }
+  }
+
+  /* Sans défilement, sur un écran étroit, la liste reprend la marge du titre :
+     le bandeau y a perdu la sienne pour laisser la piste courir d'un bord à
+     l'autre. */
+  @media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+    .defile {
+      padding-right: 0;
+    }
+
+    .defile__fenetre {
+      padding-inline: var(--spacing-section-x);
+    }
+  }
+</style>
+
+<script>
+  /* La grille s'éclaire sous le pointeur : deux variables, mises à jour au
+     plus une fois par image. Sans pointeur fin, l'éclairage reste où il est. */
+  const affiche = document.querySelector<HTMLElement>('[data-affiche]');
+  const grille = affiche?.querySelector<HTMLElement>('.affiche__grille');
+  if (affiche && grille && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let x = 0;
+    let y = 0;
+    let prevu = false;
+    affiche.addEventListener('pointermove', (e) => {
+      const r = affiche.getBoundingClientRect();
+      x = e.clientX - r.left;
+      y = e.clientY - r.top;
+      if (prevu) return;
+      prevu = true;
+      requestAnimationFrame(() => {
+        prevu = false;
+        grille.style.setProperty('--px', `${x}px`);
+        grille.style.setProperty('--py', `${y}px`);
+      });
+    });
+  }
+
+</script>

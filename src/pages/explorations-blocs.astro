@@ -1,0 +1,245 @@
+---
+/*
+ * /explorations-blocs — toutes les sculptures de verre de l'atelier.
+ *
+ * Page de travail, hors index et hors sitemap : elle sert à voir chaque forme
+ * seule, hors de la page d'accueil, et à en essayer de nouvelles.
+ */
+import Layout from '../layouts/Layout.astro';
+
+const formes = [
+  {
+    id: 'circuit',
+    nom: 'Le circuit',
+    idee: 'Une sphère déclenche, une gemme pêche décide, et trois objets reçoivent : une pile de disques, une capsule, un anneau.',
+    usages: ['Sur le site : le métier « Automatisation ».', 'Un grain de lumière fait le trajet, du déclencheur aux actions.'],
+  },
+  {
+    id: 'agent',
+    nom: 'Le gyroscope',
+    idee: 'Une sphère pêche au centre, trois anneaux qui tournent autour, et sur ces anneaux les outils que l’agent appelle.',
+    usages: ['Sur le site : le métier « Agents IA ».', 'Le grain part vers un outil, revient, repart vers un autre.'],
+  },
+  {
+    id: 'anneaux',
+    nom: 'Les anneaux',
+    idee: 'Le jeu d’anneaux à empiler : ils tombent un à un sur leur tige, du plus large au plus petit.',
+    usages: ['Sur le site : le métier « Formations ».', 'On apprend un niveau après l’autre.'],
+  },
+  {
+    id: 'page',
+    nom: 'La vitre',
+    idee: 'Une vitre debout qui porte un tableau de bord : un graphique en anneau, des barres rondes, une courbe, un bouton.',
+    usages: ['Sur le site : le métier « Sites web et dashboards ».'],
+  },
+  {
+    id: 'vague',
+    nom: 'La vague',
+    idee: 'Un nid d’abeilles de prismes de verre, traversé par une onde dont la crête luit.',
+    usages: ['Sur le site : sous le titre du premier écran.'],
+  },
+  {
+    id: 'boucle',
+    nom: 'La boucle',
+    idee: 'Un ruban de Möbius en tuiles de verre, qui tourne sans fin.',
+    usages: ['En réserve : pas utilisée sur le site pour l’instant.'],
+  },
+  {
+    id: 'cube',
+    nom: 'Le cube',
+    idee: 'Vingt-sept blocs dont les tranches pivotent d’elles-mêmes, comme un casse-tête qui se résout seul.',
+    usages: ['En réserve : pas utilisé sur le site pour l’instant.'],
+  },
+];
+---
+
+<Layout title="Blocs 3D · Lilian Sevoumian" noindex>
+  <main id="main-content" class="labo px-[var(--spacing-section-x)]">
+    <header class="labo__tete mx-auto max-w-[1200px]">
+      <a href="/" class="labo__retour">← Retour à l’accueil</a>
+      <h1>Les sculptures de verre.</h1>
+      <p>
+        Toutes les formes de l’atelier, dans la même matière et la même lumière. Passez le pointeur sur un cadre pour
+        faire tourner la sculpture.
+      </p>
+    </header>
+
+    <div class="labo__grille mx-auto max-w-[1200px]">
+      {formes.map((forme, index) => (
+        <article class="essai">
+          <div class="essai__cadre">
+            <span class="repere repere--hg" aria-hidden="true"></span>
+            <span class="repere repere--hd" aria-hidden="true"></span>
+            <span class="repere repere--bg" aria-hidden="true"></span>
+            <span class="repere repere--bd" aria-hidden="true"></span>
+            <canvas data-forme={forme.id} role="img" aria-label={`Sculpture de verre en trois dimensions : ${forme.nom.toLowerCase()}`}></canvas>
+          </div>
+          <div class="essai__texte">
+            <h2><span>{index + 1}</span>{forme.nom}</h2>
+            <p>{forme.idee}</p>
+            <ul>
+              {forme.usages.map((usage) => <li>{usage}</li>)}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .labo {
+    --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
+    min-height: 100svh;
+    padding-block: clamp(2.5rem, 6vw, 5rem) var(--spacing-section-y);
+    background: var(--color-night-deep);
+  }
+
+  .labo__retour {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    text-decoration: none;
+  }
+
+  .labo__tete h1 {
+    max-width: 16ch;
+    margin: 1.5rem 0 0;
+    color: var(--color-ink);
+    font-size: var(--text-story);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .labo__tete p {
+    max-width: 58ch;
+    margin: 1.25rem 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.5;
+  }
+
+  .labo__grille {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .essai {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--trait);
+  }
+
+  .essai__cadre {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--color-night-deep);
+  }
+
+  .essai__cadre canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 900ms var(--ease-out-quint);
+  }
+
+  .essai__cadre canvas[data-pret] {
+    opacity: 1;
+  }
+
+  .repere {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--color-ink-low);
+    pointer-events: none;
+  }
+
+  .repere--hg { top: -7px; left: -7px; border-top-width: 1px; border-left-width: 1px; }
+  .repere--hd { top: -7px; right: -7px; border-top-width: 1px; border-right-width: 1px; }
+  .repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
+  .repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .essai__texte h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+  }
+
+  .essai__texte h2 span {
+    color: var(--color-accent-text);
+    font-size: var(--text-body);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  .essai__texte p {
+    max-width: 42ch;
+    margin: 1rem 0 0;
+    color: var(--color-ink-mid);
+    line-height: 1.55;
+  }
+
+  .essai__texte ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1.25rem 0 0;
+    padding: 1.25rem 0 0;
+    border-top: 1px solid var(--trait);
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    list-style: none;
+  }
+
+  .essai__texte li {
+    max-width: none;
+  }
+
+  @media (max-width: 860px) {
+    .essai {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  /* Three.js n'est chargé que lorsqu'un cadre approche de l'écran. */
+  import type { FormeBloc } from '../lib/blocs/atelier';
+
+  const toiles = [...document.querySelectorAll<HTMLCanvasElement>('[data-forme]')];
+  if (toiles.length) {
+    const montees = new WeakSet<HTMLCanvasElement>();
+    const monter = async (toile: HTMLCanvasElement) => {
+      if (montees.has(toile)) return;
+      montees.add(toile);
+      try {
+        const { monterBlocs } = await import('../lib/blocs/atelier');
+        monterBlocs(toile, { style: 'verre', forme: toile.dataset.forme as FormeBloc });
+      } catch (erreur) {
+        console.error('Blocs 3D indisponibles :', erreur);
+      }
+    };
+    const verifier = () => {
+      toiles.forEach((toile) => {
+        const r = toile.getBoundingClientRect();
+        if (r.top < window.innerHeight + 300 && r.bottom > -300) void monter(toile);
+      });
+    };
+    window.addEventListener('scroll', verifier, { passive: true });
+    verifier();
+  }
+</script>

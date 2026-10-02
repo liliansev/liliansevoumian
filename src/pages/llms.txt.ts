@@ -4,6 +4,7 @@ import { faqs } from '../data/faq';
 import { creationOffers, subscriptionOffers } from '../data/sites-web';
 import { automationSubscriptions, maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
+import { activites, organisations, parcours, resume } from '../data/parcours';
 
 /*
  * /llms.txt — la carte du site à l'usage des moteurs de réponse générative.
@@ -28,22 +29,41 @@ export const GET: APIRoute = async () => {
     return `- [${c.data.title}](https://liliansevoumian.fr/cas-clients/${c.id})${outils}${kpi}${scope}`;
   };
 
+  /* Le parcours et les activités viennent de data/parcours.ts, comme sur la
+     page d'accueil : la fiche ne peut pas dire autre chose que le site. */
+  const ligneActivite = (a: (typeof activites)[number]) => {
+    const url = a.lien.externe ? a.lien.href : `https://liliansevoumian.fr/${a.lien.href}`;
+    return `- ${a.nom} (${a.depuis.toLowerCase()}) : ${a.resume} ${url}`;
+  };
+  const ligneAnnee = (p: (typeof parcours)[number]) =>
+    `- ${p.annee} : ${p.etapes.map((e) => `${e.quand ? `${e.quand.toLowerCase()}, ` : ''}${e.titre}${e.detail ? ` (${e.detail})` : ''}`).join(' ; ')}`;
+
   const corps = `# Lilian Sevoumian
 
-> Freelance français en automatisation, intelligence artificielle et création
-> de sites et applications web. Deux expertises de même niveau : automatiser les
-> opérations et construire des sites commerciaux ou des outils pour les équipes.
+> ${resume}
+> Ce site est sa page de référence : parcours, activités actuelles, réalisations,
+> vidéos et newsletter. Les offres de mission y figurent aussi.
 
 ## Identité
 
 - Nom : Lilian Sevoumian
-- Activité : freelance en automatisation, IA et création de sites web, depuis 2020
-- Certifications : Make niveau 5 (premier certifié en France), Airtable Certified
-- Formation : plus de 300 personnes formées
-- Zone : région parisienne, France, Europe
+- Activité : automatisation, agents IA, création de sites web et formation, depuis 2020
+- Structures fondées : ${organisations.map((o) => `${o.nom} (${o.fondation.slice(0, 4)}, ${o.url})`).join(' ; ')}
+- Certifications : Make niveau 5 (premier Français certifié), Airtable Certified
+- Formation : plus de 300 personnes formées à Make, n8n et à l'IA
+- Entreprises accompagnées : plus de 100
+- Zone : Île-de-France, France, Europe
 - Contact : ${URL_RESERVATION} (appel de ${DUREE_RESERVATION_MINUTES} min, sans engagement) ou bonjour@liliansevoumian.fr
 
-## Ce que je fais
+## Ce que je fais aujourd'hui
+
+${activites.map(ligneActivite).join('\n')}
+
+## Parcours
+
+${parcours.map(ligneAnnee).join('\n')}
+
+## Ce que je fais en mission
 
 - Automatiser un processus métier de bout en bout (n8n, Make)
 - Construire des agents IA qui prennent en charge une tâche entière
@@ -73,7 +93,7 @@ ${cas.map(ligneCas).join('\n')}
 
 ## Pages
 
-- [Accueil](https://liliansevoumian.fr/) : choix entre les deux expertises
+- [Accueil](https://liliansevoumian.fr/) : parcours, activités actuelles, réalisations, vidéos et newsletter
 - [Automatisation et IA](https://liliansevoumian.fr/automatisations-ia) : services, cas clients, méthode, calculateur et FAQ
 - [Tous les cas clients](https://liliansevoumian.fr/cas-clients)
 - [Expert Make](https://liliansevoumian.fr/expert-make)

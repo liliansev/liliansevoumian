@@ -16,9 +16,11 @@ const tools = [
       body="Vos logiciels, vos données et les personnes qui les utilisent guident le choix technique."
       titleMaxWidth="24ch"
     />
-    <dl class="m-0 grid grid-cols-1 md:grid-cols-2 gap-x-12">
+    {/* Quatre entrées sœurs : la liste entre en cascade, dans l'ordre de
+        lecture. C'était le seul contenu de la page sans aucune entrée. */}
+    <dl class="reveal-stagger m-0 grid grid-cols-1 md:grid-cols-2 gap-x-12">
       {tools.map((tool) => (
-        <div class="py-6 border-t border-[var(--color-divider)]">
+        <div class="reveal py-6 border-t border-[var(--color-divider)]">
           <dt class="font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">{tool.name}</dt>
           <dd class="m-0 mt-3 max-w-[55ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">{tool.use}</dd>
         </div>

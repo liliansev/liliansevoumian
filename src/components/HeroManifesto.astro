@@ -1,6 +1,6 @@
 ---
 /*
- * HeroManifesto — aplat lime, typographie seule.
+ * HeroManifesto — bande nuit, typographie seule.
  *
  * Le portrait a été retiré : sur le lime il formait la masse la plus contrastée
  * de la page — davantage que le H1 — et sa chemise lilas touchait le lime à
@@ -114,9 +114,9 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
    * simplement dans l'aplat au lieu de s'arrêter à son bord. Une seconde maille
    * se serait vue comme une erreur d'alignement.
    *
-   * La couleur vient de --color-grid-line, que .bloc-lime remappe déjà en
-   * rgba(17,17,17,0.12). Rien à écrire ici : la trame suivra toute reprise du
-   * remap, et resterait juste si l'aplat changeait de couleur.
+   * La trame est claire sur la bande nuit, comme --color-grid-line que
+   * .bloc-lime remappe en blanc à 8 %. Elle est écrite ici un cran en dessous,
+   * pour la raison donnée plus bas.
    *
    * Le masque est ce qui la rend supportable. Le texte occupe la moitié gauche
    * (le h1 est plafonné à 19ch) ; la trame est donc pleine à droite et se
@@ -128,12 +128,11 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
     position: absolute;
     inset: 0;
     pointer-events: none;
-    /* Trait plus clair que le jeton hérité de .bloc-lime, qui vaut 0,12.
-       Mesuré : à 0,12 les verticales coupaient les lettres du h1 avec 5,3 %
-       d'écart de luminance, assez pour se lire comme un trait sur un mot. */
+    /* Trait plus discret que le jeton hérité de .bloc-lime, qui vaut 0,08 :
+       au-delà, les verticales se lisent comme un trait sur les lettres du h1. */
     background-image:
-      linear-gradient(to right, rgba(17, 17, 17, 0.07) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(17, 17, 17, 0.07) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
     /* La dissipation s'arrête à 24 % depuis la DROITE, et non 62 %.
        Le réglage d'origine supposait que le titre tenait la moitié gauche ;
@@ -164,6 +163,21 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
        très visible, et elle coupait « freelance » en « free-lance »
        ailleurs sur le site. Le repli reste là comme garde-fou. */
     overflow-wrap: break-word;
+  }
+
+  /* Le surligneur du titre se trace, comme sur la home, mais sans passer par
+     `.reveal` ni par `.entree` : le h1 doit rester peint dès la première image
+     (voir la note LCP dans le gabarit). On rejoue donc sur le seul fragment les
+     `@keyframes mark-trace` de global.css. Le fragment surligné est écrit par
+     la bande : il apparaît en dernier, le reste du titre étant lisible dès la
+     première image. Sans `.js-ready` ou en mouvement réduit, il est
+     simplement surligné, comme avant.
+     420 ms : le sous-titre et les boutons sont en train d'arriver. */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js-ready) .hero-manifesto-h1 mark {
+      animation: mark-trace var(--duration-trace) var(--ease-out-expo) backwards;
+      animation-delay: 420ms;
+    }
   }
 
   /* La bascule à 1024 px a été retirée : elle commutait vers un second jeton

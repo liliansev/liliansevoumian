@@ -16,12 +16,12 @@ confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir 
 
 ---
 
-## 1. Les 9 goals (état réel du code)
+## 1. Les 10 goals (état réel du code)
 
 ### `service_path_opened` — choix d'une expertise
-Émis depuis les deux moitiés de la home, les liens de preuve et le bloc contact.
-La prop `source` distingue `home_automation`, `home_sites_web`, `home_preuves`
-et `home_contact`.
+Émis depuis les deux lignes de la section « Travailler avec moi » de l'accueil
+et depuis le menu mobile. La prop `source` distingue `home_services_automation`,
+`home_services_web` et `nav_mobile_offers`.
 
 ### `lead_call` — clic « Réserver un appel » (cal.com)
 Émis nativement sur **tout lien cal.com** via `data-fast-goal="lead_call"`.
@@ -31,7 +31,7 @@ se passe sur cal.com (voir Limite plus bas).
 | Param `source` | Où |
 |----------------|-----|
 | `automatisations_nav` · `automatisations_nav_mobile` · `automatisations` · `hero` · `roi` · `temoignages` · `stack-automation` · `stack-productivite` · `stack-ia` · `stack-vibe-coding` · `offres` · `contact` · `footer` · `barre-mobile` | Offre `/automatisations-ia` |
-| `home_nav` · `home_nav_mobile` · `home_contact` · `footer` | Accueil `/` |
+| `home_nav` · `home_nav_mobile` · `home_offres` · `footer` | Accueil `/` |
 | `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
 | `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
 | `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_tarifs` · `sites_web_abonnements` · `sites_web_final` | Offre `/sites-web-abonnement` |
@@ -75,10 +75,15 @@ Prop `href`. Couvre les « VOIR LE CAS » du carrousel, « VOIR TOUS LES CAS »,
 les liens de `/cas-clients` depuis À propos et Offres. Aucun n'était tagué.
 
 ### `outbound_formations` — sortie vers augmentes.fr
-Sources : `offres`, `faq`. Ce n'est pas une perte : c'est l'intention « apprendre
-soi-même » qui trouve sa route.
+Sources : `offres`, `faq`, `home_services`, `footer`. Ce n'est pas une perte : c'est
+l'intention « apprendre soi-même » qui trouve sa route.
 
-> Neuf goals. La taxonomie `contact_lead` / `cta_contact_click` des anciennes
+### `outbound_agence` — sortie vers agenceafk.fr
+Sources : `home_services`, `footer`. Depuis octobre 2026 l'accueil présente ce que Lilian
+fait aujourd'hui, et l'agence est une de ses sorties : comme pour les
+formations, un clic ici est une orientation réussie, pas une fuite.
+
+> Dix goals. La taxonomie `contact_lead` / `cta_contact_click` des anciennes
 > versions n'existe plus.
 >
 > **Ce qui reste volontairement absent : le scroll-depth et les goals
@@ -104,7 +109,7 @@ dans la même session compte comme converti.
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
 | 1 | Visite accueil | Page visit | URL equals `/` |
-| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_automation, home_sites_web)* |
+| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_services_automation, home_services_web)* |
 
 ### Funnel A2 — « Automatisation → Call » (funnel complet en 4 étapes)
 | # | Étape | Type | Valeur |

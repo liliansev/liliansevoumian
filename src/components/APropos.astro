@@ -32,7 +32,7 @@ const faits = [
         </p>
 
         <p>
-          Chez Jellysmack, j’ai passé deux ans à construire et maintenir des
+          Chez Jellysmack, j’ai passé un an à construire et maintenir des
           automatisations. Je partage aussi ce que j’apprends en formant des
           équipes à ces outils.
         </p>
@@ -101,12 +101,15 @@ const faits = [
   /* Filet de tête à 1 px, comme les soixante autres du site. Il était le seul
      filet de structure à 2 px, dans un système qui déclare « des filets, d'un
      seul poids : 1 px » (DESIGN.md). Le poids servait à marquer la tête de
-     fiche, mais l'encre pleine le fait déjà : les filets de séparation en
-     dessous sont en gris divider, et l'écart de valeur suffit à ouvrir le
-     tableau sans dérober un second poids au système. */
+     fiche, mais la valeur le fait déjà : les filets de séparation en dessous
+     sont en gris divider, et l'écart suffit à ouvrir le tableau sans dérober
+     un second poids au système.
+     Cette valeur est `border-strong` et plus l'encre : sur la nuit l'encre vaut
+     blanc pur, et un filet blanc d'un pixel éblouit. Même réglage que la fiche
+     de la home (HomeAbout). */
   .apropos-faits {
     margin: 0;
-    border-top: 1px solid var(--color-ink);
+    border-top: 1px solid var(--color-border-strong);
   }
 
   .apropos-fait {
