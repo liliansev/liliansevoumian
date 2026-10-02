@@ -923,14 +923,25 @@ const exemples = [
 
     /* Le focus rendu à la barre par `fermer` ne doit pas rouvrir la fenêtre. */
     let discret = false;
+    /* Le « Parlons de votre projet » qui a ouvert la conversation : à la
+       fermeture, le focus lui revient, pour qu'on reprenne la page où on
+       l'avait laissée. */
+    let declencheur: HTMLElement | null = null;
 
-    const fermer = () => {
+    const fermer = (rendreLeFocus = true) => {
       racine.dataset.etat = 'veille';
       panneau.inert = true;
-      /* À la souris et au clavier, le focus revient dans la barre. Au doigt, on
-         le lâche : le rendre au champ ferait monter le clavier. */
-      if (tactile.matches) {
+      const retour = declencheur?.isConnected && declencheur.getClientRects().length > 0 ? declencheur : null;
+      declencheur = null;
+      /* À la souris et au clavier, le focus revient à qui a ouvert, sinon dans
+         la barre. Au doigt, on le lâche : le rendre au champ ferait monter le
+         clavier. S'il est déjà ailleurs dans la page, on n'y touche pas. */
+      if (!rendreLeFocus) {
+        /* rien */
+      } else if (tactile.matches) {
         if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      } else if (retour) {
+        retour.focus({ preventScroll: true });
       } else {
         discret = true;
         champ.focus({ preventScroll: true });
@@ -942,9 +953,26 @@ const exemples = [
       if (lieu === 'coin') prevoirRangement(4000);
     };
 
-    reduire.addEventListener('click', fermer);
-    racine.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && racine.dataset.etat === 'ouverte') fermer();
+    reduire.addEventListener('click', () => fermer());
+    /* Échap ferme d'où que l'on soit dans la page : la fenêtre recouvre le
+       contenu, on doit pouvoir l'écarter sans y revenir. Un menu ou l'agenda
+       ouverts par-dessus gardent la touche pour eux. */
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || racine.dataset.etat !== 'ouverte') return;
+      if (document.documentElement.hasAttribute('data-defilement-verrouille')) return;
+      fermer(racine.contains(document.activeElement));
+    });
+    /* À l'étroit, la fenêtre prend la moitié de l'écran : dès que le focus la
+       quitte pour la page, elle se replie, sinon il passerait derrière elle.
+       Le contrôle attend la fin de l'événement, le temps que le focus se pose. */
+    racine.addEventListener('focusout', () => {
+      if (!etroit.matches) return;
+      window.setTimeout(() => {
+        const actif = document.activeElement;
+        if (racine.dataset.etat !== 'ouverte' || !actif || actif === document.body || racine.contains(actif)) return;
+        if (document.documentElement.hasAttribute('data-defilement-verrouille')) return;
+        fermer(false);
+      }, 0);
     });
     /* Revenir dans la barre rouvre la conversation commencée ; le clic couvre
        le cas où le champ avait gardé le focus après une réduction. */
@@ -1023,10 +1051,11 @@ const exemples = [
        de script ; ici ils ouvrent la fenêtre. Celui du champ de fin apporte ce
        qu'on y a écrit, qui devient le message. */
     document.addEventListener('click', (e) => {
-      const declencheur = e.target instanceof Element ? e.target.closest('[data-causerie-ouvrir]') : null;
-      if (!declencheur) return;
+      const source = e.target instanceof Element ? e.target.closest('[data-causerie-ouvrir]') : null;
+      if (!source) return;
       e.preventDefault();
-      const cible = declencheur.getAttribute('data-cal-note-from');
+      declencheur = source instanceof HTMLElement ? source : null;
+      const cible = source.getAttribute('data-cal-note-from');
       const origine = cible ? document.querySelector<HTMLTextAreaElement | HTMLInputElement>(cible) : null;
       const texte = origine?.value.trim() ?? '';
       if (origine) origine.value = '';

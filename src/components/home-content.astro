@@ -67,7 +67,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
       <aside id="newsletter" aria-label="La newsletter" class="grid min-w-0 gap-[var(--spacing-groupe)] lg:row-span-2 lg:grid-rows-subgrid">
         <SectionHeader title="Un mail par semaine." titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
         <div class="min-w-0">
-        <form id="newsletter-form" action="/api/newsletter" method="post" class="courrier" aria-describedby="newsletter-note newsletter-status">
+        <form id="newsletter-form" action="/api/newsletter" method="post" class="courrier">
           {/* L'objet est un exemple, inventé à la demande de Lilian : il donne le
               ton d'un numéro, ce n'est pas le titre d'un numéro paru. */}
           <dl class="courrier__entete">
@@ -82,7 +82,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
           </dl>
           <div class="courrier__ligne courrier__ligne--champ">
             <label for="newsletter-email">À<span class="sr-only">&nbsp;: votre adresse e-mail</span></label>
-            <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" />
+            <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" aria-describedby="newsletter-note newsletter-status" />
           </div>
           <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
           <div class="courrier__pied">
