@@ -10,6 +10,7 @@ async function fixture(t, options = {}) {
   await mkdir(join(dir, 'offre')); await mkdir(join(dir, '_astro'));
   await writeFile(join(dir, 'index.html'), 'home'); await writeFile(join(dir, 'offre/index.html'), 'offer');
   await writeFile(join(dir, '404.html'), 'missing'); await writeFile(join(dir, '_astro/a.woff2'), 'font');
+  await mkdir(join(dir, 'logos')); await writeFile(join(dir, 'logos/a.webp'), 'image');
   await symlink('/etc/passwd', join(dir, 'escape'));
   const server = createSiteServer({ distDir: dir, analytics: false, ...options });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -30,6 +31,21 @@ test('static pages, HEAD, MIME, canonical redirects and real 404', async t => {
   const old = await new Promise((resolve, reject) => { const req = request(`${url}/course?x=1`, { headers: { Host: 'formations.liliansevoumian.fr' } }, res => { res.resume(); resolve(res.headers.location); }); req.on('error', reject); req.end(); });
   assert.equal(old, 'https://lab.augmentes.fr/course?x=1');
   assert.equal((await fetch(`${url}/escape`)).status, 404);
+});
+test('static files carry an ETag, answer 304 when unchanged and keep images a day', async t => {
+  const { url } = await fixture(t);
+  const page = await fetch(url); const etag = page.headers.get('etag');
+  assert.match(etag, /^"[\w-]{27}"$/); assert.equal(page.headers.get('cache-control'), 'public, max-age=0, must-revalidate');
+  const same = await fetch(url, { headers: { 'If-None-Match': etag } });
+  assert.equal(same.status, 304); assert.equal(await same.text(), ''); assert.equal(same.headers.get('etag'), etag); assert.equal(same.headers.get('cache-control'), 'public, max-age=0, must-revalidate');
+  assert.equal((await fetch(url, { headers: { 'If-None-Match': `"autre", W/${etag}` } })).status, 304);
+  assert.equal((await fetch(url, { headers: { 'If-None-Match': '"autre"' } })).status, 200);
+  const head = await fetch(url, { method: 'HEAD', headers: { 'If-None-Match': etag } }); assert.equal(head.status, 304);
+  const image = await fetch(`${url}/logos/a.webp`);
+  assert.equal(image.headers.get('content-type'), 'image/webp'); assert.equal(image.headers.get('cache-control'), 'public, max-age=86400, stale-while-revalidate=604800'); assert.ok(image.headers.get('etag'));
+  assert.equal((await fetch(`${url}/logos/a.webp`, { headers: { 'If-None-Match': image.headers.get('etag') } })).status, 304);
+  assert.match((await fetch(`${url}/_astro/a.woff2`)).headers.get('cache-control'), /immutable/);
+  assert.equal((await fetch(`${url}/absent`, { headers: { 'If-None-Match': '*' } })).status, 404);
 });
 test('rejects encoded traversal and malformed URI before filesystem lookup', async t => {
   const { url } = await fixture(t);

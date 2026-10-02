@@ -3,10 +3,22 @@ import { readFile, realpath, stat } from 'node:fs/promises';
 import { resolve, sep, extname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isIP } from 'node:net';
+import { createHash } from 'node:crypto';
 import { trackAICrawlerResponse } from '@datafast/ai-crawl';
 const origin = 'https://liliansevoumian.fr';
 const root = fileURLToPath(new URL('../dist', import.meta.url));
 const mime = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', mjs: 'text/javascript', json: 'application/json', xml: 'application/xml', txt: 'text/plain; charset=utf-8', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', avif: 'image/avif', gif: 'image/gif', ico: 'image/x-icon', woff: 'font/woff', woff2: 'font/woff2', ttf: 'font/ttf', otf: 'font/otf', pdf: 'application/pdf', mp4: 'video/mp4', webm: 'video/webm' };
+/* Images, polices et vidéos de public/ : leurs noms ne sont pas hachés, donc pas
+   de cache définitif. Un jour, puis l'ETag les fait revalider en 304 au lieu de
+   les retélécharger. Tout le reste (HTML compris) se revalide à chaque visite. */
+const durable = new Set(['png', 'jpg', 'jpeg', 'webp', 'avif', 'gif', 'svg', 'ico', 'woff', 'woff2', 'ttf', 'otf', 'mp4', 'webm', 'pdf']);
+export function cacheControl(pathname, ext) {
+  if (pathname.startsWith('/_astro/')) return 'public, max-age=31536000, immutable';
+  if (durable.has(ext)) return 'public, max-age=86400, stale-while-revalidate=604800';
+  return 'public, max-age=0, must-revalidate';
+}
+const etagOf = bytes => `"${createHash('sha1').update(bytes).digest('base64url').slice(0, 27)}"`;
+const matches = (header, etag) => typeof header === 'string' && header.split(',').some(tag => { const value = tag.trim(); return value === '*' || value.replace(/^W\//, '') === etag; });
 class HttpError extends Error { constructor(status) { super(`HTTP ${status}`); this.status = status; } }
 async function readBody(req, limit) {
   if (Number(req.headers['content-length']) > limit) throw new HttpError(413);
@@ -79,7 +91,10 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNews
       }
       const file = await load(decoded);
       if (!file) { const page = await load('/404.html'); return send(404, page?.bytes ?? 'Not found', { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); }
-      return send(200, file.bytes, { 'Content-Type': mime[extname(file.filename).slice(1)] ?? 'application/octet-stream', 'Cache-Control': url.pathname.startsWith('/_astro/') ? 'public, max-age=31536000, immutable' : 'public, max-age=0, must-revalidate' });
+      const ext = extname(file.filename).slice(1).toLowerCase();
+      const caching = { 'Cache-Control': cacheControl(url.pathname, ext), ETag: etagOf(file.bytes) };
+      if (matches(req.headers['if-none-match'], caching.ETag)) { res.writeHead(304, caching); return res.end(); }
+      return send(200, file.bytes, { 'Content-Type': mime[ext] ?? 'application/octet-stream', ...caching });
     }
     handle().catch(error => { if (!res.headersSent) send(error instanceof HttpError ? error.status : 500, error instanceof HttpError ? error.message : 'Internal server error', { 'Cache-Control': 'no-store' }); else res.destroy(); if (!(error instanceof HttpError)) console.error(error); });
   });
