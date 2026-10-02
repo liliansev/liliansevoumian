@@ -88,6 +88,16 @@
   pointer-events: none;
 }
 
+/* Sur téléphone et tablette, le mélange du grain coûte cher pendant le
+   défilement : il passe en simple voile, comme dans le récit (même condition,
+   même valeur, voir `home-story`). */
+@media (max-width: 1023px), (max-height: 560px) {
+  .sm::after {
+    opacity: 0.06;
+    mix-blend-mode: normal;
+  }
+}
+
 /* Au chargement, la scène passe de l'image fixe du HTML à son repos : sans ce
    garde-fou on verrait les lignes se vider et les états s'éteindre. Le moteur
    pose `data-pret` deux images plus tard.
