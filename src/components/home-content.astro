@@ -11,6 +11,7 @@
  * L'inscription passe par `/api/newsletter` (voir `lib/newsletter-signup.ts`).
  */
 import { Icon } from 'astro-icon/components';
+import LinkCTA from './LinkCTA.astro';
 import SectionHeader from './SectionHeader.astro';
 
 // Dernière vidéo longue, vérifiée le 2 octobre 2026 sur le flux officiel (les
@@ -20,18 +21,24 @@ import SectionHeader from './SectionHeader.astro';
 // dans `public/videos/` : appelée chez YouTube, elle laissait un rectangle
 // sombre dès qu'un bloqueur ou le réseau la refusait.
 const video = {
-  title: 'Reflare : l’outil qui me manquait pour créer du contenu',
+  title: 'Reflare\u00a0: l’outil qui me manquait pour créer du contenu',
   resume: 'Reflare redonne vie à d’anciennes vidéos avec des miniatures IA et des tests A/B automatisés.',
   url: 'https://www.youtube.com/watch?v=g9NvMEE7NK4',
   thumbnail: '/videos/g9NvMEE7NK4.webp',
 };
+
+// La chaîne, pour qui veut voir les autres : la même adresse que dans le pied
+// de page.
+const chaine = 'https://www.youtube.com/@lilian.sevoumian';
+const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
 ---
 
 <section id="contenus" aria-label="Vidéos et newsletter" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
   <div class="mx-auto max-w-[1200px]">
-    <div class="content-columns grid gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-16 lg:gap-y-10">
-      <article class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="Je montre <mark>comment je fais.</mark>" titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+    <div class="content-columns grid gap-[var(--spacing-bloc)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-[var(--spacing-gouttiere)] lg:gap-y-[var(--spacing-groupe)]">
+      <article class="grid min-w-0 gap-[var(--spacing-groupe)] lg:row-span-2 lg:grid-rows-subgrid">
+        <SectionHeader title="Je montre comment je fais." titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+        <div class="video min-w-0">
         <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
           <div class="video-cadre">
             <span class="repere repere--hg" aria-hidden="true"></span>
@@ -40,18 +47,29 @@ const video = {
             <span class="repere repere--bd" aria-hidden="true"></span>
             <div class="media-ouvre relative aspect-video bg-[var(--color-surface-low)]">
               <img src={video.thumbnail} alt="" width="1280" height="720" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none" />
-              <span class="video-play absolute bottom-4 left-4 flex min-h-11 items-center gap-2 rounded-cta bg-[var(--color-paper)] px-4 text-[var(--color-ink)] text-sm font-medium">
-                <Icon name="lucide:youtube" size={20} aria-hidden="true" /> Voir la vidéo
+              <span class="video-play absolute bottom-4 left-4 flex min-h-11 items-center gap-2 rounded-cta bg-[var(--color-paper)] px-4 text-[var(--color-ink)] text-[length:var(--text-body-sm)] font-medium">
+                <Icon name="lucide:youtube" size={20} aria-hidden="true" /> Voir la vidéo sur YouTube
               </span>
             </div>
           </div>
           <h3 class="video-titre">{video.title}</h3>
           <p class="video-resume">{video.resume}</p>
         </a>
+        {/* Une vidéo en montre une : la chaîne est la sortie de cette activité.
+            Elle n'était liée que depuis le pied de page. */}
+        <p class="video-suite">
+          <LinkCTA href={chaine} external goal="youtube_opened" goalSource="home_content_chaine">
+            Voir toutes les vidéos sur YouTube
+          </LinkCTA>
+        </p>
+        </div>
       </article>
-      <aside id="newsletter" aria-label="La newsletter" class="grid min-w-0 scroll-mt-24 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="Un mail <mark>par semaine.</mark>" titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+      <aside id="newsletter" aria-label="La newsletter" class="grid min-w-0 gap-[var(--spacing-groupe)] lg:row-span-2 lg:grid-rows-subgrid">
+        <SectionHeader title="Un mail par semaine." titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+        <div class="min-w-0">
         <form id="newsletter-form" action="/api/newsletter" method="post" class="courrier" aria-describedby="newsletter-note newsletter-status">
+          {/* L'objet est un exemple, inventé à la demande de Lilian : il donne le
+              ton d'un numéro, ce n'est pas le titre d'un numéro paru. */}
           <dl class="courrier__entete">
             <div class="courrier__ligne">
               <dt>De</dt>
@@ -59,28 +77,41 @@ const video = {
             </div>
             <div class="courrier__ligne">
               <dt>Objet</dt>
-              <dd>Cas d’usage, outils et actualité IA</dd>
+              <dd>L’automatisation de la semaine, et comment la refaire</dd>
             </div>
           </dl>
           <div class="courrier__ligne courrier__ligne--champ">
-            <label for="newsletter-email">À<span class="sr-only">&nbsp;: votre adresse email</span></label>
+            <label for="newsletter-email">À<span class="sr-only">&nbsp;: votre adresse e-mail</span></label>
             <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" />
           </div>
           <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
           <div class="courrier__pied">
             <button type="submit" disabled class="btn-primary newsletter-action w-full">Recevoir la newsletter <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></button>
-            <p id="newsletter-note" class="courrier__note">Un email pour confirmer votre inscription. Désinscription en un clic.</p>
+            <p id="newsletter-note" class="courrier__note">Vous recevrez un e-mail pour confirmer votre inscription. Désinscription en&nbsp;un&nbsp;clic.</p>
             <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" class="newsletter-status courrier__note" hidden></p>
             <noscript><p class="courrier__note">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
           </div>
         </form>
+        {/* Le troisième endroit où il publie, avec la vidéo et le mail. Il
+            n'était lié que depuis le pied de page. */}
+        <p class="video-suite">
+          <LinkCTA href={linkedin} external>Me suivre sur LinkedIn</LinkCTA>
+        </p>
+        </div>
       </aside>
     </div>
   </div>
 </section>
 
 <style>
-  .content-columns :global(.section-header-row) { height: 100%; }
+  /* Les deux titres partagent une rangée, et chacun se cale en bas de la
+     sienne : quand l'un passe sur deux lignes (à 1024 px), l'autre restait en
+     haut, à 73 px de sa vidéo au lieu de 32. */
+  .content-columns :global(.section-header-row) {
+    display: grid;
+    align-content: end;
+    height: 100%;
+  }
 
   /* ── La vidéo : cadrée comme une scène, avec les mêmes repères d'angle que
         la scène du récit et les formes des métiers. ── */
@@ -118,10 +149,14 @@ const video = {
   }
 
   .video-resume {
-    max-width: 52ch;
-    margin: 0.6rem 0 0;
+    max-width: 46ch;
+    margin: var(--spacing-colle) 0 0;
     color: var(--color-ink-mid);
-    line-height: 1.55;
+    line-height: var(--leading-body);
+  }
+
+  .video-suite {
+    margin: var(--spacing-lie) 0 0;
   }
 
   /* ── Le mail : un expéditeur, un objet, et le champ « À » à remplir. ── */
@@ -144,7 +179,7 @@ const video = {
     grid-template-columns: 4.25rem minmax(0, 1fr);
     align-items: center;
     min-height: 3.25rem;
-    padding-inline: clamp(1.1rem, 2vw, 1.5rem);
+    padding-inline: var(--spacing-panneau);
     border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
   }
 
@@ -180,7 +215,7 @@ const video = {
     background: transparent;
     color: var(--color-ink);
     font: inherit;
-    font-size: 1rem;
+    font-size: var(--text-body);
     font-weight: 500;
   }
 
@@ -196,8 +231,8 @@ const video = {
 
   .courrier__pied {
     display: grid;
-    gap: 0.85rem;
-    padding: clamp(1.1rem, 2vw, 1.5rem);
+    gap: 0.75rem;
+    padding: var(--spacing-panneau);
   }
 
   .courrier__note {
@@ -207,9 +242,17 @@ const video = {
     line-height: 1.5;
   }
 
-  .newsletter-action { min-height: 48px; text-transform: none; letter-spacing: normal; }
+  .newsletter-action { min-height: 48px; }
   .newsletter-action:disabled { cursor: wait; }
   .newsletter-status[data-state="error"] { color: var(--color-error); }
+
+  /* En une colonne, le mail garde une largeur de mail : étiré sur 690 px à
+     768, son bouton faisait 654 px de large. */
+  @media (max-width: 1023px) {
+    .courrier {
+      max-width: 32rem;
+    }
+  }
 
   @media (hover: hover) and (pointer: fine) {
     .video-link:hover img { transform: scale(1.025); }
@@ -223,9 +266,20 @@ const video = {
 </style>
 
 <script>
-  import { z } from 'astro/zod';
-
-  const resultSchema = z.object({ status: z.enum(['pending', 'subscribed', 'error']), message: z.string().min(1) });
+  // La réponse de `/api/newsletter` tient en deux champs. Elle est vérifiée ici
+  // à la main : importer zod dans le navigateur pour ces deux champs chargeait
+  // toute la bibliothèque sur la page d'accueil. La validation qui compte,
+  // celle de l'adresse et des réponses de Lumail, reste côté serveur, avec zod
+  // (`lib/newsletter-signup.ts`).
+  type Resultat = { status: 'pending' | 'subscribed' | 'error'; message: string };
+  const STATUTS: readonly string[] = ['pending', 'subscribed', 'error'];
+  const lireResultat = (brut: unknown): Resultat | null => {
+    if (typeof brut !== 'object' || brut === null) return null;
+    const { status, message } = brut as Record<string, unknown>;
+    if (typeof status !== 'string' || !STATUTS.includes(status)) return null;
+    if (typeof message !== 'string' || message.length === 0) return null;
+    return { status: status as Resultat['status'], message };
+  };
   const form = document.querySelector<HTMLFormElement>('#newsletter-form');
   const email = form?.querySelector<HTMLInputElement>('#newsletter-email');
   const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
@@ -261,12 +315,12 @@ const video = {
             signal: controleur.signal,
           });
           // Une page d'erreur du frontal (502 pendant un redémarrage) n'est pas du JSON.
-          const result = resultSchema.safeParse(await response.json().catch(() => null));
-          if (!result.success) throw new Error(`Réponse d’inscription illisible (HTTP ${response.status})`);
-          status.dataset.state = result.data.status;
-          status.textContent = result.data.message;
+          const result = lireResultat(await response.json().catch(() => null));
+          if (!result) throw new Error(`Réponse d’inscription illisible (HTTP ${response.status})`);
+          status.dataset.state = result.status;
+          status.textContent = result.message;
           if (response.status === 422) email.setAttribute('aria-invalid', 'true');
-          if (response.ok && result.data.status !== 'error') form.reset();
+          if (response.ok && result.status !== 'error') form.reset();
         } finally {
           window.clearTimeout(minuterie);
           submitting = false;
@@ -286,7 +340,7 @@ const video = {
             ? 'Le serveur met trop de temps à répondre. Réessayez dans une minute.'
             : erreur instanceof TypeError && !navigator.onLine
               ? 'Vous semblez hors ligne. Vérifiez votre connexion puis réessayez.'
-              : 'L’inscription n’a pas abouti de notre côté. Réessayez dans quelques instants.';
+              : 'L’inscription n’a pas abouti de mon côté. Réessayez dans quelques instants.';
       });
     });
   }

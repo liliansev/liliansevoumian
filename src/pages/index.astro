@@ -8,6 +8,7 @@ import HomeServices from '../components/home-services.astro';
 import HomeContent from '../components/home-content.astro';
 import HomeVoices from '../components/home-voices.astro';
 import HomeOffers from '../components/home-offers.astro';
+import HomeInvite from '../components/home-invite.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
 
@@ -38,7 +39,7 @@ const pageSchema = {
   title="Lilian Sevoumian | Automatisation, IA, formations Make et n8n"
   description={resumeCourt}
   ogImage="/og-home.png"
-  ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
+  ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
   pageSchema={pageSchema}
 >
   <Navigation
@@ -49,6 +50,11 @@ const pageSchema = {
 
   <main id="main-content" tabindex="-1" class="accueil outline-none">
     <HomeHero />
+    {/* La barre où l'on écrit à Lilian : sous le titre, puis en bas à droite.
+        Sans serveur : elle ouvre WhatsApp, la messagerie ou l'agenda avec le
+        message déjà rédigé. Rendue ici, juste après le hero, pour venir au
+        clavier là où on la voit (elle est positionnée hors du flux). */}
+    <HomeInvite />
     <div class="accueil__suite">
       <HomeStory />
       <HomeServices />
@@ -95,6 +101,48 @@ const pageSchema = {
     display: none;
   }
 
+  /* Une ancre s'arrête sous la barre, quelle que soit la section visée. Trois
+     `scroll-margin-top` différents (64, 96 et rien) faisaient ce travail, une
+     section sur deux. */
+  html:has(.accueil) {
+    scroll-padding-top: var(--spacing-barre);
+  }
+
+  /* Le corps du texte n'est pas resserré sur l'accueil. `-0.005em` posé sur
+     `body` s'hérite en longueur absolue : les petits corps (14 et 12 px) se
+     retrouvaient relativement plus serrés que le texte courant, l'inverse de
+     ce qu'un texte clair sur fond sombre demande. */
+  html:has(.accueil) body {
+    letter-spacing: 0;
+  }
+
+  /* La barre d'écriture est posée en bas à droite : le pied de page lui laisse
+     sa place, pour que ses derniers liens ne restent pas dessous. */
+  html:has(.causerie) footer {
+    padding-bottom: 5.5rem;
+  }
+
+  /* Un seul bouton primaire sur la page : bas de casse, 14 px, sans approche.
+     La barre, la fin de page et la newsletter le réglaient chacune de leur
+     côté, et la newsletter avait oublié la taille : son bouton faisait 12 px
+     quand les deux autres en faisaient 14. */
+  html:has(.accueil) .btn-primary {
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.35;
+    text-transform: none;
+  }
+
+  /* Le pied de page et le menu, communs à tout le site, gardent ailleurs leurs
+     petites capitales espacées. Ici ils parlent comme le reste de la page. */
+  html:has(.accueil) :is(footer, .mobile-menu) :is(.mono-label, .mono-caption),
+  html:has(.accueil) .cal-overlay :is(.cal-overlay-title, .cal-overlay-action) {
+    font-size: var(--text-mono-label);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
   /* Un seul traitement pour le texte qui se clique : bas de casse, comme la
      barre et les boutons. Les capitales espacées du lien fléché restent sur
      les autres pages. */
@@ -132,7 +180,7 @@ const pageSchema = {
   }
 
   .accueil__suite {
-    --marge: clamp(1rem, 2.2vw, 2rem);
+    --marge: var(--spacing-cadre);
     position: relative;
   }
 
@@ -167,6 +215,14 @@ const pageSchema = {
 
   .accueil :is(h2, h3) {
     font-weight: 500;
+  }
+
+  /* Les titres de section respirent comme le titre du premier écran. Ils
+     étaient plus serrés que lui (1,05 et -0,035em, contre 1,12 et -0,028em),
+     alors qu'ils sont plus petits. */
+  .accueil h2 {
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
   }
 
   .accueil mark {

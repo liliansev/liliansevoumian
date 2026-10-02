@@ -19,7 +19,7 @@ pnpm preview    # Preview production build locally
 - **Framework**: Astro 5.x with static output
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
 - **Icons**: astro-icon with Lucide and Simple Icons
-- **Fonts**: Geist, Geist Mono (Google Fonts)
+- **Fonts**: Geist Variable, self-hosted (`@fontsource-variable/geist`); no monospace
 - **Language**: French (fr)
 - **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
 
@@ -29,8 +29,8 @@ pnpm preview    # Preview production build locally
 src/
 ├── components/
 │   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
-│   ├── home-hero.astro        # accueil : titre seul centré, grille, défilé clients
-│   ├── home-story.astro       # accueil : récit en 3 actes + scène (à la main, puis automatisation, agent IA, dashboard)
+│   ├── home-hero.astro        # accueil : titre centré, emplacement de la barre d'écriture, grille, défilé clients
+│   ├── home-story.astro       # accueil : récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues (à la main, puis les 3 réponses)
 │   ├── home-services.astro    # accueil : 4 métiers, une scène d'interface animée chacun
 │   ├── home-sites.astro       # accueil : trois sites dans des fenêtres de navigateur où la page défile
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
@@ -38,7 +38,8 @@ src/
 │   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours
 │   ├── home-content.astro     # accueil : dernière vidéo + newsletter écrite comme un mail
 │   ├── home-voices.astro      # accueil : trois recommandations, une voix à la fois
-│   ├── home-offers.astro      # accueil : fin de page, appel + prix en une ligne
+│   ├── home-offers.astro      # accueil : fin de page, champ + bouton d'appel, prix en une ligne
+│   ├── home-invite.astro      # accueil : barre d'écriture (hero puis coin bas droit) ; ouvre WhatsApp, la messagerie ou l'agenda avec le message rédigé, sans serveur
 │   ├── Home*.astro (PascalCase) # ancienne home, plus importés nulle part
 │   ├── HeroManifesto.astro    # aplat lime, typographie seule
 │   ├── LogoMarquee.astro      # bandeau d'outils défilant
@@ -63,7 +64,7 @@ src/
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
 ├── data/                      # brands.ts, faq.ts, clients.ts, realisations.ts, parcours.ts
-├── lib/                       # roi.ts, reservation.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
+├── lib/                       # roi.ts, reservation.ts, contact.ts (e-mail et WhatsApp de la barre d'écriture), metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
 │   └── PageExpertOutil.astro  # charpente commune des pages SEO par outil

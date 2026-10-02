@@ -13,10 +13,11 @@
  * le propos : vous perdez votre temps, voilà pourquoi.
  *
  * La direction est « tech moderne, propre » : une grille fine tient tout
- * l'écran, centrée sur le titre. Trois choses s'y passent, toutes discrètes.
- * Des faisceaux de lumière pêche courent le long des lignes, comme une donnée
- * qui circule. Quelques cellules s'allument l'une après l'autre. Et la grille
- * s'éclaire sous le pointeur. Des croix marquent quelques intersections,
+ * l'écran, centrée sur le titre. Deux choses s'y passent, discrètes. Quelques
+ * cellules s'allument l'une après l'autre. Et la grille s'éclaire sous le
+ * pointeur. Des faisceaux de lumière couraient aussi le long des lignes :
+ * Lilian les a fait retirer le 2 octobre 2026 (« il y a déjà assez d'animation
+ * avec les carrés qui s'illuminent »). Des croix marquent quelques intersections,
  * comme sur un plan.
  *
  * Le métier est posé dans une pastille pêche, qui arrive après le reste de la
@@ -29,20 +30,15 @@
  */
 import { clients } from '../data/clients';
 
-const question = 'Salut, je m’appelle Lilian Sevoumian et je suis expert en'.split(' ');
+/* Le nom ne se coupe pas : son espace est insécable, et le découpage en mots
+   ne coupe que sur l'espace ordinaire. Il passait à la ligne entre le prénom
+   et le nom à 1440, 1024 et 320 px. */
+const question = 'Salut, je m’appelle Lilian\u00a0Sevoumian et je suis expert en'.split(' ');
 const reponse = 'Automatisations & Agents IA';
 
 /* Tout se place en mailles, comptées depuis le centre de l'écran : `x` et `y`
    désignent une ligne de la grille (les lignes passent à une demi-maille du
    centre, le titre est donc au milieu d'une cellule). */
-const faisceaux = [
-  { sens: 'v', ligne: -6, duree: 9, delai: 0 },
-  { sens: 'v', ligne: 3, duree: 11, delai: -4 },
-  { sens: 'v', ligne: 6, duree: 8, delai: -6.5 },
-  { sens: 'h', ligne: -3, duree: 12, delai: -2 },
-  { sens: 'h', ligne: 2, duree: 10, delai: -7 },
-];
-
 const croix = [
   { x: -5, y: -3 }, { x: 4, y: -3 }, { x: -5, y: 2 }, { x: 4, y: 2 },
   { x: -8, y: 0 }, { x: 7, y: -1 },
@@ -66,12 +62,6 @@ const cellules = [
     {cellules.map((c, i) => (
       <span class="cellule" style={`--x: ${c.x}; --y: ${c.y}; --i: ${i}`}></span>
     ))}
-    {faisceaux.map((f) => (
-      <span
-        class:list={['faisceau', `faisceau--${f.sens}`]}
-        style={`--ligne: ${f.ligne}; --duree: ${f.duree}s; --delai: ${f.delai}s`}
-      ></span>
-    ))}
     {croix.map((c) => (
       <span class="croix" style={`--x: ${c.x}; --y: ${c.y}`}></span>
     ))}
@@ -88,6 +78,27 @@ const cellules = [
       </span>
       <span class="affiche__reponse">{reponse}</span>
     </h1>
+    {/* La place de la barre où l'on écrit à Lilian (`home-invite.astro`). La
+        barre elle-même vit en fin de page, hors de cette section : elle se
+        pose ici tant qu'on est sur le premier écran, puis glisse en bas à
+        droite au défilement. Sans script, cet emplacement est vide et ne
+        prend aucune hauteur. */}
+    <div class="affiche__invite" data-causerie-place></div>
+    {/* Ce que fait la barre, en une ligne : une barre de prompt sous « expert
+        en agents IA » se lisait comme un robot. Elle n'en est pas un. */}
+    <p class="affiche__mode" data-causerie-mode>
+      Écrivez votre besoin, puis choisissez comment me l’envoyer&nbsp;: WhatsApp, <span>e-mail</span> ou appel.
+    </p>
+    {/* L'amorce de défilement : le premier écran ne donnait aucun indice qu'il
+        y a une suite (critique du 2 octobre 2026). Une flèche, pas un mot de
+        plus : le titre reste seul. */}
+    <a class="affiche__suite" href="#histoire" style={`--mots: ${question.length}`}>
+      <span class="sr-only">Lire la suite</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <path d="M12 5v14" />
+        <path d="m6 13 6 6 6-6" />
+      </svg>
+    </a>
   </div>
 
   <div
@@ -138,7 +149,7 @@ const cellules = [
 
 <style>
   .affiche {
-    --maille: clamp(3.5rem, 5.6vw, 5.5rem);
+    --maille: var(--spacing-maille);
     --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
     display: grid;
     grid-template-rows: 1fr auto;
@@ -151,7 +162,7 @@ const cellules = [
 
   /* ── La grille ──
      Deux réseaux de lignes centrés sur l'écran, qui s'effacent vers les
-     bords. Tout ce qui s'y pose (faisceaux, cellules, croix) se place en
+     bords. Tout ce qui s'y pose (cellules, croix) se place en
      mailles depuis le centre et s'efface avec elle. */
   .affiche__grille {
     position: absolute;
@@ -232,37 +243,7 @@ const cellules = [
       linear-gradient(var(--color-ink-faint), var(--color-ink-faint)) 50% 50% / 1px 100% no-repeat;
   }
 
-  /* Un faisceau : un court trait de lumière qui suit une ligne de la grille. */
-  .faisceau {
-    position: absolute;
-    opacity: 0;
-  }
-
-  .faisceau--v {
-    top: -12rem;
-    left: calc(50% + (var(--ligne) - 0.5) * var(--maille));
-    width: 1px;
-    height: 12rem;
-    background: linear-gradient(to bottom, transparent, var(--color-peche) 70%, var(--color-ink));
-  }
-
-  .faisceau--h {
-    top: calc(50% + (var(--ligne) - 0.5) * var(--maille));
-    left: -16rem;
-    width: 16rem;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--color-peche) 70%, var(--color-ink));
-  }
-
   @media (prefers-reduced-motion: no-preference) {
-    .faisceau {
-      opacity: 1;
-      animation: var(--duree) linear var(--delai) infinite;
-    }
-
-    .faisceau--v { animation-name: faisceau-v; }
-    .faisceau--h { animation-name: faisceau-h; }
-
     .cellule {
       animation: cellule-passe 9s var(--ease-out-quint) infinite;
       animation-delay: calc(var(--i) * 420ms + 2s);
@@ -271,14 +252,6 @@ const cellules = [
     .affiche__grille {
       animation: grille-leve 1800ms var(--ease-out-expo) backwards;
     }
-  }
-
-  @keyframes faisceau-v {
-    to { transform: translateY(calc(100svh + 24rem)); }
-  }
-
-  @keyframes faisceau-h {
-    to { transform: translateX(calc(100vw + 32rem)); }
   }
 
   @keyframes cellule-passe {
@@ -292,9 +265,90 @@ const cellules = [
 
   /* ── La phrase ── */
   .affiche__centre {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--spacing-groupe);
+    padding-block: var(--spacing-home-hero-y);
+  }
+
+  /* L'emplacement de la barre d'écriture, sous le titre. Sa hauteur est
+     donnée par le script, qui y pose la barre. */
+  .affiche__invite {
+    width: min(100%, 34rem);
+  }
+
+  .affiche__invite:empty:not([style]) {
+    display: none;
+  }
+
+  /* Collée à la barre : elle parle d'elle. Sans script il n'y a pas de barre,
+     donc pas de ligne non plus. */
+  .affiche__mode {
+    max-width: 34rem;
+    margin: calc(var(--spacing-colle) - var(--spacing-groupe)) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .affiche__mode span {
+    white-space: nowrap;
+  }
+
+  .affiche__invite:empty:not([style]) + .affiche__mode {
+    display: none;
+  }
+
+  /* Au pied de la zone du titre, juste au-dessus du défilé des clients. */
+  .affiche__suite {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
     display: grid;
     place-items: center;
-    padding-block: clamp(2.5rem, 6svh, 5rem);
+    width: 44px;
+    height: 44px;
+    margin-left: -22px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-night-deep) 70%, transparent);
+    color: var(--color-ink-mid);
+    transition:
+      border-color var(--duration-default) var(--ease-out-quint),
+      background-color var(--duration-default) var(--ease-out-quint),
+      color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .affiche__suite svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .affiche__suite:hover {
+      border-color: var(--color-peche);
+      background: var(--color-peche);
+      color: var(--color-night);
+    }
+
+    .affiche__suite:hover svg {
+      transform: translateY(2px);
+    }
+  }
+
+  /* Écran bas : le titre et la barre d'écriture ont besoin de la place. */
+  @media (max-height: 720px) {
+    .affiche__suite {
+      display: none;
+    }
   }
 
   .affiche__titre {
@@ -355,20 +409,29 @@ const cellules = [
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* L'entrée tient en une seconde et demie. Elle en prenait plus de trois :
+       la pastille, qui dit le métier, n'était lisible qu'après deux secondes,
+       et les logos après trois. */
     .affiche .mot {
-      animation: mot-pose 1000ms var(--ease-out-expo) backwards;
-      animation-delay: calc(var(--i) * 70ms + 250ms);
+      animation: mot-pose 800ms var(--ease-out-expo) backwards;
+      animation-delay: calc(var(--i) * 45ms + 120ms);
     }
 
     /* Un temps, puis la pastille se pose. */
     .affiche__reponse {
-      animation: reponse-pose 1100ms var(--ease-out-expo) backwards;
-      animation-delay: calc(var(--mots) * 70ms + 900ms);
+      animation: reponse-pose 900ms var(--ease-out-expo) backwards;
+      animation-delay: calc(var(--mots) * 45ms + 320ms);
     }
 
     .defile {
-      animation: entree-monte 1100ms var(--ease-out-expo) backwards;
-      animation-delay: calc(var(--mots) * 70ms + 1500ms);
+      animation: entree-monte 900ms var(--ease-out-expo) backwards;
+      animation-delay: 620ms;
+    }
+
+    .affiche__suite,
+    .affiche__mode {
+      animation: entree-monte 900ms var(--ease-out-expo) backwards;
+      animation-delay: 900ms;
     }
   }
 
@@ -386,9 +449,17 @@ const cellules = [
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: clamp(1.25rem, 3vw, 2.5rem);
+    /* Le bandeau va d'un bord à l'autre de l'écran, mais son contenu tient
+       dans la colonne de 1200 px, comme la barre et le reste de la page : le
+       titre était à 48 px du bord de la colonne à 1440, et à 264 px à 1920.
+       Le pourcentage se lit sur la largeur utile de la section. Le bouton de
+       pause déborde de sa marge intérieure, pour que son icône tombe sur le
+       bord de la colonne. */
+    --bord: calc(var(--spacing-section-x) + max(0px, (100% - 1200px) / 2));
+    --haut: clamp(1.1rem, 2.4svh, 1.6rem);
+    gap: var(--spacing-lie);
     margin-inline: calc(-1 * var(--spacing-section-x));
-    padding: clamp(1.1rem, 2.4svh, 1.6rem) clamp(0.5rem, 1.6vw, 1.5rem) clamp(1.1rem, 2.4svh, 1.6rem) var(--spacing-section-x);
+    padding: var(--haut) calc(var(--bord) - 0.875rem) var(--haut) var(--bord);
     border-top: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
     background: var(--color-night-deep);
   }
@@ -494,7 +565,7 @@ const cellules = [
   @media (prefers-reduced-motion: reduce) {
     .defile {
       grid-template-columns: 1fr;
-      padding-right: var(--spacing-section-x);
+      padding-right: var(--bord);
     }
 
     .defile__fenetre {

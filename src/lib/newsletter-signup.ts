@@ -48,7 +48,7 @@ export async function signupNewsletter(
   try {
     // Bound the body before decoding it; Content-Length is not always present.
     const reader = request.body?.getReader();
-    if (!reader) return reply({ status: 'error', message: 'Indiquez votre adresse email.' }, 400);
+    if (!reader) return reply({ status: 'error', message: 'Indiquez votre adresse e-mail.' }, 400);
     const chunks: Uint8Array[] = [];
     let length = 0;
     while (true) {
@@ -70,7 +70,7 @@ export async function signupNewsletter(
     return reply({ status: 'error', message: 'La demande est invalide. Réessayez.' }, 400);
   }
   const parsed = signupSchema.safeParse(input);
-  if (!parsed.success) return reply({ status: 'error', message: 'Indiquez une adresse email valide.' }, 422);
+  if (!parsed.success) return reply({ status: 'error', message: 'Indiquez une adresse e-mail valide.' }, 422);
   if (parsed.data.website) {
     tracer('champ piège rempli');
     return reply({ status: 'error', message: 'Rechargez la page puis réessayez.' }, 400);

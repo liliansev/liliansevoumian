@@ -47,7 +47,7 @@ import SceneSites from './metiers/scene-sites.astro';
 import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
 import { projects } from '../data/realisations';
 
-const prix = (montant: number) => `À partir de ${montant.toLocaleString('fr-FR')} € HT`;
+const prix = (montant: number) => `À partir de ${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 
 const metiers = [
   {
@@ -55,9 +55,9 @@ const metiers = [
     nom: 'Automatisation',
     phrase: 'Je relie vos outils, et les ressaisies disparaissent.',
     texte:
-      'Commandes, factures, relances, reporting : je construis les workflows Make et n8n qui font passer l’information d’un outil à l’autre. Je pars de vos processus réels et je livre un système qui tourne en production.',
+      'Commandes, factures, relances, rapports\u00a0: je construis ces automatisations avec Make et n8n, deux outils faits pour ça. Je livre un système fiable, que votre équipe utilise au quotidien.',
     /* Humble+ porte déjà le récit, juste au-dessus : ce bloc cite un autre cas. */
-    preuve: { chiffre: '~4 h par semaine', suite: 'récupérées par l’équipe de Fraich Touch sur sa facturation.', href: '/cas-clients/facturation-automatisee-fraich-touch', cas: 'Fraich Touch' },
+    preuve: { chiffre: '~4\u00a0h par semaine', suite: 'récupérées par l’équipe de Fraich Touch sur sa facturation.', href: '/cas-clients/facturation-automatisee-fraich-touch', cas: 'Fraich Touch' },
     note: prix(automationStartingPrice),
     lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_metier_automation' },
   },
@@ -66,8 +66,11 @@ const metiers = [
     nom: 'Agents IA',
     phrase: 'Un agent qui va chercher la réponse à votre place.',
     texte:
-      'Vous posez une question, il va chercher l’information là où elle est : vos documents, vos outils, le web. Il lit, recoupe et répond, sources à l’appui. Les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
-    preuve: { chiffre: '~10 min', suite: 'par passage, contre 1 à 3 h à la main pour 50 entreprises, chez M Partners.', href: '/cas-clients/m-partners', cas: 'M Partners' },
+      'Vous posez une question, il va chercher l’information là où elle est\u00a0: vos documents, vos outils, le web. Il lit, recoupe et répond, sources à l’appui. Les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
+    preuve: { chiffre: '~10\u00a0min', suite: 'par passage, contre 1 à 3\u00a0h à la main pour 50 entreprises, chez M\u00a0Partners.', href: '/cas-clients/m-partners', cas: 'M Partners' },
+    /* L'offre « Automatisation et agents IA » n'a qu'un prix d'entrée : il
+       s'affiche sur ses deux blocs, comme sur la ligne de fin de page. */
+    note: prix(automationStartingPrice),
     lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
   },
   {
@@ -75,16 +78,16 @@ const metiers = [
     nom: 'Formations',
     phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
     texte:
-      'Des formations pratiques à Make, n8n et à l’IA, en ligne ou directement avec vos équipes. On construit sur vos cas, pas sur des exemples d’école.',
+      'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou directement avec vos équipes. On construit sur vos cas, pas sur des exemples d’école.',
     preuve: { chiffre: 'Plus de 300', suite: 'personnes formées, par le premier Français certifié Make niveau 5.' },
     lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
   },
   {
     id: 'sites',
     nom: 'Sites web et dashboards',
-    phrase: 'Des landing pages qui convertissent, des tableaux de bord qui servent.',
+    phrase: 'Des pages qui transforment vos visiteurs en demandes, des dashboards qui servent.',
     texte:
-      'Landing pages, sites vitrines, portails clients et tableaux de bord métier, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
+      'Landing pages, sites vitrines, portails clients et dashboards métier, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
     note: prix(webStartingPrice),
     lien: { href: '/sites-web-abonnement', label: 'Voir l’offre sites web', goal: 'service_path_opened', source: 'home_metier_web' },
   },
@@ -102,13 +105,11 @@ const scenes = {
 
 <section id="services" data-section class="metiers relative px-[var(--spacing-section-x)]">
   <div class="metiers__cadre relative mx-auto max-w-[1200px]">
+    {/* Le titre seul. Il était suivi de quatre pastilles, une par métier : la
+        barre de navigation les nomme déjà, juste au-dessus, et chaque bloc
+        s'ouvre sur son nom. */}
     <header class="metiers__tete reveal">
-      <h2>Je fais <mark>quatre choses.</mark></h2>
-      <ul>
-        {metiers.map((metier) => (
-          <li><a href={`#${metier.id}`}>{metier.nom}</a></li>
-        ))}
-      </ul>
+      <h2>Je fais quatre choses.</h2>
     </header>
 
     {metiers.map((metier, index) => {
@@ -172,18 +173,13 @@ const scenes = {
 <style>
   .metiers {
     --trait: color-mix(in srgb, var(--color-ink) 9%, transparent);
-    --marge: clamp(1rem, 2.2vw, 2rem);
+    --marge: var(--spacing-cadre);
     border-bottom: 1px solid var(--trait);
     background: var(--color-night-deep);
   }
 
   .metiers__tete {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1.5rem 3rem;
-    padding-block: var(--spacing-section-y) clamp(2.5rem, 5vw, 4rem);
+    padding-block: var(--spacing-section-y) var(--spacing-groupe);
   }
 
   .metiers__tete h2 {
@@ -191,70 +187,20 @@ const scenes = {
     color: var(--color-ink);
     font-size: var(--text-story);
     font-weight: 500;
-    line-height: 1.06;
-    letter-spacing: -0.04em;
-  }
-
-  .metiers__tete mark {
-    --angle: 0deg;
-    --radius-bande: 9999px;
-    display: inline-block;
-    padding: 0.02em 0.36em 0.08em;
-  }
-
-  .metiers__tete mark::before {
-    inset: 0;
-  }
-
-  /* Les quatre métiers, nommés d'emblée : la liste est aussi un sommaire. */
-  .metiers__tete ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0 0 0.4rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  .metiers__tete li {
-    max-width: none;
-  }
-
-  .metiers__tete a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 1.1rem;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
-    border-radius: var(--radius-full);
-    color: var(--color-ink);
-    font-size: var(--text-body-sm);
-    font-weight: 500;
-    text-decoration: none;
-    transition:
-      background-color var(--duration-default) var(--ease-out-quint),
-      border-color var(--duration-default) var(--ease-out-quint),
-      color var(--duration-default);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .metiers__tete a:hover {
-      border-color: var(--color-peche);
-      background: var(--color-peche);
-      color: var(--color-night);
-    }
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
   }
 
   .metier {
     position: relative;
     display: grid;
-    /* La scène prend la grande colonne, des deux côtés : sous 520 px de large
-       elle passerait sur son plan simplifié, fait pour le téléphone. */
+    /* La scène prend la grande colonne, des deux côtés. Le texte et la scène
+       partent de la même ligne : centré, le nom du métier flottait de 12 à
+       47 px sous le haut du cadre, selon la longueur de son texte. */
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    align-items: center;
-    gap: clamp(2rem, 5vw, 5rem);
-    padding-block: clamp(3rem, 7vw, 6rem);
-    scroll-margin-top: 64px;
+    align-items: start;
+    gap: var(--spacing-gouttiere);
+    padding-block: var(--spacing-bloc);
   }
 
   .metier::before {
@@ -283,10 +229,15 @@ const scenes = {
   .metier--miroir .metier__texte { order: 2; }
   .metier--miroir .metier__scene { order: 1; }
 
+  /* Les écarts disent qui va avec qui : le nom colle à sa phrase, la phrase
+     ouvre sur le corps, la preuve s'en détache, la sortie ferme. Un seul écart
+     de 18 px séparait tout, et le nom du métier flottait au lieu de coiffer sa
+     phrase. */
   .metier__texte {
+    --mesure: 28.25rem;
     display: grid;
     justify-items: start;
-    gap: 1.1rem;
+    align-content: start;
     min-width: 0;
   }
 
@@ -299,43 +250,56 @@ const scenes = {
   }
 
   /* Le nom du métier est petit, et c'est la phrase qui parle : elle dit ce
-     que le métier change, pas comment il s'appelle. */
+     que le métier change, pas comment il s'appelle. Un rang sous le titre de
+     la section, qu'elle égalait jusque-là. */
   .metier__phrase {
-    max-width: 16ch;
-    margin: 0;
+    max-width: 18ch;
+    margin: var(--spacing-colle) 0 0;
     color: var(--color-ink);
-    font-size: var(--text-headline);
+    font-size: var(--text-phrase);
     font-weight: 500;
-    line-height: 1.08;
-    letter-spacing: -0.035em;
+    line-height: var(--leading-phrase);
+    letter-spacing: var(--tracking-phrase);
     text-wrap: balance;
   }
 
   .metier__corps {
-    max-width: 46ch;
-    margin: 0;
+    max-width: var(--mesure);
+    margin: var(--spacing-lie) 0 0;
     color: var(--color-ink-mid);
-    line-height: 1.6;
+    line-height: var(--leading-body);
   }
 
+  /* Le chiffre puis sa phrase, à la suite. Quand la colonne est trop étroite
+     pour les deux, la phrase passe sous le chiffre : en grille `auto 1fr`, elle
+     restait à côté dans une colonne de 100 px, en six lignes de deux mots. */
   .metier__preuve {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.9rem;
-    max-width: 46ch;
-    margin: 0.4rem 0 0;
-    padding-top: 1.1rem;
+    gap: 0.25rem 1rem;
+    width: 100%;
+    max-width: var(--mesure);
+    margin: 1.75rem 0 0;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--trait);
     color: var(--color-ink-mid);
     font-size: var(--text-body-sm);
     line-height: 1.5;
   }
 
+  .metier__preuve > span {
+    flex: 1 1 14rem;
+    min-width: 0;
+  }
+
   .metier__preuve strong {
     color: var(--color-ink);
+    /* Le même traitement que les faits de « Pourquoi moi » : « Plus de 300 »
+       existe dans les deux. */
     font-size: var(--text-title);
-    font-weight: 600;
+    font-weight: 500;
+    line-height: 1.2;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -356,7 +320,7 @@ const scenes = {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 1.5rem;
-    margin-top: 0.4rem;
+    margin-top: 1.5rem;
   }
 
   .metier__note {
@@ -369,6 +333,7 @@ const scenes = {
   .metier__scene {
     position: relative;
     min-width: 0;
+    container: scene / inline-size;
   }
 
   .metier__cadre {
@@ -401,24 +366,39 @@ const scenes = {
     min-width: 0;
   }
 
-  @media (max-width: 899px) {
+  /* Sur le plan étroit (voir `scene-metier.css`), la scène est plus haute :
+     9:8 au lieu de 4:3. Le seuil est celui du socle, plus les deux pixels de
+     bordure du cadre. */
+  @container scene (max-width: 521.98px) {
+    .metier__cadre {
+      aspect-ratio: 9 / 8;
+    }
+  }
+
+  /* Deux colonnes à partir de 1200 px seulement. En dessous, la scène en
+     colonne faisait moins de 600 px et son texte passait sous 8 px à l'écran
+     (66 % des libellés à 1024, mesuré le 2 octobre 2026) : elle prend toute la
+     largeur, et son texte passe dessous. */
+  @media (max-width: 1199px) {
     .metier,
     .metier--miroir {
       grid-template-columns: minmax(0, 1fr);
-      gap: 2rem;
+      gap: var(--spacing-groupe);
     }
 
-    /* La forme passe avant son texte, pour tous les métiers : posée après,
+    /* La scène passe avant son texte, pour tous les métiers : posée après,
        elle se retrouvait collée au titre du métier suivant et se lisait comme
-       son illustration. */
+       son illustration. Elle ne dépasse jamais la hauteur de l'écran : sur un
+       téléphone tenu en paysage, elle faisait 570 px de haut pour 326 visibles. */
     .metier__scene,
-    .metier--miroir .metier__scene { order: 1; }
+    .metier--miroir .metier__scene {
+      order: 1;
+      width: 100%;
+      max-width: max(18rem, calc((100svh - var(--spacing-barre) - 2rem) * 4 / 3));
+    }
+
     .metier__texte,
     .metier--miroir .metier__texte { order: 2; }
-
-    .metier__phrase {
-      max-width: 20ch;
-    }
 
     /* Le seul chemin vers la preuve : une vraie cible pour le doigt. Le
        lien reste dans le fil du texte ; son remplissage vertical agrandit la
@@ -429,11 +409,46 @@ const scenes = {
     }
   }
 
-  @media (max-width: 640px) {
+  /* Écran bas (téléphone en paysage, zoom fort) : la scène borne sa largeur
+     sur son plan étroit, qui est en 9:8. */
+  @media (max-width: 1199px) and (max-height: 560px) {
+    .metier__scene,
+    .metier--miroir .metier__scene {
+      max-width: max(18rem, calc((100svh - var(--spacing-barre) - 2rem) * 9 / 8));
+    }
+  }
+
+  /* Entre la tablette et le petit portable, le texte tient en deux colonnes
+     sous la scène : la phrase à gauche, ce qui l'étaie à droite. Sur une seule
+     colonne, il laissait le tiers droit de la page vide. */
+  @media (min-width: 720px) and (max-width: 1199px) {
+    .metier__texte {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+      grid-template-rows: auto auto auto 1fr;
+      column-gap: var(--spacing-gouttiere);
+    }
+
+    .metier h3 { grid-area: 1 / 1; }
+    .metier__phrase { grid-area: 2 / 1 / span 3; }
+    .metier__corps { grid-area: 1 / 2 / span 2; margin-top: 0; }
+    .metier__preuve { grid-area: 3 / 2; }
+    .metier__suite { grid-area: 4 / 2; align-self: start; }
+  }
+
+  /* Sous 1024 px, les deux filets de cadre de la page ne sont plus là : le
+     filet du métier n'a plus rien à rejoindre dans la marge. */
+  @media (max-width: 1023px) {
+    .metier::before {
+      right: 0;
+      left: 0;
+    }
+
     .metier::after {
       display: none;
     }
+  }
 
+  @media (max-width: 640px) {
     /* Le prix passe toujours sous le lien : selon la longueur du libellé il
        tenait tantôt à côté, tantôt dessous, d'un métier à l'autre. */
     .metier__suite {

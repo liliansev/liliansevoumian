@@ -70,6 +70,25 @@
      rogner le dernier glyphe. La courbe vit ici, avec les autres rangs. */
   --text-sites-hero: clamp(2.5rem, 7.5vw, 5.5rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
+  /* La phrase d'un métier et la citation : un rang sous le titre de section.
+     Elles prenaient --text-headline, donc exactement la taille du h2 qui les
+     annonce, à toutes les largeurs (48/48, 38,7/38,7, 32/32) : le titre et ce
+     qu'il coiffe se lisaient d'un seul bloc. Mesuré le 2 octobre 2026. Calée à
+     ×1,2 sous le h2 partout : 26 px à 402, 32 à 1024, 39 à 1440. Le plafond
+     est à 39 px et non 40 : à 40, la phrase du métier Formations demandait
+     451,2 px dans une colonne de 451,19, et laissait un mot seul sur sa
+     troisième ligne. */
+  --text-phrase: clamp(1.625rem, 2.2vw + 0.6rem, 2.4375rem);
+  /* Interligne et approche, par rôle. Ils étaient des littéraux recopiés dans
+     chaque composant, et ils avaient divergé : le titre du hero, à 72 px, était
+     moins serré (1,12 / -0,028em, réglé à la demande de Lilian) que les h2 à
+     60 px (1,06 / -0,04em). Du texte clair sur fond sombre demande l'inverse
+     d'un serrage : un peu d'air. */
+  --leading-display: 1.1;
+  --tracking-display: -0.03em;
+  --leading-phrase: 1.14;
+  --tracking-phrase: -0.025em;
+  --leading-body: 1.6;
   /* Le récit qui ouvre l'accueil : des phrases qui se disent en grand, une par
      écran, dans une demi-largeur. La pente suit la largeur, et la hauteur de la
      fenêtre la borne : six lignes doivent tenir sur un écran de portable. */
@@ -138,6 +157,29 @@
   --text-mono-caption: 0.6875rem;
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
+  /* L'échelle d'espacement de l'accueil, nommée par rôle. Elle remplace 33
+     `clamp()` écrits sur place dans neuf composants, qui donnaient 13 pas entre
+     18 et 72 px et cinq gouttières différentes (58, 64, 72, 86 et 101 px à
+     1440). Du plus large au plus serré :
+       section-y  entre deux sections (au-dessus) ;
+       bloc       entre deux sous-blocs d'une section (métiers, actes, années) ;
+       gouttiere  entre deux colonnes, et entre ces colonnes une fois empilées ;
+       groupe     d'un titre à son composant, d'un composant à sa sortie ;
+       lie        d'un titre à son chapô, d'un texte à sa preuve ;
+       colle      d'un nom à la phrase qu'il coiffe.
+     Hors rythme : la marge des filets de cadre, la maille de la grille du
+     premier et du dernier écran, la marge intérieure d'un panneau. */
+  --spacing-bloc: clamp(3rem, 7vw, 5rem);
+  --spacing-gouttiere: clamp(2rem, 5vw, 4.5rem);
+  --spacing-groupe: clamp(2rem, 3vw, 2.5rem);
+  --spacing-lie: clamp(1.25rem, 2vw, 1.75rem);
+  --spacing-colle: 0.5rem;
+  --spacing-cadre: clamp(1rem, 2.2vw, 2rem);
+  --spacing-maille: clamp(3.5rem, 5.6vw, 5.5rem);
+  --spacing-panneau: clamp(1.5rem, 2.4vw, 2rem);
+  /* La hauteur de la barre de navigation : ce que réservent les éléments
+     collants et les ancres. */
+  --spacing-barre: 4rem;
   --spacing-grid-cell: 96px;
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -256,6 +298,9 @@
   --color-feuille: #f7f8fa;
   --color-feuille-trait: #dce1e8;
   --color-feuille-barre: #c3c9d4;
+  /* Le texte secondaire d'une feuille claire. `--color-ink-faint` y tombait à
+     3,4:1 ; celui-ci tient 7,1:1. */
+  --color-feuille-note: #4b5565;
   --color-peche: #ffb38a;
   --color-peche-clair: #ffc4a3;
   --color-accent: #ffb38a;

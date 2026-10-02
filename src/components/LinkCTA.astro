@@ -40,6 +40,6 @@ const {
   data-prefill={prefill}
   class={`link-cta ${className}`}
 >
-  <span class="link-cta__label"><slot /></span>
+  <span class="link-cta__label"><slot />{external && <span class="sr-only"> (nouvel onglet)</span>}</span>
   <Icon name={external ? 'lucide:arrow-up-right' : 'lucide:arrow-right'} class="link-cta__arrow" aria-hidden="true" />
 </a>

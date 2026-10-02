@@ -16,8 +16,8 @@
 /** Les quatre faits du haut de page. `titre` est ce qu'on retient, `detail` le précise. */
 export const faits = [
   { titre: 'Depuis 2020', detail: 'freelance en automatisation et agents IA' },
-  { titre: 'Make niveau 5', detail: 'premier Français certifié, et Airtable Certified' },
-  { titre: 'Plus de 300 personnes', detail: 'formées à Make, n8n et à l’IA' },
+  { titre: 'Certifié Make niveau\u00a05', detail: 'premier Français à l’obtenir sur cet outil d’automatisation, et certifié Airtable' },
+  { titre: 'Plus de 300 personnes', detail: 'formées à Make, à n8n et à l’IA' },
   { titre: 'Plus de 100 entreprises', detail: 'accompagnées' },
 ] as const;
 
@@ -58,7 +58,7 @@ export const activites: Activite[] = [
     nom: 'Augmentés',
     depuis: 'Depuis novembre 2023',
     resume:
-      'Mes formations pratiques à Make, n8n et à l’IA, en ligne ou directement avec les équipes.',
+      'Mes formations pratiques à Make, à n8n et à l’IA, en ligne ou directement avec les équipes.',
     lien: {
       href: 'https://augmentes.fr',
       label: 'Voir les formations',
@@ -90,6 +90,12 @@ export interface EtapeParcours {
   quand?: string;
   titre: string;
   detail?: string;
+  /**
+   * Une mission parmi d'autres, par opposition à un jalon (un lancement, un
+   * poste, une fondation). La frise de l'accueil la rend en une ligne, sans son
+   * détail : douze entrées de même poids y noyaient les cinq qui comptent.
+   */
+  mineur?: true;
 }
 
 /**
@@ -111,8 +117,9 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
     annee: '2021',
     etapes: [
       {
-        titre: 'Premières missions : Familytrip, KlaK, Qonto',
+        titre: 'Premières missions\u00a0: Familytrip, KlaK, Qonto',
         detail: 'En freelance, comme expert Make et Airtable.',
+        mineur: true,
       },
     ],
   },
@@ -124,7 +131,7 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
         titre: 'No-Code Engineer chez Jellysmack',
         detail: 'Un an en CDI, jusqu’en avril 2023, à automatiser le travail des équipes.',
       },
-      { titre: 'Missions Edumiam et Movecool', detail: 'En parallèle, comme expert Make.' },
+      { titre: 'Missions Edumiam et Movecool', detail: 'En parallèle, comme expert Make.', mineur: true },
     ],
   },
   {
@@ -134,6 +141,7 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
         quand: 'Avril',
         titre: 'Développeur back-end à l’École O’clock',
         detail: 'Un stage de sept mois, jusqu’en octobre.',
+        mineur: true,
       },
       {
         quand: 'Novembre',
@@ -144,9 +152,9 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
         quand: 'Novembre',
         titre: 'Je cofonde La Capsule',
         detail:
-          'Un studio de podcast dont je suis le COO jusqu’en février 2026. J’en automatise le back-office : réservations, fichiers, support et comptabilité.',
+          'Un studio de podcast dont je suis le COO jusqu’en février 2026. J’en automatise le back-office\u00a0: réservations, fichiers, support et comptabilité.',
       },
-      { titre: 'Missions Reborn et Deuxième Souffle' },
+      { titre: 'Missions Reborn et Deuxième Souffle', mineur: true },
     ],
   },
   {
@@ -156,6 +164,7 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
         quand: 'Juillet',
         titre: 'Mission Boost ton Biz',
         detail: 'Onboarding, bases Airtable et processus entre coachs et clientes, jusqu’en août 2025.',
+        mineur: true,
       },
     ],
   },
@@ -171,6 +180,7 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
         quand: 'Été',
         titre: 'Formateur chez Maria Schools',
         detail: 'Pour Lion, l’école qui met l’IA au service de son métier.',
+        mineur: true,
       },
     ],
   },
@@ -183,7 +193,7 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
  * chiffre affiché sur le site, par choix de Lilian.
  */
 export const audience = {
-  linkedin: { affiche: '11 K+ abonnés', releve: '2026-10-01' },
+  linkedin: { affiche: 'Plus de 11\u00a0000 abonnés', releve: '2026-10-01' },
 } as const;
 
 /** Les deux structures fondées par Lilian, pour le balisage, le pied de page et /llms.txt. */
@@ -201,7 +211,7 @@ export const organisations = [
     url: 'https://augmentes.fr',
     goal: 'outbound_formations',
     fondation: '2023-11',
-    description: 'Formations pratiques à Make, n8n et à l’IA, en ligne ou avec les équipes.',
+    description: 'Formations pratiques à Make, à n8n et à l’IA, en ligne ou avec les équipes.',
   },
 ] as const;
 
@@ -211,4 +221,4 @@ export const resumeCourt =
 
 /** La phrase qui résume Lilian, partagée par le balisage et /llms.txt. */
 export const resume =
-  'Lilian Sevoumian automatise le travail des entreprises depuis 2020. Fondateur d’agenceafk et d’Augmentés, premier Français certifié Make niveau 5, il a formé plus de 300 personnes à Make, n8n et à l’IA.';
+  'Lilian Sevoumian automatise le travail des entreprises depuis 2020. Fondateur d’agenceafk et d’Augmentés, premier Français certifié Make niveau 5, il a formé plus de 300 personnes à Make, à n8n et à l’IA.';

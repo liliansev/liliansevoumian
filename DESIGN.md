@@ -42,14 +42,20 @@ typography:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem)"
     fontWeight: 500
-    lineHeight: 1.04
-    letterSpacing: "-0.045em"
+    lineHeight: 1.12
+    letterSpacing: "-0.028em"
   story:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2rem, min(3.6vw + 0.5rem, 8svh), 4rem)"
     fontWeight: 500
-    lineHeight: 1.06
-    letterSpacing: "-0.04em"
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
+  phrase:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "clamp(1.625rem, 2.2vw + 0.6rem, 2.5rem)"
+    fontWeight: 500
+    lineHeight: 1.14
+    letterSpacing: "-0.025em"
   display-hero:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(3.25rem, 6vw + 1.2rem, 6.25rem)"
@@ -341,31 +347,65 @@ vient de ce qu'elle raconte.
   penchée.
 - **Une offre n'a qu'un nom sur la page** : « Automatisation », « Agents IA »,
   « Formations », « Sites web et dashboards », dans la barre, les blocs des
-  métiers et la ligne de prix. Le menu mobile de l'accueil ne liste que ces
-  quatre métiers.
+  métiers et la ligne de prix. Le pied de page dit pareil (« Automatisation et
+  agents IA », « Sites web et dashboards »).
+- **On dit « dashboard », jamais « tableau de bord »** dans le texte visible :
+  choix de Lilian le 2 octobre 2026, pour n'avoir qu'un mot. Les commentaires
+  du code gardent le français.
+- **Chaque offre qui a un prix l'affiche en « À partir de »** : 900 € HT sur
+  les blocs Automatisation et Agents IA (c'est la même offre, au même prix
+  d'entrée), 1 500 € HT sur Sites web et dashboards. Les formations n'en
+  affichent pas : Lilian ne le veut pas.
+- **Le menu mobile de l'accueil** liste ces quatre métiers en grand
+  (`--text-title-lg`, sans filet entre eux), puis le reste de la page en plus
+  petit (« Pourquoi moi », « Vidéos et newsletter », « Cas clients »), et se
+  termine par le bouton d'appel, en bas, sous le pouce. Tout est calé vers le
+  bas de l'écran. La barre n'a que les quatre métiers : le menu est la seule
+  entrée vers le reste avant le pied de page.
+- **Un seul bouton primaire** : bas de casse, 14 px, graisse 500, sans
+  approche. Réglé une fois dans `index.astro` (`html:has(.accueil)
+  .btn-primary`), jamais par composant.
+- **Le pied de page et le menu parlent en bas de casse** sur l'accueil : leurs
+  libellés sont écrits en bas de casse dans la source, et c'est la classe
+  (`.mono-label`, `.mono-caption`) qui les met en capitales sur les autres
+  pages.
 
 ### Le hero
 
-Le titre seul, centré, et le défilé des clients en bas : décision de Lilian,
-sans forme 3D (« pas nécessaire »). Le titre est une phrase, pas un slogan :
+Le titre centré, la barre d'écriture dessous, et le défilé des clients en bas.
+Longtemps le titre seul, sans forme 3D (« pas nécessaire ») ; Lilian y a
+ajouté la barre le 2 octobre 2026 (voir *La barre d'écriture*). Le titre est une phrase, pas un slogan :
 « Salut, je m'appelle Lilian Sevoumian et je suis expert en », puis la réponse
 dans une pastille pêche, « Automatisations & Agents IA ». Taille
 `--text-affiche`, bornée par la hauteur (`11svh`) pour ne jamais pousser les
-logos hors de l'écran.
+logos hors de l'écran. Interligne 1,12 et approche −0,028em, réglés à la
+demande de Lilian (« titre trop resserré ») : ce sont les valeurs les plus
+serrées de la page, aucun titre plus petit ne l'est davantage. Le nom ne se
+coupe jamais entre le prénom et le nom (espace insécable). L'entrée tient en
+une seconde et demie : la pastille, qui dit le métier, se pose avant la fin de
+la première seconde.
 
-Derrière, une **grille de maille `clamp(3,5rem, 5,6vw, 5,5rem)`**, traits à
+Au pied de la zone du titre, **une flèche ronde de 44 px** mène au récit : le
+premier écran ne donnait aucun indice qu'il y a une suite. Une flèche, pas un
+mot de plus : le titre reste seul. Elle disparaît sur un écran bas.
+
+Derrière, une **grille de maille `--spacing-maille`**, traits à
 10 % de blanc, comptée depuis le centre de l'écran. Elle s'allume en pêche
-sous le pointeur (`--px`, `--py`), quelques cellules se remplissent, deux
-faisceaux la parcourent. Tout élément décoratif se place en mailles (`--x`,
+sous le pointeur (`--px`, `--py`) et quelques cellules se remplissent. Rien
+d'autre n'y bouge : des faisceaux de lumière la parcouraient, Lilian les a fait
+retirer le 2 octobre 2026 (« il y a déjà assez d'animation avec les carrés qui
+s'illuminent »). Tout élément décoratif se place en mailles (`--x`,
 `--y`), jamais en pixels : c'est ce qui le garde aligné à toutes les largeurs.
 
 ### Le défilé des clients
 
 Une seule ligne au bas du premier écran, précédée de « J'ai travaillé avec »,
-qui défile en 46 s. Elle s'arrête au survol et, pour le clavier et le doigt,
+qui défile en 46 s. Le bandeau va d'un bord à l'autre de l'écran mais son
+contenu tient dans la colonne de 1 200 px, comme la barre : le titre est sur
+le bord gauche de la colonne, l'icône de pause sur son bord droit. Elle s'arrête au survol et, pour le clavier et le doigt,
 par un bouton de pause de 44 px au bout du bandeau (`aria-pressed`). La liste
 vit dans `src/data/clients.ts`, les fichiers dans `public/logos/clients/`.
-Les animations du hero (faisceaux, cellules, défilé) sont suspendues dès qu'il
+Les animations du hero (cellules, défilé) sont suspendues dès qu'il
 sort de l'écran (`data-motion-pause`).
 
 - **Tous les logos sont ramenés à une silhouette claire** : `filter:
@@ -396,13 +436,77 @@ Sur l'accueil, `mark` est une gélule droite : `--angle: 0deg`,
 `--radius-bande: 9999px`, `display: inline-block`, padding
 `0,02em 0,36em 0,08em`, bande à `inset: 0`. Plus d'inclinaison, plus de
 `.inv`. Le tracé animé (`--draw`) et la règle du texte nuit sur pêche restent.
-Une pastille par titre, sur la chute de la phrase.
+
+**Quatre pastilles sur la page, pas une par titre** : la réponse du hero, les
+actes 1 et 3 du récit, et le titre de fin. Onze titres en portaient une, trois
+dans un seul écran de téléphone : c'était devenu « un titre surligné posé
+au-dessus de chaque section », ce que Lilian a refusé, et l'accent unique n'y
+désignait plus rien. Les titres de section sont nus. 
 
 ### La graisse
 
 Les `h2` et `h3` de l'accueil sont en **500**, pas 600. Le 600 serré donnait
 l'affiche ; le 500 donne l'interface. Le hero et les titres du récit montent
 en taille (`--text-affiche`, `--text-story`), pas en graisse.
+
+### Les rôles de texte
+
+Dix tailles, pas une de plus, chacune avec un rôle (passe typographique du
+2 octobre 2026, mesurée à 1440, 1024, 402 et 320 px) :
+
+| Rôle | Jeton | 402 → 1440 | Interligne, approche |
+|---|---|---|---|
+| Affiche (h1) | `--text-affiche` | 34 → 72 | 1,12 · −0,028em |
+| Énoncé (h2 du récit, « Je fais quatre choses. », fin) | `--text-story` | 32 → 60 | `--leading-display` · `--tracking-display` |
+| Titre de section (h2) | `--text-headline` | 32 → 48 | idem (1,1 · −0,03em) |
+| Phrase (phrase d'un métier, citation) | `--text-phrase` | 26 → 40 | `--leading-phrase` · `--tracking-phrase` (1,14 · −0,025em) |
+| Titre lg (année, titre de vidéo) | `--text-title-lg` | 24 → 30 | 1,05 à 1,15 |
+| Titre (chiffre de preuve, fait, nom de site) | `--text-title` | 20 → 24 | 1,2 |
+| Chapô, nom de métier | `--text-body-large` | 17 → 20 | 1,3 à 1,5 |
+| Corps | `--text-body` | 16 | `--leading-body` (1,6) |
+| Petit corps, tout ce qui se clique | `--text-body-sm` | 14 | 1,35 à 1,5 |
+| Libellé | `--text-mono-label` | 12 | 1,4 |
+
+- **La phrase est un rang sous le titre qui l'annonce.** Elle prenait
+  `--text-headline` : la phrase d'un métier et la citation avaient exactement
+  la taille du `h2` de leur section, à toutes les largeurs.
+- **Un titre plus petit n'est jamais plus serré qu'un plus grand.** Les `h2`
+  étaient à 1,05 / −0,04em sous une affiche à 1,12 / −0,028em.
+- **Le corps n'a pas d'approche négative** sur l'accueil (`body` à 0). Le
+  −0,005em hérité de `body` valait −0,08 px quelle que soit la taille : les
+  textes de 14 et 12 px étaient relativement plus serrés que le corps.
+- **Le français se compose** : espace insécable avant `: ; ? !`, dans les
+  unités (« 45 minutes », « 24 h/24 », « 60 % ») et avant « € HT ».
+- **Les scènes ont leur propre échelle**, de quatre tailles (voir plus bas).
+
+### Les espacements
+
+Une échelle nommée par rôle, dans `@theme`. Elle remplace 33 `clamp()` écrits
+sur place dans neuf composants, qui donnaient 13 pas entre 18 et 72 px et cinq
+gouttières différentes.
+
+| Jeton | 402 → 1440 | Où |
+|---|---|---|
+| `--spacing-section-y` | 80 → 115 | au-dessus et au-dessous d'une section |
+| `--spacing-bloc` | 48 → 80 | entre deux sous-blocs d'une section (deux métiers, deux colonnes empilées) |
+| `--spacing-gouttiere` | 32 → 72 | entre deux colonnes : la même partout |
+| `--spacing-groupe` | 32 → 40 | d'un titre à son composant, d'un composant à sa sortie, d'une scène à son texte |
+| `--spacing-lie` | 20 → 28 | d'un titre à son chapô, d'un texte à ce qui l'étaie |
+| `--spacing-colle` | 8 | d'un nom à la phrase qu'il coiffe |
+
+Hors rythme : `--spacing-cadre` (marge des filets de cadre), `--spacing-maille`
+(la grille du premier et du dernier écran), `--spacing-panneau` (marge
+intérieure d'un panneau), `--spacing-barre` (hauteur de la barre : éléments
+collants, et `scroll-padding-top` posé sur la racine pour toutes les ancres).
+
+- **Les écarts disent qui va avec qui.** Dans le texte d'un métier : le nom
+  colle à sa phrase (8), la phrase ouvre sur le corps (20 à 28), la preuve s'en
+  détache (28), la sortie ferme (24). Un écart unique de 18 px séparait tout.
+- **Deux blocs qui se lisent ensemble partent de la même ligne** : le texte
+  d'un métier et sa scène, les deux titres de « Pourquoi moi », les deux
+  titres de « Ce que je publie » (calés en bas de leur rangée commune).
+- **Un composant ne dépasse jamais la hauteur de l'écran** : une scène empilée
+  borne sa largeur sur `100svh` moins la barre.
 
 ### Le récit (`home-story`)
 
@@ -423,9 +527,19 @@ ce qui est possible de faire ». D'une réponse à l'autre le plan change
 d'inclinaison, les fenêtres reculent dans un flou et les suivantes arrivent
 décalées ; pour l'agent, l'horloge de la scène file jusqu'à un dimanche soir
 puis jusqu'en pleine nuit, et c'est elle qui dit « 24 h/24 ».
-Une réponse n'est jamais coupée au milieu d'un geste : elle attend d'avoir
-conclu. Sous la scène, quatre boutons (« À la main », « Automatisation »,
-« Agent IA », « Dashboard ») disent où elle en est et permettent de choisir.
+Sous la scène, des boutons disent où elle en est et permettent de choisir :
+quatre sur ordinateur (« À la main », « Automatisation », « Agent IA »,
+« Dashboard »), trois sur téléphone (les trois réponses).
+
+**Sur ordinateur, le défilement joue les quatre modes, sans clic.** Demande de
+Lilian le 2 octobre 2026 : « cette animation est géniale, il faudrait qu'elle
+fasse les 4 pendant mon scroll, là elle s'arrête aux 2 premières et oblige
+l'utilisateur à cliquer ». Cinq paliers : les actes 1 et 2 (à la main), puis
+Automatisation, Agent IA, Dashboard. Le texte de l'acte 3 reste collé à gauche
+pendant que les trois réponses passent à droite, et dans sa phrase la
+proposition du mode en cours passe en encre pleine, les deux autres restant en
+retrait. En remontant, l'ordre s'inverse. Rien ne change sans défilement : il
+n'y a plus de ronde automatique sur ordinateur.
 
 - La scène est dessinée sur un **plan fixe de 680 × 560** mis à l'échelle par
   `--k` : ses mesures sont des unités de plan, pas des tailles de texte. C'est
@@ -437,19 +551,41 @@ conclu. Sous la scène, quatre boutons (« À la main », « Automatisation »,
   en automatique), plus le grain `--grain`. Aucune de ces teintes ne sort de la
   scène.
 - **Ordinateur :** scène collante, pilotée par le défilement. **Sous
-  1024 px :** la scène n'est plus collante et joue seule, en boucle : à la
-  main (7 s), la semaine qui file (4,5 s), puis les trois réponses. Une scène
-  collante pilotée au doigt, sur téléphone, se dispute le défilement avec la
-  page : retour direct de Lilian.
-- **Le bouton a le dernier mot.** Une fois que le visiteur a choisi l'un des
-  quatre états, ni le défilement ni la boucle ne changent son choix tant que
-  la scène reste à l'écran ; le récit reprend la main quand elle en sort.
+  1024 px, deux vues, aucune collante** : sous l'acte 1, la scène reste sur
+  « à la main », sans boutons ; sous l'acte 3, une seconde vue boucle les
+  trois réponses, avec leurs trois boutons. Une seule scène posée sous
+  l'acte 1 enchaînait les quatre modes pendant qu'on lisait autre chose : on
+  lisait « une commande recopiée à la main » à côté d'un dashboard (critique du
+  2 octobre 2026). Une scène collante pilotée au doigt, sur téléphone, se
+  dispute le défilement avec la page : retour direct de Lilian. Le moteur est
+  instanciable (`monter(racine, scene, role)`) ; la vue des réponses est
+  masquée et à l'arrêt sur ordinateur.
+- **Le bouton a le dernier mot, dans son palier.** Sur ordinateur, un clic
+  tient tant qu'on reste dans le palier de défilement en cours ; le défilement
+  reprend la main au palier voisin, ou quand la scène sort de l'écran. Sur
+  téléphone, un clic arrête la boucle tant que la vue reste à l'écran.
+- **Les compteurs ne s'affichent que là où ils comptent** : « En attente » et
+  « Ressaisies » sortent en Agent IA et Dashboard. « Ressaisies » est le mot
+  du texte de l'acte 3 et de la scène Automatisation (il disait « Gestes
+  refaits »).
+- **Une commande d'arrêt par vue**, la même que celle des scènes de métiers
+  (`.sm-pause`, coin bas droit du cadre). Le moteur n'a plus aucune
+  minuterie : chaque attente est une animation sans effet, et l'arrêt les
+  suspend toutes d'un coup. Arrêtée, la scène suit encore le défilement, en
+  image fixe ; sa boucle repart à la reprise.
+- **Le mode Agent IA s'ouvre sur une question déjà posée** : la fenêtre de
+  conversation restait un rectangle vide deux à trois secondes.
+- **Les boutons de mode restent à 14 px** à toutes les largeurs, comme tout ce
+  qui se clique sur la page.
+- **Le texte de la scène a quatre tailles**, les mêmes noms que le socle des
+  scènes de métiers (`--sm-note`, `--sm-texte`, `--sm-fort`, `--sm-titre`).
+  Rien sous 9 px à l'écran, de 320 à 1440 px (6,8 px avant). Ce qui ne tient
+  pas à la taille de la note est devenu un trait ou a quitté la scène.
 - **La scène est `aria-hidden`, le bouton l'annonce** : un paragraphe
   `aria-live` dit en une phrase ce que montre le mode choisi. Seulement au
   clic, jamais quand le récit avance seul.
-- **Mouvement réduit :** des images fixes qui suivent le récit, à la main pour
-  les deux premières phrases, l'automatisation pour la troisième ; les boutons
-  passent d'une image à l'autre. Sans script, la scène est une image fixe,
+- **Mouvement réduit :** des images fixes qui suivent le défilement, une par
+  palier ; les boutons passent d'une image à l'autre. Sans script, la scène est une image fixe,
   sans ses boutons.
 - **Un agent IA se montre en conversation.** Lilian a refusé l'agent qui
   « contrôle un bon de commande » : un visiteur reconnaît un agent à un
@@ -462,7 +598,8 @@ conclu. Sous la scène, quatre boutons (« À la main », « Automatisation »,
 ### Les scènes des métiers (`src/components/metiers/`)
 
 Chaque métier a sa scène : de petites fenêtres d'interface en 2D, reliées par
-des fils, dans un cadre 4:3 à repères d'angle. On y voit le métier se faire.
+des fils, dans un cadre à repères d'angle (4:3 sur le grand plan, 9:8 sur le
+plan étroit). On y voit le métier se faire.
 C'est la direction que Lilian a retenue le 3 octobre 2026 parmi cinq essais
 (`/explorations-metiers` : une maquette à figurines, un plateau de touches,
 cette interface, un terminal en caractères, un plan d'ingénieur au trait). Les
@@ -498,14 +635,47 @@ les scènes se ressemblent le plus vite.
   réécrit pas ces pièces : elle les compose, et n'ajoute en style scopé que ce
   qui lui est propre. Le guide d'écriture est en tête de `scene.ts`.
 - **Le plan** : 760 × 570 mis à l'échelle ; sous 520 px de large, un plan
-  simplifié de 360 × 270, redessiné et non rétréci. Sur ordinateur la scène
-  occupe la grande colonne des deux côtés, pour rester sur le grand plan.
+  simplifié de 360 × 320, redessiné et non rétréci, plus haut que le grand
+  (9:8) : un pixel du plan y vaut à peu près un pixel d'un téléphone, et c'est
+  la hauteur qui paie le texte lisible. Le cadre suit ce rapport
+  (`@container scene` dans `home-services.astro`).
+- **Quatre tailles de texte, pas une de plus**, déclarées par le socle :
+  `--sm-note` (11,5 px sur le grand plan, 11 sur l'étroit), `--sm-texte`
+  (12,5 / 12), `--sm-fort` (14 / 13,5), `--sm-titre` (16 / 15), plus
+  `--sm-chiffre` pour un nombre qui se lit de loin. Aucune scène n'écrit de
+  `font-size` en pixels, aucune graisse au-delà de 600. Les scènes comptaient
+  dix-neuf tailles, par pas d'un demi-pixel, et un quart de leur texte passait
+  sous 8 px à l'écran (22 % à 1440, 95 % à 320). Ce qui ne tient pas à la
+  taille de la note devient un trait (`sm-barre`) ou sort de la scène :
+  en-têtes de colonnes, numéros, graduations, sur-titres. Les trois ou quatre
+  mots qui portent l'action sont en `--sm-fort`. Résultat mesuré sur l'accueil :
+  au moins 9,7 px de 1280 à 1440, 10,8 px à 402, 8,25 px à 320 (la note seule).
+- **Deux colonnes à partir de 1200 px seulement.** En dessous, la scène prend
+  toute la largeur et son texte passe dessous (en deux colonnes de 720 à
+  1199 px) : en colonne, à 1024, elle faisait 520 px et les deux tiers de son
+  texte passaient sous 8 px.
+- **Un seul compteur d'état sur le plan étroit**, celui qui porte la promesse
+  du métier.
+- **Aucun texte sous 4,5:1**, au repos comme à l'image finale : plus de
+  `--color-ink-faint` pour du texte sur une fenêtre, `--color-feuille-note`
+  sur une feuille claire, et un texte « pas encore actif » est absent plutôt
+  que fantomatique.
+- **Un tableau de bord ne se montre jamais à zéro** : la scène Sites affiche
+  une conversion cohérente avec ses demandes et ses visites (5,0 à 5,5 %),
+  jamais « 0,0 % » ni un tiret, sous un titre qui promet des pages qui
+  convertissent.
 - **La boucle** : 10 à 14 s, un seul mouvement principal à la fois, image
   finale tenue 2 à 3 s, raccord invisible. Tout le temps passe par le moteur
   (ni `setTimeout` ni `requestAnimationFrame` dans une scène), sinon la pause
   hors écran ne tient plus.
 - **Le balisage est l'image finale.** Sans script et en mouvement réduit, on
   voit une scène fixe, complète et parlante.
+- **Chaque scène a sa commande d'arrêt** : un bouton de pause de 28 px (cible
+  de 44) dans le coin bas droit du cadre, posé par le moteur après la racine
+  (qui est une image, `role="img"`). Visible au survol du cadre, au focus et
+  une fois la scène arrêtée ; toujours visible au doigt. Une animation qui
+  boucle à côté d'un texte doit pouvoir être arrêtée. La scène du récit a la
+  même.
 - **Le moteur tient lui-même ses animations.** `getAnimations()` ne rend plus
   une animation suspendue sur sa dernière image ; s'y fier laissait une scène
   figée après un aller-retour hors écran.
@@ -517,11 +687,23 @@ les scènes se ressemblent le plus vite.
 ### Pourquoi moi
 
 Le seul panneau clair de la page, à gauche, reste en place pendant que la
-frise défile à droite. Les quatre faits s'y lisent **à la suite, comme une
-ligne de texte**, séparés par un point médian : une grille 2 × 2 à filets en
-faisait un tableau de chiffres. Sur la frise, l'année est un repère
-(`--text-title-lg`, graisse 500), pas un titre : elle ne doit pas peser plus
-que « D'où je viens. ».
+frise défile à droite.
+
+- **Les quatre faits ouvrent le panneau**, un par ligne : ce qu'on retient en
+  `--text-title`, ce qui le précise dessous en petit. Ils étaient le plus
+  petit texte de la section, enchaînés en une ligne de 14 px sous le
+  paragraphe. Ni grille 2 × 2 ni filets : une colonne de quatre lignes.
+- **La frise distingue les jalons des missions.** Un jalon (un lancement, un
+  poste, une fondation) garde son titre, son mois à la suite en bas de casse,
+  et sa phrase ; une mission tient en une ligne, sans détail (champ `mineur`
+  de `src/data/parcours.ts`). À douze entrées de même poids, la frise faisait
+  plus de deux écrans et mettait un stage au rang d'une fondation.
+- L'année est un repère (`--text-title-lg`, graisse 500), pas un titre : elle
+  ne doit pas peser plus que « D'où je viens. ».
+- **Un appel à mi-page**, à la fin du panneau : « Parlons de votre projet », en
+  lien fléché (`BoutonReservation`, source `home_pourquoi_moi`). Sur un
+  téléphone, le bouton de fin est à treize écrans du premier. Un lien, pas un
+  second bouton plein : l'action pleine reste celle de la barre et de la fin.
 
 ### Les trois sites (`home-sites`)
 
@@ -549,22 +731,46 @@ Deux objets, pas deux cartes.
 - **La vidéo** est cadrée comme une scène, avec les repères d'angle. Son titre
   est le vrai titre de la vidéo, suivi d'une phrase qui dit ce qu'on y voit.
   La vignette est copiée dans `public/videos/` ; la dernière vidéo se vérifie
-  sur le flux de la chaîne (adresse dans le fichier).
+  sur le flux de la chaîne (adresse dans le fichier). Sous la vidéo, un lien
+  fléché mène à la chaîne : chaque activité a sa sortie, et celle-ci n'était
+  liée que depuis le pied de page. Sous le mail, le même lien fléché mène à
+  LinkedIn, le troisième endroit où il publie.
 - **La newsletter est écrite comme le mail qu'on va recevoir** : une ligne
-  « De », une ligne « Objet », et la ligne « À » qui est le champ du
+  « De », une ligne « Objet » (un exemple, inventé à la demande de Lilian, pas
+  le titre d'un numéro paru), et la ligne « À » qui est le champ du
   formulaire. Pas de champ encadré dans une carte : le focus teinte la ligne
   entière. C'est le seul endroit où des filets séparent des lignes, parce que
   c'est l'objet lui-même qui en a.
 
 ### Les voix (`home-voices`)
 
-Trois recommandations, **une à la fois**, en grand (`--text-headline`, graisse
-500), et les trois personnes à côté sur un rail vertical. Le segment de la
-voix qui parle se remplit de pêche en 7 s, puis la parole passe. Choisir une
-voix arrête le déroulé pour de bon ; le survol et le focus le suspendent.
+Trois recommandations, **une à la fois**, et les trois personnes à côté sur un
+rail vertical. La première est celle qui dit ce pour quoi on vient
+(« son expertise en automatisation »), pas la plus générale. Le segment de la voix qui parle se remplit de pêche en 7 s, puis
+la parole passe. Choisir une voix arrête le déroulé pour de bon ; le survol et
+le focus le suspendent.
 
+- **Le titre : « Ils m'ont vu travailler. »** Choisi par Lilian le 2 octobre
+  2026 à la place de « Ce qu'ils en disent. », le titre le plus passe-partout
+  de la page.
+- **La citation est un rang sous le titre** (`--text-phrase`, graisse 500).
+  Elle prenait `--text-headline`, la taille exacte du titre, et se lisait
+  comme sa suite.
+- **Les cas clients ne passent pas au premier plan.** La critique du 2 octobre
+  2026 proposait de remplacer les citations par les résultats chiffrés des
+  cas, en grand. Lilian a refusé : « je ne veux pas que les cas soient trop
+  voyants, car si le client n'est pas dans ces cas il pourrait ne pas se sentir
+  concerné ». La règle vaut pour toute la page : un cas client est une preuve
+  discrète (une ligne de 14 px dans un bloc de métier, un lien fléché), jamais
+  le sujet d'une section ni un chiffre en grand.
 - Les trois citations occupent la même case de grille : la scène a toujours la
-  hauteur de la plus longue, rien ne bouge autour.
+  hauteur de la plus longue, rien ne bouge autour. Le lien vers les cas est
+  dans la colonne du rail, sous lui : sous la citation, il flottait à 150 ou
+  210 px d'elle quand elle était courte.
+- **Sur une colonne, le rail passe au-dessus de la citation**, en trois onglets
+  côte à côte (un portrait, un nom), leur segment couché dessous ; le rôle
+  revient sous la citation, avec la signature. Posé après elle, le rail se
+  retrouvait à 137 px d'une citation courte.
 - Onglets ARIA (`tablist`, flèches, une seule voix dans l'ordre de
   tabulation). Sans script, les trois citations se lisent à la suite, signées.
 - Ce sont des recommandations, sans chiffre : le lien du bas mène aux cas
@@ -574,11 +780,91 @@ voix arrête le déroulé pour de bon ; le survol et le focus le suspendent.
 ### La fin (`home-offers`)
 
 La page se ferme comme elle s'ouvre : une phrase seule, centrée, sur la maille
-du premier écran, cette fois immobile et effacée vers les bords. Le titre dit
-ce qu'on fait ensuite (« 45 minutes pour voir si je suis la bonne personne. »),
-le bouton est celui de la barre. Les deux prix tiennent en **une ligne** sous
-le bouton, chacun lié à sa page d'offre : ils étaient deux rangées à filets
-qui redisaient les blocs des métiers.
+du premier écran, cette fois immobile et effacée vers les bords.
+
+- **Le titre** : « Dites-moi ce qui vous fait perdre du temps. » Il répond au
+  titre qui ouvre le récit (« Vous avez la sensation de perdre votre temps ? »).
+  Il disait « 45 minutes pour voir si je suis la bonne personne » tant que le
+  bouton ouvrait l'agenda ; Lilian l'a fait changer quand l'appel à l'action
+  est devenu la conversation.
+- **Un champ et le bouton dans un même cadre**, comme une barre de prompt :
+  ce qu'on y écrit devient le premier message de la conversation
+  (`home-invite`). Vide, le bouton ouvre la même conversation.
+- **Une ligne collée au champ** dit la suite : le visiteur choisit comment
+  envoyer, WhatsApp, e-mail ou un appel de 45 minutes en visio, sans
+  engagement (« en visio » vient de l'événement Cal.com, « sans engagement »
+  de `/llms.txt`).
+- Les deux prix tiennent en **une ligne** dessous, chacun lié à sa page
+  d'offre. Hors du grand écran la section ne prend plus tout un écran
+  (`min(40rem, 70svh)`).
+
+**Un seul appel à l'action sur la page.** Tous les « Parlons de votre projet »
+(barre de navigation, menu mobile, lien de « Pourquoi moi », bouton de fin)
+ouvrent la conversation (`data-causerie-ouvrir`), décision de Lilian du
+2 octobre 2026. Ce sont des `BoutonReservation` : sans script, ils mènent à
+l'agenda.
+
+### La barre d'écriture (`home-invite`)
+
+Idée de Lilian (2 octobre 2026), pour ôter toute friction au premier contact :
+une barre de prompt où le visiteur écrit son besoin en une phrase, et qui
+ouvre une courte conversation. **Il n'y a aucun serveur derrière** : ni chat en
+direct, ni IA, ni message stocké ailleurs que dans le navigateur du visiteur.
+Il choisit son moyen et c'est lui qui envoie ; Lilian reçoit le message là où
+il répond déjà.
+
+- **La fenêtre ne fait pas semblant.** Sa première version affichait « je vous
+  réponds moi-même », trois points de frappe, puis « Merci, c'est clair. »
+  quel que soit le texte : un visiteur pouvait fermer en croyant avoir écrit à
+  Lilian (critique du 2 octobre 2026). Donc : pas de frappe simulée, un
+  sous-titre qui dit le mécanisme (« Vous choisissez comment l'envoyer »), et
+  chaque réponse dit où en est le message (« pas encore parti », « il reste à
+  l'envoyer »). Sous la barre du hero, une ligne dit ce qu'elle fait : une
+  barre de prompt sous « expert en agents IA » se lisait comme un robot.
+- **Deux places, un seul élément.** Sous le titre du premier écran, puis, dès
+  qu'on a défilé d'un tiers d'écran, en bas à droite : elle s'y envole, et
+  revient sous le titre si on remonte tout en haut. Elle s'efface quand le
+  champ de fin de page est visible : jamais deux champs à la fois. Le hero
+  n'est donc plus « le titre seul » : le titre, la barre, et les logos.
+- **Dans le coin, elle écrit un exemple puis se range en pastille** : son
+  portrait et « Écrire à Lilian » sur ordinateur, son portrait seul (56 px,
+  un point pêche) sur téléphone. En barre, elle écrivait sans fin et
+  recouvrait des titres, des prix et le bouton de la newsletter. Sur
+  téléphone la pastille s'efface quand on descend la page et revient quand on
+  remonte : elle rognait la fin des lignes. Demande de Lilian : « mets juste
+  l'animation puis range la popup ».
+- **Sous le titre, elle écrit toute seule** des débuts de phrase (« J'ai une
+  agence de 8 personnes et je ressaisis mes devis à la main… ») tant qu'on n'y
+  touche pas. Rien en mouvement réduit.
+- **Entrée ouvre la conversation dans le coin** : le message du visiteur sur
+  pêche, à droite ; une réponse à gauche (« Bien noté. Votre message n'est pas
+  encore parti : choisissez comment me l'envoyer. »), puis trois moyens, dont
+  le libellé dit ce qu'il fait :
+  - **« M'écrire sur WhatsApp »** ouvre la discussion vers son WhatsApp
+    Business, le message déjà écrit (`wa.me`, numéro dans `lib/contact.ts`).
+  - **« M'écrire par e-mail »** ouvre la messagerie du visiteur, le message
+    déjà rédigé (`mailto:` vers `EMAIL_CONTACT`). L'adresse est redite dans la
+    fenêtre, pour qui n'a pas de messagerie configurée.
+  - **« Réserver un appel · 45 min »** ouvre l'agenda dans la page
+    (`BoutonReservation`, source `home_causerie`), le message joint à la
+    réservation (`data-cal-note-from`, lu par l'embed dans Layout).
+- **Ce que le visiteur ajoute complète son message**, et les trois moyens se
+  mettent à jour. « Recommencer » efface tout. Le message est gardé le temps
+  de l'onglet (`sessionStorage`) : un rechargement ou un retour de WhatsApp ne
+  le perd pas, et la pastille dit alors « Message prêt, pas encore envoyé ».
+- **Valider un champ vide ouvre la fenêtre**, avec les trois moyens proposés
+  d'emblée : la flèche ne reste jamais sans effet.
+- **Elle est rendue juste après le hero** dans la page, pour venir au clavier
+  là où on la voit (elle était 55ᵉ sur 57 arrêts, rendue après le pied de
+  page).
+- **Pas d'outil de chat tiers** (Lilian ne veut pas payer Crisp), pas de bulle
+  flottante générique : la fenêtre est dans la tenue de la page (nuit, filet,
+  pêche, Geist), avec son portrait. Un vrai agent, branché sur une base de
+  connaissances, est une suite possible ; la fenêtre est faite pour
+  l'accueillir.
+- Suivi : `causerie_opened` sur les boutons qui l'ouvrent, `lead_message`
+  (prop `canal`) sur WhatsApp et l'e-mail, `lead_call` sur l'appel. Ils
+  mesurent l'ouverture, pas l'envoi.
 
 ### Ce qui se refait à la main
 

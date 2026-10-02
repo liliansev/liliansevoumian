@@ -2,10 +2,20 @@
 /*
  * home-offers — la fin de la page : un appel, et ce que ça coûte.
  *
- * La page s'ouvre sur un titre seul posé sur une grille ; elle se ferme de la
- * même façon. Une phrase, centrée, qui dit ce qu'on fait ensuite, puis le
- * bouton. La grille du premier écran revient derrière, immobile : on est
+ * La page s'ouvre sur un titre posé sur une grille ; elle se ferme de la même
+ * façon. Une phrase, centrée, qui dit ce qu'on fait ensuite, puis le champ et
+ * le bouton. La grille du premier écran revient derrière, immobile : on est
  * revenu au point de départ, avec une réponse.
+ *
+ * Le bouton est précédé d'un champ, comme une barre de prompt : le visiteur
+ * écrit en une phrase ce qui lui fait perdre du temps. Écrire une phrase
+ * engage moins que réserver un appel. Ce qu'il écrit ouvre la conversation de
+ * `home-invite`, qui lui propose ensuite son moyen : WhatsApp, e-mail ou un
+ * appel. Le champ est facultatif : vide, le bouton ouvre la même conversation.
+ * Tous les « Parlons de votre projet » de la page font ce même geste
+ * (`data-causerie-ouvrir`) : un seul appel à l'action, voulu par Lilian le
+ * 2 octobre 2026. Sans script, le bouton mène à l'agenda, et la phrase écrite
+ * y est reprise (voir l'embed, dans Layout).
  *
  * Les prix tiennent en une ligne sous le bouton. Ils étaient deux rangées à
  * filets qui redisaient ce que les blocs des métiers annoncent déjà ; ils
@@ -24,7 +34,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 const offres = [
   {
     href: '/automatisations-ia',
-    nom: 'Automatisation et agents IA',
+    nom: 'Automatisation et agents\u00a0IA',
     prix: automationStartingPrice,
     source: 'home_services_automation',
   },
@@ -41,15 +51,49 @@ const offres = [
   <div class="fin__grille" aria-hidden="true"></div>
 
   <div class="fin__centre reveal">
+    {/* Le titre répond à celui qui ouvre le récit (« Vous avez la sensation de
+        perdre votre temps ? ») : la page se ferme sur la même question, posée
+        cette fois au visiteur. Il disait « 45 minutes pour voir si je suis la
+        bonne personne » tant que le bouton ouvrait l'agenda. */}
     <h2 class="fin__titre">
-      {DUREE_RESERVATION_MINUTES} minutes pour voir si je suis <mark>la bonne personne.</mark>
+      Dites-moi ce qui vous fait <mark>perdre du temps.</mark>
     </h2>
     <p class="fin__suite">
-      On regarde votre besoin, et on voit si c’est un projet pour moi.
+      Une phrase suffit. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et on voit si c’est un projet pour moi.
     </p>
-    <BoutonReservation source="home_offres" class="btn-primary fin__bouton">
-      Parlons de votre projet <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
-    </BoutonReservation>
+    <form class="invite" data-invite novalidate>
+      <label class="sr-only" for="besoin">Ce qui vous fait perdre du temps, en une phrase (facultatif)</label>
+      <textarea
+        id="besoin"
+        class="invite__champ"
+        name="besoin"
+        rows="1"
+        maxlength="600"
+        autocomplete="off"
+        placeholder="J’ai une société de… et j’aimerais…"
+        data-invite-champ
+      ></textarea>
+      <BoutonReservation
+        source="home_offres"
+        class="btn-primary invite__envoi"
+        aria-describedby="fin-apres"
+        data-cal-note-from="#besoin"
+        goal="causerie_opened"
+        data-causerie-ouvrir=""
+        data-invite-envoi=""
+      >
+        Parlons de votre projet <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+      </BoutonReservation>
+    </form>
+    {/* Ce qui se passe après le clic. Rien n'est promis ici qui ne soit vrai du
+        bouton lui-même : il ouvre l'agenda dans la page, avec le mot écrit.
+        « En visio » vient de l'événement Cal.com, qui se tient sur Google Meet
+        (vérifié dans l'agenda le 2 octobre 2026) ; « sans engagement » est déjà
+        écrit dans /llms.txt. */}
+    <p id="fin-apres" class="fin__apres">
+      Vous choisissez ensuite comment me joindre&nbsp;: WhatsApp, <span class="whitespace-nowrap">e-mail</span> ou un appel de
+      {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio, sans engagement.
+    </p>
 
     <p class="fin__prix">
       {offres.map((offre, i) => (
@@ -66,7 +110,7 @@ const offres = [
 
 <style>
   .fin {
-    --maille: clamp(3.5rem, 5.6vw, 5.5rem);
+    --maille: var(--spacing-maille);
     --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
     display: grid;
     place-items: center;
@@ -92,7 +136,7 @@ const offres = [
   .fin__centre {
     display: grid;
     justify-items: center;
-    gap: clamp(1.25rem, 2.4vw, 1.75rem);
+    gap: var(--spacing-lie);
     max-width: 62rem;
     text-align: center;
   }
@@ -102,10 +146,12 @@ const offres = [
     margin: 0;
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: var(--text-story);
+    /* Borné par la largeur sous 372 px : à 320, la pastille « la bonne
+       personne. », qui ne se coupe pas, dépassait de la colonne de 10 px. */
+    font-size: min(var(--text-story), 8.6vw);
     font-weight: 500;
-    line-height: 1.06;
-    letter-spacing: -0.04em;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
     text-wrap: balance;
   }
 
@@ -122,18 +168,78 @@ const offres = [
     text-wrap: balance;
   }
 
-  /* Le même bouton que dans la barre de navigation : même libellé, même casse,
-     même flèche. Une action n'a qu'un seul traitement sur la page. */
-  .fin :global(.fin__bouton) {
+  /* ── L'invite : un champ et le bouton, dans un même cadre, comme une barre
+        de prompt. Le focus se lit sur le cadre entier, pas sur le champ. ── */
+  .invite {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 0.5rem;
+    width: min(100%, 42rem);
     margin-top: 0.5rem;
-    text-transform: none;
-    letter-spacing: normal;
+    padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--color-night-deep) 86%, var(--color-ink));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent);
+    text-align: left;
+    transition:
+      border-color var(--duration-default) var(--ease-out-quint),
+      box-shadow var(--duration-default) var(--ease-out-quint);
+  }
+
+  .invite:focus-within {
+    border-color: var(--color-peche);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--color-peche) 26%, transparent);
+  }
+
+  /* Le champ grandit avec ce qu'on y écrit (`field-sizing`, et le script pour
+     les navigateurs qui ne l'ont pas). 16 px : en dessous, iOS zoome. */
+  .invite__champ {
+    field-sizing: content;
+    min-width: 0;
+    min-height: 44px;
+    max-height: 9rem;
+    padding: 0.625rem 0;
+    border: 0;
+    border-radius: var(--radius-xs);
+    outline: none;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    resize: none;
+  }
+
+  .invite__champ::placeholder {
+    color: var(--color-ink-low);
+    opacity: 1;
+  }
+
+  /* Le même bouton que dans la barre de navigation : même libellé, même casse,
+     même flèche. Une action n'a qu'un seul traitement sur la page, réglé une
+     fois dans `index.astro`. */
+  .invite :global(.invite__envoi) {
+    min-height: 44px;
+    white-space: nowrap;
+  }
+
+  /* Collée à l'invite : elle parle d'elle. */
+  .fin__apres {
+    max-width: 52ch;
+    margin: calc(var(--spacing-colle) - var(--spacing-lie)) 0 0;
+    color: var(--color-ink-low);
     font-size: var(--text-body-sm);
+    line-height: 1.5;
+    text-wrap: balance;
   }
 
   .fin__prix {
     max-width: none;
-    margin: clamp(0.75rem, 2vw, 1.5rem) 0 0;
+    margin: 0.5rem 0 0;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
     line-height: 1.5;
@@ -172,20 +278,83 @@ const offres = [
       --maille: 3rem;
     }
 
-    /* Une offre par ligne : côte à côte, les deux prix se coupaient au milieu. */
+    /* Une offre par ligne : côte à côte, les deux prix se coupaient au milieu.
+       Le lien redevient un bloc de texte : en boîte flexible, son libellé se
+       repliait en colonne à côté du prix quand la ligne ne tenait plus. Son
+       remplissage vertical garde une cible de 44 px. */
     .fin__prix {
       display: grid;
       justify-items: center;
     }
 
+    .fin__prix a {
+      display: block;
+      min-height: 0;
+      padding-block: 0.75rem;
+      text-wrap: balance;
+    }
+
     .fin__sep {
       display: none;
+    }
+
+    /* Le champ au-dessus, le bouton dessous, sur toute la largeur. */
+    .invite {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0.5rem;
+    }
+
+    .invite__champ {
+      padding-inline: 0.75rem;
+    }
+
+    .invite :global(.invite__envoi) {
+      justify-content: center;
+    }
+  }
+
+  /* Hors du grand écran, la fin n'a pas besoin de tout un écran : elle
+     laissait 200 à 230 px de vide au-dessus du titre et sous les prix, soit
+     presque deux fois l'écart entre deux sections. */
+  @media (max-width: 1023px) {
+    .fin {
+      min-height: min(40rem, 70svh);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fin__prix a {
+    .fin__prix a,
+    .invite {
       transition: none;
     }
   }
 </style>
+
+<script>
+  /* Entrée envoie, comme dans une barre de prompt (Maj + Entrée va à la ligne) :
+     l'envoi est un clic sur le lien de réservation, que Layout intercepte pour
+     ouvrir l'agenda avec le mot écrit. Sans ce script, le lien marche seul. */
+  const invite = document.querySelector<HTMLFormElement>('[data-invite]');
+  const champ = invite?.querySelector<HTMLTextAreaElement>('[data-invite-champ]');
+  const envoi = invite?.querySelector<HTMLAnchorElement>('[data-invite-envoi]');
+  if (invite && champ && envoi) {
+    invite.addEventListener('submit', (e) => {
+      e.preventDefault();
+      envoi.click();
+    });
+    champ.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+      e.preventDefault();
+      envoi.click();
+    });
+    /* Repli pour les navigateurs sans `field-sizing: content`. */
+    if (!CSS.supports('field-sizing', 'content')) {
+      const ajuster = () => {
+        champ.style.height = 'auto';
+        champ.style.height = `${champ.scrollHeight}px`;
+      };
+      champ.addEventListener('input', ajuster);
+      ajuster();
+    }
+  }
+</script>

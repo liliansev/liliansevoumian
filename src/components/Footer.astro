@@ -39,16 +39,16 @@ const channels: Channel[] = [
   // Le bleu LinkedIn pour fond sombre (#70B5F9), pas le #0A66C2 des fonds clairs :
   // sur la nuit profonde du footer, le bleu de base tient 3,29:1 et le libellé
   // s'effaçait au survol. La variante sombre est officielle et tient 8,62:1.
-  { label: "LinkedIn", metric: audience.linkedin.affiche.toUpperCase(), href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#70B5F9" },
-  { label: "YouTube", metric: "TUTOS ET CAS CONCRETS", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
+  { label: "LinkedIn", metric: audience.linkedin.affiche, href: "https://www.linkedin.com/in/liliansevoumian/", icon: "lucide:linkedin", color: "#70B5F9" },
+  { label: "YouTube", metric: "Tutos et cas concrets", href: "https://www.youtube.com/@lilian.sevoumian", icon: "lucide:youtube", color: "#FF0000" },
   // La newsletter de référence est celle du formulaire de la home (Lumail), pas
   // l'ancien Substack : le lien ramène donc à l'inscription, sur le site.
-  { label: "Newsletter", metric: "AUTOMATISATIONS · HEBDO", href: "/#newsletter", icon: "lucide:mail" },
+  { label: "Newsletter", metric: "Automatisations · hebdo", href: "/#newsletter", icon: "lucide:mail" },
 ];
 
 const navColumns: NavColumn[] = [
   {
-    title: "NAVIGATION",
+    title: "Navigation",
     /* Même ordre que la barre de nav et que le défilement de la home. Le pied
        a de la place là où la barre n'en a pas : les deux sections neuves y
        figurent sous leur nom entier, et le calculateur y reste — il a quitté la
@@ -57,14 +57,14 @@ const navColumns: NavColumn[] = [
     links: [
       { label: "Parcours", href: "/#parcours" },
       { label: "Cas clients", href: "/cas-clients" },
-      { label: "Automatisation & IA", href: "/automatisations-ia" },
-      { label: "Sites & applications web", href: "/sites-web-abonnement" },
+      { label: "Automatisation et agents IA", href: "/automatisations-ia" },
+      { label: "Sites web et dashboards", href: "/sites-web-abonnement" },
     ],
   },
   {
     /* Les deux structures de Lilian. Le site est le point de référence sur lui :
        ce qu'il a fondé doit s'y retrouver depuis n'importe quelle page. */
-    title: "AILLEURS",
+    title: "Ailleurs",
     links: organisations.map((organisation) => ({
       label: organisation.nom,
       href: organisation.url,
@@ -72,7 +72,7 @@ const navColumns: NavColumn[] = [
     })),
   },
   {
-    title: "EXPERTISE",
+    title: "Expertise",
     links: [
       { label: "Expert Make", href: "/expert-make" },
       { label: "Expert n8n", href: "/expert-n8n" },
@@ -80,7 +80,7 @@ const navColumns: NavColumn[] = [
     ],
   },
   {
-    title: "LECTURE",
+    title: "Lecture",
     links: [
       { label: "Principes", href: "/principes" },
       { label: "Mentions légales", href: "/mentions-legales" },
@@ -97,7 +97,7 @@ const navColumns: NavColumn[] = [
     <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-16 pb-12 border-b border-[var(--color-divider)]">
       <div>
         <div class="flex items-center gap-2.5 mb-5 text-[var(--color-ink)]">
-          <span class="mono-label">LILIAN SEVOUMIAN</span>
+          <span class="mono-label">Lilian Sevoumian</span>
         </div>
         <p class="text-[var(--color-ink-mid)] max-w-md">
           Freelance depuis 2020, fondateur d’agenceafk et d’Augmentés. Je construis, je forme, je publie.
@@ -110,7 +110,7 @@ const navColumns: NavColumn[] = [
       </div>
 
       <div>
-        <div class="mono-caption text-[var(--color-ink-low)] mb-4">CONTENU</div>
+        <div class="mono-caption text-[var(--color-ink-low)] mb-4">Contenu</div>
         <ul class="space-y-2">
           {channels.map((ch) => {
             const externe = ch.href.startsWith('http');
@@ -126,6 +126,7 @@ const navColumns: NavColumn[] = [
                 <Icon name={ch.icon} class="channel-ic size-4 text-[var(--color-ink-mid)] shrink-0" aria-hidden="true" />
                 <span class="mono-label">{ch.label}</span>
                 <span class="mono-caption text-[var(--color-ink-low)]">{ch.metric}</span>
+                {externe && <span class="sr-only">(nouvel onglet)</span>}
                 <Icon name={externe ? 'lucide:arrow-up-right' : 'lucide:arrow-right'} class="size-3.5 shrink-0 opacity-40 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
               </a>
             </li>
@@ -177,7 +178,7 @@ const navColumns: NavColumn[] = [
     <!-- Bottom: legal -->
     <div class="pt-8 border-t border-[var(--color-divider)]">
       <p class="mono-caption text-[var(--color-ink-low)]">
-        © {year} · LILIAN SEVOUMIAN · TOUS DROITS RÉSERVÉS
+        © {year} · Lilian Sevoumian · Tous droits réservés
       </p>
     </div>
   </div>

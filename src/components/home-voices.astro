@@ -2,14 +2,21 @@
 /*
  * home-voices — trois recommandations, une voix à la fois.
  *
- * Sur l'accueil, les témoignages étaient trois lignes séparées par des filets :
- * le motif que cette page évite. Ici une seule citation occupe la scène, en
- * grand, et les trois personnes sont à côté, sur un rail. Le rail se remplit
- * pendant qu'une voix parle, puis passe à la suivante ; on peut aussi choisir
- * qui écouter, et le déroulé s'arrête alors pour de bon.
+ * Une seule citation occupe la scène, et les trois personnes sont à côté, sur
+ * un rail. Le rail se remplit pendant qu'une voix parle, puis passe à la
+ * suivante ; on peut aussi choisir qui écouter, et le déroulé s'arrête alors
+ * pour de bon.
  *
- * Ce sont des recommandations, pas des rapports de mission : aucune ne porte de
- * chiffre. Les chiffres sont dans les cas clients, et le lien du bas y mène.
+ * La citation est un rang SOUS le titre de la section (`--text-phrase`). Elle
+ * prenait sa taille exacte : « Un vrai bonheur de travailler avec Lilian » se
+ * lisait comme la suite du titre, en 48 px. La critique du 2 octobre 2026
+ * proposait de mettre à la place les résultats chiffrés des cas clients, en
+ * grand. Lilian a refusé : un visiteur qui ne se reconnaît dans aucun des cas
+ * montrés peut se dire que ce n'est pas pour lui. Les cas restent donc une
+ * sortie discrète, en bas, et ce sont des personnes qui parlent ici.
+ *
+ * Ce sont des recommandations, pas des rapports de mission : aucune ne porte
+ * de chiffre. Les chiffres sont dans les cas clients, et le lien du bas y mène.
  *
  * Les citations et leurs coupes viennent de `Testimonials.astro`, qui reste le
  * composant des pages d'offre : mêmes mots, même règle (on ne retire que des
@@ -28,23 +35,25 @@ import alexisImg from '../assets/testimonials/alexis.jpeg';
 import benjaminImg from '../assets/testimonials/benjamin.png';
 
 const voix = [
-  {
-    citation: 'Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.',
-    nom: 'Ismail Landoulsi',
-    role: 'Co-fondateur & COO, CasanovaParis',
-    image: ismailImg,
-  },
+  /* La première voix est celle qui dit ce pour quoi on vient : l'expertise en
+     automatisation. La page s'ouvrait sur la plus générale des trois. */
   {
     citation:
-      'J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.',
+      'J’ai la chance d’avoir collaboré à de nombreuses reprises avec\u00a0Lilian. Je peux témoigner de son expertise en automatisation.',
     nom: 'Alexis Kovalenko',
-    role: 'Co-fondateur, Contournement',
+    role: 'Cofondateur, Contournement',
     image: alexisImg,
   },
   {
-    citation: 'Les projets qu’il prend en charge sont un succès.',
+    citation: 'Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.',
+    nom: 'Ismail Landoulsi',
+    role: 'Cofondateur & COO, CasanovaParis',
+    image: ismailImg,
+  },
+  {
+    citation: 'Les projets qu’il prend en\u00a0charge sont un succès.',
     nom: 'Benjamin Potet',
-    role: 'Solution Architect, Customer Experience',
+    role: 'Solution Architect Customer Experience, Make',
     image: benjaminImg,
   },
 ];
@@ -63,10 +72,10 @@ const nombreDeCas = nombres[cas] ?? String(cas);
   class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
   <div class="relative mx-auto max-w-[1200px]">
-    <SectionHeader title="Ce qu’ils en <mark>disent.</mark>" titleMaxWidth="18ch" rule={false} />
+    <SectionHeader title="Ils m’ont vu travailler." titleMaxWidth="18ch" rule={false} spacing="none" />
 
     <div class="voix reveal" data-voix>
-      <div class="voix__rail" role="tablist" aria-label="Qui parle" aria-orientation="vertical">
+      <div class="voix__rail" role="tablist" aria-label="Qui parle">
         {voix.map((v, i) => (
           <button
             type="button"
@@ -75,7 +84,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
             id={`voix-onglet-${i}`}
             aria-controls={`voix-citation-${i}`}
             aria-selected={i === 0 ? 'true' : 'false'}
-            style={`--rang: ${i + 1}`}
           >
             <Image
               src={v.image}
@@ -102,13 +110,14 @@ const nombreDeCas = nombres[cas] ?? String(cas);
           data-actif={i === 0 ? '' : undefined}
         >
           <blockquote>«&nbsp;{v.citation}&nbsp;»</blockquote>
-          <figcaption>{v.nom}, {v.role}</figcaption>
+          <figcaption><b>{v.nom}</b>, {v.role}</figcaption>
         </figure>
       ))}
-    </div>
 
-    <div class="voix__suite reveal">
-      <LinkCTA href="/cas-clients">Lire les {nombreDeCas} cas clients, avec leurs chiffres</LinkCTA>
+      {/* La sortie vers les cas, discrète, dans la colonne du rail. */}
+      <p class="voix__suite">
+        <LinkCTA href="/cas-clients">Lire les {nombreDeCas} cas clients, avec leurs chiffres</LinkCTA>
+      </p>
     </div>
   </div>
 </section>
@@ -119,7 +128,8 @@ const nombreDeCas = nombres[cas] ?? String(cas);
   .voix {
     --duree: 7s;
     display: grid;
-    gap: clamp(1.75rem, 3vw, 2.5rem);
+    gap: var(--spacing-groupe);
+    margin-top: var(--spacing-groupe);
   }
 
   .voix:not([data-pret]) .voix__rail {
@@ -131,14 +141,14 @@ const nombreDeCas = nombres[cas] ?? String(cas);
   }
 
   .voix__citation blockquote {
-    max-width: 22ch;
+    max-width: 24ch;
     margin: 0;
     color: var(--color-ink);
     font-family: var(--font-display);
-    font-size: var(--text-headline);
+    font-size: var(--text-phrase);
     font-weight: 500;
-    line-height: 1.14;
-    letter-spacing: -0.03em;
+    line-height: var(--leading-phrase);
+    letter-spacing: var(--tracking-phrase);
     text-wrap: balance;
   }
 
@@ -146,20 +156,33 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     margin-top: 0.75rem;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
+    line-height: 1.5;
   }
 
-  /* ── Avec script : une scène à gauche, le rail à droite. Les trois citations
-        occupent la même case, la scène a donc toujours la hauteur de la plus
-        longue et rien ne bouge autour quand la voix change. ── */
+  .voix__citation figcaption b {
+    color: var(--color-ink-mid);
+    font-weight: 500;
+  }
+
+  .voix__suite {
+    margin: 0;
+  }
+
+  /* ── Avec script : une scène à gauche, le rail et la sortie à droite. Les
+        trois citations occupent la même case, la scène a donc toujours la
+        hauteur de la plus longue et rien ne bouge autour quand la voix
+        change. ── */
   .voix[data-pret] {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    column-gap: clamp(2rem, 7vw, 7rem);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--spacing-gouttiere);
+    row-gap: var(--spacing-lie);
     align-items: start;
   }
 
   .voix[data-pret] .voix__citation {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 1 / span 2;
     visibility: hidden;
     opacity: 0;
     filter: blur(10px);
@@ -192,14 +215,22 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     display: grid;
   }
 
+  /* Sous le rail, alignée sur les noms : sous la citation, elle flottait à
+     150 ou 210 px d'elle quand la citation était courte. */
+  .voix[data-pret] .voix__suite {
+    grid-column: 2;
+    grid-row: 2;
+    padding-left: 1.5rem;
+  }
+
   .voix__qui {
     position: relative;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    column-gap: 0.9rem;
+    column-gap: 1rem;
     align-items: center;
     min-height: 76px;
-    padding: 0.85rem 0.75rem 0.85rem 1.4rem;
+    padding: 0.75rem 0.75rem 0.75rem 1.5rem;
     border: 0;
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     background: transparent;
@@ -258,8 +289,7 @@ const nombreDeCas = nombres[cas] ?? String(cas);
   .voix__nom {
     align-self: end;
     font-weight: 500;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
+    line-height: 1.35;
   }
 
   .voix__role {
@@ -267,10 +297,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
     line-height: 1.35;
-  }
-
-  .voix__suite {
-    margin-top: clamp(2rem, 4vw, 3rem);
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -301,6 +327,10 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     from { transform: scaleY(0); }
   }
 
+  @keyframes voix-temps-plat {
+    from { transform: scaleX(0); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .voix[data-pret] .voix__citation {
       filter: none;
@@ -308,14 +338,84 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     }
   }
 
+  /* ── Une colonne : le rail passe AU-DESSUS de la citation, en trois onglets
+        côte à côte (un portrait, un nom), leur segment couché dessous. Posé
+        après elle, il se retrouvait à 137 px d'une citation courte : les trois
+        partagent la hauteur de la plus longue. Le rôle, qui ne tient plus dans
+        l'onglet, revient sous la citation avec la signature. ── */
   @media (max-width: 899px) {
     .voix[data-pret] {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
+      row-gap: var(--spacing-groupe);
     }
 
     .voix__rail {
       grid-column: 1;
+      grid-row: 1;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 0.75rem;
+    }
+
+    .voix[data-pret] .voix__citation {
       grid-row: 2;
+    }
+
+    .voix[data-pret] .voix__suite {
+      grid-column: 1;
+      grid-row: 3;
+      padding-left: 0;
+    }
+
+    .voix[data-pret] .voix__citation figcaption {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+    }
+
+    .voix__qui {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      justify-items: start;
+      row-gap: 0.5rem;
+      min-height: 0;
+      padding: 0 0 0.75rem;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+
+    .voix__qui::before,
+    .voix__qui::after {
+      top: auto;
+      right: 0;
+      bottom: 0;
+      width: auto;
+      height: 2px;
+    }
+
+    .voix__qui::after {
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+    }
+
+    .voix__qui :global(.voix__portrait) {
+      grid-row: auto;
+    }
+
+    .voix__nom {
+      font-size: var(--text-body-sm);
+    }
+
+    .voix__role {
+      display: none;
+    }
+  }
+
+  @media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+    .voix[data-pret]:not([data-manuel]) .voix__qui[aria-selected='true']::after {
+      animation-name: voix-temps-plat;
     }
   }
 </style>
@@ -363,7 +463,7 @@ const nombreDeCas = nombres[cas] ?? String(cas);
       /* La fin du segment passe la parole. En mouvement réduit le segment ne
          s'anime pas, donc rien n'avance seul ; la garde le dit en clair. */
       onglet.addEventListener('animationend', (e) => {
-        if (reduit || e.animationName !== 'voix-temps' || 'manuel' in racine.dataset) return;
+        if (reduit || !e.animationName.startsWith('voix-temps') || 'manuel' in racine.dataset) return;
         choisir(actif + 1);
       });
     });
