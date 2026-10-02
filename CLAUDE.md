@@ -32,6 +32,7 @@ src/
 │   ├── home-hero.astro        # accueil : titre seul centré, grille, défilé clients
 │   ├── home-story.astro       # accueil : récit en 3 actes + scène (à la main, puis automatisation, agent IA, dashboard)
 │   ├── home-services.astro    # accueil : 4 métiers, une scène d'interface animée chacun
+│   ├── home-sites.astro       # accueil : trois sites dans des fenêtres de navigateur où la page défile
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
 │   ├── explorations/          # essais non retenus (bureau, plateau, terminal, plan), page /explorations-metiers
 │   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours

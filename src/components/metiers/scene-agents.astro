@@ -1,645 +1,654 @@
 ---
 /*
- * scene-agents — la scène du métier Agents IA : « Un agent qui lit, trie et
- * qualifie à votre place. »
+ * scene-agents — la scène du métier Agents IA : « Un agent qui va chercher la
+ * réponse à votre place. »
  *
- * Le cas raconté est celui d'un cabinet de recrutement : des cibles collectées
- * (une entreprise et son dirigeant), un agent qui lit chaque fiche, la note
- * selon trois règles écrites, puis la range. Ce n'est pas la scène du haut de
- * page : ici ni PDF ni facture, seulement des fiches de prospects.
+ * Son propos est l'INTELLIGENCE : on pose une question en langage naturel, et
+ * l'agent décide lui-même où aller chercher la réponse. Le cas est celui d'un
+ * cabinet de recrutement qui veut savoir quelles entreprises approcher.
  *
- * Le geste propre à cette scène est la LECTURE puis le TRI. L'agent n'est pas
- * une fenêtre de plus : c'est un bloc à part, sans barre de titre, cerclé de
- * pêche, avec un cœur qui tourne quand il travaille et un aiguillage à sa
- * sortie, dont l'aiguille montre la voie choisie.
+ * Sa composition est une ÉTOILE, pour qu'on la distingue d'un coup d'œil des
+ * autres scènes de la page (des fenêtres en rang, reliées par un fil) : l'agent
+ * est un disque au centre, la question arrive par le haut, les sources sont
+ * posées autour, la réponse se compose en bas. Rien ne traverse la scène de
+ * gauche à droite : tout part du centre et y revient.
  *
  * Le fil de la boucle, un seul mouvement à la fois :
- *   1. une fiche quitte la liste et entre chez l'agent ;
- *   2. le trait de lecture la descend, les trois règles se cochent ;
- *   3. la note monte, l'aiguille tourne, la fiche part par le bon fil ;
- *   4. les suivantes passent en rafale : à approcher, écartées, et une seule
- *      laissée à un humain ;
- *   5. l'image est tenue, puis tout est rangé et un nouveau lot arrive.
+ *   1. la question se tape et descend jusqu'à l'agent, qui s'éveille ;
+ *   2. pour chaque étape de son raisonnement, il envoie une sonde vers une
+ *      source, la source est parcourue, et un extrait revient au centre ;
+ *   3. une dernière étape se fait sans sortir : il écarte ce qui est déjà
+ *      suivi ;
+ *   4. la réponse se compose, résultat par résultat, chacun avec la pastille
+ *      de sa source, et une ligne reste à valider par un humain ;
+ *   5. l'image est tenue, puis tout est rangé et une autre question arrive.
  *
- * Le panneau, les fenêtres, la feuille, les fils et les gestes viennent du
+ * D'une boucle à l'autre la question change, et l'ordre des sources avec
+ * elle : c'est l'agent qui choisit par où commencer.
+ *
+ * Le panneau, les fenêtres, les fils, les rangées et les gestes viennent du
  * socle (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit
- * que ce qui lui est propre : ses fiches, son agent, son aiguillage.
+ * que ce qui lui est propre : sa question, son agent, ses tuiles de source,
+ * son fil de pensée, et les allers-retours le long d'un fil.
  *
- * Sans script ou en mouvement réduit, la scène est une image fixe : le lot est
- * trié, trois fiches à approcher, deux écartées, une qui attend une décision.
+ * Sans script ou en mouvement réduit, la scène est une image fixe : la
+ * question posée, les trois sources consultées, la réponse composée.
  *
- * Secteurs, effectifs et notes sont inventés pour la scène : ce n'est pas une
- * donnée client. Une fiche n'a jamais de nom, seulement une barre dont `l`
+ * Questions, étapes et nombres sont inventés pour la scène : ce n'est pas une
+ * donnée client. Un résultat n'a jamais de nom, seulement une barre dont `l`
  * donne la longueur, en pour cent.
  */
 import './scene-metier.css';
 
-type Avis = 'oui' | 'non' | 'doute';
-type Verdict = 'approcher' | 'valider' | 'ecarter';
+type IdSource = 'web' | 'documents' | 'crm';
 
-interface Fiche {
-  l: number;
-  /* Ce que l'agent extrait, dans l'ordre des règles. */
-  valeurs: [string, string, string];
-  /* Ce que chaque règle en dit. */
-  avis: [Avis, Avis, Avis];
-  note: number;
-  verdict: Verdict;
+interface Source {
+  id: IdSource;
+  nom: string;
+  court: string;
+  /* Le tracé de son icône, dans une boîte de 16. */
+  trace: string;
 }
 
-const REGLES = ['Secteur', 'Taille', 'Signal'] as const;
+interface Etape {
+  texte: string;
+  court: string;
+  /* La source où l'agent va chercher ; `null` quand il réfléchit sur place. */
+  source: IdSource | null;
+  /* Ce que la source a rendu (« 8 résultats »), et combien cela fait. */
+  releve: string;
+  nombre: number;
+}
 
-/* Trois lots qui tournent, pour qu'on voie d'une boucle à l'autre que ce ne
-   sont pas les mêmes fiches. Tous suivent le même ordre de verdicts : c'est ce
-   qui permet au balisage de savoir combien de places chaque destination
-   compte, et au plan étroit de s'arrêter après la quatrième fiche en gardant
-   les trois issues. */
-const lots: Fiche[][] = [
-  [
-    { l: 72, valeurs: ['SaaS', '120 pers.', 'Levée'], avis: ['oui', 'oui', 'oui'], note: 92, verdict: 'approcher' },
-    { l: 54, valeurs: ['Négoce', '8 pers.', 'Aucun'], avis: ['non', 'non', 'non'], note: 18, verdict: 'ecarter' },
-    { l: 64, valeurs: ['Fintech', '45 pers.', 'Incertain'], avis: ['oui', 'oui', 'doute'], note: 58, verdict: 'valider' },
-    { l: 82, valeurs: ['Logiciel', '60 pers.', 'Recrute'], avis: ['oui', 'oui', 'oui'], note: 88, verdict: 'approcher' },
-    { l: 46, valeurs: ['Industrie', '900 pers.', 'Aucun'], avis: ['non', 'non', 'non'], note: 24, verdict: 'ecarter' },
-    { l: 68, valeurs: ['Santé', '200 pers.', 'Levée'], avis: ['oui', 'oui', 'oui'], note: 81, verdict: 'approcher' },
-  ],
-  [
-    { l: 60, valeurs: ['Fintech', '80 pers.', 'Recrute'], avis: ['oui', 'oui', 'oui'], note: 90, verdict: 'approcher' },
-    { l: 76, valeurs: ['Conseil', '12 pers.', 'Aucun'], avis: ['non', 'non', 'non'], note: 15, verdict: 'ecarter' },
-    { l: 50, valeurs: ['SaaS', '30 pers.', 'Incertain'], avis: ['oui', 'oui', 'doute'], note: 61, verdict: 'valider' },
-    { l: 70, valeurs: ['SaaS', '250 pers.', 'Levée'], avis: ['oui', 'oui', 'oui'], note: 94, verdict: 'approcher' },
-    { l: 58, valeurs: ['Négoce', '40 pers.', 'Aucun'], avis: ['non', 'oui', 'non'], note: 28, verdict: 'ecarter' },
-    { l: 84, valeurs: ['Logiciel', '140 pers.', 'Recrute'], avis: ['oui', 'oui', 'oui'], note: 85, verdict: 'approcher' },
-  ],
-  [
-    { l: 78, valeurs: ['Santé', '90 pers.', 'Levée'], avis: ['oui', 'oui', 'oui'], note: 89, verdict: 'approcher' },
-    { l: 48, valeurs: ['Industrie', '600 pers.', 'Aucun'], avis: ['non', 'non', 'non'], note: 12, verdict: 'ecarter' },
-    { l: 66, valeurs: ['Logiciel', '25 pers.', 'Incertain'], avis: ['oui', 'oui', 'doute'], note: 55, verdict: 'valider' },
-    { l: 56, valeurs: ['Fintech', '110 pers.', 'Levée'], avis: ['oui', 'oui', 'oui'], note: 93, verdict: 'approcher' },
-    { l: 74, valeurs: ['Conseil', '5 pers.', 'Aucun'], avis: ['non', 'non', 'non'], note: 9, verdict: 'ecarter' },
-    { l: 62, valeurs: ['SaaS', '70 pers.', 'Recrute'], avis: ['oui', 'oui', 'oui'], note: 86, verdict: 'approcher' },
-  ],
+interface Resultat {
+  l: number;
+  raison: string;
+}
+
+interface Demande {
+  question: string;
+  courte: string;
+  etapes: Etape[];
+  /* Trois résultats, dans l'ordre des sources : chacun porte la pastille de
+     celle qui l'a fourni. */
+  resultats: Resultat[];
+}
+
+const sources: Source[] = [
+  {
+    id: 'web',
+    nom: 'Web',
+    court: 'Web',
+    trace:
+      'M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM2.2 8h11.6M8 2c1.8 1.7 2.6 3.7 2.6 6s-.8 4.3-2.6 6c-1.8-1.7-2.6-3.7-2.6-6S6.2 3.7 8 2z',
+  },
+  {
+    id: 'documents',
+    nom: 'Documents',
+    court: 'Docs',
+    trace: 'M4.5 2.5h4.6l2.4 2.4v8.6h-7zM9 2.6V5h2.4M6.3 8h3.4M6.3 10.3h3.4',
+  },
+  {
+    id: 'crm',
+    nom: 'CRM',
+    court: 'CRM',
+    trace:
+      'M3 4.4c0-1 2.2-1.9 5-1.9s5 .9 5 1.9-2.2 1.9-5 1.9-5-.9-5-1.9zM3 4.4v7.2c0 1 2.2 1.9 5 1.9s5-.9 5-1.9V4.4M3 8c0 1 2.2 1.9 5 1.9s5-.9 5-1.9',
+  },
 ];
 
-const lot = lots[0];
-const rangees = (verdict: Verdict) => lot.filter((fiche) => fiche.verdict === verdict);
-/* La dernière fiche lue reste sur le plan de travail de l'agent. */
-const derniere = lot[lot.length - 1];
+/* Trois demandes qui tournent. Chacune a quatre étapes : trois sorties, une
+   par source et dans un ordre qui lui est propre, puis une étape faite sur
+   place. La première est rendue ici ; le script reçoit les trois. */
+const demandes: Demande[] = [
+  {
+    question: 'Quelles entreprises approcher cette semaine ?',
+    courte: 'Qui approcher cette semaine ?',
+    etapes: [
+      { texte: 'Cherche les levées de fonds récentes', court: 'Cherche les levées', source: 'web', releve: '8 résultats', nombre: 8 },
+      { texte: 'Lit 12 pages', court: 'Lit 12 pages', source: 'documents', releve: '12 pages', nombre: 12 },
+      { texte: 'Recoupe avec le CRM', court: 'Recoupe avec le CRM', source: 'crm', releve: '3 fiches', nombre: 3 },
+      { texte: 'Écarte 2 clients déjà suivis', court: 'Écarte 2 clients', source: null, releve: '', nombre: 0 },
+    ],
+    resultats: [
+      { l: 74, raison: 'Levée récente' },
+      { l: 56, raison: 'Recrute' },
+      { l: 66, raison: 'Jamais contactée' },
+    ],
+  },
+  {
+    question: 'Qui recrute un directeur technique ?',
+    courte: 'Qui recrute un directeur ?',
+    etapes: [
+      { texte: 'Relit vos échanges dans le CRM', court: 'Relit le CRM', source: 'crm', releve: '5 fiches', nombre: 5 },
+      { texte: 'Cherche les postes ouverts', court: 'Cherche les postes', source: 'web', releve: '9 résultats', nombre: 9 },
+      { texte: 'Lit 7 pages', court: 'Lit 7 pages', source: 'documents', releve: '7 pages', nombre: 7 },
+      { texte: 'Écarte 1 poste déjà pourvu', court: 'Écarte 1 poste', source: null, releve: '', nombre: 0 },
+    ],
+    resultats: [
+      { l: 60, raison: 'Poste ouvert' },
+      { l: 78, raison: 'Équipe doublée' },
+      { l: 52, raison: 'Ancien contact' },
+    ],
+  },
+  {
+    question: 'Quels dirigeants ont changé de poste ?',
+    courte: 'Qui a changé de poste ?',
+    etapes: [
+      { texte: 'Relit vos notes d’appel', court: 'Relit vos notes', source: 'documents', releve: '6 pages', nombre: 6 },
+      { texte: 'Cherche les nominations récentes', court: 'Cherche les nominations', source: 'web', releve: '11 résultats', nombre: 11 },
+      { texte: 'Recoupe avec le CRM', court: 'Recoupe avec le CRM', source: 'crm', releve: '4 fiches', nombre: 4 },
+      { texte: 'Écarte 3 doublons', court: 'Écarte 3 doublons', source: null, releve: '', nombre: 0 },
+    ],
+    resultats: [
+      { l: 68, raison: 'Nouveau poste' },
+      { l: 50, raison: 'Dans vos notes' },
+      { l: 80, raison: 'Déjà en contact' },
+    ],
+  },
+];
 
-/* Le compteur « Cibles lues » au chargement : le chiffre du cas, cinquante
-   entreprises par passage. */
-const LUES = 50;
-
-/* Plan étroit : quatre fiches au lieu de six, donc deux places à approcher et
-   une seule écartée. */
-const large = (garde: boolean) => (garde ? '' : 'sm-large');
+const demande = demandes[0];
+const releveDe = (id: IdSource) => demande.etapes.find((etape) => etape.source === id)?.releve ?? '';
+/* Le compteur « Sources consultées » au chargement : ce que les trois sources
+   de la première demande ont rendu. */
+const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre, 0);
 ---
 
 <div
   class="sm est-abouti"
   data-scene-agents
-  data-lots={JSON.stringify(lots)}
+  data-demandes={JSON.stringify(demandes)}
   role="img"
-  aria-label="Un agent lit une à une les fiches de prospects collectées, les note selon trois règles écrites et les range : les bonnes à approcher, les autres écartées, et le cas douteux laissé à la décision d'un humain."
+  aria-label="L'équipe pose une question en langage naturel. Un agent décide où chercher : il interroge le web, les documents et le CRM, en ramène des extraits, puis compose une réponse en trois résultats, chacun avec sa source, qu'un humain valide."
 >
   <div class="sm-plan" aria-hidden="true">
     <div class="sm-puces">
       <span class="sm-puce">
-        <svg viewBox="0 0 16 16"><path d="M1.6 8s2.4-4.4 6.4-4.4S14.4 8 14.4 8 12 12.4 8 12.4 1.6 8 1.6 8zM8 6.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6z" /></svg>
-        <span class="sm-puce__nom">Cibles lues</span>
-        <b data-lues>{LUES}</b>
+        <svg viewBox="0 0 16 16"><path d="M7 2.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10.4 10.4l3.1 3.1" /></svg>
+        <span class="sm-puce__nom"><span class="sm-large">Sources consultées</span><span class="sm-etroit">Sources</span></span>
+        <b data-consultees>{CONSULTEES}</b>
       </span>
       <span class="sm-puce sm-puce--peche">
         <svg viewBox="0 0 16 16"><path d="M4 2.6l8.6 4.9-3.7 1.1-1.3 3.8z" /></svg>
-        <span class="sm-puce__nom"><span class="sm-large">Triées à la main</span><span class="sm-etroit">À la main</span></span>
+        <span class="sm-puce__nom"><span class="sm-large">Recherches à la main</span><span class="sm-etroit">À la main</span></span>
         <b data-zero>0</b>
       </span>
     </div>
 
-    {/* Quatre fils : la liste vers l'agent, puis une voie par issue. Le fil
-       des écartées ne s'allume jamais : ce qui y passe est éteint. */}
+    {/* Cinq fils, tous noués au centre : la question qui descend, une branche
+       par source, la réponse qui part vers le bas. Le moteur trace de gauche
+       à droite et de haut en bas ; le fil du web va donc de sa tuile vers
+       l'agent, et la sonde le remonte à l'envers. */}
     <svg class="sm-fils" viewBox="0 0 760 570">
-      <g class="sm-fil est-allume" data-sm-fil="entree" data-de="cibles" data-vers="agent" data-sens="h">
+      <g class="sm-fil est-allume" data-sm-fil="question" data-de="question" data-vers="coeur" data-sens="v">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
-      <g class="sm-fil est-allume" data-sm-fil="approcher" data-de="tri" data-vers="approcher" data-sens="h">
+      <g class="sm-fil est-allume" data-sm-fil="web" data-de="web" data-vers="coeur" data-sens="h">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
-      <g class="sm-fil est-allume" data-sm-fil="valider" data-de="tri" data-vers="valider" data-sens="h">
+      <g class="sm-fil est-allume" data-sm-fil="documents" data-de="coeur" data-vers="documents" data-sens="h">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
-      <g class="sm-fil" data-sm-fil="ecarter" data-de="tri" data-vers="ecarter" data-sens="h">
+      <g class="sm-fil est-allume" data-sm-fil="crm" data-de="coeur" data-vers="crm" data-sens="h">
+        <path class="sm-fil__trait"></path>
+        <path class="sm-fil__flux"></path>
+      </g>
+      <g class="sm-fil est-allume" data-sm-fil="reponse" data-de="coeur" data-vers="reponse" data-sens="v">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
     </svg>
 
-    {/* Les cibles collectées : une fiche par rangée. */}
-    <div class="sm-poste poste--cibles">
-      <div class="sm-fenetre">
-        <div class="sm-fenetre__barre">
-          <span class="sm-fenetre__icone">
-            <svg viewBox="0 0 16 16"><path d="M6 7.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4zM2.2 13c0-2.2 1.7-3.6 3.8-3.6S9.8 10.8 9.8 13M10.6 3.1a2.2 2.2 0 0 1 0 4M11.6 9.6c1.4.4 2.3 1.6 2.3 3.4" /></svg>
-          </span>
-          <span class="sm-fenetre__nom">Cibles</span>
-          <span class="sm-fenetre__info">Collectées</span>
-        </div>
-        <div class="sm-corps">
-          <div class="sm-rangees">
-            {lot.map((fiche, index) => (
-              <div
-                class:list={['sm-rangee', 'cible', 'est-rempli', 'est-traite', large(index < 4)]}
-                data-cible
-                data-verdict={fiche.verdict}
-                style={`--l: ${fiche.l}%`}
-              >
-                <i class="visage"></i>
-                <i class="sm-barre"></i>
-                <b class="cible__note" data-c="note">{fiche.note}</b>
-                <div class="cible__tags sm-large">
-                  <em data-c="secteur">{fiche.valeurs[0]}</em>
-                  <em data-c="taille">{fiche.valeurs[1]}</em>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+    {/* La question de l'équipe : un champ, pas une bulle. */}
+    <div class="sm-poste poste--question">
+      <div class="question est-envoyee" data-question>
+        <i class="question__qui">
+          <svg viewBox="0 0 16 16"><path d="M6 7.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4zM2.2 13c0-2.2 1.7-3.6 3.8-3.6S9.8 10.8 9.8 13M10.6 3.1a2.2 2.2 0 0 1 0 4M11.6 9.6c1.4.4 2.3 1.6 2.3 3.4" /></svg>
+        </i>
+        <span class="question__texte" data-question-texte>
+          <span class="question__invite">Posez une question…</span>
+          <span class="sm-large" data-c="question">{demande.question}</span>
+          <span class="sm-etroit" data-c="courte">{demande.courte}</span>
+          <i class="question__curseur"></i>
+        </span>
+        <i class="question__envoi">
+          <svg viewBox="0 0 16 16"><path d="M8 12.5v-9M4.5 7L8 3.5 11.5 7" /></svg>
+        </i>
       </div>
-      <span class="sm-port port--cibles est-actif" data-sm-port="cibles"></span>
+      <span class="sm-port port--question est-actif" data-sm-port="question"></span>
     </div>
 
-    {/* L'agent : un plan de travail (la fiche lue, les règles, la note) et
-       l'aiguillage par où elle repart. */}
+    {/* L'agent : un disque, son orbite, et les extraits qu'il tient. */}
     <div class="sm-poste poste--agent">
-      <div class="agent" data-agent>
-        <div class="agent__tete">
-          <span class="coeur">
-            <i class="coeur__orbite" data-orbite></i>
-            <svg viewBox="0 0 16 16"><path d="M8 2.4l1.4 4.2 4.2 1.4-4.2 1.4L8 13.6 6.6 9.4 2.4 8l4.2-1.4z" /></svg>
-          </span>
-          <span class="agent__nom">Agent</span>
-          <span class="sm-etat" data-etat="fait" data-etat-de="agent">
-            <span class="sm-large" data-c="etat-long">Lot trié</span>
-            <span class="sm-etroit" data-c="etat-court">Trié</span>
-          </span>
-        </div>
-
-        <div class="sm-feuille lecteur" data-lecteur>
-          <div class="fiche" data-fiche>
-            <i class="visage"></i>
-            <div class="fiche__barres">
-              <i class="sm-barre" data-c="nom" style={`--l: ${derniere.l}%`}></i>
-              <i class="sm-barre sm-large"></i>
-            </div>
-          </div>
-          <div class="regles sm-large">Règles écrites</div>
-          <div>
-            {REGLES.map((regle, index) => (
-              <div class="sm-ligne critere est-parti" data-critere data-avis={derniere.avis[index]}>
-                <span class="critere__nom">{regle}</span>
-                <span class="sm-large" data-c="valeur">{derniere.valeurs[index]}</span>
-                <i class="avis">
-                  <svg class="avis__oui" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                  <svg class="avis__non" viewBox="0 0 16 16"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" /></svg>
-                  <svg class="avis__doute" viewBox="0 0 16 16"><path d="M5.6 6a2.4 2.4 0 1 1 3.7 2c-.8.5-1.3 1-1.3 1.9M8 12.4v.1" /></svg>
-                </i>
-              </div>
-            ))}
-          </div>
-          <span class="sm-balai" data-balai></span>
-        </div>
-
-        <div class="note" data-note data-verdict={derniere.verdict} style={`--n: ${derniere.note / 100}`}>
-          <span class="note__nom">Note</span>
-          <span class="note__jauge"><i></i></span>
-          <b class="note__valeur" data-note-valeur>{derniere.note}</b>
-        </div>
+      <div class="coeur" data-coeur data-etat="actif">
+        <i class="coeur__orbite" data-orbite>
+          <i class="satellite" data-satellite></i>
+          <i class="satellite" data-satellite></i>
+          <i class="satellite" data-satellite></i>
+        </i>
+        <span class="coeur__disque" data-disque>
+          <svg viewBox="0 0 16 16"><path d="M8 2.4l1.4 4.2 4.2 1.4-4.2 1.4L8 13.6 6.6 9.4 2.4 8l4.2-1.4z" /></svg>
+          <b class="sm-large">Agent</b>
+        </span>
       </div>
-
-      <span class="aiguillage" data-aiguillage data-voie={derniere.verdict}>
-        <i class="aiguillage__aiguille"></i>
-        <i class="aiguillage__pivot"></i>
-      </span>
-      <span class="sm-port port--agent est-actif" data-sm-port="agent"></span>
-      <span class="sm-port port--tri" data-sm-port="tri"></span>
+      <span class="sm-port port--coeur" data-sm-port="coeur"></span>
     </div>
 
-    {/* À approcher : les bonnes fiches arrivent avec leur note, en pêche. */}
-    <div class="sm-poste poste--approcher">
+    {/* Son fil de pensée : les étapes qu'il se donne, une à une. */}
+    <div class="pensee" data-pensee>
+      <div class="pensee__titre"><span class="sm-large">Raisonnement</span><span class="sm-etroit">Agent</span></div>
+      <div class="pensee__etapes">
+        {demande.etapes.map((etape) => (
+          <div class="etape est-fait" data-etape>
+            <i class="etape__marque">
+              <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+            </i>
+            <span class="sm-large" data-c="texte">{etape.texte}</span>
+            <span class="sm-etroit" data-c="court">{etape.court}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Les sources, autour de lui. */}
+    {sources.map((source) => (
+      <div class:list={['sm-poste', 'source', `source--${source.id}`, 'est-consultee']} data-source={source.id}>
+        <div class="sm-fenetre tuile">
+          <div class="tuile__tete">
+            <span class="sm-fenetre__icone"><svg viewBox="0 0 16 16"><path d={source.trace} /></svg></span>
+            <span class="tuile__nom"><span class="sm-large">{source.nom}</span><span class="sm-etroit">{source.court}</span></span>
+            <svg class="tuile__coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+          </div>
+          <div class="tuile__corps">
+            <i class="sm-barre tuile__ligne sm-large"></i>
+            <i class="sm-barre tuile__ligne tuile__extrait" data-extrait></i>
+            <span class="tuile__releve sm-large" data-c="releve">{releveDe(source.id)}</span>
+            <i class="tuile__balayage" data-balayage></i>
+          </div>
+        </div>
+        <span class:list={['sm-port', 'port--source', 'est-actif']} data-sm-port={source.id}></span>
+      </div>
+    ))}
+
+    {/* La réponse : trois résultats sourcés, et la main laissée à l'humain. */}
+    <div class="sm-poste poste--reponse">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
           <span class="sm-fenetre__icone">
-            <svg viewBox="0 0 16 16"><path d="M13.5 2.5L7 9M13.5 2.5l-4 11L7 9 2.5 6.5z" /></svg>
+            <svg viewBox="0 0 16 16"><path d="M3 4h10M3 8h10M3 12h6" /></svg>
           </span>
-          <span class="sm-fenetre__nom">À approcher</span>
-          <span class="sm-etat sm-large" data-etat="fait" data-etat-de="approcher"><b data-compte="approcher">{rangees('approcher').length}</b></span>
+          <span class="sm-fenetre__nom">Réponse</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="reponse">
+            <span class="sm-etat__avant">En attente</span>
+            <span class="sm-etat__apres">3 résultats</span>
+          </span>
         </div>
         <div class="sm-corps">
           <div class="sm-rangees">
-            {rangees('approcher').map((fiche, index) => (
-              <div class:list={['sm-rangee', 'case', 'est-rempli', 'est-peche', large(index < 2)]} data-case="approcher" style={`--l: ${fiche.l}%`}>
-                <i class="visage"></i>
+            {demande.resultats.map((resultat, index) => (
+              <div class="sm-rangee resultat est-rempli" data-resultat style={`--l: ${resultat.l}%`}>
+                <i class="resultat__logo"></i>
                 <i class="sm-barre"></i>
-                <span data-c="note">{fiche.note}</span>
+                <span class="resultat__raison" data-c="raison">{resultat.raison}</span>
+                <i class="pastille"><svg viewBox="0 0 16 16"><path d={sources[index]?.trace} /></svg></i>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-      <span class="sm-port port--approcher est-actif" data-sm-port="approcher"></span>
-    </div>
-
-    {/* À valider : la fiche douteuse attend une décision humaine. */}
-    <div class="sm-poste poste--valider est-saisi" data-poste-valider>
-      <div class="sm-fenetre">
-        <div class="sm-fenetre__barre">
-          <span class="sm-fenetre__icone">
+          <div class="validation est-attendue" data-validation>
             <svg viewBox="0 0 16 16"><path d="M8 7.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM3.4 13.4c0-2.5 2-4 4.6-4s4.6 1.5 4.6 4" /></svg>
-          </span>
-          <span class="sm-fenetre__nom">À valider</span>
-          <span class="sm-etat sm-large" data-etat="cours" data-etat-de="valider">
-            <span class="etat__vide">0</span>
-            <span class="etat__plein">À vous</span>
-          </span>
-        </div>
-        <div class="sm-corps">
-          <div class="sm-rangees">
-            {rangees('valider').map((fiche) => (
-              <div class="sm-rangee case est-rempli est-doute" data-case="valider" style={`--l: ${fiche.l}%`}>
-                <i class="visage"></i>
-                <i class="sm-barre"></i>
-                <span data-c="note">{fiche.note}</span>
-              </div>
-            ))}
-          </div>
-          <div class="choix sm-large">
-            <i>Approcher</i>
-            <i>Écarter</i>
+            <span>À valider par vous</span>
+            <i class="validation__bouton">Valider</i>
           </div>
         </div>
       </div>
-      <span class="sm-port port--valider est-actif" data-sm-port="valider"></span>
+      <span class="sm-port port--reponse est-actif" data-sm-port="reponse"></span>
     </div>
 
-    {/* Écartées : elles arrivent éteintes. */}
-    <div class="sm-poste poste--ecartees">
-      <div class="sm-fenetre">
-        <div class="sm-fenetre__barre">
-          <span class="sm-fenetre__icone">
-            <svg viewBox="0 0 16 16"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" /></svg>
-          </span>
-          <span class="sm-fenetre__nom">Écartées</span>
-          <span class="sm-etat sm-large" data-etat="attente" data-etat-de="ecarter"><b data-compte="ecarter">{rangees('ecarter').length}</b></span>
-        </div>
-        <div class="sm-corps">
-          <div class="sm-rangees">
-            {rangees('ecarter').map((fiche, index) => (
-              <div class:list={['sm-rangee', 'case', 'est-rempli', 'est-eteint', large(index < 1)]} data-case="ecarter" style={`--l: ${fiche.l}%`}>
-                <i class="visage"></i>
-                <i class="sm-barre"></i>
-                <span data-c="note">{fiche.note}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <span class="sm-port port--ecarter" data-sm-port="ecarter"></span>
-    </div>
-
-    {/* Ce qui voyage : par fiche, une bande et un grain pour entrer chez
-       l'agent, une bande et un grain pour en sortir. La rafale fait se
-       chevaucher la sortie d'une fiche et l'entrée de la suivante. */}
-    {lot.map(() => (
+    {/* Ce qui voyage. Une sonde (un grain creux) part de l'agent ; une bande
+       quitte la ligne trouvée dans la source ; un extrait (une petite carte)
+       revient au centre. Puis, par résultat, un grain et une bande descendent
+       vers la réponse. */}
+    <span class="sm-grain" data-grain="question"></span>
+    <span class="sm-grain sonde" data-sonde></span>
+    <span class="sm-bande" data-bande="extrait"></span>
+    <span class="extrait" data-carte><i></i><i></i></span>
+    {demande.resultats.map(() => (
       <>
-        <span class="sm-bande" data-bande="entree"></span>
-        <span class="sm-grain" data-grain="entree"></span>
-        <span class="sm-bande" data-bande="sortie"></span>
-        <span class="sm-grain" data-grain="sortie"></span>
+        <span class="sm-grain" data-grain="reponse"></span>
+        <span class="sm-bande" data-bande="reponse"></span>
       </>
     ))}
   </div>
 </div>
 
 <style>
-  /* Ce que le socle ne sait pas : où sont les postes et leurs ports, la fiche
-     d'une cible, l'agent (son cœur, son plan de travail, sa note) et son
-     aiguillage. Longueurs en pixels du plan.
+  /* Ce que le socle ne sait pas : la place de chaque pièce autour du centre,
+     le champ de la question, le disque de l'agent, son fil de pensée, les
+     tuiles de source et la carte de réponse. Longueurs en pixels du plan.
 
-     Tout s'aligne sur un axe, `--axe` : la sortie de la liste, l'entrée de
-     l'agent, l'aiguillage et la fiche à valider sont à la même hauteur. Le
-     tri s'ouvre donc en éventail autour d'un fil droit. */
+     Tout se rapporte au centre de l'agent (`--cx`, `--cy`) : c'est le moyeu
+     de l'étoile, là où les cinq fils se nouent. */
   [data-scene-agents] {
-    --sm-lumiere: 78% 30%;
+    --sm-lumiere: 50% 46%;
   }
 
   .sm-plan {
-    --axe: 310px;
-    --h-agent: 246px;
-    --h-cible: 40px;
-    --aiguillage: 40px;
-    --tige: 12px;
+    --cx: 380px;
+    --cy: 212px;
+    --coeur: 86px;
+    --orbite: 14px;
   }
 
-  .poste--cibles {
-    --haut: 154px;
-    top: var(--haut);
-    left: 24px;
-    width: 186px;
+  .poste--question {
+    top: 60px;
+    left: 178px;
+    width: 404px;
   }
 
   .poste--agent {
-    top: calc(var(--axe) - var(--h-agent) / 2);
-    left: 246px;
-    width: 172px;
-    height: var(--h-agent);
+    top: calc(var(--cy) - var(--coeur) / 2);
+    left: calc(var(--cx) - var(--coeur) / 2);
+    width: var(--coeur);
+    height: var(--coeur);
   }
 
-  .poste--approcher,
-  .poste--valider,
-  .poste--ecartees {
-    --sm-cols: 16px minmax(0, 1fr) auto;
-    top: var(--haut);
-    left: 556px;
-    width: 180px;
+  .source {
+    width: 164px;
   }
 
-  .poste--approcher { --haut: 78px; }
-  .poste--valider { --haut: 249px; }
-  .poste--ecartees { --haut: 387px; }
+  .source--web { top: 124px; left: 24px; }
+  .source--documents { top: 124px; left: 572px; }
+  .source--crm { top: 258px; left: 572px; }
 
-  .port--cibles { top: calc(var(--axe) - var(--haut) - 5.5px); right: -6px; }
-  .port--agent { top: calc(50% - 5.5px); left: -6px; }
-  .port--approcher { top: 87px; left: -6px; }
-  .port--valider { top: calc(var(--axe) - var(--haut) - 5.5px); left: -6px; }
-  .port--ecarter { top: 71px; left: -6px; }
+  .pensee {
+    top: 250px;
+    left: 30px;
+    width: 270px;
+  }
 
-  /* Le départ des trois voies est au centre de l'aiguillage, qui le couvre :
-     le port n'est là que pour que le moteur sache d'où tracer. */
-  .port--tri {
+  .poste--reponse {
+    --sm-cols: 16px minmax(0, 1fr) auto 18px;
+    top: 368px;
+    left: 182px;
+    width: 396px;
+  }
+
+  .port--question { bottom: -6px; left: calc(50% - 5.5px); }
+  .port--reponse { top: -6px; left: calc(50% - 5.5px); }
+  .port--source { top: calc(50% - 5.5px); left: -6px; }
+  .source--web .port--source { right: -6px; left: auto; }
+
+  /* Le moyeu : le disque le couvre, il n'est là que pour que le moteur sache
+     où nouer les fils. */
+  .port--coeur {
     top: calc(50% - 5.5px);
-    left: calc(100% + var(--tige) + var(--aiguillage) / 2 - 5.5px);
+    left: calc(50% - 5.5px);
     opacity: 0;
   }
 
-  /* ── Le visage d'une fiche ──
-     Une silhouette dans un rond : sans un mot, on lit « une personne ». */
-  .visage {
-    --visage-fond: color-mix(in srgb, var(--color-ink) 13%, transparent);
-    --visage-trait: color-mix(in srgb, var(--color-ink) 44%, transparent);
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
+  /* ── La question ──
+     Un champ de saisie arrondi : qui demande, ce qui est demandé, et le
+     bouton d'envoi qui passe en pêche quand la question est partie. */
+  .question {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 7px 0 8px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
     border-radius: var(--radius-full);
-    background:
-      radial-gradient(circle at 50% 37%, var(--visage-trait) 0 20%, transparent 22%),
-      radial-gradient(64% 46% at 50% 106%, var(--visage-trait) 0 96%, transparent 100%),
-      var(--visage-fond);
-    transition: opacity 220ms;
+    background: color-mix(in srgb, var(--color-night-deep) 90%, var(--color-ink));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+      0 18px 36px -22px var(--color-night-deep);
+    transition: border-color 300ms;
   }
 
-  /* ── Une cible, dans la liste ──
-     Sur deux lignes : le nom en barre et sa note, puis ses étiquettes. Visée
-     (`est-vise`), elle est cerclée de pêche le temps d'être lue ; traitée
-     (`est-traite`), elle s'efface et garde sa note. */
-  .cible {
-    grid-template-columns: 20px minmax(0, 1fr) auto;
-    align-content: center;
-    column-gap: 8px;
-    row-gap: 5px;
-    height: var(--h-cible);
+  .question__qui,
+  .question__envoi {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-full);
   }
 
-  .cible .visage {
-    grid-row: 1 / span 2;
+  .question__qui {
+    background: color-mix(in srgb, var(--color-ink) 12%, transparent);
   }
 
-  .cible .sm-barre {
-    grid-column: 2;
-    transition:
-      transform 360ms var(--ease-out-expo),
-      opacity 220ms;
-  }
-
-  .cible__note {
-    grid-column: 3;
-    grid-row: 1;
-    color: var(--color-ink-faint);
-    font-size: 10.5px;
-    font-weight: 650;
-    line-height: 1;
-    opacity: 0;
-    transition: opacity 220ms;
-  }
-
-  .cible__tags {
-    grid-column: 2 / span 2;
-    grid-row: 2;
-    display: flex;
-    gap: 4px;
-    transition: opacity 220ms;
-  }
-
-  .cible__tags em {
+  .question__qui svg {
+    width: 14px;
     height: 14px;
-    padding: 0 5px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
-    border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
-    font-size: 9px;
+    stroke: var(--color-ink-mid);
+    stroke-width: 1.4;
+  }
+
+  .question__texte {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    color: var(--color-ink);
+    font-size: 14px;
     font-weight: 500;
-    line-height: 12px;
+    letter-spacing: -0.005em;
     white-space: nowrap;
   }
 
-  .cible.est-vise {
-    border-color: var(--color-peche);
-    background: color-mix(in srgb, var(--color-peche) 12%, transparent);
+  .question__invite {
+    display: none;
+    color: var(--color-ink-faint);
+    font-weight: 400;
   }
 
-  .cible.est-traite {
-    border-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
-    background: transparent;
-  }
-
-  .cible.est-traite :is(.visage, .sm-barre, .cible__tags) {
-    opacity: 0.4;
-  }
-
-  .cible.est-traite .cible__note {
-    opacity: 1;
-  }
-
-  .cible:is([data-verdict='approcher'], [data-verdict='valider']) .cible__note {
-    color: var(--color-peche);
-  }
-
-  /* ── L'agent ──
-     Pas une fenêtre : pas de barre de titre, un cerne pêche et un halo, un
-     coin plus rond. C'est le seul bloc de la scène qui agit. */
-  .agent {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    height: 100%;
-    padding: 11px 11px 10px;
-    border: 1px solid color-mix(in srgb, var(--color-peche) 46%, transparent);
-    border-radius: 20px;
-    background: color-mix(in srgb, var(--color-peche) 6%, var(--color-night-deep));
-    box-shadow:
-      0 0 0 5px color-mix(in srgb, var(--color-peche) 8%, transparent),
-      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
-      0 30px 60px -28px var(--color-night-deep);
-  }
-
-  .agent__tete {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    height: 28px;
-    padding-left: 4px;
-  }
-
-  /* Le cœur : un disque pêche et son orbite. Le moteur fait tourner l'orbite
-     tant que l'agent travaille ; au repos, son satellite reste en haut. */
-  .coeur {
-    position: relative;
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-full);
+  /* Le curseur n'existe que pendant la frappe. */
+  .question__curseur {
+    display: none;
+    width: 1.5px;
+    height: 16px;
+    margin-left: 1px;
     background: var(--color-peche);
   }
 
-  .coeur svg {
-    width: 15px;
-    height: 15px;
-    fill: var(--color-night);
+  .question.est-en-frappe .question__curseur {
+    display: block;
+  }
+
+  .question.est-vide .question__invite {
+    display: inline;
+  }
+
+  .question.est-vide [data-c] {
+    display: none;
+  }
+
+  .question__envoi {
+    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    transition:
+      background-color 260ms,
+      border-color 260ms;
+  }
+
+  .question__envoi svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--color-ink-low);
+    stroke-width: 1.7;
+    transition: stroke 260ms;
+  }
+
+  .question.est-envoyee {
+    border-color: color-mix(in srgb, var(--color-peche) 46%, transparent);
+  }
+
+  .question.est-envoyee .question__envoi {
+    border-color: var(--color-peche);
+    background: var(--color-peche);
+  }
+
+  .question.est-envoyee .question__envoi svg {
     stroke: var(--color-night);
+  }
+
+  /* ── L'agent ──
+     Un disque et son orbite, pas une fenêtre. En veille, il est creux ; au
+     travail, il se remplit de pêche et son orbite tourne. Les extraits qu'il
+     a ramenés sont des satellites sur cette orbite, jusqu'à ce qu'il en fasse
+     une réponse. */
+  .coeur {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .coeur__disque {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 3px;
+    border: 1px solid color-mix(in srgb, var(--color-peche) 52%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-peche) 7%, var(--color-night-deep));
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-peche) 0%, transparent);
+    color: var(--color-peche);
+    transition:
+      background-color 360ms,
+      color 360ms,
+      box-shadow 520ms var(--ease-out-quint);
+  }
+
+  .coeur__disque svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    stroke: currentColor;
     stroke-width: 1;
+  }
+
+  .coeur__disque b {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    line-height: 1;
+  }
+
+  /* Tout texte posé sur la pêche est en nuit. */
+  .coeur[data-etat='actif'] .coeur__disque {
+    background: var(--color-peche);
+    box-shadow:
+      0 0 0 7px color-mix(in srgb, var(--color-peche) 13%, transparent),
+      0 0 46px 6px color-mix(in srgb, var(--color-peche) 30%, transparent);
+    color: var(--color-night);
   }
 
   .coeur__orbite {
     position: absolute;
-    inset: -4px;
-    border: 1px solid color-mix(in srgb, var(--color-peche) 36%, transparent);
+    inset: calc(var(--orbite) * -1);
+    border: 1px dashed color-mix(in srgb, var(--color-peche) 34%, transparent);
     border-radius: var(--radius-full);
+    transition: border-color 360ms;
   }
 
-  .coeur__orbite::after {
-    content: '';
+  .coeur[data-etat='actif'] .coeur__orbite {
+    border-color: color-mix(in srgb, var(--color-peche) 62%, transparent);
+  }
+
+  /* Trois places sur l'orbite, à égale distance. `--tour` tourne la place
+     autour du centre ; le satellite est posé en haut du cercle. */
+  .satellite {
+    --taille: 11px;
     position: absolute;
-    top: -3px;
-    left: calc(50% - 2.5px);
-    width: 5px;
-    height: 5px;
+    top: calc(var(--taille) / -2);
+    left: calc(50% - var(--taille) / 2);
+    width: var(--taille);
+    height: var(--taille);
+    border: 2px solid var(--color-night-deep);
     border-radius: var(--radius-full);
     background: var(--color-peche);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-peche) 6%, var(--color-night-deep));
+    transform-origin: 50% calc(var(--taille) / 2 + var(--coeur) / 2 + var(--orbite));
+    rotate: var(--tour);
+    scale: 0;
+    transition: scale 420ms var(--ease-out-expo);
   }
 
-  .agent__nom {
-    color: var(--color-ink);
-    font-size: 13px;
-    font-weight: 650;
-    letter-spacing: -0.01em;
+  .satellite:nth-child(1) { --tour: 40deg; }
+  .satellite:nth-child(2) { --tour: 160deg; }
+  .satellite:nth-child(3) { --tour: 280deg; }
+
+  .satellite.est-la {
+    scale: 1;
   }
 
-  /* Le plan de travail : la fiche lue, sur la feuille claire, et les trois
-     règles dessous. Vide (`est-vide`), il n'en reste que la trame. */
-  .lecteur {
-    --sm-cols: minmax(0, 1fr) auto 12px;
-    padding: 10px 10px 5px;
-    transition: opacity 260ms;
+  /* ── Le fil de pensée ──
+     Du texte libre à côté de l'agent, sans cadre : ce n'est pas un outil,
+     c'est ce qu'il se dit. Une étape apparaît quand il s'y met (`est-en-
+     cours`), et garde sa coche quand elle est faite (`est-fait`). */
+  .pensee {
+    position: absolute;
+    z-index: 2;
   }
 
-  .fiche {
-    display: grid;
-    grid-template-columns: 22px minmax(0, 1fr);
-    align-items: center;
-    gap: 8px;
-    height: 28px;
-    transition: opacity 200ms;
-  }
-
-  .fiche .visage {
-    --visage-fond: var(--color-feuille-trait);
-    --visage-trait: var(--color-ink-faint);
-    width: 22px;
-    height: 22px;
-  }
-
-  .fiche__barres {
-    display: grid;
-    gap: 5px;
-  }
-
-  .fiche__barres .sm-barre {
-    background: color-mix(in srgb, var(--color-night) 62%, transparent);
-  }
-
-  .fiche__barres .sm-barre + .sm-barre {
-    width: 42%;
-    background: var(--color-feuille-barre);
-  }
-
-  .regles {
-    margin-top: 9px;
-    padding: 0 6px 4px;
-    border-bottom: 1px solid var(--color-feuille-trait);
+  .pensee__titre {
+    margin-bottom: 7px;
     color: var(--color-ink-faint);
     font-size: 8.5px;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    transition: opacity 260ms;
+  }
+
+  /* Tant qu'il n'a rien entrepris, le titre n'a rien à annoncer. */
+  .pensee:not(:has(.etape:is(.est-en-cours, .est-fait))) .pensee__titre {
+    opacity: 0;
+  }
+
+  .pensee__etapes {
+    display: grid;
+    gap: 6px;
+  }
+
+  .etape {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-ink);
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 16px;
     white-space: nowrap;
+    opacity: 0;
+    transition:
+      opacity 260ms,
+      color 320ms;
   }
 
-  .critere__nom {
-    color: color-mix(in srgb, var(--color-night) 62%, transparent);
-  }
-
-  .critere [data-c='valeur'] {
-    font-weight: 600;
-    transition: opacity 200ms;
-  }
-
-  /* Une règle qui ne passe pas est lue comme les autres, mais en gris : la
-     pêche est réservée à ce qui est retenu. Le doute, lui, est rayé. */
-  .critere[data-avis='non']::before {
-    background: var(--color-feuille-trait);
-  }
-
-  .critere[data-avis='doute']::before {
-    background: repeating-linear-gradient(
-      -45deg,
-      var(--color-peche) 0 4px,
-      color-mix(in srgb, var(--color-peche) 46%, var(--color-feuille)) 4px 8px
-    );
-  }
-
-  .critere[data-avis='non'] [data-c='valeur'] {
-    color: var(--color-ink-faint);
-  }
-
-  .avis {
+  .etape__marque {
+    position: relative;
     display: grid;
     place-items: center;
-    width: 12px;
-    height: 12px;
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--color-peche);
+    border-radius: var(--radius-full);
+    transition:
+      background-color 260ms,
+      border-color 260ms;
   }
 
-  .avis svg {
-    grid-area: 1 / 1;
-    width: 12px;
-    height: 12px;
+  .etape__marque svg {
+    width: 9px;
+    height: 9px;
     stroke: var(--color-night);
-    stroke-width: 2;
+    stroke-width: 2.4;
     opacity: 0;
     scale: 0.4;
     transition:
@@ -647,460 +656,532 @@ const large = (garde: boolean) => (garde ? '' : 'sm-large');
       scale 320ms var(--ease-out-expo);
   }
 
-  .avis .avis__non {
-    stroke: var(--color-ink-faint);
+  /* Le fil, justement : un trait relie chaque étape à la précédente. */
+  .etape + .etape .etape__marque::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2.5px);
+    left: calc(50% - 0.5px);
+    width: 1px;
+    height: 6px;
+    background: color-mix(in srgb, var(--color-peche) 55%, transparent);
   }
 
-  .critere:is(.est-lu, .est-parti)[data-avis='oui'] .avis__oui,
-  .critere:is(.est-lu, .est-parti)[data-avis='non'] .avis__non,
-  .critere:is(.est-lu, .est-parti)[data-avis='doute'] .avis__doute {
+  .etape.est-en-cours,
+  .etape.est-fait {
+    opacity: 1;
+  }
+
+  .etape.est-fait {
+    color: var(--color-ink-mid);
+  }
+
+  .etape.est-fait .etape__marque {
+    background: var(--color-peche);
+  }
+
+  .etape.est-fait .etape__marque svg {
     opacity: 1;
     scale: 1;
   }
 
-  /* Une règle remise à zéro l'est d'un coup : dans la rafale, la trace de la
-     fiche précédente ne doit pas se retirer lentement sous la suivante. */
-  .critere:not(.est-lu, .est-parti)::before {
-    transition: none;
+  /* ── Une source ──
+     Une petite fenêtre du socle, sans barre : son icône, son nom, deux lignes
+     de contenu. Sondée (`est-sondee`), elle s'éclaire et un trait la balaie ;
+     consultée (`est-consultee`), sa ligne trouvée reste surlignée, son relevé
+     s'affiche et sa coche se dessine. */
+  .tuile {
+    padding: 9px 10px 10px;
+    transition:
+      border-color 300ms,
+      background-color 300ms;
   }
 
-  .lecteur.est-vide {
-    opacity: 0.74;
+  .tuile__tete {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 18px;
   }
 
-  .lecteur.est-vide .fiche {
-    opacity: 0.3;
+  .tuile .sm-fenetre__icone {
+    background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+    transition: background-color 300ms;
   }
 
-  .lecteur.est-vide [data-c='valeur'] {
+  .tuile .sm-fenetre__icone svg {
+    stroke: var(--color-ink-mid);
+    transition: stroke 300ms;
+  }
+
+  .tuile__nom {
+    color: var(--color-ink);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .tuile__coche {
+    width: 12px;
+    height: 12px;
+    margin-left: auto;
+    stroke: var(--color-peche);
+    stroke-width: 2;
+    opacity: 0;
+    scale: 0.4;
+    transition:
+      opacity 200ms,
+      scale 320ms var(--ease-out-expo);
+  }
+
+  .tuile__corps {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 7px;
+    margin-top: 10px;
+  }
+
+  .tuile__ligne {
+    grid-column: 1 / -1;
+    width: 78%;
+    background: color-mix(in srgb, var(--color-ink) 16%, transparent);
+    transition: background-color 260ms;
+  }
+
+  .tuile__extrait {
+    grid-column: 1;
+    width: 100%;
+  }
+
+  .tuile__releve {
+    color: var(--color-ink-low);
+    font-size: 9.5px;
+    font-weight: 500;
+    line-height: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 220ms;
+  }
+
+  /* Le trait qui parcourt la source, de gauche à droite. */
+  .tuile__balayage {
+    position: absolute;
+    top: -5px;
+    bottom: -5px;
+    left: 0;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--color-peche);
+    box-shadow: 0 0 10px 1px color-mix(in srgb, var(--color-peche) 70%, transparent);
     opacity: 0;
   }
 
-  /* La note : une jauge et le nombre, dans la couleur du verdict. */
-  .note {
+  .source:is(.est-sondee, .est-consultee) .tuile {
+    border-color: color-mix(in srgb, var(--color-peche) 56%, transparent);
+  }
+
+  .source.est-sondee .tuile {
+    background: color-mix(in srgb, var(--color-peche) 9%, var(--color-night-deep));
+  }
+
+  .source:is(.est-sondee, .est-consultee) .sm-fenetre__icone {
+    background: var(--color-peche);
+  }
+
+  .source:is(.est-sondee, .est-consultee) .sm-fenetre__icone svg {
+    stroke: var(--color-night);
+  }
+
+  .source.est-consultee .tuile__extrait {
+    background: var(--color-peche);
+  }
+
+  .source.est-consultee .tuile__releve {
+    opacity: 1;
+  }
+
+  .source.est-consultee .tuile__coche {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* ── La réponse ──
+     Une rangée du socle par résultat : un logo sans marque, le nom en barre,
+     la raison de l'approcher, et la pastille de la source qui l'a donnée. */
+  .resultat__logo {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+    opacity: 0;
+    transition: opacity 220ms;
+  }
+
+  .resultat__raison {
+    padding: 2px 8px;
+    border: 1px solid color-mix(in srgb, var(--color-peche) 55%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--color-peche);
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 13px;
+  }
+
+  .pastille {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    opacity: 0;
+    scale: 0.5;
+    transition:
+      opacity 220ms,
+      scale 360ms var(--ease-out-expo);
+  }
+
+  .pastille svg {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-night);
+    stroke-width: 1.5;
+  }
+
+  .resultat.est-rempli .resultat__logo {
+    opacity: 1;
+  }
+
+  .resultat.est-rempli .pastille {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* La ligne laissée à l'humain : rien n'est envoyé tant qu'il n'a pas
+     validé. Elle ne s'éclaire qu'une fois la réponse prête. */
+  .validation {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 8px;
-    height: 24px;
-    margin-top: auto;
-    padding-left: 5px;
-    border-radius: var(--radius-full);
-    color: var(--color-ink-low);
-    font-size: 10.5px;
-    font-weight: 500;
-  }
-
-  .note__jauge {
-    height: 4px;
-    overflow: hidden;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--color-ink) 12%, transparent);
-  }
-
-  .note__jauge i {
-    display: block;
-    height: 100%;
-    border-radius: 2px;
-    background: var(--color-ink-low);
-    transform: scaleX(var(--n, 0));
-    transform-origin: 0 50%;
-    transition:
-      transform 420ms var(--ease-out-expo),
-      background-color 220ms;
-  }
-
-  .note__valeur {
-    display: grid;
-    place-items: center;
-    min-width: 32px;
-    height: 22px;
-    padding-inline: 7px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
-    border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
-    font-size: 12px;
-    font-weight: 650;
-    line-height: 1;
-    transition:
-      background-color 220ms,
-      color 220ms,
-      border-color 220ms;
-  }
-
-  .note:is([data-verdict='approcher'], [data-verdict='valider']) .note__jauge i {
-    background: var(--color-peche);
-  }
-
-  .note[data-verdict='approcher'] .note__valeur {
-    border-color: var(--color-peche);
-    background: var(--color-peche);
-    color: var(--color-night);
-  }
-
-  .note[data-verdict='valider'] .note__valeur {
-    border-style: dashed;
-    border-color: var(--color-peche);
-    color: var(--color-peche);
-  }
-
-  .note[data-verdict='ecarter'] .note__valeur {
-    color: var(--color-ink-faint);
-  }
-
-  /* ── L'aiguillage ──
-     Un disque à la sortie de l'agent, relié par une tige. Son aiguille montre
-     la voie de la fiche qui part : en haut, tout droit, en bas. */
-  .aiguillage {
-    position: absolute;
-    top: calc(50% - var(--aiguillage) / 2);
-    left: calc(100% + var(--tige));
-    z-index: 3;
-    width: var(--aiguillage);
-    height: var(--aiguillage);
-    border: 1px solid color-mix(in srgb, var(--color-ink) 24%, transparent);
-    border-radius: var(--radius-full);
-    background: var(--color-night-deep);
-    color: var(--color-ink-low);
-    transition:
-      border-color 300ms,
-      background-color 300ms,
-      color 300ms;
-  }
-
-  .aiguillage::before {
-    content: '';
-    position: absolute;
-    top: calc(50% - 0.5px);
-    right: 100%;
-    width: var(--tige);
-    height: 1px;
-    background: color-mix(in srgb, var(--color-peche) 46%, transparent);
-  }
-
-  .aiguillage__aiguille {
-    position: absolute;
-    top: calc(50% - 1px);
-    left: 50%;
-    width: 36%;
-    height: 2px;
-    border-radius: 1px;
-    background: currentColor;
-    transform-origin: 0 50%;
-    rotate: var(--angle, 0deg);
-    transition: rotate 460ms var(--ease-out-expo);
-  }
-
-  /* La pointe de l'aiguille. */
-  .aiguillage__aiguille::after {
-    content: '';
-    position: absolute;
-    top: -3px;
-    right: -1px;
-    width: 8px;
-    height: 8px;
-    border-top: 2px solid currentColor;
-    border-right: 2px solid currentColor;
-    border-radius: 1px;
-    rotate: 45deg;
-  }
-
-  .aiguillage__pivot {
-    position: absolute;
-    top: calc(50% - 3px);
-    left: calc(50% - 3px);
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-full);
-    background: currentColor;
-  }
-
-  .aiguillage:is([data-voie='approcher'], [data-voie='valider']) {
-    border-color: var(--color-peche);
-    background: color-mix(in srgb, var(--color-peche) 16%, var(--color-night-deep));
-    color: var(--color-peche);
-  }
-
-  .aiguillage[data-voie='approcher'] { --angle: -44deg; }
-  .aiguillage[data-voie='ecarter'] { --angle: 44deg; }
-
-  /* ── Les places d'arrivée ──
-     Une rangée du socle, avec un visage devant. Trois façons d'être remplie :
-     en pêche (le socle), éteinte, ou en doute. */
-  .case .visage {
-    width: 16px;
-    height: 16px;
-    opacity: 0;
-  }
-
-  .case.est-rempli .visage {
-    opacity: 1;
-  }
-
-  .case [data-c='note'] {
-    font-weight: 650;
-  }
-
-  .case.est-peche .visage {
-    --visage-fond: color-mix(in srgb, var(--color-night) 16%, transparent);
-    --visage-trait: color-mix(in srgb, var(--color-night) 58%, transparent);
-  }
-
-  .case.est-eteint {
-    background: transparent;
-    color: var(--color-ink-faint);
-  }
-
-  .case.est-eteint :is(.visage, .sm-barre) {
-    opacity: 0.45;
-  }
-
-  .case.est-doute {
-    border-style: dashed;
-    border-color: var(--color-peche);
-    background: color-mix(in srgb, var(--color-peche) 11%, transparent);
-    color: var(--color-peche);
-  }
-
-  /* ── À valider ──
-     La fenêtre de l'humain : deux boutons que personne d'autre ne presse. Ils
-     ne s'éclairent que lorsqu'une fiche attend (`est-saisi`). */
-  .poste--valider .sm-fenetre {
-    transition: border-color 320ms;
-  }
-
-  .poste--valider.est-saisi .sm-fenetre {
-    border-color: color-mix(in srgb, var(--color-peche) 50%, transparent);
-  }
-
-  .etat__plein,
-  .sm-etat[data-etat='cours'] .etat__vide {
-    display: none;
-  }
-
-  .sm-etat[data-etat='cours'] .etat__plein {
-    display: inline;
-  }
-
-  .choix {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
+    height: 30px;
     margin-top: 7px;
-    opacity: 0.38;
-    transition: opacity 320ms;
+    padding: 0 4px 0 9px;
+    border: 1px dashed color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--color-ink-low);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0.45;
+    transition:
+      opacity 320ms,
+      border-color 320ms,
+      color 320ms,
+      background-color 320ms;
   }
 
-  .choix i {
+  .validation svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .validation__bouton {
     display: grid;
     place-items: center;
-    height: 24px;
+    height: 22px;
+    padding-inline: 11px;
     border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent);
     border-radius: var(--radius-full);
-    color: var(--color-ink);
+    color: var(--color-ink-mid);
     font-size: 10px;
     font-weight: 600;
+    transition:
+      border-color 320ms,
+      color 320ms;
   }
 
-  .est-saisi .choix {
+  .validation.est-attendue {
+    border-color: var(--color-peche);
+    background: color-mix(in srgb, var(--color-peche) 9%, transparent);
+    color: var(--color-peche);
     opacity: 1;
   }
 
-  /* L'icône des écartées est éteinte, comme elles. */
-  .poste--ecartees .sm-fenetre__icone {
-    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+  .validation.est-attendue .validation__bouton {
+    border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
+    color: var(--color-ink);
   }
 
-  .poste--ecartees .sm-fenetre__icone svg {
-    stroke: var(--color-ink-mid);
+  /* ── Ce qui voyage ──
+     La sonde est un grain creux : elle part vide. L'extrait est une petite
+     carte pleine : il revient avec quelque chose. */
+  .sonde {
+    border: 2px solid var(--color-peche);
+    background: var(--color-night-deep);
+    box-shadow: 0 0 12px 2px color-mix(in srgb, var(--color-peche) 45%, transparent);
   }
 
-  .poste--ecartees .sm-fenetre__nom {
-    color: var(--color-ink-mid);
+  .extrait {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    display: grid;
+    align-content: center;
+    gap: 3px;
+    width: 30px;
+    height: 20px;
+    margin: -10px 0 0 -15px;
+    padding-inline: 6px;
+    border-radius: 5px;
+    background: var(--color-peche);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--color-peche) 22%, transparent),
+      0 0 16px 2px color-mix(in srgb, var(--color-peche) 45%, transparent);
+    opacity: 0;
+    pointer-events: none;
   }
 
-  /* Ce qui part vers les écartées voyage en gris. */
-  :is(.sm-bande, .sm-grain).est-eteint {
-    background: color-mix(in srgb, var(--color-ink) 42%, var(--color-night-deep));
-    box-shadow: none;
+  .extrait i {
+    height: 2px;
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--color-night) 60%, transparent);
+  }
+
+  .extrait i + i {
+    width: 62%;
   }
 
   /* ── Le plan étroit ──
-     Quatre fiches au lieu de six. Les cibles perdent leurs étiquettes et leur
-     note, l'agent garde le nom de ses règles sans leur valeur, les fenêtres
-     d'arrivée perdent leur compteur et la validation ses boutons. */
+     La même étoile, resserrée : le disque perd son nom, les tuiles leur
+     relevé et une ligne, le fil de pensée ne montre que l'étape du moment
+     (en version courte), et la réponse garde ses trois résultats. */
   @container sm (max-width: 519.98px) {
     .sm-plan {
-      --axe: 176px;
-      --h-agent: 150px;
-      --h-cible: 21px;
-      --aiguillage: 22px;
-      --tige: 6px;
+      --cx: 180px;
+      --cy: 91px;
+      --coeur: 36px;
+      --orbite: 6px;
     }
 
-    .poste--cibles {
-      --haut: 113px;
-      left: 10px;
-      width: 68px;
+    .poste--question {
+      top: 35px;
+      left: 68px;
+      width: 224px;
     }
 
-    .poste--agent {
-      left: 94px;
-      width: 102px;
+    .source {
+      width: 82px;
     }
 
-    .poste--approcher,
-    .poste--valider,
-    .poste--ecartees {
-      --sm-cols: 11px minmax(0, 1fr) auto;
-      left: 254px;
-      width: 96px;
+    .source--web { top: 63px; left: 10px; }
+    .source--documents { top: 63px; left: 268px; }
+    .source--crm { top: 101px; left: 268px; }
+
+    .pensee {
+      top: 107px;
+      left: 12px;
+      width: 150px;
     }
 
-    .poste--approcher { --haut: 37px; }
-    .poste--valider { --haut: 132px; }
-    .poste--ecartees { --haut: 201px; }
-
-    .port--cibles { top: calc(var(--axe) - var(--haut) - 4.5px); right: -5px; }
-    .port--agent { top: calc(50% - 4.5px); left: -5px; }
-    .port--approcher { top: 52px; left: -5px; }
-    .port--valider { top: calc(var(--axe) - var(--haut) - 4.5px); left: -5px; }
-    .port--ecarter { top: 39px; left: -5px; }
-
-    .port--tri {
-      top: calc(50% - 4.5px);
-      left: calc(100% + var(--tige) + var(--aiguillage) / 2 - 4.5px);
+    .poste--reponse {
+      --sm-cols: 11px minmax(0, 1fr) auto 12px;
+      top: 140px;
+      left: 56px;
+      width: 248px;
     }
 
-    .visage,
-    .case .visage {
-      width: 11px;
-      height: 11px;
+    .port--question { bottom: -5px; left: calc(50% - 4.5px); }
+    .port--reponse { top: -5px; left: calc(50% - 4.5px); }
+    .port--source { top: calc(50% - 4.5px); left: -5px; }
+    .source--web .port--source { right: -5px; left: auto; }
+    .port--coeur { top: calc(50% - 4.5px); left: calc(50% - 4.5px); }
+
+    .question {
+      gap: 6px;
+      height: 22px;
+      padding: 0 3px 0 4px;
     }
 
-    .cible {
-      grid-template-columns: 11px minmax(0, 1fr);
-      column-gap: 5px;
-    }
-
-    .cible .visage {
-      grid-row: 1;
-    }
-
-    .cible__note {
-      display: none;
-    }
-
-    .agent {
-      gap: 5px;
-      padding: 6px 6px 6px;
-      border-radius: 13px;
-      box-shadow:
-        0 0 0 3px color-mix(in srgb, var(--color-peche) 8%, transparent),
-        inset 0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
-        0 18px 36px -20px var(--color-night-deep);
-    }
-
-    .agent__tete {
-      gap: 5px;
-      height: 20px;
-      padding-left: 3px;
-    }
-
-    .agent__tete .sm-etat {
-      padding-inline: 5px;
-    }
-
-    .coeur {
+    .question__qui,
+    .question__envoi {
       width: 15px;
       height: 15px;
     }
 
-    .coeur svg {
-      width: 10px;
-      height: 10px;
-    }
-
-    .coeur__orbite {
-      inset: -3px;
-    }
-
-    .coeur__orbite::after {
-      top: -2px;
-      left: calc(50% - 1.5px);
-      width: 3px;
-      height: 3px;
-      box-shadow: none;
-    }
-
-    .agent__nom {
-      font-size: 10px;
-    }
-
-    /* La valeur lue ne tient plus : il reste le nom de la règle et sa coche. */
-    .lecteur {
-      --sm-cols: minmax(0, 1fr) 9px;
-      padding: 5px 5px 2px;
-    }
-
-    .fiche {
-      grid-template-columns: 12px minmax(0, 1fr);
-      gap: 5px;
-      height: 16px;
-      margin-bottom: 2px;
-      padding-inline: 3px;
-    }
-
-    .fiche .visage {
-      width: 12px;
-      height: 12px;
-    }
-
-    .critere {
-      height: 22px;
-    }
-
-    .avis,
-    .avis svg {
+    .question__qui svg,
+    .question__envoi svg {
       width: 9px;
       height: 9px;
     }
 
-    .note {
-      gap: 5px;
-      height: 18px;
-      padding-left: 3px;
-      font-size: 8.5px;
+    .question__texte {
+      font-size: 10px;
     }
 
-    .note__jauge {
-      height: 3px;
+    .question__curseur {
+      height: 11px;
     }
 
-    .note__valeur {
-      min-width: 24px;
+    .coeur__disque svg {
+      width: 17px;
       height: 17px;
-      padding-inline: 5px;
+    }
+
+    .coeur[data-etat='actif'] .coeur__disque {
+      box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--color-peche) 13%, transparent),
+        0 0 24px 3px color-mix(in srgb, var(--color-peche) 30%, transparent);
+    }
+
+    .satellite {
+      --taille: 7px;
+      border-width: 1.5px;
+    }
+
+    .pensee__titre {
+      margin-bottom: 3px;
+      font-size: 7px;
+    }
+
+    /* Une seule ligne : les étapes s'empilent au même endroit, et celle
+       qu'une autre a suivie s'efface. */
+    .pensee__etapes {
+      gap: 0;
+    }
+
+    .etape {
+      grid-area: 1 / 1;
+      gap: 5px;
       font-size: 9.5px;
+      line-height: 13px;
     }
 
-    /* À cette taille, la pointe de l'aiguille ne serait qu'un pâté : il reste
-       le pivot et son trait, comme une aiguille d'horloge. */
-    .aiguillage__aiguille {
-      top: calc(50% - 0.75px);
-      width: 40%;
-      height: 1.5px;
+    .etape:has(~ .etape:is(.est-en-cours, .est-fait)) {
+      opacity: 0;
+      transition: none;
     }
 
-    .aiguillage__aiguille::after {
+    .etape__marque {
+      width: 11px;
+      height: 11px;
+      border-width: 1px;
+    }
+
+    .etape__marque svg {
+      width: 7px;
+      height: 7px;
+    }
+
+    .etape + .etape .etape__marque::before {
       display: none;
     }
 
-    .aiguillage__pivot {
-      top: calc(50% - 2.5px);
-      left: calc(50% - 2.5px);
-      width: 5px;
-      height: 5px;
+    .tuile {
+      padding: 5px 6px 6px;
+    }
+
+    .tuile__tete {
+      gap: 5px;
+      height: 13px;
+    }
+
+    .tuile .sm-fenetre__icone {
+      width: 13px;
+      height: 13px;
+      border-radius: 4px;
+    }
+
+    .tuile .sm-fenetre__icone svg {
+      width: 9px;
+      height: 9px;
+    }
+
+    .tuile__nom {
+      font-size: 9.5px;
+    }
+
+    .tuile__coche {
+      width: 9px;
+      height: 9px;
+    }
+
+    .tuile__corps {
+      margin-top: 5px;
+    }
+
+    .tuile__balayage {
+      top: -3px;
+      bottom: -3px;
+      width: 1.5px;
+    }
+
+    .poste--reponse .sm-corps {
+      padding: 4px 5px 5px;
+    }
+
+    .resultat {
+      height: 19px;
+    }
+
+    .resultat__logo {
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+    }
+
+    .resultat__raison {
+      padding: 1px 5px;
+      font-size: 8.5px;
+      line-height: 11px;
+    }
+
+    .pastille {
+      width: 12px;
+      height: 12px;
+    }
+
+    .pastille svg {
+      width: 8px;
+      height: 8px;
+    }
+
+    .validation {
+      gap: 5px;
+      height: 18px;
+      margin-top: 3px;
+      padding: 0 2px 0 6px;
+      font-size: 8.5px;
+    }
+
+    .validation svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    .validation__bouton {
+      height: 14px;
+      padding-inline: 7px;
+      font-size: 7.5px;
+    }
+
+    .extrait {
+      gap: 2px;
+      width: 18px;
+      height: 12px;
+      margin: -6px 0 0 -9px;
+      padding-inline: 4px;
+      border-radius: 3px;
+    }
+
+    .extrait i {
+      height: 1.5px;
     }
   }
 </style>
@@ -1115,76 +1196,72 @@ const large = (garde: boolean) => (garde ? '' : 'sm-large');
   import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Cadre, Pt } from '../../lib/metiers/scene';
 
-  type Avis = 'oui' | 'non' | 'doute';
-  type Verdict = 'approcher' | 'valider' | 'ecarter';
+  type IdSource = 'web' | 'documents' | 'crm';
 
-  interface Fiche {
+  interface Etape {
+    texte: string;
+    court: string;
+    source: IdSource | null;
+    releve: string;
+    nombre: number;
+  }
+
+  interface Resultat {
     l: number;
-    valeurs: string[];
-    avis: Avis[];
-    note: number;
-    verdict: Verdict;
+    raison: string;
   }
 
-  /* Un trajet par un fil : d'une zone à l'autre, à une allure donnée (1 pour
-     l'allure du socle, moins pour aller plus vite). */
+  interface Demande {
+    question: string;
+    courte: string;
+    etapes: Etape[];
+    resultats: Resultat[];
+  }
+
+  /* Un trajet le long d'un fil. `inverse` le remonte, de son arrivée à son
+     départ ; `absorbe` fait fondre le voyageur à l'arrivée, comme avalé. */
   interface Trajet {
-    bande: HTMLElement;
-    grain: HTMLElement;
-    de: HTMLElement;
-    vers: HTMLElement;
-    fil: string;
-    allure: number;
+    inverse?: boolean;
+    duree?: number;
+    absorbe?: boolean;
   }
 
-  const AVIS: readonly string[] = ['oui', 'non', 'doute'];
-  const VERDICTS: readonly string[] = ['approcher', 'valider', 'ecarter'];
-  const NB_REGLES = 3;
+  const SOURCES: readonly string[] = ['web', 'documents', 'crm'];
+  /* Le fil du web est tracé de sa tuile vers l'agent (le moteur trace de
+     gauche à droite) : pour lui, « partir de l'agent » remonte le fil. */
+  const TRACE_VERS_AGENT: readonly string[] = ['web'];
 
-  /* Les lots arrivent du balisage en JSON : c'est une frontière, on vérifie
-     leur forme avant de s'en servir. */
-  const estFiche = (valeur: unknown): valeur is Fiche => {
-    if (typeof valeur !== 'object' || valeur === null) return false;
-    const v = valeur as Record<string, unknown>;
-    return (
-      typeof v.l === 'number' &&
-      typeof v.note === 'number' &&
-      typeof v.verdict === 'string' &&
-      VERDICTS.includes(v.verdict) &&
-      Array.isArray(v.valeurs) &&
-      v.valeurs.length === NB_REGLES &&
-      v.valeurs.every((texte) => typeof texte === 'string') &&
-      Array.isArray(v.avis) &&
-      v.avis.length === NB_REGLES &&
-      v.avis.every((avis) => typeof avis === 'string' && AVIS.includes(avis))
-    );
-  };
+  const estObjet = (valeur: unknown): valeur is Record<string, unknown> => typeof valeur === 'object' && valeur !== null;
 
-  const lireLots = (brut: string | undefined): Fiche[][] => {
+  const estEtape = (valeur: unknown): valeur is Etape =>
+    estObjet(valeur) &&
+    typeof valeur.texte === 'string' &&
+    typeof valeur.court === 'string' &&
+    typeof valeur.releve === 'string' &&
+    typeof valeur.nombre === 'number' &&
+    (valeur.source === null || (typeof valeur.source === 'string' && SOURCES.includes(valeur.source)));
+
+  const estResultat = (valeur: unknown): valeur is Resultat =>
+    estObjet(valeur) && typeof valeur.l === 'number' && typeof valeur.raison === 'string';
+
+  const estDemande = (valeur: unknown): valeur is Demande =>
+    estObjet(valeur) &&
+    typeof valeur.question === 'string' &&
+    typeof valeur.courte === 'string' &&
+    Array.isArray(valeur.etapes) &&
+    valeur.etapes.every(estEtape) &&
+    Array.isArray(valeur.resultats) &&
+    valeur.resultats.every(estResultat);
+
+  /* Les demandes arrivent du balisage en JSON : c'est une frontière, on
+     vérifie leur forme avant de s'en servir. */
+  const lireDemandes = (brut: string | undefined): Demande[] => {
     const lu: unknown = JSON.parse(brut ?? 'null');
-    if (!Array.isArray(lu) || lu.length === 0 || !lu.every((lot) => Array.isArray(lot) && lot.every(estFiche))) {
-      throw new Error('Scène Agents : `data-lots` est illisible');
+    if (!Array.isArray(lu) || lu.length === 0 || !lu.every(estDemande)) {
+      throw new Error('Scène Agents : `data-demandes` est illisible');
     }
-    return lu as Fiche[][];
+    return lu;
   };
-
-  /* Les deux ports de chaque fil, pour savoir où la bande se resserre et où
-     elle se redéploie. */
-  const PORTS: Record<string, { de: string; vers: string }> = {
-    entree: { de: 'cibles', vers: 'agent' },
-    approcher: { de: 'tri', vers: 'approcher' },
-    valider: { de: 'tri', vers: 'valider' },
-    ecarter: { de: 'tri', vers: 'ecarter' },
-  };
-
-  /* L'état de l'agent, en version longue et en version courte (plan étroit). */
-  const ETATS = {
-    veille: { valeur: 'attente', long: 'En veille', court: 'Veille' },
-    lit: { valeur: 'cours', long: 'Lit…', court: 'Lit…' },
-    note: { valeur: 'cours', long: 'Note…', court: 'Note…' },
-    trie: { valeur: 'cours', long: 'Trie…', court: 'Trie…' },
-    fini: { valeur: 'fait', long: 'Lot trié', court: 'Trié' },
-  } as const;
 
   /* La bande, resserrée en tiret à l'entrée d'un port (même taille que celle
      du socle). */
@@ -1192,36 +1269,28 @@ const large = (garde: boolean) => (garde ? '' : 'sm-large');
   const entier = (n: number) => String(Math.round(n));
 
   monterScenes('[data-scene-agents]', (s) => {
-    const cibles = s.tous('[data-cible]');
-    const lecteur = s.un('[data-lecteur]');
-    const fiche = s.un('[data-fiche]');
-    const balai = s.un('[data-balai]');
-    const criteres = s.tous('[data-critere]');
-    const note = s.un('[data-note]');
-    const elNote = s.un('[data-note-valeur]');
+    const question = s.un('[data-question]');
+    const texteQuestion = s.un('[data-question-texte]');
+    const coeur = s.un('[data-coeur]');
+    const disque = s.un('[data-disque]');
     const orbite = s.un('[data-orbite]');
-    const aiguillage = s.un('[data-aiguillage]');
-    const etatAgent = s.un('[data-etat-de="agent"]');
-    const posteValider = s.un('[data-poste-valider]');
-    const elLues = s.un('[data-lues]');
+    const satellites = s.tous('[data-satellite]');
+    const etapes = s.tous('[data-etape]');
+    const resultats = s.tous('[data-resultat]');
+    const validation = s.un('[data-validation]');
+    const etatReponse = s.un('[data-etat-de="reponse"]');
+    const elConsultees = s.un('[data-consultees]');
     const elZero = s.un('[data-zero]');
-    const etats = {
-      approcher: s.un('[data-etat-de="approcher"]'),
-      valider: s.un('[data-etat-de="valider"]'),
-    };
-    const comptes = {
-      approcher: s.un('[data-compte="approcher"]'),
-      ecarter: s.un('[data-compte="ecarter"]'),
-    };
-    const cases: Record<Verdict, HTMLElement[]> = {
-      approcher: s.tous('[data-case="approcher"]'),
-      valider: s.tous('[data-case="valider"]'),
-      ecarter: s.tous('[data-case="ecarter"]'),
-    };
-    const toutesLesCases = [...cases.approcher, ...cases.valider, ...cases.ecarter];
-    const bandes = { entree: s.tous('[data-bande="entree"]'), sortie: s.tous('[data-bande="sortie"]') };
-    const grains = { entree: s.tous('[data-grain="entree"]'), sortie: s.tous('[data-grain="sortie"]') };
-    const lots = lireLots(s.racine.dataset.lots);
+    const sonde = s.un('[data-sonde]');
+    const carte = s.un('[data-carte]');
+    const bandeExtrait = s.un('[data-bande="extrait"]');
+    const grainQuestion = s.un('[data-grain="question"]');
+    const grainsReponse = s.tous('[data-grain="reponse"]');
+    const bandesReponse = s.tous('[data-bande="reponse"]');
+    const demandes = lireDemandes(s.racine.dataset.demandes);
+
+    const tuiles = new Map<string, HTMLElement>();
+    s.tous('[data-source]').forEach((tuile) => tuiles.set(tuile.dataset.source ?? '', tuile));
 
     const champ = (el: HTMLElement, nom: string) => el.querySelector<HTMLElement>(`[data-c="${nom}"]`);
     const ecrireChamp = (el: HTMLElement, nom: string, texte: string) => {
@@ -1229,96 +1298,47 @@ const large = (garde: boolean) => (garde ? '' : 'sm-large');
       if (cible) cible.textContent = texte;
     };
 
-    /* L'état de la scène. Le compteur part de ce que le balisage a rendu : il
-       n'y a qu'un endroit où l'écrire. */
+    /* L'état de la scène. Le compteur repart de zéro à chaque question : à la
+       fin, il vaut ce que ses trois sources ont rendu. */
     let rang = 0;
-    let lues = Number(elLues.textContent);
+    let consultees = 0;
     let tourne: Animation | null = null;
 
-    /* Les fiches du lot en cours qui ont une rangée affichée : six sur le
-       grand plan, quatre sur l'étroit. Si rien n'est affiché (scène dans un
-       bloc masqué), on prend tout plutôt que rien. */
-    const visibles = (): HTMLElement[] => {
-      const vues = s.affiches(cibles);
-      return vues.length > 0 ? vues : cibles;
+    const demandeCourante = (): Demande => {
+      const demande = demandes[rang % demandes.length];
+      if (!demande) throw new Error('Scène Agents : aucune demande à jouer');
+      return demande;
     };
-    const lotCourant = (): Fiche[] => lots[rang % lots.length] ?? [];
 
     /* ── Les pièces, posées d'un coup ── */
 
-    const direEtat = (nom: keyof typeof ETATS) => {
-      const etat = ETATS[nom];
-      etatAgent.dataset.etat = etat.valeur;
-      ecrireChamp(etatAgent, 'etat-long', etat.long);
-      ecrireChamp(etatAgent, 'etat-court', etat.court);
+    /* La question, vide ou entière, dans ses deux longueurs. */
+    const poserQuestion = (demande: Demande | null) => {
+      question.classList.remove('est-en-frappe');
+      question.classList.toggle('est-vide', demande === null);
+      question.classList.toggle('est-envoyee', demande !== null);
+      ecrireChamp(question, 'question', demande?.question ?? '');
+      ecrireChamp(question, 'courte', demande?.courte ?? '');
     };
 
-    const noter = (valeur: number, verdict: Verdict | null) => {
-      elNote.textContent = entier(valeur);
-      note.style.setProperty('--n', String(valeur / 100));
-      if (verdict) note.dataset.verdict = verdict;
-      else delete note.dataset.verdict;
-    };
-
-    /* La liste retrouve un lot neuf : aucune fiche lue. */
-    const charger = () => {
-      lotCourant().forEach((f, i) => {
-        const cible = cibles[i];
-        if (!cible) return;
-        cible.classList.remove('est-vise', 'est-traite');
-        delete cible.dataset.verdict;
-        cible.style.setProperty('--l', `${f.l}%`);
-        ecrireChamp(cible, 'secteur', f.valeurs[0] ?? '');
-        ecrireChamp(cible, 'taille', f.valeurs[1] ?? '');
-        ecrireChamp(cible, 'note', entier(f.note));
+    /* Les textes de la demande : ses étapes, le relevé de chaque source, ses
+       résultats. Rien n'est encore montré. */
+    const charger = (demande: Demande) => {
+      demande.etapes.forEach((etape, i) => {
+        const ligne = etapes[i];
+        if (ligne) {
+          ecrireChamp(ligne, 'texte', etape.texte);
+          ecrireChamp(ligne, 'court', etape.court);
+        }
+        const tuile = etape.source ? tuiles.get(etape.source) : undefined;
+        if (tuile) ecrireChamp(tuile, 'releve', etape.releve);
       });
-    };
-
-    const marquer = (cible: HTMLElement, f: Fiche) => {
-      cible.classList.remove('est-vise');
-      cible.classList.add('est-traite');
-      cible.dataset.verdict = f.verdict;
-    };
-
-    /* La fiche arrive sur le plan de travail : rien n'est encore lu. */
-    const poser = (f: Fiche) => {
-      lecteur.classList.remove('est-vide');
-      champ(lecteur, 'nom')?.style.setProperty('--l', `${f.l}%`);
-      criteres.forEach((critere, i) => {
-        critere.classList.remove('est-lu', 'est-parti');
-        critere.dataset.avis = f.avis[i] ?? 'non';
-        ecrireChamp(critere, 'valeur', f.valeurs[i] ?? '');
+      demande.resultats.forEach((resultat, i) => {
+        const rangee = resultats[i];
+        if (!rangee) return;
+        rangee.style.setProperty('--l', `${resultat.l}%`);
+        ecrireChamp(rangee, 'raison', resultat.raison);
       });
-      noter(0, null);
-    };
-
-    const viderLecteur = () => {
-      lecteur.classList.add('est-vide');
-      criteres.forEach((critere) => critere.classList.remove('est-lu', 'est-parti'));
-      noter(0, null);
-      aiguillage.dataset.voie = 'repos';
-    };
-
-    const remplir = (place: HTMLElement, f: Fiche) => {
-      place.style.setProperty('--l', `${f.l}%`);
-      ecrireChamp(place, 'note', entier(f.note));
-      place.classList.add('est-rempli');
-      if (f.verdict === 'approcher') place.classList.add('est-peche');
-      if (f.verdict === 'valider') place.classList.add('est-doute');
-      if (f.verdict === 'ecarter') place.classList.add('est-eteint');
-    };
-
-    const ecrireComptes = (approcher: number, ecarter: number, valider: number) => {
-      comptes.approcher.textContent = String(approcher);
-      comptes.ecarter.textContent = String(ecarter);
-      etats.approcher.dataset.etat = approcher > 0 ? 'fait' : 'attente';
-      etats.valider.dataset.etat = valider > 0 ? 'cours' : 'attente';
-      posteValider.classList.toggle('est-saisi', valider > 0);
-    };
-
-    const viderArrivees = () => {
-      toutesLesCases.forEach((place) => place.classList.remove('est-rempli', 'est-peche', 'est-doute', 'est-eteint'));
-      ecrireComptes(0, 0, 0);
     };
 
     const arreterOrbite = () => {
@@ -1326,236 +1346,257 @@ const large = (garde: boolean) => (garde ? '' : 'sm-large');
       tourne = null;
     };
 
-    /* Le repos : la liste est pleine, l'agent en veille, rien n'est rangé. */
-    const repos = () => {
+    /* Tout ce que l'agent a fait est effacé : il est en veille, rien n'est
+       consulté, la réponse est vide. */
+    const vider = () => {
       arreterOrbite();
       s.racine.classList.remove('est-abouti');
       s.eteindre();
-      charger();
-      viderLecteur();
-      viderArrivees();
-      direEtat('veille');
-      elLues.textContent = String(lues);
+      coeur.dataset.etat = 'veille';
+      satellites.forEach((satellite) => satellite.classList.remove('est-la'));
+      etapes.forEach((etape) => etape.classList.remove('est-en-cours', 'est-fait'));
+      tuiles.forEach((tuile) => tuile.classList.remove('est-sondee', 'est-consultee'));
+      resultats.forEach((rangee) => rangee.classList.remove('est-rempli'));
+      validation.classList.remove('est-attendue');
+      etatReponse.dataset.etat = 'attente';
     };
 
-    /* L'image fixe : le lot est trié. C'est aussi ce que le HTML rend sans
-       script. */
+    /* Le repos : le champ attend une question. */
+    const repos = () => {
+      vider();
+      poserQuestion(null);
+      charger(demandeCourante());
+      consultees = 0;
+      elConsultees.textContent = '0';
+    };
+
+    /* L'image fixe : la question posée, les sources consultées, la réponse
+       composée. C'est aussi ce que le HTML rend sans script. */
     const figer = () => {
-      arreterOrbite();
-      charger();
-      viderArrivees();
-      const fiches = lotCourant().slice(0, visibles().length);
-      const rangs: Record<Verdict, number> = { approcher: 0, valider: 0, ecarter: 0 };
-      fiches.forEach((f, i) => {
-        const cible = cibles[i];
-        const place = cases[f.verdict][rangs[f.verdict]];
-        rangs[f.verdict] += 1;
-        if (cible) marquer(cible, f);
-        if (place) remplir(place, f);
+      const demande = demandeCourante();
+      vider();
+      charger(demande);
+      poserQuestion(demande);
+      coeur.dataset.etat = 'actif';
+      demande.etapes.forEach((etape, i) => {
+        etapes[i]?.classList.add('est-fait');
+        if (!etape.source) return;
+        tuiles.get(etape.source)?.classList.add('est-consultee');
+        s.allumer(etape.source, true);
       });
-      ecrireComptes(rangs.approcher, rangs.ecarter, rangs.valider);
-      const derniere = fiches[fiches.length - 1];
-      if (derniere) {
-        poser(derniere);
-        criteres.forEach((critere) => critere.classList.add('est-parti'));
-        noter(derniere.note, derniere.verdict);
-        aiguillage.dataset.voie = derniere.verdict;
-      }
-      direEtat('fini');
+      resultats.forEach((rangee) => rangee.classList.add('est-rempli'));
+      validation.classList.add('est-attendue');
+      etatReponse.dataset.etat = 'fait';
+      s.allumer('question', true);
+      s.allumer('reponse', true);
       s.racine.classList.add('est-abouti');
-      s.eteindre();
-      s.allumer('entree', true);
-      if (rangs.approcher > 0) s.allumer('approcher', true);
-      if (rangs.valider > 0) s.allumer('valider', true);
-      elLues.textContent = String(lues);
+      consultees = demande.etapes.reduce((somme, etape) => somme + etape.nombre, 0);
+      elConsultees.textContent = String(consultees);
     };
 
     /* ── Les gestes ── */
 
-    /* Le passage d'une fiche par un fil : la bande se resserre dans le port
-       de départ, un grain traverse, la bande se redéploie sur sa cible. C'est
-       le `passer` du socle, à allure réglable : la rafale en a besoin. */
-    const acheminer = async ({ bande, grain, de, vers, fil, allure }: Trajet) => {
-      const ports = PORTS[fil];
-      if (!ports) throw new Error(`Scène Agents : aucun fil « ${fil} »`);
+    /* Un voyageur suit un fil, dans un sens ou dans l'autre. C'est le
+       `courir` du socle, qui ne sait aller que du départ vers l'arrivée : ici
+       tout part du centre et y revient, il faut donc pouvoir remonter. */
+    const parcourir = (voyageur: HTMLElement, fil: string, trajet: Trajet = {}): Promise<void> => {
+      const { inverse = false, duree = 520, absorbe = false } = trajet;
+      const trace = s.un<SVGPathElement>(`[data-sm-fil="${fil}"] path`);
+      const longueur = trace.getTotalLength();
+      const pas = 22;
+      return s.animer(
+        voyageur,
+        Array.from({ length: pas + 1 }, (_, n) => {
+          const p = trace.getPointAtLength((longueur * (inverse ? pas - n : n)) / pas);
+          const taille = absorbe && n === pas ? 0.3 : 1;
+          return {
+            transform: `translate(${p.x}px, ${p.y}px) scale(${taille})`,
+            opacity: n === 0 || n === pas ? 0 : 1,
+          };
+        }),
+        { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' },
+      );
+    };
+
+    /* L'agent tressaille : il vient de recevoir quelque chose, ou d'en tirer
+       une conclusion. */
+    const tressaillir = () => {
+      s.jouer(disque, [{ scale: 1 }, { scale: 1.1, offset: 0.35 }, { scale: 1 }], { duration: 420, easing: 'ease-out' });
+    };
+
+    /* La question se tape, trois lettres à la fois, dans la longueur affichée ;
+       l'autre longueur est écrite d'un coup, pour un changement de plan. */
+    const taper = async (demande: Demande) => {
+      question.classList.remove('est-vide');
+      question.classList.add('est-en-frappe');
+      const [nom, texte, autre, entiere] = s.etroit
+        ? (['courte', demande.courte, 'question', demande.question] as const)
+        : (['question', demande.question, 'courte', demande.courte] as const);
+      ecrireChamp(question, autre, entiere);
+      for (let i = 3; i < texte.length; i += 3) {
+        ecrireChamp(question, nom, texte.slice(0, i));
+        await s.attendre(42);
+      }
+      ecrireChamp(question, nom, texte);
+      await s.attendre(200);
+      question.classList.remove('est-en-frappe');
+      question.classList.add('est-envoyee');
+    };
+
+    /* L'aller-retour vers une source : la sonde part du centre, la source est
+       parcourue, la ligne trouvée s'en détache et revient en extrait. */
+    const chercher = async (source: IdSource, allure: number) => {
+      const tuile = tuiles.get(source);
+      if (!tuile) throw new Error(`Scène Agents : aucune source « ${source} »`);
+      const versAgent = TRACE_VERS_AGENT.includes(source);
+      const ligne = s.un(`[data-source="${source}"] [data-extrait]`);
+      const balayage = s.un(`[data-source="${source}"] [data-balayage]`);
+
+      /* 1. La sonde part, le fil s'allume derrière elle. */
+      s.allumer(source);
+      await parcourir(sonde, source, { inverse: versAgent, duree: 430 * allure });
+      s.port(source).classList.add('est-actif');
+
+      /* 2. La source est parcourue d'un trait. */
+      tuile.classList.add('est-sondee');
+      const corps = balayage.offsetParent instanceof HTMLElement ? balayage.offsetParent.offsetWidth : 0;
+      await s.animer(
+        balayage,
+        [
+          { transform: 'translateX(0)', opacity: 0 },
+          { opacity: 1, offset: 0.12 },
+          { opacity: 1, offset: 0.88 },
+          { transform: `translateX(${corps}px)`, opacity: 0 },
+        ],
+        { duration: 440 * allure, easing: 'ease-in-out' },
+      );
+      tuile.classList.add('est-consultee');
+      tuile.classList.remove('est-sondee');
+      await s.attendre(170 * allure);
+
+      /* 3. La ligne trouvée quitte la source et revient au centre. */
       s.enMarge(
-        s.voler(bande, de, tiret(s.lieu(s.port(ports.de))), {
-          duree: 460 * allure,
-          pose: 0.2,
+        s.voler(bandeExtrait, s.cadreDe(ligne), tiret(s.lieu(s.port(source))), {
+          duree: 300 * allure,
+          pose: 0.15,
           arrivee: 0.9,
           easing: ELAN,
-          eclot: true,
         }),
       );
-      await s.attendre(380 * allure);
-      s.enMarge(s.courir(grain, fil, { duree: 520 * allure }));
-      await s.attendre(450 * allure);
+      await s.attendre(230 * allure);
+      await parcourir(carte, source, { inverse: !versAgent, duree: 520 * allure, absorbe: true });
+      tressaillir();
+    };
+
+    /* Un extrait devient un résultat : il quitte l'orbite, descend le fil et
+       se pose dans la réponse. */
+    const composer = async (i: number) => {
+      const rangee = resultats[i];
+      const grain = grainsReponse[i];
+      const bande = bandesReponse[i];
+      if (!rangee || !grain || !bande) return;
+      satellites[i]?.classList.remove('est-la');
+      s.enMarge(s.courir(grain, 'reponse', { duree: 340 }));
+      await s.attendre(250);
+      s.port('reponse').classList.add('est-actif');
       s.enMarge(
-        s.voler(bande, tiret(s.lieu(s.port(ports.vers))), vers, {
-          duree: 680 * allure,
+        s.voler(bande, tiret(s.lieu(s.port('reponse'))), rangee, {
+          duree: 600,
           pose: 0.06,
           arrivee: 0.64,
           easing: EXPO,
           eclot: true,
         }),
       );
-      await s.attendre(400 * allure);
-    };
-
-    /* La fiche notée quitte l'agent par la voie de son verdict et se pose à
-       sa place. Une écartée voyage en gris, et son fil reste éteint. */
-    const sortir = async (i: number, f: Fiche, place: HTMLElement, allure: number, arrivees: Record<Verdict, number>) => {
-      const bande = bandes.sortie[i];
-      const grain = grains.sortie[i];
-      if (!bande || !grain) return;
-      const eteint = f.verdict === 'ecarter';
-      bande.classList.toggle('est-eteint', eteint);
-      grain.classList.toggle('est-eteint', eteint);
-      if (!eteint) s.allumer(f.verdict);
-      s.jouer(aiguillage, [{ scale: 1 }, { scale: 1.16, offset: 0.4 }, { scale: 1 }], { duration: 360 * Math.max(allure, 0.6), easing: 'ease-out' });
-      await acheminer({ bande, grain, de: note, vers: place, fil: f.verdict, allure });
-      if (!eteint) s.port(f.verdict).classList.add('est-actif');
-      remplir(place, f);
-      arrivees[f.verdict] += 1;
-      ecrireComptes(arrivees.approcher, arrivees.ecarter, arrivees.valider);
-      if (f.verdict === 'approcher') s.basculer(etats.approcher);
-      if (f.verdict === 'valider') s.basculer(etats.valider, 'cours');
+      await s.attendre(340);
+      rangee.classList.add('est-rempli');
     };
 
     async function tour() {
-      const rangees = visibles();
-      const fiches = lotCourant().slice(0, rangees.length);
-      /* Les places déjà promises, et celles où une fiche est arrivée. */
-      const promises: Record<Verdict, number> = { approcher: 0, valider: 0, ecarter: 0 };
-      const arrivees: Record<Verdict, number> = { approcher: 0, valider: 0, ecarter: 0 };
-      const sorties: Promise<void>[] = [];
-      const zoneLecture = s.affiches([fiche])[0] ?? lecteur;
+      const demande = demandeCourante();
+      const pose: Promise<void>[] = [];
 
-      await s.attendre(420);
+      await s.attendre(300);
 
-      /* L'agent se met au travail : son orbite tourne jusqu'à la fin du lot. */
-      direEtat('lit');
-      s.basculer(etatAgent, 'cours');
-      tourne = s.jouer(orbite, { rotate: ['0deg', '360deg'] }, { duration: 2400, iterations: Infinity, easing: 'linear' });
-      s.allumer('entree');
+      /* 1. La question se tape, puis descend jusqu'à l'agent, qui s'éveille :
+         son orbite tourne tant qu'il réfléchit. */
+      await taper(demande);
+      s.allumer('question');
+      await s.courir(grainQuestion, 'question', { duree: 320 });
+      coeur.dataset.etat = 'actif';
+      tressaillir();
+      tourne = s.jouer(orbite, { rotate: ['0deg', '360deg'] }, { duration: 5200, iterations: Infinity, easing: 'linear' });
+      await s.attendre(200);
 
-      for (let i = 0; i < fiches.length; i++) {
-        const f = fiches[i];
-        const cible = rangees[i];
-        const bande = bandes.entree[i];
-        const grain = grains.entree[i];
-        const place = f ? cases[f.verdict][promises[f.verdict]] : undefined;
-        if (!f || !cible || !bande || !grain || !place) continue;
-        promises[f.verdict] += 1;
-        /* La première fiche lentement, pour qu'on comprenne ; les suivantes
-           en rafale. */
-        const rafale = i > 0;
-        const allure = rafale ? 0.33 : 0.78;
+      /* 2. et 3. Le raisonnement, étape par étape. Celles qui nomment une
+         source y envoient une sonde ; la dernière se fait sur place. La
+         première sortie est lente, pour qu'on comprenne ; les suivantes vont
+         plus vite. */
+      let sorties = 0;
+      for (let i = 0; i < demande.etapes.length; i++) {
+        const etape = demande.etapes[i];
+        const ligne = etapes[i];
+        if (!etape || !ligne) continue;
+        ligne.classList.add('est-en-cours');
+        s.jouer(ligne, [{ transform: 'translateY(7px)' }, { transform: 'none' }], { duration: 380, easing: EXPO });
+        await s.attendre(sorties === 0 ? 300 : 160);
 
-        /* 1. La fiche quitte la liste et entre chez l'agent. */
-        cible.classList.add('est-vise');
-        if (!rafale) await s.attendre(260);
-        await acheminer({ bande, grain, de: cible, vers: zoneLecture, fil: 'entree', allure });
-        s.port('agent').classList.add('est-actif');
-        poser(f);
-        if (!rafale) await s.attendre(180);
-
-        /* 2. La lecture : le trait descend la fiche, chaque règle se coche
-           (ou non) quand il la traverse. */
-        if (rafale) direEtat('lit');
-        await s.lire(balai, criteres, rafale ? 210 : 860);
-
-        /* 3. La note, puis le tri : l'aiguille prend la voie du verdict. */
-        if (rafale) {
-          noter(f.note, f.verdict);
-          s.tictac(elNote, entier(f.note));
+        if (etape.source) {
+          await chercher(etape.source, sorties === 0 ? 1 : 0.7);
+          satellites[sorties]?.classList.add('est-la');
+          sorties += 1;
+          const avant = consultees;
+          consultees += etape.nombre;
+          s.enMarge(s.compter(elConsultees, avant, consultees, { format: entier, pas: 6, intervalle: 32 }));
         } else {
-          await s.attendre(140);
-          direEtat('note');
-          note.dataset.verdict = f.verdict;
-          note.style.setProperty('--n', String(f.note / 100));
-          await s.compter(elNote, 0, f.note, { format: entier });
-          await s.attendre(220);
-          direEtat('trie');
+          await s.attendre(340);
+          tressaillir();
         }
-        aiguillage.dataset.voie = f.verdict;
-        if (!rafale) await s.attendre(340);
-
-        marquer(cible, f);
-        lues += 1;
-        s.tictac(elLues, String(lues));
-        criteres.forEach((critere) => {
-          if (critere.classList.replace('est-lu', 'est-parti')) return;
-          critere.classList.add('est-parti');
-        });
-
-        /* 4. Le départ. La première fiche est suivie jusqu'au bout ; dans la
-           rafale, la suivante entre pendant que celle-ci arrive. */
-        const sortie = sortir(i, f, place, allure, arrivees);
-        if (rafale) {
-          s.enMarge(sortie);
-          sorties.push(sortie);
-          await s.attendre(60);
-        } else {
-          await sortie;
-          await s.attendre(300);
-        }
+        ligne.classList.replace('est-en-cours', 'est-fait');
+        await s.attendre(140);
       }
-      await Promise.all(sorties);
 
-      /* Le lot est trié : personne n'a rien trié à la main, et une fiche
-         attend quelqu'un. */
+      /* 4. La réponse se compose : un résultat par extrait, l'un derrière
+         l'autre, puis la ligne laissée à l'humain. */
+      s.allumer('reponse');
+      for (let i = 0; i < resultats.length; i++) {
+        const travail = composer(i);
+        s.enMarge(travail);
+        pose.push(travail);
+        await s.attendre(260);
+      }
+      await Promise.all(pose);
       arreterOrbite();
-      direEtat('fini');
-      s.basculer(etatAgent);
+      s.basculer(etatReponse);
+      await s.attendre(200);
+      validation.classList.add('est-attendue');
+      s.jouer(
+        validation,
+        [
+          { boxShadow: '0 0 0 0 color-mix(in srgb, var(--color-peche) 50%, transparent)' },
+          { boxShadow: '0 0 0 9px color-mix(in srgb, var(--color-peche) 0%, transparent)' },
+        ],
+        { duration: 1100, iterations: 2, delay: 200, easing: 'ease-out' },
+      );
       s.racine.classList.add('est-abouti');
+      /* Une réponse de plus, et personne n'a cherché à la main : zéro. */
       s.tictac(elZero, '0');
-      const enAttente = cases.valider[0];
-      if (enAttente && arrivees.valider > 0) {
-        s.jouer(
-          enAttente,
-          [
-            { boxShadow: '0 0 0 0 color-mix(in srgb, var(--color-peche) 50%, transparent)' },
-            { boxShadow: '0 0 0 9px color-mix(in srgb, var(--color-peche) 0%, transparent)' },
-          ],
-          { duration: 1100, iterations: 2, delay: 300, easing: 'ease-out' },
-        );
-      }
 
       /* Le temps de lire l'image. */
       await s.attendre(2600);
 
-      /* 5. On range : les arrivées se vident, l'agent retourne en veille, et
-         la liste laisse la place au lot suivant. */
-      s.racine.classList.remove('est-abouti');
-      s.eteindre();
-      viderArrivees();
-      viderLecteur();
-      direEtat('veille');
-      await Promise.all(
-        rangees.map((cible) =>
-          s.animer(cible, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateX(-10px)' }], {
-            duration: 220,
-            easing: ELAN,
-          }),
-        ),
-      );
-
-      /* Le raccord, invisible : au moment où les anciennes fiches ont fini de
-         sortir, les nouvelles sont chargées et entrent une à une. Quand la
-         dernière est en place, la scène est exactement à son repos. */
+      /* 5. On range : tout s'éteint d'un coup, la question s'efface. Le
+         raccord est là : la scène vide est exactement son repos, et la
+         demande suivante est chargée pendant qu'on ne voit plus rien. */
+      vider();
+      consultees = 0;
+      s.tictac(elConsultees, '0');
+      await s.animer(texteQuestion, { opacity: [1, 0] }, { duration: 300, easing: ELAN });
       rang += 1;
-      charger();
-      await Promise.all(
-        rangees.map((cible, i) =>
-          s.animer(cible, [{ opacity: 0, transform: 'translateY(-8px)' }, { opacity: 1, transform: 'none' }], {
-            duration: 340,
-            delay: i * 55,
-            easing: EXPO,
-            fill: 'backwards',
-          }),
-        ),
-      );
+      poserQuestion(null);
+      charger(demandeCourante());
+      await s.animer(texteQuestion, { opacity: [0, 1] }, { duration: 320, easing: EXPO });
+      await s.attendre(120);
     }
 
     return { figer, repos, tour };

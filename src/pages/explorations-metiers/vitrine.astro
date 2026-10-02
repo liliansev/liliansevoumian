@@ -1,0 +1,50 @@
+---
+/*
+ * /explorations-metiers/vitrine — la vitrine des trois sites, seule sur la nuit.
+ * Page de travail, hors index et hors sitemap. La vitrine y prend la largeur
+ * de la colonne de l'accueil : 1 200 px au plus, avec la même gouttière.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Vitrine from '../../components/home-sites.astro';
+import { projects } from '../../data/realisations';
+
+const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
+---
+
+<Layout title="Vitrine des sites · Explorations" description="Page de travail." noindex={true}>
+  <main id="main-content" tabindex="-1" class="essai accueil outline-none">
+    <div class="essai__colonne"><Vitrine sites={sites} class="reveal" /></div>
+    <p class="essai__retour"><a href="/#sites">Retour à l’accueil</a></p>
+  </main>
+</Layout>
+
+<style is:global>
+  html:has(.essai) {
+    --color-paper: var(--color-night-deep);
+  }
+
+  html:has(.essai) .technical-grid {
+    display: none;
+  }
+
+  .essai {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 2.5rem;
+    min-height: 100svh;
+    padding: clamp(6rem, 12vw, 8rem) var(--spacing-section-x) clamp(3rem, 6vw, 5rem);
+    background: var(--color-night-deep);
+  }
+
+  .essai__colonne {
+    width: min(100%, 1200px);
+    min-width: 0;
+  }
+
+  .essai__retour {
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+</style>

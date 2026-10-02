@@ -16,27 +16,34 @@
  * s'accumulent.
  *
  * Au troisième écran, la scène ne donne pas une réponse mais trois, à la
- * suite et en boucle, sur les MÊMES commandes : elle sert d'ouverture aux
+ * suite et en boucle, chacune sur un sujet à elle : elle sert d'ouverture aux
  * métiers détaillés plus bas dans la page, sans les répéter.
- *   1. Automatisation : le surligneur lit la page d'un trait, les lignes
- *      partent seules, le total se calcule, la facture est émise, la file
- *      d'attente se vide et le panneau s'éclaire.
- *   2. Agent IA : la facture se retire, un volet sort de derrière le bon de
- *      commande. Un trait de lecture descend la page, chaque ligne reçoit sa
- *      coche, une seule est signalée, et le curseur revient pour l'unique
- *      geste qui reste : valider le doute.
- *   3. Dashboard : les lignes quittent la page et deviennent les barres d'un
- *      tableau de bord, qui se lève devant le bon de commande rangé derrière
- *      lui. Le nombre de commandes traitées, zéro ressaisie, les dernières
- *      factures émises.
- * D'une réponse à l'autre, le plan change d'inclinaison : c'est un changement
- * de point de vue, pas de décor. Le bon de commande ne quitte jamais la scène.
+ *   1. Automatisation : le bon de commande devient une facture. Le surligneur
+ *      lit la page d'un trait, les lignes partent seules, le total se
+ *      calcule, la facture est émise, la file d'attente se vide et le panneau
+ *      s'éclaire. C'est le seul endroit de la page où il est question de
+ *      commande et de facture.
+ *   2. Agent IA : le support client. Le bon de commande et la facture sortent,
+ *      l'horloge file jusqu'à un dimanche, 23 h 47, et une conversation
+ *      s'ouvre. Un client pose sa question, l'agent va chercher la réponse
+ *      dans la base de connaissances (l'article trouvé s'allume, une bande
+ *      pêche en part et vient se poser dans la bulle), répond et cite sa
+ *      source. Puis il est 3 h 12, un autre client écrit, et c'est un outil
+ *      connecté, le CRM, que l'agent interroge. Il répond jour et nuit.
+ *   3. Dashboard : le suivi de projets d'une équipe. Le jour revient, un
+ *      tableau de bord se lève, ses cartes se distribuent dans trois colonnes
+ *      (à faire, en cours, livré), les indicateurs comptent, puis une carte
+ *      avance d'une colonne à la suivante et les indicateurs suivent.
+ * D'une réponse à l'autre, le plan change d'inclinaison, les fenêtres qui
+ * partent reculent dans le flou et l'horloge se remonte toute seule : c'est
+ * elle qui dit qu'on a changé d'heure, donc de situation.
  *
- * La scène rejoue un cas réel, celui d'Humble+, où un agent extrait les
- * données puis contrôle le client, les références et les montants, et laisse
- * à un humain la validation du cas douteux. Les références, quantités,
- * montants et compteurs sont une illustration, pas une donnée client. Le seul
- * résultat annoncé, « plus aucune ressaisie », vient du cas publié.
+ * La copie à la main et l'automatisation rejouent un cas réel, celui
+ * d'Humble+. Les références, quantités et montants sont une illustration, pas
+ * une donnée client ; le seul résultat annoncé, « plus aucune ressaisie »,
+ * vient du cas publié. L'agent de support et le suivi de projets sont des
+ * exemples : prénoms, questions, articles, outils et noms de projets sont
+ * inventés pour la scène, sans marque ni client.
  *
  * Sur téléphone et tablette, la scène n'est pas fixée : elle est posée après
  * la première phrase et déroule seule ses temps (à la main, la semaine qui
@@ -77,7 +84,7 @@ const actes: { id: string; titre: Segment[]; suite: string }[] = [
     id: 'automatiser',
     titre: [{ t: 'Ce qui se répète n’a pas' }, { t: 'besoin de vous.', mark: true }],
     suite:
-      'Une automatisation fait passer l’information, un agent IA la lit et la contrôle, un tableau de bord la montre. Chez Humble+, il n’y a plus aucune ressaisie entre le bon de commande et la facture.',
+      'Une automatisation fait passer l’information d’un outil à l’autre, un agent IA répond à vos clients jour et nuit, un tableau de bord montre où en est chaque projet. Chez Humble+, il n’y a plus aucune ressaisie entre le bon de commande et la facture.',
   },
 ];
 
@@ -104,29 +111,70 @@ const lignes = [
   { ref: 'C-0307', qte: '10', prix: '59,00', montant: 59, l: 66 },
 ];
 
-/* Le tableau de bord, troisième réponse. Cinq jours de commandes (`h` est la
-   hauteur de la barre, en pour cent ; le dernier jour est aujourd'hui), le
-   nombre de commandes traitées et les dernières factures. Tout est inventé
-   pour la scène, comme les lignes ; la première facture reprend seulement le
-   total du bon de commande qu'on vient de voir passer. La liste a une ligne
-   de plus qu'elle n'en montre : c'est celle qui sort par le bas quand une
-   nouvelle facture arrive. */
-const montantFr = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const totalBon = lignes.reduce((somme, ligne) => somme + ligne.montant, 0);
-const jours = [
-  { initiale: 'M', h: 58 },
-  { initiale: 'M', h: 74 },
-  { initiale: 'J', h: 66 },
-  { initiale: 'V', h: 88 },
-  { initiale: 'L', h: 46 },
+/* L'agent de support, deuxième réponse : deux échanges, à deux heures où
+   personne ne travaille (`minutes` est l'heure, en minutes depuis minuit).
+   `origine` dit où l'agent va chercher : dans la base de connaissances
+   (`requete` est ce qu'il y tape, `source` l'article qu'il trouve) ou dans un
+   outil connecté (`source` est alors son nom). Prénoms, questions, réponses,
+   articles et outils sont inventés pour la scène. */
+const echanges = [
+  {
+    jour: 'Dimanche',
+    heure: '23\u00a0h\u00a047',
+    minutes: 23 * 60 + 47,
+    prenom: 'Camille',
+    question: 'Comment exporter mes données\u00a0?',
+    cherche: 'Consulte la base de connaissances',
+    reponse: 'Dans Réglages\u00a0›\u00a0Export\u00a0: choisissez le format, le fichier arrive par e-mail.',
+    source: 'Exporter ses données',
+    origine: 'base',
+    requete: 'exporter mes données',
+  },
+  {
+    jour: 'Lundi',
+    heure: '3\u00a0h\u00a012',
+    minutes: 3 * 60 + 12,
+    prenom: 'Hugo',
+    /* Un outil connecté, et non l'agenda : la réservation et son agenda
+       appartiennent à la scène du bloc Automatisation, plus bas. */
+    question: 'Où en est ma demande de la semaine dernière\u00a0?',
+    cherche: 'Consulte le CRM',
+    reponse: 'Elle est en cours de traitement\u00a0: vous serez prévenu dès qu’elle est réglée.',
+    source: 'CRM',
+    origine: 'crm',
+    requete: '',
+  },
 ];
-const traitees = 214;
-const emises = [
-  { ref: 'FA-0412', montant: montantFr.format(totalBon), l: 72 },
-  { ref: 'FA-0411', montant: '512,80', l: 54 },
-  { ref: 'FA-0410', montant: '196,40', l: 84 },
-  { ref: 'FA-0409', montant: '274,10', l: 62 },
+const articles = ['Créer un compte', 'Inviter un collègue', 'Exporter ses données', 'Changer d’offre'];
+/* `trouve` est ce que l'outil répond quand l'agent l'interroge. */
+const outils = [
+  { id: 'crm', nom: 'CRM', trouve: 'Demande n°\u00a0284\u00a0: en cours', trace: 'M8 8.2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM3.4 13.2c.6-2.2 2.3-3.3 4.6-3.3s4 1.1 4.6 3.3' },
+  { id: 'messagerie', nom: 'Messagerie', trouve: '', trace: 'M2.8 4.3h10.4v7.6H2.8zM3.1 4.8L8 8.9l4.9-4.1' },
+  { id: 'agenda', nom: 'Agenda', trouve: '', trace: 'M3 4.5h10v8.5H3zM3 7.2h10M5.6 3v2.6M10.4 3v2.6' },
 ];
+
+/* Le suivi de projets, troisième réponse : trois colonnes et leurs cartes.
+   `p` est l'avancement du projet, en pour cent. Les noms sont inventés ; sur
+   le plan étroit ils deviennent des barres, comme les désignations du bon. */
+const piles = [
+  { id: 'afaire', nom: 'À faire' },
+  { id: 'cours', nom: 'En cours' },
+  { id: 'livre', nom: 'Livré' },
+];
+const projets = [
+  { nom: 'Formulaire de devis', etat: 'afaire', p: 0 },
+  { nom: 'Espace membres', etat: 'afaire', p: 0 },
+  { nom: 'Catalogue en ligne', etat: 'afaire', p: 0 },
+  { nom: 'Portail client', etat: 'cours', p: 30 },
+  { nom: 'Site vitrine', etat: 'cours', p: 45 },
+  { nom: 'Planning d’équipe', etat: 'cours', p: 60 },
+  { nom: 'Intranet', etat: 'cours', p: 75 },
+  { nom: 'Application terrain', etat: 'cours', p: 90 },
+  { nom: 'Annuaire interne', etat: 'livre', p: 100 },
+  { nom: 'Page de recrutement', etat: 'livre', p: 100 },
+  { nom: 'Demandes d’accès', etat: 'livre', p: 100 },
+];
+const compte = (etat: string) => projets.filter((projet) => projet.etat === etat).length;
 ---
 
 <section id="histoire" data-section data-story class="story relative px-[var(--spacing-section-x)]">
@@ -164,7 +212,7 @@ const emises = [
                 <div class="scene__cadre">
                 <div class="scene__plan" aria-hidden="true">
                   <div class="puces">
-                    <span class="puce">
+                    <span class="puce" data-horloge>
                       <svg class="puce__horloge" viewBox="-10 -10 20 20">
                         <circle r="8.2" />
                         <line x1="0" y1="0" x2="0" y2="-4" data-aiguille-h transform="rotate(270)" />
@@ -172,6 +220,7 @@ const emises = [
                       </svg>
                       <span data-jour>Lundi</span>
                       <b data-heure>9 h 00</b>
+                      <svg class="puce__lune" viewBox="0 0 16 16"><path d="M12.8 9.6A5.4 5.4 0 0 1 6.4 3.2a5.4 5.4 0 1 0 6.4 6.4z" /></svg>
                     </span>
                     <span class="puce" data-attente-bloc>
                       <svg viewBox="0 0 16 16"><path d="M3 5.5l5-2.5 5 2.5-5 2.5-5-2.5zM3 8l5 2.5L13 8M3 10.5L8 13l5-2.5" /></svg>
@@ -187,53 +236,6 @@ const emises = [
 
                   <div class="monde" data-monde>
                     <svg class="traces" data-traces></svg>
-
-                    <div class="fenetre fenetre--agent" data-agent>
-                      <div class="fenetre__barre">
-                        <span class="fenetre__icone fenetre__icone--app">
-                          <svg viewBox="0 0 16 16"><path d="M7 2.4l1.4 3.4 3.4 1.4-3.4 1.4L7 12 5.6 8.6 2.2 7.2l3.4-1.4L7 2.4zM12.4 10.6v3M10.9 12.1h3" /></svg>
-                        </span>
-                        <span class="fenetre__nom">Agent IA</span>
-                        <span class="agent__etat" data-agent-pastille data-etat="lecture">Lecture</span>
-                      </div>
-                      <div class="fenetre__corps">
-                        <ul class="controles">
-                          <li class="controle" data-controle="client">
-                            <span>Client</span>
-                            <b></b>
-                            <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                          </li>
-                          <li class="controle" data-controle="refs">
-                            <span><span class="mot-long">Références</span><span class="mot-court">Réf.</span></span>
-                            <b></b>
-                            <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                          </li>
-                          <li class="controle" data-controle="montants">
-                            <span>Montants</span>
-                            <b></b>
-                            <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                          </li>
-                        </ul>
-                        <div class="doute" data-doute>
-                          <div class="doute__fond">
-                            <div class="doute__carte" data-doute-carte>
-                              <div class="doute__ligne">
-                                <span class="ref" data-doute-ref></span>
-                                <i></i>
-                                <span data-doute-qte></span>
-                                <span data-doute-prix></span>
-                              </div>
-                              <span class="doute__mot" data-doute-mot>À valider par vous</span>
-                              <span class="doute__action">
-                                <span class="doute__bouton" data-doute-bouton>Valider</span>
-                                <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="resume" data-resume><span></span><span></span><span></span></div>
-                      </div>
-                    </div>
 
                     <div class="fenetre fenetre--pdf">
                       <div class="fenetre__barre">
@@ -253,26 +255,14 @@ const emises = [
                           </div>
                           <ul>
                             {lignes.map((ligne) => (
-                              <li
-                                class="doc__ligne"
-                                data-ligne-doc
-                                data-valeur={`${ligne.ref} · ${ligne.qte} · ${ligne.prix} €`}
-                                data-ref={ligne.ref}
-                                data-qte={ligne.qte}
-                                data-prix={ligne.prix}
-                              >
+                              <li class="doc__ligne" data-ligne-doc data-valeur={`${ligne.ref} · ${ligne.qte} · ${ligne.prix} €`}>
                                 <span class="ref">{ligne.ref}</span>
                                 <i style={`width: ${ligne.l}%`}></i>
                                 <span>{ligne.qte}</span>
                                 <span>{ligne.prix}</span>
-                                <svg class="avis" viewBox="0 0 16 16">
-                                  <path class="avis__ok" d="M4.4 8.4l2.4 2.4 4.8-5.2" />
-                                  <path class="avis__doute" d="M8 4.2v4.6M8 11.4v.4" />
-                                </svg>
                               </li>
                             ))}
                           </ul>
-                          <span class="lecture" data-lecture></span>
                         </div>
                       </div>
                     </div>
@@ -312,43 +302,122 @@ const emises = [
                       </div>
                     </div>
 
+                    <div class="fenetre fenetre--chat" data-chat>
+                      <div class="fenetre__barre">
+                        <span class="fenetre__icone fenetre__icone--app">
+                          <svg viewBox="0 0 16 16"><path d="M3 3.4h10v7H7.4l-3 2.4v-2.4H3v-7z" /></svg>
+                        </span>
+                        <span class="fenetre__nom">Agent de support</span>
+                        <span class="chat__etat"><i></i>En ligne · 24 h/24</span>
+                      </div>
+                      <div class="fenetre__corps">
+                        <div class="conversation" data-conversation>
+                          {echanges.map((echange, index) => (
+                            <div
+                              class:list={['echange', index === 0 && 'est-actif']}
+                              data-echange
+                              data-jour={echange.jour}
+                              data-minutes={echange.minutes}
+                              data-origine={echange.origine}
+                              data-requete={echange.requete}
+                              data-reponse={echange.reponse}
+                            >
+                              <span class="echange__quand">{echange.prenom} · {echange.jour.toLowerCase()}, {echange.heure}</span>
+                              <span class="bulle bulle--client">{echange.question}</span>
+                              <span class="bulle bulle--agent" data-bulle>
+                                <span class="bulle__cherche"><span class="points"><i></i><i></i><i></i></span>{echange.cherche}</span>
+                                <span class="bulle__texte" data-texte>{echange.reponse}</span>
+                              </span>
+                              <span class="source">Source&nbsp;: <b>{echange.source}</b></span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="fenetre fenetre--base" data-base>
+                      <div class="fenetre__barre">
+                        <span class="fenetre__icone fenetre__icone--app">
+                          <svg viewBox="0 0 16 16"><path d="M3.6 2.8h6.6a2 2 0 0 1 2 2v8.4H5.6a2 2 0 0 1-2-2V2.8zM6 6h3.6M6 8.6h3.6" /></svg>
+                        </span>
+                        <span class="fenetre__nom">Base de connaissances</span>
+                      </div>
+                      <div class="fenetre__corps">
+                        <div class="recherche">
+                          <svg viewBox="0 0 16 16"><path d="M7 11.4a4.4 4.4 0 1 0 0-8.8 4.4 4.4 0 0 0 0 8.8zM10.3 10.3l3 3" /></svg>
+                          <span data-recherche></span>
+                        </div>
+                        <ul class="articles">
+                          {articles.map((titre) => (
+                            <li class="article" data-article data-trouve={titre === echanges[0].source ? '' : undefined}>
+                              <svg viewBox="0 0 16 16"><path d="M4.4 2.6h4.8l2.4 2.4v8.4H4.4V2.6zM9.2 2.6V5h2.4" /></svg>
+                              <span>{titre}</span>
+                              <svg class="coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div class="fenetre fenetre--outils" data-outils>
+                      <div class="fenetre__barre">
+                        <span class="fenetre__icone fenetre__icone--app">
+                          <svg viewBox="0 0 16 16"><path d="M6.4 9.6l3.2-3.2M5 8L3.9 9.1a2.1 2.1 0 0 0 3 3L8 11M8 5l1.1-1.1a2.1 2.1 0 0 1 3 3L11 8" /></svg>
+                        </span>
+                        <span class="fenetre__nom">Outils connectés</span>
+                      </div>
+                      <div class="fenetre__corps">
+                        <ul class="outils">
+                          {outils.map((outil) => (
+                            <li class="outil" data-outil={outil.id} data-trouve={outil.trouve}>
+                              <svg viewBox="0 0 16 16"><path d={outil.trace} /></svg>
+                              <span>{outil.nom}</span>
+                              <span class="outil__etat" data-outil-etat>Connecté</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
                     <div class="fenetre fenetre--tableau" data-tableau>
                       <div class="fenetre__barre">
                         <span class="fenetre__icone fenetre__icone--app">
-                          <svg viewBox="0 0 16 16"><path d="M3.2 13V8.6M6.4 13V5.2M9.6 13V7.2M12.8 13V3" /></svg>
+                          <svg viewBox="0 0 16 16"><path d="M3 3h2.6v8H3V3zM6.7 3h2.6v10H6.7V3zM10.4 3H13v6h-2.6V3z" /></svg>
                         </span>
-                        <span class="fenetre__nom">Tableau de bord</span>
-                        <span class="fenetre__info">Cinq derniers jours</span>
+                        <span class="fenetre__nom">Suivi des projets</span>
+                        <span class="fenetre__info">Cette semaine</span>
                       </div>
                       <div class="fenetre__corps">
-                        <div class="chiffre">
-                          <span class="chiffre__nom">Commandes traitées</span>
-                          <b class="chiffre__valeur" data-traitees data-cible={traitees}>{traitees}</b>
-                          <div class="chiffre__suite">
-                            <span class="jeton jeton--zero">Ressaisies <b>0</b></span>
-                            <span class="jeton jeton--attente">En attente <b>0</b></span>
-                          </div>
+                        <div class="indicateurs">
+                          <span class="indicateur">
+                            <span class="indicateur__nom">En cours</span>
+                            <b data-compte="cours" data-indicateur>{compte('cours')}</b>
+                          </span>
+                          <span class="indicateur">
+                            <span class="indicateur__nom">Livrés<span class="mot-long"> cette semaine</span></span>
+                            <b data-compte="livre" data-indicateur>{compte('livre')}</b>
+                          </span>
+                          <span class="indicateur indicateur--zero">
+                            <span class="indicateur__nom">En retard</span>
+                            <b>0</b>
+                          </span>
                         </div>
-                        <div class="barres">
-                          {jours.map((jour) => (
-                            <span class="barre" data-barre style={`--h: ${jour.h}`}>
-                              <span class="barre__fut"><i></i><span class="barre__pied" data-pied></span></span>
-                              <em>{jour.initiale}</em>
-                            </span>
+                        <div class="piles">
+                          {piles.map((pile) => (
+                            <div class="pile">
+                              <span class="pile__tete">{pile.nom}<b data-compte={pile.id}>{compte(pile.id)}</b></span>
+                              <ul data-pile={pile.id}>
+                                {projets.filter((projet) => projet.etat === pile.id).map((projet) => (
+                                  <li class="carte" data-carte data-etat={projet.etat} style={`--p: ${projet.p}`}>
+                                    <i class="carte__puce"></i>
+                                    <span class="carte__nom">{projet.nom}</span>
+                                    <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+                                    <u class="carte__avance"></u>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           ))}
-                        </div>
-                        <div class="dernieres">
-                          <span class="dernieres__nom">Dernières factures</span>
-                          <ul>
-                            {emises.map((facture) => (
-                              <li class="emise" data-emise data-ref={facture.ref} data-montant={facture.montant} data-l={facture.l} style={`--l: ${facture.l}%`}>
-                                <span class="ref">{facture.ref}</span>
-                                <i></i>
-                                <span class="emise__montant">{facture.montant}&nbsp;€</span>
-                                <span class="emise__etat">Émise</span>
-                              </li>
-                            ))}
-                          </ul>
                         </div>
                       </div>
                     </div>
@@ -366,7 +435,7 @@ const emises = [
                 </div>
               </div>
 
-              <div class="scene__mode" role="group" aria-label="La même commande, de quatre façons" hidden data-mode-groupe>
+              <div class="scene__mode" role="group" aria-label="La scène, en quatre temps" hidden data-mode-groupe>
                 <button type="button" data-mode-bouton="main" aria-pressed="true">À la main</button>
                 <button type="button" data-mode-bouton="auto" aria-pressed="false" aria-label="Automatisation">
                   <span class="mot-long">Automatisation</span><span class="mot-court">Auto</span>
@@ -541,8 +610,8 @@ const emises = [
      une lueur froide en haut à droite, juste assez pour donner de la
      profondeur. Dès que la machine travaille, une lumière chaude se lève : le
      panneau s'éclaire. Elle suit ensuite ce qu'on regarde : la facture pour
-     l'automatisation, la page lue pour l'agent, tout le plan pour le tableau
-     de bord. */
+     l'automatisation, la conversation pour l'agent, tout le plan pour le
+     tableau de bord. */
   .scene__cadre {
     position: relative;
     overflow: hidden;
@@ -578,7 +647,7 @@ const emises = [
   }
 
   .scene[data-mode='agent'] .scene__cadre::before {
-    transform: translate(-15%, -11%);
+    transform: translate(-14%, -6%);
   }
 
   .scene[data-mode='tableau'] .scene__cadre::before {
@@ -678,6 +747,22 @@ const emises = [
     stroke: var(--color-peche);
   }
 
+  /* La nuit de l'agent de support : la pastille de l'heure prend la lueur
+     froide et porte une lune. */
+  .puce__lune {
+    display: none;
+  }
+
+  .puce.est-nuit {
+    border-color: color-mix(in srgb, var(--color-lueur-froide) 75%, transparent);
+  }
+
+  .puce.est-nuit .puce__lune {
+    display: block;
+    fill: color-mix(in srgb, var(--color-lueur-froide) 40%, transparent);
+    stroke: color-mix(in srgb, var(--color-lueur-froide) 45%, var(--color-ink));
+  }
+
   .puce.est-vide {
     border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
   }
@@ -690,7 +775,7 @@ const emises = [
      incliné. Tout y est dans le même repère, la perspective vient après.
      L'inclinaison est le point de vue : elle change avec la réponse montrée,
      de trois quarts pour la copie et l'automatisation, presque de face pour
-     l'agent qui lit, de l'autre côté pour le tableau de bord. */
+     la conversation de l'agent, de l'autre côté pour le tableau de bord. */
   .monde {
     --recul: 1600px;
     --rx: 8deg;
@@ -706,22 +791,20 @@ const emises = [
     transition: transform 500ms var(--ease-out-quint);
   }
 
-  /* Pour l'agent, la caméra s'approche aussi : c'est la page qu'on lit. */
   .scene[data-mode='agent'] .monde {
     --rx: 5deg;
     --ry: -4deg;
     --rz: 0.4deg;
-    --tx: 5px;
-    --ty: 66px;
-    --zoom: 1.08;
+    --tx: 0px;
+    --ty: 30px;
   }
 
   .scene[data-mode='tableau'] .monde {
     --rx: 9deg;
-    --ry: 7deg;
-    --rz: -1.1deg;
-    --tx: -10px;
-    --ty: 30px;
+    --ry: 6deg;
+    --rz: -1deg;
+    --tx: -4px;
+    --ty: 32px;
   }
 
   /* Le temps d'un changement de réponse, le plan tourne plus lentement que
@@ -752,8 +835,11 @@ const emises = [
       visibility 0s;
   }
 
+  .scene:not([data-mode='main']):not([data-mode='auto']) .fenetre--pdf,
   .scene:not([data-mode='main']):not([data-mode='auto']) .fenetre--app,
-  .scene:not([data-mode='agent']) .fenetre--agent,
+  .scene:not([data-mode='agent']) .fenetre--chat,
+  .scene:not([data-mode='agent']) .fenetre--base,
+  .scene:not([data-mode='agent']) .fenetre--outils,
   .scene:not([data-mode='tableau']) .fenetre--tableau {
     visibility: hidden;
     opacity: 0;
@@ -766,13 +852,14 @@ const emises = [
       visibility 0s 620ms;
   }
 
-  /* Derrière le tableau de bord, le bon de commande est rangé : plus petit,
-     plus terne, un peu flou. Il attend que ses lignes soient parties. */
-  .scene[data-mode='tableau'] .fenetre--pdf {
-    opacity: 0.55;
-    filter: blur(1.5px);
-    transform: translate(-12px, -22px) scale(0.92);
-    transition-delay: 520ms, 520ms, 520ms, 0s;
+  /* Les fenêtres d'une réponse n'arrivent pas d'un bloc : la principale
+     d'abord, ses voisines ensuite. */
+  .fenetre--base {
+    transition-delay: 320ms, 320ms, 320ms, 0s;
+  }
+
+  .fenetre--outils {
+    transition-delay: 440ms, 440ms, 440ms, 0s;
   }
 
   .fenetre__barre {
@@ -838,6 +925,7 @@ const emises = [
 
   /* ── Le bon de commande : un lecteur de PDF et sa page de papier ── */
   .fenetre--pdf {
+    --sortie: translate(-44px, -22px) scale(0.94);
     top: 78px;
     left: 26px;
     width: 318px;
@@ -851,39 +939,11 @@ const emises = [
   }
 
   .page {
-    position: relative;
     padding: 14px 14px 8px;
     border-radius: 6px;
     background: var(--color-feuille);
     box-shadow: 0 8px 18px -10px var(--color-night-deep);
     color: var(--color-night);
-  }
-
-  /* Le trait de lecture de l'agent : un filet de braise qui descend la page,
-     suivi de sa traîne. Le script le fait descendre ; au repos il n'existe
-     pas. */
-  .lecture {
-    position: absolute;
-    top: 0;
-    right: 5px;
-    left: 5px;
-    z-index: 2;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--color-braise);
-    box-shadow: 0 0 10px 1px color-mix(in srgb, var(--color-braise) 65%, transparent);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .lecture::before {
-    content: '';
-    position: absolute;
-    right: 0;
-    bottom: 2px;
-    left: 0;
-    height: 34px;
-    background: linear-gradient(to top, color-mix(in srgb, var(--color-peche) 50%, transparent), transparent);
   }
 
   .page__tete {
@@ -998,56 +1058,6 @@ const emises = [
   .doc__ligne.est-fait {
     opacity: 0.36;
   }
-
-  /* Contrôlée par l'agent : la ligne se teinte et reçoit sa coche, dans la
-     marge de la page. La ligne douteuse reprend la sélection froide du
-     travail à la main, parce que c'est à une main qu'elle revient. */
-  .avis {
-    position: absolute;
-    top: 50%;
-    right: -14px;
-    width: 13px;
-    height: 13px;
-    margin-top: -6.5px;
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-    fill: none;
-    stroke: var(--color-night);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0;
-    scale: 0.3;
-    transition: opacity 180ms, scale 360ms var(--ease-out-expo), background-color 220ms;
-  }
-
-  .avis__doute {
-    display: none;
-  }
-
-  .doc__ligne.est-conforme {
-    background: color-mix(in srgb, var(--color-peche) 24%, var(--color-feuille));
-  }
-
-  .doc__ligne.est-doute {
-    background: color-mix(in srgb, var(--color-lueur-froide) 18%, var(--color-feuille));
-    outline: 1px solid color-mix(in srgb, var(--color-lueur-froide) 70%, transparent);
-    outline-offset: -1px;
-  }
-
-  .doc__ligne.est-conforme .avis,
-  .doc__ligne.est-doute .avis {
-    opacity: 1;
-    scale: 1;
-  }
-
-  .doc__ligne.est-doute .avis {
-    background: var(--color-lueur-froide);
-    stroke: var(--color-ink);
-  }
-
-  .doc__ligne.est-doute .avis__ok { display: none; }
-  .doc__ligne.est-doute .avis__doute { display: inline; }
 
   /* ── La facture : l'outil dans lequel on recopie, en verre sombre ── */
   .fenetre--app {
@@ -1226,77 +1236,470 @@ const emises = [
     color: var(--color-night);
   }
 
-  /* ── L'agent : un volet qui sort de derrière le bon de commande ──
-     Il est écrit avant le PDF dans le monde, donc dessous : sa sortie le
-     ramène sous la page qu'il lit. Dedans, les contrôles reprennent le dessin
-     des lignes de la facture (en pointillé tant que rien n'est su, pleins
-     ensuite), et la carte du doute se déplie quand une ligne est signalée. */
-  .fenetre--agent {
-    --sortie: translate(-150px, 0) scale(0.96);
-    top: 132px;
-    left: 352px;
-    width: 284px;
+  /* ── L'agent de support : une conversation et ses deux sources ──
+     Plus de bon de commande ici. À gauche la conversation, à droite ce que
+     l'agent consulte pour répondre : une base de connaissances et des outils
+     connectés. La source consultée s'allume, et sa réponse rejoint la bulle. */
+  .fenetre--chat {
+    --sortie: translate(-46px, 22px) scale(0.95);
+    top: 70px;
+    left: 22px;
+    width: 352px;
     background: color-mix(in srgb, var(--color-night-deep) 74%, transparent);
     -webkit-backdrop-filter: blur(20px) saturate(1.3);
     backdrop-filter: blur(20px) saturate(1.3);
   }
 
-  .fenetre--agent .fenetre__corps {
+  .fenetre--chat .fenetre__corps {
     padding: 12px;
   }
 
-  .agent__etat {
+  /* « En ligne · 24 h/24 » : c'est ce que cette réponse doit faire lire. */
+  .chat__etat {
+    display: inline-flex;
+    align-items: center;
     flex-shrink: 0;
+    gap: 7px;
     margin-left: auto;
-    padding: 3px 10px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    padding: 3px 10px 3px 9px;
+    border: 1px solid color-mix(in srgb, var(--color-peche) 60%, transparent);
     border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
+    color: var(--color-ink);
     font-size: 11.5px;
     font-weight: 600;
     white-space: nowrap;
-    transition: background-color 220ms, color 220ms, border-color 220ms;
   }
 
-  .agent__etat[data-etat='doute'] {
-    border-color: color-mix(in srgb, var(--color-lueur-froide) 80%, transparent);
-    background: color-mix(in srgb, var(--color-lueur-froide) 26%, var(--color-night-deep));
+  .chat__etat i {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-peche) 24%, transparent);
+  }
+
+  /* La conversation a une hauteur fixe, comme une vraie fenêtre de
+     discussion : la fenêtre ne grandit pas à chaque message. */
+  .conversation {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    height: 302px;
+  }
+
+  .echange {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .echange__quand {
+    align-self: center;
+    color: var(--color-ink-low);
+    font-size: 11.5px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 260ms;
+  }
+
+  .bulle {
+    max-width: 88%;
+    padding: 7px 11px 8px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.35;
+    opacity: 0;
+    translate: 0 8px;
+    scale: 0.96;
+    transition:
+      opacity 240ms,
+      translate 420ms var(--ease-out-expo),
+      scale 420ms var(--ease-out-expo),
+      background-color 260ms,
+      border-color 260ms,
+      color 260ms;
+  }
+
+  .bulle--client {
+    border-bottom-left-radius: 4px;
+    background: color-mix(in srgb, var(--color-ink) 11%, transparent);
     color: var(--color-ink);
+    transform-origin: 0 100%;
   }
 
-  .agent__etat[data-etat='controle'] {
+  /* La bulle de l'agent a deux temps : en pointillé pêche pendant qu'il
+     cherche, pleine quand il répond. */
+  .bulle--agent {
+    align-self: flex-end;
+    border-color: color-mix(in srgb, var(--color-peche) 55%, transparent);
+    border-bottom-right-radius: 4px;
+    background: color-mix(in srgb, var(--color-peche) 10%, transparent);
+    color: var(--color-ink-mid);
+    transform-origin: 100% 100%;
+  }
+
+  .bulle__cherche {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .bulle__texte {
+    display: none;
+  }
+
+  .points {
+    display: inline-flex;
+    gap: 3px;
+  }
+
+  .points i {
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+  }
+
+  .echange.est-cherche .points i {
+    animation: recit-point 900ms ease-in-out infinite;
+  }
+
+  .echange.est-cherche .points i:nth-child(2) { animation-delay: 150ms; }
+  .echange.est-cherche .points i:nth-child(3) { animation-delay: 300ms; }
+
+  @keyframes recit-point {
+    0%, 60%, 100% { opacity: 0.35; translate: 0 0; }
+    30% { opacity: 1; translate: 0 -2px; }
+  }
+
+  .source {
+    align-self: flex-end;
+    padding: 2px 9px 3px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--color-ink-low);
+    font-size: 11.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    scale: 0.8;
+    transform-origin: 100% 50%;
+    transition: opacity 220ms, scale 360ms var(--ease-out-expo);
+  }
+
+  .source b {
+    color: var(--color-peche);
+    font-weight: 600;
+  }
+
+  .echange.est-pose .echange__quand {
+    opacity: 1;
+  }
+
+  .echange.est-pose .bulle--client,
+  .echange.est-cherche .bulle--agent {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  .echange.est-repondu .bulle--agent {
     border-color: var(--color-peche);
     background: var(--color-peche);
     color: var(--color-night);
   }
 
-  .controles {
+  .echange.est-repondu .bulle__cherche { display: none; }
+  .echange.est-repondu .bulle__texte { display: inline; }
+
+  .echange.est-source .source {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* Les deux sources. Elles reprennent le dessin des lignes de la facture :
+     discrètes au repos, pleines et pêche quand l'agent y a trouvé. */
+  .fenetre--base,
+  .fenetre--outils {
+    background: color-mix(in srgb, var(--color-night-deep) 74%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    backdrop-filter: blur(20px) saturate(1.3);
+  }
+
+  .fenetre--base {
+    --sortie: translate(48px, -20px) scale(0.95);
+    top: 84px;
+    left: 388px;
+    width: 270px;
+  }
+
+  .fenetre--outils {
+    --sortie: translate(48px, 26px) scale(0.95);
+    top: 302px;
+    left: 404px;
+    width: 254px;
+  }
+
+  .fenetre--base .fenetre__corps,
+  .fenetre--outils .fenetre__corps {
+    padding: 10px;
+  }
+
+  .fenetre--base.est-consulte,
+  .fenetre--outils.est-consulte {
+    border-color: color-mix(in srgb, var(--color-peche) 60%, transparent);
+  }
+
+  .recherche {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 27px;
+    margin-bottom: 8px;
+    padding-inline: 8px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 11%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+    color: var(--color-ink);
+    font-size: 11.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .recherche span:empty::before {
+    content: 'Rechercher';
+    color: var(--color-ink-faint);
+  }
+
+  .recherche svg,
+  .article svg,
+  .outil svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: var(--color-ink-low);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .articles,
+  .outils {
     display: grid;
     gap: 5px;
   }
 
-  .controle {
+  .article,
+  .outil {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto 12px;
+    grid-template-columns: 13px minmax(0, 1fr) auto;
     align-items: center;
     gap: 8px;
     height: 27px;
     padding-inline: 8px;
-    border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
     border-radius: 7px;
     color: var(--color-ink-mid);
     font-size: 11.5px;
     font-weight: 500;
-    transition: border-color 220ms, background-color 220ms;
+    white-space: nowrap;
+    transition: border-color 220ms, background-color 220ms, color 220ms;
   }
 
-  .controle b {
+  .article .coche {
+    width: 12px;
+    height: 12px;
+    stroke: var(--color-peche);
+    stroke-width: 2;
+    opacity: 0;
+    scale: 0.4;
+    transition: opacity 200ms, scale 320ms var(--ease-out-expo);
+  }
+
+  .outil__etat {
+    color: var(--color-ink-faint);
+    transition: color 220ms;
+  }
+
+  /* Parcouru : l'agent passe sur l'article sans s'y arrêter. */
+  .article.est-parcouru {
+    background: color-mix(in srgb, var(--color-ink) 10%, transparent);
     color: var(--color-ink);
+  }
+
+  .article.est-trouve,
+  .outil.est-interroge {
+    border-color: var(--color-peche);
+    background: color-mix(in srgb, var(--color-peche) 16%, transparent);
+    color: var(--color-ink);
+  }
+
+  .article.est-trouve svg,
+  .outil.est-interroge svg {
+    stroke: var(--color-peche);
+  }
+
+  .article.est-trouve .coche {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .outil.est-interroge .outil__etat {
+    color: var(--color-peche);
+  }
+
+  /* ── Le tableau de bord : le suivi des projets d'une équipe ──
+     Une interface métier autant qu'un tableau de bord : trois indicateurs,
+     puis trois colonnes où chaque projet est une carte. Ni lignes de facture
+     ni montants : rien ici ne rappelle la réponse Automatisation. */
+  .fenetre--tableau {
+    --sortie: translate(0, 64px) scale(0.93);
+    top: 74px;
+    left: 42px;
+    width: 598px;
+    background: color-mix(in srgb, var(--color-night-deep) 86%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    backdrop-filter: blur(20px) saturate(1.3);
+  }
+
+  .fenetre--tableau .fenetre__info {
+    font-size: 11.5px;
+  }
+
+  .fenetre--tableau .fenetre__corps {
+    display: grid;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .indicateurs,
+  .piles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .indicateur {
+    display: grid;
+    justify-items: start;
+    gap: 5px;
+    padding: 9px 12px 11px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 11%, transparent);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+  }
+
+  .indicateur__nom {
+    color: var(--color-ink-low);
+    font-size: 11.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .indicateur b {
+    color: var(--color-ink);
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  /* « En retard 0 » : le zéro qu'on vient chercher, en pêche. */
+  .indicateur--zero {
+    border-color: color-mix(in srgb, var(--color-peche) 60%, transparent);
+  }
+
+  .indicateur--zero b {
+    color: var(--color-peche);
+  }
+
+  .pile {
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    padding: 8px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-ink) 3%, transparent);
+  }
+
+  .pile__tete {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 2px;
+    color: var(--color-ink-mid);
+    font-size: 11.5px;
     font-weight: 600;
   }
 
-  .controle svg,
-  .doute__action svg {
+  .pile__tete b {
+    color: var(--color-ink-faint);
+    font-weight: 500;
+  }
+
+  /* Cinq cartes de haut : la place qu'il faut à la colonne la plus pleine,
+     pour que la fenêtre ne bouge pas quand une carte change de colonne. */
+  .pile ul {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    height: calc(5 * 30px + 4 * 5px);
+  }
+
+  /* Une carte, un projet. En pointillé tant qu'il attend ; son filet pêche
+     dit où il en est ; livré, il reçoit sa coche. */
+  .carte {
+    position: relative;
+    display: grid;
+    grid-template-columns: 8px minmax(0, 1fr) 12px;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding-inline: 8px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: 7px;
+    background: var(--color-surface-high);
+    color: var(--color-ink);
+    font-size: 11.5px;
+    font-weight: 500;
+    opacity: 0;
+    translate: 0 16px;
+    transition:
+      opacity 280ms,
+      translate 520ms var(--ease-out-expo),
+      border-color 260ms,
+      color 260ms,
+      box-shadow 260ms;
+  }
+
+  .carte.est-la {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .carte__nom {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .carte__puce {
+    width: 8px;
+    height: 8px;
+    border: 1.5px solid var(--color-peche);
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    transition: background-color 260ms, border-color 260ms;
+  }
+
+  .carte svg {
     width: 12px;
     height: 12px;
     fill: none;
@@ -1309,370 +1712,41 @@ const emises = [
     transition: opacity 200ms, scale 320ms var(--ease-out-expo);
   }
 
-  .controle[data-ton='cours'],
-  .controle[data-ton='ok'] {
-    border-style: solid;
-    border-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
-    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
-  }
-
-  .controle[data-ton='ok'] svg {
-    opacity: 1;
-    scale: 1;
-  }
-
-  .controle[data-ton='doute'] {
-    border-style: solid;
-    border-color: color-mix(in srgb, var(--color-lueur-froide) 70%, transparent);
-    background: color-mix(in srgb, var(--color-lueur-froide) 16%, transparent);
-  }
-
-  .mot-court {
-    display: none;
-  }
-
-  /* La carte du doute : repliée tant que l'agent n'a rien à soumettre. */
-  .doute {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 460ms var(--ease-out-expo);
-  }
-
-  .doute.est-ouvert {
-    grid-template-rows: 1fr;
-  }
-
-  .doute__fond {
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .doute__carte {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px;
-    margin-top: 9px;
-    padding: 8px;
-    border: 1px solid color-mix(in srgb, var(--color-lueur-froide) 70%, transparent);
-    border-radius: 9px;
-    background: color-mix(in srgb, var(--color-lueur-froide) 16%, transparent);
-    font-size: 11.5px;
-    font-weight: 500;
-    opacity: 0;
-    translate: 0 -8px;
-    transition:
-      opacity 300ms,
-      translate 460ms var(--ease-out-expo),
-      border-color 260ms,
-      background-color 260ms;
-  }
-
-  .doute.est-ouvert .doute__carte {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .doute__ligne {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) 28px 52px;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .doute__ligne .ref {
-    font-weight: 600;
-  }
-
-  .doute__ligne i {
-    width: 62%;
-    height: 5px;
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--color-ink) 24%, transparent);
-  }
-
-  .doute__ligne span:nth-of-type(n + 2) {
-    text-align: right;
-  }
-
-  .doute__mot {
-    color: var(--color-ink-mid);
-  }
-
-  .doute__action {
-    display: grid;
-    align-items: center;
-    justify-items: end;
-  }
-
-  .doute__action > * {
-    grid-area: 1 / 1;
-  }
-
-  .doute__bouton {
-    padding: 4px 13px;
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-    color: var(--color-night);
-    font-weight: 600;
-    transition: opacity 200ms, scale 200ms;
-  }
-
-  .doute.est-valide .doute__carte {
-    border-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
-    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
-  }
-
-  .doute.est-valide .doute__mot {
-    color: var(--color-ink);
-  }
-
-  .doute.est-valide .doute__bouton {
-    opacity: 0;
-    scale: 0.8;
-  }
-
-  .doute.est-valide .doute__action svg {
-    opacity: 1;
-    scale: 1;
-  }
-
-  /* Le compte rendu de l'agent, en une ligne. */
-  .resume {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    padding-top: 9px;
-    border-top: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
-    color: var(--color-ink-mid);
-    font-size: 11.5px;
-    font-weight: 500;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 320ms;
-  }
-
-  .resume.est-la {
-    opacity: 1;
-  }
-
-  .resume span:empty {
-    display: none;
-  }
-
-  .resume span + span::before {
-    content: '·';
-    margin-inline: 6px;
-    color: var(--color-ink-faint);
-    font-weight: 500;
-  }
-
-  .resume [data-ton='doute'] {
-    color: color-mix(in srgb, var(--color-lueur-froide) 45%, var(--color-ink));
-    font-weight: 600;
-  }
-
-  .resume [data-ton='ok'] {
-    color: var(--color-peche);
-    font-weight: 600;
-  }
-
-  /* ── Le tableau de bord : les mêmes commandes, vues d'en haut ──
-     Il se lève devant le bon de commande. Le grand nombre, les barres par
-     jour (celle d'aujourd'hui en pêche, la dernière), et les factures émises
-     qui arrivent en haut de la liste. */
-  .fenetre--tableau {
-    --sortie: translate(0, 64px) scale(0.93);
-    top: 128px;
-    left: 104px;
-    width: 544px;
-    background: color-mix(in srgb, var(--color-night-deep) 88%, transparent);
-    -webkit-backdrop-filter: blur(20px) saturate(1.3);
-    backdrop-filter: blur(20px) saturate(1.3);
-  }
-
-  .fenetre--tableau .fenetre__corps {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 236px;
-    gap: 14px 20px;
-    padding: 14px;
-  }
-
-  .chiffre {
-    display: grid;
-    align-content: start;
-    justify-items: start;
-    gap: 7px;
-  }
-
-  .chiffre__nom,
-  .dernieres__nom {
-    color: var(--color-ink-low);
-    font-size: 11.5px;
-    font-weight: 500;
-  }
-
-  .chiffre__valeur {
-    color: var(--color-ink);
-    font-size: 60px;
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    transition: color 500ms;
-  }
-
-  /* Tant que les lignes ne sont pas arrivées, le compteur est à zéro et
-     s'efface : il s'allume en se mettant à compter. */
-  .fenetre--tableau.est-vide .chiffre__valeur {
-    color: color-mix(in srgb, var(--color-ink) 26%, transparent);
-  }
-
-  .chiffre__suite {
-    display: flex;
-    gap: 6px;
-    margin-top: 9px;
-  }
-
-  .jeton {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 25px;
-    padding-inline: 10px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
-    border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
-    font-size: 11.5px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .jeton b {
-    color: var(--color-ink);
-    font-weight: 600;
-  }
-
-  .jeton--zero {
-    border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
-  }
-
-  .jeton--zero b {
-    color: var(--color-peche);
-  }
-
-  .barres {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
-    height: 140px;
-  }
-
-  .barre {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: 6px;
-  }
-
-  .barre__fut {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
-  }
-
-  .barre__fut i {
-    width: 100%;
-    height: calc((var(--h) + var(--plus, 0)) * 1%);
-    border-radius: 5px 5px 0 0;
-    background: color-mix(in srgb, var(--color-ink) 20%, transparent);
-    transform: scaleY(0);
-    transform-origin: 50% 100%;
-    transition: transform 780ms var(--ease-out-expo), height 420ms var(--ease-out-quint);
-  }
-
-  .barre.est-monte .barre__fut i {
-    transform: scaleY(1);
-  }
-
-  .barre:last-child .barre__fut i {
-    background: var(--color-peche);
-  }
-
-  /* Le pied de la barre : là où se pose la ligne venue du bon de commande. */
-  .barre__pied {
+  .carte__avance {
     position: absolute;
-    right: 0;
     bottom: 0;
     left: 0;
-    height: 4px;
-  }
-
-  .barre em {
-    color: var(--color-ink-faint);
-    font-size: 11.5px;
-    font-style: normal;
-    font-weight: 500;
-    text-align: center;
-  }
-
-  .barre:last-child em {
-    color: var(--color-ink);
-  }
-
-  .dernieres {
-    grid-column: 1 / -1;
-    display: grid;
-    gap: 7px;
-  }
-
-  /* Trois factures visibles ; la quatrième attend sous le bord, coupée. */
-  .dernieres ul {
-    display: grid;
-    gap: 5px;
-    height: calc(3 * 27px + 2 * 5px);
-    overflow: hidden;
-  }
-
-  .emise {
-    display: grid;
-    grid-template-columns: 58px minmax(0, 1fr) auto auto;
-    align-items: center;
-    gap: 10px;
-    height: 27px;
-    padding-inline: 8px 5px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
-    border-radius: 7px;
-    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
-    font-size: 11.5px;
-    font-weight: 500;
-    opacity: 0;
-    translate: -12px 0;
-    transition: opacity 300ms, translate 480ms var(--ease-out-expo);
-  }
-
-  .emise.est-la {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .emise .ref {
-    font-weight: 600;
-  }
-
-  .emise i {
-    width: var(--l);
-    height: 5px;
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--color-ink) 24%, transparent);
-  }
-
-  .emise__etat {
-    padding: 2px 9px;
-    border-radius: var(--radius-full);
+    width: calc(var(--p) * 1%);
+    height: 2px;
     background: var(--color-peche);
-    color: var(--color-night);
-    font-weight: 600;
+    text-decoration: none;
+    transition: width 640ms var(--ease-out-quint);
+  }
+
+  .carte[data-etat='afaire'] {
+    border-style: dashed;
+    color: var(--color-ink-mid);
+  }
+
+  .carte[data-etat='afaire'] .carte__puce {
+    border-color: var(--color-ink-faint);
+    background: transparent;
+  }
+
+  .carte[data-etat='livre'] {
+    color: var(--color-ink-mid);
+  }
+
+  .carte[data-etat='livre'] svg {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* La carte qui change de colonne passe au-dessus des autres. */
+  .carte.en-vol {
+    z-index: 2;
+    border-color: var(--color-peche);
+    box-shadow: 0 14px 24px -12px var(--color-night-deep);
   }
 
   /* Les trajets du curseur laissent une trace : à force, on voit le geste se
@@ -1695,16 +1769,16 @@ const emises = [
     stroke-linecap: round;
   }
 
-  /* Le fil qui relie la ligne douteuse à la carte qui la soumet. */
-  .traces :global(path.fil-doute) {
-    stroke: var(--color-lueur-froide);
+  /* Le fil qui relie la source consultée à la conversation. */
+  .traces :global(path.fil-source) {
+    stroke: var(--color-peche);
     stroke-width: 1.4;
     stroke-dasharray: 3 4;
   }
 
   /* En automatique, c'est la ligne elle-même qui part : sa bande pêche quitte la
-     page et vient se poser dans la facture. Pour le tableau de bord, la même
-     bande va se poser au pied d'une barre, qui monte. */
+     page et vient se poser dans la facture. Pour l'agent de support, la même
+     bande part de la source consultée et vient se poser dans sa bulle. */
   .bande {
     position: absolute;
     z-index: 4;
@@ -1774,8 +1848,8 @@ const emises = [
     scale: 1;
   }
 
-  /* La commande : la même commande, de quatre façons. Le travail à la main,
-     puis les trois réponses. Le récit la règle tout seul, et elle dit toujours
+  /* La commande de la scène, en quatre temps : le travail à la main, puis
+     les trois réponses. Le récit la règle tout seul, et elle dit toujours
      où en est la scène ; on peut aussi la pousser à la main. Le travail à la
      main s'allume en blanc, les trois réponses en pêche. */
   .scene__mode {
@@ -1814,6 +1888,12 @@ const emises = [
 
   .scene__mode button:not([data-mode-bouton='main'])[aria-pressed='true'] {
     background: var(--color-peche);
+  }
+
+  /* Un libellé a parfois deux longueurs : la courte ne sort que là où la
+     longue ne tient plus. */
+  .mot-court {
+    display: none;
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -1887,7 +1967,9 @@ const emises = [
        trop cher pendant le défilement : les fenêtres deviennent opaques. */
     .fenetre--pdf,
     .fenetre--app,
-    .fenetre--agent,
+    .fenetre--chat,
+    .fenetre--base,
+    .fenetre--outils,
     .fenetre--tableau,
     .puce {
       -webkit-backdrop-filter: none;
@@ -1896,7 +1978,9 @@ const emises = [
 
     .fenetre--pdf { background: var(--color-surface-high); }
     .fenetre--app,
-    .fenetre--agent,
+    .fenetre--chat,
+    .fenetre--base,
+    .fenetre--outils,
     .fenetre--tableau { background: color-mix(in srgb, var(--color-night-deep) 94%, var(--color-ink)); }
     .puce { background: var(--color-night-deep); }
 
@@ -1948,23 +2032,20 @@ const emises = [
       --ty: 6px;
     }
 
-    /* Le volet de l'agent descend plus bas que la facture : le plan remonte
-       d'autant, sans s'approcher (il n'y a pas la place). */
     .scene[data-mode='agent'] .monde {
       --rx: 4deg;
-      --ry: -3deg;
+      --ry: -2deg;
       --rz: 0.3deg;
-      --tx: 2px;
-      --ty: -4px;
-      --zoom: 1;
+      --tx: 0px;
+      --ty: 18px;
     }
 
     .scene[data-mode='tableau'] .monde {
-      --rx: 7deg;
-      --ry: 5deg;
-      --rz: -0.8deg;
-      --tx: -2px;
-      --ty: 12px;
+      --rx: 6deg;
+      --ry: 3deg;
+      --rz: -0.6deg;
+      --tx: 0px;
+      --ty: 24px;
     }
 
     .fenetre { border-radius: 10px; }
@@ -2044,158 +2125,177 @@ const emises = [
       transform-origin: 100% 0;
     }
 
-    /* La marge de la page est trop mince pour la coche : pendant que l'agent
-       lit, la page lui fait de la place à droite. */
-    .page {
-      transition: padding-right 320ms var(--ease-out-quint);
+    /* L'agent de support. Une seule question à l'écran à la fois, et les
+       deux sources ne sont plus des fenêtres mais des pastilles sous la
+       conversation : la base de connaissances, puis les outils. Les bulles
+       gardent le plus grand corps du plan étroit : c'est elles qu'on lit. */
+    .fenetre--chat {
+      --sortie: translate(-28px, 14px) scale(0.95);
+      top: 46px;
+      left: 10px;
+      width: 320px;
     }
 
-    .scene[data-mode='agent'] .page {
-      padding-right: 19px;
-    }
+    .fenetre--chat .fenetre__corps { padding: 9px; }
 
-    /* La colonne des désignations y perd quelques unités : son intitulé se
-       coupe proprement au lieu de monter sur celui d'à côté. */
-    .scene[data-mode='agent'] .page .colonnes span:nth-child(2) {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .avis {
-      right: -15px;
-      width: 11px;
-      height: 11px;
-      margin-top: -5.5px;
-    }
-
-    .lecture::before { height: 26px; }
-
-    .scene[data-mode='tableau'] .fenetre--pdf {
-      transform: translate(-4px, -8px) scale(0.94);
-    }
-
-    /* L'agent, à la place de la facture. Il passe au-dessus du bon de
-       commande, dont il recouvre le coin : ici le volet arrive par la droite.
-       Les trois contrôles tiennent sur une ligne, sans leur décompte. */
-    .fenetre--agent {
-      --sortie: translate(40px, 14px) scale(0.95);
-      top: 204px;
-      left: 98px;
-      z-index: 1;
-      width: 234px;
-    }
-
-    .fenetre--agent .fenetre__corps { padding: 8px; }
-
-    /* Les corps du volet et du tableau de bord sont à 10,5 unités : à
-       320 px de large le plan est réduit d'un cinquième, et 10 passerait
-       sous les 8 px à l'écran. */
-    .agent__etat {
-      padding: 2px 8px;
-      font-size: 10.5px;
-    }
-
-    .controles {
-      display: flex;
-    }
-
-    .controle {
-      flex: 1 1 auto;
-      grid-template-columns: minmax(0, 1fr) 10px;
-      gap: 4px;
-      height: 23px;
-      padding-inline: 6px;
-      font-size: 10.5px;
-    }
-
-    .controle b { display: none; }
-    .controle svg,
-    .doute__action svg { width: 10px; height: 10px; }
-    .controle .mot-long { display: none; }
-    .controle .mot-court { display: inline; }
-
-    .doute__carte {
+    .chat__etat {
       gap: 6px;
-      margin-top: 6px;
-      padding: 5px 5px 5px 7px;
+      padding: 2px 8px 2px 7px;
       font-size: 10.5px;
     }
 
-    .doute__ligne {
-      grid-column: 1;
-      grid-template-columns: 40px minmax(0, 1fr) 18px 40px;
+    .conversation { height: 160px; }
+
+    .echange {
+      display: none;
       gap: 5px;
     }
 
-    .doute__mot { display: none; }
-    .doute__bouton { padding: 3px 10px; }
+    .echange.est-actif { display: flex; }
+    .echange__quand,
+    .source { font-size: 10.5px; }
 
-    .resume {
-      margin-top: 6px;
-      padding-top: 5px;
+    .bulle {
+      max-width: 88%;
+      padding: 6px 9px 7px;
+      border-radius: 11px;
+      font-size: 11.5px;
+    }
+
+    .fenetre--base {
+      --sortie: translate(-18px, 26px) scale(0.95);
+      top: 264px;
+      left: 10px;
+      width: auto;
+      border-radius: var(--radius-full);
+    }
+
+    .fenetre--base .fenetre__barre {
+      height: 28px;
+      padding-inline: 6px 11px;
+      border-bottom: 0;
+    }
+
+    .fenetre--base .fenetre__icone { border-radius: var(--radius-full); }
+    .fenetre--base .fenetre__corps { display: none; }
+
+    .fenetre--base.est-trouve {
+      border-color: var(--color-peche);
+    }
+
+    /* Les outils n'ont plus de fenêtre : il ne reste que leurs pastilles. */
+    .fenetre--outils {
+      --sortie: translate(22px, 26px) scale(0.95);
+      top: 264px;
+      left: 178px;
+      width: auto;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .fenetre--outils .fenetre__barre { display: none; }
+    .fenetre--outils .fenetre__corps { padding: 0; }
+
+    .outils {
+      display: flex;
+      gap: 6px;
+    }
+
+    .outil {
+      grid-template-columns: 12px auto;
+      gap: 5px;
+      height: 30px;
+      padding-inline: 8px 11px;
+      border-radius: var(--radius-full);
+      background: color-mix(in srgb, var(--color-night-deep) 94%, var(--color-ink));
       font-size: 10.5px;
     }
 
-    .resume span + span::before { margin-inline: 4px; }
-
-    /* Le tableau de bord : le même dessin, deux factures au lieu de trois et
-       une seule pastille sous le grand nombre. */
-    .fenetre--tableau {
-      --sortie: translate(0, 40px) scale(0.94);
-      top: 86px;
-      left: 18px;
-      width: 306px;
+    .outil.est-interroge {
+      background: color-mix(in srgb, var(--color-peche) 18%, var(--color-night-deep));
     }
 
-    .fenetre--tableau .fenetre__corps {
-      grid-template-columns: minmax(0, 1fr) 122px;
-      gap: 9px 10px;
-      padding: 10px;
+    .outil svg {
+      width: 12px;
+      height: 12px;
     }
 
-    .chiffre { gap: 5px; }
-
-    .chiffre__nom,
-    .dernieres__nom,
-    .jeton,
-    .barre em,
-    .emise {
-      font-size: 10.5px;
-    }
-
-    .chiffre__valeur { font-size: 40px; }
-    .chiffre__suite { margin-top: 5px; }
-
-    .jeton {
-      height: 22px;
-      padding-inline: 8px;
-    }
-
-    .jeton--attente {
+    /* Un seul outil sur ce plan, celui que l'agent interroge : avec deux, la
+       seconde pastille touchait le bord du cadre et s'y rognait. */
+    .outil__etat,
+    .outil:nth-child(n + 2) {
       display: none;
     }
 
-    .dernieres ul {
-      height: calc(2 * 24px + 5px);
+    /* Le suivi de projets : le même dessin, plus serré. Les noms des projets
+       seraient illisibles à cette taille, ils deviennent des barres. */
+    .fenetre--tableau {
+      --sortie: translate(0, 40px) scale(0.94);
+      top: 46px;
+      left: 10px;
+      width: 320px;
     }
 
-    .barres {
+    .fenetre--tableau .fenetre__corps {
+      gap: 8px;
+      padding: 9px;
+    }
+
+    .indicateurs,
+    .piles { gap: 6px; }
+
+    .indicateur {
+      gap: 3px;
+      padding: 6px 8px 8px;
+      border-radius: 8px;
+    }
+
+    .indicateur__nom,
+    .pile__tete,
+    .fenetre--tableau .fenetre__info { font-size: 10.5px; }
+
+    .indicateur .mot-long { display: none; }
+    .indicateur b { font-size: 22px; }
+
+    .pile {
       gap: 5px;
-      height: 92px;
+      padding: 6px;
+      border-radius: 8px;
     }
 
-    .barre { gap: 4px; }
-    .barre__fut i { border-radius: 4px 4px 0 0; }
-    .dernieres { gap: 5px; }
-
-    .emise {
-      grid-template-columns: 44px minmax(0, 1fr) auto auto;
-      gap: 6px;
-      height: 24px;
-      padding-inline: 6px 4px;
+    .pile ul {
+      gap: 4px;
+      height: calc(5 * 16px + 4 * 4px);
     }
 
-    .emise__etat { padding: 1px 7px; }
+    .carte {
+      grid-template-columns: 6px minmax(0, 1fr) 9px;
+      gap: 5px;
+      height: 16px;
+      padding-inline: 5px;
+      border-radius: 5px;
+    }
+
+    .carte__puce {
+      width: 6px;
+      height: 6px;
+    }
+
+    .carte__nom {
+      width: 78%;
+      height: 4px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--color-ink) 24%, transparent);
+      font-size: 0;
+    }
+
+    .carte svg {
+      width: 9px;
+      height: 9px;
+    }
   }
 
   /* Sous 375 px, « Automatisation » ne tient plus à côté des trois autres :
@@ -2207,7 +2307,7 @@ const emises = [
   }
 
   /* Sans mouvement, on passe d'une image fixe à l'autre : ni caméra, ni
-     fenêtre qui glisse, ni barre qui monte. */
+     fenêtre qui glisse, ni bulle qui se pose, ni carte qui avance. */
   @media (prefers-reduced-motion: reduce) {
     .doc__ligne::before,
     .facture__ligne i,
@@ -2216,18 +2316,22 @@ const emises = [
     .scene__cadre::before,
     .monde,
     .scene[data-mode] .fenetre[class],
-    .page,
-    .avis,
-    .controle svg,
-    .doute,
-    .doute__carte,
-    .doute__bouton,
-    .doute__action svg,
-    .resume,
-    .barre__fut i,
-    .chiffre__valeur,
-    .emise {
+    .bulle,
+    .echange__quand,
+    .source,
+    .article,
+    .article .coche,
+    .outil,
+    .indicateur b,
+    .carte,
+    .carte svg,
+    .carte__puce,
+    .carte__avance {
       transition: none;
+    }
+
+    .scene .echange.est-cherche .points i {
+      animation: none;
     }
   }
 </style>
@@ -2242,11 +2346,10 @@ const emises = [
    */
   const NS = 'http://www.w3.org/2000/svg';
   const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-  const INITIALES = ['L', 'M', 'M', 'J', 'V'];
   const ATTENTE_DEPART = 23;
 
-  /* Les quatre façons de traiter la même commande : à la main, puis les trois
-     réponses, dans l'ordre où la scène les enchaîne. */
+  /* Les quatre états de la scène : la copie à la main, puis les trois
+     réponses, dans l'ordre où elle les enchaîne. */
   const MODES = ['main', 'auto', 'agent', 'tableau'] as const;
   type Mode = (typeof MODES)[number];
   const estMode = (v: string | undefined): v is Mode => MODES.some((m) => m === v);
@@ -2258,8 +2361,8 @@ const emises = [
   type Temps = { acte: number; mode: Mode; mini: number; plafond: number; tenue: number };
   const REPONSES: Temps[] = [
     { acte: 3, mode: 'auto', mini: 5200, plafond: 10500, tenue: 1500 },
-    { acte: 3, mode: 'agent', mini: 6000, plafond: 9500, tenue: 1500 },
-    { acte: 3, mode: 'tableau', mini: 5600, plafond: 9000, tenue: 1500 },
+    { acte: 3, mode: 'agent', mini: 7000, plafond: 12500, tenue: 1400 },
+    { acte: 3, mode: 'tableau', mini: 5600, plafond: 9500, tenue: 1150 },
   ];
   /* En une colonne : à la main, la semaine qui file, puis les trois réponses. */
   const DEROULE: Temps[] = [
@@ -2272,22 +2375,21 @@ const emises = [
     main: 'À la main : chaque ligne du bon de commande est recopiée dans la facture, et les commandes en attente s’accumulent.',
     auto: 'Automatisation : les lignes passent seules du bon de commande à la facture, et il ne reste aucune commande en attente.',
     agent:
-      'Agent IA : un agent lit le bon de commande, contrôle le client, les références et les montants, coche les lignes conformes et vous laisse valider la seule ligne douteuse.',
+      'Agent IA : un agent de support répond à un client un dimanche à 23 h 47, puis à un autre à 3 h 12. Il trouve la réponse dans la base de connaissances ou dans un outil connecté, le CRM, et cite sa source.',
     tableau:
-      'Dashboard : les mêmes commandes dans un tableau de bord, avec le nombre de commandes traitées, zéro ressaisie et les dernières factures émises.',
+      'Dashboard : le suivi des projets d’une équipe, avec le nombre de projets en cours, livrés cette semaine et en retard, et trois colonnes où chaque projet avance de « à faire » à « livré ».',
   };
 
-  type EtatAgent = 'lecture' | 'doute' | 'controle';
-  const ETATS_AGENT: Record<EtatAgent, string> = { lecture: 'Lecture', doute: '1 à valider', controle: 'Contrôlé' };
-
-  /* Les factures qui arrivent ensuite dans le tableau de bord : des montants
-     d'illustration, comme ceux du balisage. */
-  type Emise = { ref: string; montant: string; l: number };
-  const SUIVANTES = [
-    { montant: '268,40', l: 62 },
-    { montant: '431,00', l: 80 },
-    { montant: '189,90', l: 48 },
-    { montant: '527,60', l: 70 },
+  /* Les colonnes du suivi de projets, et l'ordre dans lequel les projets y
+     avancent : un livré, un lancé, et encore une fois. */
+  const ETATS = ['afaire', 'cours', 'livre'] as const;
+  type Etat = (typeof ETATS)[number];
+  const etatDe = (v: string | undefined): Etat => ETATS.find((e) => e === v) ?? 'afaire';
+  const MOUVEMENTS: [Etat, Etat][] = [
+    ['cours', 'livre'],
+    ['afaire', 'cours'],
+    ['cours', 'livre'],
+    ['afaire', 'cours'],
   ];
 
   const racine = document.querySelector<HTMLElement>('[data-story]');
@@ -2317,40 +2419,32 @@ const emises = [
     const aigMin = un<SVGLineElement>('[data-aiguille-min]');
     const aigH = un<SVGLineElement>('[data-aiguille-h]');
     const bandes = tous('.bande');
-    /* L'agent : son trait de lecture, sa pastille, ses trois contrôles, la
-       carte du doute et le compte rendu. */
-    const faisceau = un('[data-lecture]');
-    const pastilleAgent = un('[data-agent-pastille]');
-    const controles = {
-      client: un('[data-controle="client"]'),
-      refs: un('[data-controle="refs"]'),
-      montants: un('[data-controle="montants"]'),
+    const puceHorloge = un('[data-horloge]');
+    /* L'agent de support : la conversation et ses échanges, la base de
+       connaissances (sa recherche, ses articles) et les outils connectés. */
+    const fenChat = un('[data-chat]');
+    const conversation = un('[data-conversation]');
+    const echanges = tous('[data-echange]');
+    const fenBase = un('[data-base]');
+    const requete = un('[data-recherche]');
+    const articles = tous('[data-article]');
+    const fenOutils = un('[data-outils]');
+    const outils = tous('[data-outil]');
+    /* Le suivi de projets : les trois colonnes, les cartes et les deux
+       indicateurs qui comptent. Le balisage porte l'état de départ ; le
+       script le relit pour savoir où revenir. */
+    const piles: Record<Etat, HTMLElement> = {
+      afaire: un('[data-pile="afaire"]'),
+      cours: un('[data-pile="cours"]'),
+      livre: un('[data-pile="livre"]'),
     };
-    const volet = un('[data-agent]');
-    const doute = un('[data-doute]');
-    const douteCarte = un('[data-doute-carte]');
-    const douteRef = un('[data-doute-ref]');
-    const douteQte = un('[data-doute-qte]');
-    const doutePrix = un('[data-doute-prix]');
-    const douteMot = un('[data-doute-mot]');
-    const douteBouton = un('[data-doute-bouton]');
-    const resume = un('[data-resume]');
-    const resumeMots = [...resume.querySelectorAll<HTMLElement>('span')];
-    /* Le tableau de bord : le grand nombre, les barres et leurs pieds, les
-       dernières factures. Le balisage porte l'état d'arrivée ; le script le
-       relit pour savoir où revenir. */
-    const tableau = un('[data-tableau]');
-    const elTraitees = un('[data-traitees]');
-    const TRAITEES = Number(elTraitees.dataset.cible ?? 0);
-    const barres = tous('[data-barre]');
-    const pieds = barres.map((b) => b.querySelector<HTMLElement>('[data-pied]')!);
-    const emises = tous('[data-emise]');
-    const departEmises: Emise[] = emises.map((e) => ({
-      ref: e.dataset.ref ?? '',
-      montant: e.dataset.montant ?? '',
-      l: Number(e.dataset.l ?? 60),
+    const cartes = tous('[data-carte]');
+    const departCartes = cartes.map((carte) => ({
+      carte,
+      etat: etatDe(carte.dataset.etat),
+      p: carte.style.getPropertyValue('--p'),
     }));
-    const premierNumero = Number((departEmises[0]?.ref ?? '').replace(/\D/g, ''));
+    const indicateurs = tous('[data-indicateur]');
     const boutons = tous('[data-mode-bouton]');
     const annonce = scene.querySelector<HTMLElement>('[data-annonce]');
     const titres = [...racine.querySelectorAll<HTMLElement>('.acte')].map((acte) => ({
@@ -2362,6 +2456,8 @@ const emises = [
     /* En une colonne, la scène n'est plus liée au défilement : elle déroule
        seule ses temps. */
     const colonne = window.matchMedia('(max-width: 1023px)');
+    /* Le plan étroit, celui où la conversation ne montre qu'un échange. */
+    const etroit = window.matchMedia('(max-width: 640px)');
     const euros = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     let mode: Mode = 'main';
@@ -2375,17 +2471,14 @@ const emises = [
     let vitesse = 5;
     let pos = { x: 0, y: 0 };
     /* L'instant où la réponse en cours a fini de dire ce qu'elle a à dire : la
-       file est vide et la facture émise, le doute est validé, le tableau de
-       bord a reçu sa première facture. Zéro tant que ce n'est pas le cas. La
-       régie s'en sert pour passer à la suite au bon moment. */
+       file est vide et la facture émise, l'agent a répondu à ses deux
+       clients, un projet a été livré et un autre lancé. Zéro tant que ce
+       n'est pas le cas. La régie s'en sert pour passer à la suite au bon
+       moment. */
     let acheve = 0;
     const conclure = () => {
       if (!acheve) acheve = performance.now();
     };
-    /* Le tableau de bord vivant : ce qu'il compte et ce qu'il liste. */
-    let traitees = 0;
-    let arrivee = 0;
-    let factures: Emise[] = [...departEmises];
 
     type Pt = { x: number; y: number };
 
@@ -2544,17 +2637,11 @@ const emises = [
       etat.textContent = emise ? 'Émise' : 'Brouillon';
     };
 
-    /* La page et la facture se vident séparément : quand une réponse retire
-       la facture de la scène, elle la laisse partir telle qu'elle est, au
-       lieu de la voir se vider pendant qu'elle s'efface. */
-    const viderPage = () => {
-      monde
-        .querySelectorAll('[data-ligne-doc]')
-        .forEach((l) => l.classList.remove('est-lu', 'est-copie', 'est-fait', 'est-conforme', 'est-doute'));
-    };
-
+    /* La page et la facture se vident ensemble, et seulement quand elles
+       reviennent : une réponse qui les retire de la scène les laisse partir
+       telles qu'elles sont, au lieu de les voir se vider en s'effaçant. */
     const viderLignes = () => {
-      viderPage();
+      monde.querySelectorAll('[data-ligne-doc]').forEach((l) => l.classList.remove('est-lu', 'est-copie', 'est-fait'));
       monde.querySelectorAll('[data-ligne-facture]').forEach((l) => l.classList.remove('est-rempli', 'est-valide'));
       etatFacture(false);
       majTotal();
@@ -2569,10 +2656,8 @@ const emises = [
       });
     };
 
-    /* La page traitée part, la suivante remonte, la facture se vide. `aussi`
-       remet à zéro ce que la réponse en cours a écrit ailleurs, au moment où
-       la page est hors de vue. */
-    async function docSuivant(j: number, rapide: boolean, aussi?: () => void) {
+    /* La page traitée part, la suivante remonte, la facture se vide. */
+    async function docSuivant(j: number, rapide: boolean) {
       const d = rapide ? 190 : 360;
       await fini(
         doc.animate([{ translate: '0 0', opacity: 1 }, { translate: '0 -18px', opacity: 0 }], {
@@ -2582,7 +2667,6 @@ const emises = [
       );
       if (j !== jeton) return;
       viderLignes();
-      aussi?.();
       await fini(
         doc.animate([{ translate: '0 22px', opacity: 0 }, { translate: '0 0', opacity: 1 }], {
           duration: d,
@@ -2646,9 +2730,9 @@ const emises = [
       }
     }
 
-    /* Une bande pêche quitte une ligne du bon de commande et va prendre la
-       place et la forme de sa cible : une ligne de la facture, ou le pied
-       d'une barre du tableau de bord. */
+    /* Une bande pêche quitte son point de départ et va prendre la place et la
+       forme de sa cible : d'une ligne du bon de commande à une ligne de la
+       facture, ou de la source que l'agent consulte à la bulle où il répond. */
     async function voler(bande: HTMLElement, de: HTMLElement, vers: HTMLElement, delai: number, duree: number) {
       const a = cadreDe(de);
       const z = cadreDe(vers);
@@ -2677,9 +2761,24 @@ const emises = [
       );
     }
 
+    /* Un texte qui s'écrit, à pas réguliers. Interrompu, il s'arrête où il
+       est : la boucle qui reprendra la scène le remettra d'aplomb. */
+    const taper = (el: HTMLElement, texte: string, duree: number, j: number) =>
+      new Promise<void>((ok) => {
+        const debut = performance.now();
+        const pas = (t: number) => {
+          if (j !== jeton) return ok();
+          const a = Math.min(1, Math.max(0, (t - debut) / duree));
+          el.textContent = texte.slice(0, Math.round(texte.length * a));
+          if (a < 1) requestAnimationFrame(pas);
+          else ok();
+        };
+        requestAnimationFrame(pas);
+      });
+
     /* Les trois réponses partent du même constat : plus aucun geste refait.
-       L'agent et le tableau de bord montrent en plus une file déjà vidée,
-       celle que l'automatisation vide sous les yeux du visiteur. */
+       L'agent et le tableau de bord montrent en plus une file déjà vide ;
+       l'automatisation, elle, la vide sous les yeux du visiteur. */
     const solder = (j: number, file: boolean) => {
       compter(elGestes, gestes, 0, 900, j);
       gestes = 0;
@@ -2739,261 +2838,288 @@ const emises = [
       }
     }
 
-    /* ── Agent IA ── */
-    const etatAgent = (e: EtatAgent) => {
-      pastilleAgent.dataset.etat = e;
-      pastilleAgent.textContent = ETATS_AGENT[e];
+    /* ── Agent IA : le support client ──
+       Ce que l'agent consulte pour répondre : un article de la base de
+       connaissances, ou un outil connecté. Sur le plan étroit les articles ne
+       sont pas dessinés, c'est la pastille de la base elle-même qui s'allume. */
+    const sourceDe = (e: HTMLElement): HTMLElement => {
+      if (e.dataset.origine === 'base') return lignes('[data-article][data-trouve]')[0] ?? fenBase;
+      return outils.find((o) => o.dataset.outil === e.dataset.origine && o.offsetParent !== null) ?? fenOutils;
     };
 
-    const controler = (el: HTMLElement, texte: string, ton: 'attente' | 'cours' | 'ok' | 'doute') => {
-      const b = el.querySelector('b');
-      if (b) b.textContent = texte;
-      el.dataset.ton = ton;
-    };
-
-    const resumer = (lues: number, conformes: number, reste: string, ton: 'doute' | 'ok') => {
-      resumeMots[0].textContent = `${lues} lignes lues`;
-      resumeMots[1].textContent = `${conformes} conformes`;
-      resumeMots[2].textContent = reste;
-      resumeMots[2].dataset.ton = ton;
-      resume.classList.add('est-la');
-    };
-
-    const viderAgent = () => {
-      etatAgent('lecture');
-      Object.values(controles).forEach((c) => controler(c, '', 'attente'));
-      doute.classList.remove('est-ouvert', 'est-valide');
-      resume.classList.remove('est-la');
-    };
-
-    /* La ligne que l'agent ne tranche pas seul : la quatrième du bon, ou la
-       dernière quand le plan étroit n'en montre que trois. */
-    const suspecteDe = (docs: HTMLElement[]) => docs[Math.min(3, docs.length - 1)];
-
-    /* L'agent a fini de lire : ce qu'il a contrôlé, et la ligne qu'il soumet. */
-    const soumettre = (ligne: HTMLElement, n: number) => {
-      etatAgent('doute');
-      controler(controles.client, 'Reconnu', 'ok');
-      controler(controles.refs, `${n} sur ${n}`, 'ok');
-      controler(controles.montants, `${n - 1} sur ${n}`, 'doute');
-      douteRef.textContent = ligne.dataset.ref ?? '';
-      douteQte.textContent = ligne.dataset.qte ?? '';
-      doutePrix.textContent = ligne.dataset.prix ?? '';
-      douteMot.textContent = 'À valider par vous';
-      doute.classList.remove('est-valide');
-      doute.classList.add('est-ouvert');
-      resumer(n, n - 1, '1 à valider', 'doute');
-    };
-
-    /* Le fil entre la ligne douteuse et la carte qui la soumet, légèrement
-       bombé. Sur le plan étroit la carte est sous la page, pas à côté : un fil
-       traverserait le volet, on s'en passe. */
-    const relier = (ligne: HTMLElement) => {
-      const de = lieu(ligne, 1, 0.5);
-      de.x += 14;
-      const vers = lieu(douteCarte, 0, 0.5);
-      if (vers.x <= de.x) return;
-      const c = {
-        x: (de.x + vers.x) / 2 + (vers.y - de.y) * 0.3,
-        y: (de.y + vers.y) / 2 - (vers.x - de.x) * 0.3,
-      };
-      const p = chemin(de, c, vers);
-      p.classList.add('fil-doute');
-      traces.append(p);
-      p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, fill: 'forwards' });
-    };
-
-    async function boucleAgent(j: number, retard: number) {
-      curseur.dataset.etat = 'cache';
-      viderPage();
-      viderAgent();
-      solder(j, true);
-      await pause(retard);
-      /* Un bon sur deux porte une ligne à faire valider : l'agent trie, il ne
-         renvoie pas tout. Le premier en porte une, c'est lui qu'on voit. */
-      let douteux = true;
-      while (j === jeton) {
-        await attendreEcran();
-        if (j !== jeton) return;
-        const docs = lignes('[data-ligne-doc]');
-        const n = docs.length;
-        const suspecte = douteux ? suspecteDe(docs) : null;
-        etatAgent('lecture');
-        controler(controles.client, 'Lecture', 'cours');
-        controler(controles.refs, `0 sur ${n}`, 'cours');
-        controler(controles.montants, `0 sur ${n}`, 'cours');
-
-        /* Le trait descend la page à vitesse constante : chaque ligne est
-           contrôlée à l'instant où il passe sur elle. */
-        const DUREE = 1700;
-        const tete = un('.page__tete');
-        const fin = docs[n - 1];
-        const y0 = tete.offsetTop;
-        const y1 = fin.offsetTop + fin.offsetHeight;
-        const quand = (y: number) => (DUREE * (y - y0)) / (y1 - y0);
-        let conformes = 0;
-        const lecture = faisceau.animate(
-          [
-            { transform: `translateY(${y0}px)`, opacity: 0 },
-            { opacity: 1, offset: 0.08 },
-            { opacity: 1, offset: 0.94 },
-            { transform: `translateY(${y1}px)`, opacity: 0 },
-          ],
-          { duration: DUREE, easing: 'linear' },
-        );
-        window.setTimeout(() => j === jeton && controler(controles.client, 'Reconnu', 'ok'), quand(docs[0].offsetTop) * 0.7);
-        docs.forEach((d, i) =>
-          window.setTimeout(() => {
-            if (j !== jeton) return;
-            const conforme = d !== suspecte;
-            d.classList.add(conforme ? 'est-conforme' : 'est-doute');
-            if (conforme) conformes += 1;
-            const dernier = i === n - 1;
-            controler(controles.refs, `${i + 1} sur ${n}`, dernier ? 'ok' : 'cours');
-            controler(controles.montants, `${conformes} sur ${n}`, !dernier ? 'cours' : suspecte ? 'doute' : 'ok');
-          }, quand(d.offsetTop + d.offsetHeight / 2)),
-        );
-        await fini(lecture);
-        if (j !== jeton) return;
-        await pause(240);
-        if (j !== jeton) return;
-
-        if (suspecte) {
-          soumettre(suspecte, n);
-          /* La carte se déplie : sa place n'est connue qu'ensuite. */
-          await pause(480);
-          if (j !== jeton) return;
-          relier(suspecte);
-          await pause(1150);
-          await attendreEcran();
-          if (j !== jeton) return;
-          /* Le seul geste qui reste au visiteur : valider le doute. Le
-             curseur arrive par le dessous du volet, ou par le dessus quand
-             le plan étroit ne laisse rien sous lui. */
-          const v = cadreDe(volet);
-          const dessous = v.y + v.h + 56 < monde.offsetHeight;
-          poser({ x: v.x + v.w * 0.82, y: dessous ? v.y + v.h + 44 : v.y - 40 });
-          curseur.dataset.etat = 'visible';
-          await deplacer(lieu(douteBouton, 0.5, 0.62), 760, 26);
-          if (j !== jeton) return;
-          cliquer();
-          suspecte.classList.replace('est-doute', 'est-conforme');
-          doute.classList.add('est-valide');
-          douteMot.textContent = 'Validée par vous';
-          controler(controles.montants, `${n} sur ${n}`, 'ok');
-          resumer(n, n - 1, '1 validée', 'ok');
-          etatAgent('controle');
-          traces.replaceChildren();
-          conclure();
-          await pause(640);
-          if (j !== jeton) return;
-          curseur.dataset.etat = 'cache';
-          await pause(1900);
-        } else {
-          etatAgent('controle');
-          resumer(n, n, '', 'ok');
-          conclure();
-          await pause(1700);
-        }
-        if (j !== jeton) return;
-        feuilleTombe();
-        await docSuivant(j, false, viderAgent);
-        douteux = !douteux;
+    const allumer = (e: HTMLElement, source: HTMLElement) => {
+      if (e.dataset.origine === 'base') {
+        fenBase.classList.add('est-consulte');
+        source.classList.add('est-trouve');
+        requete.textContent = e.dataset.requete ?? '';
+        return;
       }
+      fenOutils.classList.add('est-consulte');
+      source.classList.add('est-interroge');
+      const etatOutil = source.querySelector('[data-outil-etat]');
+      if (etatOutil && source.dataset.trouve) etatOutil.textContent = source.dataset.trouve;
+    };
+
+    const eteindre = () => {
+      [fenBase, fenOutils].forEach((f) => f.classList.remove('est-consulte', 'est-trouve'));
+      articles.forEach((a) => a.classList.remove('est-parcouru', 'est-trouve'));
+      outils.forEach((o) => {
+        o.classList.remove('est-interroge');
+        const etatOutil = o.querySelector('[data-outil-etat]');
+        if (etatOutil) etatOutil.textContent = 'Connecté';
+      });
+      requete.textContent = '';
+      traces.replaceChildren();
+    };
+
+    /* `actif` est l'échange que le plan étroit montre : il n'en affiche qu'un
+       à la fois. Sur le grand plan les deux tiennent l'un sous l'autre. */
+    const viderAgent = (actif = 0) => {
+      echanges.forEach((e, i) => {
+        e.classList.remove('est-pose', 'est-cherche', 'est-repondu', 'est-source');
+        e.classList.toggle('est-actif', i === actif);
+      });
+      eteindre();
+    };
+
+    /* Un échange terminé, d'un coup : la question, la réponse, sa source. */
+    const poserEchange = (e: HTMLElement) => {
+      const texte = e.querySelector<HTMLElement>('[data-texte]');
+      if (texte) texte.textContent = e.dataset.reponse ?? '';
+      e.classList.add('est-pose', 'est-cherche', 'est-repondu', 'est-source');
+      allumer(e, sourceDe(e));
+    };
+
+    /* Le fil entre la source consultée et la conversation : il arrive sur le
+       bord de la fenêtre, à hauteur de la bulle (grand plan), ou monte droit
+       de la pastille vers elle (plan étroit). */
+    const relier = (source: HTMLElement, bulle: HTMLElement) => {
+      const c = cadreDe(fenChat);
+      const s = cadreDe(source);
+      const b = cadreDe(bulle);
+      const aCote = s.x >= c.x + c.w;
+      const de = aCote ? { x: s.x, y: s.y + s.h / 2 } : { x: s.x + s.w / 2, y: s.y };
+      const vers = aCote ? { x: c.x + c.w, y: b.y + b.h / 2 } : { x: de.x, y: c.y + c.h };
+      const milieu = {
+        x: (de.x + vers.x) / 2 + (vers.y - de.y) * 0.25,
+        y: (de.y + vers.y) / 2 - (vers.x - de.x) * 0.25,
+      };
+      const p = chemin(de, milieu, vers);
+      p.classList.add('fil-source');
+      traces.append(p);
+      p.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, fill: 'forwards' });
+    };
+
+    /* L'agent consulte sa source : il tape sa recherche et parcourt les
+       articles jusqu'au bon, ou interroge l'outil. Rend la source trouvée,
+       ou rien si la scène a changé de mode entre-temps. */
+    async function consulter(e: HTMLElement, j: number) {
+      const source = sourceDe(e);
+      if (e.dataset.origine === 'base') {
+        fenBase.classList.add('est-consulte');
+        const visibles = lignes('[data-article]');
+        if (visibles.length) {
+          await taper(requete, e.dataset.requete ?? '', 320, j);
+          for (const a of visibles) {
+            if (j !== jeton) return null;
+            if (a === source) break;
+            a.classList.add('est-parcouru');
+            await pause(100);
+            a.classList.remove('est-parcouru');
+          }
+        } else {
+          await pause(420);
+        }
+      } else {
+        fenOutils.classList.add('est-consulte');
+        await pause(420);
+      }
+      if (j !== jeton) return null;
+      allumer(e, source);
+      return source;
     }
 
-    /* ── Dashboard ── */
-    const ecrireEmise = (el: HTMLElement, f: Emise) => {
-      const ref = el.querySelector('.ref');
-      const montant = el.querySelector('.emise__montant');
-      if (ref) ref.textContent = f.ref;
-      if (montant) montant.textContent = `${f.montant} €`;
-      el.style.setProperty('--l', `${f.l}%`);
-    };
-
-    /* Les barres sont les cinq derniers jours : la dernière est aujourd'hui,
-       le jour qu'affiche l'horloge. */
-    const viderTableau = () => {
-      barres.forEach((b, i) => {
-        b.classList.remove('est-monte');
-        b.style.removeProperty('--plus');
-        const em = b.querySelector('em');
-        if (em) em.textContent = INITIALES[(jour + 1 + i) % INITIALES.length];
-      });
-      factures = [...departEmises];
-      emises.forEach((e, i) => {
-        e.classList.remove('est-la');
-        ecrireEmise(e, factures[i]);
-      });
-      traitees = 0;
-      arrivee = 0;
-      elTraitees.textContent = '0';
-      tableau.classList.add('est-vide');
-    };
-
-    /* Une facture de plus : elle entre en haut de la liste et pousse les
-       autres d'un rang (la dernière sort par le bas), le nombre avance d'un
-       cran et la barre d'aujourd'hui grandit un peu. */
-    const nouvelleFacture = () => {
-      arrivee += 1;
-      const suivante = SUIVANTES[arrivee % SUIVANTES.length];
-      const ref = `FA-${String(premierNumero + arrivee).padStart(4, '0')}`;
-      factures = [{ ref, ...suivante }, ...factures.slice(0, -1)];
-      emises.forEach((e, i) => {
-        ecrireEmise(e, factures[i]);
-        e.animate(
-          i === 0
-            ? [{ translate: '0 calc(-100% - 5px)', opacity: 0 }, { translate: '0 0', opacity: 1 }]
-            : [{ translate: '0 calc(-100% - 5px)' }, { translate: '0 0' }],
-          { duration: 480, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
-        );
-      });
-      traitees += 1;
-      ecrire(elTraitees, traitees, 10);
-      barres[barres.length - 1]?.style.setProperty('--plus', String(Math.min(arrivee * 3, 12)));
-    };
-
-    async function boucleTableau(j: number) {
-      curseur.dataset.etat = 'cache';
-      viderPage();
-      viderTableau();
-      solder(j, true);
-      await attendreEcran();
+    /* Un échange : l'heure tourne, le client écrit, l'agent cherche, la
+       réponse quitte sa source pour la bulle, s'écrit, et cite d'où elle
+       vient. */
+    async function echanger(e: HTMLElement, j: number) {
+      const bulle = e.querySelector<HTMLElement>('[data-bulle]');
+      const texte = e.querySelector<HTMLElement>('[data-texte]');
+      if (!bulle || !texte) return;
+      fixerNuit(e.dataset.jour ?? '', Number(e.dataset.minutes ?? 0));
+      await pause(320);
       if (j !== jeton) return;
-      /* Les lignes sont lues une dernière fois, puis quittent la page : elles
-         vont se poser au pied des barres, qui montent. Le bon de commande ne
-         recule qu'après leur départ (voir le retard de sa transition). */
-      const docs = lignes('[data-ligne-doc]');
-      docs.forEach((d, i) => window.setTimeout(() => j === jeton && d.classList.add('est-lu'), i * 45));
-      await pause(docs.length * 45 + 180);
+      e.classList.add('est-pose');
+      await pause(540);
       if (j !== jeton) return;
-      const pas = docs.length > 1 ? (barres.length - 1) / (docs.length - 1) : 0;
-      await Promise.all(
-        docs.map((d, i) => {
-          const k = Math.round(i * pas);
-          return voler(bandes[i], d, pieds[k], i * 70, 720).then(() => {
-            if (j !== jeton) return;
-            d.classList.add('est-fait');
-            barres[k].classList.add('est-monte');
-            /* La première ligne posée met le compteur en marche. */
-            if (traitees) return;
-            traitees = TRAITEES;
-            tableau.classList.remove('est-vide');
-            compter(elTraitees, 0, TRAITEES, 1500, j);
-          });
+      e.classList.add('est-cherche');
+      await pause(260);
+      if (j !== jeton) return;
+      const source = await consulter(e, j);
+      if (!source || j !== jeton) return;
+      relier(source, bulle);
+      await voler(bandes[0], source, bulle, 0, 480);
+      if (j !== jeton) return;
+      texte.textContent = '';
+      e.classList.add('est-repondu');
+      await taper(texte, e.dataset.reponse ?? '', 420, j);
+      if (j !== jeton) return;
+      e.classList.add('est-source');
+    }
+
+    /* La conversation sort, `entre` la change, elle revient : c'est ainsi
+       qu'elle se vide, et que le plan étroit passe d'une question à l'autre. */
+    async function tournerConversation(j: number, entre: () => void) {
+      await fini(
+        conversation.animate([{ translate: '0 0', opacity: 1 }, { translate: '0 -12px', opacity: 0 }], {
+          duration: 280,
+          easing: 'cubic-bezier(0.5, 0, 0.75, 0)',
         }),
       );
       if (j !== jeton) return;
-      barres.forEach((b) => b.classList.add('est-monte'));
-      emises.forEach((e, i) => window.setTimeout(() => j === jeton && e.classList.add('est-la'), 200 + i * 150));
-      await pause(1500);
-      /* Le tableau de bord vit : les factures continuent d'arriver. */
+      entre();
+      await fini(
+        conversation.animate([{ translate: '0 12px', opacity: 0 }, { translate: '0 0', opacity: 1 }], {
+          duration: 280,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }),
+      );
+    }
+
+    async function boucleAgent(j: number, retard: number) {
+      curseur.dataset.etat = 'cache';
+      viderAgent();
+      solder(j, true);
+      /* La nuit tombe pendant que les fenêtres arrivent. */
+      const premier = echanges[0];
+      if (premier) fixerNuit(premier.dataset.jour ?? '', Number(premier.dataset.minutes ?? 0));
+      await pause(retard);
       while (j === jeton) {
-        await pause(2100);
-        await attendreEcran();
-        if (j !== jeton) return;
-        nouvelleFacture();
+        for (let i = 0; i < echanges.length; i++) {
+          await attendreEcran();
+          if (j !== jeton) return;
+          if (i > 0) {
+            await pause(780);
+            if (j !== jeton) return;
+            if (etroit.matches) {
+              await tournerConversation(j, () => viderAgent(i));
+              if (j !== jeton) return;
+            } else {
+              traces.replaceChildren();
+            }
+          }
+          await echanger(echanges[i], j);
+          if (j !== jeton) return;
+        }
+        /* Deux clients, deux heures de la nuit, deux sources : la réponse a
+           dit ce qu'elle avait à dire. */
         conclure();
+        await pause(2600);
+        if (j !== jeton) return;
+        await tournerConversation(j, () => viderAgent());
+      }
+    }
+
+    /* ── Dashboard : le suivi de projets ── */
+    const compterPiles = (anime: boolean) => {
+      ETATS.forEach((etat) => {
+        const n = piles[etat].childElementCount;
+        tous(`[data-compte="${etat}"]`).forEach((el) => {
+          if (el.textContent === String(n)) return;
+          if (anime) ecrire(el, n, 14);
+          else el.textContent = String(n);
+        });
+      });
+    };
+
+    /* Chaque carte retrouve la colonne et l'avancement du balisage. */
+    const ranger = () => {
+      departCartes.forEach(({ carte, etat, p }) => {
+        piles[etat].append(carte);
+        carte.dataset.etat = etat;
+        carte.style.setProperty('--p', p);
+        carte.classList.remove('en-vol');
+      });
+    };
+
+    /* Le tableau vide : les cartes rangées mais pas encore posées, et les
+       indicateurs à zéro, puisqu'ils comptent les cartes. */
+    const viderTableau = () => {
+      ranger();
+      cartes.forEach((c) => c.classList.remove('est-la'));
+      compterPiles(false);
+      indicateurs.forEach((el) => (el.textContent = '0'));
+    };
+
+    /* Les cartes se distribuent, colonne après colonne, et les indicateurs
+       comptent jusqu'à ce qu'elles disent. */
+    const distribuer = (j: number) => {
+      cartes.forEach((c, i) => window.setTimeout(() => j === jeton && c.classList.add('est-la'), i * 50));
+      indicateurs.forEach((el) => compter(el, 0, piles[etatDe(el.dataset.compte)].childElementCount, 800, j));
+    };
+
+    /* Un projet avance : sa carte quitte une colonne pour le haut de la
+       suivante. Toutes les cartes sont mesurées avant et après, et chacune
+       glisse de son ancienne place à la nouvelle ; celle qui change de
+       colonne se soulève en passant. */
+    const avancer = (de: Etat, vers: Etat) => {
+      const carte = de === 'cours' ? piles.cours.lastElementChild : piles.afaire.firstElementChild;
+      if (!(carte instanceof HTMLElement)) return;
+      const avant = new Map(cartes.map((c) => [c, cadreDe(c)]));
+      piles[vers].prepend(carte);
+      carte.dataset.etat = vers;
+      carte.style.setProperty('--p', vers === 'livre' ? '100' : '15');
+      cartes.forEach((c) => {
+        const a = avant.get(c);
+        const z = cadreDe(c);
+        if (!a || (a.x === z.x && a.y === z.y)) return;
+        const dx = a.x - z.x;
+        const dy = a.y - z.y;
+        c.animate(
+          c === carte
+            ? [
+                { translate: `${dx}px ${dy}px`, scale: 1 },
+                { translate: `${dx * 0.5}px ${dy * 0.5 - 12}px`, scale: 1.06, offset: 0.5 },
+                { translate: '0 0', scale: 1 },
+              ]
+            : [{ translate: `${dx}px ${dy}px` }, { translate: '0 0' }],
+          { duration: c === carte ? 780 : 520, easing: 'cubic-bezier(0.3, 0, 0.2, 1)' },
+        );
+      });
+      carte.classList.add('en-vol');
+      window.setTimeout(() => carte.classList.remove('en-vol'), 780);
+      compterPiles(true);
+    };
+
+    async function boucleTableau(j: number, retard: number) {
+      curseur.dataset.etat = 'cache';
+      viderTableau();
+      solder(j, true);
+      /* La fenêtre se lève d'abord ; ses cartes arrivent sur elle. */
+      await pause(retard);
+      await attendreEcran();
+      if (j !== jeton) return;
+      distribuer(j);
+      await pause(cartes.length * 50 + 700);
+      while (j === jeton) {
+        for (let i = 0; i < MOUVEMENTS.length; i++) {
+          await pause(1650);
+          await attendreEcran();
+          if (j !== jeton) return;
+          avancer(MOUVEMENTS[i][0], MOUVEMENTS[i][1]);
+          /* Un projet livré, un autre lancé : on a vu le tableau vivre. */
+          if (i >= 1) conclure();
+        }
+        /* La semaine suivante : le tableau repart de son état de départ. */
+        await pause(2200);
+        if (j !== jeton) return;
+        cartes.forEach((c) => c.classList.remove('est-la'));
+        await pause(360);
+        if (j !== jeton) return;
+        ranger();
+        compterPiles(true);
+        cartes.forEach((c, i) => window.setTimeout(() => j === jeton && c.classList.add('est-la'), i * 50));
+        await pause(cartes.length * 50 + 500);
       }
     }
 
@@ -3009,6 +3135,18 @@ const emises = [
       elGestes.textContent = regle ? '0' : '2';
       elAttente.textContent = regle ? '0' : String(ATTENTE_DEPART);
       blocAttente.classList.toggle('est-vide', regle);
+      /* L'horloge s'arrête à l'heure de l'image : la nuit pour l'agent, le
+         jour pour tout le reste. */
+      remontee += 1;
+      enRemontee = false;
+      const premier = echanges[0];
+      nuit =
+        mode === 'agent' && premier
+          ? { jour: premier.dataset.jour ?? '', minutes: Number(premier.dataset.minutes ?? 0) }
+          : null;
+      puceHorloge.classList.toggle('est-nuit', nuit !== null);
+      if (nuit) afficher(nuit.jour, nuit.minutes);
+      else afficher(JOURS[jour], minutes);
       if (mode === 'main') {
         docs.slice(0, 2).forEach((d) => d.classList.add('est-fait'));
         facts.slice(0, 2).forEach((f) => f.classList.add('est-rempli'));
@@ -3017,16 +3155,12 @@ const emises = [
         facts.forEach((f) => f.classList.add('est-rempli', 'est-valide'));
         etatFacture(true);
       } else if (mode === 'agent') {
-        /* L'instant où l'agent rend la main : tout est coché sauf la ligne
-           qu'il soumet. */
-        const suspecte = suspecteDe(docs);
-        docs.forEach((d) => d.classList.add(d === suspecte ? 'est-doute' : 'est-conforme'));
-        soumettre(suspecte, docs.length);
+        /* Les échanges terminés : les deux sur le grand plan, le premier
+           seulement sur le plan étroit. */
+        echanges.filter((e) => e.offsetParent !== null).forEach(poserEchange);
       } else {
-        barres.forEach((b) => b.classList.add('est-monte'));
-        emises.forEach((e) => e.classList.add('est-la'));
-        elTraitees.textContent = String(TRAITEES);
-        tableau.classList.remove('est-vide');
+        cartes.forEach((c) => c.classList.add('est-la'));
+        compterPiles(false);
       }
       majTotal();
     };
@@ -3061,21 +3195,28 @@ const emises = [
       acheve = 0;
       scene.dataset.mode = m;
       boutons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modeBouton === m)));
-      [curseur, doc, faisceau, ...bandes, ...emises].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
+      [curseur, doc, conversation, ...bandes, ...cartes].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
       curseur.classList.remove('porte');
       traces.replaceChildren();
       if (reduit) return figer();
       basculer();
-      /* Les fenêtres se replacent par une transition : une boucle dont les
-         trajets partent d'elles attend qu'elles soient arrivées. Entre la
+      /* En quittant l'agent de support, le jour revient : l'horloge se
+         remonte jusqu'à l'heure de la semaine de travail. */
+      puceHorloge.classList.toggle('est-nuit', m === 'agent');
+      if (avant === 'agent') {
+        nuit = null;
+        remonter(JOURS[jour], minutes, 760);
+      }
+      /* Les fenêtres arrivent par une transition : une boucle dont les
+         trajets partent d'elles attend qu'elles soient en place. Entre la
          copie et l'automatisation rien ne bouge, l'attente est courte. */
       const deplace = avant === 'agent' || avant === 'tableau';
       if (m === 'auto') {
-        veiller(boucleAuto(jeton, deplace ? 820 : 360), 'automatisation');
+        veiller(boucleAuto(jeton, deplace ? 900 : 360), 'automatisation');
       } else if (m === 'agent') {
-        veiller(boucleAgent(jeton, avant === 'tableau' ? 900 : 700), 'agent IA');
+        veiller(boucleAgent(jeton, 760), 'agent IA');
       } else if (m === 'tableau') {
-        veiller(boucleTableau(jeton), 'dashboard');
+        veiller(boucleTableau(jeton, 620), 'dashboard');
       } else {
         viderLignes();
         if (attente < ATTENTE_DEPART) {
@@ -3083,21 +3224,75 @@ const emises = [
           attente = ATTENTE_DEPART;
           blocAttente.classList.remove('est-vide');
         }
-        veiller(boucleMain(jeton, deplace ? 700 : 0), 'à la main');
+        veiller(boucleMain(jeton, deplace ? 800 : 0), 'à la main');
         veiller(arrivees(jeton), 'arrivées');
       }
     };
 
-    /* L'horloge. À la main la journée file, et au deuxième écran c'est la
-       semaine ; dès que la machine travaille, elle reprend un pas tranquille. */
+    /* L'horloge. Elle a deux régimes. Le jour, c'est la semaine de travail,
+       de 9 h à 18 h : à la main la journée file, au deuxième écran c'est la
+       semaine, et dès que la machine travaille elle reprend un pas
+       tranquille. `nuit` est l'heure de l'agent de support : tant qu'elle
+       est posée, c'est elle qu'on lit et la semaine attend. */
+    let nuit: { jour: string; minutes: number } | null = null;
     let minuteAffichee = -1;
+    let affiche = minutes;
     let dernier = performance.now();
     let horloge = 0;
+    const afficher = (nom: string, min: number) => {
+      affiche = min;
+      if (elJour.textContent !== nom) elJour.textContent = nom;
+      aigMin.setAttribute('transform', `rotate(${(min % 60) * 6})`);
+      aigH.setAttribute('transform', `rotate(${(min / 60) * 30})`);
+      const m = Math.floor(min);
+      if (m !== minuteAffichee) {
+        minuteAffichee = m;
+        elHeure.textContent = `${Math.floor(m / 60) % 24} h ${String(m % 60).padStart(2, '0')}`;
+      }
+    };
+
+    /* Remonter l'horloge : les aiguilles filent en avant jusqu'à l'heure
+       voulue, et le jour change à mi-course. C'est ce qui dit qu'on a changé
+       de moment. Tant qu'elle dure, l'affichage ordinaire lui laisse la
+       main ; une remontée plus récente la remplace. */
+    let remontee = 0;
+    let enRemontee = false;
+    const remonter = (nom: string, cible: number, duree: number) => {
+      const tour = ++remontee;
+      enRemontee = true;
+      const de = affiche % 1440;
+      const ancien = elJour.textContent ?? nom;
+      let vers = cible;
+      while (vers < de + 180) vers += 1440;
+      const debut = performance.now();
+      const pas = (t: number) => {
+        if (tour !== remontee) return;
+        const a = Math.min(1, Math.max(0, (t - debut) / duree));
+        const e = a < 0.5 ? 4 * a * a * a : 1 - Math.pow(-2 * a + 2, 3) / 2;
+        if (a < 1) {
+          afficher(a < 0.5 ? ancien : nom, de + (vers - de) * e);
+          requestAnimationFrame(pas);
+        } else {
+          enRemontee = false;
+          afficher(nom, cible);
+        }
+      };
+      requestAnimationFrame(pas);
+    };
+
+    /* L'heure de l'agent de support. Déjà à cette heure-là, on n'y touche
+       pas : la remonter ferait faire un tour complet aux aiguilles. */
+    const fixerNuit = (nom: string, min: number) => {
+      if (nuit && nuit.jour === nom && Math.abs(nuit.minutes - min) < 30) return;
+      nuit = { jour: nom, minutes: min };
+      remonter(nom, min, 760);
+    };
+
     /* L'horloge ne demande une image que si la scène est à l'écran : hors
        champ, plus rien ne réveille la page. `planifier` la relance. */
     const planifier = () => {
-      /* En mouvement réduit l'horloge reste à son heure de départ : c'était le
-         seul élément de la scène à bouger encore. */
+      /* En mouvement réduit l'horloge reste à l'heure de son image fixe :
+         c'était le seul élément de la scène à bouger encore. */
       if (reduit) return;
       if (!horloge && aLEcran()) horloge = requestAnimationFrame(battre);
     };
@@ -3108,20 +3303,18 @@ const emises = [
       const dt = Math.max(0, Math.min(80, t - dernier));
       dernier = t;
       if (aLEcran()) {
-        const cible = mode !== 'main' ? 0.7 : acte === 2 ? 52 : 5;
-        vitesse += (cible - vitesse) * 0.035;
-        minutes += (vitesse * dt) / 1000;
-        if (minutes >= 18 * 60) {
-          minutes = 9 * 60;
-          jour = (jour + 1) % JOURS.length;
-          elJour.textContent = JOURS[jour];
-        }
-        aigMin.setAttribute('transform', `rotate(${(minutes % 60) * 6})`);
-        aigH.setAttribute('transform', `rotate(${(minutes / 60) * 30})`);
-        const m = Math.floor(minutes);
-        if (m !== minuteAffichee) {
-          minuteAffichee = m;
-          elHeure.textContent = `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`;
+        if (nuit) {
+          nuit.minutes += (0.15 * dt) / 1000;
+          if (!enRemontee) afficher(nuit.jour, nuit.minutes);
+        } else {
+          const cible = mode !== 'main' ? 0.7 : acte === 2 ? 52 : 5;
+          vitesse += (cible - vitesse) * 0.035;
+          minutes += (vitesse * dt) / 1000;
+          if (minutes >= 18 * 60) {
+            minutes = 9 * 60;
+            jour = (jour + 1) % JOURS.length;
+          }
+          if (!enRemontee) afficher(JOURS[jour], minutes);
         }
       }
       planifier();

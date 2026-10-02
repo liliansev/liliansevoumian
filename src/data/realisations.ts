@@ -2,6 +2,11 @@
  * Les sites réalisés par Lilian. Une seule liste, lue par la page d'offre
  * (/sites-web-abonnement) et par la page d'accueil : la capture, le lien et la
  * légende d'un site ne s'écrivent qu'ici.
+ *
+ * `long` est facultatif : la même page d'accueil, capturée sur toute sa
+ * hauteur (ramenée à 960 px de large), pour la vitrine de l'accueil qui la
+ * fait défiler dans une fenêtre. Ses dimensions sont celles du fichier : elles
+ * réservent la place avant son arrivée. Un site sans `long` y montre `src`.
  */
 export const projects = {
   lilian: {
@@ -17,6 +22,7 @@ export const projects = {
     name: 'agenceafk',
     detail: 'Agence IA et automatisation',
     alt: 'Page d’accueil claire du site agenceafk',
+    long: { src: '/sites-web/projects/agenceafk-long.webp', width: 960, height: 3736 },
   },
   augmentes: {
     src: '/sites-web/projects/augmentes-home.webp',
@@ -24,6 +30,7 @@ export const projects = {
     name: 'Augmentés',
     detail: 'Plateforme de formation',
     alt: 'Page d’accueil claire du site Augmentés',
+    long: { src: '/sites-web/projects/augmentes-long.webp', width: 960, height: 3526 },
   },
   youmanista: {
     src: '/sites-web/projects/youmanista-home.webp',
@@ -31,6 +38,7 @@ export const projects = {
     name: 'Youmanista',
     detail: 'Cabinet de recrutement',
     alt: 'Page d’accueil colorée du cabinet Youmanista',
+    long: { src: '/sites-web/projects/youmanista-long.webp', width: 960, height: 3892 },
   },
   meilleursTools: {
     src: '/sites-web/projects/meilleurs-tools-home.webp',

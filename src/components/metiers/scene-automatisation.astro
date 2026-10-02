@@ -3,95 +3,152 @@
  * scene-automatisation — la scène du métier Automatisation : « Je relie vos
  * outils, et les ressaisies disparaissent. »
  *
- * Elle raconte le cas que le bloc cite en preuve, la facturation d'une agence :
- * chaque affaire signée dans le CRM doit devenir plusieurs factures
- * échelonnées, avec la bonne TVA, et son statut doit se voir dans l'outil de
- * suivi. Avant, c'était ressaisi d'un outil à l'autre. La scène du récit, en
- * haut de page, raconte déjà le bon de commande : celle-ci montre autre chose.
+ * Le cas raconté est celui d'un studio : un client réserve un créneau en
+ * ligne, et tout suit sans que personne ne recopie rien. L'acompte est
+ * encaissé, le créneau se pose dans l'agenda de l'équipe, la confirmation
+ * part. Rien ici ne parle de facture ni de montant : la scène du récit, en
+ * haut de page, garde ce sujet-là.
  *
- * Son geste propre est le DÉCOUPAGE. Entre le CRM et la facturation,
- * l'information ne se recopie pas : une affaire entre dans le fil, le nœud
- * calcule (nombre d'échéances, TVA), et plusieurs échéances en ressortent.
+ * Sa silhouette est la sienne : L'AGENDA EST LA PIÈCE MAÎTRESSE. Une semaine
+ * en grille occupe plus de la moitié du plan, et les trois autres outils
+ * (réservation, paiement, message) sont de petites fenêtres qui gravitent sur
+ * son flanc. Les autres scènes de la page ont un agent au centre, deux
+ * fenêtres jumelles, une page à côté d'un tableau de bord : celle-ci se
+ * reconnaît à sa grille.
+ *
+ * Son geste propre est LE CRÉNEAU QUI SE POSE. Le jour et l'heure s'allument,
+ * deux bandes se croisent sur la case, et le créneau traverse la semaine pour
+ * venir s'y loger. C'est l'image à retenir.
  *
  * Le fil de la boucle, un seul mouvement à la fois :
- *   1. une affaire passe à « Signée » en tête du CRM ;
- *   2. sa fiche s'ouvre dans le volet ;
- *   3. un trait de lecture la descend : montant, échéances, TVA ;
- *   4. ces trois lignes entrent dans le fil, le nœud calcule, et les
- *      échéances en sortent une à une dans la facturation ;
- *   5. les échéances passent à « Émises » ;
- *   6. leur statut arrive dans le suivi, ligne à ligne ;
- *   7. tout est rangé, l'affaire suivante est signée.
+ *   1. une demande de réservation arrive ;
+ *   2. un trait de lecture la descend : client, date, créneau ;
+ *   3. elle passe au paiement, l'acompte est encaissé ;
+ *   4. l'agenda vise la bonne case, le créneau s'y pose ;
+ *   5. la confirmation repart de l'agenda vers le message, et s'envoie ;
+ *   6. tout est rangé, la demande suivante arrive.
+ * D'une boucle à l'autre, l'agenda garde les créneaux déjà posés : il se
+ * remplit sur trois réservations, puis la semaine tourne et il repart vide.
  *
  * Le panneau, les fenêtres, la feuille, les fils et les gestes viennent du
  * socle (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit
- * que ce qui lui est propre : la place de ses trois postes, la liste des
- * affaires, le volet de la fiche, le nœud qui calcule, et l'ordre de sa boucle.
+ * que ce qui lui est propre : la place de ses quatre postes, la jauge du
+ * paiement, la grille de l'agenda avec son viseur et ses créneaux, la bulle
+ * du message, et l'ordre de sa boucle.
+ *
+ * Sur un téléphone (plan étroit), la silhouette se resserre encore : la
+ * grille prend toute la largeur, et il n'y a plus ni fenêtres à côté ni fils.
+ * La demande arrive en étiquette au-dessus de la grille, avec l'acompte en
+ * coche ; le créneau en descend dans sa case ; la confirmation se pose
+ * dessous. Le geste est le même, la visée aussi.
  *
  * Sans script ou en mouvement réduit, la scène est une image fixe : l'état
- * final, échéances émises et suivi à jour.
+ * final, acompte encaissé, créneau posé, confirmation envoyée.
  *
- * Montants, dates et numéros sont inventés pour la scène : aucune donnée
+ * Prénoms, dates et horaires sont inventés pour la scène : aucune donnée
  * client, aucun nom de marque.
  */
 import './scene-metier.css';
-import { euros } from '../../lib/metiers/scene';
 
-interface Affaire {
-  montant: number;
-  tva: number;
-}
+const insecable = ' ';
 
-/* Trois affaires qui tournent : assez pour qu'on voie, d'une boucle à l'autre,
-   que ce n'est pas la même qui revient. La première est rendue ici ; le script
-   reçoit les trois par `data-affaires` et fait défiler les suivantes. */
-const affaires: Affaire[] = [
-  { montant: 12000, tva: 20 },
-  { montant: 8400, tva: 20 },
-  { montant: 18000, tva: 20 },
+const JOURS = [
+  { court: 'Lun', abrege: 'lun.', long: 'lundi' },
+  { court: 'Mar', abrege: 'mar.', long: 'mardi' },
+  { court: 'Mer', abrege: 'mer.', long: 'mercredi' },
+  { court: 'Jeu', abrege: 'jeu.', long: 'jeudi' },
+  { court: 'Ven', abrege: 'ven.', long: 'vendredi' },
 ];
 
-/* Les échéances tombent le 15 de chaque mois, à partir de celui-ci. */
-const mois = ['nov.', 'déc.', 'janv.', 'févr.', 'mars', 'avr.'];
+const HEURES = [
+  { debut: '9:00', fin: '10:00', court: `9${insecable}h` },
+  { debut: '11:00', fin: '12:00', court: `11${insecable}h` },
+  { debut: '14:00', fin: '15:00', court: `14${insecable}h` },
+  { debut: '16:00', fin: '17:00', court: `16${insecable}h` },
+  { debut: '18:00', fin: '19:00', court: `18${insecable}h` },
+];
 
-/* Quatre échéances sur le grand plan ; le plan étroit en montre trois, et le
-   script refait alors le calcul. La longueur des barres du suivi est
-   décorative. */
-const PARTS = 4;
-const longueurs = [72, 54, 84, 62];
-const premiere = affaires[0];
-/* Le même calcul que celui du script (voir `calculer`) : le montant, sa TVA,
-   partagés en parts égales. */
-const ttc = (premiere.montant * (1 + premiere.tva / 100)) / PARTS;
-const echeances = longueurs.map((l, i) => ({ rang: `${i + 1}/${PARTS}`, date: `15 ${mois[i]}`, l }));
+/* Trois réservations par semaine, chacune à sa case : un jour (colonne) et
+   une heure (ligne). `l` est la longueur de la barre qui tient lieu de nom de
+   famille, en pour cent. */
+const CLIENTS = [
+  { prenom: 'Camille', l: 44, jour: 3, heure: 2 },
+  { prenom: 'Hugo', l: 58, jour: 1, heure: 0 },
+  { prenom: 'Inès', l: 36, jour: 4, heure: 3 },
+];
 
-const entier = new Intl.NumberFormat('fr-FR');
+/* Les cases déjà prises par l'équipe : elles ne bougent pas, elles font de la
+   grille un vrai agenda, où tout n'est pas libre. `l` est la longueur de leur
+   barre, en pour cent. */
+const PRISES = [
+  { jour: 0, heure: 1, l: 62 },
+  { jour: 2, heure: 0, l: 48 },
+  { jour: 1, heure: 2, l: 70 },
+  { jour: 4, heure: 1, l: 54 },
+  { jour: 2, heure: 3, l: 66 },
+  { jour: 0, heure: 4, l: 44 },
+  { jour: 3, heure: 4, l: 58 },
+];
 
-/* L'affaire du moment et les trois déjà facturées qui attendent dessous. Le
-   script lit le numéro dans la page et le fait avancer d'un à chaque boucle. */
-const PREMIER_NUMERO = 413;
-const numero = (rang: number) => String(PREMIER_NUMERO + rang).padStart(4, '0');
-const anciennes = [-1, -2, -3];
-/* Le compteur « Affaires traitées » au chargement : le mois a déjà commencé. */
-const TRAITEES = 12;
+/* Trois semaines d'octobre qui tournent. Tous les libellés sont composés ici,
+   une fois : le script les reçoit par `data-semaines` et n'a qu'à les écrire,
+   sans refaire aucune date. */
+const MOIS = 'oct.';
+const semaines = [
+  { numero: 42, lundi: 12 },
+  { numero: 43, lundi: 19 },
+  { numero: 44, lundi: 26 },
+].map((semaine) => ({
+  numero: semaine.numero,
+  jours: JOURS.map((_, index) => semaine.lundi + index),
+  reservations: CLIENTS.map((client) => {
+    const jour = JOURS[client.jour];
+    const heure = HEURES[client.heure];
+    const quantieme = semaine.lundi + client.jour;
+    return {
+      prenom: client.prenom,
+      l: client.l,
+      date: `${jour.abrege} ${quantieme} ${MOIS}`,
+      creneau: `${heure.debut} – ${heure.fin}`,
+      long: `${jour.long} ${quantieme} à ${heure.court}`,
+      court: `${jour.abrege} ${heure.court}`,
+      jour: `${jour.abrege} ${quantieme}`,
+      debut: heure.debut,
+    };
+  }),
+}));
 
-/* Plan étroit : la quatrième échéance est retirée. */
-const large = (index: number) => (index > 2 ? 'sm-large' : '');
+const premiere = semaines[0];
+const demande = premiere.reservations[0];
+
+const COLONNES = JOURS.length;
+const caseDe = (jour: number, heure: number) => heure * COLONNES + jour;
+const prises = new Map(PRISES.map((p) => [caseDe(p.jour, p.heure), p.l]));
+/* À quelle case va chaque réservation, et dans quel ordre. */
+const cibles = new Map(CLIENTS.map((client, rang) => [caseDe(client.jour, client.heure), { ...client, rang }]));
+
+/* Plan étroit : la dernière heure de la journée est retirée, pour que les
+   cases qui restent soient grandes. Aucune réservation n'y tombe. */
+const derniere = (ligne: number) => (ligne === HEURES.length - 1 ? 'sm-large' : '');
+
+const PREMIER_NUMERO = '0413';
+/* Le compteur « Réservations » au chargement : le mois a déjà commencé. */
+const RESERVATIONS = 12;
 ---
 
 <div
   class="sm est-abouti"
   data-scene-automatisation
-  data-affaires={JSON.stringify({ affaires, mois })}
+  data-semaines={JSON.stringify(semaines)}
   role="img"
-  aria-label="Une affaire signée dans le CRM se découpe seule en factures échelonnées, TVA comprise, puis son statut apparaît dans l’outil de suivi, sans aucune ressaisie."
+  aria-label="Un client réserve un créneau en ligne : l’acompte est encaissé, le créneau se pose seul à la bonne case de l’agenda de l’équipe, et la confirmation part, sans aucune ressaisie."
 >
   <div class="sm-plan" aria-hidden="true">
     <div class="sm-puces">
-      <span class="sm-puce">
-        <svg viewBox="0 0 16 16"><path d="M2.5 5.5h11v7h-11zM6 5.5V4h4v1.5M2.5 8.6h11" /></svg>
-        <span class="sm-puce__nom">Affaires traitées</span>
-        <b data-traitees>{TRAITEES}</b>
+      <span class="sm-puce sm-large">
+        <svg viewBox="0 0 16 16"><path d="M3 4.5h10V13H3zM3 7h10M5.5 3v2.5M10.5 3v2.5M6 10.1l1.3 1.3L10 8.8" /></svg>
+        <span class="sm-puce__nom">Réservations</span>
+        <b data-reservations>{RESERVATIONS}</b>
       </span>
       <span class="sm-puce sm-puce--peche">
         <svg viewBox="0 0 16 16"><path d="M2 4.5h12v7H2zM4.6 7.2h.1M7.2 7.2h.1M9.8 7.2h.1M12.4 7.2h.1M5.5 9.4h5" /></svg>
@@ -100,86 +157,61 @@ const large = (index: number) => (index > 2 ? 'sm-large' : '');
       </span>
     </div>
 
-    {/* Les deux fils : le CRM vers la facturation, la facturation vers le
-       suivi. Leur tracé est calculé par le moteur d'après la place des ports. */}
+    {/* Les trois fils : la réservation vers le paiement, le paiement vers
+       l'agenda, et l'agenda vers le message. Ce dernier est déclaré du message
+       vers l'agenda : le moteur trace ses fils de gauche à droite, et le
+       script le parcourt à rebours. */}
     <svg class="sm-fils" viewBox="0 0 760 570">
-      <g class="sm-fil est-allume" data-sm-fil="facturation" data-de="crm" data-vers="entree" data-sens="h">
+      <g class="sm-fil est-allume" data-sm-fil="paiement" data-de="reservation" data-vers="paiement" data-sens="v">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
-      <g class="sm-fil est-allume" data-sm-fil="suivi" data-de="sortie" data-vers="suivi" data-sens="v">
+      <g class="sm-fil est-allume" data-sm-fil="agenda" data-de="paye" data-vers="agenda" data-sens="h">
+        <path class="sm-fil__trait"></path>
+        <path class="sm-fil__flux"></path>
+      </g>
+      <g class="sm-fil est-allume" data-sm-fil="message" data-de="message" data-vers="retour" data-sens="h">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
     </svg>
 
-    {/* Le CRM : la liste des affaires en haut, la fiche de l'affaire dessous. */}
-    <div class="sm-poste poste--crm">
+    {/* La réservation : la demande du client, telle qu'il l'a remplie en ligne. */}
+    <div class="sm-poste sm-large poste--reservation">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
           <span class="sm-fenetre__icone">
-            <svg viewBox="0 0 16 16"><path d="M8 7.6a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6zM3.4 13c.4-2.3 2.2-3.6 4.6-3.6s4.2 1.3 4.6 3.6" /></svg>
+            <svg viewBox="0 0 16 16"><path d="M8 13.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM2.6 8h10.8M8 2.5c1.6 1.6 2.3 3.4 2.3 5.5S9.6 11.9 8 13.5C6.4 11.9 5.7 10.1 5.7 8S6.4 4.1 8 2.5z" /></svg>
           </span>
-          <span class="sm-fenetre__nom">CRM</span>
-          <span class="sm-fenetre__info">Affaires</span>
-          <span class="sm-etat" data-etat="fait" data-etat-de="crm">
-            <span class="sm-etat__avant">À jour</span>
-            <span class="sm-etat__apres">Signée</span>
+          <span class="sm-fenetre__nom">Réservation</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="reservation">
+            <span class="sm-etat__avant">En attente</span>
+            <span class="sm-etat__apres">Reçue</span>
           </span>
         </div>
-
-        <div class="boite">
-          <div class="boite__vue">
-            <div class="boite__liste" data-liste style="--pose: 0">
-              <div class="affaire" data-affaire="nouvelle">
-                <span class="affaire__avatar"></span>
-                <span class="affaire__objet">Affaire n°&nbsp;<span data-c="numero">{numero(0)}</span></span>
-                <span class="affaire__montant"><span data-c="montant">{entier.format(premiere.montant)}</span>&nbsp;€</span>
-                <svg class="affaire__coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                <span class="etape est-ouverte" data-etape>
-                  <em></em><span class="etape__signee">Signée</span><span class="etape__facturee">Facturée</span>
-                </span>
+        <div class="demande est-arrivee" data-demande>
+          <div class="demande__vide"><span>Aucune demande</span></div>
+          <div class="demande__feuille" data-feuille>
+            <div class="sm-feuille">
+              <div class="sm-feuille__tete">
+                <b>Demande</b>
+                <span>N°&nbsp;<span data-c="numero">{PREMIER_NUMERO}</span></span>
               </div>
-              {anciennes.map((rang) => (
-                <div class="affaire est-traite" data-affaire="ancienne">
-                  <span class="affaire__avatar"></span>
-                  <span class="affaire__objet">Affaire n°&nbsp;<span data-c="numero">{numero(rang)}</span></span>
-                  <svg class="affaire__coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-                  <span class="etape">
-                    <em></em><span class="etape__signee">Signée</span><span class="etape__facturee">Facturée</span>
+              <div class="demande__lignes">
+                <div class="sm-ligne est-parti" data-ligne>
+                  <span>Client</span>
+                  <span class="demande__client">
+                    <span data-c="prenom">{demande.prenom}</span>
+                    <i class="sm-barre" data-c="nom" style={`--l: ${demande.l}%`}></i>
                   </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div class="apercu">
-          <div class="apercu__vide"><span>Aucune affaire ouverte</span></div>
-          <div class="fiche est-ouverte" data-fiche>
-            <div class="fiche__nom sm-large">
-              <em>Fiche</em>
-              <span>Affaire n°&nbsp;<span data-c="numero-fiche">{numero(0)}</span></span>
-              <span class="fiche__info">Signée</span>
-            </div>
-            <div class="sm-feuille" data-page>
-              <div class="sm-feuille__tete">
-                <b>Affaire signée</b>
-                <span class="sm-large">N°&nbsp;AF-<span data-c="numero-page">{numero(0)}</span></span>
-              </div>
-              <div class="sm-feuille__bloc"><i></i><i></i><i></i></div>
-              <div class="fiche__lignes">
-                <div class="sm-ligne est-parti" data-ligne-fiche>
-                  <span>Montant HT</span>
-                  <span data-c="montant-ht">{euros(premiere.montant)}</span>
+                <div class="sm-ligne est-parti" data-ligne>
+                  <span>Date</span>
+                  <span data-c="date">{demande.date}</span>
                 </div>
-                <div class="sm-ligne est-parti" data-ligne-fiche>
-                  <span>Échéances</span>
-                  <span data-c="parts">{PARTS}</span>
-                </div>
-                <div class="sm-ligne est-parti" data-ligne-fiche>
-                  <span>TVA</span>
-                  <span><span data-c="tva">{premiere.tva}</span>&nbsp;%</span>
+                <div class="sm-ligne est-parti" data-ligne>
+                  <span>Créneau</span>
+                  <span data-c="creneau">{demande.creneau}</span>
                 </div>
               </div>
               <span class="sm-balai" data-balai></span>
@@ -187,353 +219,218 @@ const large = (index: number) => (index > 2 ? 'sm-large' : '');
           </div>
         </div>
       </div>
-      <span class="sm-port port--crm est-actif" data-sm-port="crm"></span>
+      <span class="sm-port port--reservation est-actif" data-sm-port="reservation"></span>
     </div>
 
-    {/* La facturation : les échéances, puis le total. */}
-    <div class="sm-poste poste--facturation">
+    {/* Le paiement : l'acompte, et la jauge de son encaissement. */}
+    <div class="sm-poste sm-large poste--paiement">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
           <span class="sm-fenetre__icone">
-            <svg viewBox="0 0 16 16"><path d="M4 2.5h8v11l-2-1.2-2 1.2-2-1.2-2 1.2v-11zM6 6h4M6 8.5h4" /></svg>
+            <svg viewBox="0 0 16 16"><path d="M2.5 4.5h11v7h-11zM2.5 7h11M4.5 9.5h2.5" /></svg>
           </span>
-          <span class="sm-fenetre__nom">Facturation</span>
-          <span class="sm-fenetre__info">Comptabilité</span>
-          <span class="sm-etat" data-etat="fait" data-etat-de="facturation">
+          <span class="sm-fenetre__nom">Paiement</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="paiement">
             <span class="sm-etat__avant" data-avant>En attente</span>
-            <span class="sm-etat__apres">Émises</span>
+            <span class="sm-etat__apres">Encaissé</span>
           </span>
         </div>
         <div class="sm-corps">
-          <div class="sm-rangees">
-            {echeances.map((echeance, index) => (
-              <div class:list={['sm-rangee', 'est-rempli', 'est-valide', large(index)]} data-rangee="facturation">
-                <span class="sm-ref" data-c="rang">{echeance.rang}</span>
-                <span class="rangee__date" data-c="date">{echeance.date}</span>
-                <span data-c="ttc">{euros(ttc)}</span>
-                <svg class="sm-coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-              </div>
-            ))}
+          <div class="sm-rangee est-rempli est-valide" data-reglement style="--l: 68%">
+            <span class="sm-ref">Acompte</span>
+            <i class="sm-barre"></i>
+            <svg class="sm-coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
           </div>
-          <div class="sm-pied sm-large">
-            <span>Total TTC</span>
-            <b><span data-total>{euros(ttc * PARTS)}</span>&nbsp;€</b>
-          </div>
+          <div class="jauge est-pleine" data-jauge><i></i></div>
         </div>
       </div>
-      <span class="sm-port port--entree est-actif" data-sm-port="entree"></span>
-      <span class="sm-port port--sortie est-actif" data-sm-port="sortie"></span>
+      <span class="sm-port port--paiement est-actif" data-sm-port="paiement"></span>
+      <span class="sm-port port--paye est-actif" data-sm-port="paye"></span>
     </div>
 
-    {/* Le suivi : le statut de chaque échéance, visible sans rien ouvrir. */}
-    <div class="sm-poste poste--suivi">
+    {/* Le message : la confirmation, écrite et envoyée sans personne. */}
+    <div class="sm-poste sm-large poste--message">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
           <span class="sm-fenetre__icone">
-            <svg viewBox="0 0 16 16"><path d="M2.8 4.6l1.2 1.2 2-2.2M8.2 4.6H13M2.8 9l1.2 1.2 2-2.2M8.2 9H13M3 13h2.4M8.2 13H13" /></svg>
+            <svg viewBox="0 0 16 16"><path d="M3 4h10v6.5H7.5L5 12.6v-2.1H3z" /></svg>
           </span>
-          <span class="sm-fenetre__nom">Suivi</span>
-          <span class="sm-fenetre__info">Tableau de bord</span>
-          <span class="sm-etat" data-etat="fait" data-etat-de="suivi">
+          <span class="sm-fenetre__nom">Message</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="message">
             <span class="sm-etat__avant">En attente</span>
-            <span class="sm-etat__apres">À jour</span>
+            <span class="sm-etat__apres">Envoyé</span>
           </span>
         </div>
         <div class="sm-corps">
-          <div class="sm-rangees">
-            {echeances.map((echeance, index) => (
-              <div
-                class:list={['sm-rangee', 'est-rempli', 'est-valide', large(index)]}
-                data-rangee="suivi"
-                style={`--l: ${echeance.l}%`}
-              >
-                <span class="sm-ref" data-c="rang">{echeance.rang}</span>
-                <i class="sm-barre"></i>
-                <span>Émise</span>
-                <svg class="sm-coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-              </div>
-            ))}
+          <div class="bulle est-envoyee" data-bulle>
+            <span>Confirmé&nbsp;: <span data-c="long">{demande.long}</span></span>
+          </div>
+          <div class="envoi est-envoye" data-envoi>
+            <span>Envoyé</span>
+            <svg viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
           </div>
         </div>
       </div>
-      <span class="sm-port port--suivi est-actif" data-sm-port="suivi"></span>
+      <span class="sm-port port--message est-actif" data-sm-port="message"></span>
     </div>
 
-    {/* Le nœud du premier fil porte le calcul : c'est là qu'une affaire devient
-       plusieurs échéances. Celui du second fil dit seulement « relié ». */}
-    <span class="sm-noeud noeud--calcul est-allume" data-sm-noeud="facturation" data-calcul>
-      <b class="sm-large">÷&nbsp;<span data-c="parts">{PARTS}</span></b>
-      <span class="sm-large">TVA&nbsp;<span data-c="tva">{premiere.tva}</span>&nbsp;%</span>
-      <b class="sm-etroit">÷</b>
-    </span>
-    <span class="sm-noeud est-allume" data-sm-noeud="suivi">
-      <svg viewBox="0 0 16 16"><path d="M6.9 9.1a2.4 2.4 0 0 0 3.4 0l2-2a2.4 2.4 0 0 0-3.4-3.4l-.8.8M9.1 6.9a2.4 2.4 0 0 0-3.4 0l-2 2a2.4 2.4 0 0 0 3.4 3.4l.8-.8" /></svg>
-    </span>
+    {/* L'agenda de l'équipe, la pièce maîtresse : une semaine, cinq jours,
+       cinq heures, vingt-cinq cases. */}
+    <div class="sm-poste poste--agenda">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M3 4.5h10V13H3zM3 7h10M5.5 3v2.5M10.5 3v2.5" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Agenda</span>
+          <span class="sm-fenetre__info">Semaine&nbsp;<span data-c="semaine">{premiere.numero}</span></span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="agenda">
+            <span class="sm-etat__avant">À jour</span>
+            <span class="sm-etat__apres"><span class="sm-large">Créneau posé</span><span class="sm-etroit">Posé</span></span>
+          </span>
+        </div>
+        <div class="sm-corps">
+          <div class="agenda" data-agenda>
+            {/* Le viseur : une bande sur le jour, une bande sur l'heure. Leur
+               croisement désigne la case. Placées par le script, et écrites
+               avant les cases pour passer dessous. */}
+            <i class="viseur viseur--jour" data-viseur="jour"></i>
+            <i class="viseur viseur--heure" data-viseur="heure"></i>
+            <span></span>
+            {JOURS.map((jour, index) => (
+              <span class="agenda__jour" data-jour>
+                {jour.court}&nbsp;<span data-c="quantieme">{premiere.jours[index]}</span>
+              </span>
+            ))}
+            {HEURES.map((heure, ligne) => (
+              <>
+                <span class:list={['agenda__heure', derniere(ligne)]} data-heure>{heure.court}</span>
+                {JOURS.map((_, colonne) => {
+                  const index = caseDe(colonne, ligne);
+                  const cible = cibles.get(index);
+                  return (
+                    <span class:list={['case', derniere(ligne)]} data-case={index}>
+                      {prises.has(index) && <i class="prise" style={`--l: ${prises.get(index)}%`}></i>}
+                      {cible && (
+                        <span class:list={['creneau', cible.rang === 0 && 'est-pose est-neuf']} data-creneau={cible.rang}>
+                          <b>{cible.prenom}</b>
+                          <span>{HEURES[cible.heure].debut}<span class="sm-large"> – {HEURES[cible.heure].fin}</span></span>
+                        </span>
+                      )}
+                    </span>
+                  );
+                })}
+              </>
+            ))}
+            {/* L'onde : le cercle qui s'élargit quand le créneau touche sa case. */}
+            <i class="onde" data-onde></i>
+          </div>
+        </div>
+      </div>
+      <span class="sm-port port--agenda est-actif" data-sm-port="agenda"></span>
+      <span class="sm-port port--retour est-actif" data-sm-port="retour"></span>
+    </div>
 
-    {/* Ce qui voyage : une bande et un grain par échéance. */}
-    {echeances.map(() => (
-      <>
-        <span class="sm-bande"></span>
-        <span class="sm-grain"></span>
-      </>
+    {/* ── Le plan étroit ──
+       Sur un téléphone, l'agenda prend toute la largeur : il n'y a plus de
+       place pour des fenêtres à côté, et il n'en faut pas. La demande devient
+       une étiquette de papier posée au-dessus de la grille, avec l'acompte en
+       coche ; la confirmation, une bulle posée dessous. */}
+    <div class="etiquette est-arrivee sm-etroit" data-etiquette>
+      <span class="etiquette__avatar"></span>
+      <span class="morceau est-parti" data-morceau><b data-c="prenom">{demande.prenom}</b></span>
+      <span class="morceau est-parti" data-morceau data-c="jour">{demande.jour}</span>
+      <span class="morceau est-parti" data-morceau data-c="debut">{demande.debut}</span>
+      <span class="acompte" data-acompte data-etat="fait">
+        <i></i>
+        <span>Acompte</span>
+        <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+      </span>
+    </div>
+
+    <div class="confirmation est-ecrite est-envoyee sm-etroit" data-confirmation>
+      <span class="confirmation__envoi">
+        Envoyé
+        <svg viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
+      </span>
+      <span class="confirmation__bulle" data-bulle-etroite>
+        <span>Confirmé · <span data-c="court">{demande.court}</span></span>
+      </span>
+    </div>
+
+    {/* Le nœud de chaque fil : c'est lui qui dit « relié ». */}
+    {['paiement', 'agenda', 'message'].map((fil) => (
+      <span class="sm-noeud est-allume" data-sm-noeud={fil}>
+        <svg viewBox="0 0 16 16"><path d="M6.9 9.1a2.4 2.4 0 0 0 3.4 0l2-2a2.4 2.4 0 0 0-3.4-3.4l-.8.8M9.1 6.9a2.4 2.4 0 0 0-3.4 0l-2 2a2.4 2.4 0 0 0 3.4 3.4l.8-.8" /></svg>
+      </span>
     ))}
+
+    {/* Ce qui voyage : trois bandes (une par ligne de la demande) et un grain. */}
+    <span class="sm-bande"></span>
+    <span class="sm-bande"></span>
+    <span class="sm-bande"></span>
+    <span class="sm-grain"></span>
   </div>
 </div>
 
 <style>
-  /* Ce que le socle ne sait pas : où sont les trois postes, leurs ports, la
-     grille de leurs lignes, les deux composants propres au CRM (la liste des
-     affaires, le volet de la fiche) et le nœud qui calcule. Longueurs en
-     pixels du plan. */
-  .sm-plan {
-    --h-affaire: 46px;
+  /* Ce que le socle ne sait pas : où sont les quatre postes et leurs ports, la
+     demande et son emplacement vide, la jauge du paiement, la grille de
+     l'agenda avec son viseur et ses créneaux, la bulle du message. Longueurs
+     en pixels du plan. */
+
+  /* La lumière de fin se lève sur l'agenda, pas au milieu du panneau. */
+  .sm {
+    --sm-lumiere: 66% 54%;
   }
 
-  .poste--crm {
+  /* ── Les postes ──
+     À droite l'agenda, sur toute la hauteur et plus de la moitié de la
+     largeur. À gauche les trois petits outils, en retrait. */
+  .poste--agenda {
+    top: 62px;
+    left: 292px;
+    width: 444px;
+  }
+
+  .poste--reservation {
+    --sm-cols: 50px minmax(0, 1fr);
     top: 62px;
     left: 24px;
-    width: 312px;
+    width: 220px;
   }
 
-  .poste--facturation {
-    --sm-cols: 30px minmax(0, 1fr) 64px 12px;
-    top: 94px;
-    left: 424px;
-    width: 312px;
+  .poste--paiement {
+    --sm-cols: 56px minmax(0, 1fr) 12px;
+    top: 292px;
+    left: 44px;
+    width: 192px;
   }
 
-  .poste--suivi {
-    --sm-cols: 30px minmax(0, 1fr) 40px 12px;
-    top: 360px;
-    left: 440px;
-    width: 296px;
+  .poste--message {
+    top: 418px;
+    left: 24px;
+    width: 220px;
   }
 
-  .port--crm { right: -6px; bottom: 56px; }
-  .port--entree { top: 101px; left: -6px; }
-  .port--sortie { bottom: -6px; left: 112px; }
-  .port--suivi { top: -6px; left: 148px; }
+  .port--reservation { bottom: -6px; left: 96px; }
+  .port--paiement { top: -6px; left: 90px; }
+  .port--paye { top: 50px; right: -6px; }
+  .port--agenda { top: 196px; left: -6px; }
+  .port--retour { top: 340px; left: -6px; }
+  .port--message { top: 52px; right: -6px; }
 
-  /* La date d'une échéance se lit à gauche, en retrait : c'est le montant
-     qui compte. */
-  .poste--facturation .sm-rangee .rangee__date {
-    color: var(--color-ink-low);
-    text-align: left;
-  }
-
-  /* ── Le nœud qui calcule ──
-     Le nœud du socle est une pastille ronde. Celui-ci s'élargit pour porter sa
-     règle : en combien d'échéances, avec quelle TVA. Le fil le traverse. */
-  .noeud--calcul {
-    align-content: center;
-    row-gap: 2px;
-    width: 58px;
-    height: 38px;
-    margin: -19px 0 0 -29px;
-    border-radius: 11px;
-    white-space: nowrap;
-  }
-
-  .noeud--calcul b {
-    color: var(--color-ink-mid);
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
-    transition: color 300ms;
-  }
-
-  .noeud--calcul > span {
-    color: var(--color-ink-low);
-    font-size: 8.5px;
-    font-weight: 500;
-    line-height: 1;
-    transition: color 300ms;
-  }
-
-  .noeud--calcul.est-allume b {
-    color: var(--color-peche);
-  }
-
-  .noeud--calcul.est-allume > span {
-    color: var(--color-ink);
-  }
-
-  /* ── La liste des affaires ──
-     Elle compte une affaire de plus que ce que la vue montre. Au repos elle
-     est remontée d'un cran et l'affaire qui va être signée attend au-dessus,
-     cachée par la vue ; elle arrive quand la liste redescend. */
-  .boite {
-    padding: 8px;
-    border-bottom: 1px solid var(--sm-filet);
-  }
-
-  .boite__vue {
-    height: calc(3 * var(--h-affaire));
-    overflow: hidden;
-    border-radius: 8px;
-  }
-
-  .boite__liste {
-    translate: 0 calc(var(--pose, 0) * var(--h-affaire));
-  }
-
-  .affaire {
-    display: grid;
-    grid-template-columns: 22px minmax(0, 1fr) auto;
-    align-content: center;
-    align-items: center;
-    column-gap: 9px;
-    row-gap: 4px;
-    height: var(--h-affaire);
-    padding-inline: 8px;
-    border-radius: 8px;
-    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
-    transition: background-color 320ms;
-  }
-
-  .affaire__avatar {
+  /* ── La demande ──
+     Au repos, un emplacement vide en pointillé. La demande arrive par-dessus,
+     sur sa feuille. */
+  .demande {
     position: relative;
-    grid-row: 1 / span 2;
-    width: 22px;
-    height: 22px;
-    border-radius: 7px;
-    background: linear-gradient(135deg, var(--color-peche), var(--color-lueur-froide));
-    transition: filter 320ms, opacity 320ms;
+    padding: 10px 10px 12px;
   }
 
-  /* Du nouveau sur cette affaire : le point pêche que tout le monde connaît. */
-  .affaire__avatar::after {
-    content: '';
+  .demande__vide {
     position: absolute;
-    top: -3px;
-    right: -3px;
-    width: 8px;
-    height: 8px;
-    border: 2px solid var(--color-night-deep);
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-    transition: scale 260ms var(--ease-out-quint);
-  }
-
-  .affaire__objet {
-    overflow: hidden;
-    color: var(--color-ink);
-    font-size: 11.5px;
-    font-weight: 600;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    transition: color 320ms;
-  }
-
-  .affaire__montant,
-  .affaire__coche {
-    grid-column: 3;
-    grid-row: 1;
-    justify-self: end;
-  }
-
-  .affaire__montant {
-    color: var(--color-ink-mid);
-    font-size: 10.5px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .affaire__coche {
-    width: 12px;
-    height: 12px;
-    stroke: var(--color-peche);
-    stroke-width: 2;
-    opacity: 0;
-    scale: 0.4;
-    transition: opacity 220ms, scale 320ms var(--ease-out-expo);
-  }
-
-  /* L'étape de l'affaire dans le pipeline : c'est d'elle que sort la fiche. */
-  .etape {
-    grid-column: 2 / span 2;
-    justify-self: start;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    height: 17px;
-    padding: 0 8px 0 6px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
-    border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
-    font-size: 9.5px;
-    font-weight: 500;
-    white-space: nowrap;
-    transition: border-color 220ms, color 220ms, opacity 320ms;
-  }
-
-  .etape em {
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-    transition: background-color 320ms;
-  }
-
-  .etape__facturee {
-    display: none;
-  }
-
-  .etape.est-ouverte {
-    border-color: var(--color-peche);
-    color: var(--color-ink);
-  }
-
-  /* Traitée : l'affaire s'efface dans la liste, son étape devient
-     « Facturée », sa coche remplace le montant. */
-  .affaire.est-traite {
-    background: transparent;
-  }
-
-  .affaire.est-traite .affaire__avatar {
-    filter: grayscale(1);
-    opacity: 0.4;
-  }
-
-  .affaire.est-traite .affaire__avatar::after {
-    scale: 0;
-  }
-
-  .affaire.est-traite .affaire__objet {
-    color: var(--color-ink-low);
-  }
-
-  .affaire.est-traite .affaire__montant,
-  .affaire.est-traite .etape__signee {
-    display: none;
-  }
-
-  .affaire.est-traite .etape__facturee {
-    display: inline;
-  }
-
-  .affaire.est-traite .affaire__coche {
-    opacity: 0.85;
-    scale: 1;
-  }
-
-  .affaire.est-traite .etape {
-    opacity: 0.5;
-  }
-
-  .affaire.est-traite .etape em {
-    background: var(--color-ink-low);
-  }
-
-  /* ── Le volet : la fiche de l'affaire, sur sa feuille ── */
-  .apercu {
-    position: relative;
-    padding: 11px 12px 14px;
-  }
-
-  .apercu__vide {
-    position: absolute;
-    inset: 11px 12px 14px;
+    inset: 10px 10px 12px;
     display: grid;
     place-items: center;
     border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
@@ -543,162 +440,534 @@ const large = (index: number) => (index > 2 ? 'sm-large' : '');
     transition: opacity 260ms;
   }
 
-  .apercu:has(.fiche.est-ouverte) .apercu__vide {
+  .demande.est-arrivee .demande__vide {
     opacity: 0;
   }
 
-  .fiche {
-    --sm-cols: minmax(0, 1fr) auto;
+  .demande__feuille {
     position: relative;
     opacity: 0;
   }
 
-  .fiche.est-ouverte {
+  .demande.est-arrivee .demande__feuille {
     opacity: 1;
   }
 
-  .fiche__nom {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    height: 16px;
-    margin-bottom: 9px;
-    color: var(--color-ink-mid);
-    font-size: 10.5px;
-    font-weight: 500;
-  }
-
-  .fiche__nom em {
-    padding: 2px 5px;
-    border-radius: 4px;
-    background: var(--color-braise);
-    color: var(--color-night);
-    font-size: 6.5px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .fiche__info {
-    margin-left: auto;
-    color: var(--color-ink-low);
-    font-size: 10px;
-  }
-
-  /* Les trois lignes que la machine lit : un libellé, une valeur. */
-  .fiche__lignes {
+  .demande__lignes {
     margin-top: 12px;
     border-top: 1px solid var(--color-feuille-trait);
   }
 
-  .fiche__lignes .sm-ligne span:last-child {
+  /* Un formulaire : le libellé en retrait, la valeur calée à gauche. */
+  .demande__lignes .sm-ligne > span:first-child {
+    color: var(--color-ink-faint);
+    font-size: 10px;
+  }
+
+  .demande__lignes .sm-ligne > span:nth-of-type(n + 2) {
     font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .demande__client {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── La jauge du paiement ──
+     Elle se remplit pendant l'encaissement. Sa course est jouée par le
+     script ; la classe ne fait que tenir l'état d'arrivée. */
+  .jauge {
+    overflow: hidden;
+    height: 4px;
+    margin-top: 9px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 10%, transparent);
+  }
+
+  .jauge i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-peche);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  .jauge.est-pleine i {
+    transform: none;
+  }
+
+  /* ── L'agenda ──
+     Une colonne d'heures, cinq colonnes de jours. Les cases prises sont
+     grises ; un créneau réservé est pêche le temps de sa boucle (`est-neuf`),
+     puis il reste dans la semaine en plus discret. */
+  .agenda {
+    position: relative;
+    display: grid;
+    grid-template-columns: 34px repeat(5, minmax(0, 1fr));
+    grid-template-rows: 20px;
+    grid-auto-rows: 72px;
+    gap: 5px;
+  }
+
+  .agenda__jour {
+    border-radius: var(--radius-full);
+    color: var(--color-ink-low);
+    font-size: 10.5px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: center;
+    white-space: nowrap;
+    transition: background-color 240ms, color 240ms;
+  }
+
+  .agenda__heure {
+    padding: 6px 5px 0 0;
+    color: var(--color-ink-faint);
+    font-size: 9.5px;
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+    transition: color 240ms;
+  }
+
+  /* Tout texte posé sur la pêche est en nuit. */
+  .agenda__jour.est-vise {
+    background: var(--color-peche);
+    color: var(--color-night);
+  }
+
+  .agenda__heure.est-vise {
+    color: var(--color-peche);
+  }
+
+  .case {
+    position: relative;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-ink) 3.5%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 6%, transparent);
+    transition: box-shadow 240ms;
+  }
+
+  .case.est-visee {
+    box-shadow: inset 0 0 0 1.5px var(--color-peche);
+  }
+
+  /* Une case déjà prise : un bloc gris et les deux barres de son libellé. */
+  .prise {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .prise::before,
+  .prise::after {
+    content: '';
+    position: absolute;
+    left: 9px;
+    height: 5px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+  }
+
+  .prise::before {
+    top: 11px;
+    width: var(--l);
+  }
+
+  .prise::after {
+    top: 22px;
+    width: 30%;
+    background: color-mix(in srgb, var(--color-ink) 13%, transparent);
+  }
+
+  .viseur {
+    position: absolute;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-peche) 11%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 280ms;
+  }
+
+  .viseur--jour { top: 0; bottom: 0; }
+  .viseur--heure { right: 0; left: 0; }
+
+  .viseur.est-leve {
+    opacity: 1;
+  }
+
+  .creneau {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    padding: 10px 9px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-peche) 20%, var(--color-night-deep));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-peche) 55%, transparent);
+    color: var(--color-ink);
+    line-height: 1;
+    opacity: 0;
+    scale: 0.8;
+    white-space: nowrap;
+    transition:
+      opacity 240ms,
+      scale 320ms var(--ease-out-expo),
+      background-color 420ms,
+      color 420ms,
+      box-shadow 420ms;
+  }
+
+  .creneau b {
+    overflow: hidden;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+  }
+
+  .creneau > span {
+    font-size: 8.5px;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  .creneau.est-pose {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .creneau.est-neuf {
+    background: var(--color-peche);
+    box-shadow: 0 10px 20px -10px var(--color-night-deep);
+    color: var(--color-night);
+  }
+
+  .onde {
+    position: absolute;
+    border: 1.5px solid var(--color-peche);
+    border-radius: 10px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ── La bulle du message ──
+     Vide, c'est son contour en pointillé ; envoyée, elle se remplit et son
+     texte apparaît. Calée à droite : c'est un message qu'on envoie. */
+  .bulle {
+    width: fit-content;
+    max-width: 100%;
+    margin-left: auto;
+    padding: 8px 11px;
+    border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
+    border-radius: 12px 12px 4px 12px;
+    color: var(--color-ink);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: border-color 220ms, background-color 220ms;
+  }
+
+  .bulle > span {
+    opacity: 0;
+    transition: opacity 220ms;
+  }
+
+  .bulle.est-envoyee {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--color-peche) 60%, transparent);
+    background: color-mix(in srgb, var(--color-peche) 14%, transparent);
+  }
+
+  .bulle.est-envoyee > span {
+    opacity: 1;
+  }
+
+  .envoi {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-top: 6px;
+    color: var(--color-ink-low);
+    font-size: 9.5px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 240ms;
+  }
+
+  .envoi svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--color-peche);
+    stroke-width: 1.6;
+  }
+
+  .envoi.est-envoye {
+    opacity: 1;
+  }
+
+  /* ── Les deux pièces du plan étroit ──
+     Elles ne se voient que là (`sm-etroit`). L'étiquette est une petite
+     feuille : c'est la demande, dans la même matière que sur le grand plan. */
+  .etiquette {
+    position: absolute;
+    top: 7px;
+    left: 10px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 24px;
+    padding: 0 4px 0 5px;
+    border-radius: 8px;
+    background: var(--color-feuille);
+    box-shadow: 0 8px 18px -10px var(--color-night-deep);
+    color: var(--color-night);
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+  }
+
+  .etiquette.est-arrivee {
+    opacity: 1;
+  }
+
+  .etiquette__avatar {
+    width: 14px;
+    height: 14px;
+    margin-right: 2px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, var(--color-peche), var(--color-lueur-froide));
+  }
+
+  /* Un morceau de la demande : le prénom, le jour, l'heure. Lu, il est
+     surligné ; parti dans l'agenda, il en garde la trace. */
+  .morceau {
+    position: relative;
+    isolation: isolate;
+    padding: 3px 4px;
+    border-radius: 4px;
+    line-height: 1;
+  }
+
+  .morceau::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: 4px;
+    background: var(--color-peche);
+    opacity: 0;
+    transition: opacity 220ms;
+  }
+
+  .morceau.est-lu::before {
+    opacity: 1;
+  }
+
+  .morceau.est-parti::before {
+    opacity: 0.34;
+  }
+
+  .morceau b {
+    font-weight: 650;
+  }
+
+  /* L'acompte : tout le paiement tient dans cette coche. Elle se remplit
+     pendant l'encaissement (la course est jouée par le script). */
+  .acompte {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    height: 16px;
+    margin-left: 3px;
+    padding: 0 5px 0 6px;
+    border-radius: var(--radius-full);
+    box-shadow: inset 0 0 0 1px var(--color-feuille-barre);
+    color: color-mix(in srgb, var(--color-night) 62%, transparent);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1;
+    transition: color 220ms, box-shadow 220ms;
+  }
+
+  .acompte i {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-peche);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  .acompte svg {
+    width: 9px;
+    height: 9px;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    opacity: 0;
+    scale: 0.4;
+    transition: opacity 200ms, scale 320ms var(--ease-out-expo);
+  }
+
+  .acompte[data-etat='cours'],
+  .acompte[data-etat='fait'] {
+    box-shadow: inset 0 0 0 1px var(--color-peche);
+    color: var(--color-night);
+  }
+
+  .acompte[data-etat='fait'] i {
+    transform: none;
+  }
+
+  .acompte[data-etat='fait'] svg {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* La confirmation : la bulle se pose sous la grille, puis « Envoyé ». */
+  .confirmation {
+    position: absolute;
+    top: 240px;
+    right: 10px;
+    left: 10px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    height: 22px;
+  }
+
+  .confirmation__bulle {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding-inline: 9px;
+    border: 1px solid color-mix(in srgb, var(--color-peche) 60%, transparent);
+    border-radius: 10px 10px 3px 10px;
+    background: color-mix(in srgb, var(--color-peche) 16%, var(--color-night-deep));
+    color: var(--color-ink);
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 220ms;
+  }
+
+  .confirmation__envoi {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--color-ink-low);
+    font-size: 9px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 240ms;
+  }
+
+  .confirmation__envoi svg {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-peche);
+    stroke-width: 1.6;
+  }
+
+  .confirmation.est-ecrite .confirmation__bulle,
+  .confirmation.est-envoyee .confirmation__envoi {
+    opacity: 1;
   }
 
   /* ── Le plan étroit ──
-     Une liste qui ne montre que l'affaire du moment, un volet sans titre, un
-     nœud réduit à son signe, trois échéances au lieu de quatre et pas de
-     total. Le socle a déjà réduit ses propres pièces. */
+     Une seule silhouette : la grande grille d'une semaine, sur toute la
+     largeur. Les trois petites fenêtres ont disparu (`sm-large`), et avec
+     elles les fils, les ports et les nœuds : rien ne se dispose plus à gauche
+     ou à droite. La demande arrive en étiquette au-dessus de la grille, le
+     créneau en descend dans sa case, la confirmation se pose dessous. Une
+     seule pastille reste en haut, celle de la promesse. */
   @container sm (max-width: 519.98px) {
-    .sm-plan {
-      --h-affaire: 40px;
+    .sm-puces {
+      justify-content: flex-end;
     }
 
-    .poste--crm {
-      top: 36px;
-      left: 10px;
-      width: 162px;
+    /* Les fils restent dans le rendu, invisibles : le moteur mesure leur
+       tracé à chaque changement de plan. */
+    .sm-fils {
+      visibility: hidden;
     }
 
-    .poste--facturation {
-      --sm-cols: 18px minmax(0, 1fr) 42px 9px;
-      top: 36px;
-      left: 204px;
-      width: 146px;
-    }
-
-    .poste--suivi {
-      --sm-cols: 18px minmax(0, 1fr) 28px 9px;
-      top: 159px;
-      left: 204px;
-      width: 146px;
-    }
-
-    .port--crm { right: -5px; bottom: 40px; }
-    .port--entree { top: 62px; left: -5px; }
-    .port--sortie { bottom: -5px; left: 52px; }
-    .port--suivi { top: -5px; left: 82px; }
-
-    /* Trois rangées dans chaque outil : elles se resserrent pour tenir. */
-    .poste--facturation .sm-rangee,
-    .poste--suivi .sm-rangee {
-      height: 21px;
-    }
-
-    /* Entre la facturation et le suivi, il ne reste que la place des deux
-       ports : le nœud s'efface, le fil suffit. */
-    .sm-noeud[data-sm-noeud='suivi'] {
+    .sm-noeud,
+    .sm-port {
       display: none;
     }
 
-    .noeud--calcul {
-      width: 18px;
-      height: 18px;
-      margin: -9px 0 0 -9px;
-      border-radius: var(--radius-full);
+    .poste--agenda {
+      top: 37px;
+      left: 10px;
+      width: 340px;
     }
 
-    .noeud--calcul b {
-      font-size: 11px;
+    /* Le socle retire le sous-titre des fenêtres étroites ; celle-ci a toute
+       la largeur, et le numéro de la semaine y compte. */
+    .poste--agenda .sm-fenetre__info {
+      display: block;
+      font-size: 9px;
     }
 
-    .boite {
-      padding: 5px;
+    .agenda {
+      grid-template-columns: 24px repeat(5, minmax(0, 1fr));
+      grid-template-rows: 13px;
+      grid-auto-rows: 33px;
+      gap: 3px;
     }
 
-    .boite__vue {
-      height: var(--h-affaire);
+    .agenda__jour {
+      font-size: 9.5px;
+      line-height: 13px;
+    }
+
+    .agenda__heure {
+      padding: 3px 3px 0 0;
+      font-size: 9px;
+    }
+
+    .case,
+    .prise,
+    .creneau {
       border-radius: 6px;
     }
 
-    .affaire {
-      grid-template-columns: 18px minmax(0, 1fr) auto;
-      column-gap: 6px;
-      row-gap: 3px;
-      padding-inline: 5px;
-      border-radius: 6px;
+    .prise::before,
+    .prise::after {
+      left: 6px;
+      height: 4px;
     }
 
-    .affaire__avatar {
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
+    .prise::before { top: 7px; }
+    .prise::after { top: 15px; }
+
+    .creneau {
+      gap: 2px;
+      padding: 6px;
     }
 
-    .affaire__objet { font-size: 9.5px; }
-    .affaire__montant { display: none; }
+    .creneau b { font-size: 9.5px; }
+    .creneau > span { font-size: 9px; }
 
-    .affaire__coche {
-      width: 10px;
-      height: 10px;
+    .viseur,
+    .onde {
+      border-radius: 7px;
     }
-
-    .etape {
-      gap: 4px;
-      height: 14px;
-      padding: 0 6px 0 5px;
-      font-size: 8px;
-    }
-
-    .etape em {
-      width: 5px;
-      height: 5px;
-    }
-
-    .apercu { padding: 7px 7px 8px; }
-    .apercu__vide { inset: 7px 7px 8px; font-size: 0; }
-    .fiche__lignes { margin-top: 8px; }
   }
 </style>
 
@@ -709,353 +978,509 @@ const large = (index: number) => (index > 2 ? 'sm-large' : '');
    * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
    * cours, une boucle remplacée se défait d'elle-même.
    *
-   * Deux aides sont écrites ici parce que le socle ne les a pas : faire courir
-   * un grain sur une PORTION de fil (`courirSur`), et le tiret d'une bande à
-   * l'entrée d'un port (`tiretAu`). Le découpage en a besoin : ce qui entre
-   * dans le fil s'arrête au nœud, et autre chose en repart.
+   * La boucle a un tronc commun et deux milieux : `jouerLarge` (quatre outils
+   * et leurs fils) et `jouerEtroit` (la grille seule, une étiquette au-dessus,
+   * une bulle dessous). Le geste, lui, est le même : `viser`, puis `poser`.
+   *
+   * Trois aides sont écrites ici parce que le socle ne les a pas :
+   *   - `tiretAu` : le tiret d'une bande à l'entrée d'un port ;
+   *   - `viser` et `deviser` : le viseur de l'agenda, et son onde à l'arrivée ;
+   *   - `remonter` : un grain qui parcourt un fil à rebours. Le moteur trace
+   *     et parcourt ses fils de gauche à droite ; la confirmation, elle,
+   *     revient de l'agenda vers le message, à gauche.
+   * Le créneau qui se pose n'est pas un `passer` : entre le grain et la bande,
+   * l'agenda vise sa case, et la bande se pose sur un rectangle exact.
    */
-  import { ELAN, EXPO, euros, monterScenes } from '../../lib/metiers/scene';
+  import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Cadre } from '../../lib/metiers/scene';
 
-  interface Affaire {
-    montant: number;
-    tva: number;
+  interface Reservation {
+    prenom: string;
+    l: number;
+    date: string;
+    creneau: string;
+    long: string;
+    court: string;
+    jour: string;
+    debut: string;
   }
 
-  interface Donnees {
-    affaires: Affaire[];
-    mois: string[];
+  interface Semaine {
+    numero: number;
+    jours: number[];
+    reservations: Reservation[];
   }
 
-  /* Les données arrivent du balisage en JSON : c'est une frontière, on vérifie
-     leur forme avant de s'en servir. */
-  const estAffaire = (valeur: unknown): valeur is Affaire => {
+  /* Les semaines arrivent du balisage en JSON : c'est une frontière, on
+     vérifie leur forme avant de s'en servir. */
+  const estReservation = (valeur: unknown): valeur is Reservation => {
     if (typeof valeur !== 'object' || valeur === null) return false;
     const v = valeur as Record<string, unknown>;
-    return typeof v.montant === 'number' && typeof v.tva === 'number';
+    return (
+      typeof v.l === 'number' &&
+      [v.prenom, v.date, v.creneau, v.long, v.court, v.jour, v.debut].every((texte) => typeof texte === 'string')
+    );
   };
 
-  const lireDonnees = (brut: string | undefined): Donnees => {
+  const estSemaine = (valeur: unknown): valeur is Semaine => {
+    if (typeof valeur !== 'object' || valeur === null) return false;
+    const v = valeur as Record<string, unknown>;
+    return (
+      typeof v.numero === 'number' &&
+      Array.isArray(v.jours) &&
+      v.jours.every((jour) => typeof jour === 'number') &&
+      Array.isArray(v.reservations) &&
+      v.reservations.length > 0 &&
+      v.reservations.every(estReservation)
+    );
+  };
+
+  const lireSemaines = (brut: string | undefined): Semaine[] => {
     const lu: unknown = JSON.parse(brut ?? 'null');
-    if (typeof lu === 'object' && lu !== null) {
-      const { affaires, mois } = lu as Record<string, unknown>;
-      if (
-        Array.isArray(affaires) &&
-        affaires.length > 0 &&
-        affaires.every(estAffaire) &&
-        Array.isArray(mois) &&
-        mois.length > 0 &&
-        mois.every((m): m is string => typeof m === 'string')
-      ) {
-        return { affaires, mois };
-      }
+    if (!Array.isArray(lu) || lu.length === 0 || !lu.every(estSemaine)) {
+      throw new Error('Scène Automatisation : `data-semaines` est illisible');
     }
-    throw new Error('Scène Automatisation : `data-affaires` est illisible');
+    return lu;
   };
 
-  const entier = new Intl.NumberFormat('fr-FR');
   const numeroSuivant = (numero: string) => String(Number(numero) + 1).padStart(numero.length, '0');
 
   monterScenes('[data-scene-automatisation]', (s) => {
-    /* Sur le plan étroit la fenêtre est trop courte pour « En attente » : la
-       pastille touchait son bord. */
-    const attente = s.etroit ? 'Attente' : 'En attente';
-    const liste = s.un('[data-liste]');
-    const nouvelle = s.un('[data-affaire="nouvelle"]');
-    const anciennes = s.tous('[data-affaire="ancienne"]');
-    const etape = s.un('[data-etape]');
-    const fiche = s.un('[data-fiche]');
+    const demande = s.un('[data-demande]');
+    const feuille = s.un('[data-feuille]');
     const balai = s.un('[data-balai]');
-    const noeud = s.un('[data-calcul]');
-    const chemin = s.un<SVGPathElement>('[data-sm-fil="facturation"] path');
-    const elTotal = s.un('[data-total]');
-    const elTraitees = s.un('[data-traitees]');
+    const lignes = s.tous('[data-ligne]');
+    const reglement = s.un('[data-reglement]');
+    const jauge = s.un('[data-jauge]');
+    const plein = s.un('[data-jauge] i');
+    const jours = s.tous('[data-jour]');
+    const heures = s.tous('[data-heure]');
+    const viseurJour = s.un('[data-viseur="jour"]');
+    const viseurHeure = s.un('[data-viseur="heure"]');
+    const onde = s.un('[data-onde]');
+    const bulle = s.un('[data-bulle]');
+    const envoi = s.un('[data-envoi]');
+    /* Les pièces du plan étroit. */
+    const etiquette = s.un('[data-etiquette]');
+    const morceaux = s.tous('[data-morceau]');
+    const acompte = s.un('[data-acompte]');
+    const acomptePlein = s.un('[data-acompte] i');
+    const confirmation = s.un('[data-confirmation]');
+    const bulleEtroite = s.un('[data-bulle-etroite]');
+    const filMessage = s.un<SVGPathElement>('[data-sm-fil="message"] path');
+    const noeudMessage = s.un('[data-sm-noeud="message"]');
+    const elReservations = s.un('[data-reservations]');
     const elZero = s.un('[data-zero]');
     const etats = {
-      crm: s.un('[data-etat-de="crm"]'),
-      facturation: s.un('[data-etat-de="facturation"]'),
-      suivi: s.un('[data-etat-de="suivi"]'),
+      reservation: s.un('[data-etat-de="reservation"]'),
+      paiement: s.un('[data-etat-de="paiement"]'),
+      agenda: s.un('[data-etat-de="agenda"]'),
+      message: s.un('[data-etat-de="message"]'),
     };
-    const avantFacturation = s.un('[data-avant]');
+    const avantPaiement = s.un('[data-avant]');
     const bandes = s.tous('.sm-bande');
-    const grains = s.tous('.sm-grain');
-    const lignesFiche = s.tous('[data-ligne-fiche]');
-    const rangeesFacturation = s.tous('[data-rangee="facturation"]');
-    const rangeesSuivi = s.tous('[data-rangee="suivi"]');
-    const { affaires, mois } = lireDonnees(s.racine.dataset.affaires);
+    const grain = s.un('.sm-grain');
+    const semaines = lireSemaines(s.racine.dataset.semaines);
 
-    const ecrire = (nom: string, texte: string, dans: HTMLElement = s.racine) => {
-      dans.querySelectorAll<HTMLElement>(`[data-c="${nom}"]`).forEach((cible) => (cible.textContent = texte));
+    /* Les créneaux, rangés dans l'ordre où ils sont réservés, chacun avec la
+       case qui le porte. */
+    const creneaux = s
+      .tous('[data-creneau]')
+      .sort((a, b) => Number(a.dataset.creneau) - Number(b.dataset.creneau))
+      .map((creneau) => {
+        const cellule = creneau.closest<HTMLElement>('[data-case]');
+        if (!cellule) throw new Error('Scène Automatisation : un créneau est hors de sa case');
+        return { creneau, cellule };
+      });
+    const parSemaine = creneaux.length;
+
+    const ecrire = (nom: string, texte: string) => {
+      s.racine.querySelectorAll<HTMLElement>(`[data-c="${nom}"]`).forEach((cible) => (cible.textContent = texte));
     };
-    const lu = (nom: string, dans: HTMLElement) => dans.querySelector<HTMLElement>(`[data-c="${nom}"]`)?.textContent ?? '';
 
-    /* L'état de la scène. Le numéro et le compteur partent de ce que le
-       balisage a rendu : il n'y a qu'un endroit où les écrire. */
+    /* L'état de la scène. Le numéro de demande et le compteur partent de ce
+       que le balisage a rendu : il n'y a qu'un endroit où les écrire. */
     let rang = 0;
-    let numero = lu('numero', nouvelle) || '0000';
-    let traitees = Number(elTraitees.textContent);
-    let total = 0;
+    let numero = s.un('[data-c="numero"]').textContent ?? '0000';
+    let reservations = Number(elReservations.textContent);
 
-    /* Le calcul que le nœud affiche : le montant et sa TVA, partagés en autant
-       de parts que le plan montre d'échéances (quatre, ou trois à l'étroit). */
-    const calculer = () => {
-      const affaire = affaires[rang % affaires.length];
-      const parts = s.affiches(rangeesFacturation).length || 1;
-      return { ...affaire, parts, ttc: (affaire.montant * (1 + affaire.tva / 100)) / parts };
-    };
+    const semaineDe = (r: number) => semaines[Math.floor(r / parSemaine) % semaines.length];
+    const placeDe = (r: number) => r % parSemaine;
 
+    /* La demande du moment : ses textes dans la feuille et dans la bulle. */
     const charger = () => {
-      const { montant, tva, parts, ttc } = calculer();
-      ecrire('numero', numero, nouvelle);
-      ecrire('numero-fiche', numero);
-      ecrire('numero-page', numero);
-      ecrire('montant', entier.format(montant));
-      ecrire('montant-ht', euros(montant));
-      ecrire('parts', String(parts));
-      ecrire('tva', String(tva));
-      [rangeesFacturation, rangeesSuivi].forEach((rangees) =>
-        rangees.forEach((rangee, i) => {
-          ecrire('rang', `${i + 1}/${parts}`, rangee);
-          ecrire('date', `15 ${mois[(rang + i) % mois.length]}`, rangee);
-          ecrire('ttc', euros(ttc), rangee);
-        }),
-      );
+      const reservation = semaineDe(rang).reservations[placeDe(rang)];
+      ecrire('numero', numero);
+      ecrire('prenom', reservation.prenom);
+      ecrire('date', reservation.date);
+      ecrire('creneau', reservation.creneau);
+      ecrire('long', reservation.long);
+      ecrire('court', reservation.court);
+      ecrire('jour', reservation.jour);
+      ecrire('debut', reservation.debut);
+      s.racine.querySelector<HTMLElement>('[data-c="nom"]')?.style.setProperty('--l', `${reservation.l}%`);
     };
 
-    const ecrireTotal = (n: number) => {
-      total = n;
-      elTotal.textContent = euros(n);
+    /* La semaine affichée : son numéro et le quantième de chaque jour. Avec
+       `anime`, les nombres tombent en place : la semaine tourne. */
+    const ecrireSemaine = (anime: boolean) => {
+      const semaine = semaineDe(rang);
+      const poser = (cible: HTMLElement | null, texte: string) => {
+        if (!cible) return;
+        if (anime) s.tictac(cible, texte);
+        else cible.textContent = texte;
+      };
+      poser(s.racine.querySelector<HTMLElement>('[data-c="semaine"]'), String(semaine.numero));
+      jours.forEach((jour, i) => poser(jour.querySelector<HTMLElement>('[data-c="quantieme"]'), String(semaine.jours[i])));
     };
 
-    /* Le total de la facturation : la somme des échéances déjà créées. */
-    const somme = () =>
-      calculer().ttc * s.affiches(rangeesFacturation).filter((r) => r.classList.contains('est-rempli')).length;
-
-    const etatFacturation = (etat: 'attente' | 'cours') => {
-      etats.facturation.dataset.etat = etat;
-      avantFacturation.textContent = etat === 'cours' ? 'Brouillons' : attente;
+    /* Les créneaux de la semaine : les `poses` premiers sont dans l'agenda, et
+       celui de la boucle en cours (`neuf`) y est en pêche. */
+    const peindreAgenda = (poses: number, neuf: number | null) => {
+      creneaux.forEach(({ creneau }, i) => {
+        creneau.classList.toggle('est-pose', i < poses || i === neuf);
+        creneau.classList.toggle('est-neuf', i === neuf);
+      });
     };
 
+    const etatPaiement = (etat: 'attente' | 'cours') => {
+      etats.paiement.dataset.etat = etat;
+      avantPaiement.textContent = etat === 'cours' ? 'En cours' : 'En attente';
+    };
+
+    /* ── Les aides hors socle ── */
+
+    /* Le tiret d'une bande à l'entrée d'un port, comme celui de `passer`. */
+    const tiretAu = (nom: string): Cadre => {
+      const p = s.lieu(s.port(nom));
+      return { x: p.x - 8, y: p.y - 3, w: 16, h: 6 };
+    };
+
+    /* L'agenda désigne sa case avant de la remplir : le jour et l'heure
+       s'allument, une bande couvre la colonne, une autre la ligne. */
+    const viser = (cellule: HTMLElement) => {
+      const index = Number(cellule.dataset.case);
+      jours[index % jours.length]?.classList.add('est-vise');
+      heures[Math.floor(index / jours.length)]?.classList.add('est-vise');
+      Object.assign(viseurJour.style, { left: `${cellule.offsetLeft}px`, width: `${cellule.offsetWidth}px` });
+      Object.assign(viseurHeure.style, { top: `${cellule.offsetTop}px`, height: `${cellule.offsetHeight}px` });
+      viseurJour.classList.add('est-leve');
+      viseurHeure.classList.add('est-leve');
+      cellule.classList.add('est-visee');
+    };
+
+    const deviser = () => {
+      [...jours, ...heures].forEach((repere) => repere.classList.remove('est-vise'));
+      [viseurJour, viseurHeure].forEach((bande) => bande.classList.remove('est-leve'));
+      creneaux.forEach(({ cellule }) => cellule.classList.remove('est-visee'));
+    };
+
+    /* Le créneau touche sa case : un cercle s'en écarte et s'efface. */
+    const onduler = (cellule: HTMLElement) => {
+      Object.assign(onde.style, {
+        left: `${cellule.offsetLeft}px`,
+        top: `${cellule.offsetTop}px`,
+        width: `${cellule.offsetWidth}px`,
+        height: `${cellule.offsetHeight}px`,
+      });
+      s.jouer(onde, [{ opacity: 0.8, scale: 1 }, { opacity: 0, scale: 1.45 }], { duration: 700, easing: EXPO });
+    };
+
+    /* Un grain sur le fil du message, parcouru à rebours : de l'agenda vers
+       le message. */
+    const remonter = (duree: number) => {
+      const longueur = filMessage.getTotalLength();
+      const pas = 16;
+      const images = Array.from({ length: pas + 1 }, (_, i) => {
+        const p = filMessage.getPointAtLength(longueur * (1 - i / pas));
+        return { transform: `translate(${p.x}px, ${p.y}px)`, opacity: i === 0 || i === pas ? 0 : 1 };
+      });
+      return s.animer(grain, images, { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' });
+    };
+
+    /* ── Les états ── */
+
+    /* Les trois outils d'après la demande reviennent à leur attente. */
     const eteindreOutils = () => {
       s.racine.classList.remove('est-abouti');
-      [...rangeesFacturation, ...rangeesSuivi].forEach((r) => r.classList.remove('est-rempli', 'est-valide'));
-      etatFacturation('attente');
-      etats.suivi.dataset.etat = 'attente';
+      reglement.classList.remove('est-rempli', 'est-valide');
+      jauge.classList.remove('est-pleine');
+      etatPaiement('attente');
+      etats.agenda.dataset.etat = 'attente';
+      etats.message.dataset.etat = 'attente';
+      bulle.classList.remove('est-envoyee');
+      envoi.classList.remove('est-envoye');
+      acompte.dataset.etat = 'attente';
+      confirmation.classList.remove('est-ecrite', 'est-envoyee');
+      deviser();
       s.eteindre();
     };
 
-    /* Le repos : le CRM est à jour, le volet est vide, les deux outils
-       attendent. L'affaire qui va être signée est prête au-dessus de la vue. */
+    /* Le repos : aucune demande, rien à encaisser, rien à confirmer. L'agenda
+       garde les créneaux déjà posés cette semaine. */
     const repos = () => {
       eteindreOutils();
-      etats.crm.dataset.etat = 'attente';
-      liste.style.setProperty('--pose', '-1');
-      nouvelle.classList.remove('est-traite');
-      etape.classList.remove('est-ouverte');
-      fiche.classList.remove('est-ouverte');
-      lignesFiche.forEach((l) => l.classList.remove('est-lu', 'est-parti'));
+      etats.reservation.dataset.etat = 'attente';
+      demande.classList.remove('est-arrivee');
+      etiquette.classList.remove('est-arrivee');
+      [...lignes, ...morceaux].forEach((l) => l.classList.remove('est-lu', 'est-parti'));
+      peindreAgenda(placeDe(rang), null);
+      ecrireSemaine(false);
       charger();
-      ecrireTotal(0);
     };
 
     /* L'image fixe : tout est passé. C'est aussi ce que le HTML rend sans
        script. */
     const figer = () => {
       charger();
+      ecrireSemaine(false);
+      deviser();
       s.racine.classList.add('est-abouti');
-      liste.style.setProperty('--pose', '0');
-      nouvelle.classList.remove('est-traite');
-      etape.classList.add('est-ouverte');
-      fiche.classList.add('est-ouverte');
-      lignesFiche.forEach((l) => {
+      demande.classList.add('est-arrivee');
+      etiquette.classList.add('est-arrivee');
+      [...lignes, ...morceaux].forEach((l) => {
         l.classList.remove('est-lu');
         l.classList.add('est-parti');
       });
-      [...rangeesFacturation, ...rangeesSuivi].forEach((r) => r.classList.add('est-rempli', 'est-valide'));
-      avantFacturation.textContent = attente;
+      reglement.classList.add('est-rempli', 'est-valide');
+      jauge.classList.add('est-pleine');
+      avantPaiement.textContent = 'En attente';
+      acompte.dataset.etat = 'fait';
+      peindreAgenda(placeDe(rang), placeDe(rang));
+      bulle.classList.add('est-envoyee');
+      envoi.classList.add('est-envoye');
+      confirmation.classList.add('est-ecrite', 'est-envoyee');
       Object.values(etats).forEach((e) => (e.dataset.etat = 'fait'));
-      s.allumer('facturation', true);
-      s.allumer('suivi', true);
-      ecrireTotal(somme());
+      ['paiement', 'agenda', 'message'].forEach((fil) => s.allumer(fil, true));
     };
 
-    /* ── Les deux aides hors socle ── */
-
-    /* Le tiret d'une bande à l'entrée d'un port, comme celui de `passer`. */
-    const tiretAu = (port: HTMLElement): Cadre => {
-      const p = s.lieu(port);
-      return { x: p.x - 8, y: p.y - 3, w: 16, h: 6 };
+    /* Le créneau touche sa case : il y apparaît, l'onde part, il se cale. */
+    const poser = async (place: number) => {
+      const { creneau, cellule } = creneaux[place];
+      peindreAgenda(place, place);
+      cellule.classList.remove('est-visee');
+      onduler(cellule);
+      /* Un léger trop-plein, puis sa taille. */
+      await s.animer(creneau, [{ scale: 1.14 }, { scale: 1 }], { duration: 480, easing: EXPO });
+      deviser();
+      s.basculer(etats.agenda);
     };
 
-    /* Un grain sur une portion du premier fil, entre deux fractions de sa
-       longueur : du port au nœud (0 → 0.5), ou du nœud au port (0.5 → 1). */
-    const courirSur = (grain: HTMLElement, de: number, vers: number, duree: number) => {
-      const longueur = chemin.getTotalLength();
-      const pas = 12;
-      const images = Array.from({ length: pas + 1 }, (_, i) => {
-        const p = chemin.getPointAtLength(longueur * (de + ((vers - de) * i) / pas));
-        return { transform: `translate(${p.x}px, ${p.y}px)`, opacity: i === 0 || i === pas ? 0 : 1 };
+    /* ── Le grand plan : quatre outils, trois fils ── */
+    async function jouerLarge(place: number) {
+      const { cellule } = creneaux[place];
+      const lues = s.affiches(lignes);
+
+      /* 1. La demande arrive : la feuille tombe dans la fenêtre. */
+      demande.classList.add('est-arrivee');
+      await s.animer(
+        feuille,
+        [
+          { transform: 'translateY(-16px) scale(0.96)', opacity: 0 },
+          { transform: 'none', opacity: 1 },
+        ],
+        { duration: 560, easing: EXPO },
+      );
+      s.basculer(etats.reservation);
+      await s.attendre(280);
+
+      /* 2. La lecture : le trait descend la demande, client, date et créneau
+         s'allument à son passage. */
+      await s.lire(balai, lues, 900);
+      await s.attendre(180);
+
+      /* 3. Vers le paiement : les lignes lues se resserrent ensemble dans le
+         port, un grain descend le fil, l'acompte se pose. */
+      s.allumer('paiement');
+      const sortie = tiretAu('reservation');
+      lues.forEach((ligne, i) => {
+        ligne.classList.remove('est-lu');
+        ligne.classList.add('est-parti');
+        s.enMarge(s.voler(bandes[i], ligne, sortie, { duree: 460, pose: 0.2, arrivee: 0.9, easing: ELAN }));
       });
-      return s.animer(grain, images, { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' });
-    };
+      await s.attendre(380);
+      s.enMarge(s.courir(grain, 'paiement', { duree: 420 }));
+      await s.attendre(360);
+      s.port('paiement').classList.add('est-actif');
+      s.enMarge(
+        s.voler(bandes[0], tiretAu('paiement'), reglement, { duree: 680, pose: 0.06, arrivee: 0.64, easing: EXPO, eclot: true }),
+      );
+      await s.attendre(400);
+      reglement.classList.add('est-rempli');
+      etatPaiement('cours');
 
-    const tressaillir = (ampleur: number, duree: number) =>
-      s.jouer(noeud, [{ scale: 1 }, { scale: ampleur, offset: 0.35 }, { scale: 1 }], { duration: duree, easing: 'ease-out' });
+      /* L'encaissement : la jauge se remplit, l'acompte est coché. */
+      await s.animer(plein, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+        duration: 720,
+        easing: 'cubic-bezier(0.6, 0, 0.3, 1)',
+      });
+      jauge.classList.add('est-pleine');
+      reglement.classList.add('est-valide');
+      s.basculer(etats.paiement);
+      await s.attendre(340);
 
-    /* ── Le découpage ──
-       Ce qui entre dans le fil n'est pas ce qui en sort. Les trois lignes de
-       la fiche vont jusqu'au nœud et s'y arrêtent ; le nœud calcule ; puis il
-       rend autant de grains que d'échéances, et chacun se déploie en une
-       rangée de la facturation. */
-    async function decouper(lignes: HTMLElement[], echeances: HTMLElement[]) {
-      s.allumer('facturation');
-      const depart = tiretAu(s.port('crm'));
-      const arrivee = tiretAu(s.port('entree'));
-
-      await Promise.all(
-        lignes.map(async (ligne, i) => {
-          await s.attendre(i * 150);
-          ligne.classList.remove('est-lu');
-          ligne.classList.add('est-parti');
-          s.enMarge(s.voler(bandes[i], ligne, depart, { duree: 460, pose: 0.2, arrivee: 0.9, easing: ELAN }));
-          await s.attendre(380);
-          await courirSur(grains[i], 0, 0.5, 300);
-          tressaillir(1.1, 260);
+      /* 4. Le créneau se pose. L'acompte encaissé part vers l'agenda ; pendant
+         que le grain traverse, l'agenda vise sa case ; puis le créneau sort du
+         port, traverse la semaine et vient s'y loger. */
+      s.allumer('agenda');
+      s.enMarge(s.voler(bandes[0], reglement, tiretAu('paye'), { duree: 460, pose: 0.2, arrivee: 0.9, easing: ELAN, eclot: true }));
+      await s.attendre(380);
+      viser(cellule);
+      s.enMarge(s.courir(grain, 'agenda', { duree: 560 }));
+      await s.attendre(520);
+      s.port('agenda').classList.add('est-actif');
+      s.enMarge(
+        s.voler(bandes[0], tiretAu('agenda'), s.cadreDe(cellule), {
+          duree: 860,
+          pose: 0.05,
+          arrivee: 0.72,
+          easing: EXPO,
+          eclot: true,
         }),
       );
+      await s.attendre(580);
+      await poser(place);
+      await s.attendre(380);
 
-      /* Le calcul : le nœud prend un temps, et ça se voit. */
-      await s.animer(noeud, [{ scale: 1 }, { scale: 1.2, offset: 0.4 }, { scale: 1 }], { duration: 360, easing: EXPO });
+      /* 5. La confirmation : le créneau posé repart par le fil du bas vers le
+         message, et la bulle s'envoie. */
+      s.allumer('message', true);
+      s.enMarge(
+        s.voler(bandes[1], s.cadreDe(cellule), tiretAu('retour'), { duree: 520, pose: 0.2, arrivee: 0.9, easing: ELAN, eclot: true }),
+      );
+      await s.attendre(440);
+      s.enMarge(remonter(480));
+      await s.attendre(200);
+      s.jouer(noeudMessage, [{ scale: 1 }, { scale: 1.24, offset: 0.35 }, { scale: 1 }], { duration: 320, easing: 'ease-out' });
+      await s.attendre(220);
+      s.enMarge(
+        s.voler(bandes[1], tiretAu('message'), bulle, { duree: 680, pose: 0.06, arrivee: 0.64, easing: EXPO, eclot: true }),
+      );
+      await s.attendre(400);
+      bulle.classList.add('est-envoyee');
+      await s.attendre(240);
+      envoi.classList.add('est-envoye');
+      s.basculer(etats.message);
+    }
 
-      await Promise.all(
-        echeances.map(async (echeance, i) => {
-          await s.attendre(i * 170);
-          s.enMarge(courirSur(grains[i], 0.5, 1, 300));
-          await s.attendre(240);
-          s.port('entree').classList.add('est-actif');
-          if (i === 0) etatFacturation('cours');
-          s.enMarge(
-            s.voler(bandes[i], arrivee, echeance, { duree: 680, pose: 0.06, arrivee: 0.64, easing: EXPO, eclot: true }),
-          );
-          await s.attendre(400);
-          /* Créée, pas encore émise : la rangée se remplit sans sa coche. */
-          echeance.classList.add('est-rempli');
-          /* Le total suit en marge : il finit de monter pendant que la
-             scène passe à la suite. */
-          s.enMarge(
-            s.compter(elTotal, total, somme(), {
-              format: (n) => {
-                total = n;
-                return euros(n);
-              },
-            }),
-          );
+    /* ── Le plan étroit : la grille, et deux pièces devant elle ── */
+    async function jouerEtroit(place: number) {
+      const { cellule } = creneaux[place];
+
+      /* 1. La demande arrive : une étiquette se pose au-dessus de la grille. */
+      etiquette.classList.add('est-arrivee');
+      await s.animer(
+        etiquette,
+        [
+          { transform: 'translateY(-14px)', opacity: 0 },
+          { transform: 'none', opacity: 1 },
+        ],
+        { duration: 520, easing: EXPO },
+      );
+      await s.attendre(360);
+
+      /* 2. La lecture : le prénom, le jour, l'heure, l'un après l'autre. */
+      for (const morceau of morceaux) {
+        morceau.classList.add('est-lu');
+        await s.attendre(300);
+      }
+      await s.attendre(220);
+
+      /* 3. L'acompte : la coche se remplit, il est encaissé. */
+      acompte.dataset.etat = 'cours';
+      await s.animer(acomptePlein, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
+        duration: 720,
+        easing: 'cubic-bezier(0.6, 0, 0.3, 1)',
+      });
+      acompte.dataset.etat = 'fait';
+      s.jouer(acompte, [{ transform: 'scale(0.86)' }, { transform: 'none' }], { duration: 420, easing: EXPO });
+      await s.attendre(440);
+
+      /* 4. Le créneau se pose. L'agenda vise sa case, le temps qu'on la voie ;
+         puis la demande quitte son étiquette, descend dans la grille et vient
+         s'y loger. */
+      viser(cellule);
+      await s.attendre(620);
+      morceaux.forEach((morceau) => {
+        morceau.classList.remove('est-lu');
+        morceau.classList.add('est-parti');
+      });
+      s.enMarge(
+        s.voler(bandes[0], s.cadreDe(etiquette), s.cadreDe(cellule), {
+          duree: 880,
+          pose: 0.12,
+          arrivee: 0.72,
+          easing: EXPO,
+          eclot: true,
         }),
       );
+      await s.attendre(630);
+      await poser(place);
+      await s.attendre(480);
+
+      /* 5. La confirmation : elle part du créneau posé et vient s'écrire sous
+         la grille. */
+      s.enMarge(
+        s.voler(bandes[1], s.cadreDe(cellule), s.cadreDe(bulleEtroite), {
+          duree: 640,
+          pose: 0.15,
+          arrivee: 0.7,
+          easing: EXPO,
+          eclot: true,
+        }),
+      );
+      await s.attendre(450);
+      confirmation.classList.add('est-ecrite');
+      await s.attendre(260);
+      confirmation.classList.add('est-envoyee');
     }
 
     async function tour() {
-      const lignes = s.affiches(lignesFiche);
-      const echeances = s.affiches(rangeesFacturation);
-      const statuts = s.affiches(rangeesSuivi);
+      const place = placeDe(rang);
+      const etroit = s.etroit;
 
       await s.attendre(340);
+      if (etroit) await jouerEtroit(place);
+      else await jouerLarge(place);
 
-      /* 1. L'affaire est signée : elle prend la tête de la liste. */
-      liste.style.setProperty('--pose', '0');
-      const cran = nouvelle.offsetHeight;
-      s.jouer(nouvelle, { opacity: [0, 1] }, { duration: 380 });
-      await s.animer(liste, { translate: [`0 ${-cran}px`, '0 0'] }, { duration: 640, easing: EXPO });
-      s.basculer(etats.crm);
-      await s.attendre(360);
-
-      /* 2. Sa fiche s'ouvre : elle sort de l'étiquette « Signée ». */
-      await s.animer(etape, [{ transform: 'none' }, { transform: 'scale(1.1)' }, { transform: 'none' }], {
-        duration: 300,
-        easing: 'ease-out',
-      });
-      etape.classList.add('est-ouverte');
-      const origine = s.lieu(etape, 0.3, 0.5);
-      const cadreFiche = s.cadreDe(fiche);
-      fiche.style.transformOrigin = `${origine.x - cadreFiche.x}px ${origine.y - cadreFiche.y}px`;
-      fiche.classList.add('est-ouverte');
-      await s.animer(
-        fiche,
-        [
-          { transform: 'scale(0.14)', opacity: 0 },
-          { opacity: 1, offset: 0.3 },
-          { transform: 'none', opacity: 1 },
-        ],
-        { duration: 620, easing: EXPO },
-      );
-      await s.attendre(160);
-
-      /* 3. La lecture : le trait descend la fiche, montant, échéances et TVA
-         s'allument à son passage. */
-      await s.lire(balai, lignes);
-      await s.attendre(200);
-
-      /* 4. Le découpage : une affaire entre, des échéances sortent. */
-      await decouper(lignes, echeances);
-      /* Le temps que le total finisse de monter. */
-      await s.attendre(440);
-
-      /* 5. L'émission : les brouillons sont validés un à un. */
-      for (const echeance of echeances) {
-        echeance.classList.add('est-valide');
-        await s.attendre(90);
-      }
-      s.basculer(etats.facturation);
-      await s.attendre(300);
-
-      /* 6. Le suivi : le statut de chaque échéance arrive par le second fil,
-         ligne à ligne. */
-      s.allumer('suivi');
-      await Promise.all(
-        echeances.map(async (echeance, i) => {
-          const statut = statuts[i];
-          if (!statut) return;
-          await s.attendre(i * 190);
-          await s.passer({ bande: bandes[i], grain: grains[i], de: echeance, vers: statut, fil: 'suivi', eclot: true });
-          statut.classList.add('est-rempli', 'est-valide');
-        }),
-      );
-      s.basculer(etats.suivi);
       s.racine.classList.add('est-abouti');
-      traitees += 1;
-      s.tictac(elTraitees, String(traitees));
-      /* Une affaire de plus, et le compteur d'à côté n'a pas bougé : zéro. */
+      reservations += 1;
+      s.tictac(elReservations, String(reservations));
+      /* Une réservation de plus, et le compteur d'à côté n'a pas bougé. */
       s.tictac(elZero, '0');
 
-      /* Le temps de lire l'image : tout est passé, personne n'a rien saisi. */
-      await s.attendre(2250);
+      /* Le temps de lire l'image : tout a suivi, personne n'a rien saisi. */
+      await s.attendre(etroit ? 2950 : 2300);
 
-      /* 7. On range : la fiche retourne dans son étiquette, l'affaire passe à
-         « Facturée », les deux outils se vident. */
-      await s.animer(fiche, [{ transform: 'none', opacity: 1 }, { transform: 'scale(0.14)', opacity: 0 }], {
-        duration: 380,
-        easing: ELAN,
-      });
-      fiche.classList.remove('est-ouverte');
-      etape.classList.remove('est-ouverte');
-      nouvelle.classList.add('est-traite');
-      etats.crm.dataset.etat = 'attente';
+      /* 6. On range : la demande s'en va, le paiement et le message se
+         vident. Le créneau, lui, reste dans l'agenda, en plus discret. */
+      await s.animer(
+        etroit ? etiquette : feuille,
+        [
+          { transform: 'none', opacity: 1 },
+          { transform: 'translateY(-10px) scale(0.97)', opacity: 0 },
+        ],
+        { duration: 340, easing: ELAN },
+      );
+      demande.classList.remove('est-arrivee');
+      etiquette.classList.remove('est-arrivee');
+      etats.reservation.dataset.etat = 'attente';
       eteindreOutils();
-      ecrireTotal(0);
-      await s.attendre(560);
-
-      /* Le raccord, invisible : l'affaire facturée devient la première des
-         anciennes, qui lui ressemble trait pour trait, et la liste remonte
-         d'un cran dans la même image. La suivante attend au-dessus. */
-      for (let i = anciennes.length - 1; i > 0; i--) {
-        ecrire('numero', lu('numero', anciennes[i - 1]), anciennes[i]);
-      }
-      ecrire('numero', numero, anciennes[0]);
       rang += 1;
       numero = numeroSuivant(numero);
-      liste.style.setProperty('--pose', '-1');
-      nouvelle.classList.remove('est-traite');
-      lignesFiche.forEach((l) => l.classList.remove('est-lu', 'est-parti'));
+      peindreAgenda(placeDe(rang) === 0 ? parSemaine : placeDe(rang), null);
+      await s.attendre(420);
+
+      /* La semaine est pleine : elle tourne. Les créneaux s'effacent, les
+         dates avancent de sept jours, l'agenda repart vide. */
+      if (placeDe(rang) === 0) {
+        peindreAgenda(0, null);
+        await s.attendre(260);
+        ecrireSemaine(true);
+        await s.attendre(320);
+      }
+
+      [...lignes, ...morceaux].forEach((l) => l.classList.remove('est-lu', 'est-parti'));
       charger();
     }
 

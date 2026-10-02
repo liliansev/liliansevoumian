@@ -12,18 +12,21 @@
  * (`/explorations-metiers`), à la place des sculptures de verre : celles-ci
  * étaient belles, mais il fallait lire leur légende pour comprendre.
  *
- *   automatisation   une affaire signée dans le CRM se découpe en échéances
- *                    dans la facturation, puis son statut remonte au suivi ;
- *   agents IA        un agent lit des fiches, coche ses règles écrites, note
- *                    et trie ; le cas douteux reste à un humain ;
+ *   automatisation   un client réserve un créneau : le paiement est encaissé,
+ *                    le créneau se pose dans l'agenda, la confirmation part ;
+ *   agents IA        on pose une question, l'agent part chercher la réponse
+ *                    dans ses sources, recoupe et répond ; le doute reste à
+ *                    un humain ;
  *   formations       le formateur monte un scénario, l'équipe le refait, puis
  *                    le lance seule ;
  *   sites web        une page se compose, des visiteurs cliquent, et le
  *                    tableau de bord compte.
  *
- * Aucune ne rejoue le bon de commande de la scène du récit, juste au-dessus :
- * pas de redite d'une section à l'autre. Chaque scène raconte le cas que son
- * bloc cite en preuve.
+ * Un sujet par scène, et une silhouette par scène : Lilian l'a demandé en
+ * voyant la page sur son téléphone (« quand on scrolle, il faut qu'à chaque
+ * fois ce soit une animation différente, et qu'on comprenne que c'est un
+ * sujet différent »). Aucune ne rejoue le bon de commande de la scène du
+ * récit, ni son agent de support, ni son suivi de projets.
  *
  * Les scènes vivent dans `components/metiers/`, sur un socle commun
  * (`scene-metier.css`, `lib/metiers/scene.ts`). Leur balisage est déjà l'image
@@ -33,10 +36,10 @@
  * Rien n'est affirmé qui ne soit dans PRODUCT.md : les preuves viennent des
  * cas clients publiés et des faits du parcours ; les prix, de
  * `data/service-pricing`. Les trois sites montrés sont les trois premiers de
- * la liste commune, hors ce site-ci.
+ * la liste commune, hors ce site-ci ; ils sont présentés par `home-sites`.
  */
 import LinkCTA from './LinkCTA.astro';
-import ProjectVisual from './ProjectVisual.astro';
+import HomeSites from './home-sites.astro';
 import SceneAutomatisation from './metiers/scene-automatisation.astro';
 import SceneAgents from './metiers/scene-agents.astro';
 import SceneFormations from './metiers/scene-formations.astro';
@@ -61,9 +64,9 @@ const metiers = [
   {
     id: 'agents-ia',
     nom: 'Agents IA',
-    phrase: 'Un agent qui lit, trie et qualifie à votre place.',
+    phrase: 'Un agent qui va chercher la réponse à votre place.',
     texte:
-      'Un agent branché sur vos données et vos outils : il lit un document, qualifie un prospect, prépare une réponse. L’IA extrait ; les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
+      'Vous posez une question, il va chercher l’information là où elle est : vos documents, vos outils, le web. Il lit, recoupe et répond, sources à l’appui. Les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
     preuve: { chiffre: '~10 min', suite: 'par passage, contre 1 à 3 h à la main pour 50 entreprises, chez M Partners.', href: '/cas-clients/m-partners', cas: 'M Partners' },
     lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
   },
@@ -156,10 +159,8 @@ const scenes = {
         </div>
 
         {metier.id === 'sites' && (
-          <div class="metier__sites reveal-stagger">
-            {sites.map((site) => (
-              <ProjectVisual {...site} ratio="landscape" class="reveal" interactive />
-            ))}
+          <div class="metier__sites">
+            <HomeSites sites={sites} class="reveal" />
           </div>
         )}
       </article>
@@ -391,13 +392,13 @@ const scenes = {
   .repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
   .repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
 
-  /* Trois sites, sous le métier qui les a faits. */
+  /* Trois sites, sous le métier qui les a faits : une vitrine de fenêtres de
+     navigateur où chaque page défile (`home-sites.astro`), et non des captures
+     posées telles quelles, qui cassaient la tenue de la page. */
   .metier__sites {
     grid-column: 1 / -1;
     order: 3;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
+    min-width: 0;
   }
 
   @media (max-width: 899px) {
@@ -429,10 +430,6 @@ const scenes = {
   }
 
   @media (max-width: 640px) {
-    .metier__sites {
-      grid-template-columns: 1fr;
-    }
-
     .metier::after {
       display: none;
     }

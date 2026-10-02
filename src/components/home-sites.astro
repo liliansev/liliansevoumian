@@ -1,0 +1,1204 @@
+---
+/*
+ * home-sites — les sites réalisés, chacun dans sa fenêtre de navigateur.
+ *
+ * Sous le métier « Sites web et dashboards », trois captures claires étaient
+ * posées nues sur la page nuit, puis empilées sur téléphone : Lilian l'a dit
+ * en regardant son écran, « il n'y a que le screenshot, c'est pas très beau »,
+ * et « scroller comme ça d'un coup les trois, c'est un peu bizarre ».
+ *
+ * Ici chaque site vit dans une fenêtre dessinée dans la tenue de la page
+ * (barre fine, pastille d'adresse, filet clair), et sa page défile dedans
+ * comme le ferait quelqu'un qui la parcourt : un cran, on lit, un cran, puis
+ * on remonte d'un trait. Une seule fenêtre défile à la fois, celle qui est
+ * active ; les autres attendent sous un voile de nuit. Quatre repères d'angle,
+ * les mêmes que ceux des scènes, glissent de l'une à l'autre.
+ *
+ *   large    une grande fenêtre et les autres en attente, étroites, à côté.
+ *            Celle qu'on survole, qu'on touche ou qu'on atteint au clavier
+ *            s'ouvre en grand ; sans cela, chacune passe la main à la suivante
+ *            une fois sa page parcourue. Pas trois vignettes égales : une
+ *            grille de cartes est ce que cette page refuse.
+ *   moyen    les fenêtres côte à côte, égales : trop peu de place pour en
+ *            ouvrir une.
+ *   étroit   une fenêtre à la fois, la suivante dépasse sur le côté, on passe
+ *            au doigt. Dessous : la position (1 / 3) et deux flèches.
+ *
+ * Les seuils suivent la largeur du composant, pas celle de l'écran : il se
+ * pose dans n'importe quelle colonne.
+ *
+ * Rien n'est dit ici qui ne soit dans `data/realisations` : un nom, ce que
+ * c'est, un lien. La capture longue (`long`) est facultative ; sans elle, la
+ * fenêtre montre la capture courte, immobile.
+ *
+ * Sans script : trois fenêtres fixes, sans voile, que le doigt fait défiler.
+ * En mouvement réduit : aucune page ne bouge seule, et la commande d'arrêt
+ * disparaît avec ce qu'elle arrêtait. Hors écran, onglet masqué : rien ne
+ * tourne (le script s'en charge, `data-motion-pause` ne voit pas les
+ * animations lancées par script).
+ */
+interface Capture {
+  src: string;
+  width: number;
+  height: number;
+}
+
+interface Site {
+  src: string;
+  href: string;
+  name: string;
+  detail: string;
+  alt: string;
+  long?: Capture;
+}
+
+interface Props {
+  sites: readonly Site[];
+  class?: string;
+}
+
+const { sites, class: classe } = Astro.props;
+
+/* Le nom de la région compte ce qu'elle montre : il ne peut pas annoncer
+   trois sites si la liste en reçoit quatre. */
+const NOMBRES = ['Aucun', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six'];
+const pluriel = sites.length > 1 ? 's' : '';
+const titre = `${NOMBRES[sites.length] ?? sites.length} site${pluriel} réalisé${pluriel}`;
+
+/* Les captures courtes font toutes 1440 × 900 (voir ProjectVisual). */
+const fiches = sites.map((site) => ({
+  ...site,
+  domaine: new URL(site.href).hostname.replace(/^www\./, ''),
+  capture: site.long ?? { src: site.src, width: 1440, height: 900 },
+  longue: Boolean(site.long),
+}));
+---
+
+<div
+  class:list={['vitrine', classe]}
+  role="region"
+  aria-label={titre}
+  style={`--n: ${fiches.length}`}
+  data-vitrine
+>
+  <div class="vitrine__piste" data-vitrine-piste>
+    {/* Une seule commande d'arrêt pour toute la vitrine. Elle passe en premier
+        dans l'ordre de tabulation, et se pose à l'œil dans la barre de la
+        fenêtre active, là où un navigateur met son bouton « arrêter ». */}
+    <button type="button" class="vitrine__pause" aria-pressed="false" data-vitrine-pause>
+      <span class="sr-only">Mettre le défilement des pages en pause</span>
+      <svg class="vitrine__icone vitrine__icone--pause" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <rect x="4" y="3" width="3" height="10" rx="1" />
+        <rect x="9" y="3" width="3" height="10" rx="1" />
+      </svg>
+      <svg class="vitrine__icone vitrine__icone--lecture" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+        <path d="M5.5 3.2v9.6l7.6-4.8z" />
+      </svg>
+    </button>
+
+    <ul class="vitrine__sites" role="list">
+      {fiches.map((site) => (
+        <li class="vitrine__site" data-vitrine-site data-nom={site.name}>
+          <div class="vitrine__fenetre">
+            <div class="vitrine__barre" aria-hidden="true">
+              <span class="vitrine__pastilles"><i></i><i></i><i></i></span>
+              <span class="vitrine__adresse">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="11" width="16" height="10" rx="2" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+                <span>{site.domaine}</span>
+              </span>
+              <span class="vitrine__jauge" data-vitrine-jauge></span>
+            </div>
+            <div class="vitrine__page" data-vitrine-page>
+              <img
+                class:list={['vitrine__capture', { 'vitrine__capture--courte': !site.longue }]}
+                src={site.capture.src}
+                alt={site.alt}
+                width={site.capture.width}
+                height={site.capture.height}
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+                data-vitrine-capture
+              />
+            </div>
+          </div>
+
+          <div class="vitrine__legende">
+            <p class="vitrine__nom">{site.name}</p>
+            <p class="vitrine__detail">{site.detail}</p>
+            <a class="vitrine__lien" href={site.href} target="_blank" rel="noopener noreferrer">
+              <span class="vitrine__libelle">Voir le site<span class="sr-only"> {site.name} (nouvel onglet)</span></span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 7h10v10" />
+                <path d="M7 17 17 7" />
+              </svg>
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <span class="vitrine__viseur" aria-hidden="true">
+      <i class="vitrine__repere vitrine__repere--hg"></i>
+      <i class="vitrine__repere vitrine__repere--hd"></i>
+      <i class="vitrine__repere vitrine__repere--bg"></i>
+      <i class="vitrine__repere vitrine__repere--bd"></i>
+    </span>
+  </div>
+
+  <div class="vitrine__commandes">
+    <p class="vitrine__position" aria-live="polite" aria-atomic="true">
+      <span class="sr-only">Site </span><strong data-vitrine-rang>1</strong><span aria-hidden="true"> / </span><span class="sr-only"> sur </span>{fiches.length}<span class="sr-only" data-vitrine-nom> : {fiches[0]?.name}</span>
+    </p>
+    <span class="vitrine__crans" aria-hidden="true">
+      {fiches.map((_, i) => <i data-vitrine-cran data-actif={i === 0 ? '' : undefined}></i>)}
+    </span>
+    <div class="vitrine__fleches">
+      <button type="button" class="vitrine__fleche" aria-label="Site précédent" aria-disabled="true" data-vitrine-vers="-1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m12 19-7-7 7-7" />
+          <path d="M19 12H5" />
+        </svg>
+      </button>
+      <button type="button" class="vitrine__fleche" aria-label="Site suivant" data-vitrine-vers="1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14" />
+          <path d="m12 5 7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* La vitrine est son propre repère de largeur : c'est elle qui décide si
+     les fenêtres tiennent côte à côte, où qu'on la pose. */
+  .vitrine {
+    position: relative;
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
+    container: vitrine / inline-size;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+  }
+
+  /* ── La piste ──
+     Tout se mesure depuis la largeur d'un site (`--l-site`), tirée de celle de
+     la vitrine : la fenêtre, sa hauteur, le pas d'un site au suivant, et donc
+     la place du viseur et de la commande d'arrêt, qui n'ont besoin d'aucune
+     mesure par script pour suivre la fenêtre active. `--l-vu` est la largeur de
+     la fenêtre active : celle d'un site, sauf quand elle s'ouvre en grand.
+     `--tenue` dit au script laquelle des trois mises en page est en cours. */
+  .vitrine__piste {
+    --tenue: egales;
+    --ecart: clamp(0.875rem, 2.2cqi, 1.5rem);
+    --l-site: calc((100cqi - (var(--n) - 1) * var(--ecart)) / var(--n));
+    --l-vu: var(--l-site);
+    --h-page: calc(var(--l-site) * 1.2);
+    --barre: 2.375rem;
+    --haut: 0px;
+    --gauche: 0px;
+    --glisse: translateX(calc(var(--actif, 0) * (var(--l-site) + var(--ecart))));
+    /* Une seule durée pour ce qui se déplace d'une fenêtre à l'autre : le
+       viseur, la commande d'arrêt, et la fenêtre qui s'ouvre. */
+    --duree-glisse: 640ms;
+    position: relative;
+  }
+
+  .vitrine__sites {
+    display: flex;
+    gap: var(--ecart);
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .vitrine__site {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 0.875rem;
+    flex: 0 0 var(--l-site);
+    width: var(--l-site);
+    min-width: 0;
+    max-width: none;
+  }
+
+  /* ── La fenêtre ──
+     Le châssis des petites fenêtres des scènes, à l'échelle : un filet clair à
+     faible opacité, une barre à peine plus claire que la nuit. */
+  .vitrine__fenetre {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--color-night-deep);
+    transition:
+      border-color 420ms var(--ease-out-quint),
+      box-shadow 620ms var(--ease-out-quint);
+  }
+
+  /* Trois colonnes, les deux du bord égales : l'adresse reste au milieu de la
+     fenêtre, et celle de droite garde la place de la commande d'arrêt. */
+  .vitrine__barre {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2.125rem minmax(0, 1fr) 2.125rem;
+    align-items: center;
+    justify-items: center;
+    height: var(--barre);
+    padding-inline: 0.625rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 4%, var(--color-night-deep));
+    container: barre / inline-size;
+  }
+
+  .vitrine__pastilles {
+    display: flex;
+    gap: 5px;
+    justify-self: start;
+  }
+
+  .vitrine__pastilles i {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 20%, transparent);
+    transition: background-color 420ms var(--ease-out-quint);
+  }
+
+  .vitrine__adresse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    max-width: 100%;
+    height: 1.5rem;
+    padding-inline: 0.6rem 0.7rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    color: var(--color-ink-low);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    line-height: 1;
+    transition: color 420ms var(--ease-out-quint);
+  }
+
+  .vitrine__adresse svg {
+    flex: none;
+    width: 0.7rem;
+    height: 0.7rem;
+    opacity: 0.7;
+  }
+
+  .vitrine__adresse span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Dans une barre étroite, le cadenas cède sa place au domaine : c'est lui
+     qu'on lit. */
+  @container barre (max-width: 13.5rem) {
+    .vitrine__adresse {
+      padding-inline: 0.6rem;
+    }
+
+    .vitrine__adresse svg {
+      display: none;
+    }
+  }
+
+  /* La jauge de lecture : un trait pêche sous la barre, qui avance avec la
+     page. Elle dit où en est le défilement sans rien poser sur la capture. */
+  .vitrine__jauge {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    background: var(--color-peche);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: opacity 420ms var(--ease-out-quint);
+  }
+
+  /* ── La page ──
+     Avant l'arrivée de la capture, la fenêtre montre la nuit, pas un rectangle
+     blanc : c'est la capture qui apporte le clair. */
+  .vitrine__page {
+    position: relative;
+    height: var(--h-page);
+    overflow: hidden;
+    background: var(--color-surface-low);
+    /* Un repère de taille : le défilement de la capture s'écrit en hauteurs de
+       page (`cqh`), et reste donc juste quand la fenêtre change de largeur. */
+    container-type: size;
+  }
+
+  .vitrine__capture {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* Une capture courte n'a rien à faire défiler : elle remplit la fenêtre,
+     calée en haut. */
+  .vitrine__capture--courte {
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Le voile : de la nuit par-dessus les fenêtres qui attendent. Il n'existe
+     qu'avec le script, qui seul sait laquelle est active ; sans lui les trois
+     captures restent à nu. Aucun filtre : la capture active est telle que le
+     site l'affiche. */
+  .vitrine__page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-night-deep) 50%, transparent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 520ms var(--ease-out-quint);
+  }
+
+  .vitrine[data-pret] .vitrine__site:not([data-actif]) .vitrine__page::after {
+    opacity: 1;
+  }
+
+  /* ── La fenêtre active ── */
+  .vitrine[data-pret] .vitrine__site[data-actif] .vitrine__fenetre {
+    border-color: color-mix(in srgb, var(--color-ink) 26%, transparent);
+    box-shadow: 0 1.75rem 3.5rem -2.5rem color-mix(in srgb, var(--color-peche) 48%, transparent);
+  }
+
+  .vitrine[data-pret] .vitrine__site[data-actif] .vitrine__pastilles i:first-child {
+    background: var(--color-peche);
+  }
+
+  .vitrine[data-pret] .vitrine__site[data-actif] .vitrine__adresse {
+    color: var(--color-ink);
+  }
+
+  .vitrine[data-anime] .vitrine__site[data-actif] .vitrine__jauge {
+    opacity: 1;
+  }
+
+  /* ── Le viseur ──
+     Les quatre repères d'angle des scènes, en un seul exemplaire : il cadre la
+     fenêtre active et glisse vers la suivante. Posé dans la piste, il part
+     avec elle quand on la fait défiler au doigt. */
+  .vitrine__viseur {
+    position: absolute;
+    top: var(--haut);
+    left: var(--gauche);
+    z-index: 3;
+    display: none;
+    width: var(--l-vu);
+    /* La hauteur de la fenêtre, recalculée : sa barre, sa page, ses deux filets. */
+    height: calc(var(--barre) + var(--h-page) + 2px);
+    pointer-events: none;
+    transform: var(--glisse);
+    transition: transform var(--duree-glisse) var(--ease-out-expo);
+  }
+
+  .vitrine[data-pret] .vitrine__viseur {
+    display: block;
+  }
+
+  .vitrine__repere {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--color-ink-low);
+  }
+
+  .vitrine__repere--hg { top: -7px; left: -7px; border-top-width: 1px; border-left-width: 1px; }
+  .vitrine__repere--hd { top: -7px; right: -7px; border-top-width: 1px; border-right-width: 1px; }
+  .vitrine__repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
+  .vitrine__repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
+
+  /* ── La commande d'arrêt ──
+     28 px à l'œil, dans la barre de la fenêtre active ; 44 px sous le doigt,
+     par un calque qui déborde vers le bas (vers le haut, on sortirait de la
+     piste). Elle n'apparaît que s'il y a quelque chose à arrêter. */
+  .vitrine__pause {
+    position: absolute;
+    top: calc(var(--haut) + 1px + (var(--barre) - 1.75rem) / 2);
+    left: calc(var(--gauche) + var(--l-vu) - 2.5rem);
+    z-index: 4;
+    display: none;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink-low);
+    cursor: pointer;
+    transform: var(--glisse);
+    transition:
+      transform var(--duree-glisse) var(--ease-out-expo),
+      color var(--duration-default) var(--ease-out-quint),
+      background-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .vitrine[data-anime] .vitrine__pause {
+    display: grid;
+  }
+
+  .vitrine__pause::before {
+    content: '';
+    position: absolute;
+    inset: -5px -8px -11px;
+  }
+
+  .vitrine__icone {
+    fill: currentColor;
+  }
+
+  .vitrine__icone--lecture,
+  .vitrine__pause[aria-pressed='true'] .vitrine__icone--pause {
+    display: none;
+  }
+
+  .vitrine__pause[aria-pressed='true'] .vitrine__icone--lecture {
+    display: block;
+  }
+
+  .vitrine__pause[aria-pressed='true'] {
+    background: var(--color-peche);
+    color: var(--color-night);
+  }
+
+  /* ── La légende ──
+     Le nom, ce que c'est, et le lien : tout vient des données. */
+  .vitrine__legende {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+    padding-inline: 0.125rem;
+  }
+
+  .vitrine__nom,
+  .vitrine__detail {
+    max-width: none;
+    margin: 0;
+  }
+
+  .vitrine__nom {
+    color: var(--color-ink);
+    font-size: var(--text-title);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .vitrine__detail {
+    margin-top: 0.3rem;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.35;
+  }
+
+  /* Le lien se traite comme les liens fléchés de l'accueil : bas de casse, et
+     une pastille pêche qui se déroule sous le libellé. Il est écrit ici, sans
+     `LinkCTA`, pour que la vitrine ait la même allure hors de l'accueil. */
+  .vitrine__lien {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.1rem;
+    min-height: 44px;
+    margin-top: 0.15rem;
+    padding-right: 0.3rem;
+    /* Arrondi pour l'anneau de focus, qui suit le rayon : pas d'angle vif. */
+    border-radius: var(--radius-full);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* Le libellé recule de la valeur de son remplissage : au repos la pastille
+     ne se voit pas, et le texte doit tomber sous le nom, pas en retrait. */
+  .vitrine__libelle {
+    position: relative;
+    isolation: isolate;
+    margin-left: -0.5em;
+    padding: 0.14em 0.5em 0.18em;
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .vitrine__libelle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    clip-path: inset(0 100% 0 0 round 9999px);
+    transition: clip-path var(--duration-default) var(--ease-out-quint);
+  }
+
+  .vitrine__lien svg {
+    flex: none;
+    width: 1.1em;
+    height: 1.1em;
+    transition:
+      transform var(--duration-default) var(--ease-out-quint),
+      color var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* Le texte posé sur la pêche passe en nuit, comme partout. */
+  .vitrine__lien:focus-visible .vitrine__libelle {
+    color: var(--color-night);
+  }
+
+  .vitrine__lien:focus-visible .vitrine__libelle::before {
+    clip-path: inset(0 0 0 0 round 9999px);
+  }
+
+  .vitrine__lien:focus-visible svg {
+    color: var(--color-peche);
+    transform: translate(2px, -2px);
+  }
+
+  .vitrine__site:has(.vitrine__lien:focus-visible) .vitrine__fenetre {
+    border-color: var(--color-peche);
+  }
+
+  /* À la souris, la fiche entière mène au site : le lien s'étend sur elle, et
+     c'est la fenêtre qui répond. Au doigt, non : toucher une fenêtre retient
+     sa page, et le lien reste la ligne qui le dit. */
+  @media (hover: hover) and (pointer: fine) {
+    .vitrine__lien::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .vitrine__site:hover .vitrine__libelle {
+      color: var(--color-night);
+    }
+
+    .vitrine__site:hover .vitrine__libelle::before {
+      clip-path: inset(0 0 0 0 round 9999px);
+    }
+
+    .vitrine__site:hover .vitrine__lien svg {
+      color: var(--color-peche);
+      transform: translate(2px, -2px);
+    }
+
+    .vitrine[data-pret] .vitrine__site:hover .vitrine__fenetre {
+      border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
+    }
+
+    .vitrine__pause:hover {
+      background: color-mix(in srgb, var(--color-ink) 10%, transparent);
+      color: var(--color-ink);
+    }
+
+    .vitrine__pause[aria-pressed='true']:hover {
+      background: var(--color-peche-clair);
+      color: var(--color-night);
+    }
+
+    .vitrine__fleche:not([aria-disabled='true']):hover {
+      border-color: var(--color-peche);
+      background: var(--color-peche);
+      color: var(--color-night);
+    }
+  }
+
+  /* ── Les commandes : la position et deux flèches ──
+     Elles ne servent qu'à l'étroit, quand une seule fenêtre est à l'écran. */
+  .vitrine__commandes {
+    display: none;
+  }
+
+  .vitrine__position {
+    max-width: none;
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .vitrine__position strong {
+    color: var(--color-ink);
+    font-size: var(--text-title);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .vitrine__crans {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+  }
+
+  .vitrine__crans i {
+    width: 0.75rem;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+    transition:
+      width 520ms var(--ease-out-expo),
+      background-color 320ms var(--ease-out-quint);
+  }
+
+  .vitrine__crans i[data-actif] {
+    width: 1.75rem;
+    background: var(--color-peche);
+  }
+
+  .vitrine__fleches {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .vitrine__fleche {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-default) var(--ease-out-quint),
+      border-color var(--duration-default) var(--ease-out-quint),
+      color var(--duration-default) var(--ease-out-quint),
+      opacity var(--duration-default) var(--ease-out-quint);
+  }
+
+  .vitrine__fleche svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .vitrine__fleche:active:not([aria-disabled='true']) {
+    border-color: var(--color-peche);
+    background: var(--color-peche);
+    color: var(--color-night);
+  }
+
+  /* Au bout de la piste la flèche reste en place et garde le focus : elle
+     s'éteint, elle ne disparaît pas. */
+  .vitrine__fleche[aria-disabled='true'] {
+    opacity: 0.32;
+    cursor: default;
+  }
+
+  /* ── Au large : la fenêtre active s'ouvre en grand ──
+     Elle vaut `--grand` fenêtres en attente ; toutes gardent la même hauteur.
+     Les fenêtres en attente la précèdent toujours en file : le viseur n'a qu'à
+     avancer d'autant de pas étroits. Survoler une fenêtre étroite l'ouvre sans
+     jamais la retirer de sous le pointeur (elle grandit autour de lui), il n'y
+     a donc pas de va-et-vient. Sans script, les fenêtres restent égales.
+     Les largeurs ne s'animent qu'une fois la vitrine en place (`data-vif`) :
+     au chargement elle se pose d'un coup. */
+  @container vitrine (min-width: 900px) {
+    .vitrine[data-pret] .vitrine__piste {
+      --tenue: ouverte;
+      --grand: 2.2;
+      --l-site: calc((100cqi - (var(--n) - 1) * var(--ecart)) / (var(--n) - 1 + var(--grand)));
+      --l-vu: calc(var(--l-site) * var(--grand));
+      --h-page: calc(var(--l-site) * 1.55);
+    }
+
+    .vitrine[data-pret] .vitrine__site[data-actif] {
+      flex-basis: var(--l-vu);
+      width: var(--l-vu);
+    }
+
+    .vitrine[data-vif] .vitrine__site {
+      transition:
+        flex-basis var(--duree-glisse) var(--ease-out-expo),
+        width var(--duree-glisse) var(--ease-out-expo);
+    }
+  }
+
+  /* ── À l'étroit : une fenêtre à la fois ──
+     La piste devient un défilement horizontal à accroche. Elle déborde jusqu'aux
+     bords de l'écran (`--debord-g/d`, mesurés par le script : la gouttière que
+     le parent laisse de chaque côté), pour que la fenêtre voisine soit coupée
+     par le bord du téléphone et non par une limite qu'on ne voit pas. Sans
+     script elle s'arrête à la colonne. Le remplissage vertical laisse aux
+     repères la place de dépasser : une piste qui défile rogne ce qui sort. */
+  @container vitrine (max-width: 599.98px) {
+    .vitrine__piste {
+      --tenue: piste;
+      --ecart: 0.75rem;
+      --l-site: min(86cqi, 23rem);
+      --h-page: calc(var(--l-site) * 1.25);
+      --haut: 10px;
+      --gauche: var(--debord-g, 0px);
+      margin: -10px calc(-1 * var(--debord-d, 0px)) -10px calc(-1 * var(--debord-g, 0px));
+      padding: 10px var(--debord-d, 0px) 10px var(--debord-g, 0px);
+      overflow: auto hidden;
+      overscroll-behavior-x: contain;
+      scroll-padding-inline: var(--debord-g, 0px) var(--debord-d, 0px);
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .vitrine__piste::-webkit-scrollbar {
+      display: none;
+    }
+
+    .vitrine__site {
+      scroll-snap-align: start;
+    }
+
+    .vitrine[data-pret] .vitrine__commandes {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.9rem;
+    }
+  }
+
+  /* Mouvement réduit : plus rien ne glisse. Les fondus restent, ce sont eux
+     qui disent quelle fenêtre est active. */
+  @media (prefers-reduced-motion: reduce) {
+    .vitrine__viseur,
+    .vitrine__pause,
+    .vitrine__crans i,
+    .vitrine__lien svg,
+    .vitrine__libelle::before,
+    .vitrine[data-vif] .vitrine__site {
+      transition: none;
+    }
+
+    .vitrine__site:hover .vitrine__lien svg,
+    .vitrine__lien:focus-visible svg {
+      transform: none;
+    }
+
+    .vitrine__piste {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Le défilement d'une page est une animation lancée par script, pas une
+   * règle CSS : le nombre de crans dépend de la hauteur de la capture dans sa
+   * fenêtre, qu'on ne connaît qu'ici. Chaque fenêtre a la sienne, en pause dès
+   * sa création ; `regler` ne laisse tourner que celle de la fenêtre active,
+   * et seulement si on la regarde.
+   *
+   * Les positions sont écrites en parts du trajet (`cqh` moins la hauteur de
+   * la capture), pas en pixels : une fenêtre qui s'ouvre ou se referme garde
+   * sa page au même endroit, sans rien recalculer.
+   */
+  const DOUX = 'cubic-bezier(0.45, 0, 0.15, 1)';
+  /* Un tour : on regarde le haut, puis par crans (un cran, on lit), on
+     s'attarde en bas et on remonte d'un trait. En millisecondes. */
+  const T_HAUT = 1100;
+  const T_CRAN = 1900;
+  const T_LECTURE = 1500;
+  const T_BAS = 2000;
+  const T_RETOUR = 1600;
+  /* Un cran descend d'un peu moins des deux tiers de la fenêtre : on garde à
+     l'œil la fin de ce qu'on vient de lire. */
+  const PART_DU_CRAN = 0.62;
+  /* Sans capture à faire défiler, une fenêtre garde la main ce temps-là. */
+  const T_RELAIS_FIXE = 6000;
+
+  interface Fiche {
+    site: HTMLElement;
+    page: HTMLElement;
+    capture: HTMLImageElement;
+    jauge: HTMLElement | null;
+    lien: HTMLAnchorElement | null;
+    animations: Animation[];
+    /* Ce pour quoi le tour a été écrit (nombre de crans, hauteur de page) :
+       tant que cela ne change pas, il n'y a rien à réécrire. */
+    trace: string;
+    crans: number;
+    duree: number;
+    /* Les instants où la fenêtre peut passer la main : la fin d'une lecture. */
+    haltes: number[];
+  }
+
+  const instant = (animation: Animation | undefined) => Number(animation?.currentTime ?? 0);
+
+  const monter = (racine: HTMLElement) => {
+    const piste = racine.querySelector<HTMLElement>('[data-vitrine-piste]');
+    const pause = racine.querySelector<HTMLButtonElement>('[data-vitrine-pause]');
+    const rang = racine.querySelector<HTMLElement>('[data-vitrine-rang]');
+    const nom = racine.querySelector<HTMLElement>('[data-vitrine-nom]');
+    const crans = [...racine.querySelectorAll<HTMLElement>('[data-vitrine-cran]')];
+    const fleches = [...racine.querySelectorAll<HTMLButtonElement>('[data-vitrine-vers]')];
+
+    const fiches: Fiche[] = [];
+    racine.querySelectorAll<HTMLElement>('[data-vitrine-site]').forEach((site) => {
+      const page = site.querySelector<HTMLElement>('[data-vitrine-page]');
+      const capture = site.querySelector<HTMLImageElement>('[data-vitrine-capture]');
+      if (!page || !capture) return;
+      fiches.push({
+        site,
+        page,
+        capture,
+        jauge: site.querySelector<HTMLElement>('[data-vitrine-jauge]'),
+        lien: site.querySelector<HTMLAnchorElement>('a'),
+        animations: [],
+        trace: '',
+        crans: 0,
+        duree: 0,
+        haltes: [],
+      });
+    });
+    if (!piste || fiches.length === 0) return;
+
+    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let actif = 0;
+    let aLEcran = !('IntersectionObserver' in window);
+    let arrete = false; // par la commande d'arrêt
+    let tenu = false; // un doigt est posé sur la piste
+    let survole = false;
+    let choisi = false; // le visiteur a pris la main : plus de relais
+    let relais = 0;
+    let relache = 0;
+    let retrace = 0;
+    let image = 0;
+
+    /* Laquelle des trois mises en page est en cours : la feuille de style le
+       dit (`--tenue`), aucune largeur n'est recopiée ici. */
+    const tenue = () => getComputedStyle(piste).getPropertyValue('--tenue').trim();
+    const enPiste = () => tenue() === 'piste';
+
+    const effacer = (fiche: Fiche) => {
+      fiche.animations.forEach((animation) => animation.cancel());
+      fiche.animations = [];
+      fiche.trace = '';
+      fiche.haltes = [];
+    };
+
+    /* Écrit le tour d'une fenêtre, pour la taille qu'elle a quand elle est
+       active (`largeur` × `hauteur`, celles de la page active). Rien à écrire
+       si la capture y tient en entier (capture courte), ou en mouvement réduit. */
+    const tracer = (fiche: Fiche, largeur: number, hauteur: number) => {
+      const format = Number(fiche.capture.getAttribute('height')) / Number(fiche.capture.getAttribute('width'));
+      const course = largeur * format - hauteur;
+      if (reduit.matches || !hauteur || !(course >= 24) || typeof fiche.capture.animate !== 'function') {
+        effacer(fiche);
+        return;
+      }
+
+      const nombre = Math.max(1, Math.round(course / (hauteur * PART_DU_CRAN)));
+      const trace = `${nombre}:${Math.round(hauteur)}`;
+      if (fiche.animations.length && trace === fiche.trace) return;
+
+      /* Même nombre de crans : le tour est le même, on reprend à l'instant
+         exact. Sinon, à la même fraction du tour. */
+      const instantPrecedent = fiche.duree ? instant(fiche.animations[0]) % fiche.duree : 0;
+      const avance = fiche.duree ? instantPrecedent / fiche.duree : 0;
+      const memeTour = nombre === fiche.crans;
+      effacer(fiche);
+      const etapes: { t: number; p: number; doux: boolean }[] = [];
+      const haltes: number[] = [];
+      let t = 0;
+      const poser = (p: number, duree: number, doux: boolean) => {
+        etapes.push({ t, p, doux });
+        t += duree;
+      };
+
+      poser(0, T_HAUT, false);
+      for (let i = 1; i <= nombre; i += 1) {
+        poser((i - 1) / nombre, T_CRAN, true);
+        poser(i / nombre, i === nombre ? T_BAS : T_LECTURE, false);
+        if (i % 2 === 0 || i === nombre) haltes.push(t);
+      }
+      poser(1, T_RETOUR, true);
+      const duree = t;
+
+      const images = (valeur: (p: number) => string): Keyframe[] => [
+        ...etapes.map((etape) => ({
+          offset: etape.t / duree,
+          easing: etape.doux ? DOUX : 'linear',
+          transform: valeur(etape.p),
+        })),
+        { offset: 1, transform: valeur(0) },
+      ];
+      const tempo: KeyframeAnimationOptions = { duration: duree, iterations: Infinity };
+
+      /* Le trajet entier vaut la hauteur de la page moins celle de la capture
+         (`100%` d'une translation se compte sur l'élément lui-même). */
+      fiche.animations = [
+        fiche.capture.animate(images((p) => `translateY(calc(${p.toFixed(4)} * (100cqh - 100%)))`), tempo),
+      ];
+      if (fiche.jauge) {
+        fiche.animations.push(fiche.jauge.animate(images((p) => `scaleX(${p.toFixed(4)})`), tempo));
+      }
+      fiche.animations.forEach((animation) => {
+        animation.pause();
+        animation.currentTime = memeTour ? instantPrecedent : avance * duree;
+      });
+      fiche.trace = trace;
+      fiche.crans = nombre;
+      fiche.duree = duree;
+      fiche.haltes = haltes;
+    };
+
+    const tourne = () => aLEcran && !document.hidden && !arrete && !tenu;
+
+    /* Le relais : hors de la piste, tant que le visiteur n'a rien choisi, la
+       fenêtre active passe la main à la suivante à la fin d'une lecture,
+       jamais au milieu d'un cran. Entre fenêtres égales, tous les deux crans ;
+       quand la fenêtre active est ouverte en grand, seulement une fois sa page
+       parcourue jusqu'en bas : la passation déplace tout, elle doit rester
+       rare. Le survol suspend le relais, un choix l'arrête pour de bon. */
+    const programmer = () => {
+      window.clearTimeout(relais);
+      const fiche = fiches[actif];
+      const mise = tenue();
+      if (!fiche || fiches.length < 2 || choisi || survole || reduit.matches || !tourne() || mise === 'piste') return;
+      if (racine.matches(':focus-within')) return;
+
+      let attente = T_RELAIS_FIXE;
+      if (fiche.duree) {
+        const haltes = mise === 'ouverte' ? fiche.haltes.slice(-1) : fiche.haltes;
+        const t = instant(fiche.animations[0]) % fiche.duree;
+        const halte = haltes.find((h) => h > t + 1200) ?? fiche.duree + (haltes[0] ?? 0);
+        attente = halte - t;
+      }
+      relais = window.setTimeout(() => activer(actif + 1), attente);
+    };
+
+    /* Une seule page défile : celle de la fenêtre active, si on la regarde. */
+    const regler = () => {
+      const libre = tourne();
+      fiches.forEach((fiche, i) => {
+        fiche.animations.forEach((animation) => {
+          if (libre && i === actif) animation.play();
+          else animation.pause();
+        });
+      });
+      programmer();
+    };
+
+    function activer(vers: number) {
+      actif = (vers + fiches.length) % fiches.length;
+      fiches.forEach((fiche, i) => fiche.site.toggleAttribute('data-actif', i === actif));
+      crans.forEach((cran, i) => cran.toggleAttribute('data-actif', i === actif));
+      piste?.style.setProperty('--actif', String(actif));
+      /* La position est une zone annoncée : on n'y écrit que ce qui change,
+         sinon elle se redirait à chaque passage, y compris au chargement. */
+      const place = String(actif + 1);
+      const quel = ` : ${fiches[actif].site.dataset.nom ?? ''}`;
+      if (rang && rang.textContent !== place) rang.textContent = place;
+      if (nom && nom.textContent !== quel) nom.textContent = quel;
+      fleches.forEach((fleche) => {
+        const bout = Number(fleche.dataset.vitrineVers) < 0 ? actif === 0 : actif === fiches.length - 1;
+        fleche.setAttribute('aria-disabled', String(bout));
+      });
+      regler();
+    }
+
+    /* À l'étroit, la fenêtre active est celle qui occupe le milieu de l'écran. */
+    const auMilieu = () => {
+      const milieu = piste.scrollLeft + piste.clientWidth / 2;
+      let proche = 0;
+      let ecart = Infinity;
+      fiches.forEach((fiche, i) => {
+        const distance = Math.abs(fiche.site.offsetLeft + fiche.site.offsetWidth / 2 - milieu);
+        if (distance < ecart) {
+          ecart = distance;
+          proche = i;
+        }
+      });
+      return proche;
+    };
+
+    /* Aller à un site, par les flèches ou le clavier. Le focus suit s'il était
+       sur un lien de site : sinon il resterait sur une fiche partie hors champ. */
+    const aller = (vers: number) => {
+      const cible = Math.min(fiches.length - 1, Math.max(0, vers));
+      choisi = true;
+      const surUnLien = fiches.some((fiche) => fiche.lien === document.activeElement);
+      if (enPiste()) {
+        const retrait = parseFloat(getComputedStyle(piste).scrollPaddingLeft) || 0;
+        piste.scrollTo({
+          left: fiches[cible].site.offsetLeft - retrait,
+          behavior: reduit.matches ? 'auto' : 'smooth',
+        });
+      } else {
+        activer(cible);
+      }
+      if (surUnLien) fiches[cible].lien?.focus({ preventScroll: true });
+    };
+
+    /* (Ré)écrit les tours, à la taille de la page active. */
+    const retracer = () => {
+      const page = fiches[actif].page;
+      fiches.forEach((fiche) => tracer(fiche, page.clientWidth, page.clientHeight));
+      racine.toggleAttribute('data-anime', fiches.some((fiche) => fiche.animations.length > 0));
+      regler();
+    };
+
+    /* À chaque changement de taille : la gouttière que le parent laisse de
+       chaque côté (la piste étroite s'y étend jusqu'au bord de l'écran, jamais
+       au-delà), et la fenêtre active si la piste a bougé. Les tours, eux,
+       attendent que la taille soit posée : une fenêtre qui s'ouvre change de
+       largeur à chaque image, et sa taille de passage ne vaut rien. */
+    const mesurer = () => {
+      const cadre = racine.getBoundingClientRect();
+      const largeur = document.documentElement.clientWidth;
+      racine.style.setProperty('--debord-g', `${Math.max(0, cadre.left).toFixed(2)}px`);
+      racine.style.setProperty('--debord-d', `${Math.max(0, largeur - cadre.right).toFixed(2)}px`);
+      const proche = enPiste() ? auMilieu() : actif;
+      if (proche !== actif) activer(proche);
+      window.clearTimeout(retrace);
+      retrace = window.setTimeout(retracer, 200);
+    };
+
+    piste.addEventListener(
+      'scroll',
+      () => {
+        if (image) return;
+        image = requestAnimationFrame(() => {
+          image = 0;
+          if (!enPiste()) return;
+          const proche = auMilieu();
+          if (proche !== actif) activer(proche);
+        });
+      },
+      { passive: true },
+    );
+
+    fiches.forEach((fiche, i) => {
+      /* Au large, la fenêtre qu'on survole prend la main. */
+      fiche.site.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || enPiste() || i === actif) return;
+        activer(i);
+      });
+      fiche.site.addEventListener('focusin', () => {
+        choisi = true;
+        if (!enPiste() && i !== actif) activer(i);
+        else programmer();
+      });
+      /* Au large et au doigt, il n'y a pas de survol : toucher une fenêtre en
+         attente la choisit. (À la souris, elle est déjà active quand on clique.) */
+      fiche.site.addEventListener('click', () => {
+        if (enPiste() || i === actif) return;
+        choisi = true;
+        activer(i);
+      });
+    });
+
+    /* Le relais se tait tant que le focus est dans la vitrine ; il reprend
+       quand il en sort, sauf si le visiteur a choisi une fenêtre entre-temps. */
+    racine.addEventListener('focusout', () => window.setTimeout(programmer, 0));
+
+    racine.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      survole = true;
+      programmer();
+    });
+    racine.addEventListener('pointerleave', () => {
+      survole = false;
+      programmer();
+    });
+
+    /* Au doigt, toucher la piste retient la page, comme on retient une liste
+       qui défile ; elle repart peu après qu'on l'a lâchée. La souris, elle, a
+       la commande d'arrêt. */
+    const lacher = () => {
+      window.clearTimeout(relache);
+      relache = window.setTimeout(() => {
+        tenu = false;
+        regler();
+      }, 700);
+    };
+    piste.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      window.clearTimeout(relache);
+      tenu = true;
+      regler();
+    });
+    piste.addEventListener('pointerup', lacher);
+    piste.addEventListener('pointercancel', lacher);
+
+    pause?.addEventListener('click', () => {
+      arrete = !arrete;
+      pause.setAttribute('aria-pressed', String(arrete));
+      regler();
+    });
+
+    fleches.forEach((fleche) => {
+      fleche.addEventListener('click', () => {
+        if (fleche.getAttribute('aria-disabled') === 'true') return;
+        aller(actif + Number(fleche.dataset.vitrineVers));
+      });
+    });
+
+    const TOUCHES: Record<string, (i: number) => number> = {
+      ArrowRight: (i) => i + 1,
+      ArrowLeft: (i) => i - 1,
+      Home: () => 0,
+      End: () => fiches.length - 1,
+    };
+    racine.addEventListener('keydown', (e) => {
+      const vers = TOUCHES[e.key];
+      if (!vers || e.altKey || e.ctrlKey || e.metaKey) return;
+      e.preventDefault();
+      aller(vers(actif));
+    });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entree]) => {
+          aLEcran = entree.isIntersecting;
+          regler();
+        },
+        { threshold: 0.2 },
+      ).observe(racine);
+    }
+    document.addEventListener('visibilitychange', regler);
+    reduit.addEventListener('change', retracer);
+
+    /* La page active est observée aussi : c'est elle qui change de taille
+       quand une fenêtre s'ouvre, pas la vitrine. */
+    if ('ResizeObserver' in window) {
+      const guet = new ResizeObserver(mesurer);
+      guet.observe(racine);
+      fiches.forEach((fiche) => guet.observe(fiche.page));
+    }
+    window.addEventListener('resize', mesurer, { passive: true });
+
+    /* La vitrine se pose d'un coup, tours compris ; les largeurs ne s'animent
+       qu'ensuite, sinon la première fenêtre s'ouvrirait sous les yeux à
+       l'arrivée de la page. */
+    racine.dataset.pret = '';
+    activer(0);
+    mesurer();
+    window.clearTimeout(retrace);
+    retracer();
+    requestAnimationFrame(() => requestAnimationFrame(() => (racine.dataset.vif = '')));
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-vitrine]').forEach(monter);
+</script>

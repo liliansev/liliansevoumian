@@ -412,15 +412,17 @@ facture à droite, une horloge qui tourne. À la main, un curseur recopie ligne
 après ligne pendant que les heures passent ; en automatique, les lignes
 traversent seules et le total se calcule.
 
-**À la troisième phrase, la scène enchaîne trois réponses** sur ce même bon de
-commande, en boucle : *Automatisation* (les lignes passent seules, la facture
-est émise), *Agent IA* (un agent lit le document, coche ses contrôles, et
-laisse au visiteur la ligne douteuse « à valider par vous »), *Dashboard* (les
-mêmes commandes vues dans un tableau de bord). C'est la vue d'ensemble de ce
-que fait Lilian, demandée par lui le 3 octobre 2026 : « une transition entre
-tout ce qui est possible de faire ». D'une réponse à l'autre le plan change
+**À la troisième phrase, la scène enchaîne trois réponses**, en boucle, chacune
+sur son propre sujet : *Automatisation* (le bon de commande devient sa facture
+tout seul), *Agent IA* (un agent de support répond à un client en pleine nuit,
+consulte sa base de connaissances puis un outil connecté, et cite sa source),
+*Dashboard* (le suivi de projets d'une équipe : des indicateurs, et des cartes
+qui avancent de « à faire » à « livré »). C'est la vue d'ensemble de ce que
+fait Lilian, demandée par lui le 3 octobre 2026 : « une transition entre tout
+ce qui est possible de faire ». D'une réponse à l'autre le plan change
 d'inclinaison, les fenêtres reculent dans un flou et les suivantes arrivent
-décalées ; le PDF reste, on change de point de vue sur les mêmes commandes.
+décalées ; pour l'agent, l'horloge de la scène file jusqu'à un dimanche soir
+puis jusqu'en pleine nuit, et c'est elle qui dit « 24 h/24 ».
 Une réponse n'est jamais coupée au milieu d'un geste : elle attend d'avoir
 conclu. Sous la scène, quatre boutons (« À la main », « Automatisation »,
 « Agent IA », « Dashboard ») disent où elle en est et permettent de choisir.
@@ -449,8 +451,13 @@ conclu. Sous la scène, quatre boutons (« À la main », « Automatisation »,
   les deux premières phrases, l'automatisation pour la troisième ; les boutons
   passent d'une image à l'autre. Sans script, la scène est une image fixe,
   sans ses boutons.
-- **Pas de redite avec les métiers.** Le bon de commande appartient à cette
-  scène ; aucune scène de métier ne le rejoue.
+- **Un agent IA se montre en conversation.** Lilian a refusé l'agent qui
+  « contrôle un bon de commande » : un visiteur reconnaît un agent à un
+  chatbot qui répond jour et nuit et va chercher l'information dans une base
+  de connaissances ou des outils connectés.
+- **Pas de redite avec les métiers.** Le bon de commande, le support et le
+  suivi de projets appartiennent à cette scène ; aucune scène de métier ne les
+  rejoue.
 
 ### Les scènes des métiers (`src/components/metiers/`)
 
@@ -462,16 +469,28 @@ cette interface, un terminal en caractères, un plan d'ingénieur au trait). Les
 sculptures de verre qu'elle remplace étaient belles, mais il fallait lire leur
 légende pour comprendre ; elles restent visibles sur `/explorations-blocs`.
 
-| Métier | Ce que montre la scène | Le geste qui lui est propre |
+| Métier | Sujet | Silhouette, sur ordinateur puis sur téléphone |
 |---|---|---|
-| Automatisation | une affaire signée dans le CRM devient ses échéances dans la facturation, puis son statut remonte au suivi | le **découpage** : une affaire entre dans le fil, quatre échéances en sortent |
-| Agents IA | un agent lit des fiches, coche ses règles écrites, note, et trie vers « À approcher » ou « Écartées » | la **lecture puis le tri**, et la fiche douteuse laissée « à vous » |
-| Formations | deux fenêtres du même outil, « Formateur » et « Votre équipe » | **montrer, refaire, faire seule** : l'équipe hésite une fois, puis lance son scénario pendant que le formateur s'efface |
-| Sites web et dashboards | une page se compose bloc par bloc, des visiteurs cliquent, le tableau de bord compte | la **page qui se monte** sous un cadre de sélection, puis chaque clic qui devient une unité de barre |
+| Automatisation | une réservation : paiement encaissé, créneau posé dans l'agenda, confirmation envoyée | un **grand agenda** en grille où le créneau vient se poser ; sur téléphone la grille prend toute la largeur, la demande et la confirmation passent par-dessus |
+| Agents IA | une question (« Quelles entreprises approcher cette semaine ? »), et l'agent part chercher la réponse | une **étoile** : l'agent au centre réfléchit étape par étape, envoie des sondes vers ses sources autour, en ramène des extraits, puis compose une réponse sourcée, avec une ligne « à valider par vous » |
+| Formations | le formateur monte un scénario, l'équipe le refait en hésitant une fois, puis le lance seule | **deux fenêtres jumelles**, des blocs et des curseurs |
+| Sites web et dashboards | une page se compose bloc par bloc, des visiteurs cliquent, le tableau de bord compte | une **page claire** à côté d'un tableau de bord sombre ; sur téléphone, la page claire en haut sur toute la largeur et le tableau de bord en bande dessous |
 
-- **Chaque scène raconte le cas que son bloc cite en preuve** (Fraich Touch,
-  M Partners), avec des noms d'outils génériques et des chiffres
-  d'illustration : aucune marque, aucun nom de client dans une scène.
+**Un sujet par scène, et une silhouette par scène.** C'est la règle née du
+retour de Lilian sur son téléphone : « les animations sont toutes un peu
+similaires et sur les mêmes sujets ; quand on scrolle, il faut qu'à chaque
+fois ce soit une animation différente, et qu'on comprenne que c'est un sujet
+différent ». Des fenêtres en rang reliées par un fil, avec deux pastilles en
+haut, c'est une seule silhouette, quel que soit le sujet. Avant d'écrire une
+scène, on vérifie son sujet ET sa silhouette contre toutes les autres de la
+page, sur le grand plan comme sur le plan étroit : c'est sur téléphone que
+les scènes se ressemblent le plus vite.
+
+- Noms d'outils génériques et chiffres d'illustration : aucune marque, aucun
+  nom de client dans une scène. La scène Agents IA rejoue le cas que son bloc
+  cite en preuve (M Partners) ; celle du bloc Automatisation montre un autre
+  exemple que sa preuve (Fraich Touch, la facturation), parce que la facture
+  appartient déjà à la scène du récit.
 - **Un socle commun** : `scene-metier.css` (classes `.sm-…` : cadre, plan,
   fenêtre, feuille claire, rangées, fils, ports, nœuds, grains, bandes,
   pastilles) et `lib/metiers/scene.ts` (échelle du plan, pause hors écran et
@@ -503,6 +522,25 @@ ligne de texte**, séparés par un point médian : une grille 2 × 2 à filets e
 faisait un tableau de chiffres. Sur la frise, l'année est un repère
 (`--text-title-lg`, graisse 500), pas un titre : elle ne doit pas peser plus
 que « D'où je viens. ».
+
+### Les trois sites (`home-sites`)
+
+Sous le bloc Sites web, trois sites réalisés, chacun dans une **fenêtre de
+navigateur dessinée dans la tenue de la page** (barre fine, pastille d'adresse
+avec le domaine), où la page **défile par crans** à l'intérieur. Des captures
+de sites clairs posées telles quelles sur la page nuit cassaient la tenue, et
+s'enchaînaient bizarrement sur téléphone : retour de Lilian.
+
+- Une seule fenêtre défile à la fois ; les autres attendent sous un voile de
+  nuit, sans filtre sur l'active. Les repères d'angle glissent vers elle.
+- **Ordinateur :** une grande fenêtre et deux étroites ; celle qu'on vise
+  s'ouvre en grand. **Téléphone :** une fenêtre à la fois, à faire glisser,
+  avec « 1 / 3 » et deux flèches de 44 px.
+- Chaque site est accompagné : son nom, ce que c'est, « Voir le site ». Rien
+  d'autre que ce que porte `src/data/realisations.ts` (champ `long` pour la
+  capture longue, `public/sites-web/projects/*-long.webp`).
+- Une commande d'arrêt dans la barre de la fenêtre active ; rien ne défile en
+  mouvement réduit ni hors écran.
 
 ### Ce que je publie (`home-content`)
 
