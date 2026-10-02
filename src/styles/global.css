@@ -1295,9 +1295,29 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-divider);
-  height: 64px;
+  /* En rem, comme --spacing-barre : quand le visiteur agrandit le texte, la
+     barre grandit avec lui au lieu de couper ses libellés. */
+  height: var(--spacing-barre);
   transition: border-color var(--duration-default) var(--ease-out-quint),
               background-color var(--duration-default) var(--ease-out-quint);
+}
+
+/* Les liens de la barre demandent environ 56em de large (893 px à la taille
+   normale du texte, mesurés le 3 octobre 2026). La condition est en em : quand
+   le visiteur agrandit le texte, la largeur nécessaire grandit avec lui, et la
+   barre passe au menu, comme sur téléphone, au lieu de couper ses libellés. */
+.nav-root > div {
+  container: barre-nav / inline-size;
+}
+
+@container barre-nav (max-width: 56em) {
+  .nav-root .nav-liens {
+    display: none;
+  }
+
+  .nav-root .menu-trigger {
+    display: inline-flex;
+  }
 }
 
 .nav-root.scrolled {
@@ -1427,7 +1447,7 @@ body.menu-ouvert .nav-mid-cta {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 64px;
+  min-height: var(--spacing-barre);
   padding-top: env(safe-area-inset-top);
   border-bottom: 1px solid var(--color-divider);
 }

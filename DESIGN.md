@@ -1281,8 +1281,9 @@ saisie gardent leur anneau même sur tactile. En couleurs forcées : `CanvasText
 
 ### Navigation
 
-Barre fixe de 64 px, filet bas `divider` qui passe à `ink-faint` une fois la
-page défilée, sans ombre. Liens en capitales de 12 px, `ink-mid`, blancs au
+Barre fixe de 64 px (4rem, `--spacing-barre` : elle grandit avec le texte
+quand le visiteur l'agrandit), filet bas `divider` qui passe à `ink-faint` une
+fois la page défilée, sans ombre. Liens en capitales de 12 px, `ink-mid`, blancs au
 survol ; le lien actif se distingue par le poids (600), sans filet décoratif.
 Sur la home, les liens et le wordmark sont en casse normale.
 
@@ -1300,6 +1301,12 @@ pied fixes, seule la liste défile, dans la hauteur dynamique du viewport et ave
 les zones de sécurité du téléphone. Les deux offres sont en `title-lg` sur filet
 `border-strong`, les liens en `body-large` sur filet `divider`. Passer au format
 desktop ferme le menu. Son ouverture est décrite sous *Mouvement*.
+
+**Texte agrandi : la barre passe au menu.** Ses liens demandent environ 56em de
+large ; une requête de conteneur en em (`barre-nav`, dans `global.css`) masque
+les liens et montre le bouton du menu dès que la place manque, y compris
+au-dessus de 1024 px quand le texte est agrandi. Le menu s'ouvre tant que les
+liens sont masqués, quelle que soit la largeur.
 
 ### FAQ
 

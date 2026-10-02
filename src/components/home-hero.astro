@@ -152,9 +152,12 @@ const cellules = [
     --maille: var(--spacing-maille);
     --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
     display: grid;
+    /* minmax(0, 1fr) : la colonne ne s'élargit pas au contenu quand le texte
+       est agrandi, elle le fait revenir à la ligne. */
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: 1fr auto;
     min-height: 100svh;
-    padding-top: 64px;
+    padding-top: var(--spacing-barre);
     overflow: clip;
     background: var(--color-night-deep);
     isolation: isolate;
@@ -267,6 +270,7 @@ const cellules = [
   .affiche__centre {
     position: relative;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     align-content: center;
     justify-items: center;
     gap: var(--spacing-groupe);
@@ -363,6 +367,9 @@ const cellules = [
     line-height: 1.12;
     letter-spacing: -0.028em;
     text-align: center;
+    /* Un mot plus large que l'écran (texte agrandi) se coupe plutôt que de
+       sortir du cadre. Sans effet à la taille normale. */
+    overflow-wrap: anywhere;
   }
 
   .affiche__question {

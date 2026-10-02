@@ -47,7 +47,7 @@ import { faits, parcours } from '../data/parcours';
     <div class="duo__auj bloc-encre">
       <div class="moi__tete">
         <Image src={lilianPhoto} alt="Portrait de Lilian Sevoumian" width={160} class="moi__portrait" loading="lazy" />
-        <SectionHeader title="Pourquoi moi." titleMaxWidth="12ch" rule={false} spacing="none" />
+        <SectionHeader title="Pourquoi moi." titleMaxWidth="none" rule={false} spacing="none" />
       </div>
 
       <ul class="moi__faits">
@@ -134,8 +134,12 @@ import { faits, parcours } from '../data/parcours';
     gap: 0.75rem 1rem;
   }
 
-  .moi__tete :global(h2) {
-    white-space: nowrap;
+  /* Le titre passe sous le portrait, entier, plutôt que de laisser « moi. »
+     seul sur sa ligne : le retour à la ligne de la boîte flexible se décide
+     sur sa largeur naturelle. S'il ne tient pas même seul (texte agrandi), il
+     se coupe dans sa boîte au lieu de sortir du panneau. */
+  .moi__tete > :global(*) {
+    max-width: 100%;
   }
 
   /* Le titre de droite se centre sur la même ligne de 4rem que celui de
@@ -159,6 +163,7 @@ import { faits, parcours } from '../data/parcours';
      à la suite. Ni grille ni filets. */
   .moi__faits {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.75rem;
     margin: var(--spacing-groupe) 0 0;
     padding: 0;
@@ -181,7 +186,7 @@ import { faits, parcours } from '../data/parcours';
     font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    white-space: nowrap;
+    text-wrap: balance;
   }
 
   .moi__texte {
@@ -354,7 +359,7 @@ import { faits, parcours } from '../data/parcours';
 
   @media (max-width: 1023px) {
     .duo {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: var(--spacing-bloc);
     }
 

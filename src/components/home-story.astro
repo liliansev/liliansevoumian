@@ -568,6 +568,7 @@ const vues = [
 
   .acte__corps {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: start;
     gap: var(--spacing-lie);
   }
@@ -581,6 +582,9 @@ const vues = [
     font-weight: 500;
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
+    /* Texte agrandi sur un écran étroit : un mot plus large que la colonne se
+       coupe plutôt que de sortir. Sans effet à la taille normale. */
+    overflow-wrap: anywhere;
   }
 
   /* Le fragment surligné est une pastille, comme la réponse du premier
@@ -590,6 +594,11 @@ const vues = [
     --angle: 0deg;
     --radius-bande: 9999px;
     display: inline-block;
+    /* Texte agrandi : la pastille passe sur deux lignes plutôt que de sortir
+       de la colonne. Bloc en ligne, elle reste entière tant qu'elle tient sur
+       une ligne : `normal` ne change rien à la taille habituelle. */
+    max-width: 100%;
+    white-space: normal;
     padding: 0.02em 0.36em 0.08em;
     margin: 0.14em 0 0;
   }

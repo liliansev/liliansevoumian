@@ -414,6 +414,11 @@ const mobileNavLinks = navLinks.filter((link) => {
   const mobileMenu = document.querySelector<HTMLDialogElement>('#mobile-menu');
   const menuPanel = mobileMenu?.querySelector<HTMLElement>('.mobile-menu__panel');
   const desktopViewport = window.matchMedia('(min-width: 1024px)');
+  /* Le menu sert tant que les liens de la barre sont masqués : sous 1024 px,
+     et au-dessus quand le texte agrandi les fait passer au menu (voir la
+     requête de conteneur `barre-nav` dans global.css). */
+  const liensDeBarre = document.querySelector<HTMLElement>('[data-nav-liens]');
+  const menuInutile = () => (liensDeBarre ? getComputedStyle(liensDeBarre).display !== 'none' : desktopViewport.matches);
 
   function syncMenuState(open: boolean) {
     menuBtn?.setAttribute('aria-expanded', String(open));
@@ -431,7 +436,7 @@ const mobileNavLinks = navLinks.filter((link) => {
   }
 
   function openMenu() {
-    if (!mobileMenu || mobileMenu.open || desktopViewport.matches) return;
+    if (!mobileMenu || mobileMenu.open || menuInutile()) return;
     syncMenuState(true);
     mobileMenu.showModal();
     const content = mobileMenu.querySelector('.mobile-menu__content');
@@ -469,8 +474,8 @@ const mobileNavLinks = navLinks.filter((link) => {
     if (!mobileMenu.open) syncMenuState(false);
   });
 
-  desktopViewport.addEventListener('change', (event) => {
-    if (event.matches && mobileMenu?.open) {
+  desktopViewport.addEventListener('change', () => {
+    if (menuInutile() && mobileMenu?.open) {
       closeMenu();
       document.getElementById('logo-link')?.focus({ preventScroll: true });
     }
