@@ -46,10 +46,6 @@
      l'audit responsive qu'un visiteur pouvait voir directement. La courbe est
      inchangée au-dessus de 400 px de large. */
   --text-display: clamp(2.25rem, 5vw + 1rem, 5.25rem);
-  /* Home incarnée : même plafond que le display général, avec un plancher plus
-     haut pour que le manifeste reste un titre sur mobile sans retrouver les
-     six lignes du hero de landing à 6,25rem. */
-  --text-home-hero: clamp(2.75rem, 5vw + 0.25rem, 5.25rem);
   /* UNE seule courbe pour le manifeste, et non deux jetons commutés à 1024 px.
      Mesuré sur la page vivante, l'ancien dispositif faisait perdre au titre
      10,2 px (−14,7 %) quand la fenêtre gagnait UN pixel, et il ne repassait
@@ -61,9 +57,7 @@
      home cessait d'être plus petit que le titre d'une page SEO (76 contre
      84 px). Vérifié : 3 lignes à 1440 px comme avant, aucun débordement. */
   --text-display-hero: clamp(3.25rem, 6vw + 1.2rem, 6.25rem);
-  --text-home-service: clamp(1.25rem, 8.6cqi, 2.75rem);
   --spacing-home-hero-y: clamp(3rem, 5vw, 5rem);
-  --spacing-home-hero-gap: clamp(3rem, 5vw, 5rem);
   --spacing-service-card: clamp(1.25rem, 3vw, 2.5rem);
   /* Le hero de l'offre web garde le plafond du manifeste tout en descendant à
      48 px sur iPhone : son fragment surligné reste ainsi dans la colonne sans
@@ -143,17 +137,11 @@
      monotone entre les deux. Vérifié de 320 à 1920 px sur les neuf pages : aucun
      bouton ne déborde, aucun ne change de hauteur par rapport à l'état d'avant. */
   --text-button: clamp(0.75rem, 3.1vw, 0.875rem);
-  /* --text-mono-body vaut désormais --text-body-sm, et le rang de 13 px
-     disparaît de l'échelle rendue. Il était à 1,08 de --text-body-sm et à 1,08
-     de --text-mono-label : trois rangs pour deux pixels, indiscernables. Pire,
-     MockupList et StackSovereign appelaient les DEUX jetons dans la même
-     maquette, à un pixel d'écart, ce qui ne peut rien signaler.
-     Le jeton survit comme alias parce que six maquettes l'appellent — même
-     dispositif que --font-mono, qui vaut la police de texte depuis que le
-     monospace a quitté la DA. Les six déclarations à remplacer :
-     StackConsole:13, StackZite:72, StackCodex:49, StackLovable:72,
-     MockupList:85, StackSovereign:55. */
-  --text-mono-body: var(--text-body-sm);
+  /* --text-mono-body a été retiré. Le rang de 13 px avait déjà quitté
+     l'échelle rendue (il était à 1,08 de --text-body-sm et à 1,08 de
+     --text-mono-label : trois rangs pour deux pixels, indiscernables), et le
+     jeton ne survivait que comme alias de --text-body-sm pour six maquettes
+     d'outils. Elles ont été supprimées le 2 octobre 2026, et lui avec. */
   --text-mono-caption: 0.6875rem;
   --spacing-section-y: clamp(5rem, 8vw, 8rem);
   --spacing-section-x: clamp(1.5rem, 5vw, 7.5rem);
@@ -324,11 +312,9 @@
   /* ── Élévation : aucune. La structure vient des filets. ──
      Les deux jetons ne rendent rien et c'est leur rôle : ils tiennent la place
      de l'ombre pour que « pas d'élévation » soit une valeur écrite, et non une
-     absence qu'un composant comblerait un jour au jugé. Six déclarations les
-     lisent encore (MockupWindow, WorkflowCanvas, CaseStudy, StackScenario,
-     StackWorkflow), dont deux comme état de REPOS d'une `@keyframes` qui
-     alterne avec un halo de marque : les retirer y ferait échouer
-     `box-shadow: var(--shadow-card)` en silence.
+     absence qu'un composant comblerait un jour au jugé. Quatre déclarations
+     les lisent encore (MockupWindow, WorkflowCanvas deux fois, CaseStudy) :
+     les retirer y ferait échouer `box-shadow: var(--shadow-card)` en silence.
      Ce qui a été retiré, ce sont les déclarations inertes qui les peignaient
      dans ce fichier — voir la section CARDS. */
   --shadow-card: 0 0 0 0 transparent;
@@ -592,7 +578,7 @@ body {
 }
 
 /* `.mono-body` a été retirée : aucun élément du markup ne la portait. Le jeton
-   --text-mono-body reste vivant, appelé directement par six maquettes. */
+   --text-mono-body l'a suivie, avec les six maquettes qui l'appelaient. */
 
 .mono-caption {
   font-family: var(--font-mono);
@@ -713,7 +699,7 @@ body {
 }
 
 /* =========================================================================
-   SUR-TITRE — un seul, en tête du hero
+   SUR-TITRE — les deux classes globales ont été retirées
 
    `.section-number` a été supprimée. Elle rendait un sur-titre en petites
    capitales espacées au-dessus de vingt titres, alors que DESIGN.md le range
@@ -722,16 +708,9 @@ body {
    suivie. La classe part avec la prop `label` de SectionHeader — laissée en
    place, elle remettait le motif à un attribut de distance.
 
-   `.eyebrow-rule` reste, et la distinction est tout le sujet. Elle ne sert
-   qu'une fois, en tête du hero, en casse normale, et elle porte le métier, que
-   le titre ne dit pas. Un sur-titre unique qui ajoute une information est une
-   voix ; le même motif répété au-dessus de chaque section est une grammaire.
+   `.eyebrow-rule` est partie à son tour le 2 octobre 2026 : elle ne servait
+   qu'une fois, en tête de l'ancien hero, et plus aucun élément ne la portait.
    ========================================================================= */
-
-.eyebrow-rule {
-  display: inline-flex;
-  align-items: center;
-}
 
 /* =========================================================================
    BUTTONS — no shadow, ever
@@ -996,10 +975,8 @@ body {
    que la carte suivante le recopie.
 
    LES DEUX JETONS RESTENT dans @theme, et c'est vérifié plutôt que supposé :
-   six déclarations hors de ce fichier les appellent encore — MockupWindow,
-   WorkflowCanvas, CaseStudy, StackScenario et StackWorkflow, ces deux
-   dernières s'en servant comme valeur de REPOS dans une `@keyframes` qui
-   alterne avec un vrai halo de marque. Les supprimer y rendrait
+   quatre déclarations hors de ce fichier les appellent encore — MockupWindow,
+   WorkflowCanvas (deux fois) et CaseStudy. Les supprimer y rendrait
    `box-shadow: var(--shadow-card)` invalide à l'exécution, sans erreur ni
    avertissement. Ce qui part ici, ce sont les déclarations inertes, pas le
    jeton qu'elles lisaient.
@@ -1020,11 +997,9 @@ body {
    transparente, sa transition, et un survol qui repeignait la même ombre
    transparente. Zéro pixel rendu, à l'arrêt comme au survol.
    La transition `border-color` qu'elle portait aussi ne servait rien : vérifié
-   sur ses deux seuls porteurs, `.stack-card` (StackLayer) et `.roi-carte`
-   (ROICalculator), aucun des deux ne change sa propre couleur de filet — le
-   survol de la carte outil ne touche que la couleur du logo, sur l'enfant.
-   Le NOM survit dans le markup de ces deux composants, hors périmètre ici ; il
-   n'y désigne plus rien et peut tomber au prochain passage. */
+   sur ses deux seuls porteurs d'alors, `.stack-card` (StackLayer, supprimé
+   depuis) et `.roi-carte` (ROICalculator), aucun des deux ne changeait sa
+   propre couleur de filet. Le nom a quitté le markup. */
 
 .card-interactive {
   cursor: pointer;
@@ -2119,10 +2094,9 @@ h1 mark.inv::before { --angle: 1.1deg; }
 .bloc-encre .btn-primary:hover,
 .bloc-encre .btn-primary:focus-visible { background: var(--color-night-soft); color: #ffffff; }
 
-/* Même raison pour les deux traits d'accent : la pêche d'un pixel ou deux ne
-   se voit pas sur le clair, le trait y repasse en nuit. */
+/* Même raison pour le trait d'accent : la pêche d'un pixel ou deux ne se voit
+   pas sur le clair, le trait y repasse en nuit. */
 .bloc-encre .lien-prose { border-bottom-color: #111827; }
-.bloc-encre .text-link-arrow::after { background: #111827; }
 
 /* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
    `nowrap` qui protege la bande devient une cause de debordement. La bande
@@ -2163,44 +2137,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
 }
 .lien-prose:hover { border-bottom-color: var(--color-ink); }
 
-/* Un seul trait sous le lien entier, y compris l'espace avant sa flèche.
-   Le pseudo-élément évite les fragments produits par text-decoration sur flex. */
-.text-link-arrow {
-  position: relative;
-  display: inline-flex;
-  max-width: 100%;
-  min-height: 44px;
-  align-items: center;
-  gap: 0.65rem;
-  padding-block: 0.65rem;
-  color: var(--color-ink);
-  font-size: var(--text-body-sm);
-  font-weight: 600;
-  line-height: 1.5;
-  text-decoration: none;
-}
-
-.text-link-arrow::after {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0.4rem;
-  height: 2px;
-  background: var(--color-peche);
-  transition: background-color var(--duration-default) var(--ease-out-quint);
-}
-
-.text-link-arrow > span:first-child { min-width: 0; }
-.text-link-arrow > [aria-hidden] {
-  flex-shrink: 0;
-  transition: transform var(--duration-default) var(--ease-out-quint);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .text-link-arrow:hover::after { background: currentColor; }
-  .text-link-arrow:hover > [aria-hidden] { transform: translateX(0.2rem); }
-}
-
 /* =========================================================================
    MOUVEMENT D'AUTEUR — trois gestes, et pas un de plus.
 
@@ -2237,16 +2173,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
     animation: mark-trace var(--duration-trace) var(--ease-out-expo) backwards;
     animation-delay: 420ms;
   }
-
-  /* Le portrait se découvre de bas en haut pendant que l'image se pose. */
-  .entree-portrait {
-    animation: entree-ouvre 1100ms var(--ease-out-expo) backwards;
-    animation-delay: 180ms;
-  }
-  .entree-portrait :where(img) {
-    animation: entree-pose 1400ms var(--ease-out-expo) backwards;
-    animation-delay: 180ms;
-  }
 }
 
 /* 0,01 et non 0 : un élément à opacité nulle n'est pas candidat au LCP, et le
@@ -2257,13 +2183,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
 }
 @keyframes mark-trace {
   from { --draw: 0; }
-}
-@keyframes entree-ouvre {
-  from { clip-path: inset(100% 0 0 0 round var(--radius-lg)); }
-  to   { clip-path: inset(0 round var(--radius-lg)); }
-}
-@keyframes entree-pose {
-  from { transform: scale(1.14); }
 }
 
 /* ── 3. Les médias s'ouvrent au défilement ──

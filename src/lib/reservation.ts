@@ -23,18 +23,6 @@ export const DUREE_RESERVATION_MINUTES = 45;
 export const LIBELLE_CONTACT_RESERVATION = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES}\u00a0min`;
 
 /**
- * Sélecteur des liens que l'overlay cal.com intercepte (Layout) et que le menu
- * mobile referme (Navigation). Il vise l'URL sans son créneau : un changement de
- * durée ne doit pas décrocher silencieusement la réservation on-site.
- *
- * Les deux scripts qui l'utilisent sont inline et ne peuvent pas importer ce
- * module — ils portent la chaîne en dur. Elle est reproduite ici pour que la
- * dépendance soit lisible, et le test de build (`pnpm build`) la vérifie en
- * comptant les liens tagués dans le HTML de sortie.
- */
-export const SELECTEUR_RESERVATION = 'a[href*="cal.com/lilian-sevoumian"]';
-
-/**
  * Libellé par défaut d'un bouton de réservation.
  *
  * IL NOMME CE QUE LE LECTEUR VEUT, PAS CE QU'IL SUBIT. Il a porté « Réserver
