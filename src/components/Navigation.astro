@@ -188,7 +188,11 @@ const mobileNavLinks = navLinks.filter((link) => {
     ))}
 
     <!-- Desktop links -->
-    <div class="hidden lg:flex items-center gap-1">
+    <div class="nav-liens hidden lg:flex items-center gap-1" data-nav-liens>
+      {/* Sur l'accueil, une pastille glisse d'un lien à l'autre sous le
+          pointeur : le survol ne changeait que la teinte du texte, et rien ne
+          disait qu'on tenait un lien. */}
+      {isHome && <span class="nav-pastille" aria-hidden="true" data-nav-pastille></span>}
       {navLinks.map((link) => (
         <a href={lienNav(link.href)} class="nav-link" data-nav-link>
           {link.label}
@@ -312,6 +316,34 @@ const mobileNavLinks = navLinks.filter((link) => {
       });
     }, { rootMargin: '-80px 0px 0px 0px', threshold: 0 });
     heroObs.observe(heroEl);
+  }
+
+  // La pastille de survol : elle prend la place et la largeur du lien visé,
+  // glisse vers le suivant, et s'efface quand le pointeur ou le focus quitte
+  // la barre. À sa première apparition elle se pose sans glisser depuis la
+  // gauche.
+  const liens = document.querySelector<HTMLElement>('[data-nav-liens]');
+  const pastille = liens?.querySelector<HTMLElement>('[data-nav-pastille]');
+  if (liens && pastille) {
+    const viser = (lien: HTMLElement) => {
+      const visible = pastille.classList.contains('est-la');
+      if (!visible) pastille.style.transition = 'none';
+      pastille.style.setProperty('--x', `${lien.offsetLeft}px`);
+      pastille.style.setProperty('--l', `${lien.offsetWidth}px`);
+      if (!visible) {
+        void pastille.offsetWidth;
+        pastille.style.transition = '';
+      }
+      pastille.classList.add('est-la');
+    };
+    liens.querySelectorAll<HTMLElement>('[data-nav-link]').forEach((lien) => {
+      lien.addEventListener('pointerenter', () => viser(lien));
+      lien.addEventListener('focus', () => viser(lien));
+    });
+    liens.addEventListener('pointerleave', () => pastille.classList.remove('est-la'));
+    liens.addEventListener('focusout', (e) => {
+      if (!liens.contains(e.relatedTarget as Node | null)) pastille.classList.remove('est-la');
+    });
   }
 
   // Active link tracking via IntersectionObserver
@@ -452,7 +484,60 @@ const mobileNavLinks = navLinks.filter((link) => {
     text-transform: none;
     letter-spacing: 0;
   }
-  .nav-home .nav-link:hover { background: var(--color-surface-low); }
+  /* La pastille de survol. Elle vit sous les liens, à leur hauteur, et suit
+     le pointeur : une seule forme qui se déplace, pas un fond par lien. */
+  .nav-liens {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .nav-pastille {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: -1;
+    width: var(--l, 0);
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 13%, transparent);
+    opacity: 0;
+    transform: translate(var(--x, 0), -50%) scale(0.92);
+    transition:
+      transform 420ms var(--ease-out-expo),
+      width 420ms var(--ease-out-expo),
+      opacity 180ms var(--ease-out-quint);
+    pointer-events: none;
+  }
+
+  .nav-pastille.est-la {
+    opacity: 1;
+    transform: translate(var(--x, 0), -50%);
+  }
+
+  .nav-home .nav-link {
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* Le lien de la section en cours garde un point pêche : avec la pastille de
+     survol, la graisse seule ne suffisait plus à le distinguer. */
+  .nav-home .nav-link.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-pastille {
+      transition: opacity 120ms linear;
+    }
+  }
   .nav-home .nav-home-action :global(.btn-primary) {
     text-transform: none;
     letter-spacing: 0;

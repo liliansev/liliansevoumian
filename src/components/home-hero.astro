@@ -59,6 +59,10 @@ const cellules = [
 <section id="hero" data-section data-affiche data-motion-pause class="affiche relative px-[var(--spacing-section-x)]">
   <div class="affiche__grille" aria-hidden="true">
     <div class="affiche__eclairage"></div>
+    {/* La case sous le pointeur, et la traînée des cases qu'il vient de
+        quitter (voir le script). */}
+    <span class="viseur" data-viseur></span>
+    {Array.from({ length: 6 }, () => <span class="trace" data-trace></span>)}
     {cellules.map((c, i) => (
       <span class="cellule" style={`--x: ${c.x}; --y: ${c.y}; --i: ${i}`}></span>
     ))}
@@ -186,6 +190,37 @@ const cellules = [
     opacity: 0;
   }
 
+  /* La case que vise le pointeur : nettement allumée, elle saute de maille en
+     maille avec lui. Les cases quittées s'éteignent derrière, en traînée. */
+  .viseur,
+  .trace {
+    position: absolute;
+    top: calc(50% + (var(--y, 0) - 0.5) * var(--maille));
+    left: calc(50% + (var(--x, 0) - 0.5) * var(--maille));
+    width: var(--maille);
+    height: var(--maille);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .viseur {
+    background:
+      radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-peche) 58%, transparent), color-mix(in srgb, var(--color-peche) 26%, transparent));
+    box-shadow:
+      inset 0 0 0 1px var(--color-peche),
+      0 0 3rem 0 color-mix(in srgb, var(--color-peche) 50%, transparent);
+    transition: opacity 220ms var(--ease-out-quint);
+  }
+
+  .viseur.est-la {
+    opacity: 1;
+  }
+
+  .trace {
+    background: color-mix(in srgb, var(--color-peche) 24%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-peche) 55%, transparent);
+  }
+
   .croix {
     position: absolute;
     top: calc(50% + (var(--y) - 0.5) * var(--maille) - 5px);
@@ -263,14 +298,16 @@ const cellules = [
   }
 
   .affiche__titre {
-    max-width: 15.5em;
+    max-width: 16.5em;
     margin: 0;
     color: var(--color-ink);
     font-family: var(--font-display);
     font-size: var(--text-affiche);
     font-weight: 500;
-    line-height: 1.04;
-    letter-spacing: -0.045em;
+    /* Desserré : à -0,045em et 1,04 les lettres se touchaient presque et les
+       deux lignes se collaient. Retour de Lilian. */
+    line-height: 1.12;
+    letter-spacing: -0.028em;
     text-align: center;
   }
 
@@ -526,16 +563,34 @@ const cellules = [
 </style>
 
 <script>
-  /* La grille s'éclaire sous le pointeur : deux variables, mises à jour au
-     plus une fois par image. Sans pointeur fin, l'éclairage reste où il est. */
+  /* La grille répond au pointeur : la lueur le suit au pixel, et la case qu'il
+     survole s'allume franchement, en sautant de maille en maille. Les cases
+     quittées s'éteignent derrière lui. Deux variables et une classe, mises à
+     jour au plus une fois par image. Sans pointeur fin, rien ne bouge. */
   const affiche = document.querySelector<HTMLElement>('[data-affiche]');
   const grille = affiche?.querySelector<HTMLElement>('.affiche__grille');
-  if (affiche && grille && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  const viseur = grille?.querySelector<HTMLElement>('[data-viseur]');
+  if (affiche && grille && viseur && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const traces = [...grille.querySelectorAll<HTMLElement>('[data-trace]')];
+    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let x = 0;
     let y = 0;
     let prevu = false;
+    let caseX: number | null = null;
+    let caseY = 0;
+    let prochaine = 0;
+
+    const eteindre = (cx: number, cy: number) => {
+      if (reduit || !traces.length) return;
+      const trace = traces[prochaine];
+      prochaine = (prochaine + 1) % traces.length;
+      trace.style.setProperty('--x', String(cx));
+      trace.style.setProperty('--y', String(cy));
+      trace.animate([{ opacity: 0.85 }, { opacity: 0 }], { duration: 720, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+    };
+
     affiche.addEventListener('pointermove', (e) => {
-      const r = affiche.getBoundingClientRect();
+      const r = grille.getBoundingClientRect();
       x = e.clientX - r.left;
       y = e.clientY - r.top;
       if (prevu) return;
@@ -544,7 +599,25 @@ const cellules = [
         prevu = false;
         grille.style.setProperty('--px', `${x}px`);
         grille.style.setProperty('--py', `${y}px`);
+        /* La maille est lue sur la case elle-même : c'est un `clamp()`, sa
+           valeur en pixels dépend de la largeur de la fenêtre. Les lignes
+           passent à une demi-maille du centre, d'où l'arrondi. */
+        const maille = viseur.offsetWidth;
+        if (!maille) return;
+        const nx = Math.round((x - grille.clientWidth / 2) / maille);
+        const ny = Math.round((y - grille.clientHeight / 2) / maille);
+        if (nx === caseX && ny === caseY) return;
+        if (caseX !== null) eteindre(caseX, caseY);
+        caseX = nx;
+        caseY = ny;
+        viseur.style.setProperty('--x', String(nx));
+        viseur.style.setProperty('--y', String(ny));
+        viseur.classList.add('est-la');
       });
+    });
+    affiche.addEventListener('pointerleave', () => {
+      viseur.classList.remove('est-la');
+      caseX = null;
     });
   }
 

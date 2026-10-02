@@ -1,0 +1,499 @@
+---
+/*
+ * metier-plan — proposition E, « Le plan », pour le métier Automatisation.
+ *
+ * Une planche de bureau d'études : quatre machines dessinées au trait, en
+ * perspective isométrique, reliées par des conduites. Un mail arrive, le bon
+ * de commande est lu, la commande puis la facture se créent seules. La boucle
+ * a deux temps : le plan se trace, puis la machine se met en marche.
+ *
+ * Toute la géométrie et tout le minutage viennent de `lib/explorations/plan`,
+ * calculés au rendu de la page. Ici il ne reste que le SVG posé, ses styles,
+ * et un petit lecteur qui transforme les minutages en animations.
+ *
+ * Sans script, ou en mouvement réduit, le SVG tel qu'il est écrit est l'image
+ * fixe : le plan entier, les conduites en pêche, les factures sorties.
+ */
+import { dessinerPlan, LARGEUR, HAUTEUR } from '../../lib/explorations/plan';
+
+const plan = dessinerPlan();
+---
+
+<div
+  class="plan"
+  role="img"
+  aria-label="Plan isométrique au trait : un mail arrive, le bon de commande est lu, puis la commande et la facture se créent seules, sans aucune ressaisie."
+  data-plan
+  data-duree={plan.duree}
+>
+  <svg class="plan__svg" viewBox={`0 0 ${LARGEUR} ${HAUTEUR}`} aria-hidden="true" focusable="false">
+    <defs>
+      <clipPath id="plan-coupe-pli"><polygon points={plan.pli.coupe}></polygon></clipPath>
+      <clipPath id="plan-coupe-feuille"><polygon points={plan.feuilles[0].coupe}></polygon></clipPath>
+    </defs>
+
+    <!-- Le papier : la trame, le cadre et le cartouche sont imprimés d'avance, ils ne se tracent pas. -->
+    <path class="grille" d={plan.grille}></path>
+    <rect class="cadre" x="10" y="10" width="780" height="580" rx="5"></rect>
+    <g class="cartouche fin">
+      <path class="cadre" d="M566 590V536H790M566 566H790M742 566V590"></path>
+      <text class="cartouche__titre" x="578" y="556" font-size="13.5">Automatisation</text>
+      <text class="cartouche__ligne" x="578" y="582" font-size="9.6">Du bon de commande à la facture</text>
+      <text class="cartouche__ligne" x="766" y="582" font-size="9.6" text-anchor="middle">Pl. 1/4</text>
+    </g>
+
+    <g class="dessin">
+      {
+        plan.traits.map((t) => (
+          <path
+            class:list={[t.mode, t.genre, { fin: t.fin }]}
+            d={t.d}
+            pathLength={t.mode === 't' ? t.pl : undefined}
+            data-t={t.t}
+          />
+        ))
+      }
+
+      {
+        plan.mobiles.map((m) => (
+          <path class:list={[m.classe, { fin: m.fin }]} d={m.d} pathLength={m.pl} data-piste={m.piste} />
+        ))
+      }
+
+      <!-- Le portique du lecteur. -->
+      <g data-piste={plan.portique.piste}>
+        {plan.portique.traits.map((t) => <path class:list={[t.mode, t.genre]} d={t.d} pathLength={t.pl} data-t={t.t} />)}
+        <path class={plan.portique.lumiere.classe} d={plan.portique.lumiere.d} data-piste={plan.portique.lumiere.piste}></path>
+      </g>
+
+      <!-- Le pli qui tombe dans la boîte. -->
+      <g clip-path="url(#plan-coupe-pli)">
+        <g data-piste={plan.pli.piste}>
+          <path class="t vu" d={plan.pli.contour.d} pathLength={plan.pli.contour.pl} data-t={plan.pli.contour.t}></path>
+          <g data-piste={plan.pli.pisteAccent}>
+            <path class="aplat" d={plan.pli.aplat}></path>
+            <path class="encre" d={plan.pli.rabat}></path>
+          </g>
+        </g>
+      </g>
+
+      <!-- Les factures : elles sortent de la fente et se posent sur le plateau. -->
+      {
+        plan.feuilles.map((f) => (
+          <g clip-path="url(#plan-coupe-feuille)">
+            <g data-piste={f.pisteGlisse}>
+              <g data-piste={f.pisteVue}>
+                <path class="aplat" d={f.aplat} />
+                <path class="encre" d={f.encre} />
+              </g>
+            </g>
+          </g>
+        ))
+      }
+
+      <!-- Les rayons de la poulie. -->
+      <g class="f" data-t={plan.rayons.t}>
+        <g transform={plan.rayons.matrice}>
+          <g class="rayons" data-piste={plan.rayons.piste}>
+            {plan.rayons.bouts.map((b) => <line x1="0" y1="0" x2={b.x} y2={b.y} />)}
+          </g>
+        </g>
+      </g>
+
+      <!-- Les repères : le numéro donne l'ordre du trajet. -->
+      {
+        plan.reperes.map((r) => (
+          <g class="repere">
+            <path class="t cote" d={r.renvoi.d} pathLength="1" data-t={r.renvoi.t} />
+            <circle class="f point" cx={r.px} cy={r.py} r="1.7" data-t={r.tTexte} />
+            <g class="bulle">
+              <circle class="onde" cx={r.cx} cy={r.cy} r="11" data-piste={r.pisteOnde} />
+              <circle class="t cercle" cx={r.cx} cy={r.cy} r="11" pathLength="1" data-t={r.tCercle} />
+              <circle class="accent" cx={r.cx} cy={r.cy} r="11" data-piste={r.pisteAccent} />
+              <text class="f numero" x={r.cx} y={r.cy} font-size="12" data-t={r.tTexte}>
+                {r.n}
+              </text>
+            </g>
+            <text class="f nom" x={r.cx - 18} y={r.cy - 1} font-size="13.5" text-anchor="end" data-t={r.tTexte}>
+              {r.nom}
+            </text>
+            <text class="legende fin" x={r.cx - 18} y={r.cy + 12} font-size="10.5" text-anchor="end" data-piste={r.pisteLegende}>
+              {r.legende}
+            </text>
+          </g>
+        ))
+      }
+
+      <text class="f cote-texte fin" transform={plan.cote.matrice} font-size="13" text-anchor="middle" data-t={plan.cote.t}>0 ressaisie</text>
+      {
+        plan.triedre.map((a) => (
+          <text class="f triedre fin" x={a.x} y={a.y} font-size="9.5" data-t={a.t}>
+            {a.lettre}
+          </text>
+        ))
+      }
+    </g>
+  </svg>
+</div>
+
+<style>
+  .plan {
+    /* Le fond du cadre, pour les rares aplats qui masquent le trait derrière eux. */
+    --plan-fond: var(--color-night-deep);
+    /* Une unité du dessin vaut `--u` pixels d'écran inversés : multiplier une
+       épaisseur par `--u` la garde constante quelle que soit la taille du cadre. */
+    --u: 1.05;
+    width: 100%;
+    height: 100%;
+    container-type: inline-size;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+  }
+
+  /* Les réglages du trait sont posés sur le SVG et hérités : chaque famille de
+     traits n'a plus qu'à dire ce qu'elle change. */
+  .plan__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(var(--u) * 1px);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* `vector-effect: non-scaling-stroke` déforme les tirets dont dépend le
+     tracé à la plume. Le rapport entre le dessin (800 unités) et le cadre est
+     donc calculé en CSS, et chaque épaisseur le reprend. */
+  @supports (width: calc(1px * tan(atan2(1px, 1cqw)))) {
+    .plan__svg {
+      --u: tan(atan2(800px, 100cqw));
+    }
+  }
+
+  .grille {
+    stroke-opacity: 0.05;
+  }
+
+  .cadre {
+    stroke-opacity: 0.17;
+  }
+
+  .vu {
+    stroke-opacity: 0.88;
+    stroke-width: calc(var(--u) * 1.2px);
+  }
+
+  .cache {
+    stroke-opacity: 0.36;
+    stroke-linecap: butt;
+    stroke-dasharray: calc(var(--u) * 3.2px) calc(var(--u) * 2.8px);
+  }
+
+  .detail {
+    stroke-opacity: 0.6;
+  }
+
+  .hachure {
+    stroke-opacity: 0.2;
+    stroke-width: calc(var(--u) * 0.75px);
+  }
+
+  .axe {
+    stroke-opacity: 0.42;
+    stroke-linecap: butt;
+    stroke-dasharray: calc(var(--u) * 9px) calc(var(--u) * 3px) calc(var(--u) * 1.5px) calc(var(--u) * 3px);
+  }
+
+  .cond {
+    stroke-opacity: 0.72;
+  }
+
+  .cote {
+    stroke-opacity: 0.5;
+    stroke-width: calc(var(--u) * 0.9px);
+  }
+
+  /* --- La pêche : tout ce qui vit. --- */
+
+  .peche {
+    stroke: var(--color-peche);
+    stroke-width: calc(var(--u) * 1.5px);
+  }
+
+  .coche {
+    stroke-width: calc(var(--u) * 1.7px);
+  }
+
+  .lumiere {
+    stroke-width: calc(var(--u) * 2.4px);
+    opacity: 0;
+  }
+
+  .eclat {
+    stroke-width: calc(var(--u) * 1.3px);
+    opacity: 0;
+  }
+
+  .impulsion {
+    stroke: color-mix(in srgb, var(--color-peche) 50%, white);
+    stroke-width: calc(var(--u) * 3.2px);
+    stroke-dasharray: 0.16 3;
+    opacity: 0;
+  }
+
+  .impulsion--halo {
+    stroke: var(--color-peche);
+    stroke-width: calc(var(--u) * 12px);
+    stroke-opacity: 0.26;
+  }
+
+  .aplat {
+    fill: var(--color-peche);
+    stroke: color-mix(in srgb, var(--color-night) 45%, var(--color-peche));
+    stroke-width: calc(var(--u) * 0.8px);
+  }
+
+  .encre {
+    stroke: var(--color-night);
+    stroke-opacity: 0.72;
+    stroke-width: calc(var(--u) * 1.1px);
+  }
+
+  /* Les rayons vivent dans un repère cisaillé (le plan de la roue) : ici
+     seulement, l'épaisseur se fixe à l'écran. Ils ne portent pas de tiret. */
+  .rayons line {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1px;
+    stroke-opacity: 0.8;
+  }
+
+  /* --- Les repères et les textes. --- */
+
+  .point {
+    fill: currentColor;
+    stroke: none;
+    fill-opacity: 0.7;
+  }
+
+  .bulle {
+    --k: 1;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .bulle circle {
+    stroke-width: calc(var(--u) * 1px / var(--k));
+  }
+
+  .cercle {
+    fill: var(--plan-fond);
+    stroke-opacity: 0.7;
+  }
+
+  .accent,
+  .onde {
+    stroke: var(--color-peche);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .onde {
+    opacity: 0;
+  }
+
+  /* Les corps de texte sont écrits en attributs, dans les unités du dessin :
+     ils suivent l'échelle du plan, pas l'échelle typographique du site. */
+  .plan__svg text {
+    fill: var(--color-ink-mid);
+    stroke: none;
+  }
+
+  .plan__svg .numero {
+    fill: var(--color-ink);
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .plan__svg .nom {
+    fill: var(--color-ink);
+    font-weight: 500;
+    transform-box: fill-box;
+    transform-origin: 100% 50%;
+  }
+
+  .plan__svg .legende {
+    fill: var(--color-peche);
+  }
+
+  .plan__svg .cote-texte {
+    letter-spacing: 0.02em;
+  }
+
+  .plan__svg .triedre {
+    fill: var(--color-ink-faint);
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .plan__svg .cartouche__titre {
+    fill: var(--color-ink);
+    font-weight: 500;
+  }
+
+  .plan__svg .cartouche__ligne {
+    fill: var(--color-ink-low);
+  }
+
+  /* --- La boucle. --- */
+
+  /* Le tiret de tracé n'existe que si le lecteur tourne : l'image fixe garde
+     des traits pleins. */
+  .plan[data-pret] :is(.t, .ecrit) {
+    stroke-dasharray: 1.002 2;
+  }
+
+  /* Avant que le lecteur soit prêt, la planche est vierge : sans cela le plan
+     entier apparaîtrait une fraction de seconde avant de se retracer. Si le
+     script n'arrive jamais, le dessin revient seul au bout de trois secondes. */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .plan:not([data-pret]) .dessin {
+      animation: plan-secours 0.5s 3s both;
+    }
+  }
+
+  @keyframes plan-secours {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* --- Petit cadre : les annotations fines s'effacent, les repères grossissent. --- */
+
+  @container (max-width: 430px) {
+    .fin {
+      display: none;
+    }
+
+    .bulle {
+      --k: 1.75;
+      transform: scale(1.75);
+    }
+
+    .plan__svg .nom {
+      transform: translate(-9px, 2px) scale(1.6);
+    }
+
+    .grille {
+      stroke-opacity: 0.035;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Le lecteur. Chaque élément minuté reçoit une animation de la durée de la
+   * boucle, qui tourne sans fin : toutes partent du même instant, et la pause
+   * les arrête ensemble, donc elles ne se désaccordent jamais.
+   */
+  type Etape = [number, Record<string, string | number>, string?];
+
+  const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Sans ces API, ou en mouvement réduit, le SVG reste l'image fixe du HTML. */
+  const pretAAnimer = 'animate' in Element.prototype && 'IntersectionObserver' in window;
+  if (!reduit && pretAAnimer) document.querySelectorAll<HTMLElement>('[data-plan]').forEach(monter);
+
+  function monter(racine: HTMLElement) {
+    const duree = Number(racine.dataset.duree);
+    if (!Number.isFinite(duree) || duree <= 0) return;
+
+    const TRACE = 'cubic-bezier(0.45, 0, 0.2, 1)';
+    const RETRAIT = 0.32;
+    const animations: Animation[] = [];
+    const part = (t: number) => Math.min(1, Math.max(0, t / duree));
+    const lancer = (el: Element, images: Keyframe[]) => {
+      const animation = el.animate(images, { duration: duree * 1000, iterations: Infinity, fill: 'both' });
+      animation.pause();
+      animations.push(animation);
+    };
+    const temps = (el: SVGElement) => (el.dataset.t ?? '').split(',').map(Number);
+
+    /* Un trait de plume : le tiret se déroule, tient, puis file vers l'avant. */
+    for (const el of racine.querySelectorAll<SVGElement>('.t')) {
+      const [debut, tracer, fin] = temps(el);
+      lancer(el, [
+        { offset: 0, strokeDashoffset: 1, opacity: 0 },
+        { offset: part(debut), strokeDashoffset: 1, opacity: 0 },
+        { offset: part(debut), strokeDashoffset: 1, opacity: 1, easing: TRACE },
+        { offset: part(debut + tracer), strokeDashoffset: 0, opacity: 1 },
+        { offset: part(fin), strokeDashoffset: 0, opacity: 1, easing: 'cubic-bezier(0.5, 0, 0.9, 0.5)' },
+        { offset: part(fin + RETRAIT), strokeDashoffset: -1, opacity: 1 },
+        { offset: part(fin + RETRAIT), strokeDashoffset: -1, opacity: 0 },
+        { offset: 1, strokeDashoffset: -1, opacity: 0 },
+      ]);
+    }
+
+    /* Un fondu : les pointillés, les traits mixtes et les textes. */
+    for (const el of racine.querySelectorAll<SVGElement>('.f')) {
+      const [debut, monter, fin] = temps(el);
+      lancer(el, [
+        { offset: 0, opacity: 0 },
+        { offset: part(debut), opacity: 0 },
+        { offset: part(debut + monter), opacity: 1 },
+        { offset: part(fin), opacity: 1 },
+        { offset: part(fin + RETRAIT), opacity: 0 },
+        { offset: 1, opacity: 0 },
+      ]);
+    }
+
+    /* Une piste : des étapes datées, écrites dans le module de géométrie. La
+       première vaut depuis le début de la boucle, la dernière jusqu'à sa fin. */
+    for (const el of racine.querySelectorAll<SVGElement>('[data-piste]')) {
+      const etapes = JSON.parse(el.dataset.piste ?? '[]') as Etape[];
+      if (etapes.length === 0) continue;
+      const images: Keyframe[] = etapes.map(([t, proprietes, courbe]) => ({
+        offset: part(t),
+        ...proprietes,
+        easing: courbe ?? 'linear',
+      }));
+      const premiere = etapes[0];
+      const derniere = etapes[etapes.length - 1];
+      if (premiere[0] > 0) images.unshift({ offset: 0, ...premiere[1] });
+      if (derniere[0] < duree) images.push({ offset: 1, ...derniere[1] });
+      lancer(el, images);
+    }
+
+    racine.dataset.pret = '';
+
+    let visible = false;
+    let enMarche = false;
+    const regler = () => {
+      const marche = visible && !document.hidden;
+      if (marche === enMarche) return;
+      enMarche = marche;
+      /* À la reprise, toutes repartent de l'instant de la première : même si
+         une pause les avait figées à un cheveu d'écart, la boucle reste une. */
+      const instant = animations[0]?.currentTime ?? 0;
+      for (const animation of animations) {
+        if (marche) {
+          animation.currentTime = instant;
+          animation.play();
+        } else {
+          animation.pause();
+        }
+      }
+    };
+
+    new IntersectionObserver(
+      (entrees) => {
+        visible = entrees[entrees.length - 1].isIntersecting;
+        regler();
+      },
+      { threshold: 0.15 },
+    ).observe(racine);
+    document.addEventListener('visibilitychange', regler);
+  }
+</script>

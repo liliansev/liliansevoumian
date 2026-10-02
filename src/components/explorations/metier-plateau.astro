@@ -1,0 +1,310 @@
+---
+/*
+ * metier-plateau — proposition B, « Le plateau », pour le métier Automatisation.
+ *
+ * Un plateau de laque sombre vu de dessus, à peine incliné. Quatre outils y
+ * sont posés comme de grosses touches : Mail, Bon de commande, Commande,
+ * Facture. Entre eux, des rainures. Personne à l'image : ce sont les outils
+ * qui travaillent. Les jetons sortent de Mail et s'entassent tant que rien
+ * n'est relié ; les rainures s'allument une à une, la butée s'efface, et
+ * chaque jeton passe sous le portique qui lit le bon, se dédouble, puis va
+ * enfoncer la touche Commande (le compteur tourne) et la touche Facture (le
+ * tampon s'abat). « Je relie vos outils, et les ressaisies disparaissent. »
+ *
+ * Ce fichier ne porte que l'image de repli et les légendes : la scène est
+ * dessinée par `lib/explorations/plateau.ts`, chargé à la demande. Le dessin
+ * SVG ci-dessous sert trois fois : image fixe tant que la 3D n'est pas prête,
+ * image définitive si WebGL manque, et source des pictogrammes (le module lit
+ * leurs tracés ici pour les graver sur les touches, sans les redire).
+ */
+
+/* Les trois pictogrammes, dessinés pour cette scène dans une case de 24. Le
+   quatrième outil, le bon de commande, est une vraie feuille sous son portique. */
+const pictos = {
+  mail: 'M5 5.5h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2z M3.7 7.6 12 13.3l8.3-5.7',
+  commande:
+    'M2.8 4.2h2.3l2.5 10.4a1.6 1.6 0 0 0 1.55 1.2h8.2a1.6 1.6 0 0 0 1.55-1.2L20.6 8H6 M10.9 19.4a1.35 1.35 0 1 1-2.7 0 1.35 1.35 0 0 1 2.7 0z M18.4 19.4a1.35 1.35 0 1 1-2.7 0 1.35 1.35 0 0 1 2.7 0z',
+  facture:
+    'M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4z M13.9 7.6a2.6 2.6 0 1 0 0 4 M8.6 8.9h3.4 M8.6 10.4h3.4 M9 15.5h6',
+};
+
+/* Le plan du repli reprend la disposition de la scène (mêmes cotes que
+   `plateau.ts`), vue d'en haut et tassée comme le fait l'inclinaison. Le pas
+   et le centre sont ceux du cadrage 3D : la toile se pose sur son image sans
+   que rien ne saute. */
+const PAS = 77.9;
+const TASSE = 0.866;
+const X = (x: number) => Math.round((400 + x * PAS) * 10) / 10;
+const Y = (z: number) => Math.round((290 + z * PAS * TASSE) * 10) / 10;
+const L = (n: number) => Math.round(n * PAS * 10) / 10;
+const H = (n: number) => Math.round(n * PAS * TASSE * 10) / 10;
+const coude = `${L(0.5)} ${H(0.5)} 0 0`;
+const rails = [
+  `M${X(-3.3)} ${Y(0)}H${X(0.65)}`,
+  `M${X(0.65)} ${Y(0)}A${coude} 0 ${X(1.15)} ${Y(-0.5)}V${Y(-1.6)}A${coude} 1 ${X(1.65)} ${Y(-2.1)}H${X(3.3)}`,
+  `M${X(0.65)} ${Y(0)}A${coude} 1 ${X(1.15)} ${Y(0.5)}V${Y(1.6)}A${coude} 0 ${X(1.65)} ${Y(2.1)}H${X(3.3)}`,
+].join('');
+
+const touches = [
+  { cle: 'mail', nom: 'Mail', x: -3.4, z: 0 },
+  { cle: 'commande', nom: 'Commande', x: 3.4, z: -2.1 },
+  { cle: 'facture', nom: 'Facture', x: 3.4, z: 2.1 },
+] as const;
+const legendes = [...touches, { cle: 'bon', nom: 'Bon de commande', x: -0.75, z: 0 }] as const;
+/* Les jetons de l'image fixe : un en attente, deux en route vers leur outil. */
+const jetons = [
+  { x: -1.97, z: 0 },
+  { x: 2.2, z: -2.1 },
+  { x: 2.2, z: 2.1 },
+];
+---
+
+<div
+  class="plateau"
+  data-plateau
+  role="img"
+  aria-label="Un plateau vu de dessus où les outils travaillent seuls : un mail arrive, un portique lit son bon de commande, puis l'information part d'elle-même créer la commande et la facture, sans aucune ressaisie."
+>
+  <svg class="plateau__repli" viewBox="0 0 800 600" aria-hidden="true" focusable="false">
+    <rect class="repli__socle" x={X(-4.8)} y={Y(-3.85)} width={L(9.6)} height={H(7.7)} rx="38"></rect>
+    <path class="repli__rainure" d={rails}></path>
+    <path class="repli__lueur" d={rails}></path>
+    <path class="repli__trait" d={rails}></path>
+
+    <rect class="repli__platine" x={X(-1.6)} y={Y(-1.05)} width={L(1.7)} height={H(2.1)} rx="12"></rect>
+    <rect class="repli__feuille" x={X(-1.35)} y={Y(-0.8)} width={L(1.2)} height={H(1.6)} rx="4"></rect>
+    <g class="repli__lignes">
+      <path d={`M${X(-1.2)} ${Y(-0.3)}h${L(0.42)}M${X(-1.2)} ${Y(-0.07)}h${L(0.42)}M${X(-1.2)} ${Y(0.16)}h${L(0.42)}`}></path>
+      <path d={`M${X(-0.62)} ${Y(-0.3)}h${L(0.32)}M${X(-0.62)} ${Y(-0.07)}h${L(0.32)}M${X(-0.62)} ${Y(0.16)}h${L(0.32)}M${X(-0.7)} ${Y(0.55)}h${L(0.4)}`}></path>
+    </g>
+    <rect class="repli__portique" x={X(-0.78)} y={Y(-1.3)} width={L(0.16)} height={H(2.6)} rx="6"></rect>
+
+    {
+      touches.map((t) => (
+        <g>
+          <rect class="repli__touche" x={X(t.x - 0.8)} y={Y(t.z - 0.8)} width={L(1.6)} height={H(1.6)} rx="18" />
+          <g transform={`translate(${X(t.x) - 36} ${Y(t.z) - 36}) scale(3)`}>
+            <path class="repli__picto" data-picto={t.cle} d={pictos[t.cle]} />
+          </g>
+        </g>
+      ))
+    }
+
+    {jetons.map((j) => <ellipse class="repli__jeton" cx={X(j.x)} cy={Y(j.z)} rx={L(0.13)} ry={H(0.13)} />)}
+    {
+      legendes.map((l) => (
+        <text class="repli__nom" x={X(l.x)} y={Y(l.z + (l.cle === 'bon' ? 1.6 : 1.08)) + 11} text-anchor="middle">
+          {l.nom}
+        </text>
+      ))
+    }
+  </svg>
+
+  <canvas class="plateau__toile" aria-hidden="true"></canvas>
+
+  <div class="plateau__legendes" aria-hidden="true">
+    {legendes.map((l) => <span class="plateau__legende" data-legende={l.cle}>{l.nom}</span>)}
+  </div>
+</div>
+
+<style>
+  .plateau {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--color-night-deep);
+    /* Les légendes se règlent sur la largeur du cadre, pas sur celle de la
+       fenêtre : la scène peut vivre dans une colonne étroite. */
+    container-type: inline-size;
+  }
+
+  .plateau__repli,
+  .plateau__toile {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* La toile se pose par-dessus son image fixe une fois sa première image
+     dessinée ; l'image fixe reste dessous, et réapparaît si la 3D se perd. */
+  .plateau__toile {
+    opacity: 0;
+    transition: opacity 0.7s var(--ease-out-quint);
+  }
+
+  .plateau__toile[data-pret] {
+    opacity: 1;
+  }
+
+  /* ── L'image de repli ── */
+  .repli__socle {
+    fill: #141c30;
+    stroke: color-mix(in srgb, var(--color-ink) 14%, transparent);
+    stroke-width: 1.5;
+  }
+
+  .repli__rainure,
+  .repli__lueur,
+  .repli__trait {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .repli__rainure {
+    stroke: #080d18;
+    stroke-width: 22;
+  }
+
+  .repli__lueur {
+    stroke: var(--color-peche);
+    stroke-width: 14;
+    opacity: 0.16;
+  }
+
+  .repli__trait {
+    stroke: var(--color-peche);
+    stroke-width: 3;
+  }
+
+  .repli__platine {
+    fill: #27324b;
+  }
+
+  .repli__feuille {
+    fill: var(--color-feuille);
+  }
+
+  .repli__lignes path {
+    fill: none;
+    stroke: var(--color-ink-faint);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+
+  .repli__lignes path:first-child {
+    stroke: var(--color-braise);
+  }
+
+  .repli__portique {
+    fill: var(--color-ink-low);
+  }
+
+  .repli__touche {
+    fill: #222e4b;
+    stroke: color-mix(in srgb, var(--color-ink) 22%, transparent);
+    stroke-width: 1.5;
+  }
+
+  .repli__picto {
+    fill: none;
+    stroke: var(--color-ink);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .repli__jeton {
+    fill: var(--color-peche);
+  }
+
+  .repli__nom {
+    fill: var(--color-ink-low);
+    font-family: var(--font-display);
+    /* Mêmes capitales espacées que les légendes de la scène : au fondu, le
+       texte ne change pas de voix. */
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  /* ── Les légendes de la scène 3D ── */
+  .plateau__legendes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.7s var(--ease-out-quint);
+  }
+
+  .plateau[data-etat='vivant'] .plateau__legendes {
+    opacity: 1;
+  }
+
+  /* Posées par le script, au pixel, sous chaque outil : l'origine est le coin
+     du cadre, la translation fait le reste. */
+  .plateau__legende {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--color-ink-low);
+    font-family: var(--font-display);
+    font-size: clamp(0.5625rem, 0.36rem + 1.05cqw, 0.8125rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.9s var(--ease-out-quint);
+  }
+
+  /* L'outil qui travaille s'annonce aussi par son nom : il s'allume d'un coup
+     et s'éteint lentement, comme un voyant. */
+  .plateau__legende[data-actif] {
+    color: var(--color-peche);
+    transition-duration: 0.12s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plateau__toile,
+    .plateau__legendes,
+    .plateau__legende {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /* Three.js et la scène ne sont chargés que lorsque le plateau approche de
+     l'écran. Deux échecs possibles, tous deux sans gravité pour le lecteur :
+     un module qui ne charge pas (réseau, mise en ligne entre-temps) se retente
+     une fois au prochain passage ; une 3D indisponible sur la machine est
+     définitive. Dans les deux cas l'image fixe reste en place. */
+  const plateaux = [...document.querySelectorAll<HTMLElement>('[data-plateau]')];
+
+  if (plateaux.length && 'IntersectionObserver' in window && 'ResizeObserver' in window) {
+    const essais = new WeakMap<HTMLElement, number>();
+
+    const monter = async (racine: HTMLElement) => {
+      const { monterPlateau } = await import('../../lib/explorations/plateau');
+      try {
+        monterPlateau(racine);
+      } catch (erreur) {
+        console.error('Plateau : 3D indisponible, l’image fixe reste', erreur);
+      }
+    };
+
+    const approche = new IntersectionObserver(
+      (entrees) => {
+        for (const entree of entrees) {
+          if (!entree.isIntersecting) continue;
+          const racine = entree.target as HTMLElement;
+          approche.unobserve(racine);
+          monter(racine).catch((erreur: unknown) => {
+            const n = (essais.get(racine) ?? 0) + 1;
+            essais.set(racine, n);
+            console.error(`Plateau : module non chargé (essai ${n})`, erreur);
+            if (n < 2) approche.observe(racine);
+          });
+        }
+      },
+      { rootMargin: '300px 0px' },
+    );
+    plateaux.forEach((racine) => approche.observe(racine));
+  }
+</script>

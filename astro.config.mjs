@@ -119,7 +119,7 @@ export default defineConfig({
     sitemap({
       // Elle est en noindex,nofollow : la declarer au sitemap est un signal
       // contradictoire, et Search Console le remonte comme avertissement.
-      filter: (page) => !['/mentions-legales', '/explorations-3d', '/explorations-blocs'].some((path) => page.includes(path)),
+      filter: (page) => !['/mentions-legales', '/explorations-3d', '/explorations-blocs', '/explorations-metiers'].some((path) => page.includes(path)),
       /* UN SEUL `serialize` : deux clés du même nom dans un littéral d'objet
          ne lèvent aucune erreur, la seconde écrase simplement la première.
          L'URL est normalisée sans slash final, comme le canonical et comme les

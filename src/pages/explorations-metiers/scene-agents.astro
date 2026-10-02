@@ -1,0 +1,50 @@
+---
+/*
+ * /explorations-metiers/scene-agents — la scène du métier, seule dans son cadre.
+ * Page de travail, hors index et hors sitemap.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Scene from '../../components/metiers/scene-agents.astro';
+---
+
+<Layout title="Scène « agents » · Explorations" description="Page de travail." noindex={true}>
+  <main id="main-content" tabindex="-1" class="essai accueil outline-none">
+    <div class="essai__cadre"><Scene /></div>
+    <p class="essai__retour"><a href="/#services">Retour à l’accueil</a></p>
+  </main>
+</Layout>
+
+<style is:global>
+  html:has(.essai) {
+    --color-paper: var(--color-night-deep);
+  }
+
+  html:has(.essai) .technical-grid {
+    display: none;
+  }
+
+  .essai {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 1.5rem;
+    min-height: 100svh;
+    padding: clamp(1rem, 4vw, 3rem);
+    background: var(--color-night-deep);
+  }
+
+  .essai__cadre {
+    position: relative;
+    width: min(100%, 760px);
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-md);
+  }
+
+  .essai__retour {
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+</style>

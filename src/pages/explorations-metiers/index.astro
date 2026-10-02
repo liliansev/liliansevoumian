@@ -1,0 +1,387 @@
+---
+/*
+ * /explorations-metiers — cinq façons d'illustrer un métier.
+ *
+ * Page de travail, hors index et hors sitemap. Lilian hésitait sur les
+ * sculptures de verre de la section « Je fais quatre choses » et a demandé
+ * cinq propositions vraiment différentes, chacune avec sa direction. Pour
+ * qu'elles se comparent, elles racontent toutes la même chose : le métier
+ * Automatisation, et sa phrase, « Je relie vos outils, et les ressaisies
+ * disparaissent. »
+ *
+ * Chaque scène est un composant de `components/explorations/`, visible seule
+ * sur `/explorations-metiers/<nom>`. La lettre sert à en parler (« je prends
+ * la B ») : c'est un repère, pas une numérotation décorative.
+ */
+import Layout from '../../layouts/Layout.astro';
+import Bureau from '../../components/explorations/metier-bureau.astro';
+import Plateau from '../../components/explorations/metier-plateau.astro';
+import Interface from '../../components/explorations/metier-interface.astro';
+import Terminal from '../../components/explorations/metier-terminal.astro';
+import Plan from '../../components/explorations/metier-plan.astro';
+
+const propositions = [
+  {
+    lettre: 'A',
+    id: 'bureau',
+    nom: 'Le bureau',
+    direction: 'Une maquette vue de dessus, avec des personnages. Argile mate, lumière chaude.',
+    recit:
+      'D’abord une figurine fait la navette d’un poste à l’autre, une feuille à la main, pendant que le courrier s’empile. Puis un conduit s’allume au sol, les feuilles passent seules, et elle va prendre un café.',
+    autres: [
+      ['Agents IA', 'un petit automate pêche trie le courrier qui tombe en trois bacs, et la figurine ne reçoit plus que la feuille qui compte.'],
+      ['Formations', 'une salle avec un tableau : la figurine à casquette montre le geste une fois, recule, et trois autres le refont seules à leurs postes.'],
+      ['Sites web et dashboards', 'une vitrine côté rue où des passants entrent par une porte pêche, et au fond un tableau mural dont les barres montent à chaque entrée.'],
+    ],
+    Scene: Bureau,
+  },
+  {
+    lettre: 'B',
+    id: 'plateau',
+    nom: 'Le plateau',
+    direction: 'Un plateau vu de dessus où les outils travaillent seuls. Laque sombre, rails qui s’allument.',
+    recit:
+      'Pas de personnage : les outils sont de grosses touches qui s’enfoncent seules. Des jetons sortent du mail, passent sous un lecteur, se séparent vers la commande, dont le compteur tourne, et vers la facture, où un tampon s’abat.',
+    autres: [
+      ['Agents IA', 'une trémie déverse des jetons mêlés ; une touche à tête pivotante lit chacun sous sa lentille et l’aiguille vers trois casiers.'],
+      ['Formations', 'le même plateau en double : la machine de gauche joue un geste, puis les touches vierges de droite s’enfoncent seules dans le même ordre.'],
+      ['Sites web et dashboards', 'des jetons-visiteurs entrent dans une touche « page » ; ceux qui convertissent ressortent en pêche et font monter les barres d’une touche « tableau de bord ».'],
+    ],
+    Scene: Plateau,
+  },
+  {
+    lettre: 'C',
+    id: 'interface',
+    nom: 'L’interface',
+    direction: 'En 2D, dans la langue de la scène du haut de page : de vraies petites fenêtres. Direction retenue le 3 octobre 2026.',
+    recit:
+      'Elle est en place sur l’accueil, déclinée sur les quatre métiers. Ici, la scène Automatisation dans sa version finale : une affaire signée dans le CRM se découpe en échéances dans la facturation, puis son statut remonte au suivi. Le bon de commande de l’essai d’origine a été laissé à la scène du récit, pour ne rien redire.',
+    autres: [
+      ['Agents IA', 'un agent lit des fiches, coche ses règles écrites, note et trie ; le cas douteux reste à un humain.'],
+      ['Formations', 'deux fenêtres du même outil, « Formateur » et « Votre équipe » : il monte un scénario, elle le refait, puis le lance seule.'],
+      ['Sites web et dashboards', 'une page se compose bloc par bloc, des visiteurs cliquent, et le tableau de bord compte les demandes.'],
+    ],
+    Scene: Interface,
+  },
+  {
+    lettre: 'D',
+    id: 'terminal',
+    nom: 'Le terminal',
+    direction: 'Le plaisir du geek : tout est dessiné en caractères, comme dans un terminal.',
+    recit:
+      'Une commande se tape, le flux se dessine en caractères. Des grains courent le long des fils, les boîtes s’allument à leur passage, le journal aligne ses lignes, et le compteur de ressaisies reste un gros zéro.',
+    autres: [
+      ['Agents IA', 'une boîte de réception en mode texte : l’agent descend ligne à ligne, pose une étiquette et un score, puis les lignes se rangent en trois colonnes.'],
+      ['Formations', 'un écran partagé : à gauche l’invite du formateur, à droite celle de l’équipe, qui retape la commande, d’abord avec des erreurs, puis seule.'],
+      ['Sites web et dashboards', 'un tableau de bord en caractères (barres en blocs, courbes, grands chiffres), branché sur une page dont le bouton clignote à chaque conversion.'],
+    ],
+    Scene: Terminal,
+  },
+  {
+    lettre: 'E',
+    id: 'plan',
+    nom: 'Le plan',
+    direction: 'Un dessin d’ingénieur au trait, en perspective, qui se trace puis se met en marche.',
+    recit:
+      'Quatre machines se dessinent une à une, puis les conduites. Une impulsion pêche parcourt le circuit : le lecteur lit la feuille, la commande se coche, la facture sort de l’imprimante et se pose.',
+    autres: [
+      ['Agents IA', 'un poste de tri vu en plan : des plis arrivent sur un tapis, une tête de lecture les parcourt, un aiguillage les envoie dans trois bacs, et un seul sort en pêche.'],
+      ['Formations', 'la même machine en vue éclatée : les pièces s’écartent le long de leurs axes, puis une main tracée les remonte une à une, dans l’ordre.'],
+      ['Sites web et dashboards', 'une page cotée comme une façade, qui se redresse en perspective ; ses cotes deviennent les barres et la courbe d’un tableau de bord.'],
+    ],
+    Scene: Plan,
+  },
+];
+---
+
+<Layout
+  title="Cinq façons d’illustrer un métier · Explorations"
+  description="Page de travail : cinq directions pour les illustrations des métiers."
+  noindex={true}
+>
+  <main id="main-content" tabindex="-1" class="essais accueil outline-none">
+    <header class="essais__tete">
+      <p class="essais__retour"><a href="/#services">Retour à l’accueil</a></p>
+      <h1>Cinq façons d’illustrer <mark>un métier.</mark></h1>
+      <p class="essais__chapo">
+        Les cinq racontent la même chose, pour qu’on les compare : le métier Automatisation, et sa phrase, «&nbsp;Je
+        relie vos outils, et les ressaisies disparaissent.&nbsp;» Sous chacune, comment les trois autres métiers se
+        diraient dans la même direction.
+      </p>
+      <ul class="essais__sommaire">
+        {propositions.map((p) => (
+          <li><a href={`#${p.id}`}><span>{p.lettre}</span> {p.nom}</a></li>
+        ))}
+      </ul>
+    </header>
+
+    {propositions.map(({ lettre, id, nom, direction, recit, autres, Scene }) => (
+      <section id={id} class="essai" aria-labelledby={`titre-${id}`}>
+        <div class="essai__texte">
+          <h2 id={`titre-${id}`}>
+            <span class="essai__lettre">{lettre}</span>
+            {nom}
+          </h2>
+          <p class="essai__direction">{direction}</p>
+          <p class="essai__recit">{recit}</p>
+          <dl class="essai__autres">
+            {autres.map(([metier, idee]) => (
+              <div>
+                <dt>{metier}</dt>
+                <dd>{idee}</dd>
+              </div>
+            ))}
+          </dl>
+          <p class="essai__seule"><a href={`/explorations-metiers/${id}`}>Voir la scène seule</a></p>
+        </div>
+
+        <div class="essai__scene">
+          <span class="repere repere--hg" aria-hidden="true"></span>
+          <span class="repere repere--hd" aria-hidden="true"></span>
+          <span class="repere repere--bg" aria-hidden="true"></span>
+          <span class="repere repere--bd" aria-hidden="true"></span>
+          <div class="essai__cadre"><Scene /></div>
+        </div>
+      </section>
+    ))}
+
+    <footer class="essais__pied">
+      <p>
+        La version en place aujourd’hui, les sculptures de verre, reste visible sur
+        <a href="/#services">la page d’accueil</a> et sur <a href="/explorations-blocs">la page des formes</a>.
+      </p>
+    </footer>
+  </main>
+</Layout>
+
+<style is:global>
+  html:has(.essais) {
+    --color-paper: var(--color-night-deep);
+  }
+
+  html:has(.essais) .technical-grid {
+    display: none;
+  }
+</style>
+
+<style>
+  .essais {
+    --trait: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    padding: clamp(5.5rem, 10vw, 8rem) var(--spacing-section-x) var(--spacing-section-y);
+    background: var(--color-night-deep);
+  }
+
+  .essais__tete,
+  .essai,
+  .essais__pied {
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+
+  .essais__retour {
+    margin: 0 0 1.5rem;
+    font-size: var(--text-body-sm);
+  }
+
+  .essais :is(.essais__retour, .essai__seule, .essais__pied) a {
+    color: var(--color-ink-mid);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    text-underline-offset: 0.28em;
+  }
+
+  .essais h1 {
+    max-width: 16ch;
+    margin: 0;
+    font-size: var(--text-story);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+
+  .essais__chapo {
+    max-width: 62ch;
+    margin: 1.5rem 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.55;
+  }
+
+  .essais__sommaire {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .essais__sommaire li {
+    max-width: none;
+  }
+
+  .essais__sommaire a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 44px;
+    padding: 0 1rem 0 0.75rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    text-decoration: none;
+    transition: background-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .essais__sommaire span,
+  .essai__lettre {
+    display: inline-grid;
+    place-items: center;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    color: var(--color-night);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .essais__sommaire span {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: var(--text-mono-label);
+  }
+
+  .essai {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.25fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    margin-top: clamp(4rem, 9vw, 7.5rem);
+    padding-top: clamp(4rem, 9vw, 7.5rem);
+    border-top: 1px solid var(--trait);
+    scroll-margin-top: 64px;
+  }
+
+  .essai h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin: 0;
+    font-size: var(--text-headline);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .essai__lettre {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: var(--text-body-large);
+    letter-spacing: 0;
+  }
+
+  .essai__direction {
+    max-width: 34ch;
+    margin: 1.1rem 0 0;
+    color: var(--color-accent-text);
+    font-size: var(--text-body-large);
+    line-height: 1.4;
+  }
+
+  .essai__recit {
+    max-width: 46ch;
+    margin: 1rem 0 0;
+    color: var(--color-ink-mid);
+    line-height: 1.6;
+  }
+
+  .essai__autres {
+    display: grid;
+    gap: 0.7rem;
+    max-width: 46ch;
+    margin: 1.75rem 0 0;
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .essai__autres dt {
+    display: inline;
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .essai__autres dt::after {
+    content: '\00a0:';
+  }
+
+  .essai__autres dd {
+    display: inline;
+    margin: 0;
+    color: var(--color-ink-low);
+  }
+
+  .essai__seule {
+    margin: 1.5rem 0 0;
+    font-size: var(--text-body-sm);
+  }
+
+  .essai__scene {
+    position: relative;
+    min-width: 0;
+  }
+
+  .essai__cadre {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--color-night-deep);
+  }
+
+  .repere {
+    position: absolute;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--color-ink-low);
+    pointer-events: none;
+  }
+
+  .repere--hg { top: -7px; left: -7px; border-top-width: 1px; border-left-width: 1px; }
+  .repere--hd { top: -7px; right: -7px; border-top-width: 1px; border-right-width: 1px; }
+  .repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
+  .repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .essais__pied {
+    margin-top: clamp(4rem, 9vw, 7.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--trait);
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .essais__pied p {
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .essais__sommaire a:hover {
+      background: color-mix(in srgb, var(--color-ink) 8%, transparent);
+    }
+  }
+
+  @media (max-width: 899px) {
+    .essai {
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+    }
+
+    /* La scène d'abord : c'est elle qu'on vient voir. */
+    .essai__scene {
+      order: -1;
+    }
+  }
+</style>

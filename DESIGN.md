@@ -1,6 +1,6 @@
 ---
 name: Lilian Sevoumian
-description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Bleu nuit en fond général, un seul accent pêche, le clair seulement dans un panneau inversé arrondi. Sur l'accueil, direction « tech propre » : tout se pose sur une grille, le surlignage devient une pastille droite, et chaque métier a sa forme 3D en verre."
+description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Bleu nuit en fond général, un seul accent pêche, le clair seulement dans un panneau inversé arrondi. Sur l'accueil, direction « tech propre » : tout se pose sur une grille, le surlignage devient une pastille droite, et chaque métier a sa scène d'interface animée."
 colors:
   paper: "#111827"
   section-band: "#161f32"
@@ -333,7 +333,7 @@ vient de ce qu'elle raconte.
   une section qui redessine les siennes produit un escalier. Absentes sous
   1024 px, où la gouttière ne les contient pas.
 - **Les repères d'angle** (`.repere`, quatre équerres de 1 px qui débordent de
-  7 px) cadrent ce qui est une scène : la scène du récit, la forme de chaque
+  7 px) cadrent ce qui est une scène : la scène du récit, la scène de chaque
   métier, la vidéo. Jamais autour d'un texte.
 - **Un seul traitement pour le texte qui se clique** : bas de casse, comme la
   barre et les boutons. Le lien fléché (`LinkCTA`) perd ici ses capitales
@@ -410,8 +410,20 @@ Trois actes en vis-à-vis d'une scène unique. La scène est une vraie situation
 de travail, pas une illustration : un bon de commande en PDF à gauche, une
 facture à droite, une horloge qui tourne. À la main, un curseur recopie ligne
 après ligne pendant que les heures passent ; en automatique, les lignes
-traversent seules et le total se calcule. Le bouton « à la main / automatique »
-reste à la portée du visiteur.
+traversent seules et le total se calcule.
+
+**À la troisième phrase, la scène enchaîne trois réponses** sur ce même bon de
+commande, en boucle : *Automatisation* (les lignes passent seules, la facture
+est émise), *Agent IA* (un agent lit le document, coche ses contrôles, et
+laisse au visiteur la ligne douteuse « à valider par vous »), *Dashboard* (les
+mêmes commandes vues dans un tableau de bord). C'est la vue d'ensemble de ce
+que fait Lilian, demandée par lui le 3 octobre 2026 : « une transition entre
+tout ce qui est possible de faire ». D'une réponse à l'autre le plan change
+d'inclinaison, les fenêtres reculent dans un flou et les suivantes arrivent
+décalées ; le PDF reste, on change de point de vue sur les mêmes commandes.
+Une réponse n'est jamais coupée au milieu d'un geste : elle attend d'avoir
+conclu. Sous la scène, quatre boutons (« À la main », « Automatisation »,
+« Agent IA », « Dashboard ») disent où elle en est et permettent de choisir.
 
 - La scène est dessinée sur un **plan fixe de 680 × 560** mis à l'échelle par
   `--k` : ses mesures sont des unités de plan, pas des tailles de texte. C'est
@@ -423,54 +435,65 @@ reste à la portée du visiteur.
   en automatique), plus le grain `--grain`. Aucune de ces teintes ne sort de la
   scène.
 - **Ordinateur :** scène collante, pilotée par le défilement. **Sous
-  1024 px :** la scène n'est plus collante et joue ses trois actes toute seule,
-  en boucle (7 s, 4,5 s, 9,5 s). Une scène collante pilotée au doigt, sur
-  téléphone, se dispute le défilement avec la page : retour direct de Lilian.
-- **Le bouton a le dernier mot.** Une fois que le visiteur a choisi « À la
-  main » ou « Automatisé », ni le défilement ni la boucle mobile ne changent
-  son choix tant que la scène reste à l'écran ; le récit reprend la main quand
-  elle en sort.
+  1024 px :** la scène n'est plus collante et joue seule, en boucle : à la
+  main (7 s), la semaine qui file (4,5 s), puis les trois réponses. Une scène
+  collante pilotée au doigt, sur téléphone, se dispute le défilement avec la
+  page : retour direct de Lilian.
+- **Le bouton a le dernier mot.** Une fois que le visiteur a choisi l'un des
+  quatre états, ni le défilement ni la boucle ne changent son choix tant que
+  la scène reste à l'écran ; le récit reprend la main quand elle en sort.
 - **La scène est `aria-hidden`, le bouton l'annonce** : un paragraphe
   `aria-live` dit en une phrase ce que montre le mode choisi. Seulement au
   clic, jamais quand le récit avance seul.
-- **Mouvement réduit :** deux images fixes qui suivent le récit, à la main
-  pour les deux premières phrases, automatisé pour la troisième. Sans script,
-  la scène est une image fixe, sans son bouton.
+- **Mouvement réduit :** des images fixes qui suivent le récit, à la main pour
+  les deux premières phrases, l'automatisation pour la troisième ; les boutons
+  passent d'une image à l'autre. Sans script, la scène est une image fixe,
+  sans ses boutons.
+- **Pas de redite avec les métiers.** Le bon de commande appartient à cette
+  scène ; aucune scène de métier ne le rejoue.
 
-### Les formes en verre (`src/lib/blocs/atelier.ts`)
+### Les scènes des métiers (`src/components/metiers/`)
 
-Chaque métier a sa forme, en verre, dans un cadre 4:3 à repères d'angle. Le
-verre est son choix ; les empilements de blocs ont été refusés deux fois comme
-trop sages. Une forme doit **montrer le métier en mouvement** :
+Chaque métier a sa scène : de petites fenêtres d'interface en 2D, reliées par
+des fils, dans un cadre 4:3 à repères d'angle. On y voit le métier se faire.
+C'est la direction que Lilian a retenue le 3 octobre 2026 parmi cinq essais
+(`/explorations-metiers` : une maquette à figurines, un plateau de touches,
+cette interface, un terminal en caractères, un plan d'ingénieur au trait). Les
+sculptures de verre qu'elle remplace étaient belles, mais il fallait lire leur
+légende pour comprendre ; elles restent visibles sur `/explorations-blocs`.
 
-| Métier | Forme | Ce qu'elle montre |
+| Métier | Ce que montre la scène | Le geste qui lui est propre |
 |---|---|---|
-| Automatisation | `circuit` | des grains passent d'un volume à l'autre le long de tubes ; un seul volume est en pêche, la gemme |
-| Agents IA | `agent` | un gyroscope : un cœur pêche, trois anneaux, des outils en orbite que le cœur va chercher |
-| Formations | `anneaux` | des anneaux qui s'enfilent un à un sur un axe |
-| Sites web | `page` | une vitre portant un tableau de bord : barres, anneau, courbe, bouton |
+| Automatisation | une affaire signée dans le CRM devient ses échéances dans la facturation, puis son statut remonte au suivi | le **découpage** : une affaire entre dans le fil, quatre échéances en sortent |
+| Agents IA | un agent lit des fiches, coche ses règles écrites, note, et trie vers « À approcher » ou « Écartées » | la **lecture puis le tri**, et la fiche douteuse laissée « à vous » |
+| Formations | deux fenêtres du même outil, « Formateur » et « Votre équipe » | **montrer, refaire, faire seule** : l'équipe hésite une fois, puis lance son scénario pendant que le formateur s'efface |
+| Sites web et dashboards | une page se compose bloc par bloc, des visiteurs cliquent, le tableau de bord compte | la **page qui se monte** sous un cadre de sélection, puis chaque clic qui devient une unité de barre |
 
-`vague` (nid d'abeille parcouru par une onde), `boucle` et `cube` existent et
-se voient sur `/explorations-blocs` ; ils attendent une section.
-
-- Three.js, déjà présent : import dynamique, canvas monté seulement à 400 px
-  de l'écran, rendu suspendu hors champ, sculpture **démontée** au-delà d'un
-  écran et demi pour rendre son contexte graphique. Pas d'autre bibliothèque
-  3D.
-- **Sous chaque toile, une image fixe de la sculpture** (`public/formes/`,
-  1 200 × 900). C'est elle qu'on voit avant le chargement, sans script, si la
-  3D est indisponible et quand le contexte graphique est repris par le
-  système. La toile vient se poser dessus en fondu ; un cadre n'est jamais
-  vide. Une forme redessinée demande une nouvelle image.
-- **Sur une colonne, la forme passe avant son texte** : posée après, elle se
+- **Chaque scène raconte le cas que son bloc cite en preuve** (Fraich Touch,
+  M Partners), avec des noms d'outils génériques et des chiffres
+  d'illustration : aucune marque, aucun nom de client dans une scène.
+- **Un socle commun** : `scene-metier.css` (classes `.sm-…` : cadre, plan,
+  fenêtre, feuille claire, rangées, fils, ports, nœuds, grains, bandes,
+  pastilles) et `lib/metiers/scene.ts` (échelle du plan, pause hors écran et
+  onglet masqué, mouvement réduit, boucle, aides d'animation). Une scène ne
+  réécrit pas ces pièces : elle les compose, et n'ajoute en style scopé que ce
+  qui lui est propre. Le guide d'écriture est en tête de `scene.ts`.
+- **Le plan** : 760 × 570 mis à l'échelle ; sous 520 px de large, un plan
+  simplifié de 360 × 270, redessiné et non rétréci. Sur ordinateur la scène
+  occupe la grande colonne des deux côtés, pour rester sur le grand plan.
+- **La boucle** : 10 à 14 s, un seul mouvement principal à la fois, image
+  finale tenue 2 à 3 s, raccord invisible. Tout le temps passe par le moteur
+  (ni `setTimeout` ni `requestAnimationFrame` dans une scène), sinon la pause
+  hors écran ne tient plus.
+- **Le balisage est l'image finale.** Sans script et en mouvement réduit, on
+  voit une scène fixe, complète et parlante.
+- **Le moteur tient lui-même ses animations.** `getAnimations()` ne rend plus
+  une animation suspendue sur sa dernière image ; s'y fier laissait une scène
+  figée après un aller-retour hors écran.
+- **Sur une colonne, la scène passe avant son texte** : posée après, elle se
   lisait comme l'illustration du métier suivant.
-- Matière : `MeshPhysicalMaterial`, transmission 1, épaisseur 1,15, indice
-  1,46, dispersion 0,28. Environnement `RoomEnvironment` à 1,3,
-  `NeutralToneMapping` (l'ACES délavait la pêche).
-- **Une seule pièce en pêche par forme**, opaque : c'est elle que l'œil suit.
-  Tout le reste est du verre teinté vers la nuit.
-- Sur écran étroit : densité bornée à 1,5 et tampon de transmission à 0,6.
-- `prefers-reduced-motion` : la forme est rendue, immobile.
+- Les mesures d'une scène sont des unités de plan, comme celles de la scène
+  du récit : exceptions déclarées par fichier dans `.impeccable/config.json`.
 
 ### Pourquoi moi
 
@@ -522,8 +545,8 @@ qui redisaient les blocs des métiers.
 ### Ce qui se refait à la main
 
 `public/og-home.png` et la vignette du site dans les réalisations se refont à
-chaque changement du hero ; les images de `public/formes/` à chaque changement
-d'une sculpture.
+chaque changement du hero. Les images de `public/formes/` servaient de repli
+aux sculptures de verre et ne sont plus appelées par l'accueil.
 
 ## Colors
 

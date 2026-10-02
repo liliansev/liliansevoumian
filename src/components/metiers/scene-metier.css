@@ -1,0 +1,879 @@
+/*
+ * scene-metier.css — le socle visuel des scènes « métier » de l'accueil.
+ *
+ * Quatre scènes (Automatisation, Agents IA, Formations, Sites web et
+ * dashboards) parlent la même langue, celle de la scène du récit : un panneau
+ * quadrillé, du grain, deux lueurs, de vraies petites fenêtres d'interface,
+ * une feuille claire, des fils qui relient et des bandes pêche qui portent
+ * l'information. Tout ce qui est commun est ici ; une scène n'écrit en style
+ * scopé que ce qui lui est propre (la place de ses fenêtres, de ses ports, et
+ * ses composants à elle).
+ *
+ * Ce fichier est importé par chaque composant de scène : il est global. Tout
+ * y est donc préfixé, `.sm` pour la racine et `.sm-…` pour le reste. Les états
+ * (`est-lu`, `est-rempli`…) ne le sont pas, mais ils ne sont jamais écrits
+ * seuls : toujours accolés à une classe du socle.
+ *
+ * Les longueurs sont celles du plan, en pixels : le plan est dessiné à taille
+ * fixe (760 × 570, ou 360 × 270 sous 520 px) puis mis à l'échelle d'un bloc.
+ * Elles ne suivent donc pas l'échelle typographique du site, exprès.
+ *
+ * Le moteur est dans `lib/metiers/scene.ts`, avec le guide d'écriture.
+ */
+
+/* ── Le panneau ──
+   Une lueur braise en bas à gauche, une lueur froide en haut à droite, du
+   grain par-dessus. Avec `est-abouti`, une lumière chaude se lève : le panneau
+   s'éclaire quand la scène arrive à son résultat. */
+.sm {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  container: sm / inline-size;
+  isolation: isolate;
+  background:
+    radial-gradient(85% 75% at 0% 100%, color-mix(in srgb, var(--color-braise) 22%, transparent), transparent 62%),
+    radial-gradient(75% 65% at 100% 0%, color-mix(in srgb, var(--color-lueur-froide) 20%, transparent), transparent 64%),
+    var(--color-night-deep);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.sm::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    64% 58% at var(--sm-lumiere, 68% 62%),
+    color-mix(in srgb, var(--color-peche) 26%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 900ms var(--ease-out-quint);
+}
+
+.sm.est-abouti::before {
+  opacity: 1;
+}
+
+.sm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background-image: var(--grain);
+  opacity: 0.1;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* Au chargement, la scène passe de l'image fixe du HTML à son repos : sans ce
+   garde-fou on verrait les lignes se vider et les états s'éteindre. Le moteur
+   pose `data-pret` deux images plus tard.
+   `!important` : les transitions d'une scène sont écrites en style scopé, à
+   spécificité égale ou supérieure, et l'emportaient sur cette règle. */
+.sm:not([data-pret]) *,
+.sm:not([data-pret]) *::before,
+.sm:not([data-pret]) *::after {
+  transition: none !important;
+}
+
+/* ── Le plan ──
+   Dessiné à 760 × 570 puis mis à l'échelle par `--k`. Le moteur pose la
+   valeur exacte et centre le plan ; avant lui (ou sans lui), le rapport se
+   déduit de la largeur du conteneur : `atan2` de deux longueurs rend un angle,
+   `tan` en refait un nombre sans unité. Le quadrillage est dans le plan, pas
+   dans le panneau : il grandit avec les fenêtres. */
+.sm-plan {
+  --k: tan(atan2(100cqw, 760px));
+  --sm-filet: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  position: absolute;
+  top: var(--y, 0px);
+  left: var(--x, 0px);
+  width: 760px;
+  height: 570px;
+  transform: scale(var(--k));
+  transform-origin: 0 0;
+  background:
+    linear-gradient(color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px,
+    linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px;
+}
+
+.sm-plan em,
+.sm-plan i {
+  font-style: normal;
+}
+
+.sm-plan svg {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Les pastilles-compteurs ──
+   Une à chaque coin du haut : à gauche ce qui avance, à droite ce qui tient. */
+.sm-puces {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  left: 24px;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+}
+
+.sm-puce {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 12px 0 9px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-night-deep) 82%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent);
+  color: var(--color-ink-mid);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sm-puce b {
+  display: inline-block;
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.sm-puce svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: var(--color-ink-low);
+  stroke-width: 1.3;
+}
+
+/* La pastille qui porte la promesse du métier : la seule en pêche. */
+.sm-puce--peche {
+  border-color: color-mix(in srgb, var(--color-peche) 62%, transparent);
+}
+
+.sm-puce--peche b {
+  color: var(--color-peche);
+}
+
+/* ── Les fils ──
+   Au repos, un pointillé discret : les outils sont reliés même quand rien ne
+   passe. Allumé (`est-allume`), le fil passe en pêche et le reste jusqu'à ce
+   que la scène soit rangée. Le tracé est calculé par le moteur. */
+.sm-fils {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.sm-fil__trait {
+  stroke: color-mix(in srgb, var(--color-ink) 34%, transparent);
+  stroke-width: 1.25;
+  stroke-dasharray: 1.5 5;
+}
+
+.sm-fil__flux {
+  stroke: var(--color-peche);
+  stroke-width: 1.5;
+  opacity: 0;
+  transition: opacity 360ms var(--ease-out-quint);
+}
+
+.sm-fil.est-allume .sm-fil__flux {
+  opacity: 0.85;
+}
+
+/* Le nœud, au milieu du fil : c'est lui qui dit « relié ». Placé par le
+   moteur, donc invisible tant qu'il n'a pas tourné. */
+.sm-noeud {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  border-radius: var(--radius-full);
+  background: var(--color-night-deep);
+  opacity: 0;
+  transition:
+    border-color 300ms,
+    background-color 300ms;
+}
+
+.sm[data-pret] .sm-noeud {
+  opacity: 1;
+}
+
+.sm-noeud svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--color-ink-low);
+  stroke-width: 1.4;
+  transition: stroke 300ms;
+}
+
+.sm-noeud.est-allume {
+  border-color: var(--color-peche);
+  background: color-mix(in srgb, var(--color-peche) 16%, var(--color-night-deep));
+}
+
+.sm-noeud.est-allume svg {
+  stroke: var(--color-peche);
+}
+
+/* ── Les postes ──
+   Un poste porte une fenêtre et ses ports. Les ports sont hors de la fenêtre
+   parce qu'elle rogne ce qui dépasse, et un port est à cheval sur son bord.
+   La scène donne au poste sa place (`top`, `left`, `width`) et à chaque port
+   la sienne, depuis le bord du poste. */
+.sm-poste {
+  position: absolute;
+  z-index: 2;
+}
+
+.sm-port {
+  position: absolute;
+  z-index: 1;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid color-mix(in srgb, var(--color-ink) 38%, var(--color-night-deep));
+  border-radius: var(--radius-full);
+  background: var(--color-night-deep);
+  transition:
+    border-color 260ms,
+    background-color 260ms,
+    box-shadow 400ms var(--ease-out-quint);
+}
+
+.sm-port.est-actif {
+  border-color: var(--color-peche);
+  background: var(--color-peche);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-peche) 20%, transparent);
+}
+
+/* ── La fenêtre ── */
+.sm-fenetre {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 14%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-night-deep) 93%, var(--color-ink));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+    0 30px 60px -28px var(--color-night-deep),
+    0 12px 24px -16px var(--color-night-deep);
+}
+
+.sm-fenetre__barre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding-inline: 11px 9px;
+  border-bottom: 1px solid var(--sm-filet);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sm-fenetre__icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--color-peche);
+}
+
+.sm-fenetre__icone svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--color-night);
+  stroke-width: 1.5;
+}
+
+.sm-fenetre__nom {
+  color: var(--color-ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sm-fenetre__info {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-ink-low);
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sm-corps {
+  padding: 12px;
+}
+
+/* L'état de l'outil, à droite de la barre. Trois valeurs de `data-etat` :
+   `attente` (discret), `cours` (cerclé de pêche), `fait` (plein pêche). Deux
+   libellés peuvent cohabiter : `__avant` se lit tant que ce n'est pas fait,
+   `__apres` quand ça l'est. */
+.sm-etat {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 3px 9px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+  border-radius: var(--radius-full);
+  color: var(--color-ink-mid);
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color 220ms,
+    color 220ms,
+    border-color 220ms;
+}
+
+.sm-etat[data-etat='cours'] {
+  border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
+  color: var(--color-peche);
+}
+
+.sm-etat[data-etat='fait'] {
+  border-color: var(--color-peche);
+  background: var(--color-peche);
+  color: var(--color-night);
+}
+
+.sm-etat__apres,
+.sm-etat[data-etat='fait'] .sm-etat__avant {
+  display: none;
+}
+
+.sm-etat[data-etat='fait'] .sm-etat__apres {
+  display: inline;
+}
+
+/* ── La feuille : le document, sur sa page de papier ── */
+.sm-feuille {
+  position: relative;
+  overflow: hidden;
+  padding: 13px 14px 6px;
+  border-radius: 6px;
+  background: var(--color-feuille);
+  box-shadow: 0 8px 18px -10px var(--color-night-deep);
+  color: var(--color-night);
+}
+
+.sm-feuille__tete {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.sm-feuille__tete b {
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.sm-feuille__tete > span {
+  color: var(--color-ink-faint);
+  font-size: 9.5px;
+  font-weight: 500;
+}
+
+/* Un paragraphe qu'on ne lit pas : trois barres de longueurs inégales. */
+.sm-feuille__bloc {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.sm-feuille__bloc i {
+  width: 44%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-feuille-trait);
+}
+
+.sm-feuille__bloc i:nth-child(2) {
+  width: 58%;
+}
+
+.sm-feuille__bloc i:nth-child(3) {
+  width: 31%;
+}
+
+/* ── Colonnes, lignes, rangées ──
+   Les trois partagent une grille, donnée par `--sm-cols` : la scène la pose
+   sur un parent (un poste, une feuille) et tout s'aligne dessous. Dans une
+   ligne ou une rangée, le premier `span` se lit à gauche, les suivants sont
+   des valeurs, calées à droite. */
+.sm-colonnes,
+.sm-ligne,
+.sm-rangee {
+  display: grid;
+  grid-template-columns: var(--sm-cols, 48px minmax(0, 1fr) auto);
+  gap: 8px;
+}
+
+.sm-colonnes {
+  padding: 0 8px 6px;
+  color: var(--color-ink-faint);
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sm-colonnes span:nth-child(n + 3) {
+  text-align: right;
+}
+
+.sm-feuille .sm-colonnes {
+  margin-top: 12px;
+  padding: 0 6px 5px;
+  border-bottom: 1px solid var(--color-feuille-trait);
+}
+
+.sm-ref {
+  font-weight: 600;
+}
+
+/* Une barre de texte : ce qui serait trop petit pour être lu devient un
+   trait. `--l` donne sa longueur. */
+.sm-barre {
+  width: var(--l, 100%);
+  height: 5px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--color-ink) 24%, transparent);
+}
+
+/* La ligne d'un document, sur la feuille. */
+.sm-ligne {
+  position: relative;
+  isolation: isolate;
+  align-items: center;
+  height: 27px;
+  padding-inline: 6px;
+  border-bottom: 1px solid var(--color-feuille-trait);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.sm-ligne:last-child {
+  border-bottom: 0;
+}
+
+.sm-ligne .sm-barre {
+  background: var(--color-feuille-barre);
+}
+
+.sm-ligne span:nth-of-type(n + 2) {
+  text-align: right;
+}
+
+/* Lue (`est-lu`) : la bande pêche passe sur la ligne. Partie (`est-parti`) :
+   la bande s'est envolée, il en reste une trace claire, comme un passage de
+   surligneur séché. */
+.sm-ligne::before {
+  content: '';
+  position: absolute;
+  inset: 3px 0;
+  z-index: -1;
+  border-radius: 4px;
+  background: var(--color-peche);
+  clip-path: inset(0 100% 0 0 round 4px);
+  transition:
+    clip-path 340ms var(--ease-out-expo),
+    opacity 320ms;
+}
+
+.sm-ligne.est-lu::before,
+.sm-ligne.est-parti::before {
+  clip-path: inset(0 0 0 0 round 4px);
+}
+
+.sm-ligne.est-parti::before {
+  opacity: 0.34;
+}
+
+/* Le trait de lecture : un filet pêche et la traîne qu'il laisse. À poser en
+   dernier enfant d'un bloc en `position: relative` qui rogne (la feuille) ;
+   le moteur le fait descendre (`lire`). */
+.sm-balai {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: 2px;
+  background: var(--color-peche);
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--color-peche) 70%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sm-balai::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  left: 0;
+  height: 36px;
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-peche) 34%, transparent), transparent);
+}
+
+/* La rangée d'un outil, dans une fenêtre sombre. Vide, c'est un emplacement
+   en pointillé ; son contenu n'apparaît que remplie (`est-rempli`). Validée
+   (`est-valide`), sa coche se dessine. En pêche (`est-peche`), elle est
+   désignée : celle qui compte, celle qu'on a retenue. */
+.sm-rangees {
+  display: grid;
+  gap: 5px;
+}
+
+.sm-rangee {
+  align-items: center;
+  height: 27px;
+  padding-inline: 8px;
+  border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  transition:
+    border-color 220ms,
+    background-color 220ms,
+    color 220ms;
+}
+
+.sm-rangee .sm-barre {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition:
+    transform 360ms var(--ease-out-expo),
+    background-color 220ms;
+}
+
+.sm-rangee span {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 200ms;
+}
+
+.sm-rangee span:nth-of-type(n + 2) {
+  text-align: right;
+}
+
+.sm-coche {
+  width: 12px;
+  height: 12px;
+  stroke: var(--color-peche);
+  stroke-width: 2;
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 200ms,
+    scale 320ms var(--ease-out-expo),
+    stroke 220ms;
+}
+
+.sm-rangee.est-rempli {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--color-ink) 12%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 5%, transparent);
+}
+
+.sm-rangee.est-rempli .sm-barre {
+  transform: scaleX(1);
+}
+
+.sm-rangee.est-rempli span {
+  opacity: 1;
+}
+
+.sm-rangee.est-valide .sm-coche {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Tout texte posé sur la pêche est en nuit. */
+.sm-rangee.est-peche {
+  border-style: solid;
+  border-color: var(--color-peche);
+  background: var(--color-peche);
+  color: var(--color-night);
+}
+
+.sm-rangee.est-peche .sm-barre {
+  background: color-mix(in srgb, var(--color-night) 34%, transparent);
+}
+
+.sm-rangee.est-peche .sm-coche {
+  stroke: var(--color-night);
+}
+
+/* Le pied d'une fenêtre : un libellé et le nombre qui compte. */
+.sm-pied {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 11px;
+  padding: 10px 8px 0;
+  border-top: 1px solid var(--sm-filet);
+  color: var(--color-ink-low);
+  font-size: 10.5px;
+}
+
+.sm-pied b {
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* ── Ce qui voyage ──
+   La bande est le surlignage d'une ligne, détaché de sa page ; le grain est
+   ce qu'elle devient le temps de traverser un fil. Les deux sont posés dans
+   le plan, hors des fenêtres, et placés par le moteur. */
+.sm-bande,
+.sm-grain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  background: var(--color-peche);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sm-bande {
+  border-radius: 5px;
+  transform-origin: 0 0;
+}
+
+.sm-grain {
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: var(--radius-full);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-peche) 24%, transparent),
+    0 0 14px 2px color-mix(in srgb, var(--color-peche) 55%, transparent);
+}
+
+/* L'horloge de la scène : un élément sans rendu, créé par le moteur, qui ne
+   sert qu'à porter ses attentes. */
+.sm-horloge {
+  position: absolute;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+/* ── Le plan étroit ──
+   Sous 520 px, à l'échelle, les textes du grand plan passeraient sous 8 px.
+   Le plan est donc redessiné à 360 × 270, avec les mêmes pièces en plus
+   petit. La scène y simplifie son propos avec `sm-large` et `sm-etroit`
+   (voir plus bas) : deux lignes au lieu de trois, des états en un mot. */
+@container sm (max-width: 519.98px) {
+  .sm-plan {
+    --k: tan(atan2(100cqw, 360px));
+    width: 360px;
+    height: 270px;
+    background-size: 30px 30px;
+  }
+
+  .sm-puces {
+    top: 8px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .sm-puce {
+    gap: 5px;
+    height: 22px;
+    padding: 0 8px 0 6px;
+    font-size: 9.5px;
+  }
+
+  .sm-puce svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .sm-port {
+    width: 9px;
+    height: 9px;
+  }
+
+  .sm-noeud {
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+  }
+
+  .sm-noeud svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  .sm-fenetre {
+    border-radius: 9px;
+  }
+
+  .sm-fenetre__barre {
+    gap: 6px;
+    height: 25px;
+    padding-inline: 8px 6px;
+    font-size: 10px;
+  }
+
+  .sm-fenetre__icone {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+  }
+
+  .sm-fenetre__icone svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Le sous-titre de la fenêtre ne tient plus : son nom suffit. */
+  .sm-fenetre__info {
+    display: none;
+  }
+
+  .sm-etat {
+    padding: 2px 6px;
+    font-size: 8.5px;
+  }
+
+  .sm-corps {
+    padding: 6px;
+  }
+
+  .sm-feuille {
+    padding: 9px 8px 3px;
+    border-radius: 5px;
+  }
+
+  .sm-feuille__tete b {
+    font-size: 10.5px;
+  }
+
+  .sm-feuille__bloc {
+    gap: 3px;
+    margin-top: 6px;
+  }
+
+  .sm-feuille__bloc i {
+    height: 3px;
+  }
+
+  .sm-colonnes,
+  .sm-ligne,
+  .sm-rangee {
+    gap: 4px;
+  }
+
+  .sm-colonnes {
+    font-size: 6.5px;
+  }
+
+  .sm-feuille .sm-colonnes {
+    margin-top: 8px;
+    padding: 0 3px 4px;
+  }
+
+  .sm-barre {
+    height: 4px;
+  }
+
+  .sm-ligne {
+    height: 23px;
+    padding-inline: 3px;
+    font-size: 9px;
+  }
+
+  /* La dernière ligne visible n'a pas de filet, même quand celles d'après
+     sont seulement masquées. */
+  .sm-ligne:has(+ .sm-large) {
+    border-bottom: 0;
+  }
+
+  .sm-rangees {
+    gap: 3px;
+  }
+
+  .sm-rangee {
+    height: 23px;
+    padding-inline: 5px;
+    border-radius: 6px;
+    font-size: 9px;
+  }
+
+  .sm-coche {
+    width: 9px;
+    height: 9px;
+  }
+
+  .sm-pied {
+    margin-top: 6px;
+    padding: 6px 5px 0;
+    font-size: 8.5px;
+  }
+
+  .sm-pied b {
+    font-size: 12px;
+  }
+
+  .sm-grain {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+  }
+}
+
+/* ── Large ou étroit ──
+   `sm-large` ne se voit que sur le grand plan, `sm-etroit` que sur le petit.
+   Pour une troisième ligne à retirer, un libellé long et sa version courte.
+   En dernier dans le fichier et en `!important` : ce sont des interrupteurs,
+   ils doivent l'emporter sur le `display` de la pièce qu'ils masquent. Le
+   moteur ne joue jamais un élément masqué (`affiches`). */
+@container sm (min-width: 520px) {
+  .sm-etroit {
+    display: none !important;
+  }
+}
+
+@container sm (max-width: 519.98px) {
+  .sm-large {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm::before,
+  .sm *,
+  .sm *::before,
+  .sm *::after {
+    transition: none;
+  }
+}

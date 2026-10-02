@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-02T00:00:00Z",
+  "generatedAt": "2026-10-03T00:00:00Z",
   "title": "Design System: Lilian Sevoumian",
   "extensions": {
     "colorMeta": {
@@ -849,7 +849,7 @@
       "Trois gestes d'auteur de mouvement, joués une fois, jamais bloquants.",
       "Sur la home, Lilian apparaît avant les offres ; les deux expertises gardent ensuite le même poids dans leur routeur dédié.",
       "Les artefacts publics et les marques tierces gardent leur palette dans leurs visuels, jamais dans le chrome du site.",
-      "Sur l'accueil, direction « tech propre » : fond nuit profonde, tout posé sur une grille, surlignage en pastille droite, titres en graisse 500, une forme 3D en verre par métier."
+      "Sur l'accueil, direction « tech propre » : fond nuit profonde, tout posé sur une grille, surlignage en pastille droite, titres en graisse 500, une scène d'interface animée par métier."
     ],
     "rules": [
       {
@@ -943,19 +943,9 @@
         "body": "Dans le défilé des clients, tout logo est ramené à une silhouette claire. Un logo que la silhouette abîme se corrige dans le fichier, pas dans le CSS ; sa hauteur se règle à l'œil par `--echelle`. Un logo n'entre que s'il vient du site officiel de l'entreprise, sinon le nom reste en lettres."
       },
       {
-        "name": "La règle de la pièce pêche",
-        "section": "components",
-        "body": "Une forme 3D en verre porte une seule pièce en pêche, opaque : c'est elle que l'œil suit. Tout le reste est du verre teinté vers la nuit."
-      },
-      {
         "name": "La règle du dernier mot",
         "section": "components",
         "body": "Dans la scène du récit, le choix fait au bouton (« À la main » ou « Automatisé ») tient tant que la scène est à l'écran : ni le défilement ni la boucle mobile ne le changent. Le récit reprend la main quand elle sort."
-      },
-      {
-        "name": "La règle du cadre jamais vide",
-        "section": "components",
-        "body": "Sous chaque toile 3D, une image fixe de la sculpture (`public/formes/`). Elle tient le cadre avant le chargement, sans script, si la 3D est indisponible et quand le contexte graphique est perdu."
       },
       {
         "name": "La règle de l'arrêt",
@@ -966,6 +956,21 @@
         "name": "La règle du nom unique",
         "section": "components",
         "body": "Une offre n'a qu'un nom sur la page d'accueil : Automatisation, Agents IA, Formations, Sites web et dashboards."
+      },
+      {
+        "name": "La règle du socle des scènes",
+        "section": "components",
+        "body": "Une scène de métier compose les pièces du socle (`scene-metier.css`, `lib/metiers/scene.ts`) et n'ajoute en style scopé que ce qui lui est propre. Tout le temps passe par le moteur : ni `setTimeout` ni `requestAnimationFrame` dans une scène."
+      },
+      {
+        "name": "La règle de l'image finale",
+        "section": "components",
+        "body": "Le balisage d'une scène est son image finale : sans script et en mouvement réduit, on voit une scène fixe, complète et parlante."
+      },
+      {
+        "name": "La règle sans redite",
+        "section": "components",
+        "body": "Le bon de commande appartient à la scène du récit ; chaque scène de métier raconte un autre cas, celui que son bloc cite en preuve. Noms d'outils génériques, chiffres d'illustration, aucune marque."
       }
     ],
     "dos": [
@@ -985,7 +990,6 @@
       "Do passer par `SectionHeader` pour tout en-tête de section, et par `BoutonReservation` pour tout lien vers l'agenda.",
       "Do donner à chaque section de l'accueil un composant qui n'existe que là, dont la forme vient de ce qu'elle raconte.",
       "Do renseigner `largeur`, `hauteur` et la provenance de tout logo ajouté à `src/data/clients.ts`.",
-      "Do donner une image de repli à toute nouvelle sculpture 3D, et la refaire quand la sculpture change.",
       "Do écrire le formulaire de newsletter comme le mail lui-même (De, Objet, À), pas comme un champ dans une carte."
     ],
     "donts": [

@@ -30,8 +30,10 @@ src/
 ├── components/
 │   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
 │   ├── home-hero.astro        # accueil : titre seul centré, grille, défilé clients
-│   ├── home-story.astro       # accueil : récit en 3 actes + scène PDF → facture
-│   ├── home-services.astro    # accueil : 4 métiers, une forme 3D en verre chacun
+│   ├── home-story.astro       # accueil : récit en 3 actes + scène (à la main, puis automatisation, agent IA, dashboard)
+│   ├── home-services.astro    # accueil : 4 métiers, une scène d'interface animée chacun
+│   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
+│   ├── explorations/          # essais non retenus (bureau, plateau, terminal, plan), page /explorations-metiers
 │   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours
 │   ├── home-content.astro     # accueil : dernière vidéo + newsletter écrite comme un mail
 │   ├── home-voices.astro      # accueil : trois recommandations, une voix à la fois
@@ -60,7 +62,7 @@ src/
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
 ├── data/                      # brands.ts, faq.ts, clients.ts, realisations.ts, parcours.ts
-├── lib/                       # roi.ts, reservation.ts, blocs/atelier.ts (formes 3D en verre)
+├── lib/                       # roi.ts, reservation.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
 │   └── PageExpertOutil.astro  # charpente commune des pages SEO par outil
@@ -99,7 +101,9 @@ Typography:
 Home page only ("tech propre", validated 2 October 2026; see the section
 *L'accueil* in `DESIGN.md`): deep night `#0c121f`, everything laid on a grid,
 two page-level frame lines, `mark` as a straight pill, `h2`/`h3` at weight 500,
-one glass 3D shape per service (`src/lib/blocs/atelier.ts`, Three.js). These
+one animated 2D interface scene per service (`src/components/metiers/`, engine
+in `src/lib/metiers/scene.ts`; the glass 3D shapes were dropped on 3 October
+2026 and only remain on `/explorations-blocs`). These
 rules live in the `.accueil` block of `src/pages/index.astro`. The other pages
 still carry the previous look until Lilian asks to propagate it.
 

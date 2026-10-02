@@ -1,0 +1,1735 @@
+---
+/*
+ * scene-sites — la scène du métier Sites web et dashboards : « Des landing
+ * pages qui convertissent, des tableaux de bord qui servent. »
+ *
+ * L'idée à faire passer sans rien lire : une page se construit, des gens
+ * cliquent, et un tableau de bord montre ce que ça donne.
+ *
+ * Le fil de la boucle, un seul mouvement à la fois :
+ *   1. un cadre de sélection pose la page bloc par bloc (titre, bouton,
+ *      preuve, logos), comme on la monte dans un éditeur ;
+ *   2. la page passe en ligne, les visites du jour arrivent sur la courbe ;
+ *   3. le bouton est cliqué, trois à cinq fois, de plus en plus vite : chaque
+ *      clic traverse le fil et devient une unité de plus sur la barre du jour,
+ *      le nombre de demandes monte, le taux se recalcule ;
+ *   4. l'image est tenue, puis on change de jour : les barres glissent d'une
+ *      colonne, la page se défait, la suivante se monte.
+ *
+ * Le panneau, les fenêtres, la feuille, le fil et le temps viennent du socle
+ * (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit que ce
+ * qui lui est propre : la page et son cadre de sélection, le clic, le tableau
+ * de bord (barres en unités, courbe à points), et l'ordre de sa boucle.
+ *
+ * Sans script ou en mouvement réduit, la scène est une image fixe : la page
+ * montée et en ligne, le tableau de bord rempli.
+ *
+ * Tous les chiffres sont inventés pour la scène, et ils sont justes entre
+ * eux : une barre compte une unité par demande, le taux est le nombre de
+ * demandes du jour divisé par les visites du jour.
+ */
+import './scene-metier.css';
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+/* Trois pages qui tournent : d'une boucle à l'autre, ce n'est pas la même qui
+   revient. `titre` et `texte` sont les longueurs des barres, en pour cent. */
+const pages = [
+  { chemin: '/devis', bouton: 'Demander un devis', centre: false, titre: [90, 62], texte: [76, 48] },
+  { chemin: '/demo', bouton: 'Réserver une démo', centre: true, titre: [74, 52], texte: [62, 40] },
+  { chemin: '/contact', bouton: 'Prendre rendez-vous', centre: false, titre: [70, 86], texte: [80, 54] },
+];
+
+/* Trois journées : le nombre de clics sur le bouton, et les visites heure par
+   heure (leur somme est le nombre de visites du jour). */
+const journees = [
+  { clics: 4, heures: [5, 9, 8, 13, 12, 15, 18] },
+  { clics: 3, heures: [6, 8, 12, 9, 14, 11, 15] },
+  { clics: 5, heures: [8, 11, 10, 16, 14, 19, 22] },
+];
+
+/* Les six jours d'avant, en demandes par jour, et le total déjà atteint avant
+   la première journée de la scène. */
+const HISTORIQUE = [3, 5, 2, 4, 6, 3];
+const DEJA = 44;
+const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+/* La lettre de la première colonne : la septième, « aujourd'hui », tombe
+   alors un jeudi. */
+const DEPART = 4;
+/* La hauteur de l'échelle, en demandes : une unité par demande. */
+const UNITES = 6;
+const GRADUATIONS = [0, 2, 4, 6];
+
+/* La courbe des visites, dans le repère de son SVG. */
+const COURBE = { l: 144, h: 44, marge: 5 };
+const arrondi = (n: number) => Math.round(n * 10) / 10;
+
+const tracer = (heures: number[]) => {
+  const max = Math.max(...heures);
+  const pas = (COURBE.l - COURBE.marge * 2) / (heures.length - 1);
+  const points: Point[] = heures.map((valeur, i) => ({
+    x: arrondi(COURBE.marge + i * pas),
+    y: arrondi(COURBE.h - COURBE.marge - (valeur / max) * (COURBE.h - COURBE.marge * 2)),
+  }));
+  const ligne = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`).join(' ');
+  return { points, ligne };
+};
+
+const formatTaux = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const formatEntier = new Intl.NumberFormat('fr-FR');
+
+/* Tout ce que le script joue est calculé ici, une fois : il n'a plus qu'à
+   l'afficher. `taux[n]` est le taux après n demandes. */
+const jours = journees.map(({ clics, heures }) => {
+  const visites = heures.reduce((somme, valeur) => somme + valeur, 0);
+  return {
+    clics,
+    visites,
+    taux: Array.from({ length: clics + 1 }, (_, n) => `${formatTaux.format((n / visites) * 100)} %`),
+    ...tracer(heures),
+  };
+});
+
+const recit = { pages, jours, historique: HISTORIQUE, deja: DEJA, lettres: LETTRES, depart: DEPART };
+
+/* L'image fixe : la première page, la première journée, tout est passé. */
+const page = pages[0];
+const jour = jours[0];
+const colonnes = [...HISTORIQUE, jour.clics, 0];
+const clicsMax = Math.max(...jours.map((j) => j.clics));
+const voyageurs = Array.from({ length: clicsMax });
+---
+
+<div
+  class="sm est-abouti"
+  data-scene-sites
+  data-recit={JSON.stringify(recit)}
+  role="img"
+  aria-label="Une landing page se monte bloc par bloc et passe en ligne ; des visiteurs cliquent sur son bouton, et le tableau de bord compte chaque demande et recalcule le taux de conversion."
+>
+  <div class="sm-plan" aria-hidden="true">
+    <div class="sm-puces">
+      <span class="sm-puce">
+        <svg viewBox="0 0 16 16"><path d="M2.5 9.5l1.8-5.5h7.4l1.8 5.5v3h-11v-3zM2.5 9.5h3.2l.8 1.5h3l.8-1.5h3.2" /></svg>
+        <span>Demandes</span>
+        <b data-puce-demandes>{formatEntier.format(DEJA + jour.clics)}</b>
+      </span>
+      <span class="sm-puce sm-puce--peche">
+        <svg viewBox="0 0 16 16"><path d="M2.5 11.5l3.5-3.6 2.5 2.4 5-5.6M10 4.7h3.5v3.5" /></svg>
+        <span>Conversion</span>
+        <b data-puce-taux>{jour.taux[jour.clics]}</b>
+      </span>
+    </div>
+
+    {/* Le fil : du bouton de la page au tableau de bord. Son tracé est calculé
+       par le moteur d'après la place des deux ports. */}
+    <svg class="sm-fils" viewBox="0 0 760 570">
+      <g class="sm-fil est-allume" data-sm-fil="demande" data-de="bouton" data-vers="tableau" data-sens="h">
+        <path class="sm-fil__trait"></path>
+        <path class="sm-fil__flux"></path>
+      </g>
+    </svg>
+
+    {/* La page, dans son navigateur. */}
+    <div class="sm-poste poste--page">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <svg class="fleches sm-large" viewBox="0 0 28 12"><path d="M7.5 2.5L4 6l3.5 3.5M20.5 2.5L24 6l-3.5 3.5" /></svg>
+          <span class="adresse">
+            <svg viewBox="0 0 12 12"><path d="M3 5.5h6v4.5H3zM4.4 5.5V4a1.6 1.6 0 0 1 3.2 0v1.5" /></svg>
+            <span class="adresse__texte">votre-site.fr<span class="adresse__chemin" data-chemin>{page.chemin}</span></span>
+          </span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="page">
+            <span class="sm-etat__avant">Brouillon</span>
+            <span class="sm-etat__apres">En ligne</span>
+          </span>
+        </div>
+        <div class="sm-corps">
+          <div
+            class:list={['sm-feuille', 'page', { 'est-centree': page.centre }]}
+            data-page
+            style={`--t1: ${page.titre[0]}%; --t2: ${page.titre[1]}%; --p1: ${page.texte[0]}%; --p2: ${page.texte[1]}%`}
+          >
+            <div class="page__entete">
+              <i class="page__marque"></i>
+              <span class="page__menu"><i></i><i></i><i></i></span>
+              <i class="page__acces"></i>
+            </div>
+
+            <div class="bloc bloc--titre est-pose" data-bloc data-nom="Titre">
+              <i class="gros gros--un"></i>
+              <i class="gros gros--deux"></i>
+              <i class="fin fin--un"></i>
+              <i class="fin fin--deux"></i>
+            </div>
+
+            <div class="bloc bloc--bouton est-pose" data-bloc data-nom="Bouton">
+              <span class="bouton" data-bouton>
+                <span data-libelle>{page.bouton}</span>
+                <svg viewBox="0 0 12 12"><path d="M2.5 6h7M6.5 3l3 3-3 3" /></svg>
+              </span>
+              <span class="second sm-large"><i></i></span>
+            </div>
+
+            <div class="bloc bloc--preuve est-pose" data-bloc data-nom="Preuve">
+              <span class="visages"><i></i><i></i><i></i></span>
+              <svg class="etoile" viewBox="0 0 12 12"><path d="M6 1.2l1.5 3.1 3.4.4-2.5 2.3.7 3.4L6 8.7l-3.1 1.7.7-3.4L1.1 4.7l3.4-.4z" /></svg>
+              <b>4,9</b>
+              <i class="preuve__texte"></i>
+            </div>
+
+            <div class="bloc bloc--logos est-pose sm-large" data-bloc data-nom="Logos">
+              <span class="logo"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="3.6" /></svg><i></i></span>
+              <span class="logo"><svg viewBox="0 0 12 12"><path d="M6 2.2l4 7.2H2z" /></svg><i></i></span>
+              <span class="logo"><svg viewBox="0 0 12 12"><path d="M2.6 2.6h6.8v6.8H2.6z" /></svg><i></i></span>
+              <span class="logo"><svg viewBox="0 0 12 12"><path d="M6 1.8L10.2 6 6 10.2 1.8 6z" /></svg><i></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="sm-port port--bouton est-actif" data-sm-port="bouton"></span>
+    </div>
+
+    {/* Le tableau de bord. */}
+    <div class="sm-poste poste--tableau">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M3.5 12.5v-4M8 12.5v-9M12.5 12.5V6" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Tableau de bord</span>
+          <span class="sm-fenetre__info">7 derniers jours</span>
+          <span class="sm-etat direct sm-large" data-etat="cours" data-etat-de="tableau">
+            <i class="direct__point"></i>
+            <span class="direct__avant">En attente</span>
+            <span class="direct__apres">En direct</span>
+          </span>
+        </div>
+        <div class="sm-corps tableau">
+          <div class="chiffre">
+            <span class="etiquette">Demandes</span>
+            <div class="chiffre__ligne">
+              <b data-demandes>{formatEntier.format(DEJA + jour.clics)}</b>
+              <span class="plus est-visible" data-plus>
+                +<span data-plus-n>{jour.clics}</span>
+                <span class="sm-large">aujourd’hui</span><span class="sm-etroit">auj.</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Les barres : une unité par demande, l'échelle à gauche. La piste
+             porte une colonne de plus que la vue n'en montre : c'est elle qui
+             entre quand on change de jour. */}
+          <div class="barres" data-barres>
+            <div class="barres__echelle">
+              {GRADUATIONS.map((n) => <span style={`--n: ${n}`}>{n}</span>)}
+            </div>
+            <div class="barres__vue">
+              <div class="barres__piste" data-piste>
+                {colonnes.map((valeur, i) => (
+                  <div class="colonne" data-colonne>
+                    <div class="colonne__pile">
+                      {Array.from({ length: UNITES }, (_, n) => (
+                        <i class:list={['unite', { 'est-pleine': n < valeur }]}></i>
+                      ))}
+                    </div>
+                    <span class="colonne__jour" data-jour>{LETTRES[(DEPART + i) % LETTRES.length]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat stat--visites sm-large" data-stat-visites>
+              <div>
+                <span class="etiquette">Visites</span>
+                <b data-visites>{formatEntier.format(jour.visites)}</b>
+              </div>
+              <svg class="courbe est-tracee" data-courbe viewBox={`0 0 ${COURBE.l} ${COURBE.h}`}>
+                <path class="courbe__sol" d={`M0 ${COURBE.h - 0.5}H${COURBE.l}`}></path>
+                <path class="courbe__trait" data-courbe-trait pathLength="1" d={jour.ligne}></path>
+                {jour.points.map((p) => <circle class="courbe__point" data-courbe-point cx={p.x} cy={p.y} r="2.1" />)}
+              </svg>
+            </div>
+            <div class="stat stat--taux">
+              <span class="etiquette">Conversion</span>
+              <b data-taux>{jour.taux[jour.clics]}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="sm-port port--tableau est-actif" data-sm-port="tableau"></span>
+    </div>
+
+    <span class="sm-noeud est-allume" data-sm-noeud="demande">
+      <svg viewBox="0 0 16 16"><path d="M6.4 6.4l6.4 2.3-2.8 1.3-1.3 2.8zM6 2.2v1.6M2.2 6h1.6M3.3 3.3l1.2 1.2" /></svg>
+    </span>
+
+    {/* Le cadre de sélection : il pose chaque bloc de la page, l'un après
+       l'autre. Hors de la feuille, qui rognerait son étiquette. */}
+    <span class="cadre" data-cadre>
+      <em data-cadre-nom>Titre</em>
+      <i></i><i></i><i></i><i></i>
+      <span class="cadre__cote sm-large" data-cadre-cote>256 × 80</span>
+    </span>
+
+    {/* Ce qui voyage, une série par clic : le pointeur d'un visiteur, l'onde
+       de son appui, la bande qui en part et le grain qui traverse le fil. */}
+    {voyageurs.map(() => (
+      <>
+        <span class="onde"></span>
+        <svg class="pointeur" viewBox="0 0 16 16"><path d="M3 1.6v11.6l3.1-2.9 2.1 4.6 2-.9-2.1-4.5h4.3z" /></svg>
+        <span class="sm-bande"></span>
+        <span class="sm-grain"></span>
+      </>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* Ce que le socle ne sait pas : où sont les deux postes et leurs ports, la
+     page et son cadre de sélection, le clic, et les composants du tableau de
+     bord. Longueurs en pixels du plan. */
+  .sm {
+    --sm-lumiere: 70% 54%;
+  }
+
+  .poste--page {
+    top: 78px;
+    left: 24px;
+    width: 322px;
+  }
+
+  .poste--tableau {
+    top: 110px;
+    left: 412px;
+    width: 324px;
+  }
+
+  .port--bouton { top: 226px; right: -6px; }
+  .port--tableau { top: 90px; left: -6px; }
+
+  /* Au chargement, la scène passe de l'image fixe à son repos : comme dans le
+     socle, rien ne doit s'animer tant que le moteur n'a pas posé `data-pret`.
+     Les transitions de cette scène sont plus précises que la règle du socle,
+     il faut donc les couper ici aussi. */
+  .sm:not([data-pret]) .page::before,
+  .sm:not([data-pret]) .plus,
+  .sm:not([data-pret]) .unite,
+  .sm:not([data-pret]) .colonne__jour,
+  .sm:not([data-pret]) .courbe__trait,
+  .sm:not([data-pret]) .courbe__point {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page::before,
+    .plus,
+    .unite,
+    .colonne__jour,
+    .courbe__trait,
+    .courbe__point {
+      transition: none;
+    }
+  }
+
+  /* ── Le navigateur : deux flèches, une adresse en pastille, l'état ── */
+  .fleches {
+    flex-shrink: 0;
+    width: 28px;
+    height: 12px;
+    stroke: var(--color-ink-faint);
+    stroke-width: 1.4;
+  }
+
+  .adresse {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    height: 21px;
+    padding: 0 9px 0 7px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    color: var(--color-ink-mid);
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+
+  .adresse svg {
+    flex-shrink: 0;
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-ink-low);
+    stroke-width: 1.2;
+  }
+
+  .adresse__texte {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .adresse__chemin {
+    color: var(--color-ink-low);
+  }
+
+  /* ── La page ──
+     Une feuille claire. En chantier, ses repères de colonnes sont visibles,
+     comme dans un éditeur ; en ligne, ils s'effacent. */
+  .page {
+    padding: 20px 20px 26px;
+  }
+
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 0 20px;
+    background: repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-peche) 70%, transparent) 0 1px,
+      transparent 1px calc((100% - 1px) / 4)
+    );
+    opacity: 0;
+    transition: opacity 420ms;
+    pointer-events: none;
+  }
+
+  .page.est-en-chantier::before {
+    opacity: 0.55;
+  }
+
+  .page__entete {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 16px;
+    margin-bottom: 30px;
+  }
+
+  .page__marque {
+    width: 15px;
+    height: 15px;
+    border-radius: 4.5px;
+    background: var(--color-night);
+  }
+
+  .page__menu {
+    display: flex;
+    gap: 7px;
+    margin-left: auto;
+  }
+
+  .page__menu i {
+    width: 18px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-feuille-barre);
+  }
+
+  .page__acces {
+    width: 32px;
+    height: 14px;
+    border: 1px solid var(--color-feuille-barre);
+    border-radius: var(--radius-full);
+  }
+
+  /* Un bloc n'existe pas tant qu'il n'est pas posé. */
+  .bloc {
+    position: relative;
+    opacity: 0;
+  }
+
+  .bloc.est-pose {
+    opacity: 1;
+  }
+
+  .page.est-centree .bloc {
+    margin-inline: auto;
+  }
+
+  .page.est-centree .bloc--titre i {
+    margin-inline: auto;
+  }
+
+  .page.est-centree .bloc--logos {
+    justify-content: center;
+  }
+
+  .bloc--titre {
+    display: grid;
+    gap: 9px;
+  }
+
+  .gros {
+    height: 17px;
+    border-radius: 4.5px;
+    background: var(--color-night);
+  }
+
+  .gros--un { width: var(--t1, 90%); }
+  .gros--deux { width: var(--t2, 62%); }
+
+  .fin {
+    height: 5.5px;
+    border-radius: 3px;
+    background: var(--color-feuille-barre);
+  }
+
+  .fin--un { width: var(--p1, 76%); margin-top: 7px; }
+  .fin--deux { width: var(--p2, 48%); margin-top: -2px; }
+
+  .bloc--bouton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin-top: 24px;
+  }
+
+  /* Le bouton : la seule pêche de la page. Son texte est en nuit. */
+  .bouton {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 15px 0 17px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-feuille) 45%, transparent),
+      0 6px 14px -8px color-mix(in srgb, var(--color-night) 60%, transparent);
+    color: var(--color-night);
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+  }
+
+  .bouton svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--color-night);
+    stroke-width: 1.6;
+  }
+
+  .second {
+    display: grid;
+    place-items: center;
+    height: 38px;
+    padding-inline: 14px;
+    border: 1px solid var(--color-feuille-barre);
+    border-radius: var(--radius-full);
+  }
+
+  .second i {
+    width: 30px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-feuille-barre);
+  }
+
+  .bloc--preuve {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    margin-top: 26px;
+    font-size: 12.5px;
+  }
+
+  .visages {
+    display: flex;
+    margin-right: 3px;
+  }
+
+  .visages i {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-feuille);
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-peche), var(--color-lueur-froide));
+  }
+
+  .visages i + i {
+    margin-left: -7px;
+    background: linear-gradient(135deg, var(--color-night-soft), var(--color-ink-faint));
+  }
+
+  .visages i:last-child {
+    background: linear-gradient(135deg, var(--color-feuille-barre), var(--color-peche));
+  }
+
+  .etoile {
+    width: 13px;
+    height: 13px;
+    fill: var(--color-night);
+  }
+
+  .bloc--preuve b {
+    font-weight: 650;
+  }
+
+  .preuve__texte {
+    width: 58px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-feuille-barre);
+  }
+
+  .bloc--logos {
+    display: flex;
+    gap: 6px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-feuille-trait);
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 27px;
+    padding: 0 10px 0 8px;
+    border: 1px solid var(--color-feuille-trait);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-night) 4%, transparent);
+  }
+
+  .logo svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--color-ink-faint);
+    stroke-width: 1.5;
+  }
+
+  .logo i {
+    width: 19px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-feuille-barre);
+  }
+
+  /* ── Le cadre de sélection ──
+     Un filet pêche, quatre poignées, et le nom du bloc qu'il pose. Placé et
+     dimensionné par le script, dans le repère du plan. */
+  .cadre {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    border: 1.25px solid var(--color-night);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-peche) 30%, transparent);
+    /* La teinte se multiplie avec la page, comme un surligneur : elle colore
+       le blanc sans ternir les barres sombres du bloc. */
+    mix-blend-mode: multiply;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cadre.est-visible {
+    opacity: 1;
+  }
+
+  .cadre em {
+    position: absolute;
+    bottom: calc(100% + 1.25px);
+    left: -1.25px;
+    padding: 2px 6px 3px;
+    border-radius: 4px 4px 4px 0;
+    background: var(--color-peche);
+    color: var(--color-night);
+    font-size: 9px;
+    font-weight: 650;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .cadre i {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border: 1.25px solid var(--color-night);
+    border-radius: 2px;
+    background: var(--color-feuille);
+  }
+
+  /* La cote du bloc, comme la donne un éditeur : sa largeur et sa hauteur,
+     lues sur la mise en page. */
+  .cadre__cote {
+    position: absolute;
+    top: calc(100% + 7px);
+    left: 50%;
+    padding: 2px 6px 3px;
+    border-radius: var(--radius-full);
+    background: var(--color-night);
+    color: var(--color-feuille);
+    font-size: 8.5px;
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+    translate: -50% 0;
+  }
+
+  /* En vol entre deux blocs, le cadre se tait : son étiquette passerait sur
+     le bloc qu'il vient de poser. */
+  .cadre em,
+  .cadre__cote {
+    transition: opacity 140ms;
+  }
+
+  .cadre.est-en-vol em,
+  .cadre.est-en-vol .cadre__cote {
+    opacity: 0;
+  }
+
+  .cadre i:nth-of-type(1) { top: -4.5px; right: -4.5px; }
+  .cadre i:nth-of-type(2) { right: -4.5px; bottom: -4.5px; }
+  .cadre i:nth-of-type(3) { bottom: -4.5px; left: -4.5px; }
+  .cadre i:nth-of-type(4) { top: 50%; right: -4.5px; margin-top: -3.5px; }
+
+  /* ── Le clic ── */
+  .pointeur,
+  .onde {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* La pointe de la flèche est en (3, 1.6) dans son dessin : la marge la
+     ramène sur le point visé. */
+  .pointeur {
+    width: 17px;
+    height: 17px;
+    margin: -1.7px 0 0 -3.2px;
+    fill: var(--color-feuille);
+    stroke: var(--color-night);
+    stroke-width: 1.2;
+    filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--color-night) 40%, transparent));
+    transform-origin: 3.2px 1.7px;
+  }
+
+  .onde {
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border: 1.5px solid color-mix(in srgb, var(--color-night) 60%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-night) 10%, transparent);
+  }
+
+  /* ── Le tableau de bord ── */
+  .tableau {
+    --u: 21px;
+    --g: 2px;
+    --col: 39px;
+    padding: 18px 16px 16px;
+  }
+
+  .etiquette {
+    display: block;
+    color: var(--color-ink-faint);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .direct {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .direct__point {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+  }
+
+  .direct__apres,
+  .direct[data-etat='cours'] .direct__avant {
+    display: none;
+  }
+
+  .direct[data-etat='cours'] .direct__apres {
+    display: inline;
+  }
+
+  .chiffre__ligne {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .chiffre__ligne b {
+    display: inline-block;
+    font-size: 50px;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  /* Ce que la journée a ajouté : n'existe que s'il y a quelque chose à dire. */
+  .plus {
+    padding: 4px 9px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-peche) 15%, transparent);
+    color: var(--color-peche);
+    font-size: 10.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    translate: 0 3px;
+    transition:
+      opacity 240ms,
+      translate 320ms var(--ease-out-expo);
+  }
+
+  .plus.est-visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  /* Les barres. L'échelle est vraie : une unité vaut une demande, un filet
+     toutes les deux, le zéro plus marqué. */
+  .barres {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    margin-top: 20px;
+  }
+
+  .barres__echelle {
+    position: relative;
+    height: calc(6 * (var(--u) + var(--g)));
+    color: var(--color-ink-faint);
+    font-size: 8.5px;
+    font-weight: 500;
+  }
+
+  .barres__echelle span {
+    position: absolute;
+    bottom: calc(var(--n) * (var(--u) + var(--g)));
+    left: 0;
+    line-height: 1;
+    translate: 0 50%;
+  }
+
+  .barres__vue {
+    position: relative;
+    width: calc(7 * var(--col));
+    overflow: hidden;
+  }
+
+  .barres__vue::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: calc(6 * (var(--u) + var(--g)));
+    border-top: 1px solid var(--sm-filet);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 26%, transparent);
+    background: linear-gradient(to top, var(--sm-filet) 1px, transparent 1px) bottom / 100%
+      calc(2 * (var(--u) + var(--g)));
+  }
+
+  .barres__piste {
+    position: relative;
+    display: flex;
+    width: max-content;
+  }
+
+  .colonne {
+    display: grid;
+    justify-items: center;
+    width: var(--col);
+  }
+
+  .colonne__pile {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--g);
+    width: 24px;
+    height: calc(6 * (var(--u) + var(--g)));
+    padding-bottom: 1px;
+  }
+
+  .unite {
+    flex-shrink: 0;
+    height: var(--u);
+    border: 1px solid transparent;
+    border-radius: 3.5px;
+    transform-origin: 50% 100%;
+    transition:
+      background-color 360ms,
+      border-color 240ms;
+  }
+
+  .unite.est-pleine {
+    background: color-mix(in srgb, var(--color-ink) 21%, transparent);
+  }
+
+  .colonne__jour {
+    margin-top: 7px;
+    color: var(--color-ink-faint);
+    font-size: 9px;
+    font-weight: 500;
+    line-height: 1.2;
+    transition: color 360ms;
+  }
+
+  /* Aujourd'hui, c'est la septième colonne : la seule en pêche. La huitième
+     attend hors de la vue et lui ressemble, vide. Dans les deux, la prochaine
+     unité est annoncée par un emplacement en pointillé. */
+  .colonne:nth-child(7):not(.est-hier) .unite.est-pleine {
+    background: var(--color-peche);
+  }
+
+  .colonne:nth-child(7):not(.est-hier) .colonne__jour,
+  .colonne:nth-child(8) .colonne__jour {
+    color: var(--color-ink);
+    font-weight: 650;
+  }
+
+  .colonne:nth-child(n + 7):not(.est-hier) .unite:not(.est-pleine):first-child,
+  .colonne:nth-child(n + 7):not(.est-hier) .unite.est-pleine + .unite:not(.est-pleine) {
+    border: 1px dashed color-mix(in srgb, var(--color-peche) 55%, transparent);
+  }
+
+  /* Le raccord entre deux jours se fait d'un coup, sans transition. */
+  .barres.sans-transition .unite,
+  .barres.sans-transition .colonne__jour {
+    transition: none;
+  }
+
+  .stats {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 16px;
+    padding-top: 15px;
+    border-top: 1px solid var(--sm-filet);
+  }
+
+  .stat b {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .stat--visites {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    gap: 12px;
+    padding-right: 14px;
+    border-right: 1px solid var(--sm-filet);
+  }
+
+  .stat--visites > div {
+    min-width: 34px;
+  }
+
+  .stat--taux {
+    min-width: 64px;
+  }
+
+  /* La courbe des visites : une ligne brisée qui a ses points, le dernier en
+     pêche. Non tracée, il n'en reste que le sol. */
+  .courbe {
+    flex-shrink: 0;
+    width: 144px;
+    height: 44px;
+    overflow: visible;
+  }
+
+  .courbe__sol {
+    stroke: color-mix(in srgb, var(--color-ink) 16%, transparent);
+    stroke-width: 1;
+  }
+
+  .courbe__trait {
+    stroke: var(--color-ink-mid);
+    stroke-width: 1.4;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 420ms var(--ease-out-quint);
+  }
+
+  .courbe__point {
+    fill: var(--color-night-deep);
+    stroke: var(--color-ink-mid);
+    stroke-width: 1.3;
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+
+  .courbe__point:last-child {
+    fill: var(--color-peche);
+    stroke: var(--color-peche);
+  }
+
+  .courbe.est-tracee .courbe__point {
+    opacity: 1;
+  }
+
+  .courbe.est-tracee .courbe__trait {
+    stroke-dashoffset: 0;
+  }
+
+  /* ── Le plan étroit ──
+     La page perd ses logos et son second bouton, le tableau de bord sa courbe
+     des visites : il reste un titre, un bouton, une preuve, et de l'autre côté
+     le nombre, les barres, le taux. */
+  @container sm (max-width: 519.98px) {
+    .poste--page {
+      top: 44px;
+      left: 10px;
+      width: 152px;
+    }
+
+    .poste--tableau {
+      top: 44px;
+      left: 190px;
+      width: 160px;
+    }
+
+    .port--bouton { top: 126px; right: -5px; }
+    .port--tableau { top: 55px; left: -5px; }
+
+    .adresse {
+      gap: 3px;
+      height: 16px;
+      padding: 0 6px 0 5px;
+      font-size: 8.5px;
+    }
+
+    .adresse svg {
+      width: 9px;
+      height: 9px;
+    }
+
+    .adresse__chemin {
+      display: none;
+    }
+
+    .page {
+      padding: 10px 10px 13px;
+    }
+
+    .page::before {
+      inset: 0 10px;
+    }
+
+    .page__entete {
+      gap: 5px;
+      height: 9px;
+      margin-bottom: 14px;
+    }
+
+    .page__marque {
+      width: 9px;
+      height: 9px;
+      border-radius: 3px;
+    }
+
+    .page__menu {
+      gap: 4px;
+    }
+
+    .page__menu i {
+      width: 10px;
+      height: 2px;
+    }
+
+    .page__acces {
+      width: 17px;
+      height: 8px;
+    }
+
+    .bloc--titre {
+      gap: 5px;
+    }
+
+    .gros {
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .fin {
+      height: 3px;
+    }
+
+    .fin--un { margin-top: 3px; }
+    .fin--deux { margin-top: -1px; }
+
+    .bloc--bouton {
+      margin-top: 12px;
+    }
+
+    .bouton {
+      gap: 4px;
+      height: 23px;
+      padding: 0 8px 0 9px;
+      font-size: 9px;
+    }
+
+    .bouton svg {
+      width: 9px;
+      height: 9px;
+    }
+
+    .bloc--preuve {
+      gap: 4px;
+      margin-top: 13px;
+      font-size: 9px;
+    }
+
+    .visages i {
+      width: 14px;
+      height: 14px;
+      border-width: 1.5px;
+    }
+
+    .visages i + i {
+      margin-left: -5px;
+    }
+
+    .etoile {
+      width: 9px;
+      height: 9px;
+    }
+
+    .preuve__texte {
+      width: 26px;
+      height: 3px;
+    }
+
+    .cadre em {
+      padding: 1.5px 4px 2px;
+      font-size: 7.5px;
+    }
+
+    .cadre i {
+      width: 6px;
+      height: 6px;
+    }
+
+    .cadre i:nth-of-type(1) { top: -4px; right: -4px; }
+    .cadre i:nth-of-type(2) { right: -4px; bottom: -4px; }
+    .cadre i:nth-of-type(3) { bottom: -4px; left: -4px; }
+    .cadre i:nth-of-type(4) { right: -4px; margin-top: -3px; }
+
+    .pointeur {
+      width: 13px;
+      height: 13px;
+      margin: -1.3px 0 0 -2.4px;
+      transform-origin: 2.4px 1.3px;
+    }
+
+    .onde {
+      width: 30px;
+      height: 30px;
+      margin: -15px 0 0 -15px;
+    }
+
+    .tableau {
+      --u: 9px;
+      --g: 1.5px;
+      --col: 19px;
+      padding: 9px 8px 9px;
+    }
+
+    .etiquette {
+      font-size: 6.5px;
+    }
+
+    .chiffre__ligne {
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chiffre__ligne b {
+      font-size: 26px;
+    }
+
+    .plus {
+      padding: 2px 6px;
+      font-size: 8px;
+    }
+
+    .barres {
+      grid-template-columns: 11px minmax(0, 1fr);
+      margin-top: 10px;
+    }
+
+    .barres__echelle {
+      font-size: 6.5px;
+    }
+
+    .colonne__pile {
+      width: 12px;
+    }
+
+    .unite {
+      border-radius: 2.5px;
+    }
+
+    .colonne__jour {
+      margin-top: 4px;
+      font-size: 7px;
+    }
+
+    .stats {
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .stat--taux {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .stat b {
+      margin-top: 0;
+      font-size: 13px;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
+   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
+   * cours, une boucle remplacée se défait d'elle-même.
+   */
+  import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
+  import type { Cadre, Pt } from '../../lib/metiers/scene';
+
+  interface PageRecit {
+    chemin: string;
+    bouton: string;
+    centre: boolean;
+    titre: number[];
+    texte: number[];
+  }
+
+  interface JourRecit {
+    clics: number;
+    visites: number;
+    taux: string[];
+    ligne: string;
+    points: Pt[];
+  }
+
+  interface Recit {
+    pages: PageRecit[];
+    jours: JourRecit[];
+    historique: number[];
+    deja: number;
+    lettres: string[];
+    depart: number;
+  }
+
+  /* Le récit arrive du balisage en JSON : c'est une frontière, on vérifie sa
+     forme avant de s'en servir. */
+  const estObjet = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
+  const estNombres = (v: unknown): v is number[] => Array.isArray(v) && v.every((n) => typeof n === 'number');
+  const estTextes = (v: unknown): v is string[] => Array.isArray(v) && v.every((t) => typeof t === 'string');
+  const estPoint = (v: unknown): v is Pt => estObjet(v) && typeof v.x === 'number' && typeof v.y === 'number';
+
+  const estPage = (v: unknown): v is PageRecit =>
+    estObjet(v) &&
+    typeof v.chemin === 'string' &&
+    typeof v.bouton === 'string' &&
+    typeof v.centre === 'boolean' &&
+    estNombres(v.titre) &&
+    estNombres(v.texte);
+
+  const estJour = (v: unknown): v is JourRecit =>
+    estObjet(v) &&
+    typeof v.clics === 'number' &&
+    typeof v.visites === 'number' &&
+    estTextes(v.taux) &&
+    v.taux.length === v.clics + 1 &&
+    typeof v.ligne === 'string' &&
+    Array.isArray(v.points) &&
+    v.points.every(estPoint);
+
+  const lireRecit = (brut: string | undefined): Recit => {
+    const lu: unknown = JSON.parse(brut ?? 'null');
+    const valide =
+      estObjet(lu) &&
+      Array.isArray(lu.pages) &&
+      lu.pages.length > 0 &&
+      lu.pages.every(estPage) &&
+      Array.isArray(lu.jours) &&
+      lu.jours.length > 0 &&
+      lu.jours.every(estJour) &&
+      estNombres(lu.historique) &&
+      typeof lu.deja === 'number' &&
+      estTextes(lu.lettres) &&
+      lu.lettres.length > 0 &&
+      typeof lu.depart === 'number';
+    if (!valide) throw new Error('Scène Sites : `data-recit` est illisible');
+    return lu as unknown as Recit;
+  };
+
+  const formatEntier = new Intl.NumberFormat('fr-FR');
+  const entier = (n: number): string => formatEntier.format(Math.round(n));
+
+  /* Ce que le cadre de sélection laisse autour du bloc qu'il pose. */
+  const MARGE_CADRE = 6;
+  /* La bande, quand elle entre dans un port ou en sort : un tiret. */
+  const TIRET = { w: 16, h: 6 };
+  /* Le départ de chaque clic, en ms : de plus en plus rapprochés. */
+  const DEPARTS = [0, 1050, 1800, 2350, 2750];
+  /* Où chaque visiteur appuie sur le bouton (en part de sa largeur), et d'où
+     arrive son pointeur (en pixels du plan) : ce n'est pas le même deux fois. */
+  const APPUIS = [0.34, 0.66, 0.48, 0.78, 0.24];
+  const ARRIVEES: Pt[] = [
+    { x: 26, y: 24 },
+    { x: -20, y: 28 },
+    { x: 32, y: 10 },
+    { x: 6, y: 32 },
+    { x: -28, y: 16 },
+  ];
+
+  const tiretAu = (p: Pt): Cadre => ({ x: p.x - TIRET.w / 2, y: p.y - TIRET.h / 2, w: TIRET.w, h: TIRET.h });
+  const vers = (p: Pt, echelle = 1): string => `translate(${p.x}px, ${p.y}px) scale(${echelle})`;
+
+  monterScenes('[data-scene-sites]', (s) => {
+    const recit = lireRecit(s.racine.dataset.recit);
+
+    const elPage = s.un('[data-page]');
+    const elChemin = s.un('[data-chemin]');
+    const elLibelle = s.un('[data-libelle]');
+    const bouton = s.un('[data-bouton]');
+    const blocs = s.tous('[data-bloc]');
+    const cadre = s.un('[data-cadre]');
+    const nomCadre = s.un('[data-cadre-nom]');
+    const coteCadre = s.un('[data-cadre-cote]');
+
+    const barres = s.un('[data-barres]');
+    const piste = s.un('[data-piste]');
+    const colonnes = s.tous('[data-colonne]');
+    const piles = colonnes.map((colonne) => [...colonne.querySelectorAll<HTMLElement>('.unite')]);
+    const lettres = colonnes.map((colonne) => colonne.querySelector<HTMLElement>('[data-jour]'));
+    const elDemandes = s.un('[data-demandes]');
+    const elPlus = s.un('[data-plus]');
+    const elPlusN = s.un('[data-plus-n]');
+    const elVisites = s.un('[data-visites]');
+    const elTaux = s.un('[data-taux]');
+    const statVisites = s.un('[data-stat-visites]');
+    const courbe = s.un<SVGSVGElement>('[data-courbe]');
+    const traitCourbe = s.un<SVGPathElement>('[data-courbe-trait]');
+    const pointsCourbe = s.tous<SVGCircleElement>('[data-courbe-point]');
+    const elPuceDemandes = s.un('[data-puce-demandes]');
+    const elPuceTaux = s.un('[data-puce-taux]');
+
+    const etats = {
+      page: s.un('[data-etat-de="page"]'),
+      tableau: s.un('[data-etat-de="tableau"]'),
+    };
+    const noeud = s.un('[data-sm-noeud="demande"]');
+    const pointeurs = s.tous<SVGSVGElement>('.pointeur');
+    const ondes = s.tous('.onde');
+    const bandes = s.tous('.sm-bande');
+    const grains = s.tous('.sm-grain');
+
+    /* L'état de la scène. `rang` choisit la page et la journée ; `historique`
+       et `depart` glissent d'un jour à chaque boucle ; `deja` est le total des
+       demandes avant la journée en cours. */
+    let rang = 0;
+    let historique = [...recit.historique];
+    let depart = recit.depart;
+    let deja = recit.deja;
+
+    /* Les listes tournent ; `lireRecit` a vérifié qu'aucune n'est vide. */
+    const auRang = <T,>(liste: T[]): T => {
+      const element = liste[rang % liste.length];
+      if (element === undefined) throw new Error('Scène Sites : le récit est vide');
+      return element;
+    };
+    const pageCourante = (): PageRecit => auRang(recit.pages);
+    const jourCourant = (): JourRecit => auRang(recit.jours);
+    /* La colonne d'aujourd'hui : celle qui suit l'historique. */
+    const AUJOURDHUI = historique.length;
+
+    /* La page et la journée du moment, écrites dans le balisage. */
+    const charger = () => {
+      const page = pageCourante();
+      const jour = jourCourant();
+      elChemin.textContent = page.chemin;
+      elLibelle.textContent = page.bouton;
+      elPage.classList.toggle('est-centree', page.centre);
+      elPage.style.setProperty('--t1', `${page.titre[0] ?? 90}%`);
+      elPage.style.setProperty('--t2', `${page.titre[1] ?? 62}%`);
+      elPage.style.setProperty('--p1', `${page.texte[0] ?? 76}%`);
+      elPage.style.setProperty('--p2', `${page.texte[1] ?? 48}%`);
+      traitCourbe.setAttribute('d', jour.ligne);
+      pointsCourbe.forEach((point, i) => {
+        const p = jour.points[i];
+        if (!p) return;
+        point.setAttribute('cx', String(p.x));
+        point.setAttribute('cy', String(p.y));
+      });
+    };
+
+    /* Les barres : l'historique, puis aujourd'hui, puis la colonne de réserve. */
+    const poserBarres = (aujourdhui: number) => {
+      colonnes.forEach((colonne, i) => {
+        const valeur = i < AUJOURDHUI ? (historique[i] ?? 0) : i === AUJOURDHUI ? aujourdhui : 0;
+        piles[i]?.forEach((unite, n) => unite.classList.toggle('est-pleine', n < valeur));
+        colonne.classList.remove('est-hier');
+        const lettre = lettres[i];
+        if (lettre) lettre.textContent = recit.lettres[(depart + i) % recit.lettres.length] ?? '';
+      });
+    };
+
+    /* Les nombres, après `n` demandes dans la journée. Tant que les visites
+       ne sont pas arrivées, il n'y a pas de taux à calculer. */
+    const poserNombres = (n: number, visites: boolean) => {
+      const jour = jourCourant();
+      const taux = visites ? (jour.taux[n] ?? '—') : '—';
+      elDemandes.textContent = entier(deja + n);
+      elPuceDemandes.textContent = entier(deja + n);
+      elPlusN.textContent = String(n);
+      elPlus.classList.toggle('est-visible', n > 0);
+      elVisites.textContent = visites ? entier(jour.visites) : '0';
+      elTaux.textContent = taux;
+      elPuceTaux.textContent = taux;
+    };
+
+    /* Ce qu'une boucle interrompue peut laisser derrière elle. */
+    const ranger = () => {
+      cadre.classList.remove('est-visible', 'est-en-vol');
+      barres.classList.remove('sans-transition');
+    };
+
+    /* Le repos : une page vide, en chantier, et un tableau de bord qui attend
+       la journée. */
+    const repos = () => {
+      s.racine.classList.remove('est-abouti');
+      s.eteindre();
+      ranger();
+      charger();
+      blocs.forEach((bloc) => bloc.classList.remove('est-pose'));
+      elPage.classList.add('est-en-chantier');
+      etats.page.dataset.etat = 'attente';
+      etats.tableau.dataset.etat = 'attente';
+      courbe.classList.remove('est-tracee');
+      poserBarres(0);
+      poserNombres(0, false);
+    };
+
+    /* L'image fixe : la page est en ligne, la journée est passée. C'est aussi
+       ce que le HTML rend sans script. */
+    const figer = () => {
+      const jour = jourCourant();
+      ranger();
+      charger();
+      blocs.forEach((bloc) => bloc.classList.add('est-pose'));
+      elPage.classList.remove('est-en-chantier');
+      etats.page.dataset.etat = 'fait';
+      etats.tableau.dataset.etat = 'cours';
+      courbe.classList.add('est-tracee');
+      poserBarres(jour.clics);
+      poserNombres(jour.clics, true);
+      s.allumer('demande', true);
+      s.racine.classList.add('est-abouti');
+    };
+
+    const placerCadre = (c: Cadre) => {
+      Object.assign(cadre.style, { left: `${c.x}px`, top: `${c.y}px`, width: `${c.w}px`, height: `${c.h}px` });
+    };
+
+    const autour = (bloc: HTMLElement): Cadre => {
+      const c = s.cadreDe(bloc);
+      return { x: c.x - MARGE_CADRE, y: c.y - MARGE_CADRE, w: c.w + MARGE_CADRE * 2, h: c.h + MARGE_CADRE * 2 };
+    };
+
+    const enPixels = (c: Cadre): Keyframe => ({
+      left: `${c.x}px`,
+      top: `${c.y}px`,
+      width: `${c.w}px`,
+      height: `${c.h}px`,
+    });
+
+    /* Le cadre de sélection vient se poser, puis le bloc se dessine dedans,
+       de gauche à droite. Le premier cadre s'ouvre sur place ; les suivants
+       glissent depuis le bloc d'avant et prennent sa nouvelle taille. */
+    const poser = async (bloc: HTMLElement, avant: Cadre | null): Promise<Cadre> => {
+      const cible = autour(bloc);
+      const nom = bloc.dataset.nom ?? '';
+      const cote = `${bloc.offsetWidth} × ${bloc.offsetHeight}`;
+      placerCadre(cible);
+      cadre.classList.add('est-visible');
+      if (avant) {
+        cadre.classList.add('est-en-vol');
+        await s.animer(cadre, [enPixels(avant), enPixels(cible)], {
+          duration: 340,
+          easing: 'cubic-bezier(0.45, 0, 0.15, 1)',
+        });
+        /* Le nom et la cote changent à l'arrivée, quand le cadre reparle. */
+        nomCadre.textContent = nom;
+        coteCadre.textContent = cote;
+        cadre.classList.remove('est-en-vol');
+      } else {
+        nomCadre.textContent = nom;
+        coteCadre.textContent = cote;
+        cadre.style.transformOrigin = '0 0';
+        await s.animer(
+          cadre,
+          [
+            { transform: 'scale(0.72, 0.4)', opacity: 0 },
+            { transform: 'none', opacity: 1 },
+          ],
+          { duration: 300, easing: EXPO },
+        );
+      }
+      bloc.classList.add('est-pose');
+      await s.animer(
+        bloc,
+        { clipPath: ['inset(-8px 100% -8px -8px)', 'inset(-8px -8px -8px -8px)'] },
+        { duration: 360, easing: EXPO },
+      );
+      await s.attendre(110);
+      return cible;
+    };
+
+    /* Les visites du jour : la courbe se trace, ses points se posent un à un,
+       le nombre monte. */
+    const recevoirVisites = async () => {
+      const jour = jourCourant();
+      if (s.affiches([statVisites]).length === 0) return;
+      courbe.classList.add('est-tracee');
+      const duree = 760;
+      pointsCourbe.forEach((point, i) => {
+        s.jouer(point, [{ opacity: 0, r: 0 }, { opacity: 1, r: 2.1 }], {
+          duration: 260,
+          delay: (duree * i) / Math.max(1, pointsCourbe.length - 1),
+          fill: 'backwards',
+          easing: EXPO,
+        });
+      });
+      await Promise.all([
+        s.animer(traitCourbe, { strokeDashoffset: [1, 0] }, { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' }),
+        s.compter(elVisites, 0, jour.visites, { pas: 12, intervalle: 55, format: entier }),
+      ]);
+    };
+
+    /* Un clic : le pointeur d'un visiteur arrive sur le bouton et appuie, la
+       demande part par le fil, et devient une unité de plus sur la barre du
+       jour. Les nombres suivent : une demande de plus, un taux recalculé. */
+    const cliquer = async (i: number) => {
+      const jour = jourCourant();
+      const pointeur = pointeurs[i];
+      const onde = ondes[i];
+      const bande = bandes[i];
+      const grain = grains[i];
+      const unite = piles[AUJOURDHUI]?.[i];
+      const appui = s.lieu(bouton, APPUIS[i] ?? 0.5, 0.56);
+      const ecart = ARRIVEES[i] ?? { x: 24, y: 24 };
+      if (!pointeur || !onde || !bande || !grain || !unite) return;
+      /* Sur le plan étroit, tout est plus près : le pointeur vient de moins
+         loin. */
+      const k = s.etroit ? 0.6 : 1;
+      const loin = { x: appui.x + ecart.x * k, y: appui.y + ecart.y * k };
+
+      await s.animer(
+        pointeur,
+        [
+          { transform: vers(loin), opacity: 0 },
+          { opacity: 1, offset: 0.45 },
+          { transform: vers(appui), opacity: 1 },
+        ],
+        { duration: 320, easing: EXPO },
+      );
+
+      /* L'appui : le bouton s'enfonce, le pointeur aussi, une onde s'ouvre. */
+      s.jouer(bouton, [{ transform: 'none' }, { transform: 'scale(0.95)', offset: 0.35 }, { transform: 'none' }], {
+        duration: 320,
+        easing: 'ease-out',
+      });
+      s.jouer(
+        pointeur,
+        [
+          { transform: vers(appui), opacity: 1 },
+          { transform: vers(appui, 0.8), opacity: 1, offset: 0.3 },
+          { transform: vers(appui), opacity: 1, offset: 0.62 },
+          { transform: vers(appui), opacity: 0 },
+        ],
+        { duration: 520, easing: 'ease-out' },
+      );
+      s.jouer(
+        onde,
+        [
+          { transform: vers(appui, 0.25), opacity: 0.9 },
+          { transform: vers(appui, 1), opacity: 0 },
+        ],
+        { duration: 620, easing: EXPO },
+      );
+      await s.attendre(120);
+
+      /* Le passage par le fil, avec les temps du socle (`passer`) : ici la
+         bande naît au point d'appui et se pose sur une unité de barre, deux
+         rectangles exacts que `passer` ne sait pas recevoir. Sans pose au
+         départ, elle n'apparaît qu'en s'éloignant : pêche sur pêche, elle
+         masquerait le libellé du bouton. */
+      const depuis: Cadre = { x: appui.x - 15, y: appui.y - 5, w: 30, h: 10 };
+      s.enMarge(
+        s.voler(bande, depuis, tiretAu(s.lieu(s.port('bouton'))), {
+          duree: 460,
+          arrivee: 0.9,
+          easing: ELAN,
+          eclot: true,
+        }),
+      );
+      await s.attendre(380);
+      s.enMarge(s.courir(grain, 'demande'));
+      await s.attendre(210);
+      s.jouer(noeud, [{ scale: 1 }, { scale: 1.24, offset: 0.35 }, { scale: 1 }], { duration: 320, easing: 'ease-out' });
+      await s.attendre(240);
+      s.port('tableau').classList.add('est-actif');
+      s.enMarge(
+        s.voler(bande, tiretAu(s.lieu(s.port('tableau'))), s.cadreDe(unite), {
+          duree: 620,
+          pose: 0.06,
+          arrivee: 0.64,
+          easing: EXPO,
+          eclot: true,
+        }),
+      );
+      await s.attendre(380);
+
+      unite.classList.add('est-pleine');
+      s.jouer(unite, [{ transform: 'scaleY(0.35)' }, { transform: 'none' }], { duration: 380, easing: EXPO });
+      const n = i + 1;
+      const taux = jour.taux[n] ?? '—';
+      s.tictac(elDemandes, entier(deja + n));
+      s.tictac(elPuceDemandes, entier(deja + n));
+      elPlusN.textContent = String(n);
+      elPlus.classList.add('est-visible');
+      await s.attendre(140);
+      s.tictac(elTaux, taux);
+      s.tictac(elPuceTaux, taux);
+    };
+
+    async function tour() {
+      const jour = jourCourant();
+      const visibles = s.affiches(blocs);
+
+      await s.attendre(320);
+
+      /* 1. La page se monte, bloc par bloc. */
+      let avant: Cadre | null = null;
+      for (const bloc of visibles) avant = await poser(bloc, avant);
+      await s.animer(cadre, { opacity: [1, 0] }, { duration: 200 });
+      cadre.classList.remove('est-visible');
+
+      /* 2. Elle passe en ligne : les repères s'effacent, les visites du jour
+         arrivent. */
+      elPage.classList.remove('est-en-chantier');
+      s.basculer(etats.page);
+      await s.attendre(400);
+      s.basculer(etats.tableau, 'cours');
+      await recevoirVisites();
+      poserNombres(0, true);
+      s.tictac(elTaux, jour.taux[0] ?? '—');
+      s.tictac(elPuceTaux, jour.taux[0] ?? '—');
+      await s.attendre(360);
+
+      /* 3. Les clics, de plus en plus rapprochés. */
+      s.allumer('demande');
+      await Promise.all(
+        Array.from({ length: jour.clics }, async (_, i) => {
+          await s.attendre(DEPARTS[i] ?? i * 700);
+          await cliquer(i);
+        }),
+      );
+      s.racine.classList.add('est-abouti');
+
+      /* Le temps de lire l'image : la page tourne, le tableau de bord le dit. */
+      await s.attendre(2500);
+
+      /* 4. On change de jour : la page se défait, les barres glissent d'une
+         colonne (aujourd'hui devient hier), la journée repart de zéro. */
+      s.racine.classList.remove('est-abouti');
+      s.eteindre();
+      etats.page.dataset.etat = 'attente';
+      etats.tableau.dataset.etat = 'attente';
+      elPlus.classList.remove('est-visible');
+      courbe.classList.remove('est-tracee');
+      elVisites.textContent = '0';
+      elTaux.textContent = '—';
+      elPuceTaux.textContent = '—';
+      colonnes[AUJOURDHUI]?.classList.add('est-hier');
+      const cran = (colonnes[1]?.offsetLeft ?? 0) - (colonnes[0]?.offsetLeft ?? 0);
+      const GLISSE = 620;
+      const premiere = colonnes[0];
+      /* Le jour qui sort s'efface en partant, et reste effacé jusqu'au raccord. */
+      if (premiere) {
+        s.jouer(premiere, [{ opacity: 1 }, { opacity: 0, offset: 0.4 }, { opacity: 0 }], { duration: GLISSE });
+      }
+      await Promise.all([
+        s.animer(piste, { transform: ['translateX(0)', `translateX(${-cran}px)`] }, { duration: GLISSE, easing: EXPO }),
+        ...[...visibles].reverse().map(async (bloc, i) => {
+          await s.attendre(i * 55);
+          await s.animer(
+            bloc,
+            [
+              { opacity: 1, transform: 'none' },
+              { opacity: 0, transform: 'translateY(5px)' },
+            ],
+            { duration: 240, easing: ELAN },
+          );
+          bloc.classList.remove('est-pose');
+        }),
+      ]);
+
+      /* Le raccord, invisible : chaque colonne prend la valeur de sa voisine
+         dans l'image même où la piste revient à sa place. La page suivante et
+         sa journée sont chargées, la page est de nouveau en chantier. */
+      historique = [...historique.slice(1), jour.clics];
+      depart += 1;
+      deja += jour.clics;
+      rang += 1;
+      barres.classList.add('sans-transition');
+      charger();
+      poserBarres(0);
+      poserNombres(0, false);
+      /* La lecture force le rendu sans transition avant de les rétablir. */
+      void barres.offsetWidth;
+      barres.classList.remove('sans-transition');
+      elPage.classList.add('est-en-chantier');
+      await s.attendre(160);
+    }
+
+    return { figer, repos, tour };
+  });
+</script>

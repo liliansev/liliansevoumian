@@ -1,0 +1,1313 @@
+---
+/*
+ * scene-formations — la scène du métier Formations : « J’apprends à vos
+ * équipes à le faire elles-mêmes. »
+ *
+ * Deux fenêtres du même outil d'automatisation, côte à côte : celle du
+ * formateur à gauche, celle de l'équipe à droite. Le même scénario de trois
+ * blocs (un déclencheur, une étape, une action) s'y construit deux fois, et
+ * c'est la différence entre les deux fois qui raconte le métier.
+ *
+ * La boucle, en trois temps, un seul mouvement à la fois :
+ *   1. il montre : son curseur prend les trois blocs dans la réserve et les
+ *      pose l'un après l'autre, vite, ils se relient ;
+ *   2. l'équipe refait : chaque bloc de gauche s'allume, un grain passe d'une
+ *      fenêtre à l'autre (c'est le savoir-faire qui passe, pas le scénario),
+ *      et l'équipe pose le sien, plus lentement. Au deuxième, elle vise le
+ *      mauvais emplacement : il se dérobe, le formateur remontre, elle corrige ;
+ *   3. l'équipe fait seule : le formateur s'en va, les fils se débranchent,
+ *      l'équipe lance son scénario et il tourne, deux fois, sans personne.
+ *
+ * Le panneau, les fenêtres, les fils entre fenêtres, les ports, le grain et
+ * les pastilles viennent du socle (`scene-metier.css`, `lib/metiers/scene.ts`).
+ * Ce composant écrit ce que le socle n'a pas : le bloc de scénario et son
+ * emplacement vide, le lien entre deux blocs, la réserve, le lanceur, et les
+ * deux curseurs nommés.
+ *
+ * Sans script ou en mouvement réduit, la scène est une image fixe : l'équipe
+ * autonome, son scénario lancé, le formateur parti.
+ *
+ * Libellés et nombres sont inventés pour la scène. Aucun nom de marque : les
+ * pictogrammes sont dessinés ici.
+ */
+import './scene-metier.css';
+
+interface Bloc {
+  genre: string;
+  titre: string;
+  /* Le titre du plan étroit, où la place est comptée. */
+  court: string;
+  /* Le pictogramme, tracé dans un carré de 16. */
+  trace: string;
+  /* La longueur de la barre de réglage, en pour cent. */
+  l: number;
+}
+
+/* Un exemple volontairement éloigné du bon de commande : celui-là appartient à
+   la scène du récit, en haut de la page. */
+const blocs: Bloc[] = [
+  { genre: 'Déclencheur', titre: 'Nouvelle demande', court: 'Demande', trace: 'M4 3.5h8v9.5H4zM6 6.2h4M6 8.4h4M6 10.6h2.4', l: 58 },
+  {
+    genre: 'Étape',
+    titre: 'Trier la demande',
+    court: 'Trier',
+    trace: 'M3 4h10L9.4 8.4v3.4l-2.8 1.3V8.4z',
+    l: 76,
+  },
+  {
+    genre: 'Action',
+    titre: 'Prévenir l’équipe',
+    court: 'Prévenir',
+    trace: 'M5 11V7.6a3 3 0 0 1 6 0V11l1 1.2H4zM7 13.3a1.1 1.1 0 0 0 2 0',
+    l: 46,
+  },
+];
+
+interface Poste {
+  cle: 'formateur' | 'equipe';
+  nom: string;
+  info: string;
+  icone: string;
+  /* L'état de l'image fixe, et sa valeur pour la pastille du socle. */
+  etat: string;
+  valeur: 'attente' | 'fait';
+  /* Le scénario de ce poste a-t-il tourné, et combien de fois. */
+  lance: boolean;
+  executions: number;
+  /* Le nom de ses ports, côté de l'autre fenêtre. */
+  port: 'montre' | 'refait';
+  /* Ce que dit son curseur. */
+  parole: string;
+}
+
+const postes: Poste[] = [
+  {
+    cle: 'formateur',
+    nom: 'Formateur',
+    info: 'Démonstration',
+    icone: 'M2.5 3.5h11v7h-11zM8 10.5V13M5.5 13h5',
+    etat: 'Parti',
+    valeur: 'attente',
+    lance: false,
+    executions: 0,
+    port: 'montre',
+    parole: 'Je montre',
+  },
+  {
+    cle: 'equipe',
+    nom: 'Votre équipe',
+    info: 'Atelier',
+    icone:
+      'M6 7.3a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM2.6 12.6c0-1.9 1.5-3.2 3.4-3.2s3.4 1.3 3.4 3.2M10.4 7.2a1.9 1.9 0 0 0 0-3.8M11.3 9.5c1.3.4 2.1 1.5 2.1 3.1',
+    etat: 'Autonome',
+    valeur: 'fait',
+    lance: true,
+    executions: 2,
+    port: 'refait',
+    parole: 'À vous',
+  },
+];
+
+const COCHE = 'M3.5 8.5l3 3 6-6.5';
+const LECTURE = 'M5.6 3.9v8.2l6.6-4.1z';
+const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
+---
+
+<div
+  class="sm est-abouti"
+  data-scene-formations
+  data-temps="3"
+  role="img"
+  aria-label="Le formateur construit un scénario d’automatisation en trois blocs, l’équipe le refait à son tour, puis le lance et le fait tourner seule : le formateur peut partir."
+>
+  <div class="sm-plan" aria-hidden="true">
+    <div class="sm-puces">
+      <span class="sm-puce">
+        <svg viewBox="0 0 16 16"><path d="M8 4.4C6.9 3.6 5.3 3.3 3 3.5v8.3c2.3-.2 3.9.1 5 .9 1.1-.8 2.7-1.1 5-.9V3.5c-2.3-.2-3.9.1-5 .9zM8 4.4v8.3" /></svg>
+        <span class="sm-puce__nom">Modules</span>
+        <b data-modules>3/3</b>
+      </span>
+      <span class="sm-puce sm-puce--peche">
+        <svg viewBox="0 0 16 16"><path d="M1.8 6.3 8 3.6l6.2 2.7L8 9 1.8 6.3zM4.6 7.6v2.6c1 .9 2.1 1.3 3.4 1.3s2.4-.4 3.4-1.3V7.6" /></svg>
+        <span class="sm-puce__nom">Équipe</span>
+        <b data-promesse>Autonome</b>
+      </span>
+    </div>
+
+    {/* Les fils du savoir-faire : un par bloc, de la fenêtre du formateur à
+       celle de l'équipe. Leur tracé est calculé par le moteur. */}
+    <svg class="sm-fils" viewBox="0 0 760 570">
+      {blocs.map((_, i) => (
+        <g class="sm-fil" data-sm-fil={`savoir-${i}`} data-de={`montre-${i}`} data-vers={`refait-${i}`} data-sens="h">
+          <path class="sm-fil__trait"></path>
+          <path class="sm-fil__flux"></path>
+        </g>
+      ))}
+    </svg>
+
+    {/* Les deux postes sortent du même gabarit : c'est le même outil. */}
+    {postes.map((poste) => (
+      <div class:list={['sm-poste', `poste--${poste.cle}`]} data-poste={poste.cle}>
+        <div class="sm-fenetre">
+          <div class="sm-fenetre__barre">
+            <span class="sm-fenetre__icone">
+              <svg viewBox="0 0 16 16"><path d={poste.icone} /></svg>
+            </span>
+            <span class="sm-fenetre__nom">{poste.nom}</span>
+            <span class="sm-fenetre__info">{poste.info}</span>
+            <span class="sm-etat" data-etat={poste.valeur}>{poste.etat}</span>
+          </div>
+
+          <div class="atelier">
+            {blocs.map((bloc, i) => (
+              <>
+                {i > 0 && (
+                  <span class:list={['lien', 'est-trace', poste.lance && 'est-actif']} data-lien>
+                    <i></i>
+                  </span>
+                )}
+                <div class:list={['bloc', 'est-pose', poste.lance && 'est-lance']} data-bloc>
+                  <span class="bloc__tuile" data-tuile>
+                    <svg viewBox="0 0 16 16"><path d={bloc.trace} /></svg>
+                  </span>
+                  <span class="bloc__texte">
+                    <em class="bloc__genre sm-large">{bloc.genre}</em>
+                    <b class="bloc__titre">
+                      <span class="sm-large">{bloc.titre}</span>
+                      <span class="sm-etroit">{bloc.court}</span>
+                    </b>
+                    <i class="sm-barre sm-large" style={`--l: ${bloc.l}%`}></i>
+                  </span>
+                  <span class="bloc__temoin" data-temoin>
+                    <svg viewBox="0 0 16 16"><path d={COCHE} /></svg>
+                  </span>
+                </div>
+              </>
+            ))}
+          </div>
+
+          <div class="pied">
+            <span class="reserve">
+              {blocs.map((bloc) => (
+                <span class="reserve__tuile est-pris" data-reserve>
+                  <svg viewBox="0 0 16 16"><path d={bloc.trace} /></svg>
+                </span>
+              ))}
+            </span>
+            <span class="marche">
+              <span class:list={['lanceur', poste.lance && 'est-lance']} data-lanceur>
+                <svg viewBox="0 0 16 16"><path d={LECTURE} /></svg>
+              </span>
+              <span class="sm-large">Exécutions</span>
+              <b data-compte>{poste.executions}</b>
+            </span>
+          </div>
+        </div>
+        {blocs.map((_, i) => (
+          <span class:list={['sm-port', `port--${poste.port}`]} data-sm-port={`${poste.port}-${i}`} style={`--rang: ${i}`}></span>
+        ))}
+      </div>
+    ))}
+
+    {/* Les deux curseurs : celui qui montre, celui qui refait. Chacun peut
+       porter une tuile de la réserve, le temps de la poser. */}
+    {postes.map((poste) => (
+      <span class:list={['curseur', `curseur--${poste.cle}`]} data-curseur={poste.cle}>
+        <span class="curseur__charge">
+          {blocs.map((bloc) => (
+            <svg viewBox="0 0 16 16"><path d={bloc.trace} /></svg>
+          ))}
+        </span>
+        <svg class="curseur__fleche" viewBox="0 0 16 16"><path d={FLECHE} /></svg>
+        <em class="curseur__nom">{poste.parole}</em>
+      </span>
+    ))}
+
+    <span class="sm-grain"></span>
+  </div>
+</div>
+
+<style>
+  /* Ce que le socle ne sait pas : la place des deux postes et de leurs ports,
+     et les pièces de l'outil (bloc, lien, réserve, lanceur, curseur).
+     Longueurs en pixels du plan. */
+
+  /* La lumière d'arrivée se lève sur la fenêtre de l'équipe. */
+  .sm {
+    --sm-lumiere: 74% 60%;
+  }
+
+  /* Au chargement, la scène passe de l'image fixe à son repos. Le socle coupe
+     alors les transitions, mais sa règle ne l'emporte pas sur celles, plus
+     précises, de ce composant : on la redit ici, pour ne pas voir l'outil de
+     l'équipe se vider sous les yeux. */
+  .sm:not([data-pret]) .sm-plan *,
+  .sm:not([data-pret]) .sm-plan *::before,
+  .sm:not([data-pret]) .sm-plan *::after {
+    transition: none !important;
+  }
+
+  .sm-plan {
+    --h-barre: 34px;
+    --h-bloc: 76px;
+    --h-lien: 38px;
+    --h-pied: 52px;
+    --marge: 16px;
+    --c-tuile: 44px;
+    --p-bloc: 15px;
+    --r-port: 5.5px;
+    /* Le milieu du premier bloc, depuis le haut du poste : c'est là que sort
+       son port, les suivants sont un pas plus bas. */
+    --y-bloc: calc(1px + var(--h-barre) + var(--marge) + var(--h-bloc) / 2);
+    --pas: calc(var(--h-bloc) + var(--h-lien));
+  }
+
+  /* Décalés d'un cran : le formateur d'abord, l'équipe ensuite, plus bas. */
+  .poste--formateur {
+    top: 62px;
+    left: 24px;
+    width: 322px;
+  }
+
+  .poste--equipe {
+    top: 100px;
+    left: 414px;
+    width: 322px;
+  }
+
+  .sm-port {
+    top: calc(var(--y-bloc) + var(--rang) * var(--pas) - var(--r-port));
+    transition:
+      border-color 260ms,
+      background-color 260ms,
+      box-shadow 400ms var(--ease-out-quint),
+      opacity 600ms;
+  }
+
+  .port--montre { right: calc(-1 * var(--r-port)); }
+  .port--refait { left: calc(-1 * var(--r-port)); }
+
+  .sm-fils {
+    transition: opacity 600ms;
+  }
+
+  /* ── L'atelier : le canevas pointé de l'outil ── */
+  .atelier {
+    position: relative;
+    padding: var(--marge) 14px;
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--color-ink) 13%, transparent) 0.8px, transparent 1.4px);
+    background-size: 16px 16px;
+    background-position: 7px 7px;
+    transition: opacity 700ms var(--ease-out-quint);
+  }
+
+  /* ── Le bloc ──
+     Vide, c'est un emplacement en pointillé avec la place de sa tuile. Posé
+     (`est-pose`), il a son pictogramme, son nom, son réglage. Trois états en
+     pêche : attendu (l'équipe sait où poser), désigné (le formateur le
+     montre), lancé (le scénario l'a exécuté, sa coche se dessine). */
+  .bloc {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--c-tuile) minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+    height: var(--h-bloc);
+    padding-inline: var(--p-bloc) 14px;
+    border: 1px dashed color-mix(in srgb, var(--color-ink) 17%, transparent);
+    border-radius: 14px;
+    transition:
+      border-color 240ms,
+      background-color 240ms,
+      box-shadow 360ms var(--ease-out-quint);
+  }
+
+  .bloc__tuile {
+    display: grid;
+    place-items: center;
+    width: var(--c-tuile);
+    height: var(--c-tuile);
+    border: 1px dashed color-mix(in srgb, var(--color-ink) 17%, transparent);
+    border-radius: 12px;
+    transition:
+      border-color 240ms,
+      background-color 240ms;
+  }
+
+  .bloc__tuile svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--color-ink);
+    stroke-width: 1.25;
+    opacity: 0;
+    transition:
+      opacity 200ms,
+      stroke 240ms;
+  }
+
+  .bloc__texte {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+    opacity: 0;
+    transition: opacity 240ms;
+  }
+
+  .bloc__genre {
+    color: var(--color-ink-low);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .bloc__titre {
+    overflow: hidden;
+    color: var(--color-ink);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bloc__texte .sm-barre {
+    margin-top: 5px;
+    height: 4px;
+    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .bloc__temoin {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+    border-radius: var(--radius-full);
+    opacity: 0;
+    transition:
+      opacity 240ms,
+      border-color 240ms,
+      background-color 240ms;
+  }
+
+  .bloc__temoin svg {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-night);
+    stroke-width: 2.4;
+    opacity: 0;
+    scale: 0.4;
+    transition:
+      opacity 180ms,
+      scale 340ms var(--ease-out-expo);
+  }
+
+  .bloc.est-pose {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--color-ink) 14%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 7%, var(--color-night-deep));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 9%, transparent),
+      0 12px 20px -14px var(--color-night-deep);
+  }
+
+  .bloc.est-pose .bloc__tuile {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--color-ink) 15%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .bloc.est-pose .bloc__tuile svg,
+  .bloc.est-pose .bloc__texte,
+  .bloc.est-pose .bloc__temoin {
+    opacity: 1;
+  }
+
+  .bloc.est-attendu {
+    border-color: color-mix(in srgb, var(--color-peche) 72%, transparent);
+    background: color-mix(in srgb, var(--color-peche) 7%, transparent);
+  }
+
+  .bloc.est-attendu .bloc__tuile {
+    border-color: color-mix(in srgb, var(--color-peche) 72%, transparent);
+  }
+
+  /* Refusé : pas de rouge, un trait plein et gris le temps du geste. */
+  .bloc.est-refuse,
+  .bloc.est-refuse .bloc__tuile {
+    border-style: solid;
+    border-color: var(--color-ink-faint);
+  }
+
+  .bloc.est-designe {
+    border-color: var(--color-peche);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 9%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--color-peche) 18%, transparent);
+  }
+
+  .bloc.est-lance {
+    border-color: color-mix(in srgb, var(--color-peche) 52%, transparent);
+  }
+
+  /* Tout trait posé sur la pêche est en nuit. */
+  .bloc.est-designe .bloc__tuile,
+  .bloc.est-lance .bloc__tuile {
+    border-color: var(--color-peche);
+    background: var(--color-peche);
+  }
+
+  .bloc.est-designe .bloc__tuile svg,
+  .bloc.est-lance .bloc__tuile svg {
+    stroke: var(--color-night);
+  }
+
+  .bloc.est-lance .bloc__temoin {
+    border-color: var(--color-peche);
+    background: var(--color-peche);
+  }
+
+  .bloc.est-lance .bloc__temoin svg {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* ── Le lien entre deux blocs ──
+     Sous les tuiles, comme un rail. Pointillé tant que rien n'est relié ; son
+     trait plein se tire du haut vers le bas quand les deux blocs sont posés
+     (`est-trace`), et passe en pêche quand le scénario l'emprunte. */
+  .lien {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 2px;
+    height: var(--h-lien);
+    margin-left: calc(var(--p-bloc) + var(--c-tuile) / 2);
+    background: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-ink) 30%, transparent) 0 2px,
+      transparent 2px 6px
+    );
+  }
+
+  .lien i {
+    position: absolute;
+    inset: 0;
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--color-ink) 52%, var(--color-night-deep));
+    transform: scaleY(0);
+    transform-origin: 50% 0;
+    transition:
+      transform 340ms var(--ease-out-expo),
+      background-color 260ms;
+  }
+
+  .lien::before,
+  .lien::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 34%, var(--color-night-deep));
+    border-radius: var(--radius-full);
+    background: var(--color-night-deep);
+    transition:
+      border-color 260ms,
+      background-color 260ms;
+  }
+
+  .lien::before { top: -4px; }
+  .lien::after { bottom: -4px; }
+
+  .lien.est-trace i {
+    transform: scaleY(1);
+  }
+
+  .lien.est-trace::before,
+  .lien.est-trace::after {
+    border-color: color-mix(in srgb, var(--color-ink) 62%, var(--color-night-deep));
+  }
+
+  .lien.est-actif i {
+    background: var(--color-peche);
+  }
+
+  .lien.est-actif::before,
+  .lien.est-actif::after {
+    border-color: var(--color-peche);
+    background: var(--color-peche);
+  }
+
+  /* ── Le pied de l'outil : la réserve de blocs, et le lanceur ── */
+  .pied {
+    display: flex;
+    align-items: center;
+    height: var(--h-pied);
+    padding-inline: 14px;
+    border-top: 1px solid var(--sm-filet);
+    transition: opacity 700ms var(--ease-out-quint);
+  }
+
+  .reserve {
+    display: flex;
+    gap: 6px;
+  }
+
+  .reserve__tuile {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-ink) 7%, transparent);
+    transition:
+      opacity 240ms,
+      background-color 240ms;
+  }
+
+  .reserve__tuile svg {
+    width: 15px;
+    height: 15px;
+    stroke: var(--color-ink-mid);
+    stroke-width: 1.3;
+  }
+
+  /* Prise : il n'en reste que la place. */
+  .reserve__tuile.est-pris {
+    border-style: dashed;
+    background: transparent;
+  }
+
+  .reserve__tuile.est-pris svg {
+    opacity: 0.3;
+  }
+
+  .marche {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    color: var(--color-ink-low);
+    font-size: 10.5px;
+  }
+
+  .marche b {
+    display: inline-block;
+    min-width: 1ch;
+    color: var(--color-ink);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .lanceur {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+    border-radius: var(--radius-full);
+    transition:
+      border-color 240ms,
+      background-color 240ms,
+      box-shadow 420ms var(--ease-out-quint);
+  }
+
+  .lanceur svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .lanceur svg path {
+    fill: var(--color-ink-mid);
+    stroke: var(--color-ink-mid);
+    stroke-width: 1.2;
+    transition:
+      fill 240ms,
+      stroke 240ms;
+  }
+
+  .lanceur.est-lance {
+    border-color: var(--color-peche);
+    background: var(--color-peche);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-peche) 20%, transparent);
+  }
+
+  .lanceur.est-lance svg path {
+    fill: var(--color-night);
+    stroke: var(--color-night);
+  }
+
+  /* ── Le troisième temps : le formateur est parti ──
+     Sa fenêtre reste, éteinte : son nom et son état se lisent encore, le
+     reste s'efface. Les fils et les ports se débranchent avec lui. */
+  .sm-fenetre__icone,
+  .sm-fenetre__icone svg,
+  .sm-fenetre__nom {
+    transition:
+      background-color 500ms,
+      stroke 500ms,
+      color 500ms;
+  }
+
+  .sm[data-temps='3'] .poste--formateur .atelier,
+  .sm[data-temps='3'] .poste--formateur .pied {
+    opacity: 0.3;
+  }
+
+  .sm[data-temps='3'] .poste--formateur .sm-fenetre__icone {
+    background: color-mix(in srgb, var(--color-ink) 24%, var(--color-night-deep));
+  }
+
+  .sm[data-temps='3'] .poste--formateur .sm-fenetre__icone svg {
+    stroke: var(--color-ink-mid);
+  }
+
+  .sm[data-temps='3'] .poste--formateur .sm-fenetre__nom {
+    color: var(--color-ink-low);
+  }
+
+  .sm[data-temps='3'] .sm-fils {
+    opacity: 0.24;
+  }
+
+  .sm[data-temps='3'] .sm-port {
+    opacity: 0.36;
+  }
+
+  /* À l'arrivée, la fenêtre de l'équipe prend la lumière : un liseré pêche et
+     un halo, pendant que l'autre s'éteint. */
+  .poste--equipe .sm-fenetre {
+    transition:
+      border-color 700ms var(--ease-out-quint),
+      box-shadow 900ms var(--ease-out-quint);
+  }
+
+  .sm.est-abouti .poste--equipe .sm-fenetre {
+    border-color: color-mix(in srgb, var(--color-peche) 58%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+      0 0 0 4px color-mix(in srgb, var(--color-peche) 9%, transparent),
+      0 34px 70px -30px color-mix(in srgb, var(--color-peche) 46%, transparent),
+      0 12px 24px -16px var(--color-night-deep);
+  }
+
+  /* ── Les curseurs ──
+     L'origine de l'élément est la pointe de la flèche : le script le déplace
+     en pixels du plan. Le formateur est en pêche, c'est lui qui a le
+     savoir-faire ; l'équipe est en blanc, et c'est son scénario qui finira en
+     pêche. */
+  .curseur {
+    --c: var(--color-ink);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 260ms;
+  }
+
+  .curseur--formateur {
+    --c: var(--color-peche);
+  }
+
+  .curseur.est-la {
+    opacity: 1;
+  }
+
+  .curseur__fleche {
+    position: absolute;
+    top: -1.25px;
+    left: -1.25px;
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    filter: drop-shadow(0 2px 3px var(--color-night-deep));
+  }
+
+  .curseur__fleche path {
+    fill: var(--c);
+    stroke: var(--color-night-deep);
+    stroke-width: 1.1;
+  }
+
+  .curseur__nom {
+    position: absolute;
+    top: 16px;
+    left: 13px;
+    padding: 3px 8px;
+    border-radius: 3px 10px 10px 10px;
+    background: var(--c);
+    box-shadow: 0 6px 12px -6px var(--color-night-deep);
+    color: var(--color-night);
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Près du bord droit du plan, la parole passe de l'autre côté de la flèche :
+     elle en sortirait. */
+  .curseur.est-retourne .curseur__nom {
+    right: 3px;
+    left: auto;
+    border-radius: 10px 3px 10px 10px;
+  }
+
+  /* La tuile portée : centrée un peu au-dessus et à gauche de la pointe,
+     comme tenue par un coin. Le script vise en conséquence. */
+  .curseur__charge {
+    position: absolute;
+    top: -27px;
+    left: -27px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 26%, var(--color-night-deep));
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--color-ink) 12%, var(--color-night-deep));
+    box-shadow: 0 12px 20px -8px var(--color-night-deep);
+    opacity: 0;
+    rotate: -6deg;
+    scale: 0.5;
+    transition:
+      opacity 160ms,
+      scale 260ms var(--ease-out-expo);
+  }
+
+  .curseur[data-charge] .curseur__charge {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .curseur__charge svg {
+    display: none;
+    width: 18px;
+    height: 18px;
+    stroke: var(--color-ink);
+    stroke-width: 1.3;
+  }
+
+  .curseur[data-charge='0'] .curseur__charge svg:nth-child(1),
+  .curseur[data-charge='1'] .curseur__charge svg:nth-child(2),
+  .curseur[data-charge='2'] .curseur__charge svg:nth-child(3) {
+    display: block;
+  }
+
+  /* ── Le plan étroit ──
+     Les deux fenêtres restent côte à côte, c'est le propos ; chaque bloc
+     perd son genre et son réglage et ne garde que son pictogramme et un titre
+     court. Le socle a déjà réduit ses propres pièces. */
+  @container sm (max-width: 519.98px) {
+    .sm-plan {
+      --h-barre: 25px;
+      --h-bloc: 36px;
+      --h-lien: 14px;
+      --h-pied: 28px;
+      --marge: 7px;
+      --c-tuile: 22px;
+      --p-bloc: 6px;
+      --r-port: 4.5px;
+    }
+
+    .poste--formateur {
+      top: 38px;
+      left: 10px;
+      width: 158px;
+    }
+
+    .poste--equipe {
+      top: 46px;
+      left: 192px;
+      width: 158px;
+    }
+
+    .atelier {
+      padding-inline: 6px;
+      background-size: 12px 12px;
+      background-position: 5px 5px;
+    }
+
+    .bloc {
+      column-gap: 6px;
+      padding-inline: var(--p-bloc) 6px;
+      border-radius: 9px;
+    }
+
+    .bloc__tuile {
+      border-radius: 7px;
+    }
+
+    .bloc__tuile svg {
+      width: 13px;
+      height: 13px;
+      stroke-width: 1.4;
+    }
+
+    .bloc__titre {
+      font-size: 9.5px;
+    }
+
+    .bloc__temoin {
+      width: 13px;
+      height: 13px;
+      border-width: 1px;
+    }
+
+    .bloc__temoin svg {
+      width: 8px;
+      height: 8px;
+    }
+
+    .lien::before,
+    .lien::after {
+      width: 5px;
+      height: 5px;
+      margin-left: -2.5px;
+      border-width: 1px;
+    }
+
+    .lien::before { top: -3px; }
+    .lien::after { bottom: -3px; }
+
+    .pied {
+      padding-inline: 6px;
+    }
+
+    .reserve {
+      gap: 3px;
+    }
+
+    .reserve__tuile {
+      width: 17px;
+      height: 17px;
+      border-radius: 5px;
+    }
+
+    .reserve__tuile svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    .marche {
+      gap: 5px;
+    }
+
+    .marche b {
+      font-size: 11px;
+    }
+
+    .lanceur {
+      width: 17px;
+      height: 17px;
+    }
+
+    .lanceur svg {
+      width: 8px;
+      height: 8px;
+    }
+
+    .curseur__fleche {
+      top: -1px;
+      left: -1px;
+      width: 15px;
+      height: 15px;
+    }
+
+    .curseur__nom {
+      top: 12px;
+      left: 9px;
+      padding: 2px 6px;
+      border-radius: 3px 8px 8px 8px;
+      font-size: 8.5px;
+    }
+
+    .curseur__charge {
+      top: -16px;
+      left: -16px;
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+    }
+
+    .curseur__charge svg {
+      width: 11px;
+      height: 11px;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
+   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
+   * cours, une boucle remplacée se défait d'elle-même.
+   */
+  import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
+  import type { Pt } from '../../lib/metiers/scene';
+
+  /* Un curseur et l'endroit où est sa pointe, dans le repère du plan. La
+     position est tenue ici parce qu'une animation finie ne laisse rien : le
+     style porte l'arrivée, l'animation ne fait que le trajet. */
+  interface Curseur {
+    el: HTMLElement;
+    fleche: SVGElement;
+    nom: HTMLElement;
+    pos: Pt;
+  }
+
+  interface Poste {
+    blocs: HTMLElement[];
+    tuiles: HTMLElement[];
+    temoins: HTMLElement[];
+    liens: HTMLElement[];
+    reserve: HTMLElement[];
+    etat: HTMLElement;
+    lanceur: HTMLElement;
+    compte: HTMLElement;
+    curseur: Curseur;
+  }
+
+  type Cle = 'formateur' | 'equipe';
+  type Valeur = 'attente' | 'cours' | 'fait';
+
+  /* L'allure d'un curseur : il part franchement et se pose en douceur. */
+  const MAIN = 'cubic-bezier(0.5, 0, 0.15, 1)';
+  /* Le nombre de points d'un trajet de curseur. */
+  const PAS = 12;
+
+  const decale = (p: Pt, dx: number, dy: number): Pt => ({ x: p.x + dx, y: p.y + dy });
+
+  /* Un curseur ne va pas tout droit : son trajet est une courbe, d'autant
+     plus cambrée qu'il va loin. Le point de contrôle s'écarte de la corde à
+     angle droit. */
+  const trajet = (de: Pt, vers: Pt): Keyframe[] => {
+    const dx = vers.x - de.x;
+    const dy = vers.y - de.y;
+    const longueur = Math.hypot(dx, dy) || 1;
+    const cambrure = Math.min(24, longueur * 0.16);
+    const cx = (de.x + vers.x) / 2 - (dy / longueur) * cambrure;
+    const cy = (de.y + vers.y) / 2 + (dx / longueur) * cambrure;
+    return Array.from({ length: PAS + 1 }, (_, i) => {
+      const t = i / PAS;
+      const u = 1 - t;
+      const x = u * u * de.x + 2 * u * t * cx + t * t * vers.x;
+      const y = u * u * de.y + 2 * u * t * cy + t * t * vers.y;
+      return { transform: `translate(${x}px, ${y}px)` };
+    });
+  };
+
+  monterScenes('[data-scene-formations]', (s) => {
+    const lirePoste = (cle: Cle): Poste => {
+      const base = `[data-poste="${cle}"]`;
+      return {
+        blocs: s.tous(`${base} [data-bloc]`),
+        tuiles: s.tous(`${base} [data-tuile]`),
+        temoins: s.tous(`${base} [data-temoin]`),
+        liens: s.tous(`${base} [data-lien]`),
+        reserve: s.tous(`${base} [data-reserve]`),
+        etat: s.un(`${base} .sm-etat`),
+        lanceur: s.un(`${base} [data-lanceur]`),
+        compte: s.un(`${base} [data-compte]`),
+        curseur: {
+          el: s.un(`[data-curseur="${cle}"]`),
+          fleche: s.un<SVGElement>(`[data-curseur="${cle}"] .curseur__fleche`),
+          nom: s.un(`[data-curseur="${cle}"] .curseur__nom`),
+          pos: { x: 0, y: 0 },
+        },
+      };
+    };
+
+    const formateur = lirePoste('formateur');
+    const equipe = lirePoste('equipe');
+    const lesDeux = [formateur, equipe];
+    const modules = s.un('[data-modules]');
+    const promesse = s.un('[data-promesse]');
+    const grain = s.un('.sm-grain');
+    const rangs = formateur.blocs.map((_, i) => i);
+
+    /* ── Les états ── */
+
+    const ecrireEtat = (poste: Poste, texte: string, valeur: Valeur) => {
+      poste.etat.textContent = texte;
+      poste.etat.dataset.etat = valeur;
+    };
+
+    const changerEtat = (poste: Poste, texte: string, valeur: Valeur) => {
+      poste.etat.textContent = texte;
+      s.basculer(poste.etat, valeur);
+    };
+
+    const vider = (poste: Poste) => {
+      poste.blocs.forEach((b) => b.classList.remove('est-pose', 'est-lance', 'est-designe', 'est-attendu', 'est-refuse'));
+      poste.liens.forEach((l) => l.classList.remove('est-trace', 'est-actif'));
+      poste.reserve.forEach((t) => t.classList.remove('est-pris'));
+      poste.lanceur.classList.remove('est-lance');
+      poste.compte.textContent = '0';
+      cacher(poste.curseur);
+    };
+
+    const remplir = (poste: Poste, lance: boolean) => {
+      poste.blocs.forEach((b) => {
+        b.classList.remove('est-designe', 'est-attendu', 'est-refuse');
+        b.classList.add('est-pose');
+        b.classList.toggle('est-lance', lance);
+      });
+      poste.liens.forEach((l) => {
+        l.classList.add('est-trace');
+        l.classList.toggle('est-actif', lance);
+      });
+      poste.reserve.forEach((t) => t.classList.add('est-pris'));
+      poste.lanceur.classList.toggle('est-lance', lance);
+      cacher(poste.curseur);
+    };
+
+    /* Le repos : deux outils vides, le formateur prêt à montrer. */
+    const repos = () => {
+      s.racine.classList.remove('est-abouti');
+      s.racine.dataset.temps = '1';
+      s.eteindre();
+      lesDeux.forEach(vider);
+      formateur.curseur.nom.textContent = 'Je montre';
+      ecrireEtat(formateur, 'Montre', 'cours');
+      ecrireEtat(equipe, 'Regarde', 'attente');
+      modules.textContent = '1/3';
+      promesse.textContent = 'En formation';
+    };
+
+    /* L'image fixe : l'équipe est autonome, son scénario a tourné, le
+       formateur est parti. C'est aussi ce que le HTML rend sans script. */
+    const figer = () => {
+      s.racine.classList.add('est-abouti');
+      s.racine.dataset.temps = '3';
+      s.eteindre();
+      remplir(formateur, false);
+      remplir(equipe, true);
+      formateur.compte.textContent = '0';
+      equipe.compte.textContent = '2';
+      ecrireEtat(formateur, 'Parti', 'attente');
+      ecrireEtat(equipe, 'Autonome', 'fait');
+      modules.textContent = '3/3';
+      promesse.textContent = 'Autonome';
+    };
+
+    /* ── Les curseurs ── */
+
+    const poser = (curseur: Curseur, p: Pt) => {
+      curseur.pos = p;
+      curseur.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+      /* La parole tient-elle encore à droite de la flèche, là où il va ? */
+      curseur.el.classList.toggle('est-retourne', p.x + curseur.nom.offsetWidth + 18 > s.plan.offsetWidth);
+    };
+
+    const montrer = (curseur: Curseur, p: Pt) => {
+      poser(curseur, p);
+      curseur.el.classList.add('est-la');
+    };
+
+    function cacher(curseur: Curseur) {
+      curseur.el.classList.remove('est-la');
+      delete curseur.el.dataset.charge;
+    }
+
+    const aller = (curseur: Curseur, vers: Pt, duree: number, easing = MAIN): Promise<void> => {
+      const de = curseur.pos;
+      poser(curseur, vers);
+      return s.animer(curseur.el, trajet(de, vers), { duration: duree, easing });
+    };
+
+    /* Le clic : la flèche s'enfonce et revient. */
+    const appuyer = (curseur: Curseur) => {
+      s.jouer(curseur.fleche, [{ scale: 1 }, { scale: 0.78, offset: 0.4 }, { scale: 1 }], {
+        duration: 220,
+        easing: 'ease-out',
+      });
+    };
+
+    /* Où mettre la pointe pour que la tuile portée tombe au milieu de la
+       cible : la tuile est tenue par un coin (voir `.curseur__charge`). */
+    const surTuile = (cible: HTMLElement): Pt => {
+      const prise = s.etroit ? 6 : 9;
+      return decale(s.lieu(cible), prise, prise);
+    };
+
+    /* ── Les gestes ── */
+
+    const prendre = async (poste: Poste, rang: number, duree: number) => {
+      await aller(poste.curseur, surTuile(poste.reserve[rang]), duree);
+      appuyer(poste.curseur);
+      poste.reserve[rang].classList.add('est-pris');
+      poste.curseur.el.dataset.charge = String(rang);
+      await s.attendre(90);
+    };
+
+    /* La tuile quitte le curseur, le bloc se forme autour d'elle, et il se
+       relie à celui du dessus. */
+    const deposer = (poste: Poste, rang: number) => {
+      delete poste.curseur.el.dataset.charge;
+      const bloc = poste.blocs[rang];
+      bloc.classList.remove('est-attendu');
+      bloc.classList.add('est-pose');
+      s.jouer(poste.tuiles[rang], [{ scale: 0.7 }, { scale: 1 }], { duration: 440, easing: EXPO });
+      if (rang > 0) poste.liens[rang - 1].classList.add('est-trace');
+    };
+
+    /* L'emplacement se dérobe : un « non » de la tête, sans rouge. */
+    const refuser = async (bloc: HTMLElement) => {
+      bloc.classList.add('est-refuse');
+      const pas = s.etroit ? 3 : 6;
+      await s.animer(
+        bloc,
+        [0, -pas, pas, -pas * 0.6, pas * 0.6, 0].map((x) => ({ transform: `translateX(${x}px)` })),
+        { duration: 360, easing: 'ease-in-out' },
+      );
+      bloc.classList.remove('est-refuse');
+    };
+
+    const tressaillir = (element: HTMLElement) => {
+      s.jouer(element, [{ scale: 1 }, { scale: 1.035, offset: 0.4 }, { scale: 1 }], { duration: 340, easing: 'ease-out' });
+    };
+
+    /* Le savoir-faire passe : un grain va du bloc du formateur à
+       l'emplacement de l'équipe, qui sait alors où poser. */
+    const transmettre = async (rang: number, duree: number) => {
+      s.allumer(`savoir-${rang}`);
+      await s.courir(grain, `savoir-${rang}`, { duree });
+      s.port(`refait-${rang}`).classList.add('est-actif');
+    };
+
+    /* Le grain descend d'une tuile à la suivante, à l'intérieur de la
+       fenêtre : les fils du moteur passent derrière elle. */
+    const descendre = (de: Pt, vers: Pt, duree: number): Promise<void> =>
+      s.animer(
+        grain,
+        [
+          { transform: `translate(${de.x}px, ${de.y}px)`, opacity: 0 },
+          { opacity: 1, offset: 0.15 },
+          { opacity: 1, offset: 0.85 },
+          { transform: `translate(${vers.x}px, ${vers.y}px)`, opacity: 0 },
+        ],
+        { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' },
+      );
+
+    /* Le scénario de l'équipe tourne : chaque bloc s'exécute et se coche, le
+       grain passe au suivant. La seconde fois, tout est déjà coché : il ne
+       reste que le passage, plus vif. */
+    const executer = async (premiere: boolean) => {
+      const pause = premiere ? 200 : 130;
+      const course = premiere ? 400 : 300;
+      for (const rang of rangs) {
+        equipe.blocs[rang].classList.add('est-lance');
+        s.jouer(equipe.tuiles[rang], [{ scale: 1 }, { scale: 1.16, offset: 0.4 }, { scale: 1 }], {
+          duration: 380,
+          easing: 'ease-out',
+        });
+        s.jouer(equipe.temoins[rang], [{ scale: 0.6 }, { scale: 1 }], { duration: 380, easing: EXPO });
+        const suivante = equipe.tuiles[rang + 1];
+        if (!suivante) break;
+        await s.attendre(pause);
+        equipe.liens[rang].classList.add('est-actif');
+        await descendre(s.lieu(equipe.tuiles[rang], 0.5, 1), s.lieu(suivante, 0.5, 0), course);
+      }
+      await s.attendre(pause);
+    };
+
+    async function tour() {
+      await s.attendre(280);
+
+      /* 1. Il montre : trois blocs pris dans la réserve et posés d'un geste
+         sûr, sans temps mort. */
+      montrer(formateur.curseur, decale(surTuile(formateur.reserve[0]), -10, 20));
+      for (const rang of rangs) {
+        await prendre(formateur, rang, 190);
+        await aller(formateur.curseur, surTuile(formateur.tuiles[rang]), 300);
+        deposer(formateur, rang);
+        await s.attendre(100);
+      }
+      await s.attendre(220);
+
+      /* 2. L'équipe refait, bloc par bloc. Le formateur désigne le sien, le
+         grain traverse, et pendant ce temps l'équipe va chercher sa tuile. */
+      s.racine.dataset.temps = '2';
+      s.tictac(modules, '2/3');
+      changerEtat(formateur, 'Guide', 'cours');
+      formateur.curseur.nom.textContent = 'Je guide';
+      changerEtat(equipe, 'Refait', 'cours');
+      montrer(equipe.curseur, decale(surTuile(equipe.reserve[0]), 34, 6));
+
+      for (const rang of rangs) {
+        formateur.blocs[rang].classList.add('est-designe');
+        s.enMarge(aller(formateur.curseur, s.lieu(formateur.blocs[rang], 0.72, 0.9), 300));
+        await Promise.all([
+          transmettre(rang, 400).then(() => equipe.blocs[rang].classList.add('est-attendu')),
+          s.attendre(140).then(() => prendre(equipe, rang, 400)),
+        ]);
+
+        if (rang === 1 && equipe.blocs[2]) {
+          /* L'hésitation : elle vise l'emplacement d'après. Il se dérobe, la
+             tuile reste en main ; le formateur remontre, elle corrige. */
+          await aller(equipe.curseur, surTuile(equipe.tuiles[2]), 520);
+          appuyer(equipe.curseur);
+          await refuser(equipe.blocs[2]);
+          await s.attendre(180);
+          tressaillir(formateur.blocs[rang]);
+          await transmettre(rang, 320);
+          tressaillir(equipe.blocs[rang]);
+          await aller(equipe.curseur, surTuile(equipe.tuiles[rang]), 420);
+        } else {
+          await aller(equipe.curseur, surTuile(equipe.tuiles[rang]), 500);
+        }
+
+        deposer(equipe, rang);
+        formateur.blocs[rang].classList.remove('est-designe');
+        await s.attendre(150);
+      }
+      await s.attendre(220);
+
+      /* 3. L'équipe fait seule. Le formateur s'en va, les fils se
+         débranchent ; l'équipe lance elle-même son scénario. */
+      s.racine.dataset.temps = '3';
+      s.tictac(modules, '3/3');
+      s.eteindre();
+      changerEtat(formateur, 'Parti', 'attente');
+      formateur.curseur.el.classList.remove('est-la');
+      s.enMarge(aller(formateur.curseur, decale(formateur.curseur.pos, -34, 40), 520, ELAN));
+      await aller(equipe.curseur, decale(s.lieu(equipe.lanceur), 3, 3), 480);
+      appuyer(equipe.curseur);
+      equipe.lanceur.classList.add('est-lance');
+      await s.attendre(200);
+      cacher(equipe.curseur);
+
+      await executer(true);
+      /* La chute : il a tourné sans personne. Tout s'éclaire en même temps. */
+      s.tictac(equipe.compte, '1');
+      changerEtat(equipe, 'Autonome', 'fait');
+      s.tictac(promesse, 'Autonome');
+      s.racine.classList.add('est-abouti');
+
+      /* Le temps de lire l'image, pendant qu'il tourne une seconde fois. */
+      await s.attendre(750);
+      await executer(false);
+      s.tictac(equipe.compte, '2');
+      await s.attendre(950);
+
+      /* On range : les deux outils se vident, le formateur revient pour le
+         groupe suivant. */
+      repos();
+      s.tictac(modules, '1/3');
+      s.tictac(promesse, 'En formation');
+      await s.attendre(500);
+    }
+
+    return { figer, repos, tour };
+  });
+</script>

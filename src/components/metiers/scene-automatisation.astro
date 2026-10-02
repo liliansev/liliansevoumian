@@ -1,0 +1,1064 @@
+---
+/*
+ * scene-automatisation — la scène du métier Automatisation : « Je relie vos
+ * outils, et les ressaisies disparaissent. »
+ *
+ * Elle raconte le cas que le bloc cite en preuve, la facturation d'une agence :
+ * chaque affaire signée dans le CRM doit devenir plusieurs factures
+ * échelonnées, avec la bonne TVA, et son statut doit se voir dans l'outil de
+ * suivi. Avant, c'était ressaisi d'un outil à l'autre. La scène du récit, en
+ * haut de page, raconte déjà le bon de commande : celle-ci montre autre chose.
+ *
+ * Son geste propre est le DÉCOUPAGE. Entre le CRM et la facturation,
+ * l'information ne se recopie pas : une affaire entre dans le fil, le nœud
+ * calcule (nombre d'échéances, TVA), et plusieurs échéances en ressortent.
+ *
+ * Le fil de la boucle, un seul mouvement à la fois :
+ *   1. une affaire passe à « Signée » en tête du CRM ;
+ *   2. sa fiche s'ouvre dans le volet ;
+ *   3. un trait de lecture la descend : montant, échéances, TVA ;
+ *   4. ces trois lignes entrent dans le fil, le nœud calcule, et les
+ *      échéances en sortent une à une dans la facturation ;
+ *   5. les échéances passent à « Émises » ;
+ *   6. leur statut arrive dans le suivi, ligne à ligne ;
+ *   7. tout est rangé, l'affaire suivante est signée.
+ *
+ * Le panneau, les fenêtres, la feuille, les fils et les gestes viennent du
+ * socle (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit
+ * que ce qui lui est propre : la place de ses trois postes, la liste des
+ * affaires, le volet de la fiche, le nœud qui calcule, et l'ordre de sa boucle.
+ *
+ * Sans script ou en mouvement réduit, la scène est une image fixe : l'état
+ * final, échéances émises et suivi à jour.
+ *
+ * Montants, dates et numéros sont inventés pour la scène : aucune donnée
+ * client, aucun nom de marque.
+ */
+import './scene-metier.css';
+import { euros } from '../../lib/metiers/scene';
+
+interface Affaire {
+  montant: number;
+  tva: number;
+}
+
+/* Trois affaires qui tournent : assez pour qu'on voie, d'une boucle à l'autre,
+   que ce n'est pas la même qui revient. La première est rendue ici ; le script
+   reçoit les trois par `data-affaires` et fait défiler les suivantes. */
+const affaires: Affaire[] = [
+  { montant: 12000, tva: 20 },
+  { montant: 8400, tva: 20 },
+  { montant: 18000, tva: 20 },
+];
+
+/* Les échéances tombent le 15 de chaque mois, à partir de celui-ci. */
+const mois = ['nov.', 'déc.', 'janv.', 'févr.', 'mars', 'avr.'];
+
+/* Quatre échéances sur le grand plan ; le plan étroit en montre trois, et le
+   script refait alors le calcul. La longueur des barres du suivi est
+   décorative. */
+const PARTS = 4;
+const longueurs = [72, 54, 84, 62];
+const premiere = affaires[0];
+/* Le même calcul que celui du script (voir `calculer`) : le montant, sa TVA,
+   partagés en parts égales. */
+const ttc = (premiere.montant * (1 + premiere.tva / 100)) / PARTS;
+const echeances = longueurs.map((l, i) => ({ rang: `${i + 1}/${PARTS}`, date: `15 ${mois[i]}`, l }));
+
+const entier = new Intl.NumberFormat('fr-FR');
+
+/* L'affaire du moment et les trois déjà facturées qui attendent dessous. Le
+   script lit le numéro dans la page et le fait avancer d'un à chaque boucle. */
+const PREMIER_NUMERO = 413;
+const numero = (rang: number) => String(PREMIER_NUMERO + rang).padStart(4, '0');
+const anciennes = [-1, -2, -3];
+/* Le compteur « Affaires traitées » au chargement : le mois a déjà commencé. */
+const TRAITEES = 12;
+
+/* Plan étroit : la quatrième échéance est retirée. */
+const large = (index: number) => (index > 2 ? 'sm-large' : '');
+---
+
+<div
+  class="sm est-abouti"
+  data-scene-automatisation
+  data-affaires={JSON.stringify({ affaires, mois })}
+  role="img"
+  aria-label="Une affaire signée dans le CRM se découpe seule en factures échelonnées, TVA comprise, puis son statut apparaît dans l’outil de suivi, sans aucune ressaisie."
+>
+  <div class="sm-plan" aria-hidden="true">
+    <div class="sm-puces">
+      <span class="sm-puce">
+        <svg viewBox="0 0 16 16"><path d="M2.5 5.5h11v7h-11zM6 5.5V4h4v1.5M2.5 8.6h11" /></svg>
+        <span class="sm-puce__nom">Affaires traitées</span>
+        <b data-traitees>{TRAITEES}</b>
+      </span>
+      <span class="sm-puce sm-puce--peche">
+        <svg viewBox="0 0 16 16"><path d="M2 4.5h12v7H2zM4.6 7.2h.1M7.2 7.2h.1M9.8 7.2h.1M12.4 7.2h.1M5.5 9.4h5" /></svg>
+        <span class="sm-puce__nom">Ressaisies</span>
+        <b data-zero>0</b>
+      </span>
+    </div>
+
+    {/* Les deux fils : le CRM vers la facturation, la facturation vers le
+       suivi. Leur tracé est calculé par le moteur d'après la place des ports. */}
+    <svg class="sm-fils" viewBox="0 0 760 570">
+      <g class="sm-fil est-allume" data-sm-fil="facturation" data-de="crm" data-vers="entree" data-sens="h">
+        <path class="sm-fil__trait"></path>
+        <path class="sm-fil__flux"></path>
+      </g>
+      <g class="sm-fil est-allume" data-sm-fil="suivi" data-de="sortie" data-vers="suivi" data-sens="v">
+        <path class="sm-fil__trait"></path>
+        <path class="sm-fil__flux"></path>
+      </g>
+    </svg>
+
+    {/* Le CRM : la liste des affaires en haut, la fiche de l'affaire dessous. */}
+    <div class="sm-poste poste--crm">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M8 7.6a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6zM3.4 13c.4-2.3 2.2-3.6 4.6-3.6s4.2 1.3 4.6 3.6" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">CRM</span>
+          <span class="sm-fenetre__info">Affaires</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="crm">
+            <span class="sm-etat__avant">À jour</span>
+            <span class="sm-etat__apres">Signée</span>
+          </span>
+        </div>
+
+        <div class="boite">
+          <div class="boite__vue">
+            <div class="boite__liste" data-liste style="--pose: 0">
+              <div class="affaire" data-affaire="nouvelle">
+                <span class="affaire__avatar"></span>
+                <span class="affaire__objet">Affaire n°&nbsp;<span data-c="numero">{numero(0)}</span></span>
+                <span class="affaire__montant"><span data-c="montant">{entier.format(premiere.montant)}</span>&nbsp;€</span>
+                <svg class="affaire__coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+                <span class="etape est-ouverte" data-etape>
+                  <em></em><span class="etape__signee">Signée</span><span class="etape__facturee">Facturée</span>
+                </span>
+              </div>
+              {anciennes.map((rang) => (
+                <div class="affaire est-traite" data-affaire="ancienne">
+                  <span class="affaire__avatar"></span>
+                  <span class="affaire__objet">Affaire n°&nbsp;<span data-c="numero">{numero(rang)}</span></span>
+                  <svg class="affaire__coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+                  <span class="etape">
+                    <em></em><span class="etape__signee">Signée</span><span class="etape__facturee">Facturée</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="apercu">
+          <div class="apercu__vide"><span>Aucune affaire ouverte</span></div>
+          <div class="fiche est-ouverte" data-fiche>
+            <div class="fiche__nom sm-large">
+              <em>Fiche</em>
+              <span>Affaire n°&nbsp;<span data-c="numero-fiche">{numero(0)}</span></span>
+              <span class="fiche__info">Signée</span>
+            </div>
+            <div class="sm-feuille" data-page>
+              <div class="sm-feuille__tete">
+                <b>Affaire signée</b>
+                <span class="sm-large">N°&nbsp;AF-<span data-c="numero-page">{numero(0)}</span></span>
+              </div>
+              <div class="sm-feuille__bloc"><i></i><i></i><i></i></div>
+              <div class="fiche__lignes">
+                <div class="sm-ligne est-parti" data-ligne-fiche>
+                  <span>Montant HT</span>
+                  <span data-c="montant-ht">{euros(premiere.montant)}</span>
+                </div>
+                <div class="sm-ligne est-parti" data-ligne-fiche>
+                  <span>Échéances</span>
+                  <span data-c="parts">{PARTS}</span>
+                </div>
+                <div class="sm-ligne est-parti" data-ligne-fiche>
+                  <span>TVA</span>
+                  <span><span data-c="tva">{premiere.tva}</span>&nbsp;%</span>
+                </div>
+              </div>
+              <span class="sm-balai" data-balai></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="sm-port port--crm est-actif" data-sm-port="crm"></span>
+    </div>
+
+    {/* La facturation : les échéances, puis le total. */}
+    <div class="sm-poste poste--facturation">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M4 2.5h8v11l-2-1.2-2 1.2-2-1.2-2 1.2v-11zM6 6h4M6 8.5h4" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Facturation</span>
+          <span class="sm-fenetre__info">Comptabilité</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="facturation">
+            <span class="sm-etat__avant" data-avant>En attente</span>
+            <span class="sm-etat__apres">Émises</span>
+          </span>
+        </div>
+        <div class="sm-corps">
+          <div class="sm-rangees">
+            {echeances.map((echeance, index) => (
+              <div class:list={['sm-rangee', 'est-rempli', 'est-valide', large(index)]} data-rangee="facturation">
+                <span class="sm-ref" data-c="rang">{echeance.rang}</span>
+                <span class="rangee__date" data-c="date">{echeance.date}</span>
+                <span data-c="ttc">{euros(ttc)}</span>
+                <svg class="sm-coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+              </div>
+            ))}
+          </div>
+          <div class="sm-pied sm-large">
+            <span>Total TTC</span>
+            <b><span data-total>{euros(ttc * PARTS)}</span>&nbsp;€</b>
+          </div>
+        </div>
+      </div>
+      <span class="sm-port port--entree est-actif" data-sm-port="entree"></span>
+      <span class="sm-port port--sortie est-actif" data-sm-port="sortie"></span>
+    </div>
+
+    {/* Le suivi : le statut de chaque échéance, visible sans rien ouvrir. */}
+    <div class="sm-poste poste--suivi">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M2.8 4.6l1.2 1.2 2-2.2M8.2 4.6H13M2.8 9l1.2 1.2 2-2.2M8.2 9H13M3 13h2.4M8.2 13H13" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Suivi</span>
+          <span class="sm-fenetre__info">Tableau de bord</span>
+          <span class="sm-etat" data-etat="fait" data-etat-de="suivi">
+            <span class="sm-etat__avant">En attente</span>
+            <span class="sm-etat__apres">À jour</span>
+          </span>
+        </div>
+        <div class="sm-corps">
+          <div class="sm-rangees">
+            {echeances.map((echeance, index) => (
+              <div
+                class:list={['sm-rangee', 'est-rempli', 'est-valide', large(index)]}
+                data-rangee="suivi"
+                style={`--l: ${echeance.l}%`}
+              >
+                <span class="sm-ref" data-c="rang">{echeance.rang}</span>
+                <i class="sm-barre"></i>
+                <span>Émise</span>
+                <svg class="sm-coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <span class="sm-port port--suivi est-actif" data-sm-port="suivi"></span>
+    </div>
+
+    {/* Le nœud du premier fil porte le calcul : c'est là qu'une affaire devient
+       plusieurs échéances. Celui du second fil dit seulement « relié ». */}
+    <span class="sm-noeud noeud--calcul est-allume" data-sm-noeud="facturation" data-calcul>
+      <b class="sm-large">÷&nbsp;<span data-c="parts">{PARTS}</span></b>
+      <span class="sm-large">TVA&nbsp;<span data-c="tva">{premiere.tva}</span>&nbsp;%</span>
+      <b class="sm-etroit">÷</b>
+    </span>
+    <span class="sm-noeud est-allume" data-sm-noeud="suivi">
+      <svg viewBox="0 0 16 16"><path d="M6.9 9.1a2.4 2.4 0 0 0 3.4 0l2-2a2.4 2.4 0 0 0-3.4-3.4l-.8.8M9.1 6.9a2.4 2.4 0 0 0-3.4 0l-2 2a2.4 2.4 0 0 0 3.4 3.4l.8-.8" /></svg>
+    </span>
+
+    {/* Ce qui voyage : une bande et un grain par échéance. */}
+    {echeances.map(() => (
+      <>
+        <span class="sm-bande"></span>
+        <span class="sm-grain"></span>
+      </>
+    ))}
+  </div>
+</div>
+
+<style>
+  /* Ce que le socle ne sait pas : où sont les trois postes, leurs ports, la
+     grille de leurs lignes, les deux composants propres au CRM (la liste des
+     affaires, le volet de la fiche) et le nœud qui calcule. Longueurs en
+     pixels du plan. */
+  .sm-plan {
+    --h-affaire: 46px;
+  }
+
+  .poste--crm {
+    top: 62px;
+    left: 24px;
+    width: 312px;
+  }
+
+  .poste--facturation {
+    --sm-cols: 30px minmax(0, 1fr) 64px 12px;
+    top: 94px;
+    left: 424px;
+    width: 312px;
+  }
+
+  .poste--suivi {
+    --sm-cols: 30px minmax(0, 1fr) 40px 12px;
+    top: 360px;
+    left: 440px;
+    width: 296px;
+  }
+
+  .port--crm { right: -6px; bottom: 56px; }
+  .port--entree { top: 101px; left: -6px; }
+  .port--sortie { bottom: -6px; left: 112px; }
+  .port--suivi { top: -6px; left: 148px; }
+
+  /* La date d'une échéance se lit à gauche, en retrait : c'est le montant
+     qui compte. */
+  .poste--facturation .sm-rangee .rangee__date {
+    color: var(--color-ink-low);
+    text-align: left;
+  }
+
+  /* ── Le nœud qui calcule ──
+     Le nœud du socle est une pastille ronde. Celui-ci s'élargit pour porter sa
+     règle : en combien d'échéances, avec quelle TVA. Le fil le traverse. */
+  .noeud--calcul {
+    align-content: center;
+    row-gap: 2px;
+    width: 58px;
+    height: 38px;
+    margin: -19px 0 0 -29px;
+    border-radius: 11px;
+    white-space: nowrap;
+  }
+
+  .noeud--calcul b {
+    color: var(--color-ink-mid);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    transition: color 300ms;
+  }
+
+  .noeud--calcul > span {
+    color: var(--color-ink-low);
+    font-size: 8.5px;
+    font-weight: 500;
+    line-height: 1;
+    transition: color 300ms;
+  }
+
+  .noeud--calcul.est-allume b {
+    color: var(--color-peche);
+  }
+
+  .noeud--calcul.est-allume > span {
+    color: var(--color-ink);
+  }
+
+  /* ── La liste des affaires ──
+     Elle compte une affaire de plus que ce que la vue montre. Au repos elle
+     est remontée d'un cran et l'affaire qui va être signée attend au-dessus,
+     cachée par la vue ; elle arrive quand la liste redescend. */
+  .boite {
+    padding: 8px;
+    border-bottom: 1px solid var(--sm-filet);
+  }
+
+  .boite__vue {
+    height: calc(3 * var(--h-affaire));
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .boite__liste {
+    translate: 0 calc(var(--pose, 0) * var(--h-affaire));
+  }
+
+  .affaire {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    align-content: center;
+    align-items: center;
+    column-gap: 9px;
+    row-gap: 4px;
+    height: var(--h-affaire);
+    padding-inline: 8px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    transition: background-color 320ms;
+  }
+
+  .affaire__avatar {
+    position: relative;
+    grid-row: 1 / span 2;
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, var(--color-peche), var(--color-lueur-froide));
+    transition: filter 320ms, opacity 320ms;
+  }
+
+  /* Du nouveau sur cette affaire : le point pêche que tout le monde connaît. */
+  .affaire__avatar::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--color-night-deep);
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    transition: scale 260ms var(--ease-out-quint);
+  }
+
+  .affaire__objet {
+    overflow: hidden;
+    color: var(--color-ink);
+    font-size: 11.5px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 320ms;
+  }
+
+  .affaire__montant,
+  .affaire__coche {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .affaire__montant {
+    color: var(--color-ink-mid);
+    font-size: 10.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .affaire__coche {
+    width: 12px;
+    height: 12px;
+    stroke: var(--color-peche);
+    stroke-width: 2;
+    opacity: 0;
+    scale: 0.4;
+    transition: opacity 220ms, scale 320ms var(--ease-out-expo);
+  }
+
+  /* L'étape de l'affaire dans le pipeline : c'est d'elle que sort la fiche. */
+  .etape {
+    grid-column: 2 / span 2;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 17px;
+    padding: 0 8px 0 6px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-radius: var(--radius-full);
+    color: var(--color-ink-mid);
+    font-size: 9.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: border-color 220ms, color 220ms, opacity 320ms;
+  }
+
+  .etape em {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    transition: background-color 320ms;
+  }
+
+  .etape__facturee {
+    display: none;
+  }
+
+  .etape.est-ouverte {
+    border-color: var(--color-peche);
+    color: var(--color-ink);
+  }
+
+  /* Traitée : l'affaire s'efface dans la liste, son étape devient
+     « Facturée », sa coche remplace le montant. */
+  .affaire.est-traite {
+    background: transparent;
+  }
+
+  .affaire.est-traite .affaire__avatar {
+    filter: grayscale(1);
+    opacity: 0.4;
+  }
+
+  .affaire.est-traite .affaire__avatar::after {
+    scale: 0;
+  }
+
+  .affaire.est-traite .affaire__objet {
+    color: var(--color-ink-low);
+  }
+
+  .affaire.est-traite .affaire__montant,
+  .affaire.est-traite .etape__signee {
+    display: none;
+  }
+
+  .affaire.est-traite .etape__facturee {
+    display: inline;
+  }
+
+  .affaire.est-traite .affaire__coche {
+    opacity: 0.85;
+    scale: 1;
+  }
+
+  .affaire.est-traite .etape {
+    opacity: 0.5;
+  }
+
+  .affaire.est-traite .etape em {
+    background: var(--color-ink-low);
+  }
+
+  /* ── Le volet : la fiche de l'affaire, sur sa feuille ── */
+  .apercu {
+    position: relative;
+    padding: 11px 12px 14px;
+  }
+
+  .apercu__vide {
+    position: absolute;
+    inset: 11px 12px 14px;
+    display: grid;
+    place-items: center;
+    border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
+    border-radius: 8px;
+    color: var(--color-ink-faint);
+    font-size: 10.5px;
+    transition: opacity 260ms;
+  }
+
+  .apercu:has(.fiche.est-ouverte) .apercu__vide {
+    opacity: 0;
+  }
+
+  .fiche {
+    --sm-cols: minmax(0, 1fr) auto;
+    position: relative;
+    opacity: 0;
+  }
+
+  .fiche.est-ouverte {
+    opacity: 1;
+  }
+
+  .fiche__nom {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 16px;
+    margin-bottom: 9px;
+    color: var(--color-ink-mid);
+    font-size: 10.5px;
+    font-weight: 500;
+  }
+
+  .fiche__nom em {
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: var(--color-braise);
+    color: var(--color-night);
+    font-size: 6.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .fiche__info {
+    margin-left: auto;
+    color: var(--color-ink-low);
+    font-size: 10px;
+  }
+
+  /* Les trois lignes que la machine lit : un libellé, une valeur. */
+  .fiche__lignes {
+    margin-top: 12px;
+    border-top: 1px solid var(--color-feuille-trait);
+  }
+
+  .fiche__lignes .sm-ligne span:last-child {
+    font-weight: 600;
+  }
+
+  /* ── Le plan étroit ──
+     Une liste qui ne montre que l'affaire du moment, un volet sans titre, un
+     nœud réduit à son signe, trois échéances au lieu de quatre et pas de
+     total. Le socle a déjà réduit ses propres pièces. */
+  @container sm (max-width: 519.98px) {
+    .sm-plan {
+      --h-affaire: 40px;
+    }
+
+    .poste--crm {
+      top: 36px;
+      left: 10px;
+      width: 162px;
+    }
+
+    .poste--facturation {
+      --sm-cols: 18px minmax(0, 1fr) 42px 9px;
+      top: 36px;
+      left: 204px;
+      width: 146px;
+    }
+
+    .poste--suivi {
+      --sm-cols: 18px minmax(0, 1fr) 28px 9px;
+      top: 159px;
+      left: 204px;
+      width: 146px;
+    }
+
+    .port--crm { right: -5px; bottom: 40px; }
+    .port--entree { top: 62px; left: -5px; }
+    .port--sortie { bottom: -5px; left: 52px; }
+    .port--suivi { top: -5px; left: 82px; }
+
+    /* Trois rangées dans chaque outil : elles se resserrent pour tenir. */
+    .poste--facturation .sm-rangee,
+    .poste--suivi .sm-rangee {
+      height: 21px;
+    }
+
+    /* Entre la facturation et le suivi, il ne reste que la place des deux
+       ports : le nœud s'efface, le fil suffit. */
+    .sm-noeud[data-sm-noeud='suivi'] {
+      display: none;
+    }
+
+    .noeud--calcul {
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
+      border-radius: var(--radius-full);
+    }
+
+    .noeud--calcul b {
+      font-size: 11px;
+    }
+
+    .boite {
+      padding: 5px;
+    }
+
+    .boite__vue {
+      height: var(--h-affaire);
+      border-radius: 6px;
+    }
+
+    .affaire {
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      column-gap: 6px;
+      row-gap: 3px;
+      padding-inline: 5px;
+      border-radius: 6px;
+    }
+
+    .affaire__avatar {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+    }
+
+    .affaire__objet { font-size: 9.5px; }
+    .affaire__montant { display: none; }
+
+    .affaire__coche {
+      width: 10px;
+      height: 10px;
+    }
+
+    .etape {
+      gap: 4px;
+      height: 14px;
+      padding: 0 6px 0 5px;
+      font-size: 8px;
+    }
+
+    .etape em {
+      width: 5px;
+      height: 5px;
+    }
+
+    .apercu { padding: 7px 7px 8px; }
+    .apercu__vide { inset: 7px 7px 8px; font-size: 0; }
+    .fiche__lignes { margin-top: 8px; }
+  }
+</style>
+
+<script>
+  /*
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
+   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
+   * cours, une boucle remplacée se défait d'elle-même.
+   *
+   * Deux aides sont écrites ici parce que le socle ne les a pas : faire courir
+   * un grain sur une PORTION de fil (`courirSur`), et le tiret d'une bande à
+   * l'entrée d'un port (`tiretAu`). Le découpage en a besoin : ce qui entre
+   * dans le fil s'arrête au nœud, et autre chose en repart.
+   */
+  import { ELAN, EXPO, euros, monterScenes } from '../../lib/metiers/scene';
+  import type { Cadre } from '../../lib/metiers/scene';
+
+  interface Affaire {
+    montant: number;
+    tva: number;
+  }
+
+  interface Donnees {
+    affaires: Affaire[];
+    mois: string[];
+  }
+
+  /* Les données arrivent du balisage en JSON : c'est une frontière, on vérifie
+     leur forme avant de s'en servir. */
+  const estAffaire = (valeur: unknown): valeur is Affaire => {
+    if (typeof valeur !== 'object' || valeur === null) return false;
+    const v = valeur as Record<string, unknown>;
+    return typeof v.montant === 'number' && typeof v.tva === 'number';
+  };
+
+  const lireDonnees = (brut: string | undefined): Donnees => {
+    const lu: unknown = JSON.parse(brut ?? 'null');
+    if (typeof lu === 'object' && lu !== null) {
+      const { affaires, mois } = lu as Record<string, unknown>;
+      if (
+        Array.isArray(affaires) &&
+        affaires.length > 0 &&
+        affaires.every(estAffaire) &&
+        Array.isArray(mois) &&
+        mois.length > 0 &&
+        mois.every((m): m is string => typeof m === 'string')
+      ) {
+        return { affaires, mois };
+      }
+    }
+    throw new Error('Scène Automatisation : `data-affaires` est illisible');
+  };
+
+  const entier = new Intl.NumberFormat('fr-FR');
+  const numeroSuivant = (numero: string) => String(Number(numero) + 1).padStart(numero.length, '0');
+
+  monterScenes('[data-scene-automatisation]', (s) => {
+    /* Sur le plan étroit la fenêtre est trop courte pour « En attente » : la
+       pastille touchait son bord. */
+    const attente = s.etroit ? 'Attente' : 'En attente';
+    const liste = s.un('[data-liste]');
+    const nouvelle = s.un('[data-affaire="nouvelle"]');
+    const anciennes = s.tous('[data-affaire="ancienne"]');
+    const etape = s.un('[data-etape]');
+    const fiche = s.un('[data-fiche]');
+    const balai = s.un('[data-balai]');
+    const noeud = s.un('[data-calcul]');
+    const chemin = s.un<SVGPathElement>('[data-sm-fil="facturation"] path');
+    const elTotal = s.un('[data-total]');
+    const elTraitees = s.un('[data-traitees]');
+    const elZero = s.un('[data-zero]');
+    const etats = {
+      crm: s.un('[data-etat-de="crm"]'),
+      facturation: s.un('[data-etat-de="facturation"]'),
+      suivi: s.un('[data-etat-de="suivi"]'),
+    };
+    const avantFacturation = s.un('[data-avant]');
+    const bandes = s.tous('.sm-bande');
+    const grains = s.tous('.sm-grain');
+    const lignesFiche = s.tous('[data-ligne-fiche]');
+    const rangeesFacturation = s.tous('[data-rangee="facturation"]');
+    const rangeesSuivi = s.tous('[data-rangee="suivi"]');
+    const { affaires, mois } = lireDonnees(s.racine.dataset.affaires);
+
+    const ecrire = (nom: string, texte: string, dans: HTMLElement = s.racine) => {
+      dans.querySelectorAll<HTMLElement>(`[data-c="${nom}"]`).forEach((cible) => (cible.textContent = texte));
+    };
+    const lu = (nom: string, dans: HTMLElement) => dans.querySelector<HTMLElement>(`[data-c="${nom}"]`)?.textContent ?? '';
+
+    /* L'état de la scène. Le numéro et le compteur partent de ce que le
+       balisage a rendu : il n'y a qu'un endroit où les écrire. */
+    let rang = 0;
+    let numero = lu('numero', nouvelle) || '0000';
+    let traitees = Number(elTraitees.textContent);
+    let total = 0;
+
+    /* Le calcul que le nœud affiche : le montant et sa TVA, partagés en autant
+       de parts que le plan montre d'échéances (quatre, ou trois à l'étroit). */
+    const calculer = () => {
+      const affaire = affaires[rang % affaires.length];
+      const parts = s.affiches(rangeesFacturation).length || 1;
+      return { ...affaire, parts, ttc: (affaire.montant * (1 + affaire.tva / 100)) / parts };
+    };
+
+    const charger = () => {
+      const { montant, tva, parts, ttc } = calculer();
+      ecrire('numero', numero, nouvelle);
+      ecrire('numero-fiche', numero);
+      ecrire('numero-page', numero);
+      ecrire('montant', entier.format(montant));
+      ecrire('montant-ht', euros(montant));
+      ecrire('parts', String(parts));
+      ecrire('tva', String(tva));
+      [rangeesFacturation, rangeesSuivi].forEach((rangees) =>
+        rangees.forEach((rangee, i) => {
+          ecrire('rang', `${i + 1}/${parts}`, rangee);
+          ecrire('date', `15 ${mois[(rang + i) % mois.length]}`, rangee);
+          ecrire('ttc', euros(ttc), rangee);
+        }),
+      );
+    };
+
+    const ecrireTotal = (n: number) => {
+      total = n;
+      elTotal.textContent = euros(n);
+    };
+
+    /* Le total de la facturation : la somme des échéances déjà créées. */
+    const somme = () =>
+      calculer().ttc * s.affiches(rangeesFacturation).filter((r) => r.classList.contains('est-rempli')).length;
+
+    const etatFacturation = (etat: 'attente' | 'cours') => {
+      etats.facturation.dataset.etat = etat;
+      avantFacturation.textContent = etat === 'cours' ? 'Brouillons' : attente;
+    };
+
+    const eteindreOutils = () => {
+      s.racine.classList.remove('est-abouti');
+      [...rangeesFacturation, ...rangeesSuivi].forEach((r) => r.classList.remove('est-rempli', 'est-valide'));
+      etatFacturation('attente');
+      etats.suivi.dataset.etat = 'attente';
+      s.eteindre();
+    };
+
+    /* Le repos : le CRM est à jour, le volet est vide, les deux outils
+       attendent. L'affaire qui va être signée est prête au-dessus de la vue. */
+    const repos = () => {
+      eteindreOutils();
+      etats.crm.dataset.etat = 'attente';
+      liste.style.setProperty('--pose', '-1');
+      nouvelle.classList.remove('est-traite');
+      etape.classList.remove('est-ouverte');
+      fiche.classList.remove('est-ouverte');
+      lignesFiche.forEach((l) => l.classList.remove('est-lu', 'est-parti'));
+      charger();
+      ecrireTotal(0);
+    };
+
+    /* L'image fixe : tout est passé. C'est aussi ce que le HTML rend sans
+       script. */
+    const figer = () => {
+      charger();
+      s.racine.classList.add('est-abouti');
+      liste.style.setProperty('--pose', '0');
+      nouvelle.classList.remove('est-traite');
+      etape.classList.add('est-ouverte');
+      fiche.classList.add('est-ouverte');
+      lignesFiche.forEach((l) => {
+        l.classList.remove('est-lu');
+        l.classList.add('est-parti');
+      });
+      [...rangeesFacturation, ...rangeesSuivi].forEach((r) => r.classList.add('est-rempli', 'est-valide'));
+      avantFacturation.textContent = attente;
+      Object.values(etats).forEach((e) => (e.dataset.etat = 'fait'));
+      s.allumer('facturation', true);
+      s.allumer('suivi', true);
+      ecrireTotal(somme());
+    };
+
+    /* ── Les deux aides hors socle ── */
+
+    /* Le tiret d'une bande à l'entrée d'un port, comme celui de `passer`. */
+    const tiretAu = (port: HTMLElement): Cadre => {
+      const p = s.lieu(port);
+      return { x: p.x - 8, y: p.y - 3, w: 16, h: 6 };
+    };
+
+    /* Un grain sur une portion du premier fil, entre deux fractions de sa
+       longueur : du port au nœud (0 → 0.5), ou du nœud au port (0.5 → 1). */
+    const courirSur = (grain: HTMLElement, de: number, vers: number, duree: number) => {
+      const longueur = chemin.getTotalLength();
+      const pas = 12;
+      const images = Array.from({ length: pas + 1 }, (_, i) => {
+        const p = chemin.getPointAtLength(longueur * (de + ((vers - de) * i) / pas));
+        return { transform: `translate(${p.x}px, ${p.y}px)`, opacity: i === 0 || i === pas ? 0 : 1 };
+      });
+      return s.animer(grain, images, { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' });
+    };
+
+    const tressaillir = (ampleur: number, duree: number) =>
+      s.jouer(noeud, [{ scale: 1 }, { scale: ampleur, offset: 0.35 }, { scale: 1 }], { duration: duree, easing: 'ease-out' });
+
+    /* ── Le découpage ──
+       Ce qui entre dans le fil n'est pas ce qui en sort. Les trois lignes de
+       la fiche vont jusqu'au nœud et s'y arrêtent ; le nœud calcule ; puis il
+       rend autant de grains que d'échéances, et chacun se déploie en une
+       rangée de la facturation. */
+    async function decouper(lignes: HTMLElement[], echeances: HTMLElement[]) {
+      s.allumer('facturation');
+      const depart = tiretAu(s.port('crm'));
+      const arrivee = tiretAu(s.port('entree'));
+
+      await Promise.all(
+        lignes.map(async (ligne, i) => {
+          await s.attendre(i * 150);
+          ligne.classList.remove('est-lu');
+          ligne.classList.add('est-parti');
+          s.enMarge(s.voler(bandes[i], ligne, depart, { duree: 460, pose: 0.2, arrivee: 0.9, easing: ELAN }));
+          await s.attendre(380);
+          await courirSur(grains[i], 0, 0.5, 300);
+          tressaillir(1.1, 260);
+        }),
+      );
+
+      /* Le calcul : le nœud prend un temps, et ça se voit. */
+      await s.animer(noeud, [{ scale: 1 }, { scale: 1.2, offset: 0.4 }, { scale: 1 }], { duration: 360, easing: EXPO });
+
+      await Promise.all(
+        echeances.map(async (echeance, i) => {
+          await s.attendre(i * 170);
+          s.enMarge(courirSur(grains[i], 0.5, 1, 300));
+          await s.attendre(240);
+          s.port('entree').classList.add('est-actif');
+          if (i === 0) etatFacturation('cours');
+          s.enMarge(
+            s.voler(bandes[i], arrivee, echeance, { duree: 680, pose: 0.06, arrivee: 0.64, easing: EXPO, eclot: true }),
+          );
+          await s.attendre(400);
+          /* Créée, pas encore émise : la rangée se remplit sans sa coche. */
+          echeance.classList.add('est-rempli');
+          /* Le total suit en marge : il finit de monter pendant que la
+             scène passe à la suite. */
+          s.enMarge(
+            s.compter(elTotal, total, somme(), {
+              format: (n) => {
+                total = n;
+                return euros(n);
+              },
+            }),
+          );
+        }),
+      );
+    }
+
+    async function tour() {
+      const lignes = s.affiches(lignesFiche);
+      const echeances = s.affiches(rangeesFacturation);
+      const statuts = s.affiches(rangeesSuivi);
+
+      await s.attendre(340);
+
+      /* 1. L'affaire est signée : elle prend la tête de la liste. */
+      liste.style.setProperty('--pose', '0');
+      const cran = nouvelle.offsetHeight;
+      s.jouer(nouvelle, { opacity: [0, 1] }, { duration: 380 });
+      await s.animer(liste, { translate: [`0 ${-cran}px`, '0 0'] }, { duration: 640, easing: EXPO });
+      s.basculer(etats.crm);
+      await s.attendre(360);
+
+      /* 2. Sa fiche s'ouvre : elle sort de l'étiquette « Signée ». */
+      await s.animer(etape, [{ transform: 'none' }, { transform: 'scale(1.1)' }, { transform: 'none' }], {
+        duration: 300,
+        easing: 'ease-out',
+      });
+      etape.classList.add('est-ouverte');
+      const origine = s.lieu(etape, 0.3, 0.5);
+      const cadreFiche = s.cadreDe(fiche);
+      fiche.style.transformOrigin = `${origine.x - cadreFiche.x}px ${origine.y - cadreFiche.y}px`;
+      fiche.classList.add('est-ouverte');
+      await s.animer(
+        fiche,
+        [
+          { transform: 'scale(0.14)', opacity: 0 },
+          { opacity: 1, offset: 0.3 },
+          { transform: 'none', opacity: 1 },
+        ],
+        { duration: 620, easing: EXPO },
+      );
+      await s.attendre(160);
+
+      /* 3. La lecture : le trait descend la fiche, montant, échéances et TVA
+         s'allument à son passage. */
+      await s.lire(balai, lignes);
+      await s.attendre(200);
+
+      /* 4. Le découpage : une affaire entre, des échéances sortent. */
+      await decouper(lignes, echeances);
+      /* Le temps que le total finisse de monter. */
+      await s.attendre(440);
+
+      /* 5. L'émission : les brouillons sont validés un à un. */
+      for (const echeance of echeances) {
+        echeance.classList.add('est-valide');
+        await s.attendre(90);
+      }
+      s.basculer(etats.facturation);
+      await s.attendre(300);
+
+      /* 6. Le suivi : le statut de chaque échéance arrive par le second fil,
+         ligne à ligne. */
+      s.allumer('suivi');
+      await Promise.all(
+        echeances.map(async (echeance, i) => {
+          const statut = statuts[i];
+          if (!statut) return;
+          await s.attendre(i * 190);
+          await s.passer({ bande: bandes[i], grain: grains[i], de: echeance, vers: statut, fil: 'suivi', eclot: true });
+          statut.classList.add('est-rempli', 'est-valide');
+        }),
+      );
+      s.basculer(etats.suivi);
+      s.racine.classList.add('est-abouti');
+      traitees += 1;
+      s.tictac(elTraitees, String(traitees));
+      /* Une affaire de plus, et le compteur d'à côté n'a pas bougé : zéro. */
+      s.tictac(elZero, '0');
+
+      /* Le temps de lire l'image : tout est passé, personne n'a rien saisi. */
+      await s.attendre(2250);
+
+      /* 7. On range : la fiche retourne dans son étiquette, l'affaire passe à
+         « Facturée », les deux outils se vident. */
+      await s.animer(fiche, [{ transform: 'none', opacity: 1 }, { transform: 'scale(0.14)', opacity: 0 }], {
+        duration: 380,
+        easing: ELAN,
+      });
+      fiche.classList.remove('est-ouverte');
+      etape.classList.remove('est-ouverte');
+      nouvelle.classList.add('est-traite');
+      etats.crm.dataset.etat = 'attente';
+      eteindreOutils();
+      ecrireTotal(0);
+      await s.attendre(560);
+
+      /* Le raccord, invisible : l'affaire facturée devient la première des
+         anciennes, qui lui ressemble trait pour trait, et la liste remonte
+         d'un cran dans la même image. La suivante attend au-dessus. */
+      for (let i = anciennes.length - 1; i > 0; i--) {
+        ecrire('numero', lu('numero', anciennes[i - 1]), anciennes[i]);
+      }
+      ecrire('numero', numero, anciennes[0]);
+      rang += 1;
+      numero = numeroSuivant(numero);
+      liste.style.setProperty('--pose', '-1');
+      nouvelle.classList.remove('est-traite');
+      lignesFiche.forEach((l) => l.classList.remove('est-lu', 'est-parti'));
+      charger();
+    }
+
+    return { figer, repos, tour };
+  });
+</script>
