@@ -4,7 +4,7 @@ import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
-import { organisations, resume } from '../data/parcours';
+import { organisations, profils, resume } from '../data/parcours';
 
 const cheminReservation = new URL(URL_RESERVATION).pathname.replace(/^\//, '');
 
@@ -76,7 +76,7 @@ const personSchema = {
   "@id": "https://liliansevoumian.fr/#person",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "image": personImage.toString(),
-  "jobTitle": ["Fondateur d’agenceafk", "Fondateur et formateur chez Augmentés", "Freelance en automatisation et agents IA", "Créateur de sites web"],
+  "jobTitle": ["Fondateur d’agenceafk", "Fondateur et formateur chez Augmentés", "Freelance en automatisation et agents IA", "Expert Make et n8n", "Créateur de sites web"],
   /* Le résumé et les deux structures viennent de data/parcours.ts, la source
      que lisent aussi la page d'accueil et /llms.txt. */
   "description": resume,
@@ -101,7 +101,7 @@ const personSchema = {
       "recognizedBy": { "@type": "Organization", "name": "Airtable", "url": "https://airtable.com" } }
   ],
   "address": { "@type": "PostalAddress", "addressRegion": "Ile-de-France", "addressCountry": "FR" },
-  "sameAs": ["https://www.linkedin.com/in/liliansevoumian/", "https://github.com/liliansev", "https://www.youtube.com/@lilian.sevoumian"]
+  "sameAs": Object.values(profils)
 };
 
 const serviceSchema = {
@@ -192,6 +192,9 @@ const faqPageSchema = faqSchema ? {
             body.style.left = -defilementSauvegarde.x + 'px';
             body.style.width = '100%';
             root.style.overflow = 'hidden';
+            // Le document figé rend `scrollY` nul : qui lit la position de la
+            // page (la barre d'écriture) sait ainsi où la retrouver.
+            root.setAttribute('data-defilement-verrouille', '');
           } else if (!Object.keys(verrous).length && defilementSauvegarde) {
             var previous = defilementSauvegarde;
             defilementSauvegarde = null;
@@ -202,6 +205,7 @@ const faqPageSchema = faqSchema ? {
             body.style.width = previous.width;
             root.style.overflow = previous.rootOverflow;
             window.scrollTo({ left: previous.x, top: previous.y, behavior: 'instant' });
+            root.removeAttribute('data-defilement-verrouille');
           }
         };
 
@@ -372,6 +376,7 @@ const faqPageSchema = faqSchema ? {
           // réservation : Cal le lit dans la configuration de l'embed. Quand il
           // change, l'agenda est remonté, sinon l'ancien mot resterait dedans.
           var noteMontee = '';
+          var noteVoulue = '';
           function lireNote(lien) {
             var cible = lien.getAttribute('data-cal-note-from');
             if (!cible) return '';
@@ -405,8 +410,10 @@ const faqPageSchema = faqSchema ? {
           }
           function mountCal(note) {
             if (!embedTarget) return Promise.resolve();
-            // Le bouton « Réessayer » passe son événement : il rejoue la note en cours.
-            if (typeof note !== 'string') note = noteMontee;
+            // Le bouton « Réessayer » passe son événement : il rejoue la note
+            // demandée, qu'elle ait pu être montée ou non.
+            if (typeof note === 'string') noteVoulue = note;
+            else note = noteVoulue;
             if (inited && note === noteMontee && embedTarget.querySelector('iframe')) {
               setCalState('ready');
               return Promise.resolve();
@@ -423,7 +430,8 @@ const faqPageSchema = faqSchema ? {
                 return waitForEmbed();
               })
               .then(function () { setCalState('ready'); })
-              .catch(function () {
+              .catch(function (erreur) {
+                console.error('[agenda] chargement en échec', erreur);
                 inited = false;
                 embedTarget.replaceChildren();
                 setCalState('error');

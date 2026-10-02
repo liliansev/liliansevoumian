@@ -4,7 +4,8 @@ import { faqs } from '../data/faq';
 import { creationOffers, subscriptionOffers } from '../data/sites-web';
 import { automationSubscriptions, maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
-import { activites, organisations, parcours, resume } from '../data/parcours';
+import { activites, organisations, parcours, profils, resume } from '../data/parcours';
+import { automationStartingPrice } from '../data/service-pricing';
 
 /*
  * /llms.txt — la carte du site à l'usage des moteurs de réponse générative.
@@ -14,19 +15,27 @@ import { activites, organisations, parcours, resume } from '../data/parcours';
  * deux versions d'un même fait n'en cite aucune. Ici, les cas clients et la
  * FAQ viennent des mêmes sources que les pages.
  *
- * Ne contient que des faits sourcés. Les tarifs web viennent de la même source
- * que leur page ; les prestations d'automatisation restent sur devis.
+ * Ne contient que des faits sourcés. Les prix viennent des mêmes sources que
+ * les pages : `service-pricing` pour les prix d'entrée, `sites-web` et
+ * `maintenance` pour les formules.
  */
 export const GET: APIRoute = async () => {
   const cas = (await getCollection('cas-clients', (e) => !e.data.draft)).sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime()
   );
 
+  /* Une ligne par cas, en phrases : ce qui a été fait, avec quoi, et le
+     premier résultat publié. Un moteur doit pouvoir la citer telle quelle. */
+  const phrase = (texte: string) => (/[.!?…]$/.test(texte.trim()) ? texte.trim() : `${texte.trim()}.`);
+  const minuscule = (texte: string) => texte.charAt(0).toLowerCase() + texte.slice(1);
   const ligneCas = (c: (typeof cas)[number]) => {
-    const kpi = c.data.kpis[0] ? ` · ${c.data.kpis[0].value} ${c.data.kpis[0].label}` : '';
-    const outils = c.data.tools.length ? ` (${c.data.tools.join(', ')})` : '';
-    const scope = c.data.scopeNote ? ` — ${c.data.scopeNote}` : '';
-    return `- [${c.data.title}](https://liliansevoumian.fr/cas-clients/${c.id})${outils}${kpi}${scope}`;
+    const resumeCas = c.data.description ? ` : ${phrase(c.data.description)}` : '.';
+    const outils = c.data.tools.length ? ` Outils : ${c.data.tools.join(', ')}.` : '';
+    /* Le premier résultat chiffré ; à défaut, le premier publié. */
+    const mesure = c.data.kpis.find((k) => /\d/.test(k.value)) ?? c.data.kpis[0];
+    const kpi = mesure ? ` Résultat : ${mesure.value}, ${minuscule(mesure.label)}.` : '';
+    const scope = c.data.scopeNote ? ` ${phrase(c.data.scopeNote)}` : '';
+    return `- [${c.data.title}](https://liliansevoumian.fr/cas-clients/${c.id})${resumeCas}${outils}${kpi}${scope}`;
   };
 
   /* Le parcours et les activités viennent de data/parcours.ts, comme sur la
@@ -53,6 +62,7 @@ export const GET: APIRoute = async () => {
 - Formation : plus de 300 personnes formées à Make, n8n et à l'IA
 - Entreprises accompagnées : plus de 100
 - Zone : Île-de-France, France, Europe
+- Profils : LinkedIn ${profils.linkedin} ; YouTube ${profils.youtube}
 - Contact : ${URL_RESERVATION} (appel de ${DUREE_RESERVATION_MINUTES} min, sans engagement) ou bonjour@liliansevoumian.fr
 
 ## Ce que je fais aujourd'hui
@@ -98,6 +108,7 @@ ${cas.map(ligneCas).join('\n')}
 - [Tous les cas clients](https://liliansevoumian.fr/cas-clients)
 - [Expert Make](https://liliansevoumian.fr/expert-make)
 - [Expert n8n](https://liliansevoumian.fr/expert-n8n)
+- [Reprendre une automatisation qui casse](https://liliansevoumian.fr/reprendre-une-automatisation-qui-casse)
 - [Sites et applications web](https://liliansevoumian.fr/sites-web-abonnement)
 - [Principes de travail](https://liliansevoumian.fr/principes)
 
@@ -107,8 +118,8 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 
 ## Notes
 
-- Les prestations d'automatisation sont chiffrées après un appel de ${DUREE_RESERVATION_MINUTES} min. Le
-  devis est ferme une fois le périmètre posé.
+- Une automatisation ou un agent IA démarre à ${automationStartingPrice.toLocaleString('fr-FR')} € HT. Le projet est chiffré après
+  un appel de ${DUREE_RESERVATION_MINUTES} min, et le devis est ferme une fois le périmètre posé.
 - L'offre sites web publie ses prix d'entrée : ${creationOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Le suivi mensuel propose ${subscriptionOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ou ')}.
 - Chaque projet livré s'accompagne d'un abonnement de suivi, facturé séparément de la création. Les applications métiers et leur suivi font l'objet d'un devis adapté au périmètre.
 - Abonnements automatisation : ${automationSubscriptions.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Les coûts IA sont inclus dans l'offre IA et agents.

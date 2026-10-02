@@ -38,16 +38,16 @@ src/
 │   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours
 │   ├── home-content.astro     # accueil : dernière vidéo + newsletter écrite comme un mail
 │   ├── home-voices.astro      # accueil : trois recommandations, une voix à la fois
+│   ├── home-questions.astro   # accueil : quatre questions écrites comme un échange (texte et balisage FAQ dans data/home-faq.ts)
 │   ├── home-offers.astro      # accueil : fin de page, champ + bouton d'appel, prix en une ligne
 │   ├── home-invite.astro      # accueil : barre d'écriture (hero puis coin bas droit) ; ouvre WhatsApp, la messagerie ou l'agenda avec le message rédigé, sans serveur
-│   ├── Home*.astro (PascalCase) # ancienne home, plus importés nulle part
 │   ├── HeroManifesto.astro    # aplat lime, typographie seule
 │   ├── LogoMarquee.astro      # bandeau d'outils défilant
-│   ├── CaseStudy.astro        # carrousel des 4 cas sur la home
+│   ├── CaseStudy.astro        # carrousel de 4 projets, sur /automatisations-ia
 │   ├── Testimonials.astro     # recommandations
 │   ├── APropos.astro          # trajectoire 2020 → aujourd'hui
 │   ├── ROICalculator.astro    # simulateur de temps (2 curseurs)
-│   ├── Stack.astro            # 10 outils en 4 familles, un appel par famille
+│   ├── Stack.astro            # 4 outils (n8n, Make, Notion, Airtable) en liste, une ligne d'usage chacun, sur /automatisations-ia
 │   ├── Offres.astro           # formats de collaboration
 │   ├── FAQ.astro              # 7 objections + balayage lime
 │   ├── CTA.astro              # section contact, réservation seule
@@ -57,12 +57,11 @@ src/
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── BoutonReservation.astro # TOUT lien vers l'agenda passe par ici
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   └── mockups/               # mini-UI produit des cartes outils
+│   └── mockups/               # mini-UI produit des pages de cas clients
 │       ├── MockupWindow.astro     # châssis fenêtre commun
-│       ├── WorkflowCanvas.astro   # faux canvas n8n/Make
-│       └── Stack*.astro           # une maquette par outil
+│       └── WorkflowCanvas.astro   # faux canvas n8n/Make
 ├── content/
-│   └── cas-clients/           # 4 cas en .md, frontmatter typé
+│   └── cas-clients/           # 5 cas en .md, frontmatter typé
 ├── data/                      # brands.ts, faq.ts, clients.ts, realisations.ts, parcours.ts
 ├── lib/                       # roi.ts, reservation.ts, contact.ts (e-mail et WhatsApp de la barre d'écriture), metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
@@ -80,7 +79,8 @@ src/
 └── styles/
     └── global.css             # jetons @theme + dispositif de la DA
 api/
-└── dfst-events.js             # proxy DataFast (cookieless)
+├── dfst-events.js             # proxy DataFast (cookieless)
+└── newsletter.ts              # inscription à la newsletter (délègue à src/lib/newsletter-signup)
 ```
 
 ## Design System

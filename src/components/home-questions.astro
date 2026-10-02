@@ -1,0 +1,108 @@
+---
+/*
+ * home-questions — accueil : les questions qu'on pose avant d'écrire.
+ *
+ * Elles sont écrites comme un échange, dans le vocabulaire de la barre
+ * d'écriture : la question à droite, sur pêche, comme ce qu'écrit le visiteur ;
+ * la réponse à gauche, comme ce que dit Lilian. La section suivante est le
+ * champ où l'on écrit vraiment : l'échange se poursuit là.
+ *
+ * Tout est à l'écran, rien n'est replié : quatre questions ne méritent pas un
+ * accordéon, et un moteur lit ce qu'un visiteur lit. Rien ne s'écrit tout
+ * seul ni ne fait semblant d'être en direct, ce sont des réponses rédigées.
+ *
+ * Le texte vient de `data/home-faq`, qui alimente aussi le balisage `FAQPage`
+ * posé par la page.
+ */
+import SectionHeader from './SectionHeader.astro';
+import { homeFaqs } from '../data/home-faq';
+---
+
+<section
+  id="questions"
+  data-section
+  class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
+>
+  <div class="questions relative mx-auto max-w-[1200px]">
+    {/* Sur grand écran le titre accompagne l'échange, qui est plus haut que
+        lui : sans cela, la colonne de gauche restait vide sous le titre. */}
+    <SectionHeader
+      class="lg:sticky lg:top-28"
+      title="Avant de m’écrire."
+      titleMaxWidth="12ch"
+      rule={false}
+      spacing="none"
+    />
+
+    <div class="echanges reveal">
+      {homeFaqs.map((item) => (
+        <div class="echange">
+          <h3 class="echange__question">{item.q}</h3>
+          <p class="echange__reponse">{item.a}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .questions {
+    display: grid;
+    gap: var(--spacing-groupe);
+  }
+
+  .echanges {
+    display: grid;
+    gap: var(--spacing-lie);
+    max-width: 44rem;
+  }
+
+  .echange {
+    display: grid;
+    gap: var(--spacing-colle);
+  }
+
+  /* Les deux bulles de la conversation (voir `home-invite`), à la taille du
+     texte courant : ici on lit, on ne survole pas une fenêtre. */
+  .echange__question,
+  .echange__reponse {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    letter-spacing: 0;
+  }
+
+  /* La question tient sur une ligne tant que l'écran le permet : elle peut
+     prendre toute la largeur, là où la réponse garde son retrait. */
+  .echange__question {
+    justify-self: end;
+    max-width: 100%;
+    text-wrap: pretty;
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-xs) var(--radius-md);
+    background: var(--color-peche);
+    color: var(--color-night);
+  }
+
+  .echange__reponse {
+    justify-self: start;
+    max-width: 92%;
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-xs);
+    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  /* Grand écran : le titre à gauche, l'échange à droite, comme les voix. */
+  @media (min-width: 1024px) {
+    .questions {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .echange__reponse {
+      max-width: 88%;
+    }
+  }
+</style>

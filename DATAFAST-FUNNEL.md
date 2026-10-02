@@ -24,6 +24,8 @@ La prop `source` dit lequel a converti :
 
 - `home_metier_automation`, `home_metier_web` : le lien « Voir l'offre » des
   blocs Automatisation et Sites web de la section « Je fais quatre choses » ;
+- `home_metier_agents` : le prix du bloc Agents IA, qui mène à
+  `/automatisations-ia` (le bouton du bloc, lui, sort vers agenceafk) ;
 - `home_services_automation`, `home_services_web` : la ligne de prix sous le
   bouton de fin de page ;
 - `nav_mobile_offers` : le menu mobile, hors accueil (sur l'accueil le menu ne

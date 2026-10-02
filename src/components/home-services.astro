@@ -54,8 +54,11 @@ const metiers = [
     id: 'automatisation',
     nom: 'Automatisation',
     phrase: 'Je relie vos outils, et les ressaisies disparaissent.',
+    /* Seul texte de la liste qui porte du balisage : Make et n8n mènent à leur
+       page. Il est rendu par `set:html`, comme les trois autres ; tous sont
+       écrits ici, aucun ne vient d'une saisie. */
     texte:
-      'Commandes, factures, relances, rapports\u00a0: je construis ces automatisations avec Make et n8n, deux outils faits pour ça. Je livre un système fiable, que votre équipe utilise au quotidien.',
+      'Commandes, factures, relances, rapports\u00a0: je construis ces automatisations avec <a href="/expert-make">Make</a> et <a href="/expert-n8n">n8n</a>, deux outils faits pour ça. Je livre un système fiable, que votre équipe utilise au quotidien.',
     /* Humble+ porte déjà le récit, juste au-dessus : ce bloc cite un autre cas. */
     preuve: { chiffre: '~4\u00a0h par semaine', suite: 'récupérées par l’équipe de Fraich Touch sur sa facturation.', href: '/cas-clients/facturation-automatisee-fraich-touch', cas: 'Fraich Touch' },
     note: prix(automationStartingPrice),
@@ -71,6 +74,9 @@ const metiers = [
     /* L'offre « Automatisation et agents IA » n'a qu'un prix d'entrée : il
        s'affiche sur ses deux blocs, comme sur la ligne de fin de page. */
     note: prix(automationStartingPrice),
+    /* Le bouton sort vers l'agence ; le prix, lui, mène à l'offre du site,
+       qui couvre automatisation et agents IA. */
+    noteHref: '/automatisations-ia',
     lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
   },
   {
@@ -119,7 +125,7 @@ const scenes = {
         <div class="metier__texte reveal">
           <h3>{metier.nom}</h3>
           <p class="metier__phrase">{metier.phrase}</p>
-          <p class="metier__corps">{metier.texte}</p>
+          <p class="metier__corps" set:html={metier.texte} />
 
           {'preuve' in metier && (
             <p class="metier__preuve">
@@ -147,7 +153,19 @@ const scenes = {
             >
               {metier.lien.label}
             </LinkCTA>
-            {'note' in metier && <span class="metier__note">{metier.note}</span>}
+            {'note' in metier &&
+              ('noteHref' in metier ? (
+                <a
+                  class="metier__note"
+                  href={metier.noteHref}
+                  data-fast-goal="service_path_opened"
+                  data-fast-goal-source="home_metier_agents"
+                >
+                  {metier.note}
+                </a>
+              ) : (
+                <span class="metier__note">{metier.note}</span>
+              ))}
           </div>
         </div>
 
@@ -313,6 +331,25 @@ const scenes = {
     text-decoration-color: color-mix(in srgb, var(--color-ink) 40%, transparent);
     text-underline-offset: 0.2em;
     white-space: nowrap;
+  }
+
+  /* Les liens du texte courant, soulignés comme celui de la preuve. Le texte
+     est injecté (`set:html`) : il ne porte pas l'attribut de portée. */
+  .metier__corps :global(a),
+  a.metier__note {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 160ms var(--ease-out-quint);
+  }
+
+  .metier__corps :global(a) {
+    color: var(--color-ink);
+  }
+
+  .metier__corps :global(a:hover),
+  a.metier__note:hover {
+    text-decoration-color: currentColor;
   }
 
   .metier__suite {

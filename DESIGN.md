@@ -68,18 +68,6 @@ typography:
     fontWeight: 600
     lineHeight: 0.98
     letterSpacing: "-0.045em"
-  home-hero:
-    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(2.75rem, 5vw + 0.25rem, 5.25rem)"
-    fontWeight: 600
-    lineHeight: 0.94
-    letterSpacing: "-0.035em"
-  home-service:
-    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(1.25rem, 8.6cqi, 2.75rem)"
-    fontWeight: 600
-    lineHeight: 1.05
-    letterSpacing: "-0.035em"
   headline:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2rem, 3vw + 0.5rem, 3rem)"
@@ -141,7 +129,6 @@ spacing:
   section-x: "clamp(1.5rem, 5vw, 7.5rem)"
   service-card: "clamp(1.25rem, 3vw, 2.5rem)"
   home-hero-y: "clamp(3rem, 5vw, 5rem)"
-  home-hero-gap: "clamp(3rem, 5vw, 5rem)"
   grid-cell: "96px"
 components:
   button-primary:
@@ -777,6 +764,25 @@ le focus le suspendent.
   clients, dont le nombre est lu dans la collection.
 - Les pages d'offre gardent `Testimonials.astro`, mêmes citations.
 
+### Les questions (`home-questions`)
+
+Quatre questions, juste avant la fin : pour qui, combien, seul ou non, comment
+se passe le premier échange. Elles sont écrites **comme un échange**, dans le
+vocabulaire de la barre d'écriture : la question à droite, sur pêche, en nuit,
+comme ce qu'écrit le visiteur ; la réponse à gauche, sur encre à 9 %, comme ce
+que dit Lilian. Mêmes rayons que les bulles de `home-invite`, à la taille du
+texte courant. La section suivante est le champ où l'on écrit vraiment.
+
+- **Tout est à l'écran, rien n'est replié** : pas d'accordéon, pas de filets,
+  pas de cartes. Un moteur lit ce qu'un visiteur lit.
+- **Rien ne s'écrit tout seul** : ce sont des réponses rédigées, pas une
+  conversation simulée.
+- Le titre (« Avant de m'écrire. ») reste en place à gauche sur grand écran
+  pendant que l'échange défile.
+- Le texte vient de `data/home-faq.ts`, qui alimente aussi le `FAQPage` de la
+  page : une seule écriture par réponse. Rien n'y est affirmé qui ne soit dans
+  PRODUCT.md ou `/llms.txt`.
+
 ### La fin (`home-offers`)
 
 La page se ferme comme elle s'ouvre : une phrase seule, centrée, sur la maille
@@ -869,8 +875,8 @@ il répond déjà.
 ### Ce qui se refait à la main
 
 `public/og-home.png` et la vignette du site dans les réalisations se refont à
-chaque changement du hero. Les images de `public/formes/` servaient de repli
-aux sculptures de verre et ne sont plus appelées par l'accueil.
+chaque changement du hero. Les images de `public/formes/`, qui servaient de
+repli aux sculptures de verre, ont été supprimées le 2 octobre 2026.
 
 ## Colors
 
@@ -960,8 +966,8 @@ le fond.
 
 **La règle du panneau clair.** Sur `.bloc-encre`, la pêche ne porte ni texte,
 ni trait, ni focus : 1,64:1. Elle n'y reste qu'en surface, la bande d'un mot
-surligné. `--color-accent-text` et `--color-focus` y repassent en nuit, les
-traits de `.lien-prose` et `.text-link-arrow` aussi, et le bouton primaire y
+surligné. `--color-accent-text` et `--color-focus` y repassent en nuit, le
+trait de `.lien-prose` aussi, et le bouton primaire y
 devient nuit à libellé blanc (16,69:1 contre le panneau), survol `night-soft`.
 
 **La règle du remap littéral.** Un bloc qui remappe des rôles n'écrit que des
@@ -998,10 +1004,6 @@ fonctionnels en 500, capitales, `+0,06em`.
 - **Display** (600, `clamp(2,25rem, 5vw + 1rem, 5,25rem)`, 0,98, `-0,045em`) :
   `h1` par défaut et `SectionHeader as="h1"`. Plancher à 2,25rem : à 320 px,
   « l'automatisation » se coupait en plein glyphe à 2,75rem.
-- **Home hero** (600, `clamp(2,75rem, 5vw + 0,25rem, 5,25rem)`, 0,94) : le `h1`
-  de la home, face au portrait. De 44 à 84 px.
-- **Home service** (600, `clamp(1,25rem, 8,6cqi, 2,75rem)`, 1,05) : les deux
-  titres du routeur, mesurés sur la largeur du `h3` qui les porte.
 - **Headline** (600, `clamp(2rem, 3vw + 0,5rem, 3rem)`, 1,05, `-0,035em`) :
   titres de section, toujours via `SectionHeader`.
 - **Title lg / Title** (600 ou 500, jusqu'à 1,875rem / 1,5rem, 1,2) : cartes,
@@ -1026,8 +1028,8 @@ descendait à 15 px que sous 400 px, précisément là où il doit être le plus
 lisible : il vaut `1rem`, plancher compris.
 
 Le rang de 13 px (`--text-mono-body`) a disparu de l'échelle rendue : il était
-à 1,08 de ses deux voisins. Le jeton survit comme alias de `--text-body-sm`
-parce que six maquettes l'appellent. Il reste un rapport de 1,09 entre les deux
+à 1,08 de ses deux voisins. Le jeton, qui ne survivait que comme alias de
+`--text-body-sm` pour six maquettes, a été retiré avec elles. Il reste un rapport de 1,09 entre les deux
 rangs de petites capitales (11 et 12 px) ; c'est un avis du détecteur, pas un
 défaut bloquant.
 
@@ -1109,10 +1111,9 @@ s'éclaircissant** : fond général `#111827`, bande `#161f32`, carte ou média
 `#1a2439`, surface haute `#1f2a42`. Le pied de page descend au contraire, en
 `#0c121f`.
 
-Les deux jetons d'ombre restent, et c'est vérifié : six déclarations hors de
-`global.css` les lisent (`MockupWindow`, `WorkflowCanvas`, `CaseStudy`,
-`StackScenario`, `StackWorkflow`), dont deux comme valeur de **repos** d'une
-`@keyframes` qui alterne avec un contour de marque de 1,5 px. Les supprimer y
+Les deux jetons d'ombre restent, et c'est vérifié : quatre déclarations hors de
+`global.css` les lisent (`MockupWindow`, `WorkflowCanvas` deux fois,
+`CaseStudy`). Les supprimer y
 rendrait `box-shadow: var(--shadow-card)` invalide à l'exécution, sans erreur.
 « Pas d'élévation » est écrit comme une valeur plutôt que laissé comme un blanc
 qu'on comblerait un jour au jugé.
@@ -1129,7 +1130,7 @@ composant qui doit tenir 3:1 (5,57:1). Un filet blanc pur éblouissait autour de
 chaque question de la FAQ.
 
 **La règle du trait de lien.** Le soulignement d'un lien (`.lien-prose`,
-`.text-link-arrow`, question de FAQ au survol) fait 2 px. Ce n'est pas un
+question de FAQ au survol) fait 2 px. Ce n'est pas un
 filet : un filet sépare ou encadre une surface, celui-ci souligne des mots. Le
 pixel de plus le distingue d'un filet de séparation par autre chose que la
 teinte, une information portée par la seule couleur n'en étant pas une.
@@ -1180,8 +1181,7 @@ fait de l'enveloppe un conteneur de défilement : le `view()` de l'image se
 résolvait contre elle et non contre la fenêtre, et l'image restait figée à la
 fin de sa course. `clip` rogne sans créer de conteneur de défilement.
 `overflow: hidden` reste valable partout ailleurs : cartes, cadres, balayage
-de la FAQ, cadre du portrait (dont l'entrée est temporelle, pas liée au
-défilement).
+de la FAQ.
 
 ## Components
 
@@ -1214,11 +1214,10 @@ se pose derrière le libellé de gauche à droite (même inclinaison et mêmes
 retraits que `mark`), le libellé passe en nuit dans la même transition, et la
 flèche avance de 4 px en prenant la couleur d'accent.
 
-**Le lien souligné fléché** (`.text-link-arrow`) porte un seul trait pêche de
-2 px sous le libellé, l'espace et la flèche ; au survol le trait prend la
-couleur du texte et la flèche avance de 0,2rem. **Le lien de prose**
-(`.lien-prose`) est souligné de 2 px en pêche, encre au survol. Les deux
-repassent en nuit sur le panneau clair.
+**Le lien de prose** (`.lien-prose`) est souligné de 2 px en pêche, encre au
+survol. Il repasse en nuit sur le panneau clair. Le lien souligné fléché
+(`.text-link-arrow`) a été retiré le 2 octobre 2026 avec l'ancienne home, son
+seul porteur.
 
 ### Le surlignage (`mark`)
 
@@ -1334,9 +1333,9 @@ mouvement réduit, l'élément est simplement là.
 2. **L'entrée du hero** (`.entree`). Chaque enfant direct monte de 18 px, se
    dévoile et fait le point (flou de 6 px), l'un après l'autre : 900 ms
    (`--duration-entree`), 110 ms entre deux, cinq crans puis un plafond.
-   `backwards` et non `both` : aucun filtre ne reste sur le titre. Le portrait
-   (`.entree-portrait`) se découvre de bas en haut en 1 100 ms pendant que
-   l'image se pose de `scale(1.14)` en 1 400 ms.
+   `backwards` et non `both` : aucun filtre ne reste sur le titre. L'entrée du
+   portrait (`.entree-portrait`) a été retirée le 2 octobre 2026 avec l'ancien
+   hero, son seul porteur.
 3. **Les médias qui s'ouvrent au défilement** (`.media-ouvre`). Le média entre
    rogné (`inset(9% 5%)`) et grossi (`scale(1.12)`), puis s'ouvre à mesure
    qu'il monte dans la fenêtre : `animation-timeline: view()`, de `entry 5%` à
@@ -1400,6 +1399,11 @@ Tailwind v4 n'émet pas un jeton que rien ne référence.
 
 ### La home personnelle et son routeur de services
 
+Cette section décrit l'ancienne home, remplacée par *L'accueil* plus haut : ses
+composants (`Home*.astro` en PascalCase, `service-workflow-visual.astro`) et
+les images de `src/assets/home-services/` ont été supprimés le 2 octobre 2026
+et restent dans l'historique git.
+
 Le premier viewport présente d'abord la personne qui construit. Sur desktop, le
 titre « Gagnez du temps avec l'IA et l'automatisation. » occupe la gauche et le
 portrait de Lilian la droite ; « l'automatisation » est surligné. Le portrait
@@ -1421,8 +1425,8 @@ Le choix arrive ensuite dans deux cartes de même poids : **Automatisation & IA*
 et **Sites & applications web**, décrites plus haut. À gauche,
 `ServiceWorkflowVisual` affiche la capture Make originale de Lilian, recadrée ;
 à droite, un suivi commercial généré, aux données fictives mentionnées comme
-telles. La provenance des deux PNG est documentée dans
-`src/assets/home-services/README.md`. Les prix viennent de
+telles. La provenance des deux PNG était documentée dans
+`src/assets/home-services/README.md`, supprimé avec eux. Les prix viennent de
 `src/data/service-pricing.ts`, partagé avec les pages d'offre.
 
 Après ce routeur, **le panneau clair** aide les fondateurs et équipes Ops, les
@@ -1461,7 +1465,7 @@ capture ni témoignage ; la date affichée est une date de publication.
 jamais celle de la marque. Le couple logo + nom est en `nowrap`. L'alignement
 est optique et se corrige par marque.
 
-**Les maquettes produit** (`MockupWindow` et les composants `Stack*`) sont des
+**Les maquettes produit** (`MockupWindow`, `WorkflowCanvas`) sont des
 reconstitutions schématiques. Les écrans clients sont confidentiels : aucun
 visuel ne doit pouvoir passer pour une capture. Les couleurs de marque tierces
 y sont posées au repos parce qu'on montre l'outil réel, relevées de blanc quand

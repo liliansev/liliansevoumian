@@ -216,8 +216,16 @@ export const organisations = [
 ] as const;
 
 /** La même chose en moins de 160 caractères, pour la méta-description de l'accueil. */
+/** Les profils publics de Lilian : le `sameAs` du balisage et /llms.txt les
+    lisent ici, pour ne jamais en citer deux écritures. */
+export const profils = {
+  linkedin: 'https://www.linkedin.com/in/liliansevoumian/',
+  github: 'https://github.com/liliansev',
+  youtube: 'https://www.youtube.com/@lilian.sevoumian',
+} as const;
+
 export const resumeCourt =
-  'Lilian Sevoumian automatise le travail des entreprises depuis 2020. Fondateur d’agenceafk et d’Augmentés, premier Français certifié Make niveau 5.';
+  'Lilian Sevoumian, freelance en automatisation et agents IA depuis 2020. Fondateur d’agenceafk et d’Augmentés, premier Français certifié Make niveau 5.';
 
 /** La phrase qui résume Lilian, partagée par le balisage et /llms.txt. */
 export const resume =

@@ -7,10 +7,12 @@ import HomeTodayPath from '../components/home-today-path.astro';
 import HomeServices from '../components/home-services.astro';
 import HomeContent from '../components/home-content.astro';
 import HomeVoices from '../components/home-voices.astro';
+import HomeQuestions from '../components/home-questions.astro';
 import HomeOffers from '../components/home-offers.astro';
 import HomeInvite from '../components/home-invite.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
+import { homeFaqs } from '../data/home-faq';
 
 /* La barre nomme les quatre métiers : avant même de défiler, on lit ce que
    fait Lilian. Chaque lien mène au bloc du métier, dans `home-services`. */
@@ -27,7 +29,7 @@ const pageSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfilePage',
   '@id': 'https://liliansevoumian.fr/#home',
-  name: 'Lilian Sevoumian · Automatisation, IA et formation',
+  name: 'Lilian Sevoumian · Freelance en automatisation et agents IA',
   description: resume,
   url: 'https://liliansevoumian.fr/',
   inLanguage: 'fr-FR',
@@ -36,11 +38,12 @@ const pageSchema = {
 ---
 
 <Layout
-  title="Lilian Sevoumian | Automatisation, IA, formations Make et n8n"
+  title="Lilian Sevoumian · Freelance automatisation, agents IA, Make et n8n"
   description={resumeCourt}
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
   pageSchema={pageSchema}
+  faqSchema={homeFaqs.map((item) => ({ question: item.q, answer: item.a }))}
 >
   <Navigation
     links={homeNavigation}
@@ -61,6 +64,7 @@ const pageSchema = {
       <HomeTodayPath />
       <HomeContent />
       <HomeVoices />
+      <HomeQuestions />
       <HomeOffers />
     </div>
   </main>

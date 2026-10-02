@@ -1,26 +1,33 @@
 import type { FaqItem } from './faq';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
-import { maintenanceScope } from './maintenance';
+import { automationStartingPrice, webStartingPrice } from './service-pricing';
+
+/*
+ * Les questions de la page d'accueil : le texte visible de `home-questions`
+ * ET la source du balisage `FAQPage`. Une seule écriture, pour qu'un moteur ne
+ * lise jamais deux réponses à la même question.
+ *
+ * Rien n'y est affirmé qui ne soit déjà dans PRODUCT.md ou /llms.txt : le
+ * public visé, les prix d'entrée (`service-pricing`), le devis ferme,
+ * l'abonnement de suivi, la zone, la durée de l'appel.
+ */
+const euros = (montant: number) => `${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 
 export const homeFaqs: FaqItem[] = [
   {
-    q: 'Par quel service commencer ?',
-    a: 'Automatisation & IA pour connecter vos outils et réduire les tâches manuelles. Sites & applications web pour créer une interface. Les deux peuvent se combiner.',
+    q: 'Pour qui travaillez-vous\u00a0?',
+    a: 'Pour des dirigeants de PME, des fondateurs de startup et des responsables des opérations, le plus souvent dans des entreprises de 5\u00a0à\u00a050\u00a0personnes. Je suis basé en Île-de-France et je travaille avec des équipes partout en France.',
   },
   {
-    q: 'Comment se répartit le budget ?',
-    a: 'La création est chiffrée sur devis, puis un abonnement assure le suivi. Les montants et le périmètre sont détaillés sur les pages de chaque offre. Les applications métier et leur suivi sont chiffrés sur devis.',
+    q: 'Combien ça coûte\u00a0?',
+    a: `Une automatisation ou un agent\u00a0IA démarre à ${euros(automationStartingPrice)}, un site web à ${euros(webStartingPrice)}. Le devis est ferme une fois le périmètre posé. Chaque projet livré s’accompagne d’un abonnement de suivi\u00a0: hébergement, maintenance et petits ajustements.`,
   },
   {
-    q: 'Travaillez-vous seul ?',
-    a: 'Oui, du cadrage aux améliorations prévues. Si le projet demande une équipe plus large, nous le déterminons avant de démarrer.',
+    q: 'Vous travaillez seul\u00a0?',
+    a: 'Oui. Je suis freelance\u00a0: la personne qui cadre votre projet est celle qui le construit. Si le projet demande une équipe plus large, on le décide avant de démarrer.',
   },
   {
-    q: 'Que couvre l’abonnement mensuel ?',
-    a: `L’abonnement fait partie de chaque projet livré. Il comprend l’hébergement, la maintenance et les petits ajustements de la solution existante. ${maintenanceScope}`,
-  },
-  {
-    q: 'Comment se passe le premier échange ?',
-    a: `Le bouton « Parlons de votre projet » ouvre mon agenda pour réserver un appel de ${DUREE_RESERVATION_MINUTES} minutes. Nous décortiquons ce qui vous prend du temps, priorisons les automatisations ou les outils à construire, et je vous explique ce qui est faisable et pourquoi. Le devis vient ensuite.`,
+    q: 'Comment se passe le premier échange\u00a0?',
+    a: `Vous m’écrivez en une phrase ce qui vous fait perdre du temps, par WhatsApp ou par e-mail, ou vous réservez un appel de ${DUREE_RESERVATION_MINUTES}\u00a0minutes en visio, sans engagement. On regarde ce qui est faisable, et pourquoi. Le devis vient ensuite.`,
   },
 ];
