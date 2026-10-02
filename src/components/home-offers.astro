@@ -1,201 +1,191 @@
 ---
 /*
- * home-offers — travailler avec Lilian, en deux lignes.
+ * home-offers — la fin de la page : un appel, et ce que ça coûte.
  *
- * Les offres ne portent plus la page d'accueil : elles sont une des choses que
- * Lilian fait, et elles arrivent en dernier, après le parcours et les preuves.
- * Deux lignes suffisent — le nom, ce que c'est, le prix de départ, le lien —
- * parce que chacune a sa page complète.
+ * La page s'ouvre sur un titre seul posé sur une grille ; elle se ferme de la
+ * même façon. Une phrase, centrée, qui dit ce qu'on fait ensuite, puis le
+ * bouton. La grille du premier écran revient derrière, immobile : on est
+ * revenu au point de départ, avec une réponse.
+ *
+ * Les prix tiennent en une ligne sous le bouton. Ils étaient deux rangées à
+ * filets qui redisaient ce que les blocs des métiers annoncent déjà ; ils
+ * restent là pour qui est descendu jusqu'ici en cherchant un ordre de
+ * grandeur, et chacun mène à sa page d'offre.
+ *
+ * Tout lien vers l'agenda passe par `BoutonReservation`.
  */
 import { Icon } from 'astro-icon/components';
 import BoutonReservation from './BoutonReservation.astro';
-import SectionHeader from './SectionHeader.astro';
 import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
+/* Mêmes noms que dans les blocs des métiers : une offre n'a qu'un nom sur la
+   page. */
 const offres = [
   {
     href: '/automatisations-ia',
-    nom: 'Automatisation & IA',
-    resume: 'Workflows n8n et Make, agents IA et intégrations dans vos outils.',
+    nom: 'Automatisation et agents IA',
     prix: automationStartingPrice,
     source: 'home_services_automation',
   },
   {
     href: '/sites-web-abonnement',
-    nom: 'Sites & applications web',
-    resume: 'Landing pages, dashboards, portails clients et applications métier, de la conception aux évolutions.',
+    nom: 'Sites web et dashboards',
     prix: webStartingPrice,
     source: 'home_services_web',
   },
 ] as const;
 ---
 
-<section
-  id="offres"
-  data-section
-  class="relative px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
->
-  <div class="relative mx-auto max-w-[1200px]">
-    <SectionHeader title="Combien <mark>ça coûte.</mark>" titleMaxWidth="16ch" rule={false} />
+<section id="offres" data-section class="fin relative px-[var(--spacing-section-x)]">
+  <div class="fin__grille" aria-hidden="true"></div>
 
-    <ul class="offres-lignes reveal-stagger">
-      {offres.map((offre) => (
-        <li class="reveal">
-          <a
-            href={offre.href}
-            class="offres-lignes__ligne"
-            data-fast-goal="service_path_opened"
-            data-fast-goal-source={offre.source}
-          >
-            <span class="offres-lignes__nom">{offre.nom}</span>
-            <span class="offres-lignes__resume">{offre.resume}</span>
-            <span class="offres-lignes__prix">
-              <span>À partir de</span>
-              <strong>{offre.prix.toLocaleString('fr-FR')}&nbsp;€ <small>HT</small></strong>
-            </span>
-            <Icon name="lucide:arrow-right" class="offres-lignes__fleche" aria-hidden="true" />
+  <div class="fin__centre reveal">
+    <h2 class="fin__titre">
+      {DUREE_RESERVATION_MINUTES} minutes pour voir si je suis <mark>la bonne personne.</mark>
+    </h2>
+    <p class="fin__suite">
+      On regarde votre besoin, et on voit si c’est un projet pour moi.
+    </p>
+    <BoutonReservation source="home_offres" class="btn-primary fin__bouton">
+      Parlons de votre projet <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+    </BoutonReservation>
+
+    <p class="fin__prix">
+      {offres.map((offre, i) => (
+        <>
+          {i > 0 && <span class="fin__sep" aria-hidden="true"> · </span>}
+          <a href={offre.href} data-fast-goal="service_path_opened" data-fast-goal-source={offre.source}>
+            {offre.nom}, à partir de <strong>{offre.prix.toLocaleString('fr-FR')}&nbsp;€&nbsp;HT</strong>
           </a>
-        </li>
+        </>
       ))}
-    </ul>
-
-    <div class="offres-appel reveal">
-      <p>
-        Un appel de {DUREE_RESERVATION_MINUTES} minutes pour regarder votre besoin et voir si je suis
-        la bonne personne pour le prendre.
-      </p>
-      <BoutonReservation source="home_offres" class="btn-primary offres-appel__bouton">
-        Parlons de votre projet <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
-      </BoutonReservation>
-    </div>
+    </p>
   </div>
 </section>
 
 <style>
-  .offres-lignes {
+  .fin {
+    --maille: clamp(3.5rem, 5.6vw, 5.5rem);
+    --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
+    display: grid;
+    place-items: center;
+    min-height: min(46rem, 88svh);
+    padding-block: var(--spacing-section-y);
+    overflow: clip;
+    isolation: isolate;
+  }
+
+  /* La maille du premier écran, comptée depuis le centre, qui s'efface vers
+     les bords. Immobile : le mouvement était au début, ici la page se pose. */
+  .fin__grille {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(var(--trait) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille),
+      linear-gradient(90deg, var(--trait) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille);
+    -webkit-mask-image: radial-gradient(ellipse 62% 70% at 50% 50%, var(--color-night) 0%, transparent 100%);
+    mask-image: radial-gradient(ellipse 62% 70% at 50% 50%, var(--color-night) 0%, transparent 100%);
+  }
+
+  .fin__centre {
+    display: grid;
+    justify-items: center;
+    gap: clamp(1.25rem, 2.4vw, 1.75rem);
+    max-width: 62rem;
+    text-align: center;
+  }
+
+  .fin__titre {
+    max-width: 17ch;
     margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--color-border-strong);
-    list-style: none;
-  }
-
-  .offres-lignes li {
-    max-width: none;
-    border-bottom: 1px solid var(--color-divider);
-  }
-
-  .offres-lignes__ligne {
-    display: grid;
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr) 9rem 1.5rem;
-    align-items: center;
-    gap: clamp(1.25rem, 4vw, 4rem);
-    padding: clamp(1.5rem, 3vw, 2.25rem) clamp(0.75rem, 1.5vw, 1.25rem);
-    margin-inline: calc(-1 * clamp(0.75rem, 1.5vw, 1.25rem));
-    border-radius: var(--radius-md);
     color: var(--color-ink);
-    text-decoration: none;
-    transition: background-color var(--duration-default) var(--ease-out-quint);
+    font-family: var(--font-display);
+    font-size: var(--text-story);
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
   }
 
-  .offres-lignes__nom {
-    font-size: var(--text-title-lg);
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.025em;
+  .fin__titre mark {
+    margin-top: 0.14em;
   }
 
-  .offres-lignes__resume {
-    max-width: 48ch;
+  .fin__suite {
+    max-width: 44ch;
+    margin: 0;
     color: var(--color-ink-mid);
-    line-height: 1.55;
-  }
-
-  .offres-lignes__prix {
-    display: grid;
-    gap: 0.15rem;
-    white-space: nowrap;
-  }
-
-  .offres-lignes__prix > span {
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-  }
-
-  .offres-lignes__prix strong {
-    font-size: var(--text-title);
-    font-weight: 600;
-    line-height: 1.2;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .offres-lignes__prix small {
-    font-size: var(--text-body-sm);
-    font-weight: 400;
-  }
-
-  .offres-lignes__ligne :global(.offres-lignes__fleche) {
-    width: 1.125rem;
-    height: 1.125rem;
-    color: var(--color-ink-low);
-    transition: transform var(--duration-default) var(--ease-out-quint),
-                color var(--duration-default) var(--ease-out-quint);
+    font-size: var(--text-body-large);
+    line-height: 1.5;
+    text-wrap: balance;
   }
 
   /* Le même bouton que dans la barre de navigation : même libellé, même casse,
      même flèche. Une action n'a qu'un seul traitement sur la page. */
-  .offres-appel :global(.offres-appel__bouton) {
+  .fin :global(.fin__bouton) {
+    margin-top: 0.5rem;
     text-transform: none;
     letter-spacing: normal;
     font-size: var(--text-body-sm);
   }
 
-  .offres-appel {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.25rem 2rem;
-    margin-top: clamp(2rem, 4vw, 3rem);
+  .fin__prix {
+    max-width: none;
+    margin: clamp(0.75rem, 2vw, 1.5rem) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
   }
 
-  .offres-appel p {
-    max-width: 44ch;
-    margin: 0;
+  .fin__prix a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--color-ink-mid);
-    line-height: 1.55;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    text-underline-offset: 0.28em;
+    transition:
+      color var(--duration-default) var(--ease-out-quint),
+      text-decoration-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .fin__prix strong {
+    margin-left: 0.3em;
+    color: var(--color-ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .offres-lignes__ligne:hover {
-      background: var(--color-surface-low);
-    }
-    .offres-lignes__ligne:hover :global(.offres-lignes__fleche) {
-      color: var(--color-accent-text);
-      transform: translateX(4px);
+    .fin__prix a:hover {
+      color: var(--color-ink);
+      text-decoration-color: var(--color-peche);
     }
   }
 
-  @media (max-width: 899px) {
-    .offres-lignes__ligne {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: start;
-      gap: 0.75rem 1rem;
+  @media (max-width: 640px) {
+    .fin {
+      --maille: 3rem;
     }
 
-    .offres-lignes__resume,
-    .offres-lignes__prix {
-      grid-column: 1 / -1;
+    /* Une offre par ligne : côte à côte, les deux prix se coupaient au milieu. */
+    .fin__prix {
+      display: grid;
+      justify-items: center;
     }
 
-    .offres-lignes__ligne :global(.offres-lignes__fleche) {
-      grid-column: 2;
-      grid-row: 1;
+    .fin__sep {
+      display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .offres-lignes__ligne :global(.offres-lignes__fleche) { transition: none; }
-    .offres-lignes__ligne:hover :global(.offres-lignes__fleche) { transform: none; }
+    .fin__prix a {
+      transition: none;
+    }
   }
 </style>

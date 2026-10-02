@@ -25,10 +25,14 @@
  * la première phrase et déroule seule ses trois temps, pour que le défilement
  * reste celui d'une page ordinaire.
  *
- * Sans script, le texte est lisible et la scène est une image fixe ; en
- * mouvement réduit, elle montre son état final et le bouton passe de l'un à
- * l'autre sans animation ; hors écran ou onglet masqué, les boucles
- * s'arrêtent.
+ * Sans script, le texte est lisible et la scène est une image fixe, sans son
+ * bouton. En mouvement réduit, elle montre deux images fixes : celle du
+ * travail à la main, puis celle de l'automatisation quand la troisième phrase
+ * arrive (ou quand on appuie sur le bouton). Hors écran ou onglet masqué, les
+ * boucles et l'horloge s'arrêtent.
+ *
+ * Le bouton a le dernier mot : une fois qu'on a choisi une façon de faire, le
+ * défilement ne la change plus tant que la scène reste à l'écran.
  */
 import LinkCTA from './LinkCTA.astro';
 
@@ -52,7 +56,7 @@ const actes: { id: string; titre: Segment[]; suite: string }[] = [
   },
   {
     id: 'automatiser',
-    titre: [{ t: 'Ce qui se répète' }, { t: 'n’a pas besoin de vous.', mark: true }],
+    titre: [{ t: 'Ce qui se répète n’a pas' }, { t: 'besoin de vous.', mark: true }],
     suite:
       'Un geste refait trois fois se confie à une machine. Chez Humble+, il n’y a plus aucune ressaisie entre le bon de commande et la facture.',
   },
@@ -219,10 +223,11 @@ const lignes = [
                 </div>
               </div>
 
-              <div class="scene__mode" role="group" aria-label="La même commande, de deux façons">
+              <div class="scene__mode" role="group" aria-label="La même commande, de deux façons" hidden data-mode-groupe>
                 <button type="button" data-mode-bouton="main" aria-pressed="true">À la main</button>
                 <button type="button" data-mode-bouton="auto" aria-pressed="false">Automatisé</button>
               </div>
+              <p class="sr-only" aria-live="polite" data-annonce></p>
             </div>
           </div>
         )}
@@ -302,7 +307,7 @@ const lignes = [
     --radius-bande: 9999px;
     display: inline-block;
     padding: 0.02em 0.36em 0.08em;
-    margin: 0.14em 0 0 -0.12em;
+    margin: 0.14em 0 0;
   }
 
   .acte__titre mark::before {
@@ -740,7 +745,7 @@ const lignes = [
 
   /* ── La facture : l'outil dans lequel on recopie, en verre sombre ── */
   .fenetre--app {
-    top: 212px;
+    top: 198px;
     left: 350px;
     width: 308px;
     background: color-mix(in srgb, var(--color-night-deep) 74%, transparent);
@@ -1016,8 +1021,12 @@ const lignes = [
     background: color-mix(in srgb, var(--color-ink) 5%, transparent);
   }
 
+  .scene__mode[hidden] {
+    display: none;
+  }
+
   .scene__mode button {
-    min-height: 38px;
+    min-height: 44px;
     padding: 0 1.1rem;
     border: 0;
     border-radius: var(--radius-full);
@@ -1192,6 +1201,13 @@ const lignes = [
       width: 214px;
     }
 
+    /* L'étiquette portée passe au-dessus du curseur : dessous, elle recouvrait
+       le titre de la facture, que les deux fenêtres rapprochées mettent juste
+       sous la ligne copiée. */
+    .curseur__valeur {
+      top: -25px;
+    }
+
     .fenetre--app .fenetre__corps { padding: 8px; }
 
     .colonnes--app {
@@ -1243,7 +1259,10 @@ const lignes = [
 
   const racine = document.querySelector<HTMLElement>('[data-story]');
   const scene = racine?.querySelector<HTMLElement>('[data-scene]');
-  if (racine && scene) lancer(racine, scene);
+  /* Sans ces deux API (navigateurs d'avant 2020), la scène reste l'image fixe
+     du HTML : mieux qu'un script qui s'arrête à mi-chemin. */
+  const pretAAnimer = 'animate' in Element.prototype && 'ResizeObserver' in window;
+  if (racine && scene && pretAAnimer) lancer(racine, scene);
 
   function lancer(racine: HTMLElement, scene: HTMLElement) {
     const un = <T extends Element = HTMLElement>(sel: string) => scene.querySelector<T>(sel)!;
@@ -1265,6 +1284,7 @@ const lignes = [
     const aigH = un<SVGLineElement>('[data-aiguille-h]');
     const bandes = [...scene.querySelectorAll<HTMLElement>('.bande')];
     const boutons = [...scene.querySelectorAll<HTMLButtonElement>('[data-mode-bouton]')];
+    const annonce = scene.querySelector<HTMLElement>('[data-annonce]');
     const titres = [...racine.querySelectorAll<HTMLElement>('.acte')].map((acte) => ({
       n: Number(acte.dataset.acte),
       el: acte.querySelector<HTMLElement>('.acte__titre')!,
@@ -1293,6 +1313,18 @@ const lignes = [
       [...monde.querySelectorAll<HTMLElement>(sel)].filter((el) => el.offsetParent !== null);
 
     const pause = (ms: number) => new Promise<void>((ok) => window.setTimeout(ok, ms));
+
+    /* Une animation annulée par un changement de mode rejette sa promesse avec
+       `AbortError` : c'est attendu, la boucle s'arrête d'elle-même au contrôle
+       de jeton suivant. Toute autre erreur remonte. */
+    const annulee = (erreur: unknown) => erreur instanceof DOMException && erreur.name === 'AbortError';
+    const fini = (animation: Animation) =>
+      animation.finished.then(
+        () => undefined,
+        (erreur: unknown) => {
+          if (!annulee(erreur)) throw erreur;
+        },
+      );
 
     const attendreEcran = async () => {
       while (!visible || document.hidden) await pause(240);
@@ -1372,8 +1404,8 @@ const lignes = [
       try {
         await anim.finished;
         poser(vers);
-      } catch {
-        /* annulée par un changement de mode : la boucle s'arrête d'elle-même */
+      } catch (erreur) {
+        if (!annulee(erreur)) throw erreur;
       }
     }
 
@@ -1395,7 +1427,12 @@ const lignes = [
     const compter = (el: HTMLElement, de: number, vers: number, duree: number, j: number) => {
       const debut = performance.now();
       const pas = (t: number) => {
-        if (j !== jeton) return;
+        /* Interrompu, le compteur écrit sa valeur d'arrivée : la variable la
+           porte déjà, et un nombre intermédiaire resterait affiché. */
+        if (j !== jeton) {
+          el.textContent = String(vers);
+          return;
+        }
         const a = Math.min(1, (t - debut) / duree);
         el.textContent = String(Math.round(de + (vers - de) * (1 - Math.pow(1 - a, 3))));
         if (a < 1) requestAnimationFrame(pas);
@@ -1441,20 +1478,20 @@ const lignes = [
     /* La page traitée part, la suivante remonte, la facture se vide. */
     async function docSuivant(j: number, rapide: boolean) {
       const d = rapide ? 190 : 360;
-      await doc
-        .animate([{ translate: '0 0', opacity: 1 }, { translate: '0 -18px', opacity: 0 }], {
+      await fini(
+        doc.animate([{ translate: '0 0', opacity: 1 }, { translate: '0 -18px', opacity: 0 }], {
           duration: d,
           easing: 'cubic-bezier(0.5, 0, 0.75, 0)',
-        })
-        .finished.catch(() => {});
+        }),
+      );
       if (j !== jeton) return;
       viderLignes();
-      await doc
-        .animate([{ translate: '0 22px', opacity: 0 }, { translate: '0 0', opacity: 1 }], {
+      await fini(
+        doc.animate([{ translate: '0 22px', opacity: 0 }, { translate: '0 0', opacity: 1 }], {
           duration: d,
           easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        })
-        .finished.catch(() => {});
+        }),
+      );
     }
 
     /* ── À la main ── */
@@ -1518,8 +1555,8 @@ const lignes = [
         width: `${a.w}px`,
         height: `${a.h - 6}px`,
       });
-      await bande
-        .animate(
+      await fini(
+        bande.animate(
           [
             { transform: 'translate(0, 0) scale(1, 1)', opacity: 0.9 },
             {
@@ -1531,8 +1568,8 @@ const lignes = [
             { transform: `translate(${dx}px, ${dy}px) scale(${z.w / a.w}, ${z.h / (a.h - 6)})`, opacity: 0 },
           ],
           { duration: duree, delay: delai, easing: 'cubic-bezier(0.45, 0, 0.15, 1)', fill: 'backwards' },
-        )
-        .finished.catch(() => {});
+        ),
+      );
     }
 
     async function boucleAuto(j: number) {
@@ -1601,6 +1638,18 @@ const lignes = [
       majTotal();
     };
 
+    /* Une boucle qui lève s'arrêterait sans bruit, scène figée au milieu d'un
+       geste. Ici elle laisse une trace, arrête ses sœurs et la scène retombe
+       sur son image fixe, celle du mouvement réduit. */
+    const veiller = (boucle: Promise<void>, nom: string) => {
+      boucle.catch((erreur: unknown) => {
+        console.error(`Scène du récit : la boucle « ${nom} » s’est arrêtée`, erreur);
+        jeton += 1;
+        deroule += 1;
+        figer();
+      });
+    };
+
     const changerMode = (m: 'main' | 'auto') => {
       if (m === mode) return;
       mode = m;
@@ -1610,7 +1659,7 @@ const lignes = [
       [curseur, doc, ...bandes].forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
       if (reduit) return figer();
       if (m === 'auto') {
-        void boucleAuto(jeton);
+        veiller(boucleAuto(jeton), 'automatisé');
       } else {
         viderLignes();
         if (attente < ATTENTE_DEPART) {
@@ -1618,8 +1667,8 @@ const lignes = [
           attente = ATTENTE_DEPART;
           blocAttente.classList.remove('est-vide');
         }
-        void boucleMain(jeton);
-        void arrivees(jeton);
+        veiller(boucleMain(jeton), 'à la main');
+        veiller(arrivees(jeton), 'arrivées');
       }
     };
 
@@ -1627,8 +1676,20 @@ const lignes = [
        semaine ; automatisé, elle reprend un pas tranquille. */
     let minuteAffichee = -1;
     let dernier = performance.now();
+    let horloge = 0;
+    /* L'horloge ne demande une image que si la scène est à l'écran : hors
+       champ, plus rien ne réveille la page. `planifier` la relance. */
+    const planifier = () => {
+      /* En mouvement réduit l'horloge reste à son heure de départ : c'était le
+         seul élément de la scène à bouger encore. */
+      if (reduit) return;
+      if (!horloge && visible && !document.hidden) horloge = requestAnimationFrame(battre);
+    };
     const battre = (t: number) => {
-      const dt = Math.min(80, t - dernier);
+      horloge = 0;
+      /* Borné des deux côtés : l'heure d'une image peut précéder celle du
+         montage, et un long arrêt ne doit pas faire sauter les aiguilles. */
+      const dt = Math.max(0, Math.min(80, t - dernier));
       dernier = t;
       if (visible && !document.hidden) {
         const cible = mode === 'auto' ? 0.7 : acte === 2 ? 52 : 5;
@@ -1647,14 +1708,19 @@ const lignes = [
           elHeure.textContent = `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, '0')}`;
         }
       }
-      requestAnimationFrame(battre);
+      planifier();
     };
+
+    /* Ce que le visiteur a choisi au bouton, tant que la scène est à l'écran.
+       Le récit ne le contredit pas : il reprend la main quand la scène sort. */
+    let choix: 'main' | 'auto' | null = null;
+    const modeDuRecit = () => (acte === 3 ? 'auto' : 'main');
 
     const fixerActe = (n: number) => {
       if (n === acte) return;
       acte = n;
       scene.dataset.acte = String(n);
-      changerMode(n === 3 ? 'auto' : 'main');
+      if (!choix) changerMode(modeDuRecit());
     };
 
     /* Sur grand écran : quelle phrase est à l'écran, la dernière dont le titre
@@ -1666,6 +1732,18 @@ const lignes = [
       attenteImage = false;
       const r = scene.getBoundingClientRect();
       visible = r.bottom > 0 && r.top < window.innerHeight;
+      planifier();
+      if (!visible && choix) {
+        /* La scène est sortie : le récit reprend la main, pour la retrouver
+           au bon temps quand on y reviendra. */
+        choix = null;
+        if (annonce) annonce.textContent = '';
+        if (colonne.matches) {
+          if (!reduit) veiller(derouler(++deroule), 'déroulé');
+        } else {
+          changerMode(modeDuRecit());
+        }
+      }
       if (colonne.matches) return;
       let n = 1;
       for (const titre of titres) {
@@ -1675,29 +1753,30 @@ const lignes = [
     };
 
     /* En une colonne : à la main, puis la semaine qui file, puis automatisé,
-       et on recommence. Un appui sur le bouton suspend le déroulé un moment,
-       pour laisser regarder ce qu'on a choisi. */
+       et on recommence. Un appui sur le bouton arrête le déroulé : la scène
+       reste sur ce qu'on a choisi, jusqu'à ce qu'elle sorte de l'écran. */
     let deroule = 0;
-    let reprise = 0;
     const temps: [number, number][] = [[1, 7000], [2, 4500], [3, 9500]];
     async function derouler(j: number) {
       let i = 0;
       while (j === deroule) {
         await attendreEcran();
         if (j !== deroule) return;
-        if (performance.now() >= reprise) fixerActe(temps[i][0]);
+        fixerActe(temps[i][0]);
         const fin = performance.now() + temps[i][1];
         while (performance.now() < fin) {
           await pause(300);
           if (j !== deroule) return;
         }
-        if (performance.now() >= reprise) i = (i + 1) % temps.length;
+        i = (i + 1) % temps.length;
       }
     }
     const regler = () => {
       deroule += 1;
-      if (reduit) return;
-      if (colonne.matches) void derouler(deroule);
+      choix = null;
+      if (annonce) annonce.textContent = '';
+      if (reduit) return situer();
+      if (colonne.matches) veiller(derouler(deroule), 'déroulé');
       else situer();
     };
     const surDefilement = () => {
@@ -1706,12 +1785,24 @@ const lignes = [
       requestAnimationFrame(situer);
     };
 
+    const ANNONCES = {
+      main: 'À la main : chaque ligne du bon de commande est recopiée dans la facture, et les commandes en attente s’accumulent.',
+      auto: 'Automatisé : les lignes passent seules du bon de commande à la facture, et il ne reste aucune commande en attente.',
+    };
     boutons.forEach((b) =>
       b.addEventListener('click', () => {
-        reprise = performance.now() + 20000;
-        changerMode(b.dataset.modeBouton === 'auto' ? 'auto' : 'main');
+        const voulu = b.dataset.modeBouton === 'auto' ? 'auto' : 'main';
+        choix = voulu;
+        deroule += 1;
+        changerMode(voulu);
+        /* La scène est muette pour un lecteur d'écran : le bouton dit ce
+           qu'elle montre. Seulement au clic, pas quand le récit avance seul. */
+        if (annonce) annonce.textContent = ANNONCES[voulu];
       }),
     );
+    /* Les boutons sortent masqués du HTML : sans ce script ils seraient là,
+       et inertes. */
+    scene.querySelector<HTMLElement>('[data-mode-groupe]')?.removeAttribute('hidden');
 
     /* Le plan des fenêtres s'incline un peu vers le pointeur. */
     if (!reduit && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -1732,22 +1823,24 @@ const lignes = [
 
     window.addEventListener('scroll', surDefilement, { passive: true });
     window.addEventListener('resize', surDefilement, { passive: true });
+    document.addEventListener('visibilitychange', planifier);
+    /* `addEventListener` manque sur cet objet avant Safari 14 : sans lui, la
+       scène garde simplement le régime de son chargement. */
+    colonne.addEventListener?.('change', regler);
 
     if (reduit) {
-      mode = 'auto';
-      scene.dataset.mode = 'auto';
-      boutons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modeBouton === 'auto')));
+      /* Deux images fixes, qui suivent le récit : à la main pour les deux
+         premières phrases, automatisé pour la troisième. */
       figer();
+      situer();
       return;
     }
 
     situer();
     if (mode === 'main') {
-      void boucleMain(jeton);
-      void arrivees(jeton);
+      veiller(boucleMain(jeton), 'à la main');
+      veiller(arrivees(jeton), 'arrivées');
     }
-    colonne.addEventListener('change', regler);
-    if (colonne.matches) void derouler(++deroule);
-    requestAnimationFrame(battre);
+    if (colonne.matches) veiller(derouler(++deroule), 'déroulé');
   }
 </script>

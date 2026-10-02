@@ -6,7 +6,7 @@ import HomeStory from '../components/home-story.astro';
 import HomeTodayPath from '../components/home-today-path.astro';
 import HomeServices from '../components/home-services.astro';
 import HomeContent from '../components/home-content.astro';
-import Testimonials from '../components/Testimonials.astro';
+import HomeVoices from '../components/home-voices.astro';
 import HomeOffers from '../components/home-offers.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
@@ -17,7 +17,7 @@ const homeNavigation = [
   { href: '#automatisation', label: 'Automatisation' },
   { href: '#agents-ia', label: 'Agents IA' },
   { href: '#formations', label: 'Formations' },
-  { href: '#sites', label: 'Sites web' },
+  { href: '#sites', label: 'Sites web et dashboards' },
 ];
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
@@ -38,7 +38,7 @@ const pageSchema = {
   title="Lilian Sevoumian | Automatisation, IA, formations Make et n8n"
   description={resumeCourt}
   ogImage="/og-home.png"
-  ogImageAlt="Trois résultats mesurés chez des clients de Lilian Sevoumian, et son portrait"
+  ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
   pageSchema={pageSchema}
 >
   <Navigation
@@ -54,7 +54,7 @@ const pageSchema = {
       <HomeServices />
       <HomeTodayPath />
       <HomeContent />
-      <Testimonials />
+      <HomeVoices />
       <HomeOffers />
     </div>
   </main>
@@ -77,16 +77,58 @@ const pageSchema = {
    *               bande penchée.
    */
   .accueil {
-    --color-paper: var(--color-night-deep);
     --color-divider: color-mix(in srgb, var(--color-ink) 9%, transparent);
     background: var(--color-night-deep);
   }
 
-  /* Ce qui dépasse de la page prend la même nuit : la gouttière de la barre de
-     défilement et le rebond d'iOS montraient sinon le bleu du reste du site. */
-  html:has(.accueil),
-  html:has(.accueil) body {
-    background: var(--color-night-deep);
+  /* Le fond se règle sur la racine, pas sur `main` : la barre, le menu mobile,
+     l'agenda en plein écran, la gouttière de défilement et le rebond d'iOS
+     lisent tous `--color-paper`, et montraient le bleu du reste du site autour
+     d'une page plus sombre. */
+  html:has(.accueil) {
+    --color-paper: var(--color-night-deep);
+  }
+
+  /* La maille de 96 px des gouttières appartient à l'ancienne tenue. Ici elle
+     dessinait des fragments à cheval sur les deux lignes de cadre. */
+  html:has(.accueil) .technical-grid {
+    display: none;
+  }
+
+  /* Un seul traitement pour le texte qui se clique : bas de casse, comme la
+     barre et les boutons. Les capitales espacées du lien fléché restent sur
+     les autres pages. */
+  .accueil .link-cta {
+    font-size: var(--text-body-sm);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* Au survol, la même pastille que dans les titres : droite et ronde, qui se
+     déroule de gauche à droite, à la place de la bande penchée. */
+  .accueil .link-cta__label {
+    margin-left: -0.5em;
+    padding: 0.14em 0.5em 0.18em;
+  }
+
+  .accueil .link-cta__label::before {
+    inset: 0;
+    border-radius: 9999px;
+    transform: none;
+    clip-path: inset(0 100% 0 0 round 9999px);
+    transition: clip-path var(--duration-default) var(--ease-out-quint);
+  }
+
+  .accueil .link-cta:hover .link-cta__label::before,
+  .accueil .link-cta:focus-visible .link-cta__label::before {
+    transform: none;
+    clip-path: inset(0 0 0 0 round 9999px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .accueil .link-cta__label::before {
+      transition: none;
+    }
   }
 
   .accueil__suite {

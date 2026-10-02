@@ -19,9 +19,18 @@ confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir 
 ## 1. Les 10 goals (état réel du code)
 
 ### `service_path_opened` — choix d'une expertise
-Émis depuis les deux lignes de la section « Travailler avec moi » de l'accueil
-et depuis le menu mobile. La prop `source` distingue `home_services_automation`,
-`home_services_web` et `nav_mobile_offers`.
+Émis à trois endroits de l'accueil et depuis le menu mobile des autres pages.
+La prop `source` dit lequel a converti :
+
+- `home_metier_automation`, `home_metier_web` : le lien « Voir l'offre » des
+  blocs Automatisation et Sites web de la section « Je fais quatre choses » ;
+- `home_services_automation`, `home_services_web` : la ligne de prix sous le
+  bouton de fin de page ;
+- `nav_mobile_offers` : le menu mobile, hors accueil (sur l'accueil le menu ne
+  liste que les quatre métiers).
+
+Jusqu'au 2 octobre 2026 les blocs des métiers et les lignes de prix émettaient
+la même source, et le funnel ne pouvait pas dire lequel des deux avait servi.
 
 ### `lead_call` — clic « Réserver un appel » (cal.com)
 Émis nativement sur **tout lien cal.com** via `data-fast-goal="lead_call"`.
@@ -109,7 +118,7 @@ dans la même session compte comme converti.
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
 | 1 | Visite accueil | Page visit | URL equals `/` |
-| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_services_automation, home_services_web)* |
+| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_metier_automation, home_metier_web, home_services_automation, home_services_web)* |
 
 ### Funnel A2 — « Automatisation → Call » (funnel complet en 4 étapes)
 | # | Étape | Type | Valeur |

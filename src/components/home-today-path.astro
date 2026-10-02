@@ -9,7 +9,8 @@
  * livrer en perdant du temps, ou sans les bons outils métier.
  *
  * Deux colonnes qui se lisent ensemble : à gauche, lui (un portrait, ce
- * texte, quatre faits), dans le seul panneau clair de la page ; à droite, la
+ * texte, quatre faits à la suite, en une ligne de texte et non en grille),
+ * dans le seul panneau clair de la page ; à droite, la
  * frise de 2020 à aujourd'hui. Le panneau reste en place pendant que la
  * frise défile : on garde sous les yeux qui parle pendant qu'on lit par où
  * il est passé.
@@ -47,11 +48,11 @@ import { faits, parcours } from '../data/parcours';
       </p>
 
       <ul class="moi__faits">
+        {/* Chaque fait tient sur une ligne du gabarit, sans espace avant la fin
+            du `li` : une espace à cet endroit laissait le point médian passer
+            seul au début de la ligne suivante. */}
         {faits.map((fait) => (
-          <li>
-            <strong>{fait.titre}</strong>
-            <span>{fait.detail}</span>
-          </li>
+          <li><strong>{fait.titre}</strong>{' '}<span>{fait.detail}</span></li>
         ))}
       </ul>
     </div>
@@ -123,43 +124,33 @@ import { faits, parcours } from '../data/parcours';
   }
 
   /* Quatre faits, en deux colonnes séparées par des filets. */
+  /* Quatre faits, à la suite, comme une ligne de texte : une grille 2 × 2 à
+     filets en faisait un tableau de chiffres, le motif que cette page évite. */
   .moi__faits {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: clamp(1.25rem, 2vw, 1.5rem) 0 0;
+    margin: clamp(1rem, 1.6vw, 1.25rem) 0 0;
     padding: 0;
-    border-top: 1px solid var(--color-border-strong);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.7;
     list-style: none;
   }
 
   .moi__faits li {
-    display: grid;
-    align-content: start;
-    gap: 0.2rem;
+    display: inline;
     max-width: none;
-    padding: 0.9rem 0.75rem 0.9rem 0;
   }
 
-  .moi__faits li:nth-child(even) {
-    padding-left: 1rem;
-    border-left: 1px solid var(--color-divider);
+  .moi__faits li:not(:last-child)::after {
+    content: '\00a0·\0020';
+    color: var(--color-ink-faint);
   }
 
-  .moi__faits li:nth-child(n + 3) {
-    border-top: 1px solid var(--color-divider);
-  }
-
+  /* Un fait ne se coupe pas au milieu de son chiffre. */
   .moi__faits strong {
     color: var(--color-ink);
     font-weight: 600;
-    line-height: 1.25;
     letter-spacing: -0.01em;
-  }
-
-  .moi__faits span {
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-    line-height: 1.4;
+    white-space: nowrap;
   }
 
   .frise {
@@ -206,7 +197,9 @@ import { faits, parcours } from '../data/parcours';
   .frise__annee::before {
     content: '';
     position: absolute;
-    top: 0.72rem;
+    /* Centré sur la ligne de l'année : la moitié de sa hauteur de ligne,
+       moins le demi-repère. */
+    top: calc(var(--text-title-lg) * 0.525 - 5.5px);
     left: calc(-1 * clamp(2rem, 4vw, 3.25rem) + var(--rail));
     z-index: 1;
     width: 11px;
@@ -220,10 +213,12 @@ import { faits, parcours } from '../data/parcours';
   .frise__an {
     margin: 0;
     color: var(--color-ink);
-    font-size: var(--text-headline);
-    font-weight: 600;
+    /* Un repère, pas un titre : au corps et à la graisse du titre de la
+       section, les années pesaient plus lourd que lui. */
+    font-size: var(--text-title-lg);
+    font-weight: 500;
     line-height: 1.05;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
   }
 
@@ -243,9 +238,9 @@ import { faits, parcours } from '../data/parcours';
 
   .frise__quand {
     color: var(--color-accent-text);
-    font-size: var(--text-mono-caption);
+    font-size: var(--text-mono-label);
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 

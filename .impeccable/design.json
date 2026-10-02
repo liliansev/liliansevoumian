@@ -946,6 +946,26 @@
         "name": "La règle de la pièce pêche",
         "section": "components",
         "body": "Une forme 3D en verre porte une seule pièce en pêche, opaque : c'est elle que l'œil suit. Tout le reste est du verre teinté vers la nuit."
+      },
+      {
+        "name": "La règle du dernier mot",
+        "section": "components",
+        "body": "Dans la scène du récit, le choix fait au bouton (« À la main » ou « Automatisé ») tient tant que la scène est à l'écran : ni le défilement ni la boucle mobile ne le changent. Le récit reprend la main quand elle sort."
+      },
+      {
+        "name": "La règle du cadre jamais vide",
+        "section": "components",
+        "body": "Sous chaque toile 3D, une image fixe de la sculpture (`public/formes/`). Elle tient le cadre avant le chargement, sans script, si la 3D est indisponible et quand le contexte graphique est perdu."
+      },
+      {
+        "name": "La règle de l'arrêt",
+        "section": "components",
+        "body": "Tout ce qui bouge sans fin sur l'accueil a une commande d'arrêt utilisable au clavier et au doigt (bouton de pause du défilé, onglets des voix, bouton de la scène), et se suspend hors écran."
+      },
+      {
+        "name": "La règle du nom unique",
+        "section": "components",
+        "body": "Une offre n'a qu'un nom sur la page d'accueil : Automatisation, Agents IA, Formations, Sites web et dashboards."
       }
     ],
     "dos": [
@@ -964,7 +984,9 @@
       "Do garder les deux cartes du routeur de la home strictement égales en poids et en nombre de surfaces interactives.",
       "Do passer par `SectionHeader` pour tout en-tête de section, et par `BoutonReservation` pour tout lien vers l'agenda.",
       "Do donner à chaque section de l'accueil un composant qui n'existe que là, dont la forme vient de ce qu'elle raconte.",
-      "Do renseigner `largeur`, `hauteur` et la provenance de tout logo ajouté à `src/data/clients.ts`."
+      "Do renseigner `largeur`, `hauteur` et la provenance de tout logo ajouté à `src/data/clients.ts`.",
+      "Do donner une image de repli à toute nouvelle sculpture 3D, et la refaire quand la sculpture change.",
+      "Do écrire le formulaire de newsletter comme le mail lui-même (De, Objet, À), pas comme un champ dans une carte."
     ],
     "donts": [
       "Don't écrire `color: var(--color-ink)` sur un fond pêche : c'est du blanc à 1,74:1.",
@@ -992,7 +1014,9 @@
       "Don't remettre de forme 3D dans le hero de l'accueil : titre seul, grille, défilé des clients.",
       "Don't garder une scène collante pilotée par le défilement sous 1024 px : elle se dispute le geste avec la page.",
       "Don't composer une section de l'accueil en liste à filets ou en grille de cartes : c'est ce que Lilian a rejeté comme « IA slop ».",
-      "Don't « corriger » les autres pages vers la direction de l'accueil au passage : la propagation se fait sur décision de Lilian."
+      "Don't « corriger » les autres pages vers la direction de l'accueil au passage : la propagation se fait sur décision de Lilian.",
+      "Don't remettre les témoignages de l'accueil en lignes séparées par des filets : une voix à la fois.",
+      "Don't redire les prix en rangées à la fin de la page : une ligne sous le bouton suffit, les blocs des métiers les portent déjà."
     ]
   }
 }

@@ -33,8 +33,9 @@ src/
 │   ├── home-story.astro       # accueil : récit en 3 actes + scène PDF → facture
 │   ├── home-services.astro    # accueil : 4 métiers, une forme 3D en verre chacun
 │   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours
-│   ├── home-content.astro     # accueil : dernière vidéo + newsletter
-│   ├── home-offers.astro      # accueil : « Combien ça coûte »
+│   ├── home-content.astro     # accueil : dernière vidéo + newsletter écrite comme un mail
+│   ├── home-voices.astro      # accueil : trois recommandations, une voix à la fois
+│   ├── home-offers.astro      # accueil : fin de page, appel + prix en une ligne
 │   ├── Home*.astro (PascalCase) # ancienne home, plus importés nulle part
 │   ├── HeroManifesto.astro    # aplat lime, typographie seule
 │   ├── LogoMarquee.astro      # bandeau d'outils défilant

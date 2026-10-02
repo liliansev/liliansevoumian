@@ -250,7 +250,9 @@ const mobileNavLinks = navLinks.filter((link) => {
       </button>
     </header>
     <div class="mobile-menu__content">
-      <nav aria-label="Services" class="mobile-menu__offers">
+      {/* Sur l'accueil, le menu ne liste que les quatre métiers : deux offres
+          posées au-dessus d'eux, avec des noms voisins, faisaient hésiter. */}
+      {!isHome && <nav aria-label="Services" class="mobile-menu__offers">
         {mobileOfferLinks.map((link) => (
           <a
             href={link.href}
@@ -263,7 +265,7 @@ const mobileNavLinks = navLinks.filter((link) => {
             <Icon name="lucide:arrow-right" size={24} aria-hidden="true" />
           </a>
         ))}
-      </nav>
+      </nav>}
       {mobileNavLinks.length > 0 && <nav aria-label="Explorer le site" class="mobile-menu__links">
         {mobileNavLinks.map((link) => (
           <a href={lienNav(link.href)} class="mobile-link mobile-menu__link" data-mobile-link>

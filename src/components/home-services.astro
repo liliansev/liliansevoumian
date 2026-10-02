@@ -17,8 +17,11 @@
  *   sites web        la vitre : un tableau de bord posé sur du verre.
  *
  * Les sculptures sont dessinées par `lib/blocs/atelier.ts`. Three.js n'est
- * chargé que lorsqu'un cadre approche de l'écran, et chaque sculpture se met
- * en pause dès qu'elle en sort.
+ * chargé que lorsqu'un cadre approche de l'écran ; chaque sculpture se met en
+ * pause dès qu'elle en sort, et se démonte quand elle est loin, pour rendre
+ * son contexte graphique. Sous chaque toile, une image fixe de la sculpture
+ * (`public/formes/`) : c'est elle qu'on voit avant le chargement, sans script,
+ * et si la 3D n'est pas disponible.
  *
  * Rien n'est affirmé qui ne soit dans PRODUCT.md : les preuves viennent des
  * cas clients publiés et des faits du parcours ; les prix, de
@@ -40,9 +43,10 @@ const metiers = [
     phrase: 'Je relie vos outils, et les ressaisies disparaissent.',
     texte:
       'Commandes, factures, relances, reporting : je construis les workflows Make et n8n qui font passer l’information d’un outil à l’autre. Je pars de vos processus réels et je livre un système qui tourne en production.',
-    preuve: { chiffre: '0 ressaisie', suite: 'du bon de commande à la facture, chez Humble+.', href: '/cas-clients/humble-plus' },
+    /* Humble+ porte déjà le récit, juste au-dessus : ce bloc cite un autre cas. */
+    preuve: { chiffre: '~4 h par semaine', suite: 'récupérées par l’équipe de Fraich Touch sur sa facturation.', href: '/cas-clients/facturation-automatisee-fraich-touch', cas: 'Fraich Touch' },
     note: prix(automationStartingPrice),
-    lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_services_automation' },
+    lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_metier_automation' },
     description: 'Sculpture de verre : une sphère, une gemme pêche et trois objets reliés par des fils, parcourus par un grain de lumière.',
   },
   {
@@ -52,7 +56,7 @@ const metiers = [
     phrase: 'Un agent qui lit, trie et qualifie à votre place.',
     texte:
       'Un agent branché sur vos données et vos outils : il lit un document, qualifie un prospect, prépare une réponse. L’IA extrait ; les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
-    preuve: { chiffre: '~10 min', suite: 'par run, contre 1 à 3 h pour 50 entreprises à la main, chez M Partners.', href: '/cas-clients/m-partners' },
+    preuve: { chiffre: '~10 min', suite: 'par passage, contre 1 à 3 h à la main pour 50 entreprises, chez M Partners.', href: '/cas-clients/m-partners', cas: 'M Partners' },
     lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
     description: 'Sculpture de verre : une sphère pêche entourée de trois anneaux qui tournent, et les outils de l’agent en orbite.',
   },
@@ -75,7 +79,7 @@ const metiers = [
     texte:
       'Landing pages, sites vitrines, portails clients et tableaux de bord métier, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
     note: prix(webStartingPrice),
-    lien: { href: '/sites-web-abonnement', label: 'Voir l’offre sites web', goal: 'service_path_opened', source: 'home_services_web' },
+    lien: { href: '/sites-web-abonnement', label: 'Voir l’offre sites web', goal: 'service_path_opened', source: 'home_metier_web' },
     description: 'Sculpture de verre : une vitre debout portant un graphique en anneau, des barres, une courbe et un bouton.',
   },
 ] as const;
@@ -109,7 +113,9 @@ const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
                 {'href' in metier.preuve && (
                   <>
                     {' '}
-                    <a href={metier.preuve.href}>Lire le cas</a>
+                    <a href={metier.preuve.href}>
+                      Lire le cas<span class="sr-only"> {metier.preuve.cas}</span>
+                    </a>
                   </>
                 )}
               </span>
@@ -129,12 +135,21 @@ const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
           </div>
         </div>
 
-        <div class="metier__scene reveal">
+        <div class="metier__scene reveal" role="img" aria-label={metier.description} data-forme={metier.forme}>
           <span class="repere repere--hg" aria-hidden="true"></span>
           <span class="repere repere--hd" aria-hidden="true"></span>
           <span class="repere repere--bg" aria-hidden="true"></span>
           <span class="repere repere--bd" aria-hidden="true"></span>
-          <canvas data-forme={metier.forme} role="img" aria-label={metier.description}></canvas>
+          <img
+            class="metier__repli"
+            src={`/formes/${metier.forme}.webp`}
+            alt=""
+            width="1200"
+            height="900"
+            loading="lazy"
+            decoding="async"
+          />
+          <canvas aria-hidden="true"></canvas>
         </div>
 
         {metier.id === 'sites' && (
@@ -318,9 +333,14 @@ const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
     white-space: nowrap;
   }
 
+  /* Souligné : la couleur seule ne suffit pas à dire qu'on peut cliquer. Et
+     jamais coupé en deux lignes. */
   .metier__preuve a {
     color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 40%, transparent);
     text-underline-offset: 0.2em;
+    white-space: nowrap;
   }
 
   .metier__suite {
@@ -346,11 +366,23 @@ const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
     background: var(--color-night-deep);
   }
 
+  /* L'image fixe de la sculpture tient le cadre ; la toile vient se poser
+     dessus quand la 3D a dessiné sa première image. */
+  .metier__repli,
   .metier__scene canvas {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     border-radius: inherit;
+  }
+
+  .metier__repli {
+    object-fit: cover;
+  }
+
+  .metier__scene canvas {
     opacity: 0;
     transition: opacity 900ms var(--ease-out-quint);
   }
@@ -387,11 +419,24 @@ const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
       gap: 2rem;
     }
 
-    .metier--miroir .metier__texte { order: 1; }
-    .metier--miroir .metier__scene { order: 2; }
+    /* La forme passe avant son texte, pour tous les métiers : posée après,
+       elle se retrouvait collée au titre du métier suivant et se lisait comme
+       son illustration. */
+    .metier__scene,
+    .metier--miroir .metier__scene { order: 1; }
+    .metier__texte,
+    .metier--miroir .metier__texte { order: 2; }
 
     .metier__phrase {
       max-width: 20ch;
+    }
+
+    /* Le seul chemin vers la preuve : une vraie cible pour le doigt. Le
+       lien reste dans le fil du texte ; son remplissage vertical agrandit la
+       zone d'appui sans écarter les lignes, ce qu'une hauteur minimale
+       faisait. */
+    .metier__preuve a {
+      padding-block: 0.85rem;
     }
   }
 
@@ -414,30 +459,107 @@ const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
 </style>
 
 <script>
-  /* Three.js n'est chargé que lorsqu'une sculpture approche de l'écran. */
+  /* Three.js n'est chargé que lorsqu'une sculpture approche de l'écran, et une
+     sculpture loin de l'écran est démontée : chacune tient un contexte
+     graphique et sa mémoire, que le navigateur ne donne qu'en petit nombre. */
   import type { FormeBloc } from '../lib/blocs/atelier';
 
-  const toiles = [...document.querySelectorAll<HTMLCanvasElement>('.metier__scene canvas[data-forme]')];
-  if (toiles.length) {
-    const montees = new WeakSet<HTMLCanvasElement>();
-    const monter = async (toile: HTMLCanvasElement) => {
-      if (montees.has(toile)) return;
-      montees.add(toile);
+  interface Etat {
+    demonter?: () => void;
+    essais: number;
+    enCours: boolean;
+    abandon: boolean;
+  }
+
+  const scenes = [...document.querySelectorAll<HTMLElement>('.metier__scene[data-forme]')];
+  if (scenes.length && 'IntersectionObserver' in window) {
+    const etats = new WeakMap<HTMLElement, Etat>();
+    const proches = new WeakSet<HTMLElement>();
+    const etatDe = (scene: HTMLElement) => {
+      let etat = etats.get(scene);
+      if (!etat) {
+        etat = { essais: 0, enCours: false, abandon: false };
+        etats.set(scene, etat);
+      }
+      return etat;
+    };
+
+    const monter = async (scene: HTMLElement) => {
+      const etat = etatDe(scene);
+      if (etat.demonter || etat.enCours || etat.abandon) return;
+      etat.enCours = true;
+      /* Deux échecs possibles, qu'on ne traite pas pareil : un module qui ne
+         charge pas (réseau, mise en ligne entre-temps) se retente une fois au
+         prochain passage ; une 3D indisponible sur la machine est définitive.
+         Dans les deux cas l'image fixe reste en place. */
+      let atelier: typeof import('../lib/blocs/atelier');
       try {
-        const { monterBlocs } = await import('../lib/blocs/atelier');
-        monterBlocs(toile, { style: 'verre', forme: toile.dataset.forme as FormeBloc, decor: 'studio' });
+        atelier = await import('../lib/blocs/atelier');
       } catch (erreur) {
-        console.error('Sculpture 3D indisponible :', erreur);
+        etat.enCours = false;
+        etat.essais += 1;
+        etat.abandon = etat.essais >= 2;
+        console.error(`Sculpture « ${scene.dataset.forme} » : module non chargé (essai ${etat.essais})`, erreur);
+        return;
+      }
+      etat.enCours = false;
+      const toile = scene.querySelector('canvas');
+      if (!toile || !proches.has(scene)) return;
+      try {
+        etat.demonter = atelier.monterBlocs(toile, {
+          style: 'verre',
+          forme: scene.dataset.forme as FormeBloc,
+          decor: 'studio',
+        });
+      } catch (erreur) {
+        etat.abandon = true;
+        console.error(`Sculpture « ${scene.dataset.forme} » : 3D indisponible, l’image fixe reste`, erreur);
       }
     };
-    const verifier = () => {
-      toiles.forEach((toile) => {
-        const r = toile.getBoundingClientRect();
-        if (r.top < window.innerHeight + 400 && r.bottom > -400) void monter(toile);
-      });
+
+    const demonter = (scene: HTMLElement) => {
+      const etat = etatDe(scene);
+      if (!etat.demonter) return;
+      etat.demonter();
+      etat.demonter = undefined;
+      /* Une toile dont le contexte a été rendu n'en reçoit pas d'autre : on
+         la remplace par une toile neuve, prête pour le prochain montage. */
+      const toile = scene.querySelector('canvas');
+      if (toile) {
+        const neuve = document.createElement('canvas');
+        neuve.setAttribute('aria-hidden', 'true');
+        for (const nom of toile.getAttributeNames()) {
+          if (nom.startsWith('data-astro-cid')) neuve.setAttribute(nom, '');
+        }
+        toile.replaceWith(neuve);
+      }
     };
-    window.addEventListener('scroll', verifier, { passive: true });
-    window.addEventListener('resize', verifier, { passive: true });
-    verifier();
+
+    const approche = new IntersectionObserver(
+      (entrees) => {
+        for (const entree of entrees) {
+          const scene = entree.target as HTMLElement;
+          if (entree.isIntersecting) {
+            proches.add(scene);
+            monter(scene).catch((erreur: unknown) => console.error('Sculpture : montage en échec', erreur));
+          } else {
+            proches.delete(scene);
+          }
+        }
+      },
+      { rootMargin: '400px 0px' },
+    );
+    const eloignement = new IntersectionObserver(
+      (entrees) => {
+        for (const entree of entrees) {
+          if (!entree.isIntersecting) demonter(entree.target as HTMLElement);
+        }
+      },
+      { rootMargin: '150% 0px' },
+    );
+    scenes.forEach((scene) => {
+      approche.observe(scene);
+      eloignement.observe(scene);
+    });
   }
 </script>

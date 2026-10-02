@@ -46,7 +46,7 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   NeutralToneMapping,
-  PCFSoftShadowMap,
+  PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
@@ -107,27 +107,53 @@ const borne = (t: number) => Math.min(1, Math.max(0, t));
 /** Une cloche : 1 au centre, 0 au-delà de la largeur. */
 const cloche = (ecart: number, largeur: number) => Math.exp(-(ecart * ecart) / (largeur * largeur));
 
+/**
+ * Monte une sculpture sur la toile et rend la fonction qui la démonte.
+ * Lève si WebGL est indisponible : à l'appelant de garder son image de repli.
+ */
 export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}): () => void {
+  /* Un décor ne réclame pas la carte graphique dédiée : le réglage par défaut
+     laisse la machine choisir. */
+  const rendu = new WebGLRenderer({ canvas: toile, antialias: true, alpha: true });
+  try {
+    return construire(toile, options, rendu);
+  } catch (erreur) {
+    /* Une erreur à mi-montage laisserait un contexte ouvert que plus rien ne
+       référence : on le rend avant de la laisser remonter. */
+    rendu.dispose();
+    rendu.getContext().getExtension('WEBGL_lose_context')?.loseContext();
+    throw erreur;
+  }
+}
+
+function construire(toile: HTMLCanvasElement, options: OptionsBlocs, rendu: WebGLRenderer): () => void {
   const { style = 'verre', forme = 'boucle', decor = 'studio', cadrage = 'essai' } = options;
   const css = getComputedStyle(toile);
-  const teinte = (nom: string) => new Color(css.getPropertyValue(nom).trim());
-  const nuit = teinte('--color-night-deep');
-  const peche = teinte('--color-peche');
+  /* Un jeton absent rend une chaîne vide, et `new Color('')` donne du blanc
+     sans rien dire : le repli est explicite. */
+  const teinte = (nom: string, repli: string) => {
+    const valeur = css.getPropertyValue(nom).trim();
+    if (!valeur) console.warn(`atelier : jeton ${nom} absent, repli sur ${repli}`);
+    return new Color(valeur || repli);
+  };
+  const nuit = teinte('--color-night-deep', '#0c121f');
+  const peche = teinte('--color-peche', '#ffb38a');
   /* En volume, sous la lumière, la pêche du site vire au crème : la matière
      est un ton plus soutenue pour être lue comme la même couleur. */
   const pecheMatiere = new Color('#ff9a68');
   const ivoire = new Color('#e4dfd5');
   const ardoise = new Color(style === 'module' ? '#1b263d' : '#24365f');
 
-  const rendu = new WebGLRenderer({ canvas: toile, antialias: true, alpha: true, powerPreference: 'high-performance' });
-  const etroit = window.matchMedia('(max-width: 640px)').matches;
-  rendu.setPixelRatio(Math.min(window.devicePixelRatio || 1, etroit ? 1.5 : 2));
+  const ecranEtroit = window.matchMedia('(max-width: 640px)');
+  const etroit = ecranEtroit.matches;
+  const densite = () => Math.min(window.devicePixelRatio || 1, ecranEtroit.matches ? 1.5 : 2);
+  rendu.setPixelRatio(densite());
   rendu.outputColorSpace = SRGBColorSpace;
   /* Le rendu neutre garde la pêche pêche : un rendu « cinéma » la délave. */
   rendu.toneMapping = NeutralToneMapping;
   rendu.toneMappingExposure = style === 'verre' ? 1.05 : 0.95;
   rendu.shadowMap.enabled = true;
-  rendu.shadowMap.type = PCFSoftShadowMap;
+  rendu.shadowMap.type = PCFShadowMap;
   /* Le verre se calcule dans une image à part : on la réduit sur téléphone. */
   rendu.transmissionResolutionScale = etroit ? 0.6 : 0.9;
 
@@ -140,7 +166,10 @@ export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}
   }
   const pmrem = new PMREMGenerator(rendu);
   const piece = new RoomEnvironment();
-  scene.environment = pmrem.fromScene(piece, 0.04).texture;
+  /* La cible est gardée : c'est elle qu'il faut libérer, sa texture seule ne
+     suffit pas, et il faut la refaire quand le contexte revient. */
+  let reflets = pmrem.fromScene(piece, 0.04);
+  scene.environment = reflets.texture;
   scene.environmentIntensity = style === 'verre' ? 1.3 : 0.5;
 
   /* La lumière : une clé chaude qui porte les ombres, un contre-jour pêche. */
@@ -742,11 +771,14 @@ export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}
   let visible = true;
   let image = 0;
   let detruit = false;
+  let pret = false;
 
   const tailler = () => {
     const l = toile.clientWidth;
     const h = toile.clientHeight;
     if (!l || !h) return;
+    /* Relue à chaque fois : une rotation d'écran change la densité utile. */
+    rendu.setPixelRatio(densite());
     rendu.setSize(l, h, false);
     camera.aspect = l / h;
     /* La caméra se place à la distance qui tient la sculpture dans le cadre,
@@ -768,14 +800,24 @@ export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}
     construction.rotation.y = (cadrage === 'accueil' ? -0.42 : -0.2) + (reduit ? 0 : Math.sin(s * 0.28) * 0.16) + incline.x * 0.4;
     construction.rotation.x = incline.y * 0.07;
     rendu.render(scene, camera);
-    toile.dataset.pret = '';
+    /* Posé une fois, et seulement si quelque chose a vraiment été dessiné :
+       c'est ce drapeau qui fait apparaître la toile par-dessus son image. */
+    if (!pret && !rendu.getContext().isContextLost()) {
+      pret = true;
+      toile.dataset.pret = '';
+    }
   };
 
-  const depart = performance.now();
+  /* Le temps de la sculpture part de sa première image à l'écran, pas de son
+     montage : sinon son entrée se jouait hors champ. */
+  let depart = -1;
+  let dernier = 0;
   const boucle = (ms: number) => {
     image = 0;
     if (detruit) return;
-    dessiner(ms - depart);
+    if (depart < 0) depart = ms;
+    dernier = ms - depart;
+    dessiner(dernier);
     if (visible && !document.hidden) image = requestAnimationFrame(boucle);
   };
   const relancer = () => {
@@ -796,23 +838,59 @@ export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}
     pointeur.x = pointeur.y = 0;
   };
 
+  /* Changer la taille vide la toile : on redessine dans la foulée, sinon
+     chaque pas de redimensionnement laissait une image vide. Une rotation peut
+     aussi faire entrer la toile à l'écran sans défilement. */
   const observateur = new ResizeObserver(() => {
+    if (detruit || !pret) return;
     tailler();
-    if (reduit) dessiner(0);
+    dessiner(reduit ? 0 : dernier);
+    if (!reduit) surDefilement();
   });
-  observateur.observe(toile);
   tailler();
+
+  /* Le contexte peut être repris par le système (onglet en arrière-plan sur
+     téléphone, pilote graphique qui redémarre). La toile s'efface alors
+     devant son image de repli, puis revient avec ses reflets refaits. */
+  const surPerte = () => {
+    cancelAnimationFrame(image);
+    image = 0;
+    pret = false;
+    delete toile.dataset.pret;
+  };
+  const surRetour = () => {
+    if (detruit) return;
+    reflets.dispose();
+    reflets = pmrem.fromScene(piece, 0.04);
+    scene.environment = reflets.texture;
+    dessiner(reduit ? 0 : dernier);
+    if (!reduit) relancer();
+  };
 
   window.addEventListener('scroll', surDefilement, { passive: true });
   document.addEventListener('visibilitychange', relancer);
   toile.addEventListener('pointermove', surPointeur);
   toile.addEventListener('pointerleave', surSortie);
+  toile.addEventListener('webglcontextlost', surPerte);
+  toile.addEventListener('webglcontextrestored', surRetour);
 
-  if (reduit) dessiner(0);
-  else {
-    surDefilement();
-    relancer();
-  }
+  /* Les matières du verre se compilent avant la première image, sans bloquer
+     le défilement ; puis une image est dessinée tout de suite, pour que la
+     toile ait fini d'apparaître quand elle arrive à l'écran. */
+  const demarrer = () => {
+    if (detruit) return;
+    dessiner(0);
+    observateur.observe(toile);
+    if (!reduit) {
+      surDefilement();
+      relancer();
+    }
+  };
+  rendu
+    .compileAsync(scene, camera)
+    .catch((erreur: unknown) => console.warn('atelier : compilation différée indisponible', erreur))
+    .then(demarrer)
+    .catch((erreur: unknown) => console.error('atelier : première image en échec', erreur));
 
   return () => {
     detruit = true;
@@ -822,6 +900,8 @@ export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}
     document.removeEventListener('visibilitychange', relancer);
     toile.removeEventListener('pointermove', surPointeur);
     toile.removeEventListener('pointerleave', surSortie);
+    toile.removeEventListener('webglcontextlost', surPerte);
+    toile.removeEventListener('webglcontextrestored', surRetour);
     scene.traverse((objet) => {
       if (objet instanceof Mesh) {
         objet.geometry.dispose();
@@ -830,7 +910,15 @@ export function monterBlocs(toile: HTMLCanvasElement, options: OptionsBlocs = {}
     });
     trame?.dispose();
     piece.dispose();
+    /* Ni `pmrem.dispose()` ni `rendu.dispose()` ne libèrent ces deux cibles. */
+    reflets.dispose();
+    cle.shadow.map?.dispose();
+    cle.dispose();
     pmrem.dispose();
+    const contexte = rendu.getContext();
     rendu.dispose();
+    /* Le contexte est rendu tout de suite, sans attendre le ramasse-miettes :
+       un navigateur n'en tient qu'un petit nombre à la fois. */
+    contexte.getExtension('WEBGL_lose_context')?.loseContext();
   };
 }

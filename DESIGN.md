@@ -317,9 +317,14 @@ vient de ce qu'elle raconte.
 
 ### Le fond et le cadre
 
-- **Fond `night-deep` `#0c121f`** sur toute la page (`.accueil` remappe
-  `--color-paper`), pas `#111827` : la grille et le verre ont besoin d'un noir
-  plus profond pour se détacher. Blanc dessus : 18,72:1 ; pêche : 10,76:1.
+- **Fond `night-deep` `#0c121f`** sur toute la page, pas `#111827` : la grille
+  et le verre ont besoin d'un noir plus profond pour se détacher. Blanc
+  dessus : 18,72:1 ; pêche : 10,76:1. Le remap de `--color-paper` se fait sur
+  la racine (`html:has(.accueil)`), pas sur `main` : la barre, le menu mobile,
+  l'agenda en plein écran et la gouttière de défilement lisent tous ce jeton,
+  et montraient sinon le bleu du reste du site autour d'une page plus sombre.
+- **La maille de 96 px des gouttières (`.technical-grid`) est coupée** sur
+  l'accueil : elle dessinait des fragments à cheval sur les lignes de cadre.
 - **Filets adoucis** : `--color-divider` vaut 9 % de blanc, transparent. Sur
   une page quadrillée, un filet plein devient du bruit.
 - **Deux lignes verticales de 1 px** courent de la fin du hero au pied de page
@@ -329,7 +334,15 @@ vient de ce qu'elle raconte.
   1024 px, où la gouttière ne les contient pas.
 - **Les repères d'angle** (`.repere`, quatre équerres de 1 px qui débordent de
   7 px) cadrent ce qui est une scène : la scène du récit, la forme de chaque
-  métier. Jamais autour d'un texte.
+  métier, la vidéo. Jamais autour d'un texte.
+- **Un seul traitement pour le texte qui se clique** : bas de casse, comme la
+  barre et les boutons. Le lien fléché (`LinkCTA`) perd ici ses capitales
+  espacées, et son survol déroule une pastille droite au lieu de la bande
+  penchée.
+- **Une offre n'a qu'un nom sur la page** : « Automatisation », « Agents IA »,
+  « Formations », « Sites web et dashboards », dans la barre, les blocs des
+  métiers et la ligne de prix. Le menu mobile de l'accueil ne liste que ces
+  quatre métiers.
 
 ### Le hero
 
@@ -349,8 +362,11 @@ faisceaux la parcourent. Tout élément décoratif se place en mailles (`--x`,
 ### Le défilé des clients
 
 Une seule ligne au bas du premier écran, précédée de « J'ai travaillé avec »,
-qui défile en 46 s et s'arrête au survol. La liste vit dans
-`src/data/clients.ts`, les fichiers dans `public/logos/clients/`.
+qui défile en 46 s. Elle s'arrête au survol et, pour le clavier et le doigt,
+par un bouton de pause de 44 px au bout du bandeau (`aria-pressed`). La liste
+vit dans `src/data/clients.ts`, les fichiers dans `public/logos/clients/`.
+Les animations du hero (faisceaux, cellules, défilé) sont suspendues dès qu'il
+sort de l'écran (`data-motion-pause`).
 
 - **Tous les logos sont ramenés à une silhouette claire** : `filter:
   brightness(0) invert(1)`, opacité 0,78. Aucune couleur de marque dans le
@@ -410,6 +426,16 @@ reste à la portée du visiteur.
   1024 px :** la scène n'est plus collante et joue ses trois actes toute seule,
   en boucle (7 s, 4,5 s, 9,5 s). Une scène collante pilotée au doigt, sur
   téléphone, se dispute le défilement avec la page : retour direct de Lilian.
+- **Le bouton a le dernier mot.** Une fois que le visiteur a choisi « À la
+  main » ou « Automatisé », ni le défilement ni la boucle mobile ne changent
+  son choix tant que la scène reste à l'écran ; le récit reprend la main quand
+  elle en sort.
+- **La scène est `aria-hidden`, le bouton l'annonce** : un paragraphe
+  `aria-live` dit en une phrase ce que montre le mode choisi. Seulement au
+  clic, jamais quand le récit avance seul.
+- **Mouvement réduit :** deux images fixes qui suivent le récit, à la main
+  pour les deux premières phrases, automatisé pour la troisième. Sans script,
+  la scène est une image fixe, sans son bouton.
 
 ### Les formes en verre (`src/lib/blocs/atelier.ts`)
 
@@ -428,7 +454,16 @@ trop sages. Une forme doit **montrer le métier en mouvement** :
 se voient sur `/explorations-blocs` ; ils attendent une section.
 
 - Three.js, déjà présent : import dynamique, canvas monté seulement à 400 px
-  de l'écran, rendu suspendu hors champ. Pas d'autre bibliothèque 3D.
+  de l'écran, rendu suspendu hors champ, sculpture **démontée** au-delà d'un
+  écran et demi pour rendre son contexte graphique. Pas d'autre bibliothèque
+  3D.
+- **Sous chaque toile, une image fixe de la sculpture** (`public/formes/`,
+  1 200 × 900). C'est elle qu'on voit avant le chargement, sans script, si la
+  3D est indisponible et quand le contexte graphique est repris par le
+  système. La toile vient se poser dessus en fondu ; un cadre n'est jamais
+  vide. Une forme redessinée demande une nouvelle image.
+- **Sur une colonne, la forme passe avant son texte** : posée après, elle se
+  lisait comme l'illustration du métier suivant.
 - Matière : `MeshPhysicalMaterial`, transmission 1, épaisseur 1,15, indice
   1,46, dispersion 0,28. Environnement `RoomEnvironment` à 1,3,
   `NeutralToneMapping` (l'ACES délavait la pêche).
@@ -437,12 +472,58 @@ se voient sur `/explorations-blocs` ; ils attendent une section.
 - Sur écran étroit : densité bornée à 1,5 et tampon de transmission à 0,6.
 - `prefers-reduced-motion` : la forme est rendue, immobile.
 
-### Ce qui reste à faire
+### Pourquoi moi
 
-Les sections partagées avec d'autres pages (`Testimonials`, `HomeOffers`,
-`HomeContent`) reçoivent la direction par les règles de `.accueil` dans
-`index.astro`, sans variante propre. `public/og-home.png` et la vignette du
-site dans les réalisations doivent être refaites à chaque changement du hero.
+Le seul panneau clair de la page, à gauche, reste en place pendant que la
+frise défile à droite. Les quatre faits s'y lisent **à la suite, comme une
+ligne de texte**, séparés par un point médian : une grille 2 × 2 à filets en
+faisait un tableau de chiffres. Sur la frise, l'année est un repère
+(`--text-title-lg`, graisse 500), pas un titre : elle ne doit pas peser plus
+que « D'où je viens. ».
+
+### Ce que je publie (`home-content`)
+
+Deux objets, pas deux cartes.
+
+- **La vidéo** est cadrée comme une scène, avec les repères d'angle. Son titre
+  est le vrai titre de la vidéo, suivi d'une phrase qui dit ce qu'on y voit.
+  La vignette est copiée dans `public/videos/` ; la dernière vidéo se vérifie
+  sur le flux de la chaîne (adresse dans le fichier).
+- **La newsletter est écrite comme le mail qu'on va recevoir** : une ligne
+  « De », une ligne « Objet », et la ligne « À » qui est le champ du
+  formulaire. Pas de champ encadré dans une carte : le focus teinte la ligne
+  entière. C'est le seul endroit où des filets séparent des lignes, parce que
+  c'est l'objet lui-même qui en a.
+
+### Les voix (`home-voices`)
+
+Trois recommandations, **une à la fois**, en grand (`--text-headline`, graisse
+500), et les trois personnes à côté sur un rail vertical. Le segment de la
+voix qui parle se remplit de pêche en 7 s, puis la parole passe. Choisir une
+voix arrête le déroulé pour de bon ; le survol et le focus le suspendent.
+
+- Les trois citations occupent la même case de grille : la scène a toujours la
+  hauteur de la plus longue, rien ne bouge autour.
+- Onglets ARIA (`tablist`, flèches, une seule voix dans l'ordre de
+  tabulation). Sans script, les trois citations se lisent à la suite, signées.
+- Ce sont des recommandations, sans chiffre : le lien du bas mène aux cas
+  clients, dont le nombre est lu dans la collection.
+- Les pages d'offre gardent `Testimonials.astro`, mêmes citations.
+
+### La fin (`home-offers`)
+
+La page se ferme comme elle s'ouvre : une phrase seule, centrée, sur la maille
+du premier écran, cette fois immobile et effacée vers les bords. Le titre dit
+ce qu'on fait ensuite (« 45 minutes pour voir si je suis la bonne personne. »),
+le bouton est celui de la barre. Les deux prix tiennent en **une ligne** sous
+le bouton, chacun lié à sa page d'offre : ils étaient deux rangées à filets
+qui redisaient les blocs des métiers.
+
+### Ce qui se refait à la main
+
+`public/og-home.png` et la vignette du site dans les réalisations se refont à
+chaque changement du hero ; les images de `public/formes/` à chaque changement
+d'une sculpture.
 
 ## Colors
 

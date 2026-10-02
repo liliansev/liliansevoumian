@@ -36,7 +36,7 @@ const reponse = 'Automatisations & Agents IA';
    désignent une ligne de la grille (les lignes passent à une demi-maille du
    centre, le titre est donc au milieu d'une cellule). */
 const faisceaux = [
-  { sens: 'v', ligne: -4, duree: 9, delai: 0 },
+  { sens: 'v', ligne: -6, duree: 9, delai: 0 },
   { sens: 'v', ligne: 3, duree: 11, delai: -4 },
   { sens: 'v', ligne: 6, duree: 8, delai: -6.5 },
   { sens: 'h', ligne: -3, duree: 12, delai: -2 },
@@ -56,7 +56,7 @@ const cellules = [
 ];
 ---
 
-<section id="hero" data-section data-affiche class="affiche relative px-[var(--spacing-section-x)]">
+<section id="hero" data-section data-affiche data-motion-pause class="affiche relative px-[var(--spacing-section-x)]">
   <div class="affiche__grille" aria-hidden="true">
     <div class="affiche__eclairage"></div>
     {cellules.map((c, i) => (
@@ -86,7 +86,13 @@ const cellules = [
     </h1>
   </div>
 
-  <div class="defile" aria-label="Entreprises avec lesquelles j’ai travaillé">
+  <div
+    class="defile"
+    role="group"
+    aria-label="Entreprises avec lesquelles j’ai travaillé"
+    style={`--mots: ${question.length}`}
+    data-defile
+  >
     <p class="defile__titre">J’ai travaillé avec</p>
     <div class="defile__fenetre">
       <ul class="defile__piste">
@@ -111,6 +117,18 @@ const cellules = [
         )}
       </ul>
     </div>
+    {/* Un contenu qui défile sans fin doit pouvoir être arrêté, au clavier et
+        au doigt : le survol seul ne servait que la souris. */}
+    <button type="button" class="defile__pause" aria-pressed="false" data-defile-pause>
+      <span class="sr-only">Mettre le défilé des logos en pause</span>
+      <svg class="defile__icone defile__icone--pause" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <rect x="4" y="3" width="3" height="10" rx="1" />
+        <rect x="9" y="3" width="3" height="10" rx="1" />
+      </svg>
+      <svg class="defile__icone defile__icone--lecture" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path d="M5.5 3.2v9.6l7.6-4.8z" />
+      </svg>
+    </button>
   </div>
 </section>
 
@@ -291,6 +309,14 @@ const cellules = [
     }
   }
 
+  /* Repliée sur deux lignes, la pastille devient deux pastilles : un interligne
+     plus ouvert les sépare, elles se mordaient de quelques pixels. */
+  @media (max-width: 899px) {
+    .affiche__reponse {
+      line-height: 1.5;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .affiche .mot {
       animation: mot-pose 1000ms var(--ease-out-expo) backwards;
@@ -319,14 +345,13 @@ const cellules = [
 
   /* ── Le défilé ── */
   .defile {
-    --mots: 8;
     position: relative;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(1.25rem, 3vw, 2.5rem);
     margin-inline: calc(-1 * var(--spacing-section-x));
-    padding: clamp(1.1rem, 2.4svh, 1.6rem) 0 clamp(1.1rem, 2.4svh, 1.6rem) var(--spacing-section-x);
+    padding: clamp(1.1rem, 2.4svh, 1.6rem) clamp(0.5rem, 1.6vw, 1.5rem) clamp(1.1rem, 2.4svh, 1.6rem) var(--spacing-section-x);
     border-top: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
     background: var(--color-night-deep);
   }
@@ -384,13 +409,49 @@ const cellules = [
     }
 
     .defile__fenetre:hover .defile__piste,
-    .defile__fenetre:focus-within .defile__piste {
+    .defile[data-pause] .defile__piste {
       animation-play-state: paused;
     }
   }
 
   @keyframes defile {
     to { transform: translateX(-50%); }
+  }
+
+  /* La commande d'arrêt : une cible de 44 px, discrète tant qu'on ne la vise
+     pas. Les deux dessins se relaient selon l'état. */
+  .defile__pause {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink-low);
+    cursor: pointer;
+    transition: color var(--duration-default) var(--ease-out-quint),
+                background-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .defile__icone {
+    fill: currentColor;
+  }
+
+  .defile__icone--lecture,
+  .defile__pause[aria-pressed='true'] .defile__icone--pause {
+    display: none;
+  }
+
+  .defile__pause[aria-pressed='true'] .defile__icone--lecture {
+    display: block;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .defile__pause:hover {
+      background: var(--color-surface-low);
+      color: var(--color-ink);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -417,6 +478,11 @@ const cellules = [
     .defile__piste li[aria-hidden='true'] {
       display: none;
     }
+
+    /* Plus rien ne défile : la commande d'arrêt n'a plus d'objet. */
+    .defile__pause {
+      display: none;
+    }
   }
 
   @media (max-width: 640px) {
@@ -425,13 +491,23 @@ const cellules = [
     }
 
     .defile {
-      grid-template-columns: 1fr;
-      gap: 0.6rem;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.25rem 0.5rem;
       padding-left: 0;
     }
 
     .defile__titre {
       padding-left: var(--spacing-section-x);
+    }
+
+    .defile__fenetre {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .defile__pause {
+      grid-column: 2;
+      grid-row: 1;
     }
   }
 
@@ -469,6 +545,18 @@ const cellules = [
         grille.style.setProperty('--px', `${x}px`);
         grille.style.setProperty('--py', `${y}px`);
       });
+    });
+  }
+
+  /* Le défilé s'arrête et repart d'un bouton. `aria-pressed` porte l'état, le
+     libellé reste le même : c'est la convention d'un bouton à bascule. */
+  const defile = document.querySelector<HTMLElement>('[data-defile]');
+  const pause = defile?.querySelector<HTMLButtonElement>('[data-defile-pause]');
+  if (defile && pause) {
+    pause.addEventListener('click', () => {
+      const arrete = pause.getAttribute('aria-pressed') !== 'true';
+      pause.setAttribute('aria-pressed', String(arrete));
+      defile.toggleAttribute('data-pause', arrete);
     });
   }
 

@@ -1,47 +1,79 @@
 ---
+/*
+ * home-content — ce que Lilian publie : une vidéo, un mail par semaine.
+ *
+ * Deux objets, pas deux cartes. À gauche la dernière vidéo, cadrée comme les
+ * scènes de la page (quatre repères d'angle), avec son vrai titre et ce qu'on
+ * y voit. À droite l'inscription à la newsletter, écrite comme le mail qu'on
+ * va recevoir : un expéditeur, un objet, et le champ « À » qui attend
+ * l'adresse du visiteur. Le formulaire est l'objet lui-même.
+ *
+ * L'inscription passe par `/api/newsletter` (voir `lib/newsletter-signup.ts`).
+ */
 import { Icon } from 'astro-icon/components';
 import SectionHeader from './SectionHeader.astro';
 
-// Dernière vidéo longue vérifiée le 6 septembre 2026 sur le flux officiel :
+// Dernière vidéo longue, vérifiée le 2 octobre 2026 sur le flux officiel (les
+// entrées plus récentes sont des Shorts) :
 // https://www.youtube.com/feeds/videos.xml?channel_id=UCGH0eGI6I9EFsaKpuXXIisg
+// Le titre et la phrase viennent de la vidéo elle-même. La vignette est copiée
+// dans `public/videos/` : appelée chez YouTube, elle laissait un rectangle
+// sombre dès qu'un bloqueur ou le réseau la refusait.
 const video = {
-  title: 'Créer avec Reflare',
+  title: 'Reflare : l’outil qui me manquait pour créer du contenu',
+  resume: 'Reflare redonne vie à d’anciennes vidéos avec des miniatures IA et des tests A/B automatisés.',
   url: 'https://www.youtube.com/watch?v=g9NvMEE7NK4',
-  thumbnail: 'https://i.ytimg.com/vi/g9NvMEE7NK4/maxresdefault.jpg',
+  thumbnail: '/videos/g9NvMEE7NK4.webp',
 };
 ---
 
 <section id="contenus" aria-label="Vidéos et newsletter" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
   <div class="mx-auto max-w-[1200px]">
-    <div class="content-columns grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-12 lg:gap-y-8">
+    <div class="content-columns grid gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-16 lg:gap-y-10">
       <article class="grid min-w-0 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="Ma dernière vidéo YouTube" titleMaxWidth="none" spacing="none" class="h-full" />
+        <SectionHeader title="Je montre <mark>comment je fais.</mark>" titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
         <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
-          <div class="media-ouvre relative aspect-video bg-[var(--color-surface-low)]">
-            <img src={video.thumbnail} alt="" width="1280" height="720" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none" />
-            <span class="video-play absolute bottom-4 left-4 flex min-h-11 items-center gap-2 rounded-cta bg-[var(--color-paper)] px-4 text-[var(--color-ink)] text-sm font-medium">
-              <Icon name="lucide:youtube" size={20} aria-hidden="true" /> Voir la vidéo
-            </span>
+          <div class="video-cadre">
+            <span class="repere repere--hg" aria-hidden="true"></span>
+            <span class="repere repere--hd" aria-hidden="true"></span>
+            <span class="repere repere--bg" aria-hidden="true"></span>
+            <span class="repere repere--bd" aria-hidden="true"></span>
+            <div class="media-ouvre relative aspect-video bg-[var(--color-surface-low)]">
+              <img src={video.thumbnail} alt="" width="1280" height="720" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-200 motion-reduce:transition-none" />
+              <span class="video-play absolute bottom-4 left-4 flex min-h-11 items-center gap-2 rounded-cta bg-[var(--color-paper)] px-4 text-[var(--color-ink)] text-sm font-medium">
+                <Icon name="lucide:youtube" size={20} aria-hidden="true" /> Voir la vidéo
+              </span>
+            </div>
           </div>
-          <h3 class="mt-5 text-[length:var(--text-title-lg)] leading-tight tracking-[-0.02em]">{video.title}</h3>
+          <h3 class="video-titre">{video.title}</h3>
+          <p class="video-resume">{video.resume}</p>
         </a>
       </article>
       <aside id="newsletter" aria-label="La newsletter" class="grid min-w-0 scroll-mt-24 gap-8 lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="La newsletter" titleMaxWidth="none" spacing="none" class="h-full" />
-        <div class="newsletter-panel grid gap-6 self-start rounded-[var(--radius-lg)] border border-[var(--color-divider)] bg-[var(--color-surface-low)] p-6 text-[var(--color-ink)] lg:p-8">
-          <p class="m-0 max-w-[36ch] text-[length:var(--text-body-large)] leading-relaxed">Un mail par semaine : cas d’usage, outils et actualité IA.</p>
-          <form id="newsletter-form" action="/api/newsletter" method="post" class="m-0 min-w-0" aria-describedby="newsletter-note newsletter-status">
-            <label for="newsletter-email" class="mb-2 block text-base font-medium">Votre adresse email</label>
-            <div class="grid gap-3">
-              <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" class="min-h-12 min-w-0 w-full rounded-cta border border-[var(--color-border-strong)] bg-[var(--color-paper)] px-4 text-base text-[var(--color-ink)] placeholder:text-[var(--color-ink-mid)]" />
-              <button type="submit" class="btn-primary newsletter-action w-full">Recevoir la newsletter <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></button>
+        <SectionHeader title="Un mail <mark>par semaine.</mark>" titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+        <form id="newsletter-form" action="/api/newsletter" method="post" class="courrier" aria-describedby="newsletter-note newsletter-status">
+          <dl class="courrier__entete">
+            <div class="courrier__ligne">
+              <dt>De</dt>
+              <dd>Lilian Sevoumian</dd>
             </div>
-            <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
-            <p id="newsletter-note" class="mb-0 mt-4 text-sm leading-relaxed text-[var(--color-ink-mid)]">Un email pour confirmer votre inscription. Désinscription en un clic.</p>
-            <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" class="newsletter-status mb-0 mt-3 text-sm leading-relaxed" hidden></p>
-            <noscript><p class="mb-0 mt-4 text-sm">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
-          </form>
-        </div>
+            <div class="courrier__ligne">
+              <dt>Objet</dt>
+              <dd>Cas d’usage, outils et actualité IA</dd>
+            </div>
+          </dl>
+          <div class="courrier__ligne courrier__ligne--champ">
+            <label for="newsletter-email">À<span class="sr-only">&nbsp;: votre adresse email</span></label>
+            <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" />
+          </div>
+          <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
+          <div class="courrier__pied">
+            <button type="submit" disabled class="btn-primary newsletter-action w-full">Recevoir la newsletter <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></button>
+            <p id="newsletter-note" class="courrier__note">Un email pour confirmer votre inscription. Désinscription en un clic.</p>
+            <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" class="newsletter-status courrier__note" hidden></p>
+            <noscript><p class="courrier__note">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
+          </div>
+        </form>
       </aside>
     </div>
   </div>
@@ -49,17 +81,144 @@ const video = {
 
 <style>
   .content-columns :global(.section-header-row) { height: 100%; }
+
+  /* ── La vidéo : cadrée comme une scène, avec les mêmes repères d'angle que
+        la scène du récit et les formes des métiers. ── */
+  .video-cadre {
+    position: relative;
+  }
+
+  /* Pas d'`overflow` ni de rayon ici : `.media-ouvre` (global.css) porte les
+     siens, réglés pour son ouverture au défilement. */
+  .video-cadre .media-ouvre {
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+  }
+
+  .repere {
+    position: absolute;
+    z-index: 1;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--color-ink-low);
+    pointer-events: none;
+  }
+
+  .repere--hg { top: -7px; left: -7px; border-top-width: 1px; border-left-width: 1px; }
+  .repere--hd { top: -7px; right: -7px; border-top-width: 1px; border-right-width: 1px; }
+  .repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
+  .repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .video-titre {
+    max-width: 30ch;
+    margin: 1.5rem 0 0;
+    font-size: var(--text-title-lg);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .video-resume {
+    max-width: 52ch;
+    margin: 0.6rem 0 0;
+    color: var(--color-ink-mid);
+    line-height: 1.55;
+  }
+
+  /* ── Le mail : un expéditeur, un objet, et le champ « À » à remplir. ── */
+  .courrier {
+    align-self: start;
+    min-width: 0;
+    margin: 0;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-low);
+    color: var(--color-ink);
+  }
+
+  .courrier__entete {
+    margin: 0;
+  }
+
+  .courrier__ligne {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(0, 1fr);
+    align-items: center;
+    min-height: 3.25rem;
+    padding-inline: clamp(1.1rem, 2vw, 1.5rem);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .courrier__ligne dt,
+  .courrier__ligne label {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .courrier__ligne dd {
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  /* Le champ occupe sa ligne sans cadre : c'est la ligne « À » du mail, pas un
+     champ posé dans une carte. Le focus se lit sur toute la ligne. */
+  .courrier__ligne--champ {
+    transition: background-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .courrier__ligne--champ:focus-within {
+    background: color-mix(in srgb, var(--color-peche) 9%, transparent);
+  }
+
+  .courrier__ligne--champ input {
+    min-width: 0;
+    width: 100%;
+    min-height: 3.25rem;
+    border: 0;
+    /* Pour que l'anneau de focus soit arrondi, comme tout le reste. */
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .courrier__ligne--champ input::placeholder {
+    color: var(--color-ink-low);
+    font-weight: 400;
+    opacity: 1;
+  }
+
+  .courrier__ligne--champ input[aria-invalid='true'] {
+    color: var(--color-error);
+  }
+
+  .courrier__pied {
+    display: grid;
+    gap: 0.85rem;
+    padding: clamp(1.1rem, 2vw, 1.5rem);
+  }
+
+  .courrier__note {
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
   .newsletter-action { min-height: 48px; text-transform: none; letter-spacing: normal; }
   .newsletter-action:disabled { cursor: wait; }
   .newsletter-status[data-state="error"] { color: var(--color-error); }
 
   @media (hover: hover) and (pointer: fine) {
     .video-link:hover img { transform: scale(1.025); }
-    .video-link:hover h3 { text-decoration: underline; text-underline-offset: 0.18em; }
+    .video-link:hover .video-titre { text-decoration: underline; text-underline-offset: 0.18em; }
     .video-link:hover .video-play { background: var(--color-peche); color: var(--color-night); }
   }
   @media (prefers-reduced-motion: reduce) {
     .video-link:hover img { transform: none; }
+    .courrier__ligne--champ { transition: none; }
   }
 </style>
 
@@ -72,6 +231,9 @@ const video = {
   const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
   const status = form?.querySelector<HTMLParagraphElement>('#newsletter-status');
   if (form && email && button && status) {
+    // Le bouton sort désactivé du HTML : si ce script n'a pas tourné, un envoi
+    // natif du formulaire afficherait la réponse JSON brute du serveur.
+    button.disabled = false;
     const originalButton = button.innerHTML;
     let submitting = false;
     form.addEventListener('submit', (event) => {
@@ -87,29 +249,44 @@ const video = {
       email.removeAttribute('aria-invalid');
 
       const submit = async () => {
+        // `AbortSignal.timeout` manque avant Safari 16 : sur ces iPhone l'appel
+        // levait avant même le `fetch`, et aucune inscription ne partait.
+        const controleur = new AbortController();
+        const minuterie = window.setTimeout(() => controleur.abort(), 25_000);
         try {
           const data = new FormData(form);
           const response = await fetch(form.action, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: data.get('email'), website: data.get('website') }),
-            signal: AbortSignal.timeout(25_000),
+            signal: controleur.signal,
           });
-          const result = resultSchema.safeParse(await response.json());
-          if (!result.success) throw new Error('Invalid signup response');
+          // Une page d'erreur du frontal (502 pendant un redémarrage) n'est pas du JSON.
+          const result = resultSchema.safeParse(await response.json().catch(() => null));
+          if (!result.success) throw new Error(`Réponse d’inscription illisible (HTTP ${response.status})`);
           status.dataset.state = result.data.status;
           status.textContent = result.data.message;
           if (response.status === 422) email.setAttribute('aria-invalid', 'true');
           if (response.ok && result.data.status !== 'error') form.reset();
         } finally {
+          window.clearTimeout(minuterie);
           submitting = false;
           button.disabled = false;
           button.innerHTML = originalButton;
           form.removeAttribute('aria-busy');
         }
       };
-      submit().catch(() => {
+      submit().catch((erreur: unknown) => {
+        console.error('[newsletter] envoi en échec', erreur);
+        const nom = erreur instanceof Error ? erreur.name : '';
         status.dataset.state = 'error';
-        status.textContent = 'La connexion a été interrompue. Vérifiez votre connexion puis réessayez.';
+        // Trois causes, trois messages : ne pas envoyer le visiteur vérifier sa
+        // connexion quand c'est le serveur qui ne répond pas.
+        status.textContent =
+          nom === 'AbortError' || nom === 'TimeoutError'
+            ? 'Le serveur met trop de temps à répondre. Réessayez dans une minute.'
+            : erreur instanceof TypeError && !navigator.onLine
+              ? 'Vous semblez hors ligne. Vérifiez votre connexion puis réessayez.'
+              : 'L’inscription n’a pas abouti de notre côté. Réessayez dans quelques instants.';
       });
     });
   }
