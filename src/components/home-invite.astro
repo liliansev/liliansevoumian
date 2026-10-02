@@ -661,6 +661,7 @@ const exemples = [
   if (racine && panneau && fil && choix && barre && champ && exemple && note && reduire && deplieur && etiquette) {
     const reduit = window.matchMedia('(prefers-reduced-motion: reduce)');
     const etroit = window.matchMedia('(max-width: 640px)');
+    const tactile = window.matchMedia('(hover: none), (pointer: coarse)');
     const pause = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, reduit.matches ? 0 : ms));
     const adresse = racine.dataset.email ?? '';
     const numero = racine.dataset.whatsapp ?? '';
@@ -672,7 +673,8 @@ const exemples = [
       ajout: 'C’est ajouté. Il reste à l’envoyer, par le moyen de votre choix.',
       whatsapp: 'WhatsApp s’ouvre avec votre message déjà écrit : il ne reste qu’à l’envoyer. Je vous réponds là-bas.',
       email: `Votre messagerie s’ouvre avec votre message déjà écrit : il ne reste qu’à l’envoyer. Si rien ne s’ouvre, écrivez-moi à ${adresse}.`,
-      appel: `Choisissez votre créneau : ${duree} minutes, en visio. Votre message est joint à la réservation.`,
+      appel: `Choisissez votre créneau : ${duree} minutes, en visio.`,
+      appelJoint: `Choisissez votre créneau : ${duree} minutes, en visio. Votre message est joint à la réservation.`,
     } as const;
 
     const LIBELLES: Record<Canal, string> = {
@@ -780,7 +782,9 @@ const exemples = [
     const lienAgenda = () => {
       const gabarit = racine.querySelector<HTMLTemplateElement>('[data-causerie-appel]');
       const a = gabarit ? (gabarit.content.firstElementChild?.cloneNode(true) as HTMLElement | null) : null;
-      a?.addEventListener('click', () => lilian(DIT.appel).catch(console.error), { once: true });
+      a?.addEventListener('click', () => lilian(phrases.length ? DIT.appelJoint : DIT.appel).catch(console.error), {
+        once: true,
+      });
       return a;
     };
 
@@ -838,11 +842,18 @@ const exemples = [
 
     /* L'emplacement prend la hauteur de la barre, et la barre ses mesures.
        En position absolue dans la page, elle défile ensuite toute seule. */
+    /* Menu mobile ou agenda ouverts, Layout fige le document : `scrollY` vaut
+       alors zéro et la page est décalée par `top`. La vraie position se lit là. */
+    const defile = () =>
+      document.documentElement.hasAttribute('data-defilement-verrouille')
+        ? -(Number.parseFloat(document.body.style.top) || 0)
+        : window.scrollY;
+
     const caler = () => {
       if (!place) return;
       if (barre.offsetHeight) place.style.height = `${barre.offsetHeight + 2}px`;
       const cadre = place.getBoundingClientRect();
-      racine.style.setProperty('--hero-haut', `${cadre.top + window.scrollY}px`);
+      racine.style.setProperty('--hero-haut', `${cadre.top + defile()}px`);
       racine.style.setProperty('--hero-gauche', `${cadre.left + window.scrollX}px`);
       racine.style.setProperty('--hero-largeur', `${cadre.width}px`);
     };
@@ -890,12 +901,13 @@ const exemples = [
         lieu = suivant;
         racine.dataset.lieu = suivant;
       });
-      if (suivant === 'coin' && racine.dataset.etat === 'veille') {
-        /* Le temps d'écrire un exemple ; s'il ne peut pas s'écrire (mouvement
-           réduit, onglet masqué), elle se range quand même. */
-        prevoirRangement(9000);
-        relancerExemples();
-      }
+      if (racine.dataset.etat !== 'veille') return;
+      /* Dans le coin : le temps d'écrire un exemple ; s'il ne peut pas s'écrire
+         (mouvement réduit, onglet masqué), elle se range quand même. Sous le
+         titre : l'exemple resté en plan s'efface et la suite reprend. */
+      if (suivant === 'coin') prevoirRangement(9000);
+      else arreterExemples();
+      relancerExemples();
     };
 
     /* ── Ouvrir, réduire ── */
@@ -909,10 +921,21 @@ const exemples = [
       arreterExemples();
     };
 
+    /* Le focus rendu à la barre par `fermer` ne doit pas rouvrir la fenêtre. */
+    let discret = false;
+
     const fermer = () => {
       racine.dataset.etat = 'veille';
       panneau.inert = true;
-      champ.focus({ preventScroll: true });
+      /* À la souris et au clavier, le focus revient dans la barre. Au doigt, on
+         le lâche : le rendre au champ ferait monter le clavier. */
+      if (tactile.matches) {
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      } else {
+        discret = true;
+        champ.focus({ preventScroll: true });
+        discret = false;
+      }
       /* En haut de page, elle retourne sous le titre plutôt que d'y laisser un
          trou ; ailleurs, elle se range. */
       voirLaPage();
@@ -923,10 +946,14 @@ const exemples = [
     racine.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && racine.dataset.etat === 'ouverte') fermer();
     });
-    /* Revenir dans la barre rouvre la conversation commencée. */
+    /* Revenir dans la barre rouvre la conversation commencée ; le clic couvre
+       le cas où le champ avait gardé le focus après une réduction. */
     champ.addEventListener('focus', () => {
       annulerRangement();
-      if (fil.childElementCount > 0) ouvrir();
+      if (!discret && fil.childElementCount > 0) ouvrir();
+    });
+    champ.addEventListener('click', () => {
+      if (racine.dataset.etat === 'veille' && fil.childElementCount > 0) ouvrir();
     });
     deplieur.addEventListener('click', () => {
       deplier();
@@ -1003,7 +1030,13 @@ const exemples = [
       const origine = cible ? document.querySelector<HTMLTextAreaElement | HTMLInputElement>(cible) : null;
       const texte = origine?.value.trim() ?? '';
       if (origine) origine.value = '';
-      soumettre(texte).catch((erreur: unknown) => console.error('[causerie]', erreur));
+      soumettre(texte)
+        .then(() => {
+          /* Avec un message, la suite est le choix du moyen : le focus y va.
+             Sans message, `accueillir` l'a déjà mis dans le champ. */
+          if (texte !== '') (choix.querySelector<HTMLElement>('a, button') ?? champ).focus({ preventScroll: true });
+        })
+        .catch((erreur: unknown) => console.error('[causerie]', erreur));
     });
 
     /* ── L'exemple qui s'écrit tout seul ──
@@ -1076,10 +1109,10 @@ const exemples = [
           dans le coin. Sur une page sans emplacement, elle n'apparaît qu'une
           fois le premier écran passé. Repliée sur téléphone, elle s'efface
           quand on descend et revient quand on remonte. ── */
-    let dernierY = window.scrollY;
+    let dernierY = defile();
 
     function voirLaPage() {
-      const y = window.scrollY;
+      const y = defile();
       const h = window.innerHeight;
       if ('rangee' in racine!.dataset && etroit.matches) {
         if (y > dernierY + 6) racine!.dataset.cachee = '';
