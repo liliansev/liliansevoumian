@@ -1,0 +1,1157 @@
+---
+/*
+ * home-invite — la barre où l'on écrit à Lilian, et la courte conversation
+ * qu'elle ouvre.
+ *
+ * Son idée, dans ses mots (2 octobre 2026) : « une petite fenêtre qui invite à
+ * écrire : j'ai une société de je ne sais pas quoi et j'aimerais faire ceci.
+ * Le prospect écrit, fait Entrée, et ça ouvre un chatbot en bas à droite qui
+ * invite à poursuivre la conversation. » Puis, pour la suite : « si je clique
+ * sur WhatsApp, ça ouvre une fenêtre avec le message préenregistré vers mon
+ * WhatsApp Business, comme ça je reçois le message directement ; par mail, ça
+ * ouvre son truc pour écrire des mails avec le mail déjà rédigé ; un call, on
+ * lui ouvre la pop-up du cal.com ».
+ *
+ * Il n'y a donc AUCUN SERVEUR derrière : ni chat en direct, ni IA, ni message
+ * stocké ailleurs que dans le navigateur du visiteur. Il écrit son besoin,
+ * choisit son moyen, et c'est lui qui envoie, depuis son WhatsApp, sa
+ * messagerie ou l'agenda. Lilian reçoit le message là où il répond déjà.
+ *
+ * LA FENÊTRE NE FAIT PAS SEMBLANT. C'est le reproche de la critique du
+ * 2 octobre 2026 à sa première version : un sous-titre « je vous réponds
+ * moi-même », trois points de frappe, puis « Merci, c'est clair. » quel que
+ * soit le texte ; un visiteur pouvait fermer en croyant avoir écrit à Lilian,
+ * alors que rien n'était parti. Ici : pas de frappe simulée, et chaque réponse
+ * dit où en est le message (« pas encore parti », « il reste à l'envoyer »).
+ *
+ *   1. le visiteur écrit son besoin dans la barre ;
+ *   2. la barre s'ouvre en fenêtre : « Votre message n'est pas encore parti :
+ *      choisissez comment me l'envoyer » ;
+ *   3. WhatsApp et l'e-mail s'ouvrent avec le message déjà rédigé ; l'appel
+ *      ouvre l'agenda, le message joint à la réservation ;
+ *   4. ce qu'il ajoute ensuite complète le message, et les trois moyens se
+ *      mettent à jour ; « Recommencer » efface tout.
+ *
+ * Le message est gardé le temps de l'onglet (`sessionStorage`) : un
+ * rechargement, ou un retour de WhatsApp, ne le perd pas.
+ *
+ * WhatsApp n'est proposé que si `WHATSAPP_CONTACT` est renseigné
+ * (`lib/contact.ts`).
+ *
+ * La barre a deux places, et c'est le même élément qui passe de l'une à
+ * l'autre (« dans le hero aussi, puis au scroll retourner en bas à droite ») :
+ *
+ *   hero   sous le titre du premier écran, posée sur l'emplacement que
+ *          `home-hero.astro` lui réserve (`[data-causerie-place]`) ;
+ *   coin   en bas à droite, fixe, dès qu'on a défilé d'un tiers d'écran.
+ *
+ * Le passage est un vol : la barre part de là où elle est et va se ranger.
+ * Dans le coin, elle écrit UN exemple puis se replie en pastille (« mets juste
+ * l'animation puis range la popup ») : son portrait et « Écrire à Lilian » sur
+ * ordinateur, son portrait seul sur téléphone. En barre, elle écrivait sans
+ * fin et recouvrait des titres, des prix et le bouton de la newsletter. Sur
+ * téléphone, la pastille s'efface quand on descend et revient quand on
+ * remonte : elle rognait la fin des lignes.
+ *
+ * Elle s'efface quand le champ de fin de page est à l'écran : jamais deux
+ * champs en même temps. Sans script, rien n'est rendu visible ; les boutons
+ * « Parlons de votre projet » mènent alors à l'agenda.
+ *
+ * Le composant est rendu juste après le hero (voir `index.astro`), pour que
+ * sa barre vienne au clavier là où on la voit.
+ */
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
+import BoutonReservation from './BoutonReservation.astro';
+import lilianPhoto from '../assets/lilian-photo.jpg';
+import { EMAIL_CONTACT, WHATSAPP_CONTACT } from '../lib/contact';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+
+/* Ce que la barre écrit toute seule quand on n'y touche pas : des débuts de
+   phrase, pour montrer qu'on peut répondre en une ligne. Des situations
+   inventées, sans nom ni chiffre de client. */
+const exemples = [
+  'J’ai une agence de 8 personnes et je ressaisis mes devis à la main…',
+  'On est une vingtaine, et le support client nous déborde…',
+  'Je voudrais un dashboard pour suivre mes chantiers…',
+  'J’aimerais former mon équipe à l’automatisation…',
+];
+---
+
+<aside
+  class="causerie"
+  aria-label="Écrire à Lilian"
+  data-causerie
+  data-etat="veille"
+  data-lieu="coin"
+  data-exemples={JSON.stringify(exemples)}
+  data-email={EMAIL_CONTACT}
+  data-whatsapp={WHATSAPP_CONTACT || undefined}
+  data-duree={DUREE_RESERVATION_MINUTES}
+>
+  <div class="causerie__fenetre">
+    <div class="causerie__pli">
+      <div class="causerie__panneau" data-causerie-panneau inert>
+        <header class="causerie__tete">
+          <Image src={lilianPhoto} alt="" width={72} height={72} class="causerie__portrait" loading="lazy" />
+          <p class="causerie__qui">
+            <b>Lilian Sevoumian</b>
+            <span>Vous choisissez comment l’envoyer</span>
+          </p>
+          <button type="button" class="causerie__reduire" aria-label="Réduire la conversation" data-causerie-reduire>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </header>
+        <div class="causerie__fil" role="log" aria-live="polite" aria-label="Conversation" data-causerie-fil></div>
+        <div class="causerie__choix" data-causerie-choix></div>
+      </div>
+    </div>
+
+    {/* La barre repliée : le portrait, et sur ordinateur ce qu'elle propose. */}
+    <button type="button" class="causerie__pastille" data-causerie-deplier>
+      <Image src={lilianPhoto} alt="" width={72} height={72} class="causerie__portrait" loading="lazy" />
+      <span data-causerie-pastille>Écrire à Lilian</span>
+    </button>
+
+    <form class="causerie__barre" data-causerie-barre novalidate>
+      <Image src={lilianPhoto} alt="" width={72} height={72} class="causerie__portrait causerie__portrait--barre" loading="lazy" />
+      <div class="causerie__saisie">
+        <label class="sr-only" for="causerie-message">Écrivez votre besoin à Lilian</label>
+        <textarea
+          id="causerie-message"
+          rows="1"
+          maxlength="600"
+          autocomplete="off"
+          placeholder="Écrivez-moi…"
+          data-causerie-message
+        ></textarea>
+        {/* L'exemple qui s'écrit tout seul, par-dessus le champ vide. */}
+        <span class="causerie__exemple" aria-hidden="true" data-causerie-exemple></span>
+      </div>
+      {/* Le bouton n'envoie rien : il ouvre le choix du moyen. */}
+      <button type="submit" class="causerie__envoi" aria-label="Continuer">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 19V5" /><path d="m6 11 6-6 6 6" /></svg>
+      </button>
+    </form>
+  </div>
+
+  {/* Le besoin écrit, joint à la réservation quand le visiteur choisit
+      l'appel (lu par l'embed de l'agenda, dans Layout). */}
+  <input type="hidden" id="causerie-note" data-causerie-note />
+
+  {/* Les pièces que le script pose dans la conversation. Leurs icônes sont
+      rendues en ligne (`is:inline`) : dans un gabarit, le symbole partagé
+      d'astro-icon serait inerte, et les autres icônes de la page qui s'y
+      réfèrent ne se dessineraient plus. */}
+  <template data-causerie-appel>
+    <BoutonReservation source="home_causerie" class="causerie__option" data-cal-note-from="#causerie-note">
+      <Icon name="lucide:clock" size={16} aria-hidden="true" is:inline /> Réserver un appel · {DUREE_RESERVATION_MINUTES}&nbsp;min
+    </BoutonReservation>
+  </template>
+  <template data-causerie-icone="whatsapp"><Icon name="simple-icons:whatsapp" size={15} aria-hidden="true" is:inline /></template>
+  <template data-causerie-icone="email"><Icon name="lucide:mail" size={16} aria-hidden="true" is:inline /></template>
+</aside>
+
+<style>
+  /* ── La place : en bas à droite, sous la barre de navigation et sous
+        l'agenda. Invisible tant que le script n'a pas tourné. ── */
+  .causerie {
+    --bord: 1rem;
+    position: fixed;
+    right: max(var(--bord), env(safe-area-inset-right));
+    bottom: max(var(--bord), env(safe-area-inset-bottom));
+    z-index: 40;
+    width: min(24rem, calc(100vw - 2 * var(--bord)));
+    transition:
+      opacity 420ms var(--ease-out-quint),
+      transform 520ms var(--ease-out-expo),
+      visibility 0s linear 0s;
+  }
+
+  .causerie:not([data-pret]) {
+    display: none;
+  }
+
+  /* Dans le hero : posée sur son emplacement, elle défile avec la page. Les
+     trois mesures viennent du script, qui lit l'emplacement. */
+  .causerie[data-lieu='hero'] {
+    position: absolute;
+    top: var(--hero-haut, 0);
+    right: auto;
+    bottom: auto;
+    left: var(--hero-gauche, 0);
+    width: var(--hero-largeur, 24rem);
+  }
+
+  /* Hors de vue : avant son entrée, quand le champ de fin de page est à
+     l'écran, ou, repliée sur téléphone, pendant qu'on descend la page. */
+  .causerie:not([data-apparue]),
+  .causerie[data-etat='veille'][data-doublon],
+  .causerie[data-rangee][data-cachee] {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(1.25rem);
+    pointer-events: none;
+    transition-delay: 0s, 0s, 420ms;
+  }
+
+  /* ── La fenêtre : un seul cadre, qui est la barre seule en veille et la
+        conversation au-dessus de la barre une fois ouverte. ── */
+  .causerie__fenetre {
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--color-night-deep) 90%, var(--color-ink));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 9%, transparent),
+      0 24px 48px -20px var(--color-night-deep),
+      0 10px 20px -12px var(--color-night-deep);
+    color: var(--color-ink);
+    transition:
+      border-color var(--duration-default) var(--ease-out-quint),
+      box-shadow var(--duration-default) var(--ease-out-quint);
+  }
+
+  .causerie__fenetre:focus-within {
+    border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
+  }
+
+  /* Le pli : la conversation se déplie au-dessus de la barre. C'est le seul
+     geste de ce composant. */
+  .causerie__pli {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 560ms var(--ease-out-expo);
+  }
+
+  .causerie[data-etat='ouverte'] .causerie__pli {
+    grid-template-rows: 1fr;
+  }
+
+  .causerie__panneau {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 0;
+    max-height: min(30rem, calc(100svh - 11rem));
+    overflow: hidden;
+    opacity: 0;
+    filter: blur(8px);
+    transition:
+      opacity 320ms var(--ease-out-quint),
+      filter 320ms var(--ease-out-quint);
+  }
+
+  .causerie[data-etat='ouverte'] .causerie__panneau {
+    opacity: 1;
+    filter: none;
+    transition-delay: 160ms;
+  }
+
+  .causerie__tete {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.5rem 0.75rem 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .causerie :global(.causerie__portrait) {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    object-position: center 18%;
+  }
+
+  .causerie__qui {
+    display: grid;
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .causerie__qui b {
+    font-weight: 500;
+  }
+
+  .causerie__qui span {
+    color: var(--color-ink-low);
+    font-size: var(--text-mono-label);
+    line-height: 1.4;
+  }
+
+  .causerie__reduire {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink-mid);
+    cursor: pointer;
+  }
+
+  .causerie :is(.causerie__reduire, .causerie__envoi) svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── Le fil ── */
+  .causerie__fil {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .causerie__fil :global(.bulle) {
+    max-width: 85%;
+    margin: 0;
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-xs);
+    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+    animation: bulle-arrive 420ms var(--ease-out-expo) backwards;
+  }
+
+  /* Ce qu'écrit le visiteur : à droite, sur pêche, en nuit. */
+  .causerie__fil :global(.bulle--visiteur) {
+    align-self: flex-end;
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-xs) var(--radius-md);
+    background: var(--color-peche);
+    color: var(--color-night);
+  }
+
+  /* Un fil rétabli après un rechargement arrive d'un coup, sans rejouer. */
+  .causerie[data-retabli] .causerie__fil :global(.bulle),
+  .causerie[data-retabli] :global(.causerie__option) {
+    animation: none;
+  }
+
+  @keyframes bulle-arrive {
+    from { opacity: 0; transform: translateY(0.5rem); }
+  }
+
+  /* ── Les moyens proposés ── */
+  .causerie__choix {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+  }
+
+  .causerie__choix:not(:empty) {
+    padding-bottom: 0.75rem;
+  }
+
+  .causerie :global(.causerie__option) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    line-height: 1.35;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    animation: bulle-arrive 420ms var(--ease-out-expo) backwards;
+    transition:
+      background-color var(--duration-default) var(--ease-out-quint),
+      border-color var(--duration-default) var(--ease-out-quint),
+      color var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* « Recommencer » : un lien de texte, pas un quatrième moyen. */
+  .causerie :global(.causerie__effacer) {
+    min-height: 44px;
+    margin-left: auto;
+    padding: 0 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-low);
+    font: inherit;
+    font-size: var(--text-mono-label);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+  }
+
+  /* ── La barre ── */
+  .causerie__barre {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 0.625rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+  }
+
+  .causerie[data-etat='ouverte'] .causerie__barre {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-left: 1rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  /* En veille, le portrait dit à qui on écrit ; une fois la fenêtre ouverte,
+     il est dans l'en-tête. */
+  .causerie :global(.causerie__portrait--barre) {
+    align-self: center;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .causerie[data-etat='ouverte'] :global(.causerie__portrait--barre) {
+    display: none;
+  }
+
+  .causerie__saisie {
+    position: relative;
+    display: grid;
+    min-width: 0;
+  }
+
+  /* 16 px : en dessous, iOS zoome sur le champ. */
+  .causerie__saisie textarea {
+    field-sizing: content;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    max-height: 7.5rem;
+    padding: 0.625rem 0;
+    border: 0;
+    border-radius: var(--radius-xs);
+    outline: none;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    resize: none;
+  }
+
+  .causerie__saisie ::placeholder {
+    color: var(--color-ink-low);
+    opacity: 1;
+  }
+
+  /* Quand un exemple s'écrit, il remplace l'invite fixe. */
+  .causerie[data-exemple] .causerie__saisie textarea::placeholder {
+    color: transparent;
+  }
+
+  .causerie__exemple {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: 0.625rem 0;
+    overflow: hidden;
+    color: var(--color-ink-low);
+    line-height: 1.5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  .causerie[data-exemple] .causerie__exemple {
+    display: block;
+  }
+
+  /* Le trait d'écriture, au bout de l'exemple. */
+  .causerie__exemple::after {
+    content: '';
+    display: inline-block;
+    width: 1.5px;
+    height: 1.1em;
+    margin-left: 2px;
+    background: var(--color-peche);
+    vertical-align: text-bottom;
+  }
+
+  .causerie__envoi {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+    color: var(--color-night);
+    cursor: pointer;
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* ── Repliée : une pastille, tenue par son bord droit. Le portrait, et
+        « Écrire à Lilian » (ou l'état d'un message en attente). ── */
+  .causerie__pastille {
+    display: none;
+  }
+
+  .causerie[data-rangee] {
+    width: auto;
+  }
+
+  .causerie[data-rangee] .causerie__fenetre {
+    border-radius: var(--radius-full);
+  }
+
+  .causerie[data-rangee] :is(.causerie__barre, .causerie__pli) {
+    display: none;
+  }
+
+  .causerie[data-rangee] .causerie__pastille {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 3rem;
+    padding: 0.375rem 1.125rem 0.375rem 0.375rem;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    line-height: 1.35;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  /* Un message écrit et pas encore envoyé : la pastille le dit en pêche. */
+  .causerie[data-rangee][data-brouillon] .causerie__pastille {
+    color: var(--color-accent-text);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .causerie__reduire:hover {
+      background: color-mix(in srgb, var(--color-ink) 9%, transparent);
+      color: var(--color-ink);
+    }
+
+    .causerie :global(.causerie__option:hover) {
+      border-color: var(--color-peche);
+      background: var(--color-peche);
+      color: var(--color-night);
+    }
+
+    .causerie :global(.causerie__effacer:hover) {
+      color: var(--color-ink);
+    }
+
+    .causerie__envoi:hover {
+      transform: translateY(-1px);
+    }
+
+    .causerie[data-rangee] .causerie__fenetre:hover {
+      border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
+    }
+  }
+
+  @media (max-width: 640px) {
+    /* Toute la largeur, mais toujours ancrée à droite : c'est ce bord qui sert
+       de repère au vol entre les deux places, et au repli en pastille. */
+    .causerie {
+      --bord: 0.75rem;
+      width: calc(100vw - 2 * var(--bord));
+    }
+
+    .causerie__panneau {
+      max-height: calc(100svh - 9.5rem);
+    }
+
+    /* Sur téléphone la pastille est ronde : le portrait seul, et un point
+       pêche. Son nom reste lu par les lecteurs d'écran. */
+    .causerie[data-rangee] .causerie__pastille {
+      position: relative;
+      justify-content: center;
+      width: 3.5rem;
+      height: 3.5rem;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .causerie[data-rangee] .causerie__pastille span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .causerie[data-rangee] .causerie__pastille :global(.causerie__portrait) {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .causerie[data-rangee] .causerie__pastille::after {
+      content: '';
+      position: absolute;
+      top: 0.125rem;
+      right: 0.125rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      border: 2px solid var(--color-night-deep);
+      border-radius: var(--radius-full);
+      background: var(--color-peche);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .causerie,
+    .causerie__pli,
+    .causerie__panneau,
+    .causerie__fenetre,
+    .causerie__envoi {
+      transition: none;
+    }
+
+    .causerie__panneau {
+      filter: none;
+    }
+
+    .causerie__fil :global(.bulle),
+    .causerie :global(.causerie__option) {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  /* Aucun envoi d'ici : chaque moyen est un lien, que le visiteur suit. */
+  type Canal = 'whatsapp' | 'email';
+  type Lieu = 'hero' | 'coin';
+
+  const CLE = 'causerie:messages';
+  const EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+  const racine = document.querySelector<HTMLElement>('[data-causerie]');
+  const panneau = racine?.querySelector<HTMLElement>('[data-causerie-panneau]');
+  const fil = racine?.querySelector<HTMLElement>('[data-causerie-fil]');
+  const choix = racine?.querySelector<HTMLElement>('[data-causerie-choix]');
+  const barre = racine?.querySelector<HTMLFormElement>('[data-causerie-barre]');
+  const champ = racine?.querySelector<HTMLTextAreaElement>('[data-causerie-message]');
+  const exemple = racine?.querySelector<HTMLElement>('[data-causerie-exemple]');
+  const note = racine?.querySelector<HTMLInputElement>('[data-causerie-note]');
+  const reduire = racine?.querySelector<HTMLButtonElement>('[data-causerie-reduire]');
+  const deplieur = racine?.querySelector<HTMLButtonElement>('[data-causerie-deplier]');
+  const etiquette = racine?.querySelector<HTMLElement>('[data-causerie-pastille]');
+  /* L'emplacement réservé sous le titre du premier écran, quand la page en a un. */
+  const place = document.querySelector<HTMLElement>('[data-causerie-place]');
+
+  if (racine && panneau && fil && choix && barre && champ && exemple && note && reduire && deplieur && etiquette) {
+    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const etroit = window.matchMedia('(max-width: 640px)');
+    const pause = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, reduit.matches ? 0 : ms));
+    const adresse = racine.dataset.email ?? '';
+    const numero = racine.dataset.whatsapp ?? '';
+    const duree = racine.dataset.duree ?? '45';
+
+    const DIT = {
+      accueil: 'Écrivez-moi en une phrase ce qui vous fait perdre du temps, ou choisissez directement comment me joindre.',
+      moyens: 'Bien noté. Votre message n’est pas encore parti : choisissez comment me l’envoyer.',
+      ajout: 'C’est ajouté. Il reste à l’envoyer, par le moyen de votre choix.',
+      whatsapp: 'WhatsApp s’ouvre avec votre message déjà écrit : il ne reste qu’à l’envoyer. Je vous réponds là-bas.',
+      email: `Votre messagerie s’ouvre avec votre message déjà écrit : il ne reste qu’à l’envoyer. Si rien ne s’ouvre, écrivez-moi à ${adresse}.`,
+      appel: `Choisissez votre créneau : ${duree} minutes, en visio. Votre message est joint à la réservation.`,
+    } as const;
+
+    const LIBELLES: Record<Canal, string> = {
+      whatsapp: 'M’écrire sur WhatsApp',
+      email: 'M’écrire par e-mail',
+    };
+
+    const NOMS = { libre: 'Écrire à Lilian', brouillon: 'Message prêt, pas encore envoyé' } as const;
+
+    /* ── Le message : ce que le visiteur a écrit, phrase après phrase. Gardé
+          le temps de l'onglet, pour survivre à un rechargement ou à un retour
+          de WhatsApp. Le stockage peut être refusé (navigation privée) : la
+          conversation marche sans. ── */
+    let phrases: string[] = [];
+    let occupe = false;
+
+    const message = () => phrases.join('\n');
+
+    const memoriser = () => {
+      try {
+        if (phrases.length) window.sessionStorage.setItem(CLE, JSON.stringify(phrases));
+        else window.sessionStorage.removeItem(CLE);
+      } catch (erreur) {
+        console.warn('[causerie] message non gardé pour cet onglet', erreur);
+      }
+    };
+
+    const relire = (): string[] => {
+      try {
+        const brut: unknown = JSON.parse(window.sessionStorage.getItem(CLE) ?? '[]');
+        return Array.isArray(brut) ? brut.filter((p): p is string => typeof p === 'string' && p.trim() !== '').slice(0, 20) : [];
+      } catch (erreur) {
+        console.warn('[causerie] message gardé illisible', erreur);
+        return [];
+      }
+    };
+
+    /* Ce que la barre et la pastille disent du message en attente. */
+    const marquer = () => {
+      const enAttente = phrases.length > 0;
+      racine.toggleAttribute('data-brouillon', enAttente);
+      note.value = message().slice(0, 600);
+      etiquette.textContent = enAttente ? NOMS.brouillon : NOMS.libre;
+      champ.placeholder = enAttente ? 'Ajouter une précision…' : 'Écrivez-moi…';
+    };
+
+    /* ── Le fil ── */
+    const auBas = () => {
+      fil.scrollTop = fil.scrollHeight;
+    };
+
+    const bulle = (texte: string, qui: 'lilian' | 'visiteur') => {
+      const p = document.createElement('p');
+      p.className = qui === 'visiteur' ? 'bulle bulle--visiteur' : 'bulle';
+      p.textContent = texte;
+      fil.append(p);
+      auBas();
+    };
+
+    /* Un court temps, pour que la réponse ne tombe pas sur le message. Pas de
+       points de frappe : personne n'est en train d'écrire. */
+    const lilian = async (texte: string) => {
+      await pause(280);
+      bulle(texte, 'lilian');
+    };
+
+    /* ── Les moyens ──
+       WhatsApp et l'e-mail sont de vrais liens, refaits à chaque ajout : leur
+       adresse porte le message. L'appel est un `BoutonReservation` cloné de son
+       gabarit, que Layout intercepte pour ouvrir l'agenda dans la page. */
+    const icone = (nom: Canal) =>
+      racine.querySelector<HTMLTemplateElement>(`[data-causerie-icone="${nom}"]`)?.content.cloneNode(true) ?? null;
+
+    const lien = (canal: Canal) => {
+      const a = document.createElement('a');
+      a.className = 'causerie__option';
+      a.rel = 'noopener noreferrer';
+      const ecrit = message();
+      if (canal === 'whatsapp') {
+        const texte = `Bonjour Lilian, je vous écris depuis votre site.${ecrit ? `\n\n${ecrit}` : ''}`;
+        a.href = `https://wa.me/${numero}?text=${encodeURIComponent(texte)}`;
+        a.target = '_blank';
+      } else {
+        const corps = `Bonjour Lilian,\n\n${ecrit ? `${ecrit}\n\n` : ''}`;
+        a.href = `mailto:${adresse}?subject=${encodeURIComponent('Demande depuis votre site')}&body=${encodeURIComponent(corps)}`;
+      }
+      a.dataset.fastGoal = 'lead_message';
+      a.dataset.fastGoalCanal = canal;
+      const dessin = icone(canal);
+      if (dessin) a.append(dessin);
+      a.append(LIBELLES[canal]);
+      if (canal === 'whatsapp') {
+        const onglet = document.createElement('span');
+        onglet.className = 'sr-only';
+        onglet.textContent = ' (nouvel onglet)';
+        a.append(onglet);
+      }
+      /* Une phrase dit ce qui vient de s'ouvrir, une seule fois par moyen. */
+      a.addEventListener('click', () => lilian(canal === 'whatsapp' ? DIT.whatsapp : DIT.email).catch(console.error), {
+        once: true,
+      });
+      return a;
+    };
+
+    const lienAgenda = () => {
+      const gabarit = racine.querySelector<HTMLTemplateElement>('[data-causerie-appel]');
+      const a = gabarit ? (gabarit.content.firstElementChild?.cloneNode(true) as HTMLElement | null) : null;
+      a?.addEventListener('click', () => lilian(DIT.appel).catch(console.error), { once: true });
+      return a;
+    };
+
+    const proposer = () => {
+      const moyens: (HTMLElement | null)[] = [numero ? lien('whatsapp') : null, adresse ? lien('email') : null, lienAgenda()];
+      const pieces = moyens.filter((moyen): moyen is HTMLElement => moyen !== null);
+      /* Tant qu'un message est écrit, on peut tout effacer et recommencer. */
+      if (phrases.length) {
+        const effacer = document.createElement('button');
+        effacer.type = 'button';
+        effacer.className = 'causerie__effacer';
+        effacer.textContent = 'Recommencer';
+        effacer.addEventListener('click', recommencer);
+        pieces.push(effacer);
+      }
+      choix.replaceChildren(...pieces);
+      auBas();
+    };
+
+    function recommencer() {
+      phrases = [];
+      memoriser();
+      marquer();
+      fil.replaceChildren();
+      choix.replaceChildren();
+      champ.value = '';
+      champ.focus({ preventScroll: true });
+      accueillir().catch(console.error);
+    }
+
+    /* ── Les deux places : sous le titre du premier écran, ou dans le coin ── */
+    let lieu: Lieu = 'coin';
+
+    /* Un changement de forme (de place, ou barre ⇄ pastille) part de l'ancienne
+       forme : on note le cadre, on change, on anime depuis l'ancien cadre. Dans
+       le coin elle est tenue par son angle bas droit, dans le hero par son
+       angle haut gauche. */
+    const muer = (changer: () => void) => {
+      const avant = racine.getBoundingClientRect();
+      changer();
+      if (reduit.matches || !('apparue' in racine.dataset)) return;
+      const apres = racine.getBoundingClientRect();
+      if (!avant.width || !apres.width) return;
+      const dansLeCoin = lieu === 'coin';
+      const dx = dansLeCoin ? avant.right - apres.right : avant.left - apres.left;
+      const dy = dansLeCoin ? avant.bottom - apres.bottom : avant.top - apres.top;
+      racine.animate(
+        {
+          transform: [`translate(${dx}px, ${dy}px)`, 'translate(0, 0)'],
+          width: [`${avant.width}px`, `${apres.width}px`],
+        },
+        { duration: 620, easing: EXPO },
+      );
+    };
+
+    /* L'emplacement prend la hauteur de la barre, et la barre ses mesures.
+       En position absolue dans la page, elle défile ensuite toute seule. */
+    const caler = () => {
+      if (!place) return;
+      if (barre.offsetHeight) place.style.height = `${barre.offsetHeight + 2}px`;
+      const cadre = place.getBoundingClientRect();
+      racine.style.setProperty('--hero-haut', `${cadre.top + window.scrollY}px`);
+      racine.style.setProperty('--hero-gauche', `${cadre.left + window.scrollX}px`);
+      racine.style.setProperty('--hero-largeur', `${cadre.width}px`);
+    };
+
+    /* ── Le repli : dans le coin, la barre écrit un exemple puis se range en
+          pastille. Tant qu'on y écrit, qu'elle a le focus ou que la
+          conversation est ouverte, elle reste dépliée. ── */
+    let rangement = 0;
+
+    const annulerRangement = () => {
+      window.clearTimeout(rangement);
+      rangement = 0;
+    };
+
+    const deplier = () => {
+      annulerRangement();
+      if (!('rangee' in racine.dataset)) return;
+      muer(() => {
+        delete racine.dataset.rangee;
+        delete racine.dataset.cachee;
+      });
+    };
+
+    const ranger = () => {
+      rangement = 0;
+      if ('rangee' in racine.dataset || lieu !== 'coin' || racine.dataset.etat !== 'veille') return;
+      if (champ.value !== '' || document.activeElement === champ) return;
+      arreterExemples();
+      muer(() => {
+        racine.dataset.rangee = '';
+      });
+    };
+
+    const prevoirRangement = (delai: number) => {
+      annulerRangement();
+      rangement = window.setTimeout(ranger, delai);
+    };
+
+    const allerA = (suivant: Lieu) => {
+      if (suivant === lieu) return;
+      annulerRangement();
+      muer(() => {
+        delete racine.dataset.rangee;
+        delete racine.dataset.cachee;
+        lieu = suivant;
+        racine.dataset.lieu = suivant;
+      });
+      if (suivant === 'coin' && racine.dataset.etat === 'veille') {
+        /* Le temps d'écrire un exemple ; s'il ne peut pas s'écrire (mouvement
+           réduit, onglet masqué), elle se range quand même. */
+        prevoirRangement(9000);
+        relancerExemples();
+      }
+    };
+
+    /* ── Ouvrir, réduire ── */
+    const ouvrir = () => {
+      allerA('coin');
+      deplier();
+      racine.dataset.etat = 'ouverte';
+      racine.dataset.apparue = '';
+      delete racine.dataset.retabli;
+      panneau.inert = false;
+      arreterExemples();
+    };
+
+    const fermer = () => {
+      racine.dataset.etat = 'veille';
+      panneau.inert = true;
+      champ.focus({ preventScroll: true });
+      /* En haut de page, elle retourne sous le titre plutôt que d'y laisser un
+         trou ; ailleurs, elle se range. */
+      voirLaPage();
+      if (lieu === 'coin') prevoirRangement(4000);
+    };
+
+    reduire.addEventListener('click', fermer);
+    racine.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && racine.dataset.etat === 'ouverte') fermer();
+    });
+    /* Revenir dans la barre rouvre la conversation commencée. */
+    champ.addEventListener('focus', () => {
+      annulerRangement();
+      if (fil.childElementCount > 0) ouvrir();
+    });
+    deplieur.addEventListener('click', () => {
+      deplier();
+      if (fil.childElementCount > 0) ouvrir();
+      champ.focus({ preventScroll: true });
+    });
+    etroit.addEventListener('change', () => {
+      delete racine.dataset.cachee;
+    });
+
+    /* ── Le déroulé ── */
+    const recevoir = async (texte: string) => {
+      const premier = phrases.length === 0;
+      phrases.push(texte);
+      memoriser();
+      marquer();
+      ouvrir();
+      bulle(texte, 'visiteur');
+      choix.replaceChildren();
+      await lilian(premier ? DIT.moyens : DIT.ajout);
+      proposer();
+    };
+
+    /* Ouverte sans rien d'écrit : par un « Parlons de votre projet », ou par la
+       flèche sur un champ vide. Les moyens sont proposés d'emblée. */
+    async function accueillir() {
+      ouvrir();
+      if (fil.childElementCount === 0) {
+        await lilian(DIT.accueil);
+        proposer();
+      }
+      champ.focus({ preventScroll: true });
+    }
+
+    const soumettre = async (texte: string) => {
+      if (occupe) return;
+      occupe = true;
+      try {
+        if (texte === '') await accueillir();
+        else await recevoir(texte);
+      } finally {
+        occupe = false;
+      }
+    };
+
+    const envoyerLeChamp = () => {
+      const texte = champ.value.trim();
+      champ.value = '';
+      soumettre(texte).catch((erreur: unknown) => console.error('[causerie]', erreur));
+    };
+
+    barre.addEventListener('submit', (e) => {
+      e.preventDefault();
+      envoyerLeChamp();
+    });
+    /* Entrée continue, Maj + Entrée va à la ligne. */
+    champ.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+      e.preventDefault();
+      envoyerLeChamp();
+    });
+
+    /* ── Les « Parlons de votre projet » de la page ouvrent la conversation ──
+       Le bouton de la barre de navigation, celui du menu mobile, le lien de
+       « Pourquoi moi » et le bouton du champ de fin portent
+       `data-causerie-ouvrir`. Ce sont des liens vers l'agenda, pour qui n'a pas
+       de script ; ici ils ouvrent la fenêtre. Celui du champ de fin apporte ce
+       qu'on y a écrit, qui devient le message. */
+    document.addEventListener('click', (e) => {
+      const declencheur = e.target instanceof Element ? e.target.closest('[data-causerie-ouvrir]') : null;
+      if (!declencheur) return;
+      e.preventDefault();
+      const cible = declencheur.getAttribute('data-cal-note-from');
+      const origine = cible ? document.querySelector<HTMLTextAreaElement | HTMLInputElement>(cible) : null;
+      const texte = origine?.value.trim() ?? '';
+      if (origine) origine.value = '';
+      soumettre(texte).catch((erreur: unknown) => console.error('[causerie]', erreur));
+    });
+
+    /* ── L'exemple qui s'écrit tout seul ──
+       Sous le titre, les exemples se suivent. Dans le coin, un seul : il
+       s'écrit, tient deux secondes, et la barre se range. */
+    const exemples: string[] = JSON.parse(racine.dataset.exemples ?? '[]');
+    let minuterie = 0;
+    let rang = 0;
+    let lettres = 0;
+    let sens: 1 | -1 = 1;
+
+    const libre = () =>
+      racine.dataset.etat === 'veille' &&
+      !('rangee' in racine.dataset) &&
+      phrases.length === 0 &&
+      champ.value === '' &&
+      document.activeElement !== champ &&
+      !document.hidden &&
+      !reduit.matches &&
+      exemples.length > 0;
+
+    function arreterExemples() {
+      window.clearTimeout(minuterie);
+      minuterie = 0;
+      delete racine!.dataset.exemple;
+    }
+
+    const ecrire = () => {
+      if (!libre()) return arreterExemples();
+      const phrase = exemples[rang % exemples.length];
+      racine.dataset.exemple = '';
+      lettres += sens;
+      exemple.textContent = phrase.slice(0, lettres);
+      let attente = sens === 1 ? 38 : 14;
+      if (sens === 1 && lettres >= phrase.length) {
+        if (lieu === 'coin') {
+          minuterie = 0;
+          lettres = 0;
+          rang += 1;
+          prevoirRangement(2200);
+          return;
+        }
+        sens = -1;
+        attente = 2200;
+      } else if (sens === -1 && lettres <= 0) {
+        sens = 1;
+        rang += 1;
+        attente = 420;
+      }
+      minuterie = window.setTimeout(ecrire, attente);
+    };
+
+    function relancerExemples() {
+      if (minuterie || !libre() || !('apparue' in racine!.dataset)) return;
+      sens = 1;
+      lettres = 0;
+      minuterie = window.setTimeout(ecrire, 900);
+    }
+
+    champ.addEventListener('focus', arreterExemples);
+    champ.addEventListener('blur', () => {
+      if (lieu === 'coin' && racine.dataset.etat === 'veille') prevoirRangement(4000);
+      else relancerExemples();
+    });
+    document.addEventListener('visibilitychange', relancerExemples);
+
+    /* ── Où elle se tient : sous le titre tant qu'on est en haut de page, dans
+          le coin dès qu'on a défilé d'un tiers d'écran. Deux seuils, pour
+          qu'elle n'hésite pas entre les deux. Une conversation ouverte reste
+          dans le coin. Sur une page sans emplacement, elle n'apparaît qu'une
+          fois le premier écran passé. Repliée sur téléphone, elle s'efface
+          quand on descend et revient quand on remonte. ── */
+    let dernierY = window.scrollY;
+
+    function voirLaPage() {
+      const y = window.scrollY;
+      const h = window.innerHeight;
+      if ('rangee' in racine!.dataset && etroit.matches) {
+        if (y > dernierY + 6) racine!.dataset.cachee = '';
+        else if (y < dernierY - 6) delete racine!.dataset.cachee;
+      }
+      dernierY = y;
+      if (place) {
+        if (lieu === 'hero' && y > h * 0.3) allerA('coin');
+        else if (lieu === 'coin' && y < h * 0.18 && racine!.dataset.etat === 'veille') allerA('hero');
+        return;
+      }
+      const passe = y > h * 0.6;
+      if (passe === 'apparue' in racine!.dataset) return;
+      if (passe) {
+        racine!.dataset.apparue = '';
+        relancerExemples();
+      } else if (racine!.dataset.etat === 'veille') {
+        delete racine!.dataset.apparue;
+        arreterExemples();
+      }
+    }
+    window.addEventListener('scroll', voirLaPage, { passive: true });
+
+    /* Jamais deux champs à l'écran : devant le champ de fin de page, elle
+       s'efface ; devant celui de la newsletter, elle se range. */
+    const champDeFin = document.querySelector('#offres [data-invite]');
+    if (champDeFin) {
+      new IntersectionObserver(([vue]) => racine.toggleAttribute('data-doublon', vue.isIntersecting), {
+        rootMargin: '0px 0px -10% 0px',
+      }).observe(champDeFin);
+    }
+    const champNewsletter = document.querySelector('#newsletter-form');
+    if (champNewsletter) {
+      new IntersectionObserver(([vue]) => {
+        if (vue.isIntersecting) ranger();
+      }).observe(champNewsletter);
+    }
+
+    /* ── Le départ ── */
+    racine.dataset.pret = '';
+
+    /* Un message écrit avant un rechargement : le fil est rétabli tel quel,
+       fermé, et la barre le signale. */
+    phrases = relire();
+    if (phrases.length) {
+      racine.dataset.retabli = '';
+      for (const phrase of phrases) bulle(phrase, 'visiteur');
+      bulle(DIT.moyens, 'lilian');
+      proposer();
+    }
+    marquer();
+
+    if (place) {
+      /* Elle naît à sa place du hero si la page est en haut, et entre après le
+         titre et sa pastille, avec le défilé des clients. */
+      caler();
+      if (window.scrollY <= window.innerHeight * 0.3) {
+        lieu = 'hero';
+        racine.dataset.lieu = 'hero';
+      }
+      window.addEventListener('resize', caler);
+      new ResizeObserver(caler).observe(place.parentElement ?? place);
+      document.fonts?.ready.then(caler).catch(console.error);
+      window.setTimeout(
+        () => {
+          racine.dataset.apparue = '';
+          if (lieu === 'coin') prevoirRangement(phrases.length ? 0 : 9000);
+          relancerExemples();
+        },
+        reduit.matches || lieu === 'coin' ? 0 : 700,
+      );
+    }
+    voirLaPage();
+  }
+</script>

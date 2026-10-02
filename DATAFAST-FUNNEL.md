@@ -40,7 +40,7 @@ se passe sur cal.com (voir Limite plus bas).
 | Param `source` | Où |
 |----------------|-----|
 | `automatisations_nav` · `automatisations_nav_mobile` · `automatisations` · `hero` · `roi` · `temoignages` · `stack-automation` · `stack-productivite` · `stack-ia` · `stack-vibe-coding` · `offres` · `contact` · `footer` · `barre-mobile` | Offre `/automatisations-ia` |
-| `home_nav` · `home_nav_mobile` · `home_offres` · `footer` | Accueil `/` |
+| `home_nav` · `home_nav_mobile` (bouton du menu mobile) · `home_pourquoi_moi` (lien du panneau « Pourquoi moi ») · `home_offres` · `footer` | Accueil `/` |
 | `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
 | `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
 | `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_tarifs` · `sites_web_abonnements` · `sites_web_final` | Offre `/sites-web-abonnement` |
@@ -82,6 +82,20 @@ classement des libellés dit laquelle bloque le plus.
 ### `case_opened` — clic vers un cas client
 Prop `href`. Couvre les « VOIR LE CAS » du carrousel, « VOIR TOUS LES CAS », et
 les liens de `/cas-clients` depuis À propos et Offres. Aucun n'était tagué.
+
+### `causerie_opened` — ouverture de la conversation depuis un bouton de l'accueil
+Prop `source` = `home_nav`, `home_nav_mobile`, `home_pourquoi_moi` ou `home_offres`.
+Sur l'accueil, les « Parlons de votre projet » n'ouvrent plus l'agenda mais la
+conversation de `home-invite.astro`, qui propose WhatsApp, l'e-mail ou l'appel.
+Le `lead_call` de l'accueil ne vient donc plus que du moyen « Plutôt un appel »
+(source `home_causerie`).
+
+### `lead_message` — message envoyé depuis la barre d'écriture de l'accueil
+Prop `canal` = `whatsapp` ou `email`. Posé sur les deux liens de la conversation
+(`home-invite.astro`) : le clic ouvre WhatsApp ou la messagerie du visiteur avec
+son message déjà rédigé. Il mesure l'ouverture, pas l'envoi : celui-ci se fait
+hors du site. Le troisième moyen, l'appel, est un `lead_call` de source
+`home_causerie`.
 
 ### `outbound_formations` — sortie vers augmentes.fr
 Sources : `offres`, `faq`, `home_services`, `footer`. Ce n'est pas une perte : c'est

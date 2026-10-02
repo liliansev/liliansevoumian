@@ -31,11 +31,19 @@ interface Props {
   source: string;
   /** Remplace `btn-primary`. Passer la chaîne complète. */
   class?: string;
+  /**
+   * L'objectif DataFast posé sur le lien. `lead_call` par défaut : le lien
+   * ouvre l'agenda. Sur l'accueil, les « Parlons de votre projet » ouvrent la
+   * conversation (`data-causerie-ouvrir`) et passent `causerie_opened`. Une
+   * prop, et non un attribut passé en plus : deux `data-fast-goal` sur une
+   * balise, c'est le premier qui compte, donc `lead_call`.
+   */
+  goal?: string;
   /** Attributs libres : `data-mobile-link`, `id`… */
   [attribut: string]: unknown;
 }
 
-const { source, class: classe = 'btn-primary', ...reste } = Astro.props;
+const { source, class: classe = 'btn-primary', goal = 'lead_call', ...reste } = Astro.props;
 ---
 
 <a
@@ -43,7 +51,7 @@ const { source, class: classe = 'btn-primary', ...reste } = Astro.props;
   target="_blank"
   rel="noopener noreferrer"
   class={classe}
-  data-fast-goal="lead_call"
+  data-fast-goal={goal}
   data-fast-goal-source={source}
   {...reste}
 ><slot>{LIBELLE_RESERVATION}</slot></a>

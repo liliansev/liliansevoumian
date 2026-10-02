@@ -367,6 +367,17 @@ const faqPageSchema = faqSchema ? {
           var embedTarget = document.getElementById('cal-embed-target');
           var inited = false;
           var lastFocused = null;
+          // Le mot que le visiteur a écrit avant d'ouvrir l'agenda (voir
+          // `home-offers.astro`). Il est repris dans le champ « notes » de la
+          // réservation : Cal le lit dans la configuration de l'embed. Quand il
+          // change, l'agenda est remonté, sinon l'ancien mot resterait dedans.
+          var noteMontee = '';
+          function lireNote(lien) {
+            var cible = lien.getAttribute('data-cal-note-from');
+            if (!cible) return '';
+            var champ = document.querySelector(cible);
+            return champ && typeof champ.value === 'string' ? champ.value.trim().slice(0, 600) : '';
+          }
           // Entre "lead_call" au clic et "call_booked" à la confirmation, tout se
           // passe dans un iframe cross-origin : la déperdition y était totalement
           // invisible. `booked` distingue la fermeture qui suit une réservation
@@ -376,8 +387,8 @@ const faqPageSchema = faqSchema ? {
             if (!status || !statusText || !errorActions || !embedTarget) return;
             status.hidden = state === 'ready';
             statusText.textContent = state === 'error'
-              ? 'Le calendrier ne peut pas se charger pour le moment.'
-              : 'Chargement du calendrier…';
+              ? 'L’agenda ne peut pas se charger pour le moment.'
+              : 'Chargement de l’agenda…';
             errorActions.hidden = state !== 'error';
             embedTarget.setAttribute('aria-busy', String(state === 'loading'));
           }
@@ -392,9 +403,11 @@ const faqPageSchema = faqSchema ? {
               check();
             });
           }
-          function mountCal() {
+          function mountCal(note) {
             if (!embedTarget) return Promise.resolve();
-            if (inited && embedTarget.querySelector('iframe')) {
+            // Le bouton « Réessayer » passe son événement : il rejoue la note en cours.
+            if (typeof note !== 'string') note = noteMontee;
+            if (inited && note === noteMontee && embedTarget.querySelector('iframe')) {
               setCalState('ready');
               return Promise.resolve();
             }
@@ -402,8 +415,11 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: { layout: "month_view", theme: "dark" } });
+                var config = { layout: "month_view", theme: "dark" };
+                if (note) config.notes = note;
+                window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: config });
                 inited = true;
+                noteMontee = note;
                 return waitForEmbed();
               })
               .then(function () { setCalState('ready'); })
@@ -413,14 +429,14 @@ const faqPageSchema = faqSchema ? {
                 setCalState('error');
               });
           }
-          function openOverlay() {
+          function openOverlay(note) {
             booked = false;
             lastFocused = document.activeElement;
             overlay.classList.add('is-open');
             overlay.setAttribute('aria-hidden', 'false');
             window.__verrouDefilement('cal', true);
             overlay.focus({ preventScroll: true });
-            mountCal();
+            mountCal(note || '');
           }
           function closeOverlay() {
             var wasOpen = overlay.classList.contains('is-open');
@@ -457,9 +473,13 @@ const faqPageSchema = faqSchema ? {
             var t = ev.target && ev.target.closest ? ev.target.closest('a[href*="cal.com/lilian-sevoumian"]') : null;
             if (!t) return;
             if (t.hasAttribute('data-cal-direct')) return;
+            // Sur l'accueil, les boutons « Parlons de votre projet » ouvrent la
+            // conversation (home-invite), qui propose ensuite l'agenda. Si elle
+            // n'a pas démarré, ils ouvrent l'agenda comme les autres.
+            if (t.hasAttribute('data-causerie-ouvrir') && document.querySelector('[data-causerie][data-pret]')) return;
             ev.preventDefault();
             lastSource = t.getAttribute('data-fast-goal-source') || 'cal_embed';
-            openOverlay();
+            openOverlay(lireNote(t));
           });
           if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
           if (retryBtn) retryBtn.addEventListener('click', mountCal);
@@ -498,14 +518,14 @@ const faqPageSchema = faqSchema ? {
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
     <!-- data-cal-link est réservé à Cal : le poser ici ouvre aussi sa popup au clic Fermer. -->
-    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label={`Réserver un appel de ${DUREE_RESERVATION_MINUTES} min`} aria-hidden="true" tabindex="-1" data-reservation-path={cheminReservation}>
+    <div id="cal-overlay" class="cal-overlay" role="dialog" aria-modal="true" aria-label={`Réserver un appel de ${DUREE_RESERVATION_MINUTES}\u00a0min`} aria-hidden="true" tabindex="-1" data-reservation-path={cheminReservation}>
       <div class="cal-overlay-bar">
-        <span class="cal-overlay-title">Appel · {DUREE_RESERVATION_MINUTES} min</span>
-        <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer"></button>
+        <span class="cal-overlay-title">Appel · {DUREE_RESERVATION_MINUTES}&nbsp;min</span>
+        <button type="button" class="cal-overlay-close" data-cal-close aria-label="Fermer l’agenda"></button>
       </div>
       <div class="cal-overlay-body">
         <div class="cal-overlay-status" data-cal-status role="status" aria-live="polite">
-          <p data-cal-status-text>Chargement du calendrier…</p>
+          <p data-cal-status-text>Chargement de l’agenda…</p>
           <div class="cal-overlay-error-actions" data-cal-error-actions hidden>
             <button type="button" class="cal-overlay-action" data-cal-retry>Réessayer</button>
             <a
@@ -514,7 +534,7 @@ const faqPageSchema = faqSchema ? {
               target="_blank"
               rel="noopener noreferrer"
               data-cal-direct
-            >Ouvrir Cal.com ↗</a>
+            >Réserver sur Cal.com<span class="sr-only"> (nouvel onglet)</span></a>
           </div>
         </div>
         <div id="cal-embed-target" aria-busy="true"></div>
