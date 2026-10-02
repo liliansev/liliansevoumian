@@ -3,43 +3,45 @@
  * scene-sites — la scène du métier Sites web et dashboards : « Des landing
  * pages qui convertissent, des tableaux de bord qui servent. »
  *
- * L'idée à faire passer sans rien lire : une page se construit, des gens
- * cliquent, et un tableau de bord montre ce que ça donne.
+ * L'idée à faire passer en cinq secondes, téléphone en main : une page, des
+ * clics, un tableau de bord qui compte.
  *
  * Le fil de la boucle, un seul mouvement à la fois :
  *   1. un cadre de sélection pose la page bloc par bloc (titre, bouton,
  *      preuve, logos), comme on la monte dans un éditeur ;
- *   2. la page passe en ligne, les visites du jour arrivent sur la courbe ;
+ *   2. la page passe en ligne ;
  *   3. le bouton est cliqué, trois à cinq fois, de plus en plus vite : chaque
  *      clic traverse le fil et devient une unité de plus sur la barre du jour,
- *      le nombre de demandes monte, le taux se recalcule ;
+ *      le nombre de demandes monte, le taux de conversion monte avec lui ;
  *   4. l'image est tenue, puis on change de jour : les barres glissent d'une
  *      colonne, la page se défait, la suivante se monte.
  *
- * Le panneau, les fenêtres, la feuille, le fil et le temps viennent du socle
- * (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit que ce
- * qui lui est propre : la page et son cadre de sélection, le clic, le tableau
- * de bord (barres en unités, courbe à points), et l'ordre de sa boucle.
+ * Le panneau, les fenêtres, la feuille, le fil, le temps et les quatre tailles
+ * de texte viennent du socle (`scene-metier.css` et `lib/metiers/scene.ts`).
+ * Ce composant n'écrit que ce qui lui est propre : la page et son cadre de
+ * sélection, le clic, le tableau de bord (deux nombres, des barres en unités),
+ * et l'ordre de sa boucle.
+ *
+ * Ce qui se lit est compté : l'adresse, l'état de la page, le libellé du
+ * bouton, « Demandes », « Conversion », « Visites » et leurs nombres. Tout le
+ * reste est un trait. Il n'y a ni échelle, ni lettres de jours, ni cotes :
+ * à la taille de la note, ils ne tenaient pas.
  *
  * Sur le plan étroit (téléphone), la scène change de silhouette pour ne pas
  * ressembler à ses voisines : la page claire prend toute la largeur, en haut,
- * et le tableau de bord devient une bande en bas (le nombre, le taux, les
- * barres), reliée par un fil vertical et court. Ni pastilles ni seconde
- * fenêtre.
+ * et le tableau de bord devient une bande en bas (les demandes, la
+ * conversion, les barres), reliée par un fil vertical et court. Une seule
+ * pastille, celle de la promesse.
  *
  * Sans script ou en mouvement réduit, la scène est une image fixe : la page
  * montée et en ligne, le tableau de bord rempli.
  *
- * Tous les chiffres sont inventés pour la scène, et ils sont justes entre
- * eux : une barre compte une unité par demande, le taux est le nombre de
- * demandes du jour divisé par les visites du jour.
+ * Tous les chiffres sont inventés pour la scène, et ils sont justes entre eux
+ * à chaque instant : la conversion est le nombre de demandes divisé par le
+ * nombre de visites, sur le mois en cours. Elle ne part donc jamais de zéro :
+ * le site a déjà reçu des demandes avant la journée que la scène montre.
  */
 import './scene-metier.css';
-
-interface Point {
-  x: number;
-  y: number;
-}
 
 /* Trois pages qui tournent : d'une boucle à l'autre, ce n'est pas la même qui
    revient. `titre` et `texte` sont les longueurs des barres, en pour cent. */
@@ -49,64 +51,32 @@ const pages = [
   { chemin: '/contact', bouton: 'Prendre rendez-vous', centre: false, titre: [70, 86], texte: [80, 54] },
 ];
 
-/* Trois journées : le nombre de clics sur le bouton, et les visites heure par
-   heure (leur somme est le nombre de visites du jour). */
-const journees = [
-  { clics: 4, heures: [5, 9, 8, 13, 12, 15, 18] },
-  { clics: 3, heures: [6, 8, 12, 9, 14, 11, 15] },
-  { clics: 5, heures: [8, 11, 10, 16, 14, 19, 22] },
-];
-
-/* Les six jours d'avant, en demandes par jour, et le total déjà atteint avant
-   la première journée de la scène. */
+/* Le nombre de clics sur le bouton, journée après journée. */
+const CLICS = [4, 3, 5];
+/* Les six jours d'avant, en demandes par jour. */
 const HISTORIQUE = [3, 5, 2, 4, 6, 3];
-const DEJA = 44;
-const LETTRES = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-/* La lettre de la première colonne : la septième, « aujourd'hui », tombe
-   alors un jeudi. */
-const DEPART = 4;
-/* La hauteur de l'échelle, en demandes : une unité par demande. */
+/* Les demandes déjà reçues ce mois-ci avant la première journée de la scène,
+   et ce qu'il a fallu de visites pour chacune : vingt, soit 5 % de
+   conversion au matin. Avec quatre demandes de plus dans la journée, la
+   première image finale lit 44 demandes, 800 visites, 5,5 %. */
+const DEJA = 40;
+const VISITES_PAR_DEMANDE = 20;
+/* La hauteur d'une barre, en demandes : une unité par demande. */
 const UNITES = 6;
-const GRADUATIONS = [0, 2, 4, 6];
-
-/* La courbe des visites, dans le repère de son SVG. */
-const COURBE = { l: 144, h: 44, marge: 5 };
-const arrondi = (n: number) => Math.round(n * 10) / 10;
-
-const tracer = (heures: number[]) => {
-  const max = Math.max(...heures);
-  const pas = (COURBE.l - COURBE.marge * 2) / (heures.length - 1);
-  const points: Point[] = heures.map((valeur, i) => ({
-    x: arrondi(COURBE.marge + i * pas),
-    y: arrondi(COURBE.h - COURBE.marge - (valeur / max) * (COURBE.h - COURBE.marge * 2)),
-  }));
-  const ligne = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`).join(' ');
-  return { points, ligne };
-};
 
 const formatTaux = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const formatEntier = new Intl.NumberFormat('fr-FR');
 
-/* Tout ce que le script joue est calculé ici, une fois : il n'a plus qu'à
-   l'afficher. `taux[n]` est le taux après n demandes. */
-const jours = journees.map(({ clics, heures }) => {
-  const visites = heures.reduce((somme, valeur) => somme + valeur, 0);
-  return {
-    clics,
-    visites,
-    taux: Array.from({ length: clics + 1 }, (_, n) => `${formatTaux.format((n / visites) * 100)} %`),
-    ...tracer(heures),
-  };
-});
-
-const recit = { pages, jours, historique: HISTORIQUE, deja: DEJA, lettres: LETTRES, depart: DEPART };
+const recit = { pages, clics: CLICS, historique: HISTORIQUE, deja: DEJA, visitesParDemande: VISITES_PAR_DEMANDE };
 
 /* L'image fixe : la première page, la première journée, tout est passé. */
 const page = pages[0];
-const jour = jours[0];
-const colonnes = [...HISTORIQUE, jour.clics, 0];
-const clicsMax = Math.max(...jours.map((j) => j.clics));
-const voyageurs = Array.from({ length: clicsMax });
+const clics = CLICS[0] ?? 0;
+const demandes = DEJA + clics;
+const visites = DEJA * VISITES_PAR_DEMANDE;
+const taux = `${formatTaux.format((demandes / visites) * 100)} %`;
+const colonnes = [...HISTORIQUE, clics, 0];
+const voyageurs = Array.from({ length: Math.max(...CLICS) });
 ---
 
 <div
@@ -114,19 +84,21 @@ const voyageurs = Array.from({ length: clicsMax });
   data-scene-sites
   data-recit={JSON.stringify(recit)}
   role="img"
-  aria-label="Une landing page se monte bloc par bloc et passe en ligne ; des visiteurs cliquent sur son bouton, et le tableau de bord compte chaque demande et recalcule le taux de conversion."
+  aria-label="Une landing page se monte bloc par bloc et passe en ligne&nbsp;; des visiteurs cliquent sur son bouton, et le dashboard compte chaque demande&nbsp;: le taux de conversion monte avec elles."
 >
   <div class="sm-plan" aria-hidden="true">
+    {/* Deux pastilles sur le grand plan, une seule sur l'étroit : celle de la
+       promesse, la conversion. */}
     <div class="sm-puces">
-      <span class="sm-puce">
+      <span class="sm-puce sm-large">
         <svg viewBox="0 0 16 16"><path d="M2.5 9.5l1.8-5.5h7.4l1.8 5.5v3h-11v-3zM2.5 9.5h3.2l.8 1.5h3l.8-1.5h3.2" /></svg>
         <span>Demandes</span>
-        <b data-puce-demandes>{formatEntier.format(DEJA + jour.clics)}</b>
+        <b data-puce-demandes>{formatEntier.format(demandes)}</b>
       </span>
       <span class="sm-puce sm-puce--peche">
         <svg viewBox="0 0 16 16"><path d="M2.5 11.5l3.5-3.6 2.5 2.4 5-5.6M10 4.7h3.5v3.5" /></svg>
         <span>Conversion</span>
-        <b data-puce-taux>{jour.taux[jour.clics]}</b>
+        <b data-puce-taux>{taux}</b>
       </span>
     </div>
 
@@ -145,7 +117,8 @@ const voyageurs = Array.from({ length: clicsMax });
       </g>
     </svg>
 
-    {/* La page, dans son navigateur. */}
+    {/* La page, dans son navigateur. Tout ce qui s'y lit : l'adresse, l'état,
+       le libellé du bouton, la note. Le reste est en traits. */}
     <div class="sm-poste poste--page">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
@@ -168,7 +141,6 @@ const voyageurs = Array.from({ length: clicsMax });
             <div class="page__entete">
               <i class="page__marque"></i>
               <span class="page__menu"><i></i><i></i><i></i></span>
-              <i class="page__acces"></i>
             </div>
 
             <div class="bloc bloc--titre est-pose" data-bloc data-nom="Titre">
@@ -183,14 +155,13 @@ const voyageurs = Array.from({ length: clicsMax });
                 <span data-libelle>{page.bouton}</span>
                 <svg viewBox="0 0 12 12"><path d="M2.5 6h7M6.5 3l3 3-3 3" /></svg>
               </span>
-              <span class="second sm-large"><i></i></span>
             </div>
 
             <div class="bloc bloc--preuve est-pose" data-bloc data-nom="Preuve">
               <span class="visages"><i></i><i></i><i></i></span>
               <svg class="etoile" viewBox="0 0 12 12"><path d="M6 1.2l1.5 3.1 3.4.4-2.5 2.3.7 3.4L6 8.7l-3.1 1.7.7-3.4L1.1 4.7l3.4-.4z" /></svg>
               <b>4,9</b>
-              <i class="preuve__texte"></i>
+              <i class="preuve__texte sm-large"></i>
             </div>
 
             <div class="bloc bloc--logos est-pose sm-large" data-bloc data-nom="Logos">
@@ -205,72 +176,60 @@ const voyageurs = Array.from({ length: clicsMax });
       <span class="sm-port port--bouton est-actif" data-sm-port="bouton"></span>
     </div>
 
-    {/* Le tableau de bord. */}
+    {/* Le tableau de bord : les demandes et la conversion, qui portent
+       l'action, puis les barres, puis les visites. */}
     <div class="sm-poste poste--tableau">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
           <span class="sm-fenetre__icone">
             <svg viewBox="0 0 16 16"><path d="M3.5 12.5v-4M8 12.5v-9M12.5 12.5V6" /></svg>
           </span>
-          <span class="sm-fenetre__nom">Tableau de bord</span>
-          <span class="sm-fenetre__info">7 derniers jours</span>
-          <span class="sm-etat direct sm-large" data-etat="cours" data-etat-de="tableau">
+          <span class="sm-fenetre__nom">Dashboard</span>
+          <span class="sm-fenetre__info">ce mois-ci</span>
+          <span class="sm-etat direct" data-etat="cours" data-etat-de="tableau">
             <i class="direct__point"></i>
             <span class="direct__avant">En attente</span>
             <span class="direct__apres">En direct</span>
           </span>
         </div>
         <div class="sm-corps tableau">
-          <div class="chiffre">
-            <span class="etiquette">Demandes</span>
-            <div class="chiffre__ligne">
-              <b data-demandes>{formatEntier.format(DEJA + jour.clics)}</b>
-              <span class="plus est-visible" data-plus>
-                +<span data-plus-n>{jour.clics}</span>
-                <span class="sm-large">aujourd’hui</span><span class="sm-etroit">auj.</span>
-              </span>
+          <div class="tuiles">
+            <div class="tuile tuile--demandes">
+              <span class="tuile__nom">Demandes</span>
+              <div class="tuile__ligne">
+                <b data-demandes>{formatEntier.format(demandes)}</b>
+                <span class="plus est-visible" data-plus>
+                  +<span data-plus-n>{clics}</span><span class="sm-large">&nbsp;aujourd’hui</span>
+                </span>
+              </div>
+            </div>
+            <div class="tuile tuile--taux">
+              <span class="tuile__nom">Conversion</span>
+              <b data-taux>{taux}</b>
             </div>
           </div>
 
-          {/* Les barres : une unité par demande, l'échelle à gauche. La piste
-             porte une colonne de plus que la vue n'en montre : c'est elle qui
-             entre quand on change de jour. */}
+          {/* Les barres : une colonne par jour, une unité par demande, la
+             dernière colonne en pêche pour aujourd'hui. La piste porte une
+             colonne de plus que la vue n'en montre : c'est elle qui entre
+             quand on change de jour. */}
           <div class="barres" data-barres>
-            <div class="barres__echelle">
-              {GRADUATIONS.map((n) => <span style={`--n: ${n}`}>{n}</span>)}
-            </div>
             <div class="barres__vue">
               <div class="barres__piste" data-piste>
-                {colonnes.map((valeur, i) => (
+                {colonnes.map((valeur) => (
                   <div class="colonne" data-colonne>
-                    <div class="colonne__pile">
-                      {Array.from({ length: UNITES }, (_, n) => (
-                        <i class:list={['unite', { 'est-pleine': n < valeur }]}></i>
-                      ))}
-                    </div>
-                    <span class="colonne__jour" data-jour>{LETTRES[(DEPART + i) % LETTRES.length]}</span>
+                    {Array.from({ length: UNITES }, (_, n) => (
+                      <i class:list={['unite', { 'est-pleine': n < valeur }]}></i>
+                    ))}
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div class="stats">
-            <div class="stat stat--visites sm-large" data-stat-visites>
-              <div>
-                <span class="etiquette">Visites</span>
-                <b data-visites>{formatEntier.format(jour.visites)}</b>
-              </div>
-              <svg class="courbe est-tracee" data-courbe viewBox={`0 0 ${COURBE.l} ${COURBE.h}`}>
-                <path class="courbe__sol" d={`M0 ${COURBE.h - 0.5}H${COURBE.l}`}></path>
-                <path class="courbe__trait" data-courbe-trait pathLength="1" d={jour.ligne}></path>
-                {jour.points.map((p) => <circle class="courbe__point" data-courbe-point cx={p.x} cy={p.y} r="2.1" />)}
-              </svg>
-            </div>
-            <div class="stat stat--taux">
-              <span class="etiquette">Conversion</span>
-              <b data-taux>{jour.taux[jour.clics]}</b>
-            </div>
+          <div class="sm-pied visites sm-large">
+            <span>Visites</span>
+            <b data-visites>{formatEntier.format(visites)}</b>
           </div>
         </div>
       </div>
@@ -282,11 +241,10 @@ const voyageurs = Array.from({ length: clicsMax });
     </span>
 
     {/* Le cadre de sélection : il pose chaque bloc de la page, l'un après
-       l'autre. Hors de la feuille, qui rognerait son étiquette. */}
+       l'autre, et le nomme. Hors de la feuille, qui rognerait son étiquette. */}
     <span class="cadre" data-cadre>
       <em data-cadre-nom>Titre</em>
       <i></i><i></i><i></i><i></i>
-      <span class="cadre__cote sm-large" data-cadre-cote>256 × 80</span>
     </span>
 
     {/* Ce qui voyage, une série par clic : le pointeur d'un visiteur, l'onde
@@ -305,25 +263,32 @@ const voyageurs = Array.from({ length: clicsMax });
 <style>
   /* Ce que le socle ne sait pas : où sont les deux postes et leurs ports, la
      page et son cadre de sélection, le clic, et les composants du tableau de
-     bord. Longueurs en pixels du plan. */
+     bord. Longueurs en pixels du plan ; les tailles de texte sont les quatre
+     du socle, jamais une valeur en pixels. */
   .sm {
     --sm-lumiere: 70% 54%;
   }
 
   .poste--page {
-    top: 78px;
+    top: 88px;
     left: 24px;
     width: 322px;
   }
 
   .poste--tableau {
-    top: 110px;
+    top: 150px;
     left: 412px;
     width: 324px;
   }
 
-  .port--bouton { top: 226px; right: -6px; }
-  .port--tableau { top: 90px; left: -6px; }
+  /* Le port de la page est à la hauteur de son bouton. */
+  .port--bouton { top: 225px; right: -6px; }
+  .port--tableau { top: 76px; left: -6px; }
+
+  /* Seule, la pastille de la promesse reste à droite. */
+  .sm-puce--peche {
+    margin-left: auto;
+  }
 
   /* Des deux fils, celui de l'autre plan est masqué sans quitter le rendu :
      le moteur mesure encore son tracé. */
@@ -335,11 +300,9 @@ const voyageurs = Array.from({ length: clicsMax });
      plus faible que celles de cette scène : il faut les couper ici aussi. */
   @media (prefers-reduced-motion: reduce) {
     .page::before,
+    .cadre em,
     .plus,
-    .unite,
-    .colonne__jour,
-    .courbe__trait,
-    .courbe__point {
+    .unite {
       transition: none;
     }
   }
@@ -349,7 +312,7 @@ const voyageurs = Array.from({ length: clicsMax });
     flex-shrink: 0;
     width: 28px;
     height: 12px;
-    stroke: var(--color-ink-faint);
+    stroke: var(--color-ink-low);
     stroke-width: 1.4;
   }
 
@@ -359,13 +322,13 @@ const voyageurs = Array.from({ length: clicsMax });
     align-items: center;
     gap: 5px;
     min-width: 0;
-    height: 21px;
+    height: 22px;
     padding: 0 9px 0 7px;
     border: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--color-ink) 6%, transparent);
     color: var(--color-ink-mid);
-    font-size: 10.5px;
+    font-size: var(--sm-note);
     font-weight: 500;
   }
 
@@ -378,9 +341,6 @@ const voyageurs = Array.from({ length: clicsMax });
   }
 
   .adresse__texte {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
@@ -389,21 +349,17 @@ const voyageurs = Array.from({ length: clicsMax });
   }
 
   /* ── La page ──
-     Une feuille claire. En chantier, ses repères de colonnes sont visibles,
-     comme dans un éditeur ; en ligne, ils s'effacent. */
+     Une feuille claire. En chantier, ses deux marges sont tracées en
+     pointillé, comme les repères d'un éditeur ; en ligne, elles s'effacent. */
   .page {
-    padding: 20px 20px 26px;
+    padding: 18px 20px 22px;
   }
 
   .page::before {
     content: '';
     position: absolute;
     inset: 0 20px;
-    background: repeating-linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-peche) 70%, transparent) 0 1px,
-      transparent 1px calc((100% - 1px) / 4)
-    );
+    border-inline: 1px dashed color-mix(in srgb, var(--color-peche) 80%, var(--color-night));
     opacity: 0;
     transition: opacity 420ms;
     pointer-events: none;
@@ -417,9 +373,8 @@ const voyageurs = Array.from({ length: clicsMax });
     position: relative;
     display: flex;
     align-items: center;
-    gap: 9px;
     height: 16px;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
   }
 
   .page__marque {
@@ -440,13 +395,6 @@ const voyageurs = Array.from({ length: clicsMax });
     height: 3px;
     border-radius: 2px;
     background: var(--color-feuille-barre);
-  }
-
-  .page__acces {
-    width: 32px;
-    height: 14px;
-    border: 1px solid var(--color-feuille-barre);
-    border-radius: var(--radius-full);
   }
 
   /* Un bloc n'existe pas tant qu'il n'est pas posé. */
@@ -486,38 +434,38 @@ const voyageurs = Array.from({ length: clicsMax });
   .gros--deux { width: var(--t2, 62%); }
 
   .fin {
-    height: 5.5px;
+    height: 5px;
     border-radius: 3px;
     background: var(--color-feuille-barre);
   }
 
-  .fin--un { width: var(--p1, 76%); margin-top: 7px; }
+  .fin--un { width: var(--p1, 76%); margin-top: 6px; }
   .fin--deux { width: var(--p2, 48%); margin-top: -2px; }
 
+  /* Entre deux blocs, la place de l'étiquette du cadre : elle nomme le bloc
+     qu'on pose sans mordre sur celui d'au-dessus. */
   .bloc--bouton {
     display: flex;
-    align-items: center;
-    gap: 8px;
     width: fit-content;
-    margin-top: 24px;
+    margin-top: 26px;
   }
 
-  /* Le bouton : la seule pêche de la page. Son texte est en nuit. */
+  /* Le bouton : la seule pêche de la page, et ce sur quoi on clique. Son
+     libellé est le texte le plus fort de la page ; il est en nuit. */
   .bouton {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    height: 38px;
-    padding: 0 15px 0 17px;
+    gap: 8px;
+    height: 42px;
+    padding: 0 16px 0 18px;
     border-radius: var(--radius-full);
     background: var(--color-peche);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, var(--color-feuille) 45%, transparent),
       0 6px 14px -8px color-mix(in srgb, var(--color-night) 60%, transparent);
     color: var(--color-night);
-    font-size: 13px;
-    font-weight: 650;
-    letter-spacing: -0.005em;
+    font-size: var(--sm-fort);
+    font-weight: 600;
     white-space: nowrap;
   }
 
@@ -528,29 +476,13 @@ const voyageurs = Array.from({ length: clicsMax });
     stroke-width: 1.6;
   }
 
-  .second {
-    display: grid;
-    place-items: center;
-    height: 38px;
-    padding-inline: 14px;
-    border: 1px solid var(--color-feuille-barre);
-    border-radius: var(--radius-full);
-  }
-
-  .second i {
-    width: 30px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--color-feuille-barre);
-  }
-
   .bloc--preuve {
     display: flex;
     align-items: center;
     gap: 6px;
     width: fit-content;
     margin-top: 26px;
-    font-size: 12.5px;
+    font-size: var(--sm-texte);
   }
 
   .visages {
@@ -582,7 +514,7 @@ const voyageurs = Array.from({ length: clicsMax });
   }
 
   .bloc--preuve b {
-    font-weight: 650;
+    font-weight: 600;
   }
 
   .preuve__texte {
@@ -595,8 +527,8 @@ const voyageurs = Array.from({ length: clicsMax });
   .bloc--logos {
     display: flex;
     gap: 6px;
-    margin-top: 24px;
-    padding-top: 18px;
+    margin-top: 26px;
+    padding-top: 16px;
     border-top: 1px solid var(--color-feuille-trait);
   }
 
@@ -614,7 +546,7 @@ const voyageurs = Array.from({ length: clicsMax });
   .logo svg {
     width: 12px;
     height: 12px;
-    stroke: var(--color-ink-faint);
+    stroke: var(--color-feuille-note);
     stroke-width: 1.5;
   }
 
@@ -626,7 +558,7 @@ const voyageurs = Array.from({ length: clicsMax });
   }
 
   /* ── Le cadre de sélection ──
-     Un filet pêche, quatre poignées, et le nom du bloc qu'il pose. Placé et
+     Un filet, quatre poignées, et le nom du bloc qu'il pose. Placé et
      dimensionné par le script, dans le repère du plan. */
   .cadre {
     position: absolute;
@@ -651,14 +583,21 @@ const voyageurs = Array.from({ length: clicsMax });
     position: absolute;
     bottom: calc(100% + 1.25px);
     left: -1.25px;
-    padding: 2px 6px 3px;
+    padding: 1px 7px 2px;
     border-radius: 4px 4px 4px 0;
     background: var(--color-peche);
     color: var(--color-night);
-    font-size: 9px;
-    font-weight: 650;
-    line-height: 1.1;
+    font-size: var(--sm-note);
+    font-weight: 600;
+    line-height: 1.15;
     white-space: nowrap;
+    /* En vol entre deux blocs, le cadre se tait : son étiquette passerait sur
+       le bloc qu'il vient de poser. */
+    transition: opacity 140ms;
+  }
+
+  .cadre.est-en-vol em {
+    opacity: 0;
   }
 
   .cadre i {
@@ -668,35 +607,6 @@ const voyageurs = Array.from({ length: clicsMax });
     border: 1.25px solid var(--color-night);
     border-radius: 2px;
     background: var(--color-feuille);
-  }
-
-  /* La cote du bloc, comme la donne un éditeur : sa largeur et sa hauteur,
-     lues sur la mise en page. */
-  .cadre__cote {
-    position: absolute;
-    top: calc(100% + 7px);
-    left: 50%;
-    padding: 2px 6px 3px;
-    border-radius: var(--radius-full);
-    background: var(--color-night);
-    color: var(--color-feuille);
-    font-size: 8.5px;
-    font-weight: 600;
-    line-height: 1.1;
-    white-space: nowrap;
-    translate: -50% 0;
-  }
-
-  /* En vol entre deux blocs, le cadre se tait : son étiquette passerait sur
-     le bloc qu'il vient de poser. */
-  .cadre em,
-  .cadre__cote {
-    transition: opacity 140ms;
-  }
-
-  .cadre.est-en-vol em,
-  .cadre.est-en-vol .cadre__cote {
-    opacity: 0;
   }
 
   .cadre i:nth-of-type(1) { top: -4.5px; right: -4.5px; }
@@ -718,20 +628,20 @@ const voyageurs = Array.from({ length: clicsMax });
   /* La pointe de la flèche est en (3, 1.6) dans son dessin : la marge la
      ramène sur le point visé. */
   .pointeur {
-    width: 17px;
-    height: 17px;
-    margin: -1.7px 0 0 -3.2px;
+    width: 19px;
+    height: 19px;
+    margin: -1.9px 0 0 -3.6px;
     fill: var(--color-feuille);
     stroke: var(--color-night);
     stroke-width: 1.2;
     filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--color-night) 40%, transparent));
-    transform-origin: 3.2px 1.7px;
+    transform-origin: 3.6px 1.9px;
   }
 
   .onde {
-    width: 44px;
-    height: 44px;
-    margin: -22px 0 0 -22px;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
     border: 1.5px solid color-mix(in srgb, var(--color-night) 60%, transparent);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--color-night) 10%, transparent);
@@ -739,20 +649,10 @@ const voyageurs = Array.from({ length: clicsMax });
 
   /* ── Le tableau de bord ── */
   .tableau {
-    --u: 21px;
+    --u: 18px;
     --g: 2px;
-    --col: 39px;
-    padding: 18px 16px 16px;
-  }
-
-  .etiquette {
-    display: block;
-    color: var(--color-ink-faint);
-    font-size: 8.5px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
+    --col: 41px;
+    padding: 16px 16px 14px;
   }
 
   .direct {
@@ -777,29 +677,58 @@ const voyageurs = Array.from({ length: clicsMax });
     display: inline;
   }
 
-  .chiffre__ligne {
+  /* Les deux nombres qui portent l'action : un nom à la taille forte, un
+     nombre qui se lit de loin. La conversion est la promesse du métier : elle
+     est en pêche. */
+  .tuiles {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .tuile__nom {
+    display: block;
+    color: var(--color-ink-mid);
+    font-size: var(--sm-fort);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .tuile b {
+    display: inline-block;
+    font-size: var(--sm-chiffre);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .tuile__ligne {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     margin-top: 8px;
   }
 
-  .chiffre__ligne b {
-    display: inline-block;
-    font-size: 50px;
-    font-weight: 600;
-    letter-spacing: -0.035em;
-    line-height: 1;
+  .tuile--taux {
+    padding-left: 16px;
+    border-left: 1px solid var(--sm-filet);
+  }
+
+  .tuile--taux b {
+    margin-top: 8px;
+    color: var(--color-peche);
   }
 
   /* Ce que la journée a ajouté : n'existe que s'il y a quelque chose à dire. */
   .plus {
-    padding: 4px 9px;
+    padding: 3px 8px 4px;
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--color-peche) 15%, transparent);
     color: var(--color-peche);
-    font-size: 10.5px;
+    font-size: var(--sm-note);
     font-weight: 600;
+    line-height: 1.15;
     white-space: nowrap;
     opacity: 0;
     translate: 0 3px;
@@ -813,68 +742,30 @@ const voyageurs = Array.from({ length: clicsMax });
     translate: 0 0;
   }
 
-  /* Les barres. L'échelle est vraie : une unité vaut une demande, un filet
-     toutes les deux, le zéro plus marqué. */
+  /* Les barres. Une unité vaut une demande : elles se comptent à l'œil, sans
+     échelle. Un seul filet, le sol. */
   .barres {
-    display: grid;
-    grid-template-columns: 18px minmax(0, 1fr);
-    margin-top: 20px;
-  }
-
-  .barres__echelle {
-    position: relative;
-    height: calc(6 * (var(--u) + var(--g)));
-    color: var(--color-ink-faint);
-    font-size: 8.5px;
-    font-weight: 500;
-  }
-
-  .barres__echelle span {
-    position: absolute;
-    bottom: calc(var(--n) * (var(--u) + var(--g)));
-    left: 0;
-    line-height: 1;
-    translate: 0 50%;
+    margin-top: 18px;
   }
 
   .barres__vue {
-    position: relative;
     width: calc(7 * var(--col));
     overflow: hidden;
-  }
-
-  .barres__vue::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: calc(6 * (var(--u) + var(--g)));
-    border-top: 1px solid var(--sm-filet);
     border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 26%, transparent);
-    background: linear-gradient(to top, var(--sm-filet) 1px, transparent 1px) bottom / 100%
-      calc(2 * (var(--u) + var(--g)));
   }
 
   .barres__piste {
-    position: relative;
     display: flex;
     width: max-content;
   }
 
   .colonne {
-    display: grid;
-    justify-items: center;
-    width: var(--col);
-  }
-
-  .colonne__pile {
     display: flex;
     flex-direction: column-reverse;
     gap: var(--g);
-    width: 24px;
+    width: var(--col);
     height: calc(6 * (var(--u) + var(--g)));
-    padding-bottom: 1px;
+    padding: 0 7px 2px;
   }
 
   .unite {
@@ -892,26 +783,11 @@ const voyageurs = Array.from({ length: clicsMax });
     background: color-mix(in srgb, var(--color-ink) 21%, transparent);
   }
 
-  .colonne__jour {
-    margin-top: 7px;
-    color: var(--color-ink-faint);
-    font-size: 9px;
-    font-weight: 500;
-    line-height: 1.2;
-    transition: color 360ms;
-  }
-
   /* Aujourd'hui, c'est la septième colonne : la seule en pêche. La huitième
      attend hors de la vue et lui ressemble, vide. Dans les deux, la prochaine
      unité est annoncée par un emplacement en pointillé. */
   .colonne:nth-child(7):not(.est-hier) .unite.est-pleine {
     background: var(--color-peche);
-  }
-
-  .colonne:nth-child(7):not(.est-hier) .colonne__jour,
-  .colonne:nth-child(8) .colonne__jour {
-    color: var(--color-ink);
-    font-weight: 650;
   }
 
   .colonne:nth-child(n + 7):not(.est-hier) .unite:not(.est-pleine):first-child,
@@ -920,104 +796,27 @@ const voyageurs = Array.from({ length: clicsMax });
   }
 
   /* Le raccord entre deux jours se fait d'un coup, sans transition. */
-  .barres.sans-transition .unite,
-  .barres.sans-transition .colonne__jour {
+  .barres.sans-transition .unite {
     transition: none;
   }
 
-  .stats {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 14px;
-    margin-top: 16px;
-    padding-top: 15px;
-    border-top: 1px solid var(--sm-filet);
-  }
-
-  .stat b {
-    display: inline-block;
-    margin-top: 7px;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .stat--visites {
-    display: flex;
-    flex: 1;
-    align-items: flex-end;
-    gap: 12px;
-    padding-right: 14px;
-    border-right: 1px solid var(--sm-filet);
-  }
-
-  .stat--visites > div {
-    min-width: 34px;
-  }
-
-  .stat--taux {
-    min-width: 64px;
-  }
-
-  /* La courbe des visites : une ligne brisée qui a ses points, le dernier en
-     pêche. Non tracée, il n'en reste que le sol. */
-  .courbe {
-    flex-shrink: 0;
-    width: 144px;
-    height: 44px;
-    overflow: visible;
-  }
-
-  .courbe__sol {
-    stroke: color-mix(in srgb, var(--color-ink) 16%, transparent);
-    stroke-width: 1;
-  }
-
-  .courbe__trait {
-    stroke: var(--color-ink-mid);
-    stroke-width: 1.4;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    transition: stroke-dashoffset 420ms var(--ease-out-quint);
-  }
-
-  .courbe__point {
-    fill: var(--color-night-deep);
-    stroke: var(--color-ink-mid);
-    stroke-width: 1.3;
-    opacity: 0;
-    transition: opacity 200ms;
-  }
-
-  .courbe__point:last-child {
-    fill: var(--color-peche);
-    stroke: var(--color-peche);
-  }
-
-  .courbe.est-tracee .courbe__point {
-    opacity: 1;
-  }
-
-  .courbe.est-tracee .courbe__trait {
-    stroke-dashoffset: 0;
+  /* Les visites : le pied de la fenêtre, à la manière du socle. Le sol des
+     barres fait déjà le filet. */
+  .visites {
+    margin-top: 0;
+    padding-inline: 0;
+    border-top: 0;
   }
 
   /* ── Le plan étroit ──
      Une autre silhouette que le grand plan. La page claire prend toute la
      largeur, en haut ; le tableau de bord n'est plus une fenêtre mais une
-     bande en bas (le nombre, le taux, les barres) ; le fil descend tout
-     droit du bouton au nombre. Les pastilles s'effacent : la bande dit déjà
-     ce qu'elles disaient. Aucun texte sous 8,5 px du plan. */
+     bande en bas (les demandes, la conversion, les barres) ; le fil descend
+     tout droit du bouton à la bande. La hauteur gagnée par le plan (320 au
+     lieu de 270) va au texte : le libellé du bouton et les deux nombres. */
   @container sm (max-width: 519.98px) {
     .sm::before {
       --sm-lumiere: 50% 84%;
-    }
-
-    .sm-puces {
-      display: none;
     }
 
     .fil--large {
@@ -1034,7 +833,7 @@ const voyageurs = Array.from({ length: clicsMax });
     }
 
     .poste--page {
-      top: 8px;
+      top: 38px;
       left: 10px;
       width: 340px;
     }
@@ -1048,8 +847,8 @@ const voyageurs = Array.from({ length: clicsMax });
 
     /* Les deux ports à la même abscisse, sous le bouton : le fil est une
        verticale. */
-    .port--bouton { top: auto; right: auto; bottom: -5px; left: 71px; }
-    .port--tableau { top: -5px; left: 71px; }
+    .port--bouton { top: auto; right: auto; bottom: -5px; left: 46px; }
+    .port--tableau { top: -5px; left: 46px; }
 
     .fleches {
       width: 24px;
@@ -1058,33 +857,30 @@ const voyageurs = Array.from({ length: clicsMax });
 
     .adresse {
       gap: 4px;
-      height: 17px;
-      padding: 0 7px 0 6px;
-      font-size: 9px;
+      height: 19px;
+      padding: 0 8px 0 6px;
     }
 
     .adresse svg {
-      width: 9px;
-      height: 9px;
+      width: 10px;
+      height: 10px;
     }
 
     /* La page, large et basse : le titre sur toute la largeur, puis le bouton
        et la preuve sur une même ligne. Toujours calée à gauche, pour que le
        bouton reste au-dessus de son port. */
     .page {
-      padding: 9px 12px 10px;
+      padding: 10px 12px 10px;
     }
 
     .page::before {
       inset: 0 12px;
     }
 
-    /* Sous l'en-tête, la place de l'étiquette du cadre : elle ne doit pas
-       mordre sur la marque. */
+    /* Sous l'en-tête, la place de l'étiquette du cadre. */
     .page__entete {
-      gap: 6px;
       height: 9px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
 
     .page__marque {
@@ -1102,11 +898,6 @@ const voyageurs = Array.from({ length: clicsMax });
       height: 2.5px;
     }
 
-    .page__acces {
-      width: 20px;
-      height: 9px;
-    }
-
     .page.est-centree .bloc--titre,
     .page.est-centree .bloc--titre i,
     .page.est-centree .bloc--bouton {
@@ -1122,42 +913,42 @@ const voyageurs = Array.from({ length: clicsMax });
       border-radius: 3.5px;
     }
 
+    /* Le faux paragraphe sort de la page : sa place va à l'étiquette du
+       cadre, qui nomme le bouton sans rien recouvrir. */
     .fin {
-      height: 3.5px;
+      display: none;
     }
-
-    .fin--un { margin-top: 3px; }
-    .fin--deux { margin-top: -1px; }
 
     .bloc--bouton,
     .bloc--preuve {
       display: inline-flex;
       vertical-align: middle;
-      margin-top: 12px;
+      margin-top: 23px;
     }
 
+    /* Un peu d'air à droite de la note : la poignée du cadre ne la touche
+       pas. */
     .bloc--preuve,
     .page.est-centree .bloc--preuve {
       gap: 5px;
       margin-inline: 14px 0;
-      font-size: 9.5px;
+      padding-right: 5px;
     }
 
     .bouton {
-      gap: 5px;
-      height: 25px;
-      padding: 0 9px 0 11px;
-      font-size: 9.5px;
+      gap: 6px;
+      height: 32px;
+      padding: 0 12px 0 14px;
     }
 
     .bouton svg {
-      width: 10px;
-      height: 10px;
+      width: 11px;
+      height: 11px;
     }
 
     .visages i {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       border-width: 1.5px;
     }
 
@@ -1166,21 +957,21 @@ const voyageurs = Array.from({ length: clicsMax });
     }
 
     .etoile {
-      width: 10px;
-      height: 10px;
-    }
-
-    .preuve__texte {
-      width: 40px;
-      height: 3.5px;
+      width: 11px;
+      height: 11px;
     }
 
     /* L'étiquette se décale : au coin, elle toucherait la marque de la page. */
     .cadre em {
       left: 14px;
-      padding: 1px 5px 1.5px;
+      padding: 1px 6px 2px;
       border-radius: 4px 4px 0 0;
-      font-size: 8.5px;
+    }
+
+    /* Sur la rangée du bouton, elle revient au coin : rien à éviter. */
+    .cadre.est-en-ligne em {
+      left: -1.25px;
+      border-radius: 4px 4px 4px 0;
     }
 
     .cadre i {
@@ -1194,22 +985,20 @@ const voyageurs = Array.from({ length: clicsMax });
     .cadre i:nth-of-type(4) { right: -4px; margin-top: -3px; }
 
     .pointeur {
-      width: 14px;
-      height: 14px;
-      margin: -1.4px 0 0 -2.6px;
-      transform-origin: 2.6px 1.4px;
+      width: 16px;
+      height: 16px;
+      margin: -1.6px 0 0 -3px;
+      transform-origin: 3px 1.6px;
     }
 
     .onde {
-      width: 32px;
-      height: 32px;
-      margin: -16px 0 0 -16px;
+      width: 36px;
+      height: 36px;
+      margin: -18px 0 0 -18px;
     }
 
-    /* La bande : sans barre de titre, sur une seule ligne. Le nombre à
-       gauche, sous l'arrivée du fil ; le taux ; les barres à droite, sans axe
-       ni lettres de jours : à cette taille ils seraient illisibles, et une
-       unité se compte à l'œil. Leur hauteur va aux unités. */
+    /* La bande : sans barre de titre, sur une seule ligne. Les demandes à
+       gauche, sous l'arrivée du fil ; la conversion ; les barres à droite. */
     .poste--tableau .sm-fenetre__barre {
       display: none;
     }
@@ -1217,74 +1006,59 @@ const voyageurs = Array.from({ length: clicsMax });
     .tableau {
       --u: 6px;
       --g: 1.5px;
-      --col: 20px;
+      --col: 18px;
       display: grid;
       grid-template-columns: auto auto minmax(0, 1fr);
-      grid-template-areas: 'chiffre taux barres';
       align-items: end;
-      column-gap: 16px;
+      column-gap: 14px;
       padding: 8px 10px 8px 12px;
     }
 
-    .chiffre { grid-area: chiffre; }
-    .stats { grid-area: taux; }
-    .barres { grid-area: barres; }
-
-    .etiquette {
-      font-size: 8.5px;
-      letter-spacing: 0.05em;
+    .tuiles {
+      display: contents;
     }
 
-    .chiffre__ligne {
+    /* Le nombre et son « +n » ne poussent pas la conversion quand ils
+       grandissent. */
+    .tuile--demandes {
+      min-width: 74px;
+    }
+
+    .tuile__ligne {
       gap: 6px;
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
-    .chiffre__ligne b {
-      font-size: 30px;
+    .tuile--taux {
+      padding-left: 14px;
+    }
+
+    .tuile--taux b {
+      margin-top: 5px;
     }
 
     .plus {
-      padding: 2.5px 6px;
-      font-size: 8.5px;
-    }
-
-    .stats {
-      display: block;
-      margin-top: 0;
-      padding: 0 0 2px;
-      border-top: 0;
-    }
-
-    .stat--taux {
-      min-width: 0;
-    }
-
-    .stat b {
-      margin-top: 6px;
-      font-size: 16px;
+      padding: 2px 6px 3px;
     }
 
     .barres {
-      grid-template-columns: minmax(0, 1fr);
       justify-self: end;
       margin-top: 0;
     }
 
-    .barres__echelle {
-      display: none;
-    }
-
-    .colonne__pile {
-      width: 13px;
+    .colonne {
+      padding: 0 3px 1.5px;
     }
 
     .unite {
       border-radius: 2px;
     }
 
-    .colonne__jour {
-      display: none;
+    /* À six pixels de haut, un pointillé ne se lit plus : l'emplacement de la
+       prochaine unité est un filet plein. */
+    .colonne:nth-child(n + 7):not(.est-hier) .unite:not(.est-pleine):first-child,
+    .colonne:nth-child(n + 7):not(.est-hier) .unite.est-pleine + .unite:not(.est-pleine) {
+      border-style: solid;
     }
   }
 </style>
@@ -1307,29 +1081,19 @@ const voyageurs = Array.from({ length: clicsMax });
     texte: number[];
   }
 
-  interface JourRecit {
-    clics: number;
-    visites: number;
-    taux: string[];
-    ligne: string;
-    points: Pt[];
-  }
-
   interface Recit {
     pages: PageRecit[];
-    jours: JourRecit[];
+    clics: number[];
     historique: number[];
     deja: number;
-    lettres: string[];
-    depart: number;
+    visitesParDemande: number;
   }
 
   /* Le récit arrive du balisage en JSON : c'est une frontière, on vérifie sa
      forme avant de s'en servir. */
   const estObjet = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
   const estNombres = (v: unknown): v is number[] => Array.isArray(v) && v.every((n) => typeof n === 'number');
-  const estTextes = (v: unknown): v is string[] => Array.isArray(v) && v.every((t) => typeof t === 'string');
-  const estPoint = (v: unknown): v is Pt => estObjet(v) && typeof v.x === 'number' && typeof v.y === 'number';
+  const estPositif = (v: unknown): v is number => typeof v === 'number' && v > 0;
 
   const estPage = (v: unknown): v is PageRecit =>
     estObjet(v) &&
@@ -1339,37 +1103,29 @@ const voyageurs = Array.from({ length: clicsMax });
     estNombres(v.titre) &&
     estNombres(v.texte);
 
-  const estJour = (v: unknown): v is JourRecit =>
-    estObjet(v) &&
-    typeof v.clics === 'number' &&
-    typeof v.visites === 'number' &&
-    estTextes(v.taux) &&
-    v.taux.length === v.clics + 1 &&
-    typeof v.ligne === 'string' &&
-    Array.isArray(v.points) &&
-    v.points.every(estPoint);
-
   const lireRecit = (brut: string | undefined): Recit => {
     const lu: unknown = JSON.parse(brut ?? 'null');
+    /* `deja` et `visitesParDemande` sont strictement positifs : c'est ce qui
+       garantit qu'un taux n'est jamais une division par zéro, ni un zéro. */
     const valide =
       estObjet(lu) &&
       Array.isArray(lu.pages) &&
       lu.pages.length > 0 &&
       lu.pages.every(estPage) &&
-      Array.isArray(lu.jours) &&
-      lu.jours.length > 0 &&
-      lu.jours.every(estJour) &&
+      estNombres(lu.clics) &&
+      lu.clics.length > 0 &&
       estNombres(lu.historique) &&
-      typeof lu.deja === 'number' &&
-      estTextes(lu.lettres) &&
-      lu.lettres.length > 0 &&
-      typeof lu.depart === 'number';
+      estPositif(lu.deja) &&
+      estPositif(lu.visitesParDemande);
     if (!valide) throw new Error('Scène Sites : `data-recit` est illisible');
     return lu as unknown as Recit;
   };
 
   const formatEntier = new Intl.NumberFormat('fr-FR');
+  const formatTaux = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const entier = (n: number): string => formatEntier.format(Math.round(n));
+  /* « 5,5 % », avec son espace insécable. */
+  const pourCent = (part: number): string => `${formatTaux.format(part * 100)} %`;
 
   /* Ce que le cadre de sélection laisse autour du bloc qu'il pose, sur le
      grand plan puis sur l'étroit. */
@@ -1402,22 +1158,16 @@ const voyageurs = Array.from({ length: clicsMax });
     const blocs = s.tous('[data-bloc]');
     const cadre = s.un('[data-cadre]');
     const nomCadre = s.un('[data-cadre-nom]');
-    const coteCadre = s.un('[data-cadre-cote]');
 
     const barres = s.un('[data-barres]');
     const piste = s.un('[data-piste]');
     const colonnes = s.tous('[data-colonne]');
     const piles = colonnes.map((colonne) => [...colonne.querySelectorAll<HTMLElement>('.unite')]);
-    const lettres = colonnes.map((colonne) => colonne.querySelector<HTMLElement>('[data-jour]'));
     const elDemandes = s.un('[data-demandes]');
     const elPlus = s.un('[data-plus]');
     const elPlusN = s.un('[data-plus-n]');
     const elVisites = s.un('[data-visites]');
     const elTaux = s.un('[data-taux]');
-    const statVisites = s.un('[data-stat-visites]');
-    const courbe = s.un<SVGSVGElement>('[data-courbe]');
-    const traitCourbe = s.un<SVGPathElement>('[data-courbe-trait]');
-    const pointsCourbe = s.tous<SVGCircleElement>('[data-courbe-point]');
     const elPuceDemandes = s.un('[data-puce-demandes]');
     const elPuceTaux = s.un('[data-puce-taux]');
 
@@ -1436,11 +1186,10 @@ const voyageurs = Array.from({ length: clicsMax });
     const filDuPlan = (): string => (s.etroit ? 'demande-bas' : 'demande');
 
     /* L'état de la scène. `rang` choisit la page et la journée ; `historique`
-       et `depart` glissent d'un jour à chaque boucle ; `deja` est le total des
-       demandes avant la journée en cours. */
+       glisse d'un jour à chaque boucle ; `deja` est le total des demandes du
+       mois avant la journée en cours. */
     let rang = 0;
     let historique = [...recit.historique];
-    let depart = recit.depart;
     let deja = recit.deja;
 
     /* Les listes tournent ; `lireRecit` a vérifié qu'aucune n'est vide. */
@@ -1450,14 +1199,19 @@ const voyageurs = Array.from({ length: clicsMax });
       return element;
     };
     const pageCourante = (): PageRecit => auRang(recit.pages);
-    const jourCourant = (): JourRecit => auRang(recit.jours);
+    /* Jamais plus de clics que la barre n'a d'unités, ni que la scène n'a de
+       pointeurs. */
+    const clicsDuJour = (): number => Math.min(auRang(recit.clics), pointeurs.length, piles[0]?.length ?? 0);
+    /* Les visites du mois, comptées au matin : la journée part du taux du
+       site, pas de zéro. Elles ne bougent pas pendant qu'on clique, si bien
+       que demandes ÷ visites = conversion à chaque instant. */
+    const visites = (): number => deja * recit.visitesParDemande;
     /* La colonne d'aujourd'hui : celle qui suit l'historique. */
     const AUJOURDHUI = historique.length;
 
-    /* La page et la journée du moment, écrites dans le balisage. */
+    /* La page du moment, écrite dans le balisage. */
     const charger = () => {
       const page = pageCourante();
-      const jour = jourCourant();
       elChemin.textContent = page.chemin;
       elLibelle.textContent = page.bouton;
       elPage.classList.toggle('est-centree', page.centre);
@@ -1465,13 +1219,6 @@ const voyageurs = Array.from({ length: clicsMax });
       elPage.style.setProperty('--t2', `${page.titre[1] ?? 62}%`);
       elPage.style.setProperty('--p1', `${page.texte[0] ?? 76}%`);
       elPage.style.setProperty('--p2', `${page.texte[1] ?? 48}%`);
-      traitCourbe.setAttribute('d', jour.ligne);
-      pointsCourbe.forEach((point, i) => {
-        const p = jour.points[i];
-        if (!p) return;
-        point.setAttribute('cx', String(p.x));
-        point.setAttribute('cy', String(p.y));
-      });
     };
 
     /* Les barres : l'historique, puis aujourd'hui, puis la colonne de réserve. */
@@ -1480,33 +1227,31 @@ const voyageurs = Array.from({ length: clicsMax });
         const valeur = i < AUJOURDHUI ? (historique[i] ?? 0) : i === AUJOURDHUI ? aujourdhui : 0;
         piles[i]?.forEach((unite, n) => unite.classList.toggle('est-pleine', n < valeur));
         colonne.classList.remove('est-hier');
-        const lettre = lettres[i];
-        if (lettre) lettre.textContent = recit.lettres[(depart + i) % recit.lettres.length] ?? '';
       });
     };
 
-    /* Les nombres, après `n` demandes dans la journée. Tant que les visites
-       ne sont pas arrivées, il n'y a pas de taux à calculer. */
-    const poserNombres = (n: number, visites: boolean) => {
-      const jour = jourCourant();
-      const taux = visites ? (jour.taux[n] ?? '—') : '—';
+    const tauxApres = (n: number): string => pourCent((deja + n) / visites());
+
+    /* Les nombres, après `n` demandes dans la journée. */
+    const poserNombres = (n: number) => {
+      const taux = tauxApres(n);
       elDemandes.textContent = entier(deja + n);
       elPuceDemandes.textContent = entier(deja + n);
       elPlusN.textContent = String(n);
       elPlus.classList.toggle('est-visible', n > 0);
-      elVisites.textContent = visites ? entier(jour.visites) : '0';
+      elVisites.textContent = entier(visites());
       elTaux.textContent = taux;
       elPuceTaux.textContent = taux;
     };
 
     /* Ce qu'une boucle interrompue peut laisser derrière elle. */
     const ranger = () => {
-      cadre.classList.remove('est-visible', 'est-en-vol');
+      cadre.classList.remove('est-visible', 'est-en-vol', 'est-en-ligne');
       barres.classList.remove('sans-transition');
     };
 
     /* Le repos : une page vide, en chantier, et un tableau de bord qui attend
-       la journée. */
+       la journée, avec les nombres du mois au matin. */
     const repos = () => {
       s.racine.classList.remove('est-abouti');
       s.eteindre();
@@ -1516,24 +1261,22 @@ const voyageurs = Array.from({ length: clicsMax });
       elPage.classList.add('est-en-chantier');
       etats.page.dataset.etat = 'attente';
       etats.tableau.dataset.etat = 'attente';
-      courbe.classList.remove('est-tracee');
       poserBarres(0);
-      poserNombres(0, false);
+      poserNombres(0);
     };
 
     /* L'image fixe : la page est en ligne, la journée est passée. C'est aussi
        ce que le HTML rend sans script. */
     const figer = () => {
-      const jour = jourCourant();
+      const clics = clicsDuJour();
       ranger();
       charger();
       blocs.forEach((bloc) => bloc.classList.add('est-pose'));
       elPage.classList.remove('est-en-chantier');
       etats.page.dataset.etat = 'fait';
       etats.tableau.dataset.etat = 'cours';
-      courbe.classList.add('est-tracee');
-      poserBarres(jour.clics);
-      poserNombres(jour.clics, true);
+      poserBarres(clics);
+      poserNombres(clics);
       s.eteindre();
       s.allumer(filDuPlan(), true);
       s.racine.classList.add('est-abouti');
@@ -1562,22 +1305,24 @@ const voyageurs = Array.from({ length: clicsMax });
     const poser = async (bloc: HTMLElement, avant: Cadre | null): Promise<Cadre> => {
       const cible = autour(bloc);
       const nom = bloc.dataset.nom ?? '';
-      const cote = `${bloc.offsetWidth} × ${bloc.offsetHeight}`;
+      /* Seul le titre partage sa ligne avec la marque de la page : pour lui,
+         sur le plan étroit, l'étiquette se décale. */
+      const enLigne = bloc !== blocs[0];
       placerCadre(cible);
       cadre.classList.add('est-visible');
       if (avant) {
         cadre.classList.add('est-en-vol');
         await s.animer(cadre, [enPixels(avant), enPixels(cible)], {
-          duration: 340,
+          duration: 300,
           easing: 'cubic-bezier(0.45, 0, 0.15, 1)',
         });
-        /* Le nom et la cote changent à l'arrivée, quand le cadre reparle. */
+        /* Le nom change à l'arrivée, quand le cadre reparle. */
         nomCadre.textContent = nom;
-        coteCadre.textContent = cote;
+        cadre.classList.toggle('est-en-ligne', enLigne);
         cadre.classList.remove('est-en-vol');
       } else {
         nomCadre.textContent = nom;
-        coteCadre.textContent = cote;
+        cadre.classList.toggle('est-en-ligne', enLigne);
         cadre.style.transformOrigin = '0 0';
         await s.animer(
           cadre,
@@ -1585,45 +1330,23 @@ const voyageurs = Array.from({ length: clicsMax });
             { transform: 'scale(0.72, 0.4)', opacity: 0 },
             { transform: 'none', opacity: 1 },
           ],
-          { duration: 300, easing: EXPO },
+          { duration: 280, easing: EXPO },
         );
       }
       bloc.classList.add('est-pose');
       await s.animer(
         bloc,
         { clipPath: ['inset(-8px 100% -8px -8px)', 'inset(-8px -8px -8px -8px)'] },
-        { duration: 360, easing: EXPO },
+        { duration: 320, easing: EXPO },
       );
-      await s.attendre(110);
+      await s.attendre(70);
       return cible;
-    };
-
-    /* Les visites du jour : la courbe se trace, ses points se posent un à un,
-       le nombre monte. */
-    const recevoirVisites = async () => {
-      const jour = jourCourant();
-      if (s.affiches([statVisites]).length === 0) return;
-      courbe.classList.add('est-tracee');
-      const duree = 760;
-      pointsCourbe.forEach((point, i) => {
-        s.jouer(point, [{ opacity: 0, r: 0 }, { opacity: 1, r: 2.1 }], {
-          duration: 260,
-          delay: (duree * i) / Math.max(1, pointsCourbe.length - 1),
-          fill: 'backwards',
-          easing: EXPO,
-        });
-      });
-      await Promise.all([
-        s.animer(traitCourbe, { strokeDashoffset: [1, 0] }, { duration: duree, easing: 'cubic-bezier(0.45, 0, 0.25, 1)' }),
-        s.compter(elVisites, 0, jour.visites, { pas: 12, intervalle: 55, format: entier }),
-      ]);
     };
 
     /* Un clic : le pointeur d'un visiteur arrive sur le bouton et appuie, la
        demande part par le fil, et devient une unité de plus sur la barre du
-       jour. Les nombres suivent : une demande de plus, un taux recalculé. */
+       jour. Les nombres suivent : une demande de plus, un taux qui monte. */
     const cliquer = async (i: number) => {
-      const jour = jourCourant();
       const pointeur = pointeurs[i];
       const onde = ondes[i];
       const bande = bandes[i];
@@ -1688,7 +1411,7 @@ const voyageurs = Array.from({ length: clicsMax });
       );
       await s.attendre(380);
       if (s.etroit) {
-        /* Le fil est court et tombe sur le nombre : le grain descend vite, et
+        /* Le fil est court et tombe sur la bande : le grain descend vite, et
            l'unité se pose sans vol, la bande n'a rien à traverser. */
         s.enMarge(s.courir(grain, filDuPlan(), { duree: 300 }));
         await s.attendre(270);
@@ -1716,19 +1439,21 @@ const voyageurs = Array.from({ length: clicsMax });
 
       unite.classList.add('est-pleine');
       s.jouer(unite, [{ transform: 'scaleY(0.35)' }, { transform: 'none' }], { duration: 380, easing: EXPO });
+      /* Les deux nombres changent dans la même image : à aucun instant le
+         tableau de bord n'affiche un taux qui ne soit pas celui de ses
+         demandes. */
       const n = i + 1;
-      const taux = jour.taux[n] ?? '—';
+      const taux = tauxApres(n);
       s.tictac(elDemandes, entier(deja + n));
       s.tictac(elPuceDemandes, entier(deja + n));
-      elPlusN.textContent = String(n);
-      elPlus.classList.add('est-visible');
-      await s.attendre(140);
       s.tictac(elTaux, taux);
       s.tictac(elPuceTaux, taux);
+      elPlusN.textContent = String(n);
+      elPlus.classList.add('est-visible');
     };
 
     async function tour() {
-      const jour = jourCourant();
+      const clics = clicsDuJour();
       const visibles = s.affiches(blocs);
 
       await s.attendre(320);
@@ -1739,22 +1464,18 @@ const voyageurs = Array.from({ length: clicsMax });
       await s.animer(cadre, { opacity: [1, 0] }, { duration: 200 });
       cadre.classList.remove('est-visible');
 
-      /* 2. Elle passe en ligne : les repères s'effacent, les visites du jour
-         arrivent. */
+      /* 2. Elle passe en ligne : les repères s'effacent, le tableau de bord
+         se met à l'écoute. */
       elPage.classList.remove('est-en-chantier');
       s.basculer(etats.page);
-      await s.attendre(400);
+      await s.attendre(320);
       s.basculer(etats.tableau, 'cours');
-      await recevoirVisites();
-      poserNombres(0, true);
-      s.tictac(elTaux, jour.taux[0] ?? '—');
-      s.tictac(elPuceTaux, jour.taux[0] ?? '—');
-      await s.attendre(360);
+      await s.attendre(340);
 
       /* 3. Les clics, de plus en plus rapprochés. */
       s.allumer(filDuPlan());
       await Promise.all(
-        Array.from({ length: jour.clics }, async (_, i) => {
+        Array.from({ length: clics }, async (_, i) => {
           await s.attendre(DEPARTS[i] ?? i * 700);
           await cliquer(i);
         }),
@@ -1762,19 +1483,15 @@ const voyageurs = Array.from({ length: clicsMax });
       s.racine.classList.add('est-abouti');
 
       /* Le temps de lire l'image : la page tourne, le tableau de bord le dit. */
-      await s.attendre(2500);
+      await s.attendre(2800);
 
       /* 4. On change de jour : la page se défait, les barres glissent d'une
-         colonne (aujourd'hui devient hier), la journée repart de zéro. */
+         colonne (aujourd'hui devient hier). Les demandes du mois restent. */
       s.racine.classList.remove('est-abouti');
       s.eteindre();
       etats.page.dataset.etat = 'attente';
       etats.tableau.dataset.etat = 'attente';
       elPlus.classList.remove('est-visible');
-      courbe.classList.remove('est-tracee');
-      elVisites.textContent = '0';
-      elTaux.textContent = '—';
-      elPuceTaux.textContent = '—';
       colonnes[AUJOURDHUI]?.classList.add('est-hier');
       const cran = (colonnes[1]?.offsetLeft ?? 0) - (colonnes[0]?.offsetLeft ?? 0);
       const GLISSE = 620;
@@ -1800,16 +1517,17 @@ const voyageurs = Array.from({ length: clicsMax });
       ]);
 
       /* Le raccord, invisible : chaque colonne prend la valeur de sa voisine
-         dans l'image même où la piste revient à sa place. La page suivante et
-         sa journée sont chargées, la page est de nouveau en chantier. */
-      historique = [...historique.slice(1), jour.clics];
-      depart += 1;
-      deja += jour.clics;
+         dans l'image même où la piste revient à sa place. Le mois compte une
+         journée de plus : ses demandes sont acquises, ses visites s'ajoutent,
+         et le taux repart de celui du matin, jamais de zéro. La page suivante
+         est chargée, de nouveau en chantier. */
+      historique = [...historique.slice(1), clics];
+      deja += clics;
       rang += 1;
       barres.classList.add('sans-transition');
       charger();
       poserBarres(0);
-      poserNombres(0, false);
+      poserNombres(0);
       /* La lecture force le rendu sans transition avant de les rétablir. */
       void barres.offsetWidth;
       barres.classList.remove('sans-transition');

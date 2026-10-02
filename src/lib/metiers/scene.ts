@@ -31,11 +31,14 @@
  *    script. Aucun `id`, aucun dégradé ou `clipPath` SVG nommé : quatre scènes
  *    vivent sur la même page.
  *
- * 2. Le plan. 760 × 570 (`PLAN_LARGE`), redessiné à 360 × 270 (`PLAN_ETROIT`)
+ * 2. Le plan. 760 × 570 (`PLAN_LARGE`), redessiné à 360 × 320 (`PLAN_ETROIT`)
  *    quand la racine fait moins de 520 px (`SEUIL_ETROIT`). La scène place ses
  *    postes et ses ports en pixels du plan, dans son style scopé, deux fois :
  *    une pour le grand plan, une dans `@container sm (max-width: 519.98px)`.
  *    `sm-large` et `sm-etroit` masquent une pièce sur l'un ou l'autre plan.
+ *    Le texte n'a que quatre tailles, déclarées par le socle (`--sm-note`,
+ *    `--sm-texte`, `--sm-fort`, `--sm-titre`, et `--sm-chiffre` pour un
+ *    nombre) : une scène n'écrit jamais de `font-size` en pixels.
  *
  * 3. Les fils. Un `<g data-sm-fil>` nomme ses deux ports (`data-de`,
  *    `data-vers`) et son sens de sortie (`data-sens`, `h` ou `v`). Le moteur
@@ -79,7 +82,7 @@ export const EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';
 export const ELAN = 'cubic-bezier(0.5, 0, 0.75, 0)';
 
 export const PLAN_LARGE = { l: 760, h: 570 } as const;
-export const PLAN_ETROIT = { l: 360, h: 270 } as const;
+export const PLAN_ETROIT = { l: 360, h: 320 } as const;
 /* Le seuil est appliqué par la feuille de style (requête de conteneur) ; il
    est rappelé ici pour qui écrit une scène. */
 export const SEUIL_ETROIT = 520;
@@ -260,6 +263,8 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   let jeton = 0;
   let visible = false;
   let enMarche = false;
+  /* Le visiteur a mis la scène en pause (voir la commande d'arrêt, en bas). */
+  let arretee = false;
   let largeurPlan = 0;
 
   /* ── Le DOM ── */
@@ -346,7 +351,7 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   };
 
   const regler = () => {
-    const voulu = visible && !document.hidden;
+    const voulu = visible && !document.hidden && !arretee;
     if (voulu === enMarche) return;
     enMarche = voulu;
     for (const animation of toutes()) {
@@ -655,6 +660,32 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   /* `addEventListener` manque sur cet objet avant Safari 14 : sans lui, la
      scène garde simplement le régime de son chargement. */
   reduit.addEventListener?.('change', relancer);
+
+  /* ── La commande d'arrêt ──
+     Une scène qui boucle sans fin à côté d'un texte doit pouvoir être arrêtée,
+     au clavier comme au doigt. Le bouton est posé APRÈS la racine, pas dedans :
+     la racine est une image (`role="img"`), ce qu'elle contient n'est pas
+     annoncé. Il s'appuie sur la pause du moteur : la scène s'arrête net et
+     reprend où elle en était. Rien à arrêter en mouvement réduit. */
+  if (!reduit.matches) {
+    const commande = document.createElement('button');
+    commande.type = 'button';
+    commande.className = 'sm-pause';
+    commande.setAttribute('aria-pressed', 'false');
+    commande.innerHTML =
+      '<span class="sr-only">Mettre l’animation en pause</span>' +
+      '<svg class="sm-pause__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>' +
+      '<svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>';
+    const nom = commande.querySelector('.sr-only');
+    commande.addEventListener('click', () => {
+      arretee = !arretee;
+      commande.setAttribute('aria-pressed', String(arretee));
+      /* Le nom dit ce que le bouton fera. */
+      if (nom) nom.textContent = arretee ? 'Relancer l’animation' : 'Mettre l’animation en pause';
+      regler();
+    });
+    racine.after(commande);
+  }
 
   relancer();
 }

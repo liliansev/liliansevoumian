@@ -15,8 +15,17 @@
  * seuls : toujours accolés à une classe du socle.
  *
  * Les longueurs sont celles du plan, en pixels : le plan est dessiné à taille
- * fixe (760 × 570, ou 360 × 270 sous 520 px) puis mis à l'échelle d'un bloc.
+ * fixe (760 × 570, ou 360 × 320 sous 520 px) puis mis à l'échelle d'un bloc.
  * Elles ne suivent donc pas l'échelle typographique du site, exprès.
+ *
+ * LE TEXTE N'A QUE QUATRE TAILLES, posées sur `.sm` : `--sm-note`, `--sm-texte`,
+ * `--sm-fort`, `--sm-titre` (plus `--sm-chiffre` pour un nombre qui se lit de
+ * loin). Aucune scène n'écrit de `font-size` en pixels. Les scènes en
+ * comptaient dix-neuf, de 6,5 à 16 px par pas d'un demi-pixel, et une fois le
+ * plan mis à l'échelle un quart du texte passait sous 8 px à l'écran (mesuré
+ * le 2 octobre 2026 : 22 % à 1440, 95 % à 320). `--sm-note` est le plancher :
+ * ce qui ne tient pas à cette taille devient un trait (`sm-barre`) ou sort de
+ * la scène. Il n'y a pas de cinquième taille plus petite.
  *
  * Le moteur est dans `lib/metiers/scene.ts`, avec le guide d'écriture.
  */
@@ -40,6 +49,14 @@
   font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
+  /* Les quatre tailles du grand plan. À l'écran le plan est rendu entre 0,8
+     (fenêtre de 1200) et 0,89 (1440) : la note fait donc 9,2 à 10,2 px, le
+     texte 10 à 11,1 px. */
+  --sm-note: 11.5px;
+  --sm-texte: 12.5px;
+  --sm-fort: 14px;
+  --sm-titre: 16px;
+  --sm-chiffre: 22px;
 }
 
 .sm::before {
@@ -137,7 +154,7 @@
   background: color-mix(in srgb, var(--color-night-deep) 82%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent);
   color: var(--color-ink-mid);
-  font-size: 12px;
+  font-size: var(--sm-texte);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -286,7 +303,7 @@
   height: 34px;
   padding-inline: 11px 9px;
   border-bottom: 1px solid var(--sm-filet);
-  font-size: 12px;
+  font-size: var(--sm-texte);
   font-weight: 500;
 }
 
@@ -317,7 +334,7 @@
   min-width: 0;
   overflow: hidden;
   color: var(--color-ink-low);
-  font-size: 10.5px;
+  font-size: var(--sm-note);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -337,7 +354,7 @@
   border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
   border-radius: var(--radius-full);
   color: var(--color-ink-mid);
-  font-size: 10px;
+  font-size: var(--sm-note);
   font-weight: 600;
   white-space: nowrap;
   transition:
@@ -384,14 +401,15 @@
 }
 
 .sm-feuille__tete b {
-  font-size: 12.5px;
-  font-weight: 650;
+  font-size: var(--sm-texte);
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 
 .sm-feuille__tete > span {
-  color: var(--color-ink-faint);
-  font-size: 9.5px;
+  /* Sur la feuille claire, le gris le plus pâle tombait à 3,4:1. */
+  color: var(--color-feuille-note);
+  font-size: var(--sm-note);
   font-weight: 500;
 }
 
@@ -430,14 +448,18 @@
   gap: 8px;
 }
 
+/* Les en-têtes de colonnes : en bas de casse, à la taille de la note. Elles
+   étaient en capitales espacées de 8,5 px, soit 7,2 px à l'écran. */
 .sm-colonnes {
   padding: 0 8px 6px;
-  color: var(--color-ink-faint);
-  font-size: 8.5px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  color: var(--color-ink-low);
+  font-size: var(--sm-note);
+  font-weight: 500;
   white-space: nowrap;
+}
+
+.sm-feuille .sm-colonnes {
+  color: var(--color-feuille-note);
 }
 
 .sm-colonnes span:nth-child(n + 3) {
@@ -468,10 +490,10 @@
   position: relative;
   isolation: isolate;
   align-items: center;
-  height: 27px;
+  height: 29px;
   padding-inline: 6px;
   border-bottom: 1px solid var(--color-feuille-trait);
-  font-size: 11px;
+  font-size: var(--sm-texte);
   font-weight: 500;
 }
 
@@ -549,11 +571,11 @@
 
 .sm-rangee {
   align-items: center;
-  height: 27px;
+  height: 29px;
   padding-inline: 8px;
   border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
   border-radius: 7px;
-  font-size: 11px;
+  font-size: var(--sm-texte);
   font-weight: 500;
   transition:
     border-color 220ms,
@@ -636,12 +658,12 @@
   padding: 10px 8px 0;
   border-top: 1px solid var(--sm-filet);
   color: var(--color-ink-low);
-  font-size: 10.5px;
+  font-size: var(--sm-note);
 }
 
 .sm-pied b {
   color: var(--color-ink);
-  font-size: 15px;
+  font-size: var(--sm-titre);
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
@@ -686,16 +708,89 @@
   visibility: hidden;
 }
 
+/* ── La commande d'arrêt ──
+   Posée par le moteur juste après la scène, dans le coin bas droit de son
+   cadre (le cadre, ou son parent, est en `position: relative`). Discrète : elle
+   ne se montre qu'au survol du cadre, au focus, ou une fois la scène arrêtée ;
+   au doigt, où il n'y a pas de survol, elle est toujours là. */
+.sm-pause {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-night-deep) 82%, transparent);
+  color: var(--color-ink-mid);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 220ms var(--ease-out-quint),
+    color 220ms var(--ease-out-quint);
+}
+
+/* La cible fait 44 px, la pastille 28. Le débord part de la boîte de
+   remplissage, donc de 26 px une fois la bordure déduite : 9 px de chaque
+   côté, pas 8. */
+.sm-pause::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+}
+
+.sm-pause svg {
+  fill: currentColor;
+}
+
+.sm-pause__lecture,
+.sm-pause[aria-pressed='true'] .sm-pause__arret {
+  display: none;
+}
+
+.sm-pause[aria-pressed='true'] .sm-pause__lecture {
+  display: block;
+}
+
+:hover > .sm-pause,
+.sm-pause:focus-visible,
+.sm-pause[aria-pressed='true'] {
+  opacity: 1;
+}
+
+.sm-pause:hover {
+  color: var(--color-ink);
+}
+
+@media (hover: none) {
+  .sm-pause {
+    opacity: 0.8;
+  }
+}
+
 /* ── Le plan étroit ──
    Sous 520 px, à l'échelle, les textes du grand plan passeraient sous 8 px.
-   Le plan est donc redessiné à 360 × 270, avec les mêmes pièces en plus
-   petit. La scène y simplifie son propos avec `sm-large` et `sm-etroit`
-   (voir plus bas) : deux lignes au lieu de trois, des états en un mot. */
+   Le plan est donc redessiné à 360 × 320, soit à peu près la taille réelle
+   d'un téléphone : un pixel du plan y vaut un pixel de l'écran, et les tailles
+   de texte s'y lisent telles quelles. Il est plus haut que le grand (9:8 au
+   lieu de 4:3) : c'est la hauteur qui paie le texte lisible. Le cadre qui
+   porte la scène suit ce rapport (voir `home-services.astro`). La scène y
+   simplifie son propos avec `sm-large` et `sm-etroit` (voir plus bas) : deux
+   lignes au lieu de trois, des états en un mot. */
 @container sm (max-width: 519.98px) {
   .sm-plan {
     --k: tan(atan2(100cqw, 360px));
+    --sm-note: 11px;
+    --sm-texte: 12px;
+    --sm-fort: 13.5px;
+    --sm-titre: 15px;
+    --sm-chiffre: 20px;
     width: 360px;
-    height: 270px;
+    height: 320px;
     background-size: 30px 30px;
   }
 
@@ -707,9 +802,9 @@
 
   .sm-puce {
     gap: 5px;
-    height: 22px;
+    height: 24px;
     padding: 0 8px 0 6px;
-    font-size: 9.5px;
+    font-size: var(--sm-note);
   }
 
   .sm-puce svg {
@@ -739,9 +834,9 @@
 
   .sm-fenetre__barre {
     gap: 6px;
-    height: 25px;
+    height: 28px;
     padding-inline: 8px 6px;
-    font-size: 10px;
+    font-size: var(--sm-texte);
   }
 
   .sm-fenetre__icone {
@@ -761,8 +856,7 @@
   }
 
   .sm-etat {
-    padding: 2px 6px;
-    font-size: 8.5px;
+    padding: 2px 7px;
   }
 
   .sm-corps {
@@ -772,10 +866,6 @@
   .sm-feuille {
     padding: 9px 8px 3px;
     border-radius: 5px;
-  }
-
-  .sm-feuille__tete b {
-    font-size: 10.5px;
   }
 
   .sm-feuille__bloc {
@@ -793,13 +883,10 @@
     gap: 4px;
   }
 
+  /* Les en-têtes de colonnes ne tiennent pas à une taille lisible sur une
+     feuille de cette largeur : la feuille s'en passe. */
   .sm-colonnes {
-    font-size: 6.5px;
-  }
-
-  .sm-feuille .sm-colonnes {
-    margin-top: 8px;
-    padding: 0 3px 4px;
+    display: none;
   }
 
   .sm-barre {
@@ -807,9 +894,9 @@
   }
 
   .sm-ligne {
-    height: 23px;
+    height: 25px;
     padding-inline: 3px;
-    font-size: 9px;
+    font-size: var(--sm-note);
   }
 
   /* La dernière ligne visible n'a pas de filet, même quand celles d'après
@@ -823,10 +910,10 @@
   }
 
   .sm-rangee {
-    height: 23px;
+    height: 25px;
     padding-inline: 5px;
     border-radius: 6px;
-    font-size: 9px;
+    font-size: var(--sm-note);
   }
 
   .sm-coche {
@@ -837,11 +924,6 @@
   .sm-pied {
     margin-top: 6px;
     padding: 6px 5px 0;
-    font-size: 8.5px;
-  }
-
-  .sm-pied b {
-    font-size: 12px;
   }
 
   .sm-grain {
@@ -869,11 +951,13 @@
   }
 }
 
+/* `!important` : les transitions d'une scène sont écrites en style scopé, à
+   spécificité supérieure, et cette règle ne les coupait pas. */
 @media (prefers-reduced-motion: reduce) {
   .sm::before,
   .sm *,
   .sm *::before,
   .sm *::after {
-    transition: none;
+    transition: none !important;
   }
 }

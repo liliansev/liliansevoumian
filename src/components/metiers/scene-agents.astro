@@ -34,6 +34,12 @@
  * Sans script ou en mouvement réduit, la scène est une image fixe : la
  * question posée, les trois sources consultées, la réponse composée.
  *
+ * Ce qui se lit : la question, le nom de l'agent et de ses sources, les
+ * étapes qui se cochent, la raison de chaque résultat, « À valider par vous ».
+ * Ce sont les mots qui portent l'action, ils sont à `--sm-fort`. Tout le reste
+ * est un trait ou n'est pas là : ni sur-titre, ni relevé par source. Un texte
+ * qui n'a pas encore cours est absent (`visibility`), jamais en demi-teinte.
+ *
  * Questions, étapes et nombres sont inventés pour la scène : ce n'est pas une
  * donnée client. Un résultat n'a jamais de nom, seulement une barre dont `l`
  * donne la longueur, en pour cent.
@@ -45,19 +51,16 @@ type IdSource = 'web' | 'documents' | 'crm';
 interface Source {
   id: IdSource;
   nom: string;
-  court: string;
   /* Le tracé de son icône, dans une boîte de 16. */
   trace: string;
 }
 
 interface Etape {
+  /* Ce que l'agent se dit, en long (grand plan) et en court (plan étroit). */
   texte: string;
   court: string;
   /* La source où l'agent va chercher ; `null` quand il réfléchit sur place. */
   source: IdSource | null;
-  /* Ce que la source a rendu (« 8 résultats »), et combien cela fait. */
-  releve: string;
-  nombre: number;
 }
 
 interface Resultat {
@@ -70,7 +73,7 @@ interface Demande {
   courte: string;
   etapes: Etape[];
   /* Trois résultats, dans l'ordre des sources : chacun porte la pastille de
-     celle qui l'a fourni. */
+     celle qui l'a fourni. Le plan étroit n'en montre que deux. */
   resultats: Resultat[];
 }
 
@@ -78,20 +81,17 @@ const sources: Source[] = [
   {
     id: 'web',
     nom: 'Web',
-    court: 'Web',
     trace:
       'M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM2.2 8h11.6M8 2c1.8 1.7 2.6 3.7 2.6 6s-.8 4.3-2.6 6c-1.8-1.7-2.6-3.7-2.6-6S6.2 3.7 8 2z',
   },
   {
     id: 'documents',
     nom: 'Documents',
-    court: 'Docs',
     trace: 'M4.5 2.5h4.6l2.4 2.4v8.6h-7zM9 2.6V5h2.4M6.3 8h3.4M6.3 10.3h3.4',
   },
   {
     id: 'crm',
     nom: 'CRM',
-    court: 'CRM',
     trace:
       'M3 4.4c0-1 2.2-1.9 5-1.9s5 .9 5 1.9-2.2 1.9-5 1.9-5-.9-5-1.9zM3 4.4v7.2c0 1 2.2 1.9 5 1.9s5-.9 5-1.9V4.4M3 8c0 1 2.2 1.9 5 1.9s5-.9 5-1.9',
   },
@@ -99,16 +99,17 @@ const sources: Source[] = [
 
 /* Trois demandes qui tournent. Chacune a quatre étapes : trois sorties, une
    par source et dans un ordre qui lui est propre, puis une étape faite sur
-   place. La première est rendue ici ; le script reçoit les trois. */
+   place. La première est rendue ici ; le script reçoit les trois.
+   Les espaces avant « ? » et entre un nombre et son nom sont insécables. */
 const demandes: Demande[] = [
   {
-    question: 'Quelles entreprises approcher cette semaine ?',
-    courte: 'Qui approcher cette semaine ?',
+    question: 'Quelles entreprises approcher cette semaine\u00a0?',
+    courte: 'Qui approcher cette semaine\u00a0?',
     etapes: [
-      { texte: 'Cherche les levées de fonds récentes', court: 'Cherche les levées', source: 'web', releve: '8 résultats', nombre: 8 },
-      { texte: 'Lit 12 pages', court: 'Lit 12 pages', source: 'documents', releve: '12 pages', nombre: 12 },
-      { texte: 'Recoupe avec le CRM', court: 'Recoupe avec le CRM', source: 'crm', releve: '3 fiches', nombre: 3 },
-      { texte: 'Écarte 2 clients déjà suivis', court: 'Écarte 2 clients', source: null, releve: '', nombre: 0 },
+      { texte: 'Cherche les levées de fonds', court: 'Cherche sur le web', source: 'web' },
+      { texte: 'Lit 12\u00a0pages de vos dossiers', court: 'Lit 12\u00a0pages', source: 'documents' },
+      { texte: 'Recoupe avec le CRM', court: 'Recoupe le CRM', source: 'crm' },
+      { texte: 'Écarte 2\u00a0clients déjà suivis', court: 'Écarte 2\u00a0clients', source: null },
     ],
     resultats: [
       { l: 74, raison: 'Levée récente' },
@@ -117,13 +118,13 @@ const demandes: Demande[] = [
     ],
   },
   {
-    question: 'Qui recrute un directeur technique ?',
-    courte: 'Qui recrute un directeur ?',
+    question: 'Qui recrute un directeur technique\u00a0?',
+    courte: 'Qui recrute un directeur\u00a0?',
     etapes: [
-      { texte: 'Relit vos échanges dans le CRM', court: 'Relit le CRM', source: 'crm', releve: '5 fiches', nombre: 5 },
-      { texte: 'Cherche les postes ouverts', court: 'Cherche les postes', source: 'web', releve: '9 résultats', nombre: 9 },
-      { texte: 'Lit 7 pages', court: 'Lit 7 pages', source: 'documents', releve: '7 pages', nombre: 7 },
-      { texte: 'Écarte 1 poste déjà pourvu', court: 'Écarte 1 poste', source: null, releve: '', nombre: 0 },
+      { texte: 'Relit vos échanges dans le CRM', court: 'Relit le CRM', source: 'crm' },
+      { texte: 'Cherche les postes ouverts', court: 'Cherche les postes', source: 'web' },
+      { texte: 'Lit 7\u00a0pages de vos dossiers', court: 'Lit 7\u00a0pages', source: 'documents' },
+      { texte: 'Écarte 1\u00a0poste déjà pourvu', court: 'Écarte 1\u00a0poste', source: null },
     ],
     resultats: [
       { l: 60, raison: 'Poste ouvert' },
@@ -132,13 +133,13 @@ const demandes: Demande[] = [
     ],
   },
   {
-    question: 'Quels dirigeants ont changé de poste ?',
-    courte: 'Qui a changé de poste ?',
+    question: 'Quels dirigeants ont changé de poste\u00a0?',
+    courte: 'Qui a changé de poste\u00a0?',
     etapes: [
-      { texte: 'Relit vos notes d’appel', court: 'Relit vos notes', source: 'documents', releve: '6 pages', nombre: 6 },
-      { texte: 'Cherche les nominations récentes', court: 'Cherche les nominations', source: 'web', releve: '11 résultats', nombre: 11 },
-      { texte: 'Recoupe avec le CRM', court: 'Recoupe avec le CRM', source: 'crm', releve: '4 fiches', nombre: 4 },
-      { texte: 'Écarte 3 doublons', court: 'Écarte 3 doublons', source: null, releve: '', nombre: 0 },
+      { texte: 'Relit vos notes d’appel', court: 'Relit vos notes', source: 'documents' },
+      { texte: 'Cherche les nominations', court: 'Cherche sur le web', source: 'web' },
+      { texte: 'Recoupe avec le CRM', court: 'Recoupe le CRM', source: 'crm' },
+      { texte: 'Écarte 3\u00a0doublons', court: 'Écarte 3\u00a0doublons', source: null },
     ],
     resultats: [
       { l: 68, raison: 'Nouveau poste' },
@@ -149,10 +150,11 @@ const demandes: Demande[] = [
 ];
 
 const demande = demandes[0];
-const releveDe = (id: IdSource) => demande.etapes.find((etape) => etape.source === id)?.releve ?? '';
-/* Le compteur « Sources consultées » au chargement : ce que les trois sources
-   de la première demande ont rendu. */
-const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre, 0);
+/* Le compteur « Sources consultées » au chargement : une par sortie. */
+const CONSULTEES = demande.etapes.filter((etape) => etape.source !== null).length;
+
+const description =
+  'L’équipe pose une question en langage naturel. Un agent décide où chercher\u00a0: il interroge le web, les documents et le CRM, raisonne étape par étape, recoupe ce qu’il trouve, puis compose une réponse où chaque résultat porte sa source. Rien ne part sans vous\u00a0: la réponse reste à valider par un humain.';
 ---
 
 <div
@@ -160,18 +162,20 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   data-scene-agents
   data-demandes={JSON.stringify(demandes)}
   role="img"
-  aria-label="L'équipe pose une question en langage naturel. Un agent décide où chercher : il interroge le web, les documents et le CRM, en ramène des extraits, puis compose une réponse en trois résultats, chacun avec sa source, qu'un humain valide."
+  aria-label={description}
 >
   <div class="sm-plan" aria-hidden="true">
+    {/* Deux compteurs sur le grand plan ; le plan étroit ne garde que celui
+       de la promesse. */}
     <div class="sm-puces">
-      <span class="sm-puce">
+      <span class="sm-puce sm-large">
         <svg viewBox="0 0 16 16"><path d="M7 2.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zM10.4 10.4l3.1 3.1" /></svg>
-        <span class="sm-puce__nom"><span class="sm-large">Sources consultées</span><span class="sm-etroit">Sources</span></span>
+        <span class="sm-puce__nom">Sources consultées</span>
         <b data-consultees>{CONSULTEES}</b>
       </span>
       <span class="sm-puce sm-puce--peche">
         <svg viewBox="0 0 16 16"><path d="M4 2.6l8.6 4.9-3.7 1.1-1.3 3.8z" /></svg>
-        <span class="sm-puce__nom"><span class="sm-large">Recherches à la main</span><span class="sm-etroit">À la main</span></span>
+        <span class="sm-puce__nom">Recherches à la main</span>
         <b data-zero>0</b>
       </span>
     </div>
@@ -222,7 +226,7 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
       <span class="sm-port port--question est-actif" data-sm-port="question"></span>
     </div>
 
-    {/* L'agent : un disque, son orbite, et les extraits qu'il tient. */}
+    {/* L'agent : un disque à son nom, son orbite, et les extraits qu'il tient. */}
     <div class="sm-poste poste--agent">
       <div class="coeur" data-coeur data-etat="actif">
         <i class="coeur__orbite" data-orbite>
@@ -232,41 +236,39 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
         </i>
         <span class="coeur__disque" data-disque>
           <svg viewBox="0 0 16 16"><path d="M8 2.4l1.4 4.2 4.2 1.4-4.2 1.4L8 13.6 6.6 9.4 2.4 8l4.2-1.4z" /></svg>
-          <b class="sm-large">Agent</b>
+          <b>Agent</b>
         </span>
       </div>
       <span class="sm-port port--coeur" data-sm-port="coeur"></span>
     </div>
 
-    {/* Son fil de pensée : les étapes qu'il se donne, une à une. */}
+    {/* Son fil de pensée : les étapes qu'il se donne, une à une. Pas de titre :
+       les coches disent ce que c'est. */}
     <div class="pensee" data-pensee>
-      <div class="pensee__titre"><span class="sm-large">Raisonnement</span><span class="sm-etroit">Agent</span></div>
-      <div class="pensee__etapes">
-        {demande.etapes.map((etape) => (
-          <div class="etape est-fait" data-etape>
-            <i class="etape__marque">
-              <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-            </i>
-            <span class="sm-large" data-c="texte">{etape.texte}</span>
-            <span class="sm-etroit" data-c="court">{etape.court}</span>
-          </div>
-        ))}
-      </div>
+      {demande.etapes.map((etape) => (
+        <div class="etape est-fait" data-etape>
+          <i class="etape__marque">
+            <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+          </i>
+          <span class="sm-large" data-c="texte">{etape.texte}</span>
+          <span class="sm-etroit" data-c="court">{etape.court}</span>
+        </div>
+      ))}
     </div>
 
-    {/* Les sources, autour de lui. */}
+    {/* Les sources, autour de lui : un nom, et ce qu'elles contiennent en
+       traits. La ligne trouvée est celle qui passe en pêche. */}
     {sources.map((source) => (
       <div class:list={['sm-poste', 'source', `source--${source.id}`, 'est-consultee']} data-source={source.id}>
         <div class="sm-fenetre tuile">
           <div class="tuile__tete">
             <span class="sm-fenetre__icone"><svg viewBox="0 0 16 16"><path d={source.trace} /></svg></span>
-            <span class="tuile__nom"><span class="sm-large">{source.nom}</span><span class="sm-etroit">{source.court}</span></span>
-            <svg class="tuile__coche" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
+            <span class="tuile__nom">{source.nom}</span>
+            <svg class="tuile__coche sm-large" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
           </div>
           <div class="tuile__corps">
             <i class="sm-barre tuile__ligne sm-large"></i>
             <i class="sm-barre tuile__ligne tuile__extrait" data-extrait></i>
-            <span class="tuile__releve sm-large" data-c="releve">{releveDe(source.id)}</span>
             <i class="tuile__balayage" data-balayage></i>
           </div>
         </div>
@@ -274,7 +276,8 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
       </div>
     ))}
 
-    {/* La réponse : trois résultats sourcés, et la main laissée à l'humain. */}
+    {/* La réponse : des résultats sourcés, et la main laissée à l'humain. Le
+       troisième résultat ne tient que sur le grand plan. */}
     <div class="sm-poste poste--reponse">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
@@ -284,13 +287,17 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
           <span class="sm-fenetre__nom">Réponse</span>
           <span class="sm-etat" data-etat="fait" data-etat-de="reponse">
             <span class="sm-etat__avant">En attente</span>
-            <span class="sm-etat__apres">3 résultats</span>
+            <span class="sm-etat__apres">Prête</span>
           </span>
         </div>
         <div class="sm-corps">
           <div class="sm-rangees">
             {demande.resultats.map((resultat, index) => (
-              <div class="sm-rangee resultat est-rempli" data-resultat style={`--l: ${resultat.l}%`}>
+              <div
+                class:list={['sm-rangee', 'resultat', 'est-rempli', { 'sm-large': index === 2 }]}
+                data-resultat
+                style={`--l: ${resultat.l}%`}
+              >
                 <i class="resultat__logo"></i>
                 <i class="sm-barre"></i>
                 <span class="resultat__raison" data-c="raison">{resultat.raison}</span>
@@ -331,22 +338,27 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
      tuiles de source et la carte de réponse. Longueurs en pixels du plan.
 
      Tout se rapporte au centre de l'agent (`--cx`, `--cy`) : c'est le moyeu
-     de l'étoile, là où les cinq fils se nouent. */
+     de l'étoile, là où les cinq fils se nouent.
+
+     Aucune taille de texte n'est écrite ici en pixels : chaque texte prend
+     l'une des quatre du socle. `--sm-fort` pour les mots qui racontent (la
+     question, l'agent, ses sources, ses étapes, les raisons, la validation),
+     `--sm-texte` pour le bouton. Graisses : 500 et 600. */
   [data-scene-agents] {
     --sm-lumiere: 50% 46%;
   }
 
   .sm-plan {
     --cx: 380px;
-    --cy: 212px;
-    --coeur: 86px;
+    --cy: 208px;
+    --coeur: 88px;
     --orbite: 14px;
   }
 
   .poste--question {
     top: 60px;
-    left: 178px;
-    width: 404px;
+    left: 168px;
+    width: 424px;
   }
 
   .poste--agent {
@@ -357,22 +369,21 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   }
 
   .source {
-    width: 164px;
+    width: 168px;
   }
 
-  .source--web { top: 124px; left: 24px; }
-  .source--documents { top: 124px; left: 572px; }
-  .source--crm { top: 258px; left: 572px; }
+  .source--web { top: 120px; left: 24px; }
+  .source--documents { top: 120px; left: 568px; }
+  .source--crm { top: 248px; left: 568px; }
 
   .pensee {
-    top: 250px;
-    left: 30px;
-    width: 270px;
+    top: 224px;
+    left: 24px;
   }
 
   .poste--reponse {
     --sm-cols: 16px minmax(0, 1fr) auto 18px;
-    top: 368px;
+    top: 354px;
     left: 182px;
     width: 396px;
   }
@@ -398,8 +409,8 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
-    height: 40px;
-    padding: 0 7px 0 8px;
+    height: 42px;
+    padding: 0 8px;
     border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--color-night-deep) 90%, var(--color-ink));
@@ -434,16 +445,18 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     align-items: center;
     min-width: 0;
     color: var(--color-ink);
-    font-size: 14px;
+    font-size: var(--sm-fort);
     font-weight: 500;
     letter-spacing: -0.005em;
     white-space: nowrap;
   }
 
+  /* L'invite se lit au repos : elle garde un vrai contraste (6,4:1). Le gris
+     le plus pâle tombait à 4:1 sur ce champ. */
   .question__invite {
     display: none;
-    color: var(--color-ink-faint);
-    font-weight: 400;
+    color: var(--color-ink-low);
+    font-weight: 500;
   }
 
   /* Le curseur n'existe que pendant la frappe. */
@@ -506,6 +519,8 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     height: 100%;
   }
 
+  /* La couleur du nom bascule d'un coup, à mi-chemin du fond : en fondu, le
+     texte traversait un instant où il ne se détachait plus du disque. */
   .coeur__disque {
     position: absolute;
     inset: 0;
@@ -519,8 +534,8 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-peche) 0%, transparent);
     color: var(--color-peche);
     transition:
-      background-color 360ms,
-      color 360ms,
+      background-color 300ms,
+      color 1ms 120ms,
       box-shadow 520ms var(--ease-out-quint);
   }
 
@@ -533,8 +548,8 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   }
 
   .coeur__disque b {
-    font-size: 12.5px;
-    font-weight: 700;
+    font-size: var(--sm-fort);
+    font-weight: 600;
     letter-spacing: -0.005em;
     line-height: 1;
   }
@@ -587,47 +602,30 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   }
 
   /* ── Le fil de pensée ──
-     Du texte libre à côté de l'agent, sans cadre : ce n'est pas un outil,
-     c'est ce qu'il se dit. Une étape apparaît quand il s'y met (`est-en-
-     cours`), et garde sa coche quand elle est faite (`est-fait`). */
+     Du texte libre à côté de l'agent, sans cadre ni titre : ce n'est pas un
+     outil, c'est ce qu'il se dit. Une étape n'existe pas tant qu'il ne s'y
+     est pas mis : elle est absente, pas en demi-teinte (`visibility`, et non
+     une opacité). Elle s'écrit quand il s'y met (`est-en-cours`, le script la
+     dévoile de gauche à droite) et garde sa coche quand elle est faite
+     (`est-fait`). */
   .pensee {
     position: absolute;
     z-index: 2;
-  }
-
-  .pensee__titre {
-    margin-bottom: 7px;
-    color: var(--color-ink-faint);
-    font-size: 8.5px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    transition: opacity 260ms;
-  }
-
-  /* Tant qu'il n'a rien entrepris, le titre n'a rien à annoncer. */
-  .pensee:not(:has(.etape:is(.est-en-cours, .est-fait))) .pensee__titre {
-    opacity: 0;
-  }
-
-  .pensee__etapes {
     display: grid;
-    gap: 6px;
+    gap: 7px;
   }
 
   .etape {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     color: var(--color-ink);
-    font-size: 12.5px;
+    font-size: var(--sm-fort);
     font-weight: 500;
-    line-height: 16px;
+    line-height: 20px;
     white-space: nowrap;
-    opacity: 0;
-    transition:
-      opacity 260ms,
-      color 320ms;
+    visibility: hidden;
+    transition: color 240ms;
   }
 
   .etape__marque {
@@ -635,24 +633,22 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border: 1.5px solid var(--color-peche);
     border-radius: var(--radius-full);
-    transition:
-      background-color 260ms,
-      border-color 260ms;
+    transition: background-color 220ms;
   }
 
   .etape__marque svg {
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     stroke: var(--color-night);
     stroke-width: 2.4;
     opacity: 0;
     scale: 0.4;
     transition:
-      opacity 180ms,
+      opacity 160ms,
       scale 320ms var(--ease-out-expo);
   }
 
@@ -660,18 +656,19 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   .etape + .etape .etape__marque::before {
     content: '';
     position: absolute;
-    bottom: calc(100% + 2.5px);
+    bottom: calc(100% + 3.5px);
     left: calc(50% - 0.5px);
     width: 1px;
-    height: 6px;
+    height: 7px;
     background: color-mix(in srgb, var(--color-peche) 55%, transparent);
   }
 
-  .etape.est-en-cours,
-  .etape.est-fait {
-    opacity: 1;
+  .etape:is(.est-en-cours, .est-fait) {
+    visibility: visible;
   }
 
+  /* Faite, l'étape recule d'un cran (10:1 sur le fond) : l'œil reste sur
+     celle qui est en cours, puis sur la réponse. */
   .etape.est-fait {
     color: var(--color-ink-mid);
   }
@@ -686,12 +683,13 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   }
 
   /* ── Une source ──
-     Une petite fenêtre du socle, sans barre : son icône, son nom, deux lignes
-     de contenu. Sondée (`est-sondee`), elle s'éclaire et un trait la balaie ;
-     consultée (`est-consultee`), sa ligne trouvée reste surlignée, son relevé
-     s'affiche et sa coche se dessine. */
+     Une petite fenêtre du socle, sans barre : son icône, son nom, et son
+     contenu en deux traits. Sondée (`est-sondee`), elle s'éclaire et un trait
+     la balaie ; consultée (`est-consultee`), la ligne trouvée reste en pêche
+     et sa coche se dessine. Ce qu'elle a rendu (« 8 résultats ») ne tenait
+     pas à une taille lisible : c'est le compteur du haut qui le dit. */
   .tuile {
-    padding: 9px 10px 10px;
+    padding: 10px 11px 12px;
     transition:
       border-color 300ms,
       background-color 300ms;
@@ -701,7 +699,7 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 18px;
+    height: 20px;
   }
 
   .tuile .sm-fenetre__icone {
@@ -716,14 +714,14 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
 
   .tuile__nom {
     color: var(--color-ink);
-    font-size: 12px;
+    font-size: var(--sm-fort);
     font-weight: 600;
     white-space: nowrap;
   }
 
   .tuile__coche {
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
     margin-left: auto;
     stroke: var(--color-peche);
     stroke-width: 2;
@@ -737,33 +735,18 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   .tuile__corps {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: 8px;
-    row-gap: 7px;
-    margin-top: 10px;
+    gap: 7px;
+    margin-top: 11px;
   }
 
   .tuile__ligne {
-    grid-column: 1 / -1;
-    width: 78%;
+    width: 82%;
     background: color-mix(in srgb, var(--color-ink) 16%, transparent);
     transition: background-color 260ms;
   }
 
   .tuile__extrait {
-    grid-column: 1;
-    width: 100%;
-  }
-
-  .tuile__releve {
-    color: var(--color-ink-low);
-    font-size: 9.5px;
-    font-weight: 500;
-    line-height: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 220ms;
+    width: 58%;
   }
 
   /* Le trait qui parcourt la source, de gauche à droite. */
@@ -799,10 +782,6 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     background: var(--color-peche);
   }
 
-  .source.est-consultee .tuile__releve {
-    opacity: 1;
-  }
-
   .source.est-consultee .tuile__coche {
     opacity: 1;
     scale: 1;
@@ -810,24 +789,21 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
 
   /* ── La réponse ──
      Une rangée du socle par résultat : un logo sans marque, le nom en barre,
-     la raison de l'approcher, et la pastille de la source qui l'a donnée. */
+     la raison de l'approcher (le seul texte, donc lisible), et la pastille de
+     la source qui l'a donnée. */
   .resultat__logo {
     width: 16px;
     height: 16px;
     border-radius: 5px;
     background: color-mix(in srgb, var(--color-ink) 22%, transparent);
     opacity: 0;
-    transition: opacity 220ms;
+    transition: opacity 200ms;
   }
 
   .resultat__raison {
-    padding: 2px 8px;
-    border: 1px solid color-mix(in srgb, var(--color-peche) 55%, transparent);
-    border-radius: var(--radius-full);
-    color: var(--color-peche);
-    font-size: 10.5px;
+    color: var(--color-ink);
+    font-size: var(--sm-fort);
     font-weight: 600;
-    line-height: 13px;
   }
 
   .pastille {
@@ -840,7 +816,7 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     opacity: 0;
     scale: 0.5;
     transition:
-      opacity 220ms,
+      opacity 200ms,
       scale 360ms var(--ease-out-expo);
   }
 
@@ -861,61 +837,61 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   }
 
   /* La ligne laissée à l'humain : rien n'est envoyé tant qu'il n'a pas
-     validé. Elle ne s'éclaire qu'une fois la réponse prête. */
+     validé. Tant que la réponse n'est pas prête, c'est un emplacement vide,
+     en pointillé, comme une rangée du socle : ses mots sont absents, pas
+     estompés (ils l'étaient à 45 %, soit 2,5:1). Prête, ils se lisent en
+     entier : « À valider par vous » en blanc, et le bouton plein pêche, texte
+     en nuit. */
   .validation {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 8px;
-    height: 30px;
-    margin-top: 7px;
-    padding: 0 4px 0 9px;
+    gap: 9px;
+    height: 34px;
+    margin-top: 8px;
+    padding: 0 5px 0 11px;
     border: 1px dashed color-mix(in srgb, var(--color-ink) 16%, transparent);
     border-radius: var(--radius-full);
-    color: var(--color-ink-low);
-    font-size: 11px;
+    color: var(--color-ink);
+    font-size: var(--sm-fort);
     font-weight: 600;
     white-space: nowrap;
-    opacity: 0.45;
     transition:
-      opacity 320ms,
-      border-color 320ms,
-      color 320ms,
-      background-color 320ms;
+      border-color 260ms,
+      background-color 260ms;
+  }
+
+  .validation > * {
+    visibility: hidden;
   }
 
   .validation svg {
-    width: 14px;
-    height: 14px;
-    stroke: currentColor;
+    width: 15px;
+    height: 15px;
+    stroke: var(--color-peche);
     stroke-width: 1.5;
   }
 
   .validation__bouton {
     display: grid;
     place-items: center;
-    height: 22px;
-    padding-inline: 11px;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent);
+    height: 24px;
+    padding-inline: 13px;
     border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
-    font-size: 10px;
+    background: var(--color-peche);
+    color: var(--color-night);
+    font-size: var(--sm-texte);
     font-weight: 600;
-    transition:
-      border-color 320ms,
-      color 320ms;
   }
 
   .validation.est-attendue {
+    border-style: solid;
     border-color: var(--color-peche);
-    background: color-mix(in srgb, var(--color-peche) 9%, transparent);
-    color: var(--color-peche);
-    opacity: 1;
+    background: color-mix(in srgb, var(--color-peche) 12%, transparent);
   }
 
-  .validation.est-attendue .validation__bouton {
-    border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
-    color: var(--color-ink);
+  .validation.est-attendue > * {
+    visibility: visible;
   }
 
   /* ── Ce qui voyage ──
@@ -958,43 +934,53 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     width: 62%;
   }
 
-  /* ── Le plan étroit ──
-     La même étoile, resserrée : le disque perd son nom, les tuiles leur
-     relevé et une ligne, le fil de pensée ne montre que l'étape du moment
-     (en version courte), et la réponse garde ses trois résultats. */
+  /* ── Le plan étroit (360 × 320) ──
+     La même étoile, à taille de téléphone : un pixel du plan y vaut un pixel
+     d'écran, donc les textes gardent leurs tailles et ce sont les pièces qui
+     cèdent. Une seule pastille en haut, celle de la promesse. Les tuiles
+     perdent leur coche et une ligne. Le fil de pensée ne montre que l'étape
+     du moment, en version courte. La réponse garde deux résultats sur trois,
+     et la ligne de validation en entier : la hauteur gagnée (320 au lieu de
+     270) va au texte. */
   @container sm (max-width: 519.98px) {
+    .sm-puces {
+      justify-content: flex-end;
+    }
+
     .sm-plan {
       --cx: 180px;
-      --cy: 91px;
-      --coeur: 36px;
+      --cy: 122px;
+      --coeur: 54px;
       --orbite: 6px;
     }
 
     .poste--question {
-      top: 35px;
-      left: 68px;
-      width: 224px;
+      top: 38px;
+      left: 40px;
+      width: 280px;
     }
 
     .source {
-      width: 82px;
+      width: 102px;
     }
 
-    .source--web { top: 63px; left: 10px; }
-    .source--documents { top: 63px; left: 268px; }
-    .source--crm { top: 101px; left: 268px; }
+    .source--web { top: 80px; left: 10px; }
+    .source--documents { top: 80px; left: 248px; }
+    .source--crm { top: 130px; left: 248px; }
 
+    /* Sous la tuile du web, à gauche du disque et assez bas pour que l'étape
+       la plus longue passe sous l'orbite sans la toucher. */
     .pensee {
-      top: 107px;
-      left: 12px;
-      width: 150px;
+      top: 148px;
+      left: 10px;
+      gap: 0;
     }
 
     .poste--reponse {
-      --sm-cols: 11px minmax(0, 1fr) auto 12px;
-      top: 140px;
-      left: 56px;
-      width: 248px;
+      --sm-cols: 12px minmax(0, 1fr) auto 14px;
+      top: 188px;
+      left: 30px;
+      width: 300px;
     }
 
     .port--question { bottom: -5px; left: calc(50% - 4.5px); }
@@ -1004,34 +990,40 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     .port--coeur { top: calc(50% - 4.5px); left: calc(50% - 4.5px); }
 
     .question {
-      gap: 6px;
-      height: 22px;
-      padding: 0 3px 0 4px;
+      gap: 7px;
+      height: 30px;
+      padding: 0 5px;
     }
 
     .question__qui,
     .question__envoi {
-      width: 15px;
-      height: 15px;
+      width: 20px;
+      height: 20px;
     }
 
     .question__qui svg,
     .question__envoi svg {
-      width: 9px;
-      height: 9px;
-    }
-
-    .question__texte {
-      font-size: 10px;
-    }
-
-    .question__curseur {
+      width: 11px;
       height: 11px;
     }
 
+    .question__curseur {
+      height: 14px;
+    }
+
+    .coeur__disque {
+      gap: 1px;
+    }
+
     .coeur__disque svg {
-      width: 17px;
-      height: 17px;
+      width: 15px;
+      height: 15px;
+    }
+
+    /* Le nom reste sur le disque : sur un téléphone c'est lui qui dit qui
+       cherche. Il passe à la taille du texte pour tenir dans le rond. */
+    .coeur__disque b {
+      font-size: var(--sm-texte);
     }
 
     .coeur[data-etat='actif'] .coeur__disque {
@@ -1041,42 +1033,30 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     }
 
     .satellite {
-      --taille: 7px;
+      --taille: 8px;
       border-width: 1.5px;
     }
 
-    .pensee__titre {
-      margin-bottom: 3px;
-      font-size: 7px;
-    }
-
     /* Une seule ligne : les étapes s'empilent au même endroit, et celle
-       qu'une autre a suivie s'efface. */
-    .pensee__etapes {
-      gap: 0;
-    }
-
+       qu'une autre a suivie disparaît d'un coup. */
     .etape {
       grid-area: 1 / 1;
-      gap: 5px;
-      font-size: 9.5px;
-      line-height: 13px;
+      gap: 6px;
+      line-height: 18px;
     }
 
     .etape:has(~ .etape:is(.est-en-cours, .est-fait)) {
-      opacity: 0;
-      transition: none;
+      visibility: hidden;
     }
 
     .etape__marque {
-      width: 11px;
-      height: 11px;
-      border-width: 1px;
+      width: 14px;
+      height: 14px;
     }
 
     .etape__marque svg {
-      width: 7px;
-      height: 7px;
+      width: 9px;
+      height: 9px;
     }
 
     .etape + .etape .etape__marque::before {
@@ -1084,36 +1064,26 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     }
 
     .tuile {
-      padding: 5px 6px 6px;
+      padding: 6px 7px 8px;
     }
 
     .tuile__tete {
-      gap: 5px;
-      height: 13px;
+      gap: 6px;
+      height: 16px;
     }
 
-    .tuile .sm-fenetre__icone {
-      width: 13px;
-      height: 13px;
-      border-radius: 4px;
-    }
-
-    .tuile .sm-fenetre__icone svg {
-      width: 9px;
-      height: 9px;
-    }
-
+    /* Le nom entier (« Documents ») tient à la taille du texte ; abrégé, il
+       se lisait moins vite. */
     .tuile__nom {
-      font-size: 9.5px;
-    }
-
-    .tuile__coche {
-      width: 9px;
-      height: 9px;
+      font-size: var(--sm-texte);
     }
 
     .tuile__corps {
-      margin-top: 5px;
+      margin-top: 6px;
+    }
+
+    .tuile__extrait {
+      width: 64%;
     }
 
     .tuile__balayage {
@@ -1123,52 +1093,45 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     }
 
     .poste--reponse .sm-corps {
-      padding: 4px 5px 5px;
+      padding: 5px;
     }
 
     .resultat {
-      height: 19px;
+      gap: 6px;
+      padding-inline: 6px;
     }
 
     .resultat__logo {
-      width: 11px;
-      height: 11px;
-      border-radius: 3px;
-    }
-
-    .resultat__raison {
-      padding: 1px 5px;
-      font-size: 8.5px;
-      line-height: 11px;
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
     }
 
     .pastille {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
     }
 
     .pastille svg {
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
     }
 
     .validation {
-      gap: 5px;
-      height: 18px;
-      margin-top: 3px;
-      padding: 0 2px 0 6px;
-      font-size: 8.5px;
+      gap: 6px;
+      height: 28px;
+      margin-top: 4px;
+      padding: 0 4px 0 8px;
     }
 
     .validation svg {
-      width: 10px;
-      height: 10px;
+      width: 13px;
+      height: 13px;
     }
 
     .validation__bouton {
-      height: 14px;
-      padding-inline: 7px;
-      font-size: 7.5px;
+      height: 20px;
+      padding-inline: 10px;
     }
 
     .extrait {
@@ -1182,6 +1145,15 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
 
     .extrait i {
       height: 1.5px;
+    }
+  }
+
+  /* En mouvement réduit la scène est une image fixe : aucune transition, y
+     compris celles écrites ici, plus spécifiques que la règle du socle. */
+  @media (prefers-reduced-motion: reduce) {
+    .sm-plan *,
+    .sm-plan *::before {
+      transition: none !important;
     }
   }
 </style>
@@ -1202,8 +1174,6 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     texte: string;
     court: string;
     source: IdSource | null;
-    releve: string;
-    nombre: number;
   }
 
   interface Resultat {
@@ -1237,8 +1207,6 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     estObjet(valeur) &&
     typeof valeur.texte === 'string' &&
     typeof valeur.court === 'string' &&
-    typeof valeur.releve === 'string' &&
-    typeof valeur.nombre === 'number' &&
     (valeur.source === null || (typeof valeur.source === 'string' && SOURCES.includes(valeur.source)));
 
   const estResultat = (valeur: unknown): valeur is Resultat =>
@@ -1266,7 +1234,6 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
   /* La bande, resserrée en tiret à l'entrée d'un port (même taille que celle
      du socle). */
   const tiret = (p: Pt): Cadre => ({ x: p.x - 8, y: p.y - 3, w: 16, h: 6 });
-  const entier = (n: number) => String(Math.round(n));
 
   monterScenes('[data-scene-agents]', (s) => {
     const question = s.un('[data-question]');
@@ -1298,8 +1265,8 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
       if (cible) cible.textContent = texte;
     };
 
-    /* L'état de la scène. Le compteur repart de zéro à chaque question : à la
-       fin, il vaut ce que ses trois sources ont rendu. */
+    /* L'état de la scène. Le compteur repart de zéro à chaque question et
+       monte d'un cran par source consultée : à la fin, il vaut trois. */
     let rang = 0;
     let consultees = 0;
     let tourne: Animation | null = null;
@@ -1321,17 +1288,14 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
       ecrireChamp(question, 'courte', demande?.courte ?? '');
     };
 
-    /* Les textes de la demande : ses étapes, le relevé de chaque source, ses
-       résultats. Rien n'est encore montré. */
+    /* Les textes de la demande : ses étapes et ses résultats. Rien n'est
+       encore montré. */
     const charger = (demande: Demande) => {
       demande.etapes.forEach((etape, i) => {
         const ligne = etapes[i];
-        if (ligne) {
-          ecrireChamp(ligne, 'texte', etape.texte);
-          ecrireChamp(ligne, 'court', etape.court);
-        }
-        const tuile = etape.source ? tuiles.get(etape.source) : undefined;
-        if (tuile) ecrireChamp(tuile, 'releve', etape.releve);
+        if (!ligne) return;
+        ecrireChamp(ligne, 'texte', etape.texte);
+        ecrireChamp(ligne, 'court', etape.court);
       });
       demande.resultats.forEach((resultat, i) => {
         const rangee = resultats[i];
@@ -1390,7 +1354,7 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
       s.allumer('question', true);
       s.allumer('reponse', true);
       s.racine.classList.add('est-abouti');
-      consultees = demande.etapes.reduce((somme, etape) => somme + etape.nombre, 0);
+      consultees = demande.etapes.filter((etape) => etape.source !== null).length;
       elConsultees.textContent = String(consultees);
     };
 
@@ -1489,13 +1453,15 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
     };
 
     /* Un extrait devient un résultat : il quitte l'orbite, descend le fil et
-       se pose dans la réponse. */
+       se pose dans la réponse. Le plan étroit ne montre que deux résultats :
+       le troisième extrait quitte l'orbite sans rien poser. */
     const composer = async (i: number) => {
       const rangee = resultats[i];
       const grain = grainsReponse[i];
       const bande = bandesReponse[i];
       if (!rangee || !grain || !bande) return;
       satellites[i]?.classList.remove('est-la');
+      if (s.affiches([rangee]).length === 0) return;
       s.enMarge(s.courir(grain, 'reponse', { duree: 340 }));
       await s.attendre(250);
       s.port('reponse').classList.add('est-actif');
@@ -1537,17 +1503,26 @@ const CONSULTEES = demande.etapes.reduce((somme, etape) => somme + etape.nombre,
         const etape = demande.etapes[i];
         const ligne = etapes[i];
         if (!etape || !ligne) continue;
+        /* L'étape s'écrit : dévoilée de gauche à droite, à pleine encre du
+           premier au dernier instant (pas de fondu). La marge du haut laisse
+           passer le trait qui la relie à la précédente. */
         ligne.classList.add('est-en-cours');
-        s.jouer(ligne, [{ transform: 'translateY(7px)' }, { transform: 'none' }], { duration: 380, easing: EXPO });
-        await s.attendre(sorties === 0 ? 300 : 160);
+        s.jouer(
+          ligne,
+          [
+            { clipPath: 'inset(-12px 100% -4px -4px)', transform: 'translateY(6px)' },
+            { clipPath: 'inset(-12px -4px -4px -4px)', transform: 'none' },
+          ],
+          { duration: 420, easing: EXPO },
+        );
+        await s.attendre(sorties === 0 ? 340 : 200);
 
         if (etape.source) {
           await chercher(etape.source, sorties === 0 ? 1 : 0.7);
           satellites[sorties]?.classList.add('est-la');
           sorties += 1;
-          const avant = consultees;
-          consultees += etape.nombre;
-          s.enMarge(s.compter(elConsultees, avant, consultees, { format: entier, pas: 6, intervalle: 32 }));
+          consultees += 1;
+          s.tictac(elConsultees, String(consultees));
         } else {
           await s.attendre(340);
           tressaillir();

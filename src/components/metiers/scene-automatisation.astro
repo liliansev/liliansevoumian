@@ -22,7 +22,7 @@
  *
  * Le fil de la boucle, un seul mouvement à la fois :
  *   1. une demande de réservation arrive ;
- *   2. un trait de lecture la descend : client, date, créneau ;
+ *   2. un trait de lecture la descend : le client, puis son créneau ;
  *   3. elle passe au paiement, l'acompte est encaissé ;
  *   4. l'agenda vise la bonne case, le créneau s'y pose ;
  *   5. la confirmation repart de l'agenda vers le message, et s'envoie ;
@@ -38,9 +38,18 @@
  *
  * Sur un téléphone (plan étroit), la silhouette se resserre encore : la
  * grille prend toute la largeur, et il n'y a plus ni fenêtres à côté ni fils.
- * La demande arrive en étiquette au-dessus de la grille, avec l'acompte en
- * coche ; le créneau en descend dans sa case ; la confirmation se pose
- * dessous. Le geste est le même, la visée aussi.
+ * Les trois petits outils deviennent trois pièces autour d'elle : la demande
+ * en étiquette de papier au-dessus, l'acompte en pastille dessous à gauche,
+ * la confirmation en bulle dessous à droite. Le geste est le même, la visée
+ * aussi.
+ *
+ * LE TEXTE. Quatre tailles, celles du socle, et peu de mots. Sont en
+ * `--sm-fort` ceux qui portent l'action : ce qui est réservé (le client, son
+ * créneau), ce qui est payé (l'acompte), ce qui est posé (le prénom dans sa
+ * case), ce qui est envoyé (la confirmation). Ce qui ne se lisait pas est
+ * sorti : le numéro de la demande, son sur-titre, l'heure répétée dans chaque
+ * créneau (la colonne des heures la donne déjà), le « Envoyé » doublé sous la
+ * bulle. Le nom de famille et le montant restent des traits.
  *
  * Sans script ou en mouvement réduit, la scène est une image fixe : l'état
  * final, acompte encaissé, créneau posé, confirmation envoyée.
@@ -50,7 +59,7 @@
  */
 import './scene-metier.css';
 
-const insecable = ' ';
+const insecable = '\u00a0';
 
 const JOURS = [
   { court: 'Lun', abrege: 'lun.', long: 'lundi' },
@@ -60,13 +69,8 @@ const JOURS = [
   { court: 'Ven', abrege: 'ven.', long: 'vendredi' },
 ];
 
-const HEURES = [
-  { debut: '9:00', fin: '10:00', court: `9${insecable}h` },
-  { debut: '11:00', fin: '12:00', court: `11${insecable}h` },
-  { debut: '14:00', fin: '15:00', court: `14${insecable}h` },
-  { debut: '16:00', fin: '17:00', court: `16${insecable}h` },
-  { debut: '18:00', fin: '19:00', court: `18${insecable}h` },
-];
+/* Cinq heures dans la journée, une par ligne de la grille. */
+const HEURES = [9, 11, 14, 16, 18].map((heure) => `${heure}${insecable}h`);
 
 /* Trois réservations par semaine, chacune à sa case : un jour (colonne) et
    une heure (ligne). `l` est la longueur de la barre qui tient lieu de nom de
@@ -92,8 +96,8 @@ const PRISES = [
 
 /* Trois semaines d'octobre qui tournent. Tous les libellés sont composés ici,
    une fois : le script les reçoit par `data-semaines` et n'a qu'à les écrire,
-   sans refaire aucune date. */
-const MOIS = 'oct.';
+   sans refaire aucune date. Le jour s'écrit comme dans l'en-tête de l'agenda
+   (« jeu. 15 » et « Jeu 15 ») : c'est ce que l'œil rapproche. */
 const semaines = [
   { numero: 42, lundi: 12 },
   { numero: 43, lundi: 19 },
@@ -108,12 +112,10 @@ const semaines = [
     return {
       prenom: client.prenom,
       l: client.l,
-      date: `${jour.abrege} ${quantieme} ${MOIS}`,
-      creneau: `${heure.debut} – ${heure.fin}`,
-      long: `${jour.long} ${quantieme} à ${heure.court}`,
-      court: `${jour.abrege} ${heure.court}`,
-      jour: `${jour.abrege} ${quantieme}`,
-      debut: heure.debut,
+      jour: `${jour.abrege}${insecable}${quantieme}`,
+      heure,
+      quand: `${jour.abrege}${insecable}${quantieme} · ${heure}`,
+      long: `${jour.long} ${quantieme} à${insecable}${heure}`,
     };
   }),
 }));
@@ -131,7 +133,6 @@ const cibles = new Map(CLIENTS.map((client, rang) => [caseDe(client.jour, client
    cases qui restent soient grandes. Aucune réservation n'y tombe. */
 const derniere = (ligne: number) => (ligne === HEURES.length - 1 ? 'sm-large' : '');
 
-const PREMIER_NUMERO = '0413';
 /* Le compteur « Réservations » au chargement : le mois a déjà commencé. */
 const RESERVATIONS = 12;
 ---
@@ -141,7 +142,7 @@ const RESERVATIONS = 12;
   data-scene-automatisation
   data-semaines={JSON.stringify(semaines)}
   role="img"
-  aria-label="Un client réserve un créneau en ligne : l’acompte est encaissé, le créneau se pose seul à la bonne case de l’agenda de l’équipe, et la confirmation part, sans aucune ressaisie."
+  aria-label="Un client réserve un créneau en ligne : l’acompte est encaissé, le créneau se pose seul à la bonne case de l’agenda de l’équipe, et la confirmation part, sans aucune ressaisie."
 >
   <div class="sm-plan" aria-hidden="true">
     <div class="sm-puces">
@@ -190,29 +191,19 @@ const RESERVATIONS = 12;
           </span>
         </div>
         <div class="demande est-arrivee" data-demande>
-          <div class="demande__vide"><span>Aucune demande</span></div>
+          <div class="demande__vide"></div>
           <div class="demande__feuille" data-feuille>
             <div class="sm-feuille">
-              <div class="sm-feuille__tete">
-                <b>Demande</b>
-                <span>N°&nbsp;<span data-c="numero">{PREMIER_NUMERO}</span></span>
+              <div class="sm-ligne est-parti" data-ligne>
+                <span>Client</span>
+                <span class="demande__client">
+                  <span data-c="prenom">{demande.prenom}</span>
+                  <i class="sm-barre" data-c="nom" style={`--l: ${demande.l}%`}></i>
+                </span>
               </div>
-              <div class="demande__lignes">
-                <div class="sm-ligne est-parti" data-ligne>
-                  <span>Client</span>
-                  <span class="demande__client">
-                    <span data-c="prenom">{demande.prenom}</span>
-                    <i class="sm-barre" data-c="nom" style={`--l: ${demande.l}%`}></i>
-                  </span>
-                </div>
-                <div class="sm-ligne est-parti" data-ligne>
-                  <span>Date</span>
-                  <span data-c="date">{demande.date}</span>
-                </div>
-                <div class="sm-ligne est-parti" data-ligne>
-                  <span>Créneau</span>
-                  <span data-c="creneau">{demande.creneau}</span>
-                </div>
+              <div class="sm-ligne est-parti" data-ligne>
+                <span>Créneau</span>
+                <span data-c="quand">{demande.quand}</span>
               </div>
               <span class="sm-balai" data-balai></span>
             </div>
@@ -263,11 +254,11 @@ const RESERVATIONS = 12;
         </div>
         <div class="sm-corps">
           <div class="bulle est-envoyee" data-bulle>
-            <span>Confirmé&nbsp;: <span data-c="long">{demande.long}</span></span>
-          </div>
-          <div class="envoi est-envoye" data-envoi>
-            <span>Envoyé</span>
-            <svg viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
+            <b>C’est confirmé</b>
+            <span class="bulle__quand">
+              <span data-c="long">{demande.long}</span>
+              <svg class="bulle__vu est-envoye" data-envoi viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
+            </span>
           </div>
         </div>
       </div>
@@ -304,7 +295,7 @@ const RESERVATIONS = 12;
             ))}
             {HEURES.map((heure, ligne) => (
               <>
-                <span class:list={['agenda__heure', derniere(ligne)]} data-heure>{heure.court}</span>
+                <span class:list={['agenda__heure', derniere(ligne)]} data-heure>{heure}</span>
                 {JOURS.map((_, colonne) => {
                   const index = caseDe(colonne, ligne);
                   const cible = cibles.get(index);
@@ -314,7 +305,7 @@ const RESERVATIONS = 12;
                       {cible && (
                         <span class:list={['creneau', cible.rang === 0 && 'est-pose est-neuf']} data-creneau={cible.rang}>
                           <b>{cible.prenom}</b>
-                          <span>{HEURES[cible.heure].debut}<span class="sm-large"> – {HEURES[cible.heure].fin}</span></span>
+                          <i class="sm-barre"></i>
                         </span>
                       )}
                     </span>
@@ -333,30 +324,27 @@ const RESERVATIONS = 12;
 
     {/* ── Le plan étroit ──
        Sur un téléphone, l'agenda prend toute la largeur : il n'y a plus de
-       place pour des fenêtres à côté, et il n'en faut pas. La demande devient
-       une étiquette de papier posée au-dessus de la grille, avec l'acompte en
-       coche ; la confirmation, une bulle posée dessous. */}
+       place pour des fenêtres à côté, et il n'en faut pas. Les trois outils
+       deviennent trois pièces posées autour de la grille : la demande en
+       étiquette de papier au-dessus, l'acompte en pastille dessous, la
+       confirmation en bulle à côté. */}
     <div class="etiquette est-arrivee sm-etroit" data-etiquette>
       <span class="etiquette__avatar"></span>
       <span class="morceau est-parti" data-morceau><b data-c="prenom">{demande.prenom}</b></span>
       <span class="morceau est-parti" data-morceau data-c="jour">{demande.jour}</span>
-      <span class="morceau est-parti" data-morceau data-c="debut">{demande.debut}</span>
-      <span class="acompte" data-acompte data-etat="fait">
-        <i></i>
-        <span>Acompte</span>
-        <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
-      </span>
+      <span class="morceau est-parti" data-morceau data-c="heure">{demande.heure}</span>
     </div>
 
-    <div class="confirmation est-ecrite est-envoyee sm-etroit" data-confirmation>
-      <span class="confirmation__envoi">
-        Envoyé
-        <svg viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
-      </span>
-      <span class="confirmation__bulle" data-bulle-etroite>
-        <span>Confirmé · <span data-c="court">{demande.court}</span></span>
-      </span>
-    </div>
+    <span class="acompte sm-etroit" data-acompte data-etat="fait">
+      <i></i>
+      <span>Acompte</span>
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" /><path d="M4.6 8.4l2.4 2.4 4.6-5.2" /></svg>
+    </span>
+
+    <span class="confirmation est-ecrite est-envoyee sm-etroit" data-confirmation>
+      <span>Confirmation envoyée</span>
+      <svg viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
+    </span>
 
     {/* Le nœud de chaque fil : c'est lui qui dit « relié ». */}
     {['paiement', 'agenda', 'message'].map((fil) => (
@@ -365,8 +353,7 @@ const RESERVATIONS = 12;
       </span>
     ))}
 
-    {/* Ce qui voyage : trois bandes (une par ligne de la demande) et un grain. */}
-    <span class="sm-bande"></span>
+    {/* Ce qui voyage : deux bandes (une par ligne de la demande) et un grain. */}
     <span class="sm-bande"></span>
     <span class="sm-bande"></span>
     <span class="sm-grain"></span>
@@ -377,7 +364,8 @@ const RESERVATIONS = 12;
   /* Ce que le socle ne sait pas : où sont les quatre postes et leurs ports, la
      demande et son emplacement vide, la jauge du paiement, la grille de
      l'agenda avec son viseur et ses créneaux, la bulle du message. Longueurs
-     en pixels du plan. */
+     en pixels du plan ; le texte, lui, ne prend que les tailles du socle
+     (`--sm-note`, `--sm-texte`, `--sm-fort`). */
 
   /* La lumière de fin se lève sur l'agenda, pas au milieu du panneau. */
   .sm {
@@ -386,43 +374,44 @@ const RESERVATIONS = 12;
 
   /* ── Les postes ──
      À droite l'agenda, sur toute la hauteur et plus de la moitié de la
-     largeur. À gauche les trois petits outils, en retrait. */
+     largeur. À gauche les trois petits outils, en retrait, de son bord haut à
+     son bord bas. */
   .poste--agenda {
     top: 62px;
-    left: 292px;
-    width: 444px;
+    left: 296px;
+    width: 440px;
   }
 
   .poste--reservation {
-    --sm-cols: 50px minmax(0, 1fr);
+    --sm-cols: 52px minmax(0, 1fr);
     top: 62px;
     left: 24px;
-    width: 220px;
+    width: 226px;
   }
 
   .poste--paiement {
-    --sm-cols: 56px minmax(0, 1fr) 12px;
-    top: 292px;
-    left: 44px;
-    width: 192px;
+    --sm-cols: auto minmax(0, 1fr) 12px;
+    top: 250px;
+    left: 42px;
+    width: 196px;
   }
 
   .poste--message {
-    top: 418px;
+    top: 414px;
     left: 24px;
-    width: 220px;
+    width: 226px;
   }
 
-  .port--reservation { bottom: -6px; left: 96px; }
-  .port--paiement { top: -6px; left: 90px; }
-  .port--paye { top: 50px; right: -6px; }
-  .port--agenda { top: 196px; left: -6px; }
-  .port--retour { top: 340px; left: -6px; }
-  .port--message { top: 52px; right: -6px; }
+  .port--reservation { bottom: -6px; left: 107px; }
+  .port--paiement { top: -6px; left: 89px; }
+  .port--paye { top: 56px; right: -6px; }
+  .port--agenda { top: 228px; left: -6px; }
+  .port--retour { top: 394px; left: -6px; }
+  .port--message { top: 67px; right: -6px; }
 
   /* ── La demande ──
      Au repos, un emplacement vide en pointillé. La demande arrive par-dessus,
-     sur sa feuille. */
+     sur sa feuille : deux lignes de formulaire, qui et quand. */
   .demande {
     position: relative;
     padding: 10px 10px 12px;
@@ -431,12 +420,8 @@ const RESERVATIONS = 12;
   .demande__vide {
     position: absolute;
     inset: 10px 10px 12px;
-    display: grid;
-    place-items: center;
     border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
     border-radius: 8px;
-    color: var(--color-ink-faint);
-    font-size: 10.5px;
     transition: opacity 260ms;
   }
 
@@ -453,18 +438,31 @@ const RESERVATIONS = 12;
     opacity: 1;
   }
 
-  .demande__lignes {
-    margin-top: 12px;
-    border-top: 1px solid var(--color-feuille-trait);
+  .demande .sm-feuille {
+    padding: 5px 10px;
   }
 
-  /* Un formulaire : le libellé en retrait, la valeur calée à gauche. */
-  .demande__lignes .sm-ligne > span:first-child {
-    color: var(--color-ink-faint);
-    font-size: 10px;
+  /* Le trait de lecture est le dernier enfant de la feuille : la dernière
+     ligne n'est donc pas `:last-child`, et gardait son filet. */
+  .demande .sm-ligne:last-of-type {
+    border-bottom: 0;
   }
 
-  .demande__lignes .sm-ligne > span:nth-of-type(n + 2) {
+  /* Un formulaire : le libellé en note, la valeur calée à gauche, en fort.
+     Sur la feuille claire le libellé prend le gris de la feuille ; sous le
+     surlignage pêche il passe en nuit, comme tout texte posé sur la pêche. */
+  .demande .sm-ligne > span:first-child {
+    color: var(--color-feuille-note);
+    font-size: var(--sm-note);
+    transition: color 200ms;
+  }
+
+  .demande .sm-ligne.est-lu > span:first-child {
+    color: var(--color-night);
+  }
+
+  .demande .sm-ligne > span:nth-of-type(n + 2) {
+    font-size: var(--sm-fort);
     font-weight: 600;
     text-align: left;
     white-space: nowrap;
@@ -476,8 +474,14 @@ const RESERVATIONS = 12;
     gap: 6px;
   }
 
-  /* ── La jauge du paiement ──
-     Elle se remplit pendant l'encaissement. Sa course est jouée par le
+  /* ── Le paiement ──
+     L'acompte est le mot qui compte : il passe en fort. Son montant reste un
+     trait. */
+  .poste--paiement .sm-ref {
+    font-size: var(--sm-fort);
+  }
+
+  /* La jauge se remplit pendant l'encaissement. Sa course est jouée par le
      script ; la classe ne fait que tenir l'état d'arrivée. */
   .jauge {
     overflow: hidden;
@@ -503,11 +507,12 @@ const RESERVATIONS = 12;
   /* ── L'agenda ──
      Une colonne d'heures, cinq colonnes de jours. Les cases prises sont
      grises ; un créneau réservé est pêche le temps de sa boucle (`est-neuf`),
-     puis il reste dans la semaine en plus discret. */
+     puis il reste dans la semaine en plus discret. Jours et heures sont en
+     note, dans le gris qui tient 4,5:1 sur le fond de la fenêtre. */
   .agenda {
     position: relative;
     display: grid;
-    grid-template-columns: 34px repeat(5, minmax(0, 1fr));
+    grid-template-columns: 30px repeat(5, minmax(0, 1fr));
     grid-template-rows: 20px;
     grid-auto-rows: 72px;
     gap: 5px;
@@ -516,7 +521,7 @@ const RESERVATIONS = 12;
   .agenda__jour {
     border-radius: var(--radius-full);
     color: var(--color-ink-low);
-    font-size: 10.5px;
+    font-size: var(--sm-note);
     font-weight: 500;
     line-height: 20px;
     text-align: center;
@@ -525,9 +530,9 @@ const RESERVATIONS = 12;
   }
 
   .agenda__heure {
-    padding: 6px 5px 0 0;
-    color: var(--color-ink-faint);
-    font-size: 9.5px;
+    padding: 8px 4px 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--sm-note);
     font-weight: 500;
     text-align: right;
     white-space: nowrap;
@@ -568,19 +573,19 @@ const RESERVATIONS = 12;
   .prise::after {
     content: '';
     position: absolute;
-    left: 9px;
+    left: 8px;
     height: 5px;
     border-radius: 3px;
     background: color-mix(in srgb, var(--color-ink) 22%, transparent);
   }
 
   .prise::before {
-    top: 11px;
+    top: 15px;
     width: var(--l);
   }
 
   .prise::after {
-    top: 22px;
+    top: 27px;
     width: 30%;
     background: color-mix(in srgb, var(--color-ink) 13%, transparent);
   }
@@ -601,13 +606,15 @@ const RESERVATIONS = 12;
     opacity: 1;
   }
 
+  /* Le créneau : un prénom, en fort, et un trait. Son heure n'y est plus
+     écrite : la ligne où il se pose la donne, et le viseur l'a montrée. */
   .creneau {
     position: absolute;
     inset: 0;
     display: grid;
     align-content: start;
-    gap: 4px;
-    padding: 10px 9px;
+    gap: 7px;
+    padding: 12px 8px 0;
     border-radius: 8px;
     background: color-mix(in srgb, var(--color-peche) 20%, var(--color-night-deep));
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-peche) 55%, transparent);
@@ -625,16 +632,13 @@ const RESERVATIONS = 12;
   }
 
   .creneau b {
-    overflow: hidden;
-    font-size: 11.5px;
+    font-size: var(--sm-fort);
     font-weight: 600;
-    text-overflow: ellipsis;
   }
 
-  .creneau > span {
-    font-size: 8.5px;
-    font-weight: 500;
-    opacity: 0.8;
+  .creneau .sm-barre {
+    --l: 58%;
+    transition: background-color 420ms;
   }
 
   .creneau.est-pose {
@@ -648,6 +652,10 @@ const RESERVATIONS = 12;
     color: var(--color-night);
   }
 
+  .creneau.est-neuf .sm-barre {
+    background: color-mix(in srgb, var(--color-night) 34%, transparent);
+  }
+
   .onde {
     position: absolute;
     border: 1.5px solid var(--color-peche);
@@ -658,8 +666,12 @@ const RESERVATIONS = 12;
 
   /* ── La bulle du message ──
      Vide, c'est son contour en pointillé ; envoyée, elle se remplit et son
-     texte apparaît. Calée à droite : c'est un message qu'on envoie. */
+     texte apparaît, puis la double coche. Calée à droite : c'est un message
+     qu'on envoie. « Envoyé » n'est plus écrit dessous : la barre de la
+     fenêtre le dit déjà. */
   .bulle {
+    display: grid;
+    gap: 3px;
     width: fit-content;
     max-width: 100%;
     margin-left: auto;
@@ -667,15 +679,27 @@ const RESERVATIONS = 12;
     border: 1px dashed color-mix(in srgb, var(--color-ink) 14%, transparent);
     border-radius: 12px 12px 4px 12px;
     color: var(--color-ink);
-    font-size: 11px;
-    font-weight: 500;
     white-space: nowrap;
     transition: border-color 220ms, background-color 220ms;
   }
 
-  .bulle > span {
+  .bulle > * {
     opacity: 0;
     transition: opacity 220ms;
+  }
+
+  .bulle b {
+    font-size: var(--sm-fort);
+    font-weight: 600;
+  }
+
+  .bulle__quand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-ink-mid);
+    font-size: var(--sm-texte);
+    font-weight: 500;
   }
 
   .bulle.est-envoyee {
@@ -684,52 +708,49 @@ const RESERVATIONS = 12;
     background: color-mix(in srgb, var(--color-peche) 14%, transparent);
   }
 
-  .bulle.est-envoyee > span {
+  .bulle.est-envoyee > * {
     opacity: 1;
   }
 
-  .envoi {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
-    margin-top: 6px;
-    color: var(--color-ink-low);
-    font-size: 9.5px;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 240ms;
-  }
-
-  .envoi svg {
-    width: 13px;
-    height: 13px;
+  .bulle__vu {
+    width: 14px;
+    height: 14px;
+    margin-left: auto;
     stroke: var(--color-peche);
     stroke-width: 1.6;
+    opacity: 0;
+    scale: 0.4;
+    transition: opacity 240ms, scale 320ms var(--ease-out-expo);
   }
 
-  .envoi.est-envoye {
+  .bulle__vu.est-envoye {
     opacity: 1;
+    scale: 1;
   }
 
-  /* ── Les deux pièces du plan étroit ──
-     Elles ne se voient que là (`sm-etroit`). L'étiquette est une petite
-     feuille : c'est la demande, dans la même matière que sur le grand plan. */
+  /* ── Les trois pièces du plan étroit ──
+     Elles ne se voient que là (`sm-etroit`) : la demande, l'acompte, la
+     confirmation. Les trois petites fenêtres du grand plan, réduites à ce
+     qu'elles disent. Leur texte est en fort : ce sont elles qu'on lit, la
+     grille se regarde. */
+
+  /* L'étiquette est une petite feuille : c'est la demande, dans la même
+     matière que sur le grand plan. */
   .etiquette {
     position: absolute;
-    top: 7px;
+    top: 8px;
     left: 10px;
     z-index: 4;
     display: flex;
     align-items: center;
     gap: 2px;
     height: 24px;
-    padding: 0 4px 0 5px;
+    padding: 0 3px 0 5px;
     border-radius: 8px;
     background: var(--color-feuille);
     box-shadow: 0 8px 18px -10px var(--color-night-deep);
     color: var(--color-night);
-    font-size: 10px;
+    font-size: var(--sm-fort);
     font-weight: 500;
     white-space: nowrap;
     opacity: 0;
@@ -752,9 +773,8 @@ const RESERVATIONS = 12;
   .morceau {
     position: relative;
     isolation: isolate;
-    padding: 3px 4px;
-    border-radius: 4px;
-    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 5px;
   }
 
   .morceau::before {
@@ -762,7 +782,7 @@ const RESERVATIONS = 12;
     position: absolute;
     inset: 0;
     z-index: -1;
-    border-radius: 4px;
+    border-radius: 5px;
     background: var(--color-peche);
     opacity: 0;
     transition: opacity 220ms;
@@ -777,52 +797,74 @@ const RESERVATIONS = 12;
   }
 
   .morceau b {
-    font-weight: 650;
+    font-weight: 600;
   }
 
-  /* L'acompte : tout le paiement tient dans cette coche. Elle se remplit
-     pendant l'encaissement (la course est jouée par le script). */
+  /* L'acompte : tout le paiement tient dans cette pastille. En attente, un
+     contour et un rond vide ; pendant l'encaissement, un filet pêche court
+     sous le mot (sa course est jouée par le script) ; encaissé, la pastille
+     passe en pêche, texte en nuit, et la coche se dessine. */
   .acompte {
-    position: relative;
+    position: absolute;
+    top: 286px;
+    left: 10px;
+    z-index: 4;
     isolation: isolate;
     overflow: hidden;
     display: inline-flex;
     align-items: center;
-    gap: 3px;
-    height: 16px;
-    margin-left: 3px;
-    padding: 0 5px 0 6px;
+    gap: 5px;
+    height: 26px;
+    padding: 0 8px 0 11px;
     border-radius: var(--radius-full);
-    box-shadow: inset 0 0 0 1px var(--color-feuille-barre);
-    color: color-mix(in srgb, var(--color-night) 62%, transparent);
-    font-size: 9px;
+    background: color-mix(in srgb, var(--color-night-deep) 86%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 18%, transparent);
+    color: var(--color-ink-mid);
+    font-size: var(--sm-fort);
     font-weight: 600;
-    line-height: 1;
-    transition: color 220ms, box-shadow 220ms;
+    white-space: nowrap;
+    transition: color 220ms, background-color 220ms, box-shadow 220ms;
   }
 
   .acompte i {
     position: absolute;
-    inset: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: -1;
+    height: 3px;
     background: var(--color-peche);
     transform: scaleX(0);
     transform-origin: 0 50%;
   }
 
   .acompte svg {
-    width: 9px;
-    height: 9px;
+    width: 13px;
+    height: 13px;
     stroke: currentColor;
-    stroke-width: 2.2;
-    opacity: 0;
-    scale: 0.4;
-    transition: opacity 200ms, scale 320ms var(--ease-out-expo);
+    stroke-width: 1.3;
   }
 
-  .acompte[data-etat='cours'],
+  .acompte circle {
+    stroke-dasharray: 2 2.4;
+    opacity: 0.7;
+    transition: opacity 200ms;
+  }
+
+  .acompte path {
+    stroke-width: 2.2;
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+
+  .acompte[data-etat='cours'] {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-peche) 70%, transparent);
+    color: var(--color-ink);
+  }
+
   .acompte[data-etat='fait'] {
-    box-shadow: inset 0 0 0 1px var(--color-peche);
+    background: var(--color-peche);
+    box-shadow: none;
     color: var(--color-night);
   }
 
@@ -830,71 +872,63 @@ const RESERVATIONS = 12;
     transform: none;
   }
 
-  .acompte[data-etat='fait'] svg {
-    opacity: 1;
-    scale: 1;
+  .acompte[data-etat='fait'] circle {
+    opacity: 0;
   }
 
-  /* La confirmation : la bulle se pose sous la grille, puis « Envoyé ». */
+  .acompte[data-etat='fait'] path {
+    opacity: 1;
+  }
+
+  /* La confirmation : une bulle se pose sous la grille, puis sa double coche. */
   .confirmation {
     position: absolute;
-    top: 240px;
+    top: 286px;
     right: 10px;
-    left: 10px;
     z-index: 4;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 6px;
-    height: 22px;
-  }
-
-  .confirmation__bulle {
     display: inline-flex;
     align-items: center;
-    height: 22px;
-    padding-inline: 9px;
+    gap: 6px;
+    height: 26px;
+    padding: 0 8px 0 11px;
     border: 1px solid color-mix(in srgb, var(--color-peche) 60%, transparent);
-    border-radius: 10px 10px 3px 10px;
+    border-radius: 13px 13px 4px 13px;
     background: color-mix(in srgb, var(--color-peche) 16%, var(--color-night-deep));
     color: var(--color-ink);
-    font-size: 10px;
-    font-weight: 500;
+    font-size: var(--sm-fort);
+    font-weight: 600;
     white-space: nowrap;
     opacity: 0;
     transition: opacity 220ms;
   }
 
-  .confirmation__envoi {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    color: var(--color-ink-low);
-    font-size: 9px;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 240ms;
-  }
-
-  .confirmation__envoi svg {
-    width: 11px;
-    height: 11px;
+  .confirmation svg {
+    width: 14px;
+    height: 14px;
     stroke: var(--color-peche);
-    stroke-width: 1.6;
+    stroke-width: 1.7;
+    opacity: 0;
+    scale: 0.4;
+    transition: opacity 240ms, scale 320ms var(--ease-out-expo);
   }
 
-  .confirmation.est-ecrite .confirmation__bulle,
-  .confirmation.est-envoyee .confirmation__envoi {
+  .confirmation.est-ecrite {
     opacity: 1;
+  }
+
+  .confirmation.est-envoyee svg {
+    opacity: 1;
+    scale: 1;
   }
 
   /* ── Le plan étroit ──
      Une seule silhouette : la grande grille d'une semaine, sur toute la
      largeur. Les trois petites fenêtres ont disparu (`sm-large`), et avec
-     elles les fils, les ports et les nœuds : rien ne se dispose plus à gauche
-     ou à droite. La demande arrive en étiquette au-dessus de la grille, le
-     créneau en descend dans sa case, la confirmation se pose dessous. Une
-     seule pastille reste en haut, celle de la promesse. */
+     elles les fils, les ports et les nœuds. La demande arrive en étiquette
+     au-dessus de la grille, le créneau en descend dans sa case, l'acompte et
+     la confirmation se posent dessous. Une seule pastille reste en haut,
+     celle de la promesse. Les cinquante pixels de hauteur gagnés par le plan
+     vont aux lignes de la grille : chaque case porte un prénom en fort. */
   @container sm (max-width: 519.98px) {
     .sm-puces {
       justify-content: flex-end;
@@ -912,33 +946,28 @@ const RESERVATIONS = 12;
     }
 
     .poste--agenda {
-      top: 37px;
+      top: 38px;
       left: 10px;
       width: 340px;
     }
 
-    /* Le socle retire le sous-titre des fenêtres étroites ; celle-ci a toute
-       la largeur, et le numéro de la semaine y compte. */
-    .poste--agenda .sm-fenetre__info {
-      display: block;
-      font-size: 9px;
+    .poste--agenda .sm-corps {
+      padding: 6px 5px;
     }
 
     .agenda {
-      grid-template-columns: 24px repeat(5, minmax(0, 1fr));
-      grid-template-rows: 13px;
-      grid-auto-rows: 33px;
+      grid-template-columns: 22px repeat(5, minmax(0, 1fr));
+      grid-template-rows: 16px;
+      grid-auto-rows: 43px;
       gap: 3px;
     }
 
     .agenda__jour {
-      font-size: 9.5px;
-      line-height: 13px;
+      line-height: 16px;
     }
 
     .agenda__heure {
-      padding: 3px 3px 0 0;
-      font-size: 9px;
+      padding: 5px 0 0;
     }
 
     .case,
@@ -949,20 +978,17 @@ const RESERVATIONS = 12;
 
     .prise::before,
     .prise::after {
-      left: 6px;
+      left: 5px;
       height: 4px;
     }
 
-    .prise::before { top: 7px; }
-    .prise::after { top: 15px; }
+    .prise::before { top: 11px; }
+    .prise::after { top: 20px; }
 
     .creneau {
-      gap: 2px;
-      padding: 6px;
+      gap: 5px;
+      padding: 8px 4px 0 5px;
     }
-
-    .creneau b { font-size: 9.5px; }
-    .creneau > span { font-size: 9px; }
 
     .viseur,
     .onde {
@@ -980,7 +1006,8 @@ const RESERVATIONS = 12;
    *
    * La boucle a un tronc commun et deux milieux : `jouerLarge` (quatre outils
    * et leurs fils) et `jouerEtroit` (la grille seule, une étiquette au-dessus,
-   * une bulle dessous). Le geste, lui, est le même : `viser`, puis `poser`.
+   * une pastille et une bulle dessous). Le geste, lui, est le même : `viser`,
+   * puis `poser`.
    *
    * Trois aides sont écrites ici parce que le socle ne les a pas :
    *   - `tiretAu` : le tiret d'une bande à l'entrée d'un port ;
@@ -997,12 +1024,10 @@ const RESERVATIONS = 12;
   interface Reservation {
     prenom: string;
     l: number;
-    date: string;
-    creneau: string;
-    long: string;
-    court: string;
     jour: string;
-    debut: string;
+    heure: string;
+    quand: string;
+    long: string;
   }
 
   interface Semaine {
@@ -1018,7 +1043,7 @@ const RESERVATIONS = 12;
     const v = valeur as Record<string, unknown>;
     return (
       typeof v.l === 'number' &&
-      [v.prenom, v.date, v.creneau, v.long, v.court, v.jour, v.debut].every((texte) => typeof texte === 'string')
+      [v.prenom, v.jour, v.heure, v.quand, v.long].every((texte) => typeof texte === 'string')
     );
   };
 
@@ -1043,8 +1068,6 @@ const RESERVATIONS = 12;
     return lu;
   };
 
-  const numeroSuivant = (numero: string) => String(Number(numero) + 1).padStart(numero.length, '0');
-
   monterScenes('[data-scene-automatisation]', (s) => {
     const demande = s.un('[data-demande]');
     const feuille = s.un('[data-feuille]');
@@ -1059,14 +1082,13 @@ const RESERVATIONS = 12;
     const viseurHeure = s.un('[data-viseur="heure"]');
     const onde = s.un('[data-onde]');
     const bulle = s.un('[data-bulle]');
-    const envoi = s.un('[data-envoi]');
+    const envoi = s.un<SVGSVGElement>('[data-envoi]');
     /* Les pièces du plan étroit. */
     const etiquette = s.un('[data-etiquette]');
     const morceaux = s.tous('[data-morceau]');
     const acompte = s.un('[data-acompte]');
     const acomptePlein = s.un('[data-acompte] i');
     const confirmation = s.un('[data-confirmation]');
-    const bulleEtroite = s.un('[data-bulle-etroite]');
     const filMessage = s.un<SVGPathElement>('[data-sm-fil="message"] path');
     const noeudMessage = s.un('[data-sm-noeud="message"]');
     const elReservations = s.un('[data-reservations]');
@@ -1098,26 +1120,23 @@ const RESERVATIONS = 12;
       s.racine.querySelectorAll<HTMLElement>(`[data-c="${nom}"]`).forEach((cible) => (cible.textContent = texte));
     };
 
-    /* L'état de la scène. Le numéro de demande et le compteur partent de ce
-       que le balisage a rendu : il n'y a qu'un endroit où les écrire. */
+    /* L'état de la scène. Le compteur part de ce que le balisage a rendu : il
+       n'y a qu'un endroit où l'écrire. */
     let rang = 0;
-    let numero = s.un('[data-c="numero"]').textContent ?? '0000';
     let reservations = Number(elReservations.textContent);
 
     const semaineDe = (r: number) => semaines[Math.floor(r / parSemaine) % semaines.length];
     const placeDe = (r: number) => r % parSemaine;
 
-    /* La demande du moment : ses textes dans la feuille et dans la bulle. */
+    /* La demande du moment : ses textes dans la feuille, l'étiquette et la
+       bulle. */
     const charger = () => {
       const reservation = semaineDe(rang).reservations[placeDe(rang)];
-      ecrire('numero', numero);
       ecrire('prenom', reservation.prenom);
-      ecrire('date', reservation.date);
-      ecrire('creneau', reservation.creneau);
-      ecrire('long', reservation.long);
-      ecrire('court', reservation.court);
+      ecrire('quand', reservation.quand);
       ecrire('jour', reservation.jour);
-      ecrire('debut', reservation.debut);
+      ecrire('heure', reservation.heure);
+      ecrire('long', reservation.long);
       s.racine.querySelector<HTMLElement>('[data-c="nom"]')?.style.setProperty('--l', `${reservation.l}%`);
     };
 
@@ -1284,9 +1303,9 @@ const RESERVATIONS = 12;
       s.basculer(etats.reservation);
       await s.attendre(280);
 
-      /* 2. La lecture : le trait descend la demande, client, date et créneau
+      /* 2. La lecture : le trait descend la demande, le client et son créneau
          s'allument à son passage. */
-      await s.lire(balai, lues, 900);
+      await s.lire(balai, lues, 800);
       await s.attendre(180);
 
       /* 3. Vers le paiement : les lignes lues se resserrent ensemble dans le
@@ -1363,7 +1382,7 @@ const RESERVATIONS = 12;
       s.basculer(etats.message);
     }
 
-    /* ── Le plan étroit : la grille, et deux pièces devant elle ── */
+    /* ── Le plan étroit : la grille, et trois pièces autour d'elle ── */
     async function jouerEtroit(place: number) {
       const { cellule } = creneaux[place];
 
@@ -1377,24 +1396,25 @@ const RESERVATIONS = 12;
         ],
         { duration: 520, easing: EXPO },
       );
-      await s.attendre(360);
+      await s.attendre(380);
 
       /* 2. La lecture : le prénom, le jour, l'heure, l'un après l'autre. */
       for (const morceau of morceaux) {
         morceau.classList.add('est-lu');
-        await s.attendre(300);
+        await s.attendre(320);
       }
       await s.attendre(220);
 
-      /* 3. L'acompte : la coche se remplit, il est encaissé. */
+      /* 3. L'acompte : un filet court sous le mot, puis la pastille passe en
+         pêche et sa coche se dessine. Il est encaissé. */
       acompte.dataset.etat = 'cours';
       await s.animer(acomptePlein, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], {
         duration: 720,
         easing: 'cubic-bezier(0.6, 0, 0.3, 1)',
       });
       acompte.dataset.etat = 'fait';
-      s.jouer(acompte, [{ transform: 'scale(0.86)' }, { transform: 'none' }], { duration: 420, easing: EXPO });
-      await s.attendre(440);
+      s.jouer(acompte, [{ transform: 'scale(0.88)' }, { transform: 'none' }], { duration: 420, easing: EXPO });
+      await s.attendre(460);
 
       /* 4. Le créneau se pose. L'agenda vise sa case, le temps qu'on la voie ;
          puis la demande quitte son étiquette, descend dans la grille et vient
@@ -1419,9 +1439,9 @@ const RESERVATIONS = 12;
       await s.attendre(480);
 
       /* 5. La confirmation : elle part du créneau posé et vient s'écrire sous
-         la grille. */
+         la grille, puis sa double coche. */
       s.enMarge(
-        s.voler(bandes[1], s.cadreDe(cellule), s.cadreDe(bulleEtroite), {
+        s.voler(bandes[1], s.cadreDe(cellule), s.cadreDe(confirmation), {
           duree: 640,
           pose: 0.15,
           arrivee: 0.7,
@@ -1431,7 +1451,7 @@ const RESERVATIONS = 12;
       );
       await s.attendre(450);
       confirmation.classList.add('est-ecrite');
-      await s.attendre(260);
+      await s.attendre(280);
       confirmation.classList.add('est-envoyee');
     }
 
@@ -1450,7 +1470,7 @@ const RESERVATIONS = 12;
       s.tictac(elZero, '0');
 
       /* Le temps de lire l'image : tout a suivi, personne n'a rien saisi. */
-      await s.attendre(etroit ? 2950 : 2300);
+      await s.attendre(etroit ? 2800 : 2400);
 
       /* 6. On range : la demande s'en va, le paiement et le message se
          vident. Le créneau, lui, reste dans l'agenda, en plus discret. */
@@ -1467,7 +1487,6 @@ const RESERVATIONS = 12;
       etats.reservation.dataset.etat = 'attente';
       eteindreOutils();
       rang += 1;
-      numero = numeroSuivant(numero);
       peindreAgenda(placeDe(rang) === 0 ? parSemaine : placeDe(rang), null);
       await s.attendre(420);
 

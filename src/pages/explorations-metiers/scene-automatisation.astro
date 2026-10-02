@@ -42,6 +42,14 @@ import Scene from '../../components/metiers/scene-automatisation.astro';
     border-radius: var(--radius-md);
   }
 
+  /* Sous 520 px la scène passe sur son plan étroit, plus haut (360 × 320) :
+     le cadre suit son rapport, comme sur l'accueil. */
+  @media (max-width: 560px) {
+    .essai__cadre {
+      aspect-ratio: 9 / 8;
+    }
+  }
+
   .essai__retour {
     margin: 0;
     color: var(--color-ink-low);

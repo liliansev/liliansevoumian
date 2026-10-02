@@ -22,10 +22,19 @@
  * les pastilles viennent du socle (`scene-metier.css`, `lib/metiers/scene.ts`).
  * Ce composant écrit ce que le socle n'a pas : le bloc de scénario et son
  * emplacement vide, le lien entre deux blocs, la réserve, le lanceur, et les
- * deux curseurs nommés.
+ * deux curseurs.
  *
  * Sans script ou en mouvement réduit, la scène est une image fixe : l'équipe
  * autonome, son scénario lancé, le formateur parti.
+ *
+ * Les mots. Quatre tailles, celles du socle, et peu de texte : ce qui se lit
+ * de loin (`--sm-fort`) est ce qui raconte, soit le nom des deux postes, leur
+ * état (« Montre », « Guide », « Parti » ; « Regarde », « Refait », « Lance
+ * seule ») et le nom des trois blocs. Le genre du bloc, le sous-titre des
+ * fenêtres et la parole des curseurs sont sortis de la scène : ils ne
+ * tenaient qu'à 9 ou 10 px. Un texte qui n'a pas encore cours est absent,
+ * jamais fantomatique : quand le formateur part, les noms de ses blocs
+ * deviennent des traits au lieu de pâlir.
  *
  * Libellés et nombres sont inventés pour la scène. Aucun nom de marque : les
  * pictogrammes sont dessinés ici.
@@ -33,7 +42,6 @@
 import './scene-metier.css';
 
 interface Bloc {
-  genre: string;
   titre: string;
   /* Le titre du plan étroit, où la place est comptée. */
   court: string;
@@ -46,16 +54,14 @@ interface Bloc {
 /* Un exemple volontairement éloigné du bon de commande : celui-là appartient à
    la scène du récit, en haut de la page. */
 const blocs: Bloc[] = [
-  { genre: 'Déclencheur', titre: 'Nouvelle demande', court: 'Demande', trace: 'M4 3.5h8v9.5H4zM6 6.2h4M6 8.4h4M6 10.6h2.4', l: 58 },
+  { titre: 'Nouvelle demande', court: 'Demande', trace: 'M4 3.5h8v9.5H4zM6 6.2h4M6 8.4h4M6 10.6h2.4', l: 58 },
   {
-    genre: 'Étape',
     titre: 'Trier la demande',
     court: 'Trier',
     trace: 'M3 4h10L9.4 8.4v3.4l-2.8 1.3V8.4z',
     l: 76,
   },
   {
-    genre: 'Action',
     titre: 'Prévenir l’équipe',
     court: 'Prévenir',
     trace: 'M5 11V7.6a3 3 0 0 1 6 0V11l1 1.2H4zM7 13.3a1.1 1.1 0 0 0 2 0',
@@ -66,7 +72,6 @@ const blocs: Bloc[] = [
 interface Poste {
   cle: 'formateur' | 'equipe';
   nom: string;
-  info: string;
   icone: string;
   /* L'état de l'image fixe, et sa valeur pour la pastille du socle. */
   etat: string;
@@ -76,35 +81,29 @@ interface Poste {
   executions: number;
   /* Le nom de ses ports, côté de l'autre fenêtre. */
   port: 'montre' | 'refait';
-  /* Ce que dit son curseur. */
-  parole: string;
 }
 
 const postes: Poste[] = [
   {
     cle: 'formateur',
     nom: 'Formateur',
-    info: 'Démonstration',
     icone: 'M2.5 3.5h11v7h-11zM8 10.5V13M5.5 13h5',
     etat: 'Parti',
     valeur: 'attente',
     lance: false,
     executions: 0,
     port: 'montre',
-    parole: 'Je montre',
   },
   {
     cle: 'equipe',
     nom: 'Votre équipe',
-    info: 'Atelier',
     icone:
       'M6 7.3a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM2.6 12.6c0-1.9 1.5-3.2 3.4-3.2s3.4 1.3 3.4 3.2M10.4 7.2a1.9 1.9 0 0 0 0-3.8M11.3 9.5c1.3.4 2.1 1.5 2.1 3.1',
-    etat: 'Autonome',
+    etat: 'Lance seule',
     valeur: 'fait',
     lance: true,
     executions: 2,
     port: 'refait',
-    parole: 'À vous',
   },
 ];
 
@@ -118,11 +117,12 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   data-scene-formations
   data-temps="3"
   role="img"
-  aria-label="Le formateur construit un scénario d’automatisation en trois blocs, l’équipe le refait à son tour, puis le lance et le fait tourner seule : le formateur peut partir."
+  aria-label="Le formateur construit un scénario d’automatisation en trois blocs : nouvelle demande, trier la demande, prévenir l’équipe. L’équipe le refait à son tour, puis le lance et le fait tourner seule : le formateur peut partir."
 >
   <div class="sm-plan" aria-hidden="true">
     <div class="sm-puces">
-      <span class="sm-puce">
+      {/* Sur le plan étroit, une seule pastille : celle de la promesse. */}
+      <span class="sm-puce sm-large">
         <svg viewBox="0 0 16 16"><path d="M8 4.4C6.9 3.6 5.3 3.3 3 3.5v8.3c2.3-.2 3.9.1 5 .9 1.1-.8 2.7-1.1 5-.9V3.5c-2.3-.2-3.9.1-5 .9zM8 4.4v8.3" /></svg>
         <span class="sm-puce__nom">Modules</span>
         <b data-modules>3/3</b>
@@ -154,7 +154,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
               <svg viewBox="0 0 16 16"><path d={poste.icone} /></svg>
             </span>
             <span class="sm-fenetre__nom">{poste.nom}</span>
-            <span class="sm-fenetre__info">{poste.info}</span>
             <span class="sm-etat" data-etat={poste.valeur}>{poste.etat}</span>
           </div>
 
@@ -163,6 +162,7 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
               <>
                 {i > 0 && (
                   <span class:list={['lien', 'est-trace', poste.lance && 'est-actif']} data-lien>
+                    <svg class="lien__pointille"><line x1="1" y1="0" x2="1" y2="100%"></line></svg>
                     <i></i>
                   </span>
                 )}
@@ -171,7 +171,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
                     <svg viewBox="0 0 16 16"><path d={bloc.trace} /></svg>
                   </span>
                   <span class="bloc__texte">
-                    <em class="bloc__genre sm-large">{bloc.genre}</em>
                     <b class="bloc__titre">
                       <span class="sm-large">{bloc.titre}</span>
                       <span class="sm-etroit">{bloc.court}</span>
@@ -198,8 +197,10 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
               <span class:list={['lanceur', poste.lance && 'est-lance']} data-lanceur>
                 <svg viewBox="0 0 16 16"><path d={LECTURE} /></svg>
               </span>
-              <span class="sm-large">Exécutions</span>
-              <b data-compte>{poste.executions}</b>
+              <span class="marche__texte sm-large">
+                Exécutions
+                <b data-compte>{poste.executions}</b>
+              </span>
             </span>
           </div>
         </div>
@@ -209,8 +210,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       </div>
     ))}
 
-    {/* Les deux curseurs : celui qui montre, celui qui refait. Chacun peut
-       porter une tuile de la réserve, le temps de la poser. */}
+    {/* Les deux curseurs : celui qui montre (pêche), celui qui refait (blanc).
+       Chacun peut porter une tuile de la réserve, le temps de la poser. */}
     {postes.map((poste) => (
       <span class:list={['curseur', `curseur--${poste.cle}`]} data-curseur={poste.cle}>
         <span class="curseur__charge">
@@ -219,7 +220,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
           ))}
         </span>
         <svg class="curseur__fleche" viewBox="0 0 16 16"><path d={FLECHE} /></svg>
-        <em class="curseur__nom">{poste.parole}</em>
       </span>
     ))}
 
@@ -230,7 +230,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
 <style>
   /* Ce que le socle ne sait pas : la place des deux postes et de leurs ports,
      et les pièces de l'outil (bloc, lien, réserve, lanceur, curseur).
-     Longueurs en pixels du plan. */
+     Longueurs en pixels du plan ; les tailles de texte sont celles du socle
+     (`--sm-note`, `--sm-fort`, `--sm-titre`), jamais des pixels. */
 
   /* La lumière d'arrivée se lève sur la fenêtre de l'équipe. */
   .sm {
@@ -289,6 +290,14 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
 
   .sm-fils {
     transition: opacity 600ms;
+  }
+
+  /* ── Qui, et ce qu'il fait ──
+     Le nom du poste et son état sont les mots qui racontent : ils se lisent à
+     la taille forte, au-dessus de celle que le socle leur donne. */
+  .sm-fenetre__nom,
+  .sm-etat {
+    font-size: var(--sm-fort);
   }
 
   /* ── L'atelier : le canevas pointé de l'outil ── */
@@ -353,22 +362,34 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     transition: opacity 240ms;
   }
 
-  .bloc__genre {
-    color: var(--color-ink-low);
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-  }
-
+  /* Le nom du bloc : c'est lui qu'on lit, à la taille forte. Le trait qui le
+     remplace quand le formateur est parti (voir le troisième temps) est posé
+     dessous, à sa place. */
   .bloc__titre {
-    overflow: hidden;
+    position: relative;
     color: var(--color-ink);
-    font-size: 13px;
+    font-size: var(--sm-fort);
     font-weight: 600;
     letter-spacing: -0.005em;
-    text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .bloc__titre span {
+    transition: opacity 300ms;
+  }
+
+  .bloc__titre::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 68%;
+    height: 5px;
+    margin-top: -2.5px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-ink) 44%, transparent);
+    opacity: 0;
+    transition: opacity 300ms;
   }
 
   .bloc__texte .sm-barre {
@@ -474,7 +495,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   }
 
   /* ── Le lien entre deux blocs ──
-     Sous les tuiles, comme un rail. Pointillé tant que rien n'est relié ; son
+     Sous les tuiles, comme un rail. Tant que rien n'est relié, c'est le fil
+     au repos du socle : un trait pointillé, tracé et non peint en rayures. Son
      trait plein se tire du haut vers le bas quand les deux blocs sont posés
      (`est-trace`), et passe en pêche quand le scénario l'emprunte. */
   .lien {
@@ -484,11 +506,17 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     width: 2px;
     height: var(--h-lien);
     margin-left: calc(var(--p-bloc) + var(--c-tuile) / 2);
-    background: repeating-linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-ink) 30%, transparent) 0 2px,
-      transparent 2px 6px
-    );
+  }
+
+  .lien__pointille {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    stroke: color-mix(in srgb, var(--color-ink) 34%, transparent);
+    stroke-width: 1.25;
+    stroke-dasharray: 1.5 5;
   }
 
   .lien i {
@@ -590,17 +618,32 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   .marche {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     margin-left: auto;
-    color: var(--color-ink-low);
-    font-size: 10.5px;
   }
 
-  .marche b {
+  /* Le compte des exécutions n'existe qu'une fois le scénario lancé : avant,
+     il n'y a rien à lire, et rien d'écrit en gris pâle. */
+  .marche__texte {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    color: var(--color-ink-low);
+    font-size: var(--sm-note);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 260ms;
+  }
+
+  .lanceur.est-lance + .marche__texte {
+    opacity: 1;
+  }
+
+  .marche__texte b {
     display: inline-block;
     min-width: 1ch;
     color: var(--color-ink);
-    font-size: 15px;
+    font-size: var(--sm-titre);
     font-weight: 600;
     text-align: right;
   }
@@ -608,6 +651,7 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   .lanceur {
     display: grid;
     place-items: center;
+    flex-shrink: 0;
     width: 26px;
     height: 26px;
     border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
@@ -644,8 +688,10 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   }
 
   /* ── Le troisième temps : le formateur est parti ──
-     Sa fenêtre reste, éteinte : son nom et son état se lisent encore, le
-     reste s'efface. Les fils et les ports se débranchent avec lui. */
+     Sa fenêtre reste, éteinte : son nom et son état se lisent encore, à plein
+     contraste. Le reste s'efface, et le nom de ses blocs avec : un texte à
+     30 % d'opacité ne se lit pas, il devient donc un trait. Les fils et les
+     ports se débranchent avec lui. */
   .sm-fenetre__icone,
   .sm-fenetre__icone svg,
   .sm-fenetre__nom {
@@ -657,7 +703,15 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
 
   .sm[data-temps='3'] .poste--formateur .atelier,
   .sm[data-temps='3'] .poste--formateur .pied {
-    opacity: 0.3;
+    opacity: 0.38;
+  }
+
+  .sm[data-temps='3'] .poste--formateur .bloc__titre span {
+    opacity: 0;
+  }
+
+  .sm[data-temps='3'] .poste--formateur .bloc__titre::after {
+    opacity: 1;
   }
 
   .sm[data-temps='3'] .poste--formateur .sm-fenetre__icone {
@@ -701,7 +755,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
      L'origine de l'élément est la pointe de la flèche : le script le déplace
      en pixels du plan. Le formateur est en pêche, c'est lui qui a le
      savoir-faire ; l'équipe est en blanc, et c'est son scénario qui finira en
-     pêche. */
+     pêche. Ils n'ont pas d'étiquette : ce que fait chacun est écrit dans la
+     barre de sa fenêtre, à une taille qui se lit. */
   .curseur {
     --c: var(--color-ink);
     position: absolute;
@@ -727,8 +782,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     position: absolute;
     top: -1.25px;
     left: -1.25px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     overflow: visible;
     filter: drop-shadow(0 2px 3px var(--color-night-deep));
   }
@@ -737,28 +792,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     fill: var(--c);
     stroke: var(--color-night-deep);
     stroke-width: 1.1;
-  }
-
-  .curseur__nom {
-    position: absolute;
-    top: 16px;
-    left: 13px;
-    padding: 3px 8px;
-    border-radius: 3px 10px 10px 10px;
-    background: var(--c);
-    box-shadow: 0 6px 12px -6px var(--color-night-deep);
-    color: var(--color-night);
-    font-size: 10px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  /* Près du bord droit du plan, la parole passe de l'autre côté de la flèche :
-     elle en sortirait. */
-  .curseur.est-retourne .curseur__nom {
-    right: 3px;
-    left: auto;
-    border-radius: 10px 3px 10px 10px;
   }
 
   /* La tuile portée : centrée un peu au-dessus et à gauche de la pointe,
@@ -802,32 +835,59 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     display: block;
   }
 
-  /* ── Le plan étroit ──
-     Les deux fenêtres restent côte à côte, c'est le propos ; chaque bloc
-     perd son genre et son réglage et ne garde que son pictogramme et un titre
-     court. Le socle a déjà réduit ses propres pièces. */
+  /* ── Le plan étroit (360 × 320) ──
+     Les deux fenêtres restent côte à côte, c'est le propos. La hauteur gagnée
+     paie le texte : la barre passe sur deux rangs (le nom, puis l'état dessous,
+     tous deux à la taille forte), et chaque bloc ne garde que son pictogramme
+     et un nom court. Une seule pastille, celle de la promesse, au-dessus de la
+     fenêtre de l'équipe. Le socle a déjà réduit ses propres pièces. */
   @container sm (max-width: 519.98px) {
     .sm-plan {
-      --h-barre: 25px;
-      --h-bloc: 36px;
-      --h-lien: 14px;
-      --h-pied: 28px;
-      --marge: 7px;
-      --c-tuile: 22px;
+      --h-barre: 56px;
+      --h-bloc: 42px;
+      --h-lien: 16px;
+      --h-pied: 30px;
+      --marge: 8px;
+      --c-tuile: 24px;
       --p-bloc: 6px;
       --r-port: 4.5px;
     }
 
+    .sm-puces {
+      justify-content: flex-end;
+    }
+
+    /* Seule sur sa ligne, la pastille de la promesse a la place de se lire un
+       cran au-dessus de la note du socle : 9 px à l'écran sur un téléphone de
+       320, au lieu de 8,25. */
+    .sm-puce {
+      font-size: var(--sm-texte);
+    }
+
     .poste--formateur {
-      top: 38px;
+      top: 40px;
       left: 10px;
       width: 158px;
     }
 
     .poste--equipe {
-      top: 46px;
+      top: 48px;
       left: 192px;
       width: 158px;
+    }
+
+    .sm-fenetre__barre {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-content: center;
+      justify-items: start;
+      gap: 5px 6px;
+      height: var(--h-barre);
+    }
+
+    .sm-etat {
+      grid-column: 1 / -1;
+      margin-left: 0;
     }
 
     .atelier {
@@ -847,18 +907,20 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     }
 
     .bloc__tuile svg {
-      width: 13px;
-      height: 13px;
+      width: 14px;
+      height: 14px;
       stroke-width: 1.4;
     }
 
-    .bloc__titre {
-      font-size: 9.5px;
+    .bloc__titre::after {
+      width: 76%;
+      height: 4px;
+      margin-top: -2px;
     }
 
     .bloc__temoin {
-      width: 13px;
-      height: 13px;
+      width: 14px;
+      height: 14px;
       border-width: 1px;
     }
 
@@ -887,8 +949,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     }
 
     .reserve__tuile {
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 18px;
       border-radius: 5px;
     }
 
@@ -897,17 +959,9 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       height: 10px;
     }
 
-    .marche {
-      gap: 5px;
-    }
-
-    .marche b {
-      font-size: 11px;
-    }
-
     .lanceur {
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 18px;
     }
 
     .lanceur svg {
@@ -918,16 +972,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     .curseur__fleche {
       top: -1px;
       left: -1px;
-      width: 15px;
-      height: 15px;
-    }
-
-    .curseur__nom {
-      top: 12px;
-      left: 9px;
-      padding: 2px 6px;
-      border-radius: 3px 8px 8px 8px;
-      font-size: 8.5px;
+      width: 16px;
+      height: 16px;
     }
 
     .curseur__charge {
@@ -961,7 +1007,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   interface Curseur {
     el: HTMLElement;
     fleche: SVGElement;
-    nom: HTMLElement;
     pos: Pt;
   }
 
@@ -1021,7 +1066,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
         curseur: {
           el: s.un(`[data-curseur="${cle}"]`),
           fleche: s.un<SVGElement>(`[data-curseur="${cle}"] .curseur__fleche`),
-          nom: s.un(`[data-curseur="${cle}"] .curseur__nom`),
           pos: { x: 0, y: 0 },
         },
       };
@@ -1045,6 +1089,14 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     const changerEtat = (poste: Poste, texte: string, valeur: Valeur) => {
       poste.etat.textContent = texte;
       s.basculer(poste.etat, valeur);
+    };
+
+    /* Un texte change. Le plan étroit en masque certains (la pastille des
+       modules, le compte des exécutions) : ceux-là prennent leur valeur sans
+       être joués. */
+    const dire = (element: HTMLElement, texte: string) => {
+      if (s.affiches([element]).length) s.tictac(element, texte);
+      else element.textContent = texte;
     };
 
     const vider = (poste: Poste) => {
@@ -1077,14 +1129,13 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       s.racine.dataset.temps = '1';
       s.eteindre();
       lesDeux.forEach(vider);
-      formateur.curseur.nom.textContent = 'Je montre';
       ecrireEtat(formateur, 'Montre', 'cours');
       ecrireEtat(equipe, 'Regarde', 'attente');
       modules.textContent = '1/3';
       promesse.textContent = 'En formation';
     };
 
-    /* L'image fixe : l'équipe est autonome, son scénario a tourné, le
+    /* L'image fixe : l'équipe lance seule, son scénario a tourné, le
        formateur est parti. C'est aussi ce que le HTML rend sans script. */
     const figer = () => {
       s.racine.classList.add('est-abouti');
@@ -1095,7 +1146,7 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       formateur.compte.textContent = '0';
       equipe.compte.textContent = '2';
       ecrireEtat(formateur, 'Parti', 'attente');
-      ecrireEtat(equipe, 'Autonome', 'fait');
+      ecrireEtat(equipe, 'Lance seule', 'fait');
       modules.textContent = '3/3';
       promesse.textContent = 'Autonome';
     };
@@ -1105,8 +1156,6 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
     const poser = (curseur: Curseur, p: Pt) => {
       curseur.pos = p;
       curseur.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-      /* La parole tient-elle encore à droite de la flèche, là où il va ? */
-      curseur.el.classList.toggle('est-retourne', p.x + curseur.nom.offsetWidth + 18 > s.plan.offsetWidth);
     };
 
     const montrer = (curseur: Curseur, p: Pt) => {
@@ -1238,9 +1287,8 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       /* 2. L'équipe refait, bloc par bloc. Le formateur désigne le sien, le
          grain traverse, et pendant ce temps l'équipe va chercher sa tuile. */
       s.racine.dataset.temps = '2';
-      s.tictac(modules, '2/3');
+      dire(modules, '2/3');
       changerEtat(formateur, 'Guide', 'cours');
-      formateur.curseur.nom.textContent = 'Je guide';
       changerEtat(equipe, 'Refait', 'cours');
       montrer(equipe.curseur, decale(surTuile(equipe.reserve[0]), 34, 6));
 
@@ -1276,7 +1324,7 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       /* 3. L'équipe fait seule. Le formateur s'en va, les fils se
          débranchent ; l'équipe lance elle-même son scénario. */
       s.racine.dataset.temps = '3';
-      s.tictac(modules, '3/3');
+      dire(modules, '3/3');
       s.eteindre();
       changerEtat(formateur, 'Parti', 'attente');
       formateur.curseur.el.classList.remove('est-la');
@@ -1284,26 +1332,27 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       await aller(equipe.curseur, decale(s.lieu(equipe.lanceur), 3, 3), 480);
       appuyer(equipe.curseur);
       equipe.lanceur.classList.add('est-lance');
+      changerEtat(equipe, 'Lance seule', 'cours');
       await s.attendre(200);
       cacher(equipe.curseur);
 
       await executer(true);
       /* La chute : il a tourné sans personne. Tout s'éclaire en même temps. */
-      s.tictac(equipe.compte, '1');
-      changerEtat(equipe, 'Autonome', 'fait');
+      dire(equipe.compte, '1');
+      s.basculer(equipe.etat, 'fait');
       s.tictac(promesse, 'Autonome');
       s.racine.classList.add('est-abouti');
 
       /* Le temps de lire l'image, pendant qu'il tourne une seconde fois. */
       await s.attendre(750);
       await executer(false);
-      s.tictac(equipe.compte, '2');
-      await s.attendre(950);
+      dire(equipe.compte, '2');
+      await s.attendre(1250);
 
       /* On range : les deux outils se vident, le formateur revient pour le
          groupe suivant. */
       repos();
-      s.tictac(modules, '1/3');
+      dire(modules, '1/3');
       s.tictac(promesse, 'En formation');
       await s.attendre(500);
     }
