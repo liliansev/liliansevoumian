@@ -216,6 +216,20 @@ const exemples = [
     border-color: color-mix(in srgb, var(--color-peche) 70%, transparent);
   }
 
+  /* Le champ a le focus : le cadre entier le dit, comme l'invite de fin de
+     page (`home-offers`), par une bordure pêche et un halo de 3 px. Un pixel
+     de bordure seul ne se voyait pas. Le halo s'ajoute aux ombres du cadre. Il
+     suit le champ, pas les boutons : un champ focalisé garde son repère même
+     au doigt (voir FOCUS dans `global.css`), un bouton touché n'en reçoit pas. */
+  .causerie__fenetre:has(.causerie__saisie textarea:focus) {
+    border-color: var(--color-peche);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 9%, transparent),
+      0 24px 48px -20px var(--color-night-deep),
+      0 10px 20px -12px var(--color-night-deep),
+      0 0 0 3px color-mix(in srgb, var(--color-peche) 26%, transparent);
+  }
+
   /* Le pli : la conversation se déplie au-dessus de la barre. C'est le seul
      geste de ce composant. */
   .causerie__pli {
@@ -817,7 +831,9 @@ const exemples = [
         onglet.textContent = ' (nouvel onglet)';
         a.append(onglet);
       }
-      /* Une phrase dit ce qui vient de s'ouvrir, une seule fois par moyen. */
+      /* Une phrase dit ce qui vient de s'ouvrir, une fois par lien. Les liens
+         sont refaits à chaque `proposer()` : elle peut donc revenir après un
+         ajout au message. */
       a.addEventListener('click', () => lilian(canal === 'whatsapp' ? DIT.whatsapp : DIT.email).catch(console.error), {
         once: true,
       });

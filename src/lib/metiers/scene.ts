@@ -666,7 +666,10 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
      au clavier comme au doigt. Le bouton est posé APRÈS la racine, pas dedans :
      la racine est une image (`role="img"`), ce qu'elle contient n'est pas
      annoncé. Il s'appuie sur la pause du moteur : la scène s'arrête net et
-     reprend où elle en était. Rien à arrêter en mouvement réduit. */
+     reprend où elle en était. Rien à arrêter en mouvement réduit.
+     `aria-pressed` porte l'état, le libellé reste le même : c'est la convention
+     d'un bouton à bascule (comme le défilé des logos, dans `home-hero`). Changer
+     les deux à la fois s'annonçait « Relancer l'animation, enfoncé ». */
   if (!reduit.matches) {
     const commande = document.createElement('button');
     commande.type = 'button';
@@ -676,12 +679,9 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
       '<span class="sr-only">Mettre l’animation en pause</span>' +
       '<svg class="sm-pause__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>' +
       '<svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>';
-    const nom = commande.querySelector('.sr-only');
     commande.addEventListener('click', () => {
       arretee = !arretee;
       commande.setAttribute('aria-pressed', String(arretee));
-      /* Le nom dit ce que le bouton fera. */
-      if (nom) nom.textContent = arretee ? 'Relancer l’animation' : 'Mettre l’animation en pause';
       regler();
     });
     racine.after(commande);

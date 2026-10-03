@@ -277,7 +277,7 @@ const faqPageSchema = faqSchema ? {
     <meta name="generator" content={Astro.generator} />
 
     <link rel="preload" as="font" type="font/woff2" href={geistLatin} crossorigin />
-    <link rel="preconnect" href="https://taap.it" crossorigin />
+    <link rel="preconnect" href="https://taap.it" />
 
     <script is:inline async src="https://taap.it/scripts/tracker.js" data-project="pk_b238afbc093083b15bf02b73e03d494f" data-track-outbound="true"></script>
     {/* File DataFast : capture les goals déclenchés avant le chargement du script. */}
@@ -401,7 +401,14 @@ const faqPageSchema = faqSchema ? {
             return new Promise(function (resolve, reject) {
               var deadline = Date.now() + 10000;
               function check() {
-                if (embedTarget && embedTarget.querySelector('iframe')) { resolve(); return; }
+                var cadre = embedTarget && embedTarget.querySelector('iframe');
+                if (cadre) {
+                  // Cal.com nomme son iframe « Book a call » : un lecteur d'écran
+                  // l'annonçait en anglais au milieu d'une page en français.
+                  cadre.title = 'Agenda de réservation';
+                  resolve();
+                  return;
+                }
                 if (Date.now() >= deadline) { reject(new Error('Cal.com embed timeout')); return; }
                 window.setTimeout(check, 100);
               }

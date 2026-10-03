@@ -3,11 +3,13 @@
  * home-hero — le premier écran de l'accueil : Lilian se présente, sur une
  * grille.
  *
- * Il l'a voulu ainsi : le titre seul, centré, et au bas de l'écran le défilé
- * des entreprises avec lesquelles il a travaillé. Pas de portrait, pas de
- * bouton, pas de chapô, et pas de sculpture non plus : il l'a essayée sous le
- * titre et l'a jugée de trop. Les sculptures de verre vivent plus bas, une
- * par métier. Le titre est la phrase qu'il a dictée : « Salut, je
+ * Il l'a voulu ainsi : le titre, centré, et au bas de l'écran le défilé des
+ * entreprises avec lesquelles il a travaillé. Pas de portrait, pas de chapô,
+ * et pas de sculpture non plus : il l'a essayée sous le titre et l'a jugée de
+ * trop. Sous le titre, le premier écran porte la barre où l'on écrit à Lilian :
+ * `home-invite`, rendu juste après cette section dans `index.astro`, la pose
+ * sur l'emplacement réservé ici. Une ligne dit ce qu'elle fait, une flèche
+ * annonce la suite. Le titre est la phrase qu'il a dictée : « Salut, je
  * m'appelle Lilian Sevoumian et je suis expert en Automatisations & Agents
  * IA ». L'esperluette est la sienne. Le récit qui suit (`home-story`) porte
  * le propos : vous perdez votre temps, voilà pourquoi.
@@ -24,8 +26,9 @@
  * phrase. Sur un écran étroit elle se replie sur deux lignes, chacune avec
  * ses bouts ronds.
  *
- * Sans script, la phrase et la grille sont là ; il ne manque que l'éclairage
- * sous le pointeur. En mouvement réduit, rien ne bouge.
+ * Sans script, la phrase et la grille sont là ; il manque l'éclairage sous le
+ * pointeur, la barre d'écriture et sa ligne. En mouvement réduit, rien ne
+ * bouge.
  *
  */
 import { clients } from '../data/clients';
@@ -79,20 +82,20 @@ const cellules = [
       <span class="affiche__reponse">{reponse}</span>
     </h1>
     {/* La place de la barre où l'on écrit à Lilian (`home-invite.astro`). La
-        barre elle-même vit en fin de page, hors de cette section : elle se
-        pose ici tant qu'on est sur le premier écran, puis glisse en bas à
-        droite au défilement. Sans script, cet emplacement est vide et ne
-        prend aucune hauteur. */}
+        barre elle-même est rendue juste après cette section (voir
+        `index.astro`), hors du flux : elle se pose ici tant qu'on est sur le
+        premier écran, puis glisse en bas à droite au défilement. Sans script,
+        cet emplacement est vide et ne prend aucune hauteur. */}
     <div class="affiche__invite" data-causerie-place></div>
     {/* Ce que fait la barre, en une ligne : une barre de prompt sous « expert
         en agents IA » se lisait comme un robot. Elle n'en est pas un. */}
-    <p class="affiche__mode" data-causerie-mode>
+    <p class="affiche__mode">
       Écrivez votre besoin, puis choisissez comment me l’envoyer&nbsp;: WhatsApp, <span>e-mail</span> ou appel.
     </p>
     {/* L'amorce de défilement : le premier écran ne donnait aucun indice qu'il
         y a une suite (critique du 2 octobre 2026). Une flèche, pas un mot de
         plus : le titre reste seul. */}
-    <a class="affiche__suite" href="#histoire" style={`--mots: ${question.length}`}>
+    <a class="affiche__suite" href="#histoire">
       <span class="sr-only">Lire la suite</span>
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
         <path d="M12 5v14" />
@@ -105,7 +108,6 @@ const cellules = [
     class="defile"
     role="group"
     aria-label="Entreprises avec lesquelles j’ai travaillé"
-    style={`--mots: ${question.length}`}
     data-defile
   >
     <p class="defile__titre">J’ai travaillé avec</p>

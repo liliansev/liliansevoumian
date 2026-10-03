@@ -138,6 +138,10 @@ const mobileNavLinks = navLinks.filter((link) => {
    l'observateur reprend la main et corrige l'état à sa première mesure. */
 ---
 
+{/* Le repère « bannière » de la page : sans lui, la barre n'était dans aucun
+    en-tête. Il ne porte ni classe ni style, et ne prend aucune place : la
+    barre, son seul enfant, est fixe. */}
+<header>
 <nav
   id="main-nav"
   class:list={['nav-root', 'px-[var(--spacing-section-x)]', { 'past-hero': !hasTrackedHero, 'nav-home': isHome }]}
@@ -247,6 +251,7 @@ const mobileNavLinks = navLinks.filter((link) => {
     </button>
   </div>
 </nav>
+</header>
 
 <!-- Le dialogue natif isole le menu de la page et de ses éléments fixes. -->
 <dialog

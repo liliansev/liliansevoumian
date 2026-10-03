@@ -101,12 +101,16 @@ const nombreDeCas = nombres[cas] ?? String(cas);
         ))}
       </div>
 
+      {/* `tabindex="0"` : un panneau sans élément focalisable doit pouvoir
+          recevoir le focus, pour qu'on y arrive depuis son onglet. Avec le
+          script, seul le panneau montré le garde (voir `choisir`). */}
       {voix.map((v, i) => (
         <figure
           class="voix__citation"
           role="tabpanel"
           id={`voix-citation-${i}`}
           aria-labelledby={`voix-onglet-${i}`}
+          tabindex="0"
           data-actif={i === 0 ? '' : undefined}
         >
           <blockquote>«&nbsp;{v.citation}&nbsp;»</blockquote>
@@ -136,8 +140,10 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     display: none;
   }
 
+  /* L'arrondi ne se voit qu'au focus clavier : il arrondit l'anneau. */
   .voix__citation {
     margin: 0;
+    border-radius: var(--radius-xs);
   }
 
   .voix__citation blockquote {
@@ -436,7 +442,12 @@ const nombreDeCas = nombres[cas] ?? String(cas);
         onglet.setAttribute('aria-selected', String(i === actif));
         onglet.tabIndex = i === actif ? 0 : -1;
       });
-      citations.forEach((citation, i) => citation.toggleAttribute('data-actif', i === actif));
+      citations.forEach((citation, i) => {
+        citation.toggleAttribute('data-actif', i === actif);
+        /* Seul le panneau montré se prend à la tabulation : celui qui s'efface
+           reste visible 420 ms, et y entrer faisait perdre le focus. */
+        citation.tabIndex = i === actif ? 0 : -1;
+      });
       if (parLaMain) {
         racine.dataset.manuel = '';
         onglets[actif].focus({ preventScroll: true });
