@@ -911,6 +911,13 @@ const exemples = [
     };
 
     /* ── Ouvrir, réduire ── */
+    /* Un seul champ à la fois. La barre s'efface devant le champ de fin de
+       page ; à l'inverse, conversation ouverte, c'est ce champ qui se met en
+       retrait (inerte, atténué par `home-offers`). Sur téléphone la fenêtre
+       s'ouvre juste sous lui : resté actif, il invitait à y écrire, et le
+       toucher refermait la conversation. */
+    const champDeFin = document.querySelector<HTMLElement>('#offres [data-invite]');
+
     const ouvrir = () => {
       allerA('coin');
       deplier();
@@ -918,6 +925,7 @@ const exemples = [
       racine.dataset.apparue = '';
       delete racine.dataset.retabli;
       panneau.inert = false;
+      if (champDeFin) champDeFin.inert = true;
       arreterExemples();
     };
 
@@ -931,6 +939,7 @@ const exemples = [
     const fermer = (rendreLeFocus = true) => {
       racine.dataset.etat = 'veille';
       panneau.inert = true;
+      if (champDeFin) champDeFin.inert = false;
       const retour = declencheur?.isConnected && declencheur.getClientRects().length > 0 ? declencheur : null;
       declencheur = null;
       /* À la souris et au clavier, le focus revient à qui a ouvert, sinon dans
@@ -954,6 +963,15 @@ const exemples = [
     };
 
     reduire.addEventListener('click', () => fermer());
+    /* Toucher le champ de fin de page, en retrait, mène à celui de la
+       conversation : c'est là qu'on écrit tant qu'elle est ouverte. Inerte, il
+       ne reçoit pas le clic lui-même ; on reconnaît sa place. */
+    document.addEventListener('click', (e) => {
+      if (!champDeFin?.inert || racine.dataset.etat !== 'ouverte') return;
+      const cadre = champDeFin.getBoundingClientRect();
+      const dedans = e.clientX >= cadre.left && e.clientX <= cadre.right && e.clientY >= cadre.top && e.clientY <= cadre.bottom;
+      if (dedans && !racine.contains(e.target as Node)) champ.focus({ preventScroll: true });
+    });
     /* Échap ferme d'où que l'on soit dans la page : la fenêtre recouvre le
        contenu, on doit pouvoir l'écarter sans y revenir. Un menu ou l'agenda
        ouverts par-dessus gardent la touche pour eux. */
@@ -964,9 +982,11 @@ const exemples = [
     });
     /* À l'étroit, la fenêtre prend la moitié de l'écran : dès que le focus la
        quitte pour la page, elle se replie, sinon il passerait derrière elle.
-       Le contrôle attend la fin de l'événement, le temps que le focus se pose. */
+       C'est une affaire de clavier : au doigt, on voit ce qu'on touche, et
+       seul le visiteur referme la conversation. Le contrôle attend la fin de
+       l'événement, le temps que le focus se pose. */
     racine.addEventListener('focusout', () => {
-      if (!etroit.matches) return;
+      if (!etroit.matches || tactile.matches) return;
       window.setTimeout(() => {
         const actif = document.activeElement;
         if (racine.dataset.etat !== 'ouverte' || !actif || actif === document.body || racine.contains(actif)) return;
@@ -1167,7 +1187,6 @@ const exemples = [
 
     /* Jamais deux champs à l'écran : devant le champ de fin de page, elle
        s'efface ; devant celui de la newsletter, elle se range. */
-    const champDeFin = document.querySelector('#offres [data-invite]');
     if (champDeFin) {
       new IntersectionObserver(([vue]) => racine.toggleAttribute('data-doublon', vue.isIntersecting), {
         rootMargin: '0px 0px -10% 0px',

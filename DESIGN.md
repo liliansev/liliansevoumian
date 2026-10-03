@@ -830,8 +830,16 @@ il répond déjà.
 - **Deux places, un seul élément.** Sous le titre du premier écran, puis, dès
   qu'on a défilé d'un tiers d'écran, en bas à droite : elle s'y envole, et
   revient sous le titre si on remonte tout en haut. Elle s'efface quand le
-  champ de fin de page est visible : jamais deux champs à la fois. Le hero
-  n'est donc plus « le titre seul » : le titre, la barre, et les logos.
+  champ de fin de page est visible : jamais deux champs à la fois. À
+  l'inverse, conversation ouverte, c'est le champ de fin de page qui se met en
+  retrait (inerte, à 35 %) ; le toucher mène au champ de la conversation.
+  Constaté par Lilian sur son téléphone le 3 octobre 2026 : la fenêtre
+  s'ouvrait juste sous ce champ resté actif, il y écrivait, et la conversation
+  se refermait. Le hero n'est donc plus « le titre seul » : le titre, la barre,
+  et les logos.
+- **Au doigt, seul le visiteur referme la conversation** (chevron). Le repli
+  automatique quand le focus quitte la fenêtre ne vaut qu'au clavier, sur un
+  écran étroit, où le focus passerait derrière elle.
 - **Dans le coin, elle écrit un exemple puis se range en pastille** : son
   portrait et « Écrire à Lilian » sur ordinateur, son portrait seul (56 px,
   un point pêche) sur téléphone. En barre, elle écrivait sans fin et
