@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import BoutonReservation from './BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 import { serviceNavigation } from '../data/service-navigation';
 
 interface NavigationLink {
@@ -12,29 +12,22 @@ interface NavigationLink {
 }
 
 interface Props {
-  /** Liens propres à une landing. Sans cette prop, la navigation de la home reste la source. */
+  /** Liens propres à une page (ses ancres). Sans cette prop, la barre porte les liens du site. */
   links?: NavigationLink[];
-  ctaLabel?: string;
+  /** Nom de la page dans les statistiques : d'où la conversation a été ouverte. */
   ctaSource?: string;
-  /** Pour une page qui doit d'abord orienter, remplace la réservation par un lien interne. */
-  ctaHref?: string;
   /** La page porte un élément #hero dont la sortie pilote le repère mobile. */
   trackHero?: boolean;
 }
 
-/* L'ordre suit le DÉFILEMENT de la home, pas une hiérarchie d'importance. Toute
-   permutation dans src/pages/index.astro doit se répercuter ici, sinon la nav
-   annonce un ordre que la page ne tient pas. « Cas clients » mène à la page
-   dédiée et non à l'ancre de la home, mais sa place dans la liste reflète celle
-   de la section.
-   Les numéros `01`…`05` ont été retirés avec le reste de la numérotation du site. */
-/* « Méthode » mène à /principes, et cette entrée règle un cul-de-sac : quatre
-   pages substantielles — /principes, /expert-n8n, /expert-make et la page sur
-   les automatisations qui cassent — n'étaient atteignables que depuis le pied
-   de page, à onze mille pixels. Sur les trente-sept liens de la home,
-   dix-sept menaient à l'agenda et aucun à ces pages. La méthode en quatre
-   étapes que PRODUCT.md promet existe pourtant, écrite, sur /principes : elle
-   n'avait simplement aucun chemin. */
+/* La barre est la même sur toutes les pages : le nom, les liens en bas de
+   casse, la pastille qui suit le pointeur, et un seul bouton, « Parlons de
+   votre projet », qui ouvre la conversation (`home-invite`, rendue par
+   `Layout`). Seule la liste des liens change : l'accueil nomme ses quatre
+   métiers, une page d'offre ses ancres, les autres pages les liens du site.
+   Avant le 3 octobre 2026, chaque page avait son libellé de bouton, et
+   l'accueil était la seule à porter cette allure. */
+
 // MENU MOBILE, SANS NUMÉRO : une navigation n'est pas une séquence. Le chiffre
 // annonçait un ordre que le lecteur ne suit pas — il clique là où il veut aller —
 // et il numérotait cinq entrées dont deux mènent à une autre page.
@@ -46,36 +39,18 @@ interface Props {
 // texte comme du contenu — deux lignes de prose en haut du menu plein écran, sur
 // chaque page du site. Un bloc `/* … */` aurait le même défaut ; seuls des `//`
 // permettent d'écrire ces marqueurs sans les déclencher.
-/* La liste suit le nouvel ordre de la home, qui suit lui-même les quatre
-   questions d'un prospect : « Process » (que sait-il faire), « Cas clients »
-   (peut-il résoudre mon problème), « Méthode » (comment). « Offres » et « FAQ »
-   ferment, et la réservation a sa propre pilule à droite.
-
-   Deux changements par rapport à la liste d'avant. « Méthode » ne mène plus à
-   /principes mais à la section #methode de la home, qui n'existait pas : la
-   page reste atteignable, par le lien de fin de cette section-là. Et « Calcul »
-   sort, parce que le calculateur est descendu en avant-dernière position : il
-   sert à justifier un budget, ce n'est plus une destination.
-
-   LE LIBELLÉ EST CONTRAINT PAR LA LARGEUR, et c'est ce qui a écarté
-   « Automatiser ». Mesuré dans Geist à 12 px avec l'interlettrage des liens de
-   nav : à 1024 px, la barre laisse 514 px aux six entrées une fois le wordmark,
-   la pilule de réservation et les gouttières déduits. « AUTOMATISER » porte le
-   jeu à 512 px, soit 1,3 px de marge — donc un débordement au premier arrondi.
-   « PROCESS » le laisse à 483 px, 30 px de marge. « CE QUE JE FAIS » et
-   « AUTOMATISATIONS » débordent franchement. */
+/* Les liens du site, pour les pages qui n'ont pas d'ancres à elles : les deux
+   offres, les cas clients, la méthode, le parcours. */
 const defaultNavLinks: NavigationLink[] = [
   ...serviceNavigation,
-  { href: "/cas-clients", label: "Réalisations" },
+  { href: "/cas-clients", label: "Cas clients" },
   { href: "/principes", label: "Méthode" },
   { href: "/#parcours", label: "Parcours" },
 ];
 
 const {
   links: suppliedLinks,
-  ctaLabel = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES} min`,
   ctaSource = 'nav',
-  ctaHref,
   trackHero,
 } = Astro.props;
 const navLinks = suppliedLinks ?? defaultNavLinks;
@@ -114,7 +89,7 @@ const liensAccueil: NavigationLink[] = [
   { href: '/cas-clients', label: 'Cas clients' },
 ];
 
-// Les offres restent accessibles même quand une landing fournit ses propres
+// Les offres restent accessibles même quand une page fournit ses propres
 // ancres. Leur bloc remplace les entrées équivalentes de la liste mobile.
 const mobileNavLinks = navLinks.filter((link) => {
   const target = new URL(lienNav(link.href), Astro.url);
@@ -124,6 +99,13 @@ const mobileNavLinks = navLinks.filter((link) => {
       && (!target.hash || target.hash === offerTarget.hash);
   });
 });
+
+// Le menu a la même composition partout : une liste en grand, une suite en
+// plus petit, le bouton en bas. Sur l'accueil, la liste en grand est celle des
+// quatre métiers ; ailleurs, ce sont les deux offres, et la suite reprend les
+// liens de la barre.
+const menuEnGrand = isHome ? navLinks : mobileOfferLinks;
+const menuSuite = isHome ? liensAccueil : mobileNavLinks;
 
 /* `past-hero` posé DÈS LE RENDU sur toute page qui n'est pas la home, et c'est
    la réparation d'un défaut qui touchait dix pages sur douze. La classe était
@@ -144,7 +126,7 @@ const mobileNavLinks = navLinks.filter((link) => {
 <header>
 <nav
   id="main-nav"
-  class:list={['nav-root', 'px-[var(--spacing-section-x)]', { 'past-hero': !hasTrackedHero, 'nav-home': isHome }]}
+  class:list={['nav-root', 'px-[var(--spacing-section-x)]', { 'past-hero': !hasTrackedHero }]}
   aria-label="Navigation principale"
 >
   <div class="max-w-[1200px] mx-auto h-full grid grid-cols-[auto_1fr_auto] items-stretch lg:flex lg:items-center lg:justify-between lg:gap-4">
@@ -155,7 +137,7 @@ const mobileNavLinks = navLinks.filter((link) => {
       class="inline-flex items-center gap-2.5 text-[var(--color-ink)] group min-h-[44px] pr-4 border-r border-[var(--color-divider)] lg:pr-0 lg:border-r-0"
       aria-label="Lilian Sevoumian, accueil"
     >
-      <span class="nav-wordmark mono-label hidden lg:inline">{isHome ? 'Lilian Sevoumian' : 'LILIAN SEVOUMIAN'}</span>
+      <span class="nav-wordmark hidden lg:inline">Lilian Sevoumian</span>
       <!-- Mobile : « L » et avatar empilés dans une cellule de taille fixe (pas de saut
            de layout au scroll). Crossfade en opacité dès qu'on a dépassé le Hero.
 
@@ -189,23 +171,12 @@ const mobileNavLinks = navLinks.filter((link) => {
       </span>
     </a>
 
-    <!-- CTA central (mobile) → overlay cal.com + goal lead_call -->
-    {!isHome && (ctaHref ? (
-      <a href={lienNav(ctaHref)} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
-        {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
-      </a>
-    ) : (
-      <BoutonReservation source={mobileCtaSource} class="nav-mid-cta lg:hidden inline-flex items-center justify-center gap-1.5 min-h-[44px] mono-label text-[var(--color-ink)]">
-        {ctaLabel} <span aria-hidden="true" class="text-[var(--color-ink-low)]">›</span>
-      </BoutonReservation>
-    ))}
-
     <!-- Desktop links -->
     <div class="nav-liens hidden lg:flex items-center gap-1" data-nav-liens>
-      {/* Sur l'accueil, une pastille glisse d'un lien à l'autre sous le
-          pointeur : le survol ne changeait que la teinte du texte, et rien ne
-          disait qu'on tenait un lien. */}
-      {isHome && <span class="nav-pastille" aria-hidden="true" data-nav-pastille></span>}
+      {/* Une pastille glisse d'un lien à l'autre sous le pointeur : le survol
+          ne changeait que la teinte du texte, et rien ne disait qu'on tenait
+          un lien. */}
+      <span class="nav-pastille" aria-hidden="true" data-nav-pastille></span>
       {navLinks.map((link) => (
         <a href={lienNav(link.href)} class="nav-link" data-nav-link>
           {link.label}
@@ -213,30 +184,18 @@ const mobileNavLinks = navLinks.filter((link) => {
       ))}
     </div>
 
-    <!-- La home garde un seul bouton, partagé par les layouts mobile et desktop. -->
-    <div id={isHome ? 'contact' : undefined} class:list={[isHome ? 'nav-home-action' : 'hidden lg:flex shrink-0 items-center gap-2']}>
-      {isHome ? (
-        <BoutonReservation
-          source={ctaSource}
-          class="btn-primary"
-          aria-describedby="home-booking-help"
-          goal="causerie_opened"
-          data-causerie-ouvrir=""
-        >
-          <span class="nav-home-action__label">Parlons de votre projet</span>
-          <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
-        </BoutonReservation>
-      ) : ctaHref ? (
-        <a href={lienNav(ctaHref)} class="btn-primary">{ctaLabel}</a>
-      ) : (
-        <BoutonReservation source={ctaSource}>
-          {ctaLabel}
-        </BoutonReservation>
-      )}
+    {/* Un seul bouton, le même au bureau et sur téléphone, sur toutes les
+        pages : il ouvre la conversation de `home-invite`, qui propose
+        WhatsApp, l'e-mail ou l'agenda. Sans script, il mène à l'agenda. Sur
+        l'accueil il porte l'ancre `#contact` ; ailleurs, c'est la section de
+        fin de page qui la porte. */}
+    <div id={isHome ? 'contact' : undefined} class="nav-action">
+      <BoutonReservation source={ctaSource} aria-describedby="nav-action-aide">
+        <span class="nav-action__label">{LIBELLE_CONTACT_RESERVATION}</span>
+        <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
+      </BoutonReservation>
     </div>
-    {/* Sur l'accueil, ce bouton ouvre la conversation de `home-invite`, qui
-        propose WhatsApp, l'e-mail ou l'agenda. Sans script, il mène à l'agenda. */}
-    {isHome && <p id="home-booking-help" class="sr-only">Ouvre la conversation pour écrire à Lilian, par WhatsApp, par e-mail ou en réservant un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio.</p>}
+    <p id="nav-action-aide" class="sr-only">Ouvre la conversation pour écrire à Lilian, par WhatsApp, par e-mail ou en réservant un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio.</p>
 
     <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
     <button
@@ -254,14 +213,10 @@ const mobileNavLinks = navLinks.filter((link) => {
 </header>
 
 <!-- Le dialogue natif isole le menu de la page et de ses éléments fixes. -->
-<dialog
-  id="mobile-menu"
-  class:list={['mobile-menu', { 'mobile-menu--accueil': isHome }]}
-  aria-label="Menu"
->
+<dialog id="mobile-menu" class="mobile-menu" aria-label="Menu">
   <div class="mobile-menu__panel" tabindex="-1" autofocus>
     <header class="mobile-menu__header">
-      <a href="/" class="mono-label inline-flex items-center min-h-[44px]" data-mobile-link>
+      <a href="/" class="mobile-menu__marque" data-mobile-link>
         Lilian Sevoumian
       </a>
       <button type="button" class="mobile-menu__close" aria-label="Fermer le menu" data-menu-close>
@@ -270,58 +225,31 @@ const mobileNavLinks = navLinks.filter((link) => {
       </button>
     </header>
     <div class="mobile-menu__content">
-      {/* Sur l'accueil, le menu liste les quatre métiers, puis le reste de la
-          page : deux offres posées au-dessus d'eux, avec des noms voisins,
-          faisaient hésiter. */}
-      {!isHome && <nav aria-label="Services" class="mobile-menu__offers">
-        {mobileOfferLinks.map((link) => (
+      <nav aria-label={isHome ? 'Mes expertises' : 'Services'} class="mobile-menu__links">
+        {menuEnGrand.map((link) => (
           <a
-            href={link.href}
-            class="mobile-link mobile-menu__offer"
+            href={lienNav(link.href)}
+            class="mobile-link mobile-menu__link"
             data-mobile-link
-            data-fast-goal="service_path_opened"
-            data-fast-goal-source="nav_mobile_offers"
+            data-fast-goal={isHome ? undefined : 'service_path_opened'}
+            data-fast-goal-source={isHome ? undefined : 'nav_mobile_offers'}
           >
-            <span>{link.label}</span>
-            <Icon name="lucide:arrow-right" size={24} aria-hidden="true" />
-          </a>
-        ))}
-      </nav>}
-      {mobileNavLinks.length > 0 && <nav aria-label="Explorer le site" class="mobile-menu__links">
-        {mobileNavLinks.map((link) => (
-          <a href={lienNav(link.href)} class="mobile-link mobile-menu__link" data-mobile-link>
             {link.label}
           </a>
         ))}
-      </nav>}
-      {isHome && <nav aria-label="Le reste de la page" class="mobile-menu__suite">
-        {liensAccueil.map((link) => (
-          <a href={link.href} class="mobile-link" data-mobile-link>
+      </nav>
+      {menuSuite.length > 0 && <nav aria-label={isHome ? 'Le reste de la page' : 'Explorer le site'} class="mobile-menu__suite">
+        {menuSuite.map((link) => (
+          <a href={lienNav(link.href)} class="mobile-link" data-mobile-link>
             {link.label}
           </a>
         ))}
       </nav>}
     </div>
     <div class="mobile-menu__footer">
-      {isHome ? (
-        <BoutonReservation
-          source={mobileCtaSource}
-          class="btn-primary justify-center w-full"
-          data-mobile-link=""
-          goal="causerie_opened"
-          data-causerie-ouvrir=""
-        >
-          Parlons de votre projet <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
-        </BoutonReservation>
-      ) : ctaHref ? (
-        <a href={lienNav(ctaHref)} class="btn-primary justify-center w-full" data-mobile-link>
-          {ctaLabel}
-        </a>
-      ) : (
-        <BoutonReservation source={ctaSource} class="btn-primary justify-center w-full" data-mobile-link="">
-          {ctaLabel}
-        </BoutonReservation>
-      )}
+      <BoutonReservation source={mobileCtaSource} class="btn-primary justify-center w-full" data-mobile-link="">
+        {LIBELLE_CONTACT_RESERVATION} <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
+      </BoutonReservation>
     </div>
   </div>
 </dialog>
@@ -430,7 +358,6 @@ const mobileNavLinks = navLinks.filter((link) => {
     // Le nom du bouton dit ce qu'il fera, pas ce qu'il a fait.
     menuBtn?.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
     window.__verrouDefilement?.('menu', open);
-    document.body.classList.toggle('menu-ouvert', open);
   }
 
   function closeMenu() {
@@ -508,23 +435,15 @@ const mobileNavLinks = navLinks.filter((link) => {
 </script>
 
 <style>
-  .nav-home {
-    background: var(--color-paper);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  .nav-home .nav-wordmark {
+  /* L'habillage de la barre (fond, liens, menu) vit dans `global.css`, avec
+     `.nav-root`. Ici, ce qui tient à ce gabarit : la marque, la pastille, le
+     bouton. */
+  .nav-wordmark {
     font-size: var(--text-body);
     font-weight: 600;
     letter-spacing: -0.02em;
-    text-transform: none;
   }
-  .nav-home .nav-link {
-    min-height: 44px;
-    font-size: var(--text-body-sm);
-    text-transform: none;
-    letter-spacing: 0;
-  }
+
   /* La pastille de survol. Elle vit sous les liens, à leur hauteur, et suit
      le pointeur : une seule forme qui se déplace, pas un fond par lien. */
   .nav-liens {
@@ -556,44 +475,14 @@ const mobileNavLinks = navLinks.filter((link) => {
     transform: translate(var(--x, 0), -50%);
   }
 
-  .nav-home .nav-link {
-    transition: color var(--duration-default) var(--ease-out-quint);
-  }
-
-  /* Le lien de la section en cours garde un point pêche : avec la pastille de
-     survol, la graisse seule ne suffisait plus à le distinguer. */
-  .nav-home .nav-link.is-active::after {
-    content: '';
-    position: absolute;
-    bottom: 3px;
-    left: 50%;
-    width: 4px;
-    height: 4px;
-    margin-left: -2px;
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .nav-pastille {
       transition: opacity 120ms linear;
     }
   }
-  /* La casse, la taille et la graisse du bouton viennent de la règle commune
-     de l'accueil (`index.astro`). */
-  .nav-home .nav-home-action :global(.btn-primary) {
-    gap: 0.75rem;
-  }
 
-  /* Le libellé tient sur une ligne jusqu'à 320 px : sur deux lignes, le bouton
-     faisait 50 px de haut dans une barre de 64. */
-  .nav-home-action__label {
-    white-space: nowrap;
-  }
-  @media (max-width: 479px) {
-    .nav-home .nav-home-action :global(svg) { display: none; }
-  }
-  .nav-home-action {
+  /* Le bouton : au centre de la barre sur téléphone, à droite au bureau. */
+  .nav-action {
     display: flex;
     min-width: 0;
     align-items: center;
@@ -601,63 +490,32 @@ const mobileNavLinks = navLinks.filter((link) => {
     padding-inline: 0.5rem;
   }
 
-  .nav-home-action :global(.btn-primary) {
+  .nav-action :global(.btn-primary) {
     flex-wrap: wrap;
-    gap: 0 0.35rem;
+    gap: 0 0.75rem;
     max-width: 100%;
     padding: 6px 10px;
     line-height: 1.35;
     text-align: center;
   }
 
-  .nav-home-action__duration { white-space: nowrap; }
-
-  /* Le menu de l'accueil : les quatre métiers en grand, le reste de la page
-     en dessous, et le bouton d'appel en bas, sous le pouce. Tout est calé vers
-     le bas : la liste était collée en haut de l'écran, au-dessus de 560 px de
-     vide. Pas de filet entre les liens : c'est la taille qui les sépare. */
-  .mobile-menu--accueil :global(.mobile-menu__content) {
-    display: grid;
-    align-content: end;
-    gap: var(--spacing-groupe);
-    padding-block: 1.5rem;
+  /* Le libellé tient sur une ligne jusqu'à 320 px : sur deux lignes, le bouton
+     faisait 50 px de haut dans une barre de 64. */
+  .nav-action__label {
+    white-space: nowrap;
   }
 
-  .mobile-menu--accueil :global(.mobile-menu__links) {
-    margin-top: 0;
-  }
-
-  .mobile-menu--accueil :global(.mobile-menu__link) {
-    padding-block: 0.4rem;
-    border-bottom: 0;
-    font-size: var(--text-title-lg);
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-  }
-
-  .mobile-menu__suite {
-    display: grid;
-  }
-
-  .mobile-menu__suite .mobile-link {
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-large);
-  }
-
-  .mobile-menu--accueil :global(.mobile-menu__header .mono-label) {
-    font-size: var(--text-body);
-    font-weight: 600;
-    letter-spacing: -0.02em;
+  @media (max-width: 479px) {
+    .nav-action :global(svg) { display: none; }
   }
 
   @media (max-width: 359px) {
-    .nav-home-action { padding-inline: 0.25rem; }
+    .nav-action { padding-inline: 0.25rem; }
   }
 
   @media (min-width: 1024px) {
-    .nav-home-action { padding-inline: 0; }
-    .nav-home-action :global(.btn-primary) { padding: 11px 18px; }
+    .nav-action { padding-inline: 0; }
+    .nav-action :global(.btn-primary) { padding: 11px 18px; }
   }
 
   /* Marque mobile — conteneur de taille fixe (28px) qui empile « L » et avatar.
@@ -708,11 +566,6 @@ const mobileNavLinks = navLinks.filter((link) => {
   /* Crossfade au passage du Hero. */
   .nav-root.past-hero .nav-logo-l { opacity: 0; }
   .nav-root.past-hero .nav-logo-avatar { opacity: 1; }
-
-  /* Le CTA central est rendu par BoutonReservation : il ne porte donc pas le
-     `data-astro-cid` de ce fichier, et un style scopé ici ne l'atteindrait pas.
-     `.nav-mid-cta` vit dans global.css, avec `.nav-root`, `.nav-link` et
-     `.mobile-link` — le reste de l'habillage de la barre y est déjà. */
 
   /* Déclencheur de menu : grille de 9 points (fermé) ⇄ croix (ouvert), sans carré. */
   .menu-trigger {

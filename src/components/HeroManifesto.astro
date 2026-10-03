@@ -1,191 +1,108 @@
 ---
 /*
- * HeroManifesto — bande nuit, typographie seule.
+ * HeroManifesto — l'ouverture de /automatisations-ia, sur la nuit : un titre,
+ * ce qui est livré, le bouton. Typographie seule, sans portrait.
  *
- * Le portrait a été retiré : sur le lime il formait la masse la plus contrastée
- * de la page — davantage que le H1 — et sa chemise lilas touchait le lime à
- * l'opposition sur la roue. Il était de toute façon absent en mobile. On fait
- * donc en desktop ce que le site faisait déjà en petit format, et mieux : la
- * couleur et l'échelle du titre portent seules. La photo reste là où elle sert,
- * à côté de la bio dans le bloc contact.
+ * L'id `hero` est observé par la barre de navigation (`trackHero`) : il reste.
  */
 import LinkCTA from './LinkCTA.astro';
 import Outil from './Outil.astro';
 import BoutonReservation from './BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
-
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 ---
 
 <section
   id="hero"
   data-section
-  class="bloc-lime hero-grille relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)] overflow-hidden"
+  class="hero-grille relative overflow-hidden px-[var(--spacing-section-x)] pt-[var(--spacing-barre)]"
 >
-  <div class="relative max-w-[1200px] mx-auto pt-10 md:pt-24 pb-12 md:pb-[var(--spacing-section-y)] flex flex-col justify-center lg:block lg:min-h-0">
+  {/* Les `.reveal` sont les enfants directs de `data-hero-stagger` : c'est leur
+      rang qui règle la cascade d'entrée (voir global.css). */}
+  <div data-hero-stagger class="relative mx-auto max-w-[1200px] py-[var(--spacing-section-y)]">
+    {/* Le h1 n'est pas un `.reveal`, et c'est voulu : peint à opacité 0 par le
+        voile, il ne serait plus candidat au LCP, et le message principal de la
+        page dépendrait d'un module JavaScript. Il est là dès la première
+        image ; seuls le chapô, les boutons et la note entrent en cascade. */}
+    <h1 class="hero-manifesto-h1 m-0">
+      J’automatise ce que vos équipes font encore <mark>à la main.</mark>
+    </h1>
 
-    <div class="grid grid-cols-1">
+    {/* Le chapô porte ce que le titre ne dit pas : les tâches, puis ce sur quoi
+        l'on est expert. Il ne nomme ni taille d'entreprise ni intitulé de
+        poste : il dit à qui l'on parle sans dire à qui l'on ne parle pas. */}
+    <p class="reveal m-0 mt-[var(--spacing-lie)] max-w-[43ch] text-[length:var(--text-body-large)] leading-[1.5] text-[var(--color-ink-mid)]">
+      Ressaisir des données, trier des demandes, relancer des clients&nbsp;:
+      ces tâches prennent de la place quand l’activité grandit.
+      Je suis freelance et je les automatise avec <Outil icon="simple-icons:n8n">n8n</Outil>,
+      <Outil icon="simple-icons:make">Make</Outil> et des agents IA.
+    </p>
 
-      {/* Statement, sur papier nu, sans carte.
-          Commentaire Astro et non HTML : un `<!-- -->` est recopié tel quel
-          dans la page servie, et ceux-ci y laissaient des tirets cadratins
-          alors que la copy n'en porte aucun. */}
-      <div data-hero-stagger class="flex flex-col gap-6 md:gap-7">
-
-        {/* Le h1 n'est PAS un `.reveal`, et c'est délibéré.
-            Mesuré : peint à opacity 0 par le voile, il est définitivement
-            disqualifié comme candidat LCP par Chrome. Le navigateur retenait
-            donc le bouton de la nav — 2 016 px² — au lieu de ce titre de
-            214 833 px², cent six fois plus grand. Le score était flatteur
-            parce qu'il mesurait le mauvais élément.
-            Surtout, le titre mettait ~280 ms à devenir lisible et une seconde
-            à être opaque, et le filet de sécurité du <head> le laissait
-            invisible 2,5 s si le module de reveal échouait. Le message
-            principal du site ne peut pas dépendre d'un module JavaScript.
-            La cascade reste sur le sur-titre, le sous-titre et les boutons :
-            le geste est préservé, le message est peint tout de suite. */}
-        <h1 class="hero-manifesto-h1 font-display font-semibold text-[var(--color-ink)] m-0">
-          J'automatise ce que vos équipes font encore <mark>à la main.</mark>
-        </h1>
-
-        {/* 43ch et non 48 : à 48 le paragraphe dépassait le point où la trame
-            commence, et il était de toute façon au-dessus de la fourchette de
-            lisibilité de 65 à 75 caractères une fois la ligne pleine. */}
-        {/* Le sous-titre porte ce que le titre ne dit pas : à qui on parle, et ce
-            qu'on livre. L'ancienne version (« automatiser vos tâches manuelles »)
-            paraphrasait le h1 et n'ajoutait que trois mots neufs ; le seul
-            ciblage du site vivait dans le footer, à neuf mille pixels d'ici. */}
-        {/* CE QUE LE CIBLAGE NE DOIT PAS FAIRE : exclure. Il a porté « Heads of
-            Ops, fondateurs et PME », et les deux bornes étaient fausses. « Head
-            of Ops » est un intitulé qui ne s'emploie pas en France — le lecteur
-            à qui la phrase s'adresse ne se reconnaît pas dans un titre qu'il ne
-            porte pas — et « PME » ferme la porte aux missions qui ne le sont
-            pas : un cabinet d'executive search, un distributeur IT établi et une
-            marque e-commerce figurent dans les cas clients de cette même page.
-            « Les fondateurs et leurs équipes » nomme un rôle réel et aucune
-            taille d'entreprise : le ciblage dit à qui l'on parle sans dire à qui
-            l'on ne parle pas. C'est aussi pourquoi la phrase ne dit pas « small
-            teams » — l'anglicisme rouvrirait la borne de taille qu'on vient de
-            retirer, dans la seule langue que le reste de la page n'emploie pas.
-
-            L'EXPERTISE EST PASSÉE EN TÊTE. Le sous-titre énonçait d'abord à qui
-            l'on parle, puis ce qu'on livre ; il énonce maintenant ce sur quoi
-            l'on est expert, puis pour qui. Les trois noms — n8n, Make, agents
-            IA — sont ce sur quoi la recherche est faite, et ils arrivent avant
-            la première virgule au lieu du milieu de la deuxième ligne. */}
-        <p class="reveal text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 max-w-[43ch]">
-          Ressaisir des données, trier des demandes, relancer des clients :
-          ces tâches prennent de la place quand l’activité grandit.
-          Je suis freelance et je les automatise avec <Outil icon="simple-icons:n8n">n8n</Outil>,
-          <Outil icon="simple-icons:make">Make</Outil> et des agents IA.
-        </p>
-
-        <div class="reveal flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-          <BoutonReservation source="hero" class="btn-primary w-full sm:w-auto">
-            Choisir un créneau · {DUREE_RESERVATION_MINUTES} min
-          </BoutonReservation>
-          <LinkCTA href="#cas">Voir les cas clients</LinkCTA>
-        </div>
-
-        {/* La durée et l'absence d'engagement ne sont plus dans le libellé du
-            bouton, qui nomme désormais le résultat et non la procédure. Elles
-            descendent ici, en corps de texte : c'est la même correction que
-            celle déjà faite sur /reprendre-une-automatisation-qui-casse, où
-            cette réassurance vivait dans la plus petite taille du système, à
-            onze pixels et en capitales espacées. C'est la seule information de
-            ce rang qui compte vraiment au moment de cliquer ; elle se lit dans
-            une phrase. Le hero est le seul emplacement où elle manquait : les
-            autres boutons ont déjà cette phrase à côté d'eux. */}
-        <p class="reveal text-[length:var(--text-body-sm)] text-[var(--color-ink-mid)] leading-[1.5] m-0">
-          Pendant l’appel, nous identifions les tâches à automatiser en priorité.
-        </p>
-
-      </div>
-
+    <div class="reveal mt-[var(--spacing-groupe)] flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+      <BoutonReservation source="hero" class="btn-primary w-full sm:w-auto">
+        {LIBELLE_CONTACT_RESERVATION}
+      </BoutonReservation>
+      <LinkCTA href="#cas">Voir les cas clients</LinkCTA>
     </div>
 
+    {/* Ce que le bouton ouvre, dit dans une phrase à côté de lui : une
+        conversation, pas l'agenda. Mêmes mots qu'en fin de page. */}
+    <p class="reveal m-0 mt-3 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-mid)]">
+      Écrivez une phrase, je vous réponds moi-même. Vous choisissez ensuite comment me joindre&nbsp;:
+      WhatsApp, e-mail ou un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio, sans engagement.
+    </p>
   </div>
 </section>
 
 <style>
-  /* La trame du hero.
-   *
-   * Même maille que le quadrillage des gouttières posé par Layout.astro
-   * (--spacing-grid-cell, 96 px) : le site n'a qu'une grille, elle entre
-   * simplement dans l'aplat au lieu de s'arrêter à son bord. Une seconde maille
-   * se serait vue comme une erreur d'alignement.
-   *
-   * La trame est claire sur la bande nuit, comme --color-grid-line que
-   * .bloc-lime remappe en blanc à 8 %. Elle est écrite ici un cran en dessous,
-   * pour la raison donnée plus bas.
-   *
-   * Le masque est ce qui la rend supportable. Le texte occupe la moitié gauche
-   * (le h1 est plafonné à 19ch) ; la trame est donc pleine à droite et se
-   * dissipe avant de passer sous les mots. Sans lui, un quadrillage derrière un
-   * titre de 76 px se lit comme du bruit.
-   */
+  /* La trame du hero : un quadrillage à la maille de 96 px
+     (`--spacing-grid-cell`), posé derrière le premier écran, du côté droit.
+
+     Le masque la garde à droite : elle se dissipe à 24 % depuis le bord, donc
+     avant le point où s'arrête la ligne la plus longue du titre (72 % de la
+     largeur). Derrière un titre de cette taille, un quadrillage se lit comme
+     du bruit. */
   .hero-grille::before {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
-    /* Trait plus discret que le jeton hérité de .bloc-lime, qui vaut 0,08 :
-       au-delà, les verticales se lisent comme un trait sur les lettres du h1. */
+    --trait: color-mix(in srgb, var(--color-ink) 5%, transparent);
     background-image:
-      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      linear-gradient(to right, var(--trait) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--trait) 1px, transparent 1px);
     background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
-    /* La dissipation s'arrête à 24 % depuis la DROITE, et non 62 %.
-       Le réglage d'origine supposait que le titre tenait la moitié gauche ;
-       mesuré, sa ligne la plus longue va jusqu'à 72 % de la largeur, et les
-       verticales lui traversaient les lettres. À 24 %, la trame ne commence
-       qu'après le point où le texte s'arrête, à toutes les largeurs où elle
-       est active. */
     -webkit-mask-image: linear-gradient(to left, var(--color-night) 0%, transparent 24%);
     mask-image: linear-gradient(to left, var(--color-night) 0%, transparent 24%);
   }
 
-  /* Pas de trame sous 1024 px. Le texte y occupe toute la largeur ET toute la
-     hauteur utile : une dissipation verticale laissait la trame traverser le
-     sous-titre et le lien secondaire à 8-9 % d'écart de luminance. Aucun
-     réglage ne la rendait à la fois visible et inoffensive, donc elle saute. */
+  /* Pas de trame sous 1024 px : le texte y occupe toute la largeur, et aucun
+     réglage ne la rendait à la fois visible et inoffensive. */
   @media (max-width: 1023px) {
     .hero-grille::before { display: none; }
   }
 
+  /* La graisse, l'interligne et l'approche viennent de la tenue commune
+     (global.css) ; seuls la taille et le plafond de largeur sont d'ici. */
   .hero-manifesto-h1 {
-    font-size: var(--text-display-hero);
-    line-height: 0.95;
-    letter-spacing: -0.035em;
-    text-wrap: balance;
     max-width: 19ch;
-    /* `overflow-wrap` sans `hyphens` : un mot trop long se replie, mais
-       jamais avec un tiret. À cette taille d'affichage une césure est
-       très visible, et elle coupait « freelance » en « free-lance »
-       ailleurs sur le site. Le repli reste là comme garde-fou. */
+    /* Sous 360 px de large, « J’automatise » ne tient plus sur une ligne au
+       plancher du jeton (52 px) et se coupait en deux : le titre suit alors la
+       largeur de l'écran. Au-delà, c'est le jeton qui décide. */
+    font-size: min(var(--text-display-hero), 14.5vw);
+    /* Garde-fou : un mot trop long se replie, sans tiret, plutôt que de sortir
+       de l'écran. */
     overflow-wrap: break-word;
   }
 
-  /* Le surligneur du titre se trace, comme sur la home, mais sans passer par
-     `.reveal` ni par `.entree` : le h1 doit rester peint dès la première image
-     (voir la note LCP dans le gabarit). On rejoue donc sur le seul fragment les
-     `@keyframes mark-trace` de global.css. Le fragment surligné est écrit par
-     la bande : il apparaît en dernier, le reste du titre étant lisible dès la
-     première image. Sans `.js-ready` ou en mouvement réduit, il est
-     simplement surligné, comme avant.
-     420 ms : le sous-titre et les boutons sont en train d'arriver. */
+  /* Le surlignage du titre se trace sans passer par `.reveal` ni par
+     `.entree`, puisque le h1 reste peint dès la première image : on rejoue sur
+     le seul fragment les `@keyframes mark-trace` de global.css. Sans
+     `.js-ready` ou en mouvement réduit, il est simplement surligné.
+     420 ms : le chapô et les boutons sont en train d'arriver. */
   @media (prefers-reduced-motion: no-preference) {
     :global(.js-ready) .hero-manifesto-h1 mark {
       animation: mark-trace var(--duration-trace) var(--ease-out-expo) backwards;
       animation-delay: 420ms;
     }
   }
-
-  /* La bascule à 1024 px a été retirée : elle commutait vers un second jeton
-     PLUS PETIT que le premier, et le titre rétrécissait de 14,7 % au passage
-     du point de rupture. La courbe unique de --text-display-hero couvre
-     désormais toute la plage.
-     Le plafond de 19ch reste utile jusqu'à ~92 px de corps ; au-delà c'est le
-     conteneur de 1200 px qui borne, et la règle devient inerte sans nuire. */
-
-  /* Dark mode : bordure plus visible pour matérialiser le crop de la photo. */
 </style>

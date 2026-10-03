@@ -1,27 +1,47 @@
 ---
 /*
- * home-questions — accueil : les questions qu'on pose avant d'écrire.
+ * questions — les questions qu'on pose avant d'écrire, sur toutes les pages.
  *
  * Elles sont écrites comme un échange, dans le vocabulaire de la barre
  * d'écriture : la question à droite, sur pêche, comme ce qu'écrit le visiteur ;
  * la réponse à gauche, comme ce que dit Lilian. La section suivante est le
  * champ où l'on écrit vraiment : l'échange se poursuit là.
  *
- * Sur grand écran tout est affiché, rien n'est replié : quatre questions ne
- * méritent pas un accordéon. Sur téléphone, où la section tenait un écran et
- * demi, seule la première réponse est ouverte ; on touche une question pour
- * lire la sienne. Ce sont des `details` : sans script ils sont tous ouverts, et
- * un moteur lit les quatre réponses dans tous les cas.
+ * Née sur l'accueil (`home-questions`), elle remplace depuis le 3 octobre 2026
+ * les accordéons à cadres des autres pages : une seule façon de poser une
+ * question sur le site.
  *
- * Le texte vient de `data/home-faq`, qui alimente aussi le balisage `FAQPage`
- * posé par la page.
+ * Sur grand écran tout est affiché, rien n'est replié. Sur téléphone, seule la
+ * première réponse est ouverte ; on touche une question pour lire la sienne.
+ * Ce sont des `details` : sans script ils sont tous ouverts, et un moteur lit
+ * toutes les réponses dans tous les cas.
+ *
+ * Sans `items`, le texte vient de `data/home-faq`. Le balisage `FAQPage` reste
+ * posé par la page, à partir de la même liste : il lit `a`, le texte brut.
+ * Quand une réponse porte un lien (`lien-prose`), elle l'écrit dans `html`.
  */
 import SectionHeader from './SectionHeader.astro';
 import { homeFaqs } from '../data/home-faq';
+
+interface Props {
+  id?: string;
+  titre?: string;
+  /** Largeur du titre, en `ch`. */
+  titreLargeur?: string;
+  /** `a` en texte brut ; `html`, la même réponse quand elle porte un lien. */
+  items?: readonly { q: string; a: string; html?: string }[];
+}
+
+const {
+  id = 'questions',
+  titre = 'Avant de m’écrire.',
+  titreLargeur = '12ch',
+  items = homeFaqs,
+} = Astro.props;
 ---
 
 <section
-  id="questions"
+  id={id}
   data-section
   class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
@@ -30,19 +50,18 @@ import { homeFaqs } from '../data/home-faq';
         lui : sans cela, la colonne de gauche restait vide sous le titre. */}
     <SectionHeader
       class="lg:sticky lg:top-28"
-      title="Avant de m’écrire."
-      titleMaxWidth="12ch"
-      rule={false}
+      title={titre}
+      titleMaxWidth={titreLargeur}
       spacing="none"
     />
 
     <div class="echanges reveal" data-echanges>
-      {homeFaqs.map((item) => (
+      {items.map((item) => (
         <details class="echange" open>
           <summary class="echange__tete">
             <h3 class="echange__question">{item.q}</h3>
           </summary>
-          <p class="echange__reponse">{item.a}</p>
+          <p class="echange__reponse" set:html={item.html ?? item.a} />
         </details>
       ))}
     </div>

@@ -1,59 +1,80 @@
 ---
 /*
- * /expert-make — landing SEO ciblée « expert Make » (ex-Integromat).
- * Angle propre à Make : visuel, maintenable par l'équipe, certification Niveau 5.
- * Contenu distinct de /expert-n8n (pas de page doublon — angles, cas d'usage et
- * FAQ différents) ; la charpente, elle, est partagée : voir PageExpertOutil.
+ * /expert-make — la page « expert Make » (l'ancien Integromat).
+ * Angle propre à Make : lisible, maintenable par l'équipe, certification
+ * niveau 5. Le contenu est distinct de /expert-n8n (angles, usages, cas et
+ * questions différents) ; la charpente est partagée : voir PageExpertOutil.
+ *
+ * Les phrases des cas reprennent les chiffres des fiches de
+ * `src/content/cas-clients` : en changer un là-bas, c'est le changer ici.
  */
 import PageExpertOutil from '../layouts/PageExpertOutil.astro';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { reponseMakeOuN8n, reponseMakeOuN8nHtml } from '../data/make-ou-n8n';
 
-// Ce que je fais avec Make — props de valeur (angle Make : visuel + maintenable).
 const valeur = [
   {
-    titre: 'Des scénarios visuels que votre équipe lit',
-    texte: "Make rend chaque automatisation lisible étape par étape. Votre équipe voit ce qui se passe, repère une erreur, ajuste un filtre, sans dépendre de moi pour le moindre changement.",
+    titre: 'Des scénarios que votre équipe lit',
+    texte: 'Make, l’ancien Integromat, rend chaque automatisation lisible étape par étape. Votre équipe voit ce qui se passe, repère une erreur, ajuste un filtre, sans dépendre de moi pour le moindre changement.',
   },
   {
-    titre: '1 500+ applications connectées',
-    texte: "HubSpot, Pipedrive, Notion, Airtable, Slack, Google Workspace, Stripe, Pennylane… Si vos outils ont une API, je les branche entre eux et fais circuler la donnée au bon endroit.",
+    titre: 'Vos outils branchés entre eux',
+    texte: 'HubSpot, Pipedrive, Notion, Airtable, Slack, Google Workspace, Stripe, Pennylane… Si vos outils ont une API, je les branche entre eux et fais circuler la donnée au bon endroit.',
   },
   {
     titre: 'Une couche d’erreur sur chaque scénario',
-    texte: "try/catch, alertes Slack, reprise propre. Quand une API tierce bouge, vous le voyez et vous savez quoi faire, même un dimanche soir.",
+    texte: 'Gestion d’erreur, alertes Slack, reprise propre. Quand une API tierce bouge, vous le voyez et vous savez quoi faire, même un dimanche soir.',
   },
   {
     titre: 'Du premier scénario au transfert',
-    texte: "Je conçois, je documente (une doc custom qui colle à votre setup), je forme. L'objectif : à la livraison, vos équipes sont autonomes sur les modifications courantes.",
+    texte: 'Je conçois, je documente (une documentation écrite pour votre installation), je forme. L’objectif : à la livraison, vos équipes sont autonomes sur les modifications courantes.',
   },
 ];
 
-// Ce qu'on peut automatiser avec Make — cas d'usage (SEO + concret).
 const casUsage = [
-  'Synchroniser votre CRM avec vos autres outils (lead → CRM → facturation → Slack)',
+  'Synchroniser votre CRM avec vos autres outils (lead, CRM, facturation, Slack)',
   'Automatiser les relances commerciales et l’onboarding client',
-  'Consolider votre reporting (Google Sheets, Notion, tableaux de bord)',
+  'Consolider votre reporting (Google Sheets, Notion, dashboards)',
   'Générer devis, factures et documents à partir d’un formulaire',
   'Router les demandes entrantes vers la bonne personne, sans tri manuel',
   'Connecter vos formulaires, paiements et e-mails en un flux unique',
 ];
 
+const cas = [
+  {
+    nom: 'Fraich Touch',
+    href: '/cas-clients/facturation-automatisee-fraich-touch',
+    texte: 'Chez Fraich Touch, agence de gestion de talents, 4 scénarios Make remplacent les 33 précédents pour la facturation entre HubSpot et Pennylane ; l’équipe a récupéré environ 4 heures par semaine.',
+  },
+  {
+    nom: 'M Partners',
+    href: '/cas-clients/m-partners',
+    texte: 'Chez M Partners, cabinet de chasse de têtes, un scénario Make orchestre le repérage et la qualification des prospects par un agent IA ; un passage prend environ 10 minutes, contre 1 à 3 heures à la main pour 50 entreprises.',
+  },
+  {
+    nom: 'Deuxième Souffle',
+    href: '/cas-clients/deuxieme-souffle',
+    texte: 'Pour Deuxième Souffle, qui coordonnait une trentaine de coachs, des automatisations Make accompagnent une application Glide : sessions, candidatures, affectations et pointage. Aucun résultat chiffré n’a été mesuré sur ce projet.',
+  },
+];
+
 const faqs = [
   {
-    q: 'Make ou n8n, lequel choisir ?',
-    a: "Make si vous voulez du visuel, maintenable par votre équipe, et une connexion rapide à des outils SaaS courants. n8n si vous avez des contraintes de souveraineté (données sensibles, RGPD strict), du volume de données important, ou besoin d’agents IA et de code sur-mesure. Je travaille les deux et je vous dis lequel colle à votre cas.",
+    q: 'Make ou n8n, lequel choisir ?',
+    a: reponseMakeOuN8n,
+    html: reponseMakeOuN8nHtml,
   },
   {
-    q: 'Mon équipe pourra-t-elle maintenir les scénarios sans moi ?',
-    a: "Oui, c’est le but. Make est visuel par nature, et je livre une documentation custom + une session de formation. Modifier un filtre, ajouter un destinataire, dupliquer un scénario : votre équipe le fait seule. Pour les évolutions profondes, une séance à la carte suffit.",
+    q: 'Mon équipe pourra-t-elle maintenir les scénarios sans moi ?',
+    a: 'Oui, c’est le but. Make se lit étape par étape, et je livre une documentation écrite pour votre installation, avec une session de formation. Modifier un filtre, ajouter un destinataire, dupliquer un scénario : votre équipe le fait seule. Pour les évolutions profondes, une séance à la carte suffit.',
   },
   {
-    q: 'Combien de temps pour un premier scénario ?',
-    a: `On valide le périmètre pendant l'appel de ${DUREE_RESERVATION_MINUTES} minutes, avant de lancer quoi que ce soit. Le délai dépend du nombre d'outils à connecter et de la logique métier. Je vous l'annonce à ce moment-là.`,
+    q: 'Combien de temps pour un premier scénario ?',
+    a: `On valide le périmètre pendant l’appel de ${DUREE_RESERVATION_MINUTES} minutes, avant de lancer quoi que ce soit. Le délai dépend du nombre d’outils à connecter et de la logique métier. Je vous l’annonce à ce moment-là.`,
   },
   {
-    q: 'Make est-il assez puissant pour mon besoin ?',
-    a: "Pour la grande majorité des automatisations métiers (connecter des outils, faire circuler la donnée, déclencher des actions), oui, largement. Si votre besoin tire vers du traitement de gros volumes de données ou de l’hébergement maîtrisé, je bascule sur n8n, et je vous le dis.",
+    q: 'Make est-il assez puissant pour mon besoin ?',
+    a: 'Pour la grande majorité des automatisations métier (connecter des outils, faire circuler la donnée, déclencher des actions), oui, largement. Si votre besoin demande du code dans le flux ou un hébergement sur vos serveurs, je passe à n8n, et je vous le dis.',
   },
 ];
 
@@ -66,48 +87,35 @@ const serviceSchema = {
   "@id": "https://liliansevoumian.fr/expert-make#service",
   "isPartOf": { "@id": "https://liliansevoumian.fr/automatisations-ia#service" },
   "name": "Expert Make freelance · Lilian Sevoumian",
-  "description": "Expert Make (ex-Integromat) freelance, certifié Niveau 5. Automatisation des processus métier, intégration d’outils et scénarios no-code maintenables.",
+  "description": "Lilian Sevoumian, expert Make (ex-Integromat) freelance, premier Français certifié Make niveau 5 (2022). Automatisation des processus métier, intégration d’outils et scénarios maintenables par l’équipe.",
   "url": "https://liliansevoumian.fr/expert-make",
   "areaServed": "France",
   "serviceType": ["Automatisation Make", "Intégration Make", "Conseil no-code", "Formation Make"],
   "knowsAbout": ["Make", "Integromat", "Automatisation des processus", "Intégration API", "No-Code", "Workflow"],
   "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
-
-const stats = [
-  { label: 'CERTIFICATION', valeur: 'Make Niveau 5' },
-  { label: 'EN PRODUCTION', valeur: 'Depuis 2020' },
-  { label: 'APRÈS LIVRAISON', valeur: 'Corrections incluses' },
-];
 ---
 
 <PageExpertOutil
   outil="Make"
   url="/expert-make"
-  titreSeo="Expert Make freelance · automatisation no-code | Lilian Sevoumian"
-  descriptionSeo="Expert Make (ex-Integromat) freelance, certifié Niveau 5, le premier en France. J'automatise vos processus métier et connecte vos outils en scénarios visuels maintenables. Réponse sous 48 h."
+  titreSeo="Expert Make freelance certifié niveau 5 · Lilian Sevoumian"
+  descriptionSeo="Premier Français certifié Make niveau 5 (2022). Je construis, reprends et documente vos scénarios Make (ex-Integromat), lisibles par votre équipe."
   serviceSchema={serviceSchema}
-  icone="simple-icons:make"
-  badge="EXPERT MAKE · CERTIFIÉ NIVEAU 5"
   titreHtml="Expert <mark>Make</mark> freelance."
-  chapo="Certifié Niveau 5, le premier en France. J'automatise vos processus métier et connecte vos outils en scénarios visuels que votre équipe peut lire, suivre et maintenir."
-  titreValeur="Du visuel, du robuste, du maintenable."
+  chapo="Certifié Make niveau 5 depuis 2022, le premier en France. J’automatise vos processus métier et connecte vos outils en scénarios que votre équipe peut lire, suivre et maintenir."
+  preuves="Premier Français certifié Make niveau 5 (2022). Plus de 300 personnes formées à Make, à n8n et à l’IA."
+  titreValeur="Du lisible, du robuste, du maintenable."
   valeur={valeur}
-  titreCasUsage="Ce qu'on peut automatiser avec Make."
+  titreCasUsage="Ce qu’on peut automatiser avec Make."
   casUsage={casUsage}
-  titrePourquoi="Le premier certifié Make Niveau 5 en France."
-  textePourquoi="J'automatise des process depuis 2020, pour des fondateurs, des dirigeants et des équipes ops. Des automatisations qui tiennent dans le temps, documentées, avec une couche d'erreur sur chacune."
-  stats={stats}
+  lienCroise={{ href: '/expert-n8n', libelle: 'Plutôt un besoin n8n ? La page expert n8n' }}
+  cas={cas}
+  titrePourquoi="Le premier Français certifié Make niveau 5."
+  fichePourquoi="Lilian Sevoumian est le premier Français certifié Make niveau 5, une certification obtenue en 2022. Freelance en automatisation depuis septembre 2020, il a formé plus de 300 personnes à Make, à n8n et à l’IA."
+  textePourquoi="J’automatise des process depuis 2020, pour des fondateurs, des dirigeants et des équipes ops. Des automatisations qui tiennent dans le temps, documentées, avec une couche d’erreur sur chacune."
   titreFaq="Les questions qui reviennent sur Make."
   faqs={faqs}
-  lienCroise={{ question: 'BESOIN PLUTÔT DE n8n ?', href: '/expert-n8n', libelle: 'VOIR LA PAGE EXPERT N8N' }}
-  titreCtaFinal="Un scénario Make en tête ?"
->
-  <Fragment slot="preuves">
-    <span class="text-[var(--color-accent-text)]">MAKE CERTIFIÉ N5</span> · 300+ PERSONNES FORMÉES · RÉPONSE SOUS 48&nbsp;H
-  </Fragment>
-
-  <Fragment slot="cta-texte">
-    {DUREE_RESERVATION_MINUTES}&nbsp;min pour poser votre process à plat. Sans engagement. Votre scénario Make existe déjà et il casse&nbsp;? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.
-  </Fragment>
-</PageExpertOutil>
+  titreFin="Un scénario Make <mark>en tête ?</mark>"
+  suiteFin={'Décrivez-le en une phrase, je vous réponds <span class="whitespace-nowrap">moi-même</span>. Il existe déjà et il casse ? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.'}
+/>

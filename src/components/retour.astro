@@ -1,0 +1,50 @@
+---
+/*
+ * retour — le fil de retour en haut d'une page intérieure : une flèche et
+ * une destination, en bas de casse. Il était réécrit à la main sur quatre
+ * pages, en capitales.
+ */
+interface Props {
+  href?: string;
+}
+
+const { href = '/' } = Astro.props;
+---
+
+<a href={href} class="retour tap-44">
+  <span aria-hidden="true" class="retour__fleche">←</span>
+  <slot>Retour à l’accueil</slot>
+</a>
+
+<style>
+  .retour {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    text-decoration: none;
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .retour__fleche {
+    display: inline-block;
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .retour:hover {
+      color: var(--color-ink);
+    }
+
+    .retour:hover .retour__fleche {
+      transform: translateX(-0.2rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .retour__fleche {
+      transition: none;
+    }
+  }
+</style>

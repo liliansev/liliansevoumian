@@ -2,11 +2,10 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import MobileCTABar from '../../components/MobileCTABar.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
+import Retour from '../../components/retour.astro';
+import FinDePage from '../../components/fin-de-page.astro';
+import { Icon } from 'astro-icon/components';
 import { getCollection } from 'astro:content';
-import BoutonReservation from '../../components/BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../../lib/reservation';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -16,15 +15,29 @@ const entries = all
   .filter((entry) => showDrafts || !entry.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
+/* Les textes des cas ne portent pas les espaces insécables du français : sans
+   elles, un deux-points ou une unité passait seul à la ligne. Elles sont
+   posées ici, à l'affichage : avant `: ; ? !` et le guillemet fermant, après le
+   guillemet ouvrant, entre un nombre et son unité. La page d'un cas fait de
+   même sur son corps (`[slug].astro`). */
+const espaces = (texte: string) =>
+  texte
+    .replace(/ ([:;?!»])/g, '\u00a0$1')
+    .replace(/« /g, '«\u00a0')
+    .replace(/(\d) (?=(?:h|min|%|€)(?![\p{L}\d]))/gu, '$1\u00a0');
+
+// Le titre garde aussi sa forme d'origine : c'est elle que lit le balisage
+// de la collection.
 const displayStudies = entries.map((entry) => ({
   slug: entry.id,
   title: entry.data.title,
+  titre: espaces(entry.data.title),
   secteur: entry.data.secteur,
   tags: entry.data.tags,
   tools: entry.data.tools,
-  kpis: entry.data.kpis,
-  description: entry.data.description,
-  scopeNote: entry.data.scopeNote,
+  kpis: entry.data.kpis.map((kpi) => ({ value: espaces(kpi.value), label: espaces(kpi.label) })),
+  description: entry.data.description && espaces(entry.data.description),
+  scopeNote: entry.data.scopeNote && espaces(entry.data.scopeNote),
 }));
 
 const breadcrumbs = [
@@ -52,33 +65,10 @@ const collectionSchema = {
 
 const total = displayStudies.length;
 
-/* Nombre de colonnes de la grille de cartes, déduit du nombre de cas.
-   Il était figé à `lg:grid-cols-3`, et le nombre de cas vient de la collection :
-   à quatre fiches, la grille rendait trois cartes en rang 1 et une orpheline en
-   rang 2. Mesuré à 1440 px, les deux cellules laissées vides faisaient
-   816 × 463 px de blanc au milieu de la page, soit un tiers de la grille — la
-   même page à 768 px, en deux colonnes, affichait un 2 × 2 sans trou.
-   La règle qui remplace la valeur figée compte les trous : on garde le nombre
-   de colonnes qui en laisse le moins, et on préfère la grille la plus dense à
-   égalité. 3 cas → 3 colonnes, 4 → 2 × 2, 5 → 3 + 2, 6 → 3 × 3, 8 → 2 × 4.
-   Aucune configuration ne peut plus laisser une rangée à moitié vide.
-   Les classes sont écrites en toutes lettres et non interpolées : Tailwind
-   scanne le source, une classe construite à la volée n'existerait pas au build. */
-const trous = (colonnes: number) => (colonnes - (total % colonnes)) % colonnes;
-const colonnesLg = total < 3 ? Math.max(total, 1) : trous(3) <= trous(2) ? 3 : 2;
-const classeLg =
-  colonnesLg === 3 ? 'lg:grid-cols-3' : colonnesLg === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1';
-const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
-
-/* Grille de KPI : une seule colonne, à toutes les tailles.
-   Deux raisons mesurées. Le séparateur est le fond du conteneur qui
-   transparaît par le `gap-px` : toute cellule manquante se remplit de gris, et
-   trois KPI sur deux colonnes laissaient un carré gris dans la carte. Et les
-   cartes tiennent à trois de front, soit ~390 px : découpées en trois
-   colonnes, les cellules tombaient à 111 px pour des libellés qui en
-   demandaient 117, et « AUTOMATIQUEMENT » débordait de la carte.
-   La page de détail, elle, dispose de toute la largeur et garde ses trois
-   colonnes. */
+// Le nombre de cas ouvre le chapô, en toutes lettres jusqu'à dix.
+const EN_LETTRES = ['', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six', 'Sept', 'Huit', 'Neuf', 'Dix'];
+const debut =
+  total > 0 ? `${EN_LETTRES[total] ?? total} projet${total > 1 ? 's' : ''}, automatisations` : 'Automatisations';
 ---
 
 <Layout
@@ -87,176 +77,307 @@ const classeMd = total >= 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
   breadcrumbs={breadcrumbs}
   articleSchema={collectionSchema}
 >
-  <Navigation ctaLabel="Parler de mon projet" />
+  <Navigation ctaSource="cas_index_nav" />
 
   <main id="main-content">
     <section
       data-section
-      class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]"
+      class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)]"
     >
-      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+      {/* Même dégagement sous la barre que `tete-de-page`. */}
+      <div class="relative max-w-[1200px] mx-auto pt-[calc(var(--spacing-barre)+var(--spacing-bloc))] pb-[var(--spacing-section-y)]">
 
         {/* L'en-tête arrive, il ne s'affiche pas : `.entree` fait monter ses
             enfants directs l'un après l'autre, dans l'ordre où on les lit.
             Ce sont des `@keyframes` jouées au chargement, pas un voile levé par
-            script : sans JS le h1 est peint dans son état final, ce que le
-            `.reveal` d'avant ne garantissait qu'au paragraphe.
-            La mesure de 64ch est remontée du bloc titre à l'enveloppe, et son
-            retrait droit sur le titre et le chapô : le titre coupe aux mêmes
-            mots qu'avant. Le libellé est un bloc, sinon il partage la ligne du
-            fil de retour. */}
-        <div class="entree max-w-[64ch] mb-10 md:mb-12">
-          <a
-            href="/"
-            class="group tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
-          >
-            <span aria-hidden="true" class="inline-block transition-transform motion-safe:group-hover:-translate-x-[0.2rem]">←</span>
-            RETOUR À L'ACCUEIL
-          </a>
-
-          <div class="mb-6 md:mb-8 py-1.5">
-            <span class="mono-caption text-[var(--color-ink-low)]">
-              CAS CLIENTS · {total} PROJET{total > 1 ? 'S' : ''} DOCUMENTÉ{total > 1 ? 'S' : ''}
-            </span>
-          </div>
-
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0 pt-2 pr-2 max-w-[18ch]">
-            Des projets métier, documentés.
-          </h1>
-          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-5 pb-2 pr-2 max-w-[60ch]">
-            Automatisations et applications : le besoin de départ, la solution réalisée et les résultats disponibles, avec leur contexte.
+            script : sans JS le titre est peint dans son état final. */}
+        <div class="entree mb-[var(--spacing-bloc)]">
+          <div class="mb-[var(--spacing-groupe)]"><Retour href="/" /></div>
+          <h1 class="m-0 max-w-[18ch]">Des projets métier, documentés.</h1>
+          <p class="mt-[var(--spacing-lie)] mb-0 text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5]">
+            {debut} et applications&nbsp;: le besoin de départ, la solution réalisée et les résultats disponibles, avec leur contexte.
           </p>
         </div>
 
-        {displayStudies.length === 0 ? (
-          <div class="reveal card p-10 text-center">
-            <p class="mono-caption text-[var(--color-ink-low)] mb-3">CAS EN COURS DE PUBLICATION</p>
-            <p class="text-[var(--color-ink-mid)] mb-6 max-w-[44ch] mx-auto">
-              Pour discuter d'un cas similaire au vôtre, le plus efficace est l'appel direct.
+        {/* Une liste, pas une grille de cartes : un cas par rangée, ce qu'il
+            est à gauche, ce qu'il a donné à droite. Rien ne l'encadre et aucun
+            filet ne sépare les rangées : c'est l'espace qui le fait. */}
+        {total === 0 ? (
+          <div class="reveal">
+            <p class="m-0 text-[length:var(--text-body-large)] text-[var(--color-ink)]">
+              Les cas sont en cours de publication.
             </p>
-            <BoutonReservation source="cas_index_empty">
-              Parler de mon projet
-            </BoutonReservation>
+            <p class="mt-[var(--spacing-colle)] mb-0 text-[var(--color-ink-mid)]">
+              Pour parler d’un projet proche du vôtre, écrivez-moi une phrase juste en dessous&nbsp;: je vous réponds moi-même.
+            </p>
           </div>
         ) : (
-          <div class:list={['grid grid-cols-1 gap-6 reveal-stagger', classeMd, classeLg]}>
-            {displayStudies.map((cs) => {
-              const tools = cs.tools || [];
-              const kpis = cs.kpis || [];
-              const tags = cs.tags || [];
-              // L'enveloppe porte l'entrée en cascade, la carte porte le survol.
-              // Sur un seul élément, la transition de `.reveal-stagger` écrasait
-              // celle de `.card` : le filet changeait de couleur d'un coup.
-              return (
-                <div class="reveal flex">
-                <a
-                  href={`/cas-clients/${cs.slug}`}
-                  class="cas-carte card card-interactive bg-[var(--color-paper)] flex flex-col gap-5 w-full"
-                >
+          <ul class="cas-liste reveal-stagger" role="list">
+            {displayStudies.map((cs) => (
+              <li class="reveal">
+                <article class="cas">
+                  <div class="cas__tete">
+                    {/* Le lien est le titre, et il s'étend à toute la rangée
+                        (`::after`) : la rangée entière se clique, et un lecteur
+                        d'écran n'entend que le titre comme nom du lien. */}
+                    <h2 class="cas__titre">
+                      <a href={`/cas-clients/${cs.slug}`} class="cas__lien">{cs.titre}</a>
+                    </h2>
+                    {(cs.secteur || cs.tags.length > 0) && (
+                      <p class="cas__meta">
+                        {cs.secteur && <span class="cas__secteur">{cs.secteur}</span>}
+                        {cs.tags.length > 0 && <span>{cs.tags.join(', ')}</span>}
+                      </p>
+                    )}
+                  </div>
 
-                  {(cs.secteur || tags.length > 0) && (
-                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mono-caption text-[var(--color-ink-low)]">
-                      {cs.secteur && <span>{cs.secteur.toUpperCase()}</span>}
-                      {cs.secteur && tags.length > 0 && <span aria-hidden="true">·</span>}
-                      {tags.length > 0 && <span>{tags.join(' · ').toUpperCase()}</span>}
-                    </div>
-                  )}
+                  {/* À droite, les résultats ; un cas qui n'a pas de chiffre y
+                      dit en une phrase ce qui a été réalisé. */}
+                  <div class="cas__preuves">
+                    {cs.kpis.length > 0 ? (
+                      <dl class="faits">
+                        {cs.kpis.slice(0, 3).map((kpi) => (
+                          <div>
+                            <dt class="fait__valeur">{kpi.value}</dt>
+                            <dd class="fait__detail">{kpi.label}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : (
+                      cs.description && <p class="cas__resume">{cs.description}</p>
+                    )}
+                    {cs.scopeNote && <p class="cas__reserve">{cs.scopeNote}</p>}
+                  </div>
 
-                  <h2 class="font-display font-semibold text-[length:var(--text-title)] tracking-[-0.02em] text-[var(--color-ink)] leading-[1.2] m-0">
-                    {cs.title}
-                  </h2>
-
-                  {kpis.length === 0 && cs.description && (
-                    <p class="m-0 leading-relaxed text-[var(--color-ink-mid)]">{cs.description}</p>
-                  )}
-                  {cs.scopeNote && (
-                    <p class="m-0 mt-auto text-sm leading-relaxed text-[var(--color-ink-low)]">{cs.scopeNote}</p>
-                  )}
-
-                  {kpis.length > 0 && (
-                    <div class="grid grid-cols-1 gap-px bg-[var(--color-divider)] mt-auto">
-                      {kpis.slice(0, 3).map((kpi) => (
-                        <div class="bg-[var(--color-paper)] py-3 flex flex-col gap-1">
-                          <span class="font-display font-semibold tabular-nums text-xl tracking-[-0.025em] text-[var(--color-ink)] leading-none">
-                            {kpi.value}
-                          </span>
-                          <span class="mono-caption text-[var(--color-ink-low)] leading-tight">{kpi.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {tools.length > 0 && (
-                    <div class="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-divider)]">
-                      {tools.slice(0, 4).map((tool) => (
-                        <span class="chip chip-accent">{tool}</span>
-                      ))}
-                      {tools.length > 4 && (
-                        <span class="chip chip-dashed">+ {tools.length - 4}</span>
-                      )}
-                    </div>
-                  )}
-
-                  <span class="mono-caption text-[var(--color-accent-text)] inline-flex items-center gap-1.5 mt-2">
-                    LIRE LE DÉTAIL
-                    <span class="cas-carte__fleche" aria-hidden="true">→</span>
-                  </span>
-                </a>
-                </div>
-              );
-            })}
-          </div>
+                  <div class="cas__pied">
+                    {cs.tools.length > 0 && (
+                      <ul class="cas__outils" role="list" aria-label="Outils">
+                        {cs.tools.map((tool) => <li class="chip">{tool}</li>)}
+                      </ul>
+                    )}
+                    <span class="link-cta" aria-hidden="true">
+                      <span class="link-cta__label">Lire le détail</span>
+                      <Icon name="lucide:arrow-right" class="link-cta__arrow" />
+                    </span>
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
         )}
 
       </div>
     </section>
 
-    <!-- CTA section -->
-    <section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <SectionHeader
-          title="Un projet qui ressemble à <mark class='inv'>l'un de ceux-là ?</mark>"
-          body={`${DUREE_RESERVATION_MINUTES} min pour parler de votre besoin et voir comment je peux vous aider.`}
-          titleMaxWidth="22ch"
-          bodyMaxWidth="60ch"
-          class="!mb-0"
-        />
-
-        <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <BoutonReservation source="cas_index" class="btn-primary justify-center">
-            {LIBELLE_CONTACT_RESERVATION}
-          </BoutonReservation>
-        </div>
-      </div>
-    </section>
+    <FinDePage
+      source="cas_index_fin"
+      titre="Un projet qui ressemble à <mark>l’un de ceux-là&nbsp;?</mark>"
+    />
   </main>
 
   <Footer />
-  <MobileCTABar label="Parler de mon projet" />
 </Layout>
 
 <style>
-  /* La carte entière est un lien : elle répond par son filet, qui passe à la
-     pêche, et par sa flèche, qui avance. Rien ne se soulève, il n'y a pas
-     d'élévation dans ce système. `.card-interactive` porte déjà la transition
-     du filet ; cette règle ne fait que choisir la couleur d'arrivée, au survol
-     comme au clavier. */
-  .cas-carte:focus-visible { border-color: var(--color-peche); }
+  .cas-liste {
+    display: grid;
+    row-gap: var(--spacing-bloc);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-  .cas-carte__fleche {
-    display: inline-block;
-    transition: transform var(--duration-default) var(--ease-out-quint);
+  /* La règle de base plafonne un `li` à une mesure de prose : ici c'est une
+     rangée, sur toute la colonne. */
+  .cas-liste > li {
+    max-width: none;
+  }
+
+  .cas {
+    position: relative;
+    display: grid;
+    gap: var(--spacing-lie);
+  }
+
+  .cas__titre {
+    max-width: 30ch;
+    margin: 0;
+    font-size: var(--text-title-lg);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .cas__lien {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Toute la rangée se clique. La zone déborde un peu du texte, pour que le
+     cadre de focus ne le serre pas. */
+  .cas__lien::after {
+    content: '';
+    position: absolute;
+    inset: -0.75rem;
+    border-radius: var(--radius-md);
+  }
+
+  .cas__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+    max-width: none;
+    margin: var(--spacing-colle) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .cas__secteur {
+    color: var(--color-ink-mid);
+  }
+
+  /* Les résultats, un par ligne : ce qu'on retient, puis ce qui le précise,
+     comme les faits de « Pourquoi moi » sur l'accueil. */
+  .faits {
+    display: grid;
+    gap: var(--spacing-lie);
+    margin: 0;
+  }
+
+  .fait__valeur {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .fait__detail {
+    margin: 0.25rem 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  .cas__resume {
+    margin: 0;
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
+  }
+
+  .cas__reserve {
+    margin: var(--spacing-colle) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .cas__pied {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-colle);
+  }
+
+  /* Les outils ne se cliquent pas : le pointeur les traverse, la rangée reste
+     une seule cible. */
+  .cas__outils {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  /* La rangée répond par son lien fléché : la pastille se déroule sous
+     « Lire le détail » et la flèche avance, au survol comme au clavier. */
+  .cas:focus-within .link-cta__label::before {
+    clip-path: inset(0 0 0 0 round 9999px);
+  }
+
+  .cas:focus-within .link-cta__label {
+    color: var(--color-night);
+  }
+
+  .cas:focus-within :global(.link-cta__arrow) {
+    transform: translateX(4px);
+    color: var(--color-accent-text);
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .cas-carte:hover { border-color: var(--color-peche); }
-    .cas-carte:hover .cas-carte__fleche { transform: translateX(0.2rem); }
-  }
-  .cas-carte:focus-visible .cas-carte__fleche { transform: translateX(0.2rem); }
+    .cas:hover .link-cta__label::before {
+      clip-path: inset(0 0 0 0 round 9999px);
+    }
 
-  @media (prefers-reduced-motion: reduce) {
-    .cas-carte__fleche { transition: none; }
-    .cas-carte:hover .cas-carte__fleche,
-    .cas-carte:focus-visible .cas-carte__fleche { transform: none; }
+    .cas:hover .link-cta__label {
+      color: var(--color-night);
+    }
+
+    .cas:hover :global(.link-cta__arrow) {
+      transform: translateX(4px);
+      color: var(--color-accent-text);
+    }
+  }
+
+  /* Le cadre de focus entoure la rangée, pas le seul titre. Même condition que
+     la règle générale : pas de cadre sur un écran purement tactile. */
+  @media (any-hover: hover), (any-pointer: fine) {
+    .cas__lien:focus-visible {
+      outline: none;
+    }
+
+    .cas__lien:focus-visible::after {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  /* À partir de la tablette : le cas à gauche, ses résultats à droite, sur
+     deux colonnes égales. */
+  @media (min-width: 48rem) {
+    .cas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: auto 1fr;
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .cas__tete {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .cas__pied {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .cas__preuves {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+  }
+
+  /* Grand écran : chaque résultat tient sur une ligne, la valeur puis ce qui
+     la précise. Les valeurs partagent une colonne, les précisions partent
+     toutes du même bord. */
+  @media (min-width: 64rem) {
+    .faits {
+      grid-template-columns: minmax(9.5rem, max-content) minmax(0, 1fr);
+      gap: 0.75rem var(--spacing-lie);
+      align-items: baseline;
+    }
+
+    .faits > div {
+      display: contents;
+    }
+
+    .fait__detail {
+      margin: 0;
+    }
   }
 </style>

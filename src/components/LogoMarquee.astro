@@ -1,75 +1,68 @@
 ---
 /*
- * LogoMarquee — bande d'OUTILS défilante, juste après le hero.
+ * LogoMarquee — la bande d'outils qui défile, juste après le hero.
  *
- * Logos de marque EN COULEUR, sans encadrés. Deux sources :
- *  - jeu iconify `logos:` (multicolore) pour les marques qui ont une vraie icône
- *    couleur (Slack, Gmail, Mistral, Drive…) ;
- *  - `simple-icons:` teinté à la couleur officielle de marque (via `color:`) pour
- *    les marques monochromes/absentes du set couleur (n8n, Make, Google Sheets,
- *    HubSpot, Stripe) — rendu identique au vrai logo, footprint homogène.
+ * Chaque outil est un logo `simple-icons` suivi de son nom. Les logos sont à
+ * l'encre au repos : vingt-deux couleurs de marque sous le hero contrediraient
+ * l'accent unique. La couleur officielle (`color`) ne revient qu'au survol,
+ * sur un appareil à souris.
  *
- * Dark mode : les logos monochromes-foncés (Notion, OpenAI, Typeform) sont
- * inversés en blanc (`invertDark`) → lisibles sur fond sombre sans ajouter de
- * cadre. Boucle sans couture (liste doublée), fondu horizontal aux bords, pause
- * au survol, statique sous prefers-reduced-motion.
+ * La liste est doublée pour boucler sans couture, les bords se fondent, le
+ * défilement s'arrête au survol et hors de l'écran (`data-motion-pause`). En
+ * mouvement réduit, la bande devient une liste à plat dans la colonne.
  */
 import { Icon } from 'astro-icon/components';
+import SectionHeader from './SectionHeader.astro';
 
 interface Tool {
   name: string;
   icon: string;
-  /** Teinte de marque (simple-icons monochromes rendus en currentColor). */
+  /** Couleur de marque, montrée au survol. Sans elle, le logo reste à l'encre. */
   color?: string;
-  /** Teinte de marque alternative en dark mode (si la couleur claire manque de contraste). */
-  /** Logo monochrome-foncé → inversé en blanc sur fond sombre. */
 }
 
 const tools: Tool[] = [
   { name: 'n8n', icon: 'simple-icons:n8n', color: '#EA4B71' },
   { name: 'Make', icon: 'simple-icons:make', color: '#6D00CC' },
-  { name: 'Airtable', icon: 'simple-icons:airtable' , color: '#18BFFF' },
+  { name: 'Airtable', icon: 'simple-icons:airtable', color: '#18BFFF' },
   // Sans teinte : la couleur de marque de Notion et de Typeform est un noir,
   // et au survol le logo disparaissait dans la nuit. Ils restent à l'encre.
   { name: 'Notion', icon: 'simple-icons:notion' },
   { name: 'Google Sheets', icon: 'simple-icons:googlesheets', color: '#0F9D58' },
-  { name: 'Slack', icon: 'simple-icons:slack' , color: '#4A154B' },
+  { name: 'Slack', icon: 'simple-icons:slack', color: '#4A154B' },
   { name: 'HubSpot', icon: 'simple-icons:hubspot', color: '#FF7A59' },
   { name: 'Stripe', icon: 'simple-icons:stripe', color: '#635BFF' },
-  { name: 'OpenAI', icon: 'simple-icons:openai' , color: '#412991' },
-  { name: 'Claude', icon: 'simple-icons:claude' , color: '#D97757' },
-  { name: 'Mistral', icon: 'simple-icons:mistralai' , color: '#FA520F' },
-  { name: 'Gmail', icon: 'simple-icons:gmail' , color: '#EA4335' },
-  { name: 'Google Drive', icon: 'simple-icons:googledrive' , color: '#4285F4' },
-  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar' , color: '#4285F4' },
+  { name: 'OpenAI', icon: 'simple-icons:openai', color: '#412991' },
+  { name: 'Claude', icon: 'simple-icons:claude', color: '#D97757' },
+  { name: 'Mistral', icon: 'simple-icons:mistralai', color: '#FA520F' },
+  { name: 'Gmail', icon: 'simple-icons:gmail', color: '#EA4335' },
+  { name: 'Google Drive', icon: 'simple-icons:googledrive', color: '#4285F4' },
+  { name: 'Google Calendar', icon: 'simple-icons:googlecalendar', color: '#4285F4' },
   { name: 'Calendly', icon: 'simple-icons:calendly', color: '#006BFF' },
-  { name: 'Shopify', icon: 'simple-icons:shopify' , color: '#7AB55C' },
+  { name: 'Shopify', icon: 'simple-icons:shopify', color: '#7AB55C' },
   { name: 'Typeform', icon: 'simple-icons:typeform' },
-  { name: 'WhatsApp', icon: 'simple-icons:whatsapp' , color: '#25D366' },
-  { name: 'Telegram', icon: 'simple-icons:telegram' , color: '#26A5E4' },
-  { name: 'Discord', icon: 'simple-icons:discord' , color: '#5865F2' },
+  { name: 'WhatsApp', icon: 'simple-icons:whatsapp', color: '#25D366' },
+  { name: 'Telegram', icon: 'simple-icons:telegram', color: '#26A5E4' },
+  { name: 'Discord', icon: 'simple-icons:discord', color: '#5865F2' },
   { name: 'Brevo', icon: 'simple-icons:brevo', color: '#0B996E' },
-  { name: 'Trello', icon: 'simple-icons:trello' , color: '#0052CC' },
-  // Zapier retiré : c'est le concurrent direct des deux plateformes vendues
-  // trois cents pixels plus haut, il n'apparaît dans aucun cas client et dans
-  // aucune des quatre familles de la section outils. Le faire défiler ici
-  // revenait à le présenter comme une option, dans la bande censée montrer ce
-  // qu'on branche.
+  { name: 'Trello', icon: 'simple-icons:trello', color: '#0052CC' },
+  // Pas de Zapier : c'est le concurrent direct des deux plateformes vendues
+  // sur la page, et il n'apparaît dans aucun cas client.
 ];
 const loop = [...tools, ...tools];
 ---
 
-{/* `section-band` et non papier : dans l'ordre de la home, cette section est prise
-    entre « à propos » et « outils », tous deux sur papier. Sans elle, trois sections
-    de suite partageaient la même surface sur plus de 3 000 px, et le rythme vertical
-    de la DA, qui repose entièrement sur le changement de surface, s'effondrait. */}
-<section class="lm section-band" data-motion-pause aria-label="Outils que j'automatise et connecte au quotidien">
+<section
+  class="lm relative border-b border-[var(--color-divider)] py-[var(--spacing-section-y)]"
+  data-motion-pause
+  aria-label="Outils que j’automatise et connecte au quotidien"
+>
+  {/* Le titre est sur la colonne de la page, comme ceux des autres sections ;
+      la bande, elle, va d'un bord à l'autre de l'écran. */}
   <div class="px-[var(--spacing-section-x)]">
-    {/* Le titre annonçait « Votre Agent IA s'occupera de ça : » au-dessus d'une
-        bande de logos d'outils. La phrase promet des tâches, la bande montre des
-        outils, et le lecteur devait faire le raccourci lui-même. L'aria-label de
-        la section, lui, disait déjà juste depuis le début. */}
-    <h2 class="lm-title reveal">Ce que je branche à vos <mark>agents IA</mark>&nbsp;:</h2>
+    <div class="mx-auto max-w-[1200px]">
+      <SectionHeader title="Ce que je branche à vos agents&nbsp;IA&nbsp;:" titleMaxWidth="none" spacing="none" />
+    </div>
   </div>
 
   <div class="lm-viewport reveal">
@@ -93,63 +86,40 @@ const loop = [...tools, ...tools];
 </section>
 
 <style>
-  /* Beaucoup d'air autour de la bande → lecture premium. */
-  .lm { padding-block: clamp(4rem, 8vw, 7rem); }
-
-  .lm-title {
-    text-align: center;
-    max-width: 24ch;
-    margin: 0 auto;
-    text-wrap: balance;
-    font-family: var(--font-display);
-    font-weight: 600;
-    /* --text-headline, comme les huit autres titres de section, et non
-       --text-title-lg. Mesuré sur la page : ce H2 rendait 30 px, soit
-       exactement la taille des neuf H3 des cartes, et il était le seul de son
-       rang à ne pas passer par SectionHeader. Deux niveaux sémantiques pour
-       une seule taille n'est pas une hiérarchie. */
-    font-size: var(--text-headline);
-    letter-spacing: -0.035em;
-    line-height: 1.05;
-    color: var(--color-ink);
-  }
-  /* Desktop : titre forcé sur une seule ligne. */
-  @media (min-width: 768px) {
-    .lm-title { max-width: none; white-space: nowrap; }
-  }
-
   .lm-viewport {
-    margin-top: clamp(2.75rem, 5vw, 4rem);
-    /* Respiration verticale : headroom pour que le survol (scale) ne soit jamais
-       rogné par l'overflow horizontal du marquee. */
+    margin-top: var(--spacing-groupe);
+    /* De la hauteur autour de la piste : le zoom du survol n'est jamais rogné
+       par le débordement horizontal masqué. */
     padding-block: 1.5rem;
     overflow: hidden;
     -webkit-mask-image: linear-gradient(90deg, transparent, var(--color-ink) 8%, var(--color-ink) 92%, transparent);
     mask-image: linear-gradient(90deg, transparent, var(--color-ink) 8%, var(--color-ink) 92%, transparent);
   }
+
   .lm-track {
     display: flex;
     align-items: center;
     width: max-content;
-    gap: clamp(3.5rem, 8vw, 7rem);
+    gap: var(--spacing-bloc);
     animation: lm-scroll 42s linear infinite;
     will-change: transform;
   }
-  /* Pause au hover ET au focus clavier (WCAG 2.2.2 : contrôle du mouvement
-     indépendant de la préférence OS reduced-motion). */
+
+  /* Arrêt au survol et au focus, indépendant de la préférence de mouvement
+     réduit du système (WCAG 2.2.2). */
   .lm-viewport:hover .lm-track,
   .lm-viewport:focus-within .lm-track { animation-play-state: paused; }
+
   @keyframes lm-scroll {
     to { transform: translateX(-50%); }
   }
 
-  /* Sur grand écran, davantage de logos sont visibles simultanément : un
-     passage plus lent laisse le temps de les identifier sans effet ticker. */
+  /* Sur grand écran, davantage de logos sont visibles en même temps : un
+     passage plus lent laisse le temps de les reconnaître. */
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
     .lm-track { animation-duration: 72s; }
   }
 
-  /* Outil = logo couleur + nom en gris discret. */
   .lm-tool {
     display: inline-flex;
     align-items: center;
@@ -157,11 +127,8 @@ const loop = [...tools, ...tools];
     white-space: nowrap;
   }
 
-  /* L'atténuation porte sur le logo seul, plus sur la puce entière. Posée sur
-     `.lm-tool`, elle s'appliquait aussi au nom : ink-low composité à 82 % sur la
-     bande grise retombait à 3,49:1, sous le seuil AA à 20 px. Le commentaire de
-     `.lm-tool-name` corrigeait déjà une fois cette couleur sans voir que
-     l'opacité du parent la reprenait. */
+  /* L'atténuation porte sur le logo seul : posée sur `.lm-tool`, elle
+     prendrait aussi le nom, qui retomberait sous le seuil de contraste. */
   .lm-tool-ic {
     height: 30px;
     width: auto;
@@ -171,67 +138,64 @@ const loop = [...tools, ...tools];
     transition: transform var(--duration-default) var(--ease-out-quint),
                 opacity var(--duration-default) var(--ease-out-quint);
   }
-  .lm-tool:hover .lm-tool-ic { opacity: 1; }
-  /* Léger zoom centré au survol — reste dans le headroom vertical, jamais rogné. */
-  .lm-tool:hover .lm-tool-ic { transform: scale(1.09); }
 
-  /* Marques monochromes teintées à leur couleur officielle. */
-  /* Les logos sont en encre au repos : 23 couleurs de marque à 300 px du hero
-   contredisaient la promesse d'un seul accent. La couleur officielle revient
-   au survol — le clin d'œil est gardé, mais il devient un geste au lieu d'un
-   bruit permanent. Sur pointeur grossier, il n'y a pas de survol : la couleur
-   n'y apparaît jamais, et c'est acceptable, elle n'est pas porteuse de sens. */
-.lm-tool-ic.is-tinted { color: var(--color-ink); }
-
-/* Durée et courbe passent sur les jetons : `--ease-out-quart` a été posé dans
-   global.css précisément pour cette teinte, et la valeur recopiée ici échappait
-   à toute reprise globale. La transition porte aussi `transform` et `opacity`,
-   sinon cette déclaration, plus spécifique que celle de `.lm-tool-ic`, coupait
-   net le zoom et l'éclaircissement du logo sur les appareils à souris. */
-@media (hover: hover) and (pointer: fine) {
-  .lm-tool-ic.is-tinted {
-    transition: color var(--duration-default) var(--ease-out-quart),
-                transform var(--duration-default) var(--ease-out-quint),
-                opacity var(--duration-default) var(--ease-out-quint);
+  .lm-tool:hover .lm-tool-ic {
+    opacity: 1;
+    transform: scale(1.09);
   }
-  /* La teinte de marque est relevée de 30 % de blanc : plusieurs marques sont
-     sombres (l'aubergine de Slack, le violet d'OpenAI) et, posées telles
-     quelles sur la nuit, elles éteignaient le logo qu'on venait de viser. */
-  .lm-tool:hover .lm-tool-ic.is-tinted { color: color-mix(in oklab, var(--tool-c) 70%, white); }
-}
 
-/* Mouvement réduit : la teinte et l'opacité répondent encore, le zoom saute. */
-@media (prefers-reduced-motion: reduce) {
-  .lm-tool-ic.is-tinted { transition: none; }
-  .lm-tool:hover .lm-tool-ic { transform: none; }
-}
+  .lm-tool-ic.is-tinted { color: var(--color-ink); }
 
-  /* Logos monochromes-foncés → inversés en blanc sur fond sombre. */
+  /* La transition de la teinte reprend aussi `transform` et `opacity` : plus
+     spécifique que celle de `.lm-tool-ic`, elle couperait sinon le zoom et
+     l'éclaircissement du logo. */
+  @media (hover: hover) and (pointer: fine) {
+    .lm-tool-ic.is-tinted {
+      transition: color var(--duration-default) var(--ease-out-quart),
+                  transform var(--duration-default) var(--ease-out-quint),
+                  opacity var(--duration-default) var(--ease-out-quint);
+    }
 
+    /* La teinte de marque est relevée de 30 % de blanc : plusieurs marques sont
+       sombres (l'aubergine de Slack, le violet d'OpenAI) et, posées telles
+       quelles sur la nuit, elles éteindraient le logo qu'on vient de viser. */
+    .lm-tool:hover .lm-tool-ic.is-tinted { color: color-mix(in oklab, var(--tool-c) 70%, white); }
+  }
+
+  /* `ink-low` et non `ink-faint` : le nom complète le logo, il porte du sens
+     et doit tenir le contraste. */
   .lm-tool-name {
     font-family: var(--font-display);
-    font-weight: 500;
-    /* Jeton, et non un clamp() recopié sur place : le bloc @theme est l'unique
-       source de l'échelle, et une courbe écrite ici échappait à toute reprise
-       globale. --text-title est le rang le plus proche de l'ancienne valeur. */
     font-size: var(--text-title);
+    font-weight: 500;
     letter-spacing: -0.02em;
-    /* ink-low, pas ink-faint : le nom de l'outil est porteur de sens (complément
-       du logo) — ink-faint plafonnait à ~2:1 sur paper (fail WCAG 1.4.3). */
     color: var(--color-ink-low);
     transition: color var(--duration-default) var(--ease-out-quint);
   }
+
   .lm-tool:hover .lm-tool-name { color: var(--color-ink-mid); }
 
+  /* Mouvement réduit : plus de défilement ni de zoom. La liste passe à la
+     ligne dans la colonne de la page, sous le titre, un exemplaire de chaque
+     outil ; la teinte et l'opacité répondent encore. */
   @media (prefers-reduced-motion: reduce) {
-    .lm-viewport { -webkit-mask-image: none; mask-image: none; }
-    .lm-track {
-      animation: none;
-      width: auto;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: clamp(1.75rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4.5rem);
+    .lm-viewport {
+      padding-inline: var(--spacing-section-x);
+      -webkit-mask-image: none;
+      mask-image: none;
     }
+
+    .lm-track {
+      width: auto;
+      max-width: 1200px;
+      margin-inline: auto;
+      flex-wrap: wrap;
+      gap: var(--spacing-lie) var(--spacing-gouttiere);
+      animation: none;
+    }
+
     .lm-tool[aria-hidden='true'] { display: none; }
+    .lm-tool-ic.is-tinted { transition: none; }
+    .lm-tool:hover .lm-tool-ic { transform: none; }
   }
 </style>

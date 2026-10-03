@@ -1,49 +1,46 @@
 ---
 /*
- * BoutonReservation — le lien vers l'agenda, partout où il apparaît.
+ * BoutonReservation — le bouton d'appel du site, partout où il apparaît.
  *
- * Dix-sept boutons écrivaient à la main la même séquence de six attributs :
- * l'URL, `target`, `rel`, la classe, le goal et sa source. Quatre variantes
- * d'attributs circulaient déjà, et l'inventaire du tracking ne tenait que par
- * recopie attentive — `data-fast-goal` posé sur chaque lien est la SEULE chose
- * qui distingue un CTA mesuré d'un CTA muet, et rien ne signalait un oubli : le
- * bouton ouvrait l'agenda dans les deux cas.
+ * Depuis le 3 octobre 2026 il n'y a qu'un geste sur tout le site : « Parlons de
+ * votre projet » ouvre la conversation de `home-invite`, où le visiteur choisit
+ * WhatsApp, l'e-mail ou un appel. Ce composant pose donc par défaut
+ * `data-causerie-ouvrir` et le goal `causerie_opened`. C'est toujours un vrai
+ * lien vers l'agenda : sans script, ou si la barre d'écriture n'a pas démarré,
+ * il y mène (voir l'embed, dans Layout).
  *
- * Ici `source` est requis par le typage. Un bouton sans source ne compile pas ;
- * le goal, lui, n'est plus à écrire du tout.
+ * `direct` garde l'ancien comportement : le lien ouvre l'agenda, goal
+ * `lead_call`. Un seul endroit s'en sert, le moyen « Réserver un appel » de la
+ * conversation elle-même.
  *
- * `class` remplace la classe par défaut plutôt que de s'y ajouter : le CTA
- * central de la nav n'est pas un bouton plein mais un lien de barre, et le
- * composant n'a pas à trancher entre les deux registres. Il garantit le lien,
- * pas l'apparence.
- *
- * Le libellé passe par le slot, et il est aujourd'hui le même partout :
- * « Automatiser mon business » (LIBELLE_RESERVATION). Il a existé quatre
- * variantes selon la place disponible — « diagnostic · 20 min » dans les zones
- * étroites, la forme longue ailleurs — c'est-à-dire quatre noms pour un seul
- * clic. Le libellé actuel tient sur une ligne dans la plus étroite des zones,
- * donc il n'y a plus rien à arbitrer par emplacement.
+ * `source` est requis par le typage : un bouton sans source ne compile pas, et
+ * c'est ce qui tient l'inventaire du suivi. `class` remplace la classe par
+ * défaut plutôt que de s'y ajouter. Le libellé passe par le slot ; sans slot,
+ * c'est `LIBELLE_CONTACT_RESERVATION`.
  */
-import { URL_RESERVATION, LIBELLE_RESERVATION } from '../lib/reservation';
+import { URL_RESERVATION, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 
 interface Props {
   /** D'où vient le clic, en clair dans le funnel DataFast. Requis. */
   source: string;
   /** Remplace `btn-primary`. Passer la chaîne complète. */
   class?: string;
+  /** Le lien ouvre l'agenda sans passer par la conversation. */
+  direct?: boolean;
   /**
-   * L'objectif DataFast posé sur le lien. `lead_call` par défaut : le lien
-   * ouvre l'agenda. Sur l'accueil, les « Parlons de votre projet » ouvrent la
-   * conversation (`data-causerie-ouvrir`) et passent `causerie_opened`. Une
-   * prop, et non un attribut passé en plus : deux `data-fast-goal` sur une
-   * balise, c'est le premier qui compte, donc `lead_call`.
+   * L'objectif DataFast posé sur le lien : `causerie_opened` par défaut,
+   * `lead_call` quand `direct`. Une prop, et non un attribut passé en plus :
+   * deux `data-fast-goal` sur une balise, c'est le premier qui compte.
    */
   goal?: string;
   /** Attributs libres : `data-mobile-link`, `id`… */
   [attribut: string]: unknown;
 }
 
-const { source, class: classe = 'btn-primary', goal = 'lead_call', ...reste } = Astro.props;
+const { source, class: classe = 'btn-primary', direct = false, goal = direct ? 'lead_call' : 'causerie_opened', ...reste } = Astro.props;
+/* Un seul objet d'attributs : passé deux fois, `data-causerie-ouvrir` serait
+   écrit en double sur la balise. */
+const attributs = direct ? reste : { 'data-causerie-ouvrir': '', ...reste };
 ---
 
 <a
@@ -53,5 +50,5 @@ const { source, class: classe = 'btn-primary', goal = 'lead_call', ...reste } = 
   class={classe}
   data-fast-goal={goal}
   data-fast-goal-source={source}
-  {...reste}
-><slot>{LIBELLE_RESERVATION}</slot></a>
+  {...attributs}
+><slot>{LIBELLE_CONTACT_RESERVATION}</slot></a>

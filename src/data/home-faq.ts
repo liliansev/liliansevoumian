@@ -3,7 +3,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 import { automationStartingPrice } from './service-pricing';
 
 /*
- * Les questions de la page d'accueil : le texte visible de `home-questions`
+ * Les questions de la page d'accueil : le texte visible de `questions`
  * ET la source du balisage `FAQPage`. Une seule écriture, pour qu'un moteur ne
  * lise jamais deux réponses à la même question.
  *
@@ -14,6 +14,8 @@ import { automationStartingPrice } from './service-pricing';
  */
 const euros = (montant: number) => `${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 
+const reponsePrix = `Une automatisation ou un agent\u00a0IA démarre à ${euros(automationStartingPrice)}\u00a0; un dashboard ou un outil métier se chiffre sur devis. Le devis est ferme une fois le périmètre posé. Chaque projet livré s’accompagne d’un abonnement de suivi\u00a0: hébergement, maintenance et petits ajustements.`;
+
 export const homeFaqs: FaqItem[] = [
   {
     q: 'Pour qui travaillez-vous\u00a0?',
@@ -21,7 +23,8 @@ export const homeFaqs: FaqItem[] = [
   },
   {
     q: 'Combien ça coûte\u00a0?',
-    a: `Une automatisation ou un agent\u00a0IA démarre à ${euros(automationStartingPrice)}\u00a0; un dashboard ou un outil métier se chiffre sur devis. Le devis est ferme une fois le périmètre posé. Chaque projet livré s’accompagne d’un abonnement de suivi\u00a0: hébergement, maintenance et petits ajustements.`,
+    a: reponsePrix,
+    html: `${reponsePrix} Le détail est sur la page <a class="lien-prose" href="/combien-coute-une-automatisation">Combien coûte une automatisation\u00a0?</a>`,
   },
   {
     q: 'Vous travaillez seul\u00a0?',

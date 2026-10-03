@@ -1,29 +1,19 @@
 ---
+/*
+ * ProjectVisual — la vignette d'un site réalisé : sa capture dans une fenêtre,
+ * son nom et ce qu'il est. La vignette entière est un lien vers le site, qui
+ * s'ouvre dans un nouvel onglet.
+ */
 interface Props {
   src: string;
   href: string;
   name: string;
   detail: string;
   alt: string;
-  ratio?: 'wide' | 'landscape' | 'portrait';
-  priority?: boolean;
-  interactive?: boolean;
   class?: string;
 }
 
-const {
-  src,
-  href,
-  name,
-  detail,
-  alt,
-  ratio = 'landscape',
-  priority = false,
-  interactive = false,
-  class: className,
-} = Astro.props;
-
-const Root = interactive ? 'a' : 'figure';
+const { src, href, name, detail, alt, class: className } = Astro.props;
 
 // Le dernier mot du nom reste soudé à la flèche. Une espace insécable n'y
 // suffit pas : le navigateur s'autorise à couper devant un élément en ligne
@@ -31,48 +21,28 @@ const Root = interactive ? 'a' : 'figure';
 const mots = name.split(' ');
 const dernierMot = mots.pop() ?? name;
 const debutNom = mots.join(' ');
-const rootAttributes = interactive
-  ? {
-      href,
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      'aria-label': `Voir ${name}, ${detail} (nouvel onglet)`,
-    }
-  : {};
 ---
 
-<Root
-  class:list={[
-    'project-visual group',
-    `project-visual--${ratio}`,
-    { 'project-visual--lien': interactive },
-    className,
-  ]}
-  {...rootAttributes}
+<a
+  class:list={['project-visual', className]}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={`Voir ${name}, ${detail} (nouvel onglet)`}
   data-project-visual
 >
   <span class="project-visual__image">
-    <img
-      src={src}
-      alt={alt}
-      width="1440"
-      height="900"
-      loading={priority ? 'eager' : 'lazy'}
-      fetchpriority={priority ? 'high' : 'auto'}
-      decoding="async"
-    />
+    <img src={src} alt={alt} width="1440" height="900" loading="lazy" decoding="async" />
   </span>
   <span class="project-visual__caption">
     {/* Le tracé de la flèche est celui de Lucide `arrow-up-right`. Il est
         écrit ici pour rester soudé au dernier mot du nom : une icône en
         composant serait un élément remplacé, devant lequel le navigateur
         s'autorise à couper. */}
-    <strong>{debutNom && `${debutNom} `}<span class="project-visual__fin">{dernierMot}{interactive && (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
-    )}</span></strong>
+    <strong>{debutNom && `${debutNom} `}<span class="project-visual__fin">{dernierMot}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg></span></strong>
     <span>{detail}</span>
   </span>
-</Root>
+</a>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-project-visual]').forEach((visual) => {
@@ -120,30 +90,19 @@ const rootAttributes = interactive
     transition: border-color var(--duration-default) var(--ease-out-quint);
   }
 
-  /* La capture a sa propre fenêtre, qui porte le format et le rognage. */
+  /* La capture a sa propre fenêtre, qui porte le format et le rognage.
+     16 / 9,4 et non 16 / 10 : les captures font 1440 × 900, et l'une d'elles
+     finit sur une bande noire de 48 px. Le cadre, un peu moins haut que la
+     capture, rogne ce bas — l'image est calée en haut. */
   .project-visual__image {
     display: block;
     overflow: hidden;
+    aspect-ratio: 16 / 9.4;
     background: var(--color-surface-low);
   }
 
-  .project-visual--wide .project-visual__image {
-    aspect-ratio: 16 / 7;
-  }
-
-  /* 16 / 9,4 et non 16 / 10 : les captures font 1440 × 900, et l'une d'elles
-     finit sur une bande noire de 48 px. Le cadre, un peu moins haut que la
-     capture, rogne ce bas — l'image est calée en haut. */
-  .project-visual--landscape .project-visual__image {
-    aspect-ratio: 16 / 9.4;
-  }
-
-  .project-visual--portrait .project-visual__image {
-    aspect-ratio: 4 / 5;
-  }
-
   /* La sortie est plus lente que l'entrée : le repos porte la durée longue, le
-     survol la courte. Mêmes valeurs que les cartes de service de la home. */
+     survol la courte. */
   .project-visual img {
     display: block;
     width: 100%;
@@ -171,11 +130,12 @@ const rootAttributes = interactive
     color: var(--color-text-on-dark);
   }
 
+  /* Le nom du site a la graisse des titres. */
   .project-visual__caption strong {
     font-family: var(--font-display);
     font-size: var(--text-title);
-    font-weight: 600;
-    line-height: 1.15;
+    font-weight: 500;
+    line-height: 1.2;
     letter-spacing: -0.02em;
   }
 
@@ -206,31 +166,31 @@ const rootAttributes = interactive
   /* La vignette entière est un lien : c'est son contenu qui répond. Le filet
      passe à la pêche, la capture avance, la flèche part vers l'extérieur. Le
      clavier reçoit la même réponse que la souris. */
-  .project-visual--lien:focus-visible::after {
+  .project-visual:focus-visible::after {
     border-color: var(--color-peche);
   }
 
-  .project-visual--lien:focus-visible img {
+  .project-visual:focus-visible img {
     transform: scale(1.03);
     transition-duration: 350ms;
   }
 
-  .project-visual--lien:focus-visible strong svg {
+  .project-visual:focus-visible strong svg {
     color: var(--color-peche);
     transform: translate(0.15rem, -0.15rem);
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .project-visual--lien:hover::after {
+    .project-visual:hover::after {
       border-color: var(--color-peche);
     }
 
-    .project-visual--lien:hover img {
+    .project-visual:hover img {
       transform: scale(1.03);
       transition-duration: 350ms;
     }
 
-    .project-visual--lien:hover strong svg {
+    .project-visual:hover strong svg {
       color: var(--color-peche);
       transform: translate(0.15rem, -0.15rem);
     }
@@ -243,10 +203,10 @@ const rootAttributes = interactive
       transition: none;
     }
 
-    .project-visual--lien:hover img,
-    .project-visual--lien:focus-visible img,
-    .project-visual--lien:hover strong svg,
-    .project-visual--lien:focus-visible strong svg {
+    .project-visual:hover img,
+    .project-visual:focus-visible img,
+    .project-visual:hover strong svg,
+    .project-visual:focus-visible strong svg {
       transform: none;
     }
   }

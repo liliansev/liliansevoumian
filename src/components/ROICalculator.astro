@@ -1,31 +1,22 @@
 ---
 /*
- * Simulateur de temps — version JavaScript native Astro.
+ * Simulateur de temps : deux curseurs, un chiffre.
  *
- * Trois choses ont changé par rapport à la version « calculateur ROI » :
+ * Le chiffre est du TEMPS. L'euro vient en seconde ligne : c'est une
+ * traduction de ce temps à un coût chargé posé en hypothèse (HOURLY_COST, dans
+ * lib/roi.ts), pas une mesure.
  *
- *  1. Le héros est le TEMPS, plus l'euro. L'euro passe en ligne secondaire :
- *     c'est une traduction du temps à un coût chargé posé en hypothèse, pas la
- *     mesure elle-même.
- *  2. Une seule colonne, chiffre en tête. En deux colonnes il fallait un
- *     `order-first` pour remonter le résultat en mobile, ce qui plaçait le CTA
- *     AVANT les curseurs : on lisait le résultat, on descendait régler, il
- *     fallait remonter pour voir le nouveau chiffre et le bouton. Ici l'ordre
- *     du DOM est l'ordre de lecture est l'ordre de tabulation — chiffre,
- *     réglages, action — et il n'y a plus rien à inverser.
- *  3. Deux curseurs au lieu de trois. Le coût horaire est devenu une hypothèse
- *     fixe (cf. HOURLY_COST dans lib/roi.ts) : il n'était pas plafonné alors
- *     que les deux autres l'étaient, et c'était la question la plus intrusive
- *     du formulaire.
+ * Une seule fenêtre, le chiffre d'abord. L'ordre du DOM est l'ordre de lecture
+ * et l'ordre de tabulation : résultat, réglages, sorties. Au-delà de 60rem les
+ * deux moitiés se posent côte à côte sans changer cet ordre.
  *
- * La ligne « FORMULE : 8H × 3 EMP × 0,55 RÉCUP × 48 SEM × 55€ » a disparu. Elle
- * ne portait qu'une information propre — le plafonnement en action — que
- * l'avertissement dit déjà en français, et les hypothèses sont écrites juste
- * en dessous, en toutes lettres.
+ * Pas de bouton plein dans la fenêtre : la section qui suit est la fin de
+ * page, avec son champ et le bouton. Ici, un lien fléché suffit.
  */
+import { Icon } from 'astro-icon/components';
 import SectionHeader from './SectionHeader.astro';
 import BoutonReservation from './BoutonReservation.astro';
-import { LIBELLE_RESERVATION } from '../lib/reservation';
+import { LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
 import {
   compute, formatFR, inWorkWeeks, HOURLY_COST,
 } from '../lib/roi';
@@ -33,70 +24,61 @@ import {
 const initial = { hours: 8, people: 3 };
 
 const sliders = [
-  { id: 'roi-hours',  label: 'HEURES /SEM PERDUES SUR TÂCHES RÉPÉTITIVES', unit: 'H', min: 1, max: 30, step: 1, value: initial.hours },
-  { id: 'roi-people', label: 'PERSONNES CONCERNÉES',                        unit: '',  min: 1, max: 15, step: 1, value: initial.people },
+  { id: 'roi-hours',  label: 'Heures par semaine perdues sur des tâches répétitives', unit: 'h', min: 1, max: 30, step: 1, value: initial.hours },
+  { id: 'roi-people', label: 'Personnes concernées',                                  unit: '',  min: 1, max: 15, step: 1, value: initial.people },
 ];
+
+/* Un nombre et son unité ne se séparent pas : « 8 h », espace insécable. */
+const avecUnite = (valeur: number, unite: string) => `${formatFR(valeur)}${unite ? ` ${unite}` : ''}`;
 
 const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours, initial.people);
 ---
 
 <section
   id="roi"
-  data-section  class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+  data-section
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
-    {/* Sans sur-titre : deux curseurs et un résultat chiffré disent d'eux-mêmes
-        qu'on est devant un simulateur, et le titre annonce ce qu'il calcule. */}
+    {/* Titre nu : celui de la fin de page, juste après, porte la pastille, sur
+        le même mot. */}
     <SectionHeader
-      title="Et si vous récupériez une partie de <mark class='inv'>ce temps ?</mark>"
-      body="Une simulation, pas une promesse de résultat : elle suppose 55 % du temps manuel récupéré sur 48 semaines, avec un plafond à 20 h/semaine et 10 personnes. Le gain réel dépend des tâches retenues."
+      title="Et si vous récupériez une partie de ce temps&nbsp;?"
+      body={'Une simulation, pas une promesse de résultat : elle suppose 55 % du temps manuel récupéré sur 48 semaines, avec un plafond à 20 h/semaine et 10 personnes. Le gain réel dépend des tâches retenues.'}
       titleMaxWidth="24ch"
-      bodyMaxWidth="60ch"
     />
 
-    {/* Rayon de grande carte, le même que la grille d'abonnements et que les
-        cartes de cas plus haut : à 16 px fixes elle se lisait encore comme un
-        rectangle à 1 200 px de large. Ses deux moitiés peignent jusqu'au bord,
-        d'où `overflow-hidden`. */}
+    {/* Une fenêtre : surface relevée, rayon de grande carte. Ses deux moitiés
+        vont jusqu'au bord, d'où `overflow-hidden`. */}
     <div
       class="roi-carte reveal border border-[var(--color-divider)] rounded-[var(--radius-lg)] overflow-hidden"
       data-roi-calc
     >
       <!-- Le résultat en tête : il est visible dès l'entrée dans la section, et
            il reste au-dessus des curseurs qu'on manipule juste en dessous. -->
-      <div class="bloc-lime roi-sortie">
-        <div class="mono-caption text-[var(--color-ink-low)]">HEURES RÉCUPÉRÉES PAR AN</div>
+      <div class="roi-sortie">
+        <div class="text-[length:var(--text-body-sm)] text-[var(--color-ink-mid)]">Heures récupérées par an</div>
 
-        <div
-          class="roi-chiffre font-display font-semibold text-[var(--color-ink)] tabular-nums"
-        >
-          <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span>
-          <span> H</span>
+        <div class="roi-chiffre font-display text-[var(--color-ink)] tabular-nums">
+          <span data-roi-output="hoursSaved">{formatFR(hoursSaved)}</span><span>&nbsp;h</span>
         </div>
 
         <p class="roi-traduction">
           Sur les <span data-roi-output="manualHours">{formatFR(manualHours)}</span>&nbsp;h/an
           passées en tâches répétitives, soit
-          <span data-roi-output="weeksSaved">{formatFR(inWorkWeeks(hoursSaved))}</span> semaines
+          <span data-roi-output="weeksSaved">{formatFR(inWorkWeeks(hoursSaved))}</span>&nbsp;semaines
           de travail rendues à l’équipe. Environ
           <span data-roi-output="moneySaved">{formatFR(moneySaved)}</span>&nbsp;€ à {HOURLY_COST}&nbsp;€
           de l’heure chargée.
         </p>
 
-        {/* Casse normale, comme les deux ponts vers les formations : c'est un
-            avertissement, donc précisément le texte qu'il ne faut pas rendre
-            plus lent à lire. Le crochet « [!] » saute avec les capitales — il
-            faisait le travail d'un signe d'alerte dans une ligne qui n'en avait
-            pas d'autre, et la couleur d'erreur le porte déjà. */}
+        {/* Un avertissement se lit vite : casse normale, couleur d'erreur. */}
         <span data-roi-warning class="block mt-4 text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-error)]" hidden={!isCapped}>
-          Estimation plafonnée : les besoins réels seront examinés pendant l’appel.
+          Estimation plafonnée&nbsp;: les besoins réels seront examinés pendant l’appel.
         </span>
 
-        {/* Une seule région live, hors du chiffre animé. L'ancien montage
-            posait aria-live SUR le nombre, que l'animation rAF réécrit à chaque
-            image : un glissement de curseur empilait une vingtaine d'annonces
-            dans la file du lecteur d'écran. Ici le texte n'est écrit qu'une
-            fois l'animation finie. */}
+        {/* Une seule région live, hors du chiffre animé : le nombre est réécrit
+            à chaque image, l'annonce ne l'est qu'une fois l'animation finie. */}
         <span class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-roi-annonce></span>
       </div>
 
@@ -104,16 +86,15 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
         <legend class="sr-only">Paramètres du simulateur</legend>
         {sliders.map((s) => (
           <div class="flex flex-col gap-3">
-            <div class="flex items-baseline justify-between">
-              <label for={s.id} class="mono-caption text-[var(--color-ink-low)]">
+            <div class="flex items-baseline justify-between gap-4">
+              <label for={s.id} class="text-[length:var(--text-body-sm)] leading-[1.4] text-[var(--color-ink-mid)]">
                 {s.label}
               </label>
               <span
-                class="font-display font-semibold tabular-nums tracking-[-0.02em] text-[var(--color-ink)] whitespace-nowrap"
+                class="font-display font-medium tabular-nums tracking-[-0.02em] text-[var(--color-ink)] whitespace-nowrap"
                 style="font-size: var(--text-title-lg);"
               >
-                <span data-roi-display={s.id}>{formatFR(s.value)}</span>
-                {s.unit && <span class="mono-caption ml-1 text-[var(--color-ink-low)]">{s.unit}</span>}
+                <span data-roi-display={s.id}>{formatFR(s.value)}</span>{s.unit && <span>&nbsp;{s.unit}</span>}
               </span>
             </div>
             <input
@@ -123,27 +104,24 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
               max={s.max}
               step={s.step}
               value={s.value}
-              aria-valuetext={`${s.value}${s.unit ? ' ' + s.unit : ''}`}
+              aria-valuetext={avecUnite(s.value, s.unit)}
               class="roi-slider"
               data-roi-input={s.id}
             />
             <div class="flex justify-between mono-caption text-[var(--color-ink-low)]">
-              <span>{formatFR(s.min)}{s.unit}</span>
-              <span>{formatFR(s.max)}{s.unit}</span>
+              <span>{avecUnite(s.min, s.unit)}</span>
+              <span>{avecUnite(s.max, s.unit)}</span>
             </div>
           </div>
         ))}
 
         <div class="roi-actions">
-          <BoutonReservation source="roi" class="btn-primary justify-center w-full">
-            {LIBELLE_RESERVATION}
+          <BoutonReservation source="roi" class="link-cta">
+            <span class="link-cta__label">{LIBELLE_CONTACT_RESERVATION}</span>
+            <Icon name="lucide:arrow-right" class="link-cta__arrow" aria-hidden="true" />
           </BoutonReservation>
-          <button
-            type="button"
-            data-roi-share
-            class="tap-44 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors bg-transparent border-0 p-0 cursor-pointer self-start"
-          >
-            <span data-roi-share-label>COPIER LE LIEN DE CE CALCUL</span>
+          <button type="button" data-roi-share class="roi-partage tap-44">
+            <span data-roi-share-label aria-live="polite">Copier le lien de ce calcul</span>
           </button>
         </div>
       </fieldset>
@@ -152,14 +130,20 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
 </section>
 
 <style>
+  .roi-carte {
+    background: var(--color-surface-low);
+  }
+
   .roi-sortie {
     padding: clamp(1.75rem, 4vw, 2.5rem);
   }
 
+  /* Le chiffre parle par sa taille, à la graisse des titres. */
   .roi-chiffre {
     font-size: var(--text-roi-primary);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: var(--tracking-display);
     margin-top: 0.35rem;
   }
 
@@ -177,47 +161,56 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     flex-direction: column;
     gap: 2rem;
     padding: clamp(1.75rem, 4vw, 2.5rem);
-    background: var(--color-paper);
     border-top: 1px solid var(--color-divider);
   }
 
+  /* Les deux sorties de la fenêtre, sur une ligne : parler du projet, ou
+     emporter son calcul. Elles passent l'une sous l'autre faute de place. */
   .roi-actions {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.85rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-divider);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 var(--spacing-lie);
   }
 
-  /* Le curseur est la seule commande du site à manipulation continue, et la plus
-     difficile à saisir au doigt : il faut attraper une poignée de 16 px puis la
-     tenir pendant qu'elle se déplace. Sa zone tactile valait 28 px, soit 16 de
-     moins que le plancher de 44 px que le reste du site tient déjà (flèches du
-     carrousel, liens du pied de page, barre mobile). Sur pointeur grossier
-     uniquement : sur bureau, 28 px suffisent à la souris et 44 px pousseraient
-     les deux réglages de 32 px sans rien améliorer.
-     La piste PEINTE ne bouge pas — elle est dessinée en `background-image` de
-     4 px centrée dans la boîte, et c'est la boîte seule qui grandit. D'où
-     l'avertissement de global.css, répété ici parce que c'est de ce côté-ci que
-     la tentation revient : ne jamais repasser en raccourci `background`, il
-     réinitialiserait `background-size` et la piste s'étalerait sur les 44 px. */
+  .roi-partage {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-ink-low);
+    font: inherit;
+    font-size: var(--text-body-sm);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 40%, transparent);
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .roi-partage:hover,
+  .roi-partage:focus-visible {
+    color: var(--color-ink);
+  }
+
+  /* Le curseur est la seule commande du site à manipulation continue, et la
+     plus difficile à saisir au doigt : il faut attraper une poignée de 16 px
+     puis la tenir pendant qu'elle se déplace. Sur pointeur grossier sa zone
+     tactile monte à 44 px ; à la souris, les 28 px de global.css suffisent.
+     La piste PEINTE ne bouge pas : elle est dessinée en `background-image` de
+     4 px centrée dans la boîte, et c'est la boîte seule qui grandit. Ne jamais
+     repasser en raccourci `background`, il réinitialiserait `background-size`
+     et la piste s'étalerait sur les 44 px. */
   @media (pointer: coarse) {
     [data-roi-calc] .roi-slider {
       height: 44px;
     }
   }
 
-  /* Aucun accusé de réception à l'appui : la poignée répondait au survol et au
-     focus clavier, c'est-à-dire aux deux situations où l'on voit déjà un curseur
-     à l'écran, et à rien au doigt — là où le doigt masque justement la poignée.
-     L'aplat d'encre est instantané (aucune transition ne le porte, et c'est
-     voulu : un appui doit être reconnu à l'image suivante), le grossissement
-     suit la transition de 150 ms déjà déclarée sur la poignée. L'encre plutôt
-     qu'un lime plus vif : le lime est une surface, il ne signale pas un état.
-     Sélecteur préfixé par [data-roi-calc] pour passer devant la règle de survol
-     de global.css, de spécificité identique — une égalité qui se serait tranchée
-     à l'ordre d'injection des feuilles, c'est-à-dire au hasard du build. */
+  /* À l'appui, la poignée passe à l'encre et grossit : le doigt la masque, il
+     faut que l'appui se voie autour. L'aplat est instantané (un appui doit
+     être reconnu à l'image suivante), le grossissement suit la transition déjà
+     déclarée sur la poignée. Sélecteur préfixé par [data-roi-calc] pour passer
+     devant la règle de survol de global.css, de spécificité identique. */
   [data-roi-calc] .roi-slider:active::-webkit-slider-thumb {
     background: var(--color-ink);
     border-color: var(--color-ink);
@@ -232,9 +225,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
 
   /* Deux règles et non une liste séparée par une virgule : un sélecteur invalide
      dans une liste invalide la règle ENTIÈRE, et `::-moz-range-thumb` est
-     invalide pour Chrome comme `::-webkit-slider-thumb` l'est pour Firefox.
-     Groupées, les deux poignées auraient gardé leur transition dans les deux
-     navigateurs — vérifié : Chrome ne conserve aucune des deux. */
+     invalide pour Chrome comme `::-webkit-slider-thumb` l'est pour Firefox. */
   @media (prefers-reduced-motion: reduce) {
     [data-roi-calc] .roi-slider::-webkit-slider-thumb {
       transition: none;
@@ -393,7 +384,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     inputPeople.value = String(initPeople);
 
     // Sync aria-valuetext avec les valeurs effectives (URL params), sinon AT lit la valeur SSR figee
-    inputHours.setAttribute('aria-valuetext', `${initHours} H`);
+    inputHours.setAttribute('aria-valuetext', `${initHours}\u00a0h`);
     inputPeople.setAttribute('aria-valuetext', `${initPeople}`);
 
     updateSliderProgress(inputHours);
@@ -451,7 +442,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
 
       dispHours.textContent = formatFR(hours);
       dispPeople.textContent = formatFR(people);
-      inputHours!.setAttribute('aria-valuetext', `${hours} H`);
+      inputHours!.setAttribute('aria-valuetext', `${hours}\u00a0h`);
       inputPeople!.setAttribute('aria-valuetext', `${people}`);
 
       updateSliderProgress(inputHours!);
@@ -482,13 +473,13 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
       shareBtn.addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(window.location.href);
-          shareLabel.textContent = 'LIEN COPIÉ ✓';
+          shareLabel.textContent = 'Lien copié';
           if (resetTimer !== null) window.clearTimeout(resetTimer);
           resetTimer = window.setTimeout(() => {
-            shareLabel.textContent = 'COPIER LE LIEN DE CE CALCUL';
+            shareLabel.textContent = 'Copier le lien de ce calcul';
           }, 1500);
         } catch {
-          shareLabel.textContent = 'COPIE IMPOSSIBLE · SÉLECTIONNEZ L’URL';
+          shareLabel.textContent = 'Copie impossible\u00a0: sélectionnez l’URL';
         }
       });
     }

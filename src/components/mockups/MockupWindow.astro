@@ -1,59 +1,41 @@
 ---
 /*
- * MockupWindow.astro — châssis "fenêtre produit" monochrome.
+ * MockupWindow.astro — le châssis d'une fenêtre, autour d'un schéma redessiné.
  *
- * Le contenant commun de tous les mini-mockups (façon capture d'app) : barre de
- * titre avec pastilles + nom de fichier mono + badge de statut optionnel, corps
- * (slot par défaut), pied de page optionnel (slot "footer"). 100 % tokens projet
- * → suit le thème clair/sombre. Le seul écart au monochrome strict est le token
- * fonctionnel --color-success, réservé aux statuts positifs (cf. statusTone).
+ * Une barre de titre (trois pastilles, un nom de fichier, la mention « Schéma
+ * reconstitué »), puis le corps, passé par le slot. Tout vient des jetons du
+ * projet : sur un panneau clair, la fenêtre suit sans variante.
  *
  * `schema` fait porter au châssis la mention qui le démentit. Les écrans
  * clients sont confidentiels : ce qui est montré ici est redessiné. Or trois
- * pastilles, un chemin de fichier et un badge d'état forment l'habillage exact
- * d'une vraie capture, et le visuel affirmait donc le contraire de ce que son
- * texte sr-only reconnaissait (« Schéma simplifié du workflow… »). La mention
+ * pastilles et un chemin de fichier forment l'habillage exact d'une vraie
+ * capture, et le visuel affirmait donc le contraire de ce que son texte
+ * sr-only reconnaissait (« Schéma simplifié du workflow… »). La mention
  * s'écrit dans la barre de titre, à côté du nom de fichier, c'est-à-dire là où
- * naît la confusion. Sans barre (`bare`), il n'y a rien à démentir.
+ * naît la confusion.
  */
 interface Props {
   file?: string;
-  status?: string;
-  statusTone?: 'success' | 'neutral';
   schema?: boolean;
+  /** Le corps touche les bords de la fenêtre : il porte son propre fond. */
   flush?: boolean;
-  bare?: boolean;
-  class?: string;
 }
-const { file, status, statusTone = 'neutral', schema = false, flush = false, bare = false, class: className } = Astro.props;
+const { file, schema = false, flush = false } = Astro.props;
 ---
 
-<div class:list={['mockup-window', className]}>
-  {!bare && (
-    <div class:list={['mw-bar', schema && 'has-schema']}>
-      <span class="mw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="mw-file">{file}</span>
-      {/* Texte visible et non aria-label : le lecteur d'écran le rencontre une
-          fois, dans l'ordre de la barre, sans doublon avec la description
-          sr-only que le corps de la fenêtre porte déjà. La casse reste normale
-          dans le DOM — les capitales viennent du CSS, pour que la mention ne
-          soit pas épelée lettre à lettre. */}
-      {schema && <span class="mw-schema">Schéma reconstitué</span>}
-      {status && (
-        <span class:list={['mw-status', statusTone === 'success' && 'is-success']}>{status}</span>
-      )}
-    </div>
-  )}
+<div class="mockup-window">
+  <div class:list={['mw-bar', schema && 'has-schema']}>
+    <span class="mw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="mw-file">{file}</span>
+    {/* Texte visible et non aria-label : le lecteur d'écran le rencontre une
+        fois, dans l'ordre de la barre, sans doublon avec la description
+        sr-only que le corps de la fenêtre porte déjà. */}
+    {schema && <span class="mw-schema">Schéma reconstitué</span>}
+  </div>
 
   <div class:list={['mw-body', flush && 'is-flush']}>
     <slot />
   </div>
-
-  {Astro.slots.has('footer') && (
-    <div class="mw-foot">
-      <slot name="footer" />
-    </div>
-  )}
 </div>
 
 <style>
@@ -85,94 +67,38 @@ const { file, status, statusTone = 'neutral', schema = false, flush = false, bar
     opacity: 0.55;
   }
   .mw-file {
-    font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
     color: var(--color-ink-low);
-    letter-spacing: 0.02em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  /* La mention est de l'encre pleine sur la bande grise — 17,63:1 mesuré, quand
-     le nom de fichier voisin tient 4,97:1 : des deux, c'est elle qui doit se
-     lire en premier. Ni pastille ni fond, car le badge d'état en porte déjà un
-     et deux gélules côte à côte se seraient lues comme deux états de l'appli.
-     Un filet la sépare du chemin, à la manière du reste du système, où la
-     structure vient des traits. */
+  /* La mention est à l'encre pleine, le nom de fichier voisin en encre basse :
+     des deux, c'est elle qui doit se lire en premier. Ni pastille ni fond : elle
+     se lirait comme un état de l'application. Un filet la sépare du chemin. */
   .mw-schema {
     flex-shrink: 0;
     padding-left: 10px;
     border-left: 1px solid var(--color-divider);
-    font-family: var(--font-mono);
     font-size: var(--text-mono-caption);
     font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
     color: var(--color-ink);
-  }
-
-  .mw-status {
-    margin-left: auto;
-    flex-shrink: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: var(--radius-full);
-    color: var(--color-ink-low);
-    background: var(--color-paper);
-    border: 1px solid var(--color-divider);
-    white-space: nowrap;
-  }
-  .mw-status.is-success {
-    color: var(--color-success);
-    border-color: color-mix(in oklch, var(--color-success) 32%, transparent);
-    background: color-mix(in oklch, var(--color-success) 9%, transparent);
   }
 
   .mw-body { padding: 4px 14px; }
   .mw-body.is-flush { padding: 0; }
 
-  .mw-foot {
-    display: flex;
-    align-items: center;
-    gap: 8px 16px;
-    flex-wrap: wrap;
-    padding: 10px 14px;
-    border-top: 1px solid var(--color-divider);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    color: var(--color-ink-low);
-    background: var(--color-paper);
-  }
-
-  /* Mesuré à 402 px : la barre offre 227 px et ses quatre éléments en réclament
-     258 à 307 selon le statut — « synchronisé » débordait de 52 px, rogné par
-     l'overflow de la fenêtre. Aucune formulation ne rentrait : même « SCHÉMA »
-     seul ne passait qu'à 10 px près, et se serait fait couper sur un écran plus
-     étroit. Ce qui part est donc le décor, ce qui reste est ce qui dit vrai : le
-     chemin de fichier est inventé, l'état l'est aussi, la mention non. Les
-     pastilles restent, elles portent à elles seules l'idée de fenêtre. */
+  /* Sur téléphone, la barre ne garde que ce qui dit vrai : le chemin de fichier
+     est inventé, la mention non. Les pastilles restent, elles portent à elles
+     seules l'idée de fenêtre. */
   @media (max-width: 639px) {
-    .mw-bar.has-schema .mw-file,
-    .mw-bar.has-schema .mw-status {
+    .mw-bar.has-schema .mw-file {
       display: none;
     }
 
     .mw-bar.has-schema .mw-schema {
       padding-left: 0;
       border-left: 0;
-    }
-  }
-
-  /* Sous 375 px — sous toute la matrice de test, un pliant refermé — les
-     pastilles partent à leur tour : mesuré, la mention y était rognée de 21 px,
-     et une mention coupée ne vaut pas mieux qu'une mention absente. */
-  @media (max-width: 374px) {
-    .mw-bar.has-schema .mw-dots {
-      display: none;
     }
   }
 </style>

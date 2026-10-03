@@ -16,7 +16,7 @@
 /** Les quatre faits du haut de page. `titre` est ce qu'on retient, `detail` le précise. */
 export const faits = [
   { titre: 'Depuis 2020', detail: 'freelance en automatisation et agents IA' },
-  { titre: 'Certifié Make niveau\u00a05', detail: 'premier Français à l’obtenir sur cet outil d’automatisation, et certifié Airtable' },
+  { titre: 'Certifié Make niveau\u00a05', detail: 'depuis 2022, premier Français à l’obtenir sur cet outil d’automatisation\u00a0; certifié Airtable aussi' },
   { titre: 'Plus de 300 personnes', detail: 'formées à Make, à n8n et à l’IA' },
   { titre: 'Plus de 100 entreprises', detail: 'accompagnées' },
 ] as const;

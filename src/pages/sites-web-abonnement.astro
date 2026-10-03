@@ -9,11 +9,14 @@ import Footer from '../components/Footer.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import SubscriptionGrid from '../components/SubscriptionGrid.astro';
 import ApplicationSystemDiagram from '../components/application-system-diagram.astro';
+import Questions from '../components/questions.astro';
+import FinDePage from '../components/fin-de-page.astro';
 import { maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 import {
   creationOffers,
   manufacturingSteps,
+  prixEnPhrase,
   siteFaqs,
   subscriptionOffers,
 } from '../data/sites-web';
@@ -27,9 +30,24 @@ const navLinks = [
   { href: '#faq', label: 'FAQ' },
 ];
 
+// Ce qu'une application métier peut être. Trois formes, sur devis.
+const formesApplication = [
+  {
+    nom: 'Dashboard de suivi',
+    texte: 'Vos chiffres, vos dossiers en cours et les actions à traiter dans une même vue.',
+  },
+  {
+    nom: 'Portail client',
+    texte: 'Un espace où vos clients retrouvent leurs documents, déposent leurs pièces et suivent leurs demandes.',
+  },
+  {
+    nom: 'Outil interne connecté',
+    texte: 'Des formulaires et des étapes de validation reliés à votre CRM, vos données et vos automatisations.',
+  },
+];
+
 const faqSchema = siteFaqs.map((faq) => ({ question: faq.q, answer: faq.a }));
-const pageDescription = `Création de sites web dès ${creationOffers[0].price}, avec abonnement de suivi. Applications métier, dashboards et portails clients sur devis. Échange de ${DUREE_RESERVATION_MINUTES} min.`;
-const bookingLabel = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES} min`;
+const pageDescription = `Création de sites web dès ${creationOffers[0].price}, avec abonnement de suivi. Applications métier, dashboards et portails clients sur devis. Échange de ${DUREE_RESERVATION_MINUTES} min.`;
 
 
 const directionContract = `
@@ -56,15 +74,13 @@ const serviceSchema = {
     '@type': 'OfferCatalog',
     name: 'Création et suivi des sites commerciaux',
     itemListElement: [
-      ...creationOffers.map((offer, index) => ({
+      ...creationOffers.map((offer) => ({
         '@type': 'Offer',
         name: offer.name,
         description: `${offer.promise} Création facturée séparément de l’abonnement mensuel obligatoire.`,
         priceSpecification: {
           '@type': 'PriceSpecification',
-          ...(index === creationOffers.length - 1
-            ? { minPrice: offer.schemaPrice }
-            : { price: offer.schemaPrice }),
+          ...(offer.minimum ? { minPrice: offer.schemaPrice } : { price: offer.schemaPrice }),
           priceCurrency: 'EUR',
           valueAddedTaxIncluded: false,
         },
@@ -101,61 +117,63 @@ const serviceSchema = {
 >
   <Navigation
     links={navLinks}
-    ctaLabel={bookingLabel}
     ctaSource="sites_web_nav"
     trackHero={true}
   />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <section id="hero" class="bloc-lime relative px-[var(--spacing-section-x)] pt-28 pb-14 lg:pt-36 lg:pb-16 border-b border-[var(--color-divider)]">
+    {/* Le premier écran reste sur la nuit, sans filet bas : la section qui
+        suit est un panneau clair détaché et arrondi, et un trait droit à vingt
+        pixels de son arrondi lui servirait de couvercle. */}
+    <section id="hero" class="relative px-[var(--spacing-section-x)] pt-28 pb-[var(--spacing-bloc)] lg:pt-36">
       <div class="relative max-w-[1200px] mx-auto w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,0.55fr)] gap-12 lg:gap-20 items-end">
-          {/* L'entrée d'auteur : le titre, le chapô, les deux portes et les actions
-              arrivent l'un après l'autre, puis le surlignage se trace. Des
-              keyframes CSS jouées au chargement — sans script, la colonne est
-              peinte dans son état final. */}
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.55fr)] gap-[var(--spacing-gouttiere)] items-end">
+          {/* L'entrée d'auteur : le titre, le chapô puis les actions arrivent
+              l'un après l'autre, et le surlignage se trace. Des keyframes CSS
+              jouées au chargement — sans script, la colonne est peinte dans
+              son état final. */}
           <div class="min-w-0 entree">
-            <h1 class="font-display font-semibold text-[length:var(--text-sites-hero)] leading-[0.95] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-              Un site pour vos clients. Une app pour <mark class="inv">vos équipes.</mark>
+            <h1 class="m-0 max-w-[18ch] text-[length:var(--text-display)]">
+              Un site pour vos clients. Une app pour <mark>vos équipes.</mark>
             </h1>
-            <p class="mt-7 mb-0 max-w-[58ch] text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)]">
-              Présenter votre offre, centraliser vos dossiers ou suivre votre activité : je crée le site web ou l’application métier qui répond à votre besoin, puis j’en assure le suivi.
+            <p class="mt-[var(--spacing-lie)] mb-0 max-w-[46ch] text-[length:var(--text-body-large)] leading-[1.5] text-[var(--color-ink-mid)]">
+              Présenter votre offre, centraliser vos dossiers ou suivre votre activité&nbsp;: je crée le site web ou l’application métier qui répond à votre besoin, puis j’en assure le suivi.
             </p>
 
-            <nav aria-label="Choisir le type de projet web" class="mt-6 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-x-7">
-              <LinkCTA href="#tarifs">Sites et landing pages</LinkCTA>
-              <LinkCTA href="#applications">Applications métier</LinkCTA>
-            </nav>
-
-            <div class="mt-9 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-              <BoutonReservation source="sites_web_hero" class="btn-primary justify-center">
-                {bookingLabel}
-              </BoutonReservation>
-              <LinkCTA href="#realisations">Voir les réalisations</LinkCTA>
+            {/* Un bouton, puis les deux portes de la page : les sites et leurs
+                tarifs, les applications et leur devis. Les deux portes vont
+                ensemble : faute de place à côté du bouton, elles passent
+                dessous toutes les deux. */}
+            <div class="mt-[var(--spacing-groupe)] flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-7 gap-y-2">
+              <BoutonReservation source="sites_web_hero" />
+              <div class="flex flex-wrap gap-x-7">
+                <LinkCTA href="#tarifs">Sites et landing pages</LinkCTA>
+                <LinkCTA href="#applications">Applications métier</LinkCTA>
+              </div>
             </div>
           </div>
 
           {/* Les repères de prix forment un seul objet, qui entre d'un bloc après
               le titre. L'enveloppe porte `.entree` parce que le geste anime des
               enfants directs : posé sur l'aside, il aurait fait arriver les
-              trois lignes dans un cadre déjà là, vide. */}
+              lignes dans un cadre déjà là, vide. */}
           <div class="min-w-0 entree">
-            <aside class="hero-reperes" style="--i: 3" aria-label="Création et suivi des sites web">
-              <p class="m-0 pb-5 text-[length:var(--text-body)] leading-[1.55] text-[var(--color-ink-mid)]">
-                Pour votre site web : un budget de création, puis un abonnement mensuel obligatoire.
+            <aside class="reperes" style="--i: 3" aria-label="Création et suivi des sites web">
+              <p>
+                Pour votre site web&nbsp;: un budget de création, puis un abonnement mensuel obligatoire.
               </p>
-              <dl class="m-0 border-t border-[var(--color-divider)]">
-                <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 py-4 border-b border-[var(--color-divider)]">
-                  <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Création</dt>
-                  <dd class="pastille-prix">dès {creationOffers[0].price}</dd>
+              <dl>
+                <div>
+                  <dt>Création</dt>
+                  <dd>dès {creationOffers[0].price}</dd>
                 </div>
-                <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-2 py-4 border-b border-[var(--color-divider)]">
-                  <dt class="font-display font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">Suivi</dt>
-                  <dd class="pastille-prix">{subscriptionOffers[0].price}</dd>
+                <div>
+                  <dt>Suivi</dt>
+                  <dd>{prixEnPhrase(subscriptionOffers[0].price)}</dd>
                 </div>
               </dl>
-              <p class="m-0 pt-5 text-[length:var(--text-body-sm)] leading-[1.55] text-[var(--color-ink-mid)]">
-                Application métier : création et suivi sur devis.
+              <p class="reperes__devis">
+                Application métier&nbsp;: création et suivi sur devis.
               </p>
             </aside>
           </div>
@@ -163,156 +181,111 @@ const serviceSchema = {
       </div>
     </section>
 
-    <section id="tarifs" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+    {/* Premier panneau clair : les tarifs de création, ce qu'on vient vérifier. */}
+    <section id="tarifs" data-section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            Le site qui correspond à <mark>votre offre.</mark>
-          </h2>
-          <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Une page pour une offre précise, plusieurs pages pour vos services, ou un outil pour guider vos visiteurs. Voici les tarifs de création, hors abonnement.
-          </p>
+        <SectionHeader
+          title="Le site qui correspond à votre offre."
+          body="Une page pour une offre précise, plusieurs pages pour vos services, ou un outil pour guider vos visiteurs. Voici les tarifs de création, hors abonnement."
+          titleMaxWidth="18ch"
+        />
+
+        <div class="reveal">
+          <SubscriptionGrid offers={creationOffers} label="Tarifs de création des sites web" unite="HT" />
         </div>
 
-        <div class="reveal-stagger">
-          {creationOffers.map((offer, index) => (
-            <article class="reveal grid grid-cols-1 lg:grid-cols-[minmax(12rem,0.72fr)_minmax(0,1.28fr)_minmax(13rem,0.58fr)] gap-7 lg:gap-12 py-9 lg:py-11 border-b border-[var(--color-divider)] items-start">
-              <div class="grid grid-cols-[2rem_minmax(0,1fr)] gap-4 items-start">
-                <span class="text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-low)] tabular-nums" aria-hidden="true">{index + 1}</span>
-                <div>
-                  <h3 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.12] tracking-[-0.025em] text-[var(--color-ink)] m-0">{offer.name}</h3>
-                  <p class="mt-3 mb-0 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink-low)]">{offer.useCase}</p>
-                </div>
-              </div>
-
-              <div>
-                <p class="m-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">{offer.promise}</p>
-                <ul class="inclus mt-5 mb-0 p-0 list-none flex flex-wrap gap-2">
-                  {offer.includes.map((item) => <li>{item}</li>)}
-                </ul>
-              </div>
-
-              <p class="m-0 lg:text-right font-display font-semibold leading-none tracking-[-0.035em] text-[var(--color-ink)] tabular-nums">
-                {index === creationOffers.length - 1 ? (
-                  <>
-                    <span class="block mb-2 font-sans text-[length:var(--text-body-sm)] font-normal leading-[1.4] tracking-normal text-[var(--color-ink-low)]">À partir de</span>
-                    <span class="block text-[length:var(--text-title-lg)] whitespace-nowrap">{offer.price.replace('À partir de ', '')}</span>
-                  </>
-                ) : (
-                  <span class="block text-[length:var(--text-title-lg)] whitespace-nowrap">{offer.price}</span>
-                )}
-              </p>
-            </article>
-          ))}
-        </div>
-
-        <div class="reveal mt-10 pt-7 border-t border-[var(--color-divider)] flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        {/* La sortie se tient plus loin que l'écart entre deux formules, pour
+            ne pas se lire comme une quatrième ligne de la liste. */}
+        <div class="reveal mt-[var(--spacing-bloc)] flex flex-col md:flex-row md:items-center md:justify-between gap-x-[var(--spacing-gouttiere)] gap-y-3">
           <p class="m-0 max-w-[64ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
             Nous validons les pages, les contenus et les outils à connecter avant le démarrage. Les applications métier ont leur propre devis, détaillé ci-dessous.
           </p>
-          <BoutonReservation source="sites_web_tarifs" class="btn-primary justify-center shrink-0">
-            {bookingLabel}
-          </BoutonReservation>
+          <LinkCTA href="#abonnements" class="shrink-0">Voir l’abonnement de suivi</LinkCTA>
         </div>
       </div>
     </section>
 
-    {/* Pas de filet bas : la section suivante est un panneau détaché et arrondi,
-        et un trait droit à vingt pixels de son arrondi lui servait de couvercle. */}
-    <section id="applications" data-section class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 lg:gap-20 items-start">
-        <div>
+    {/* Entre les deux panneaux clairs, sur la nuit et sans filet. À gauche ce
+        qu'est une application métier et ce qu'elle coûte, à droite le schéma
+        puis le cas qui l'illustre. C'est aussi là qu'arrive le lien
+        « Dashboards et outils métiers » de l'accueil : d'où le bouton. */}
+    <section id="applications" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-x-[var(--spacing-gouttiere)] gap-y-[var(--spacing-bloc)] items-start">
+        <div class="min-w-0">
           <SectionHeader
-            title="Vos dossiers au même endroit. Votre équipe <mark>y voit clair.</mark>"
-            body="Des fichiers Excel, des demandes par mail, des informations à recopier : votre équipe passe du temps à faire le lien. Je construis une application métier reliée à vos outils pour rassembler ce travail."
+            title="Vos dossiers au même endroit. Votre équipe y voit clair."
+            body={`Des fichiers Excel, des demandes par mail, des informations à recopier : votre équipe passe du temps à faire le lien. Je construis une application métier reliée à vos outils pour rassembler ce travail.`}
             titleMaxWidth="20ch"
-            bodyMaxWidth="58ch"
             spacing="none"
           />
-          <div class="reveal mt-8">
-            <BoutonReservation source="sites_web_applications" class="btn-primary justify-center">
-              {bookingLabel}
-            </BoutonReservation>
+
+          <ul class="reveal m-0 mt-[var(--spacing-groupe)] p-0 list-none grid gap-[var(--spacing-lie)]">
+            {formesApplication.map((forme) => (
+              <li>
+                <h3 class="m-0">{forme.nom}</h3>
+                <p class="mt-[var(--spacing-colle)] mb-0 leading-[var(--leading-body)] text-[var(--color-ink-mid)]">{forme.texte}</p>
+              </li>
+            ))}
+          </ul>
+
+          <div class="reveal mt-[var(--spacing-groupe)]">
+            <p class="m-0 mb-[var(--spacing-lie)] leading-[var(--leading-body)] text-[var(--color-ink)]">
+              Création et abonnement sur devis, selon les fonctionnalités, les utilisateurs et les connexions nécessaires.
+            </p>
+            <BoutonReservation source="sites_web_applications" />
           </div>
-          <div class="reveal mt-8">
-            <p class="m-0 mb-2 text-[var(--color-ink-mid)] leading-relaxed">
+        </div>
+
+        <div class="min-w-0 max-w-[720px]">
+          <div class="reveal">
+            <ApplicationSystemDiagram />
+          </div>
+          <div class="reveal mt-[var(--spacing-groupe)]">
+            <p class="m-0 mb-[var(--spacing-colle)] max-w-[58ch] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">
               Chez Deuxième Souffle, des tableaux Excel servaient à organiser les sessions d’une trentaine de coachs. J’ai livré une première application pour recueillir leurs disponibilités, faciliter les affectations et suivre le pointage.
             </p>
             <LinkCTA href="/cas-clients/deuxieme-souffle">Voir le cas Deuxième Souffle</LinkCTA>
           </div>
         </div>
-        <div class="reveal">
-          <dl class="m-0 border-t border-[var(--color-border-strong)]">
-            <div class="py-6 border-b border-[var(--color-divider)]">
-              <dt class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em]">Dashboard de suivi</dt>
-              <dd class="mt-3 mb-0 ml-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">Vos chiffres, vos dossiers en cours et les actions à traiter dans une même vue.</dd>
-            </div>
-            <div class="py-6 border-b border-[var(--color-divider)]">
-              <dt class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em]">Portail client</dt>
-              <dd class="mt-3 mb-0 ml-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">Un espace où vos clients retrouvent leurs documents, déposent leurs pièces et suivent leurs demandes.</dd>
-            </div>
-            <div class="py-6 border-b border-[var(--color-divider)]">
-              <dt class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em]">Outil interne connecté</dt>
-              <dd class="mt-3 mb-0 ml-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">Des formulaires et des étapes de validation reliés à votre CRM, vos données et vos automatisations.</dd>
-            </div>
-          </dl>
-          <p class="mt-7 mb-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink)]">
-            Création et abonnement sur devis, selon les fonctionnalités, les utilisateurs et les connexions nécessaires.
-          </p>
-        </div>
-      </div>
-      <div class="mx-auto mt-12 max-w-[720px]">
-        <ApplicationSystemDiagram />
       </div>
     </section>
 
+    {/* Second panneau clair : ce que coûte le suivi, chaque mois. */}
     <section id="abonnements" data-section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
       <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[16ch] text-balance">
-            Votre site est en ligne. Je m’occupe du <mark class="inv">suivi.</mark>
-          </h2>
-          <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Hébergement, maintenance et petits ajustements des pages livrées : l’abonnement fait partie de chaque projet. Son tarif dépend du format de votre site.
-          </p>
-        </div>
+        <SectionHeader
+          title="Votre site est en ligne. Je m’occupe du suivi."
+          body={`Hébergement, maintenance et petits ajustements des pages livrées : l’abonnement fait partie de chaque projet. Son tarif dépend du format de votre site.`}
+          titleMaxWidth="16ch"
+        />
 
-        {/* La grille est un cadre arrondi : elle se détache du filet de l'en-tête
-            au lieu de s'y coller, comme la grille de réalisations plus bas. */}
-        <div class="reveal mt-10">
+        <div class="reveal">
           <SubscriptionGrid offers={subscriptionOffers} label="Abonnements de suivi des sites web" />
         </div>
 
-        <div class="reveal mt-9 grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_auto] gap-7 items-center">
-          <p class="m-0 max-w-[72ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
-            {maintenanceScope} La rédaction récurrente d’articles est distincte de l’abonnement blog. Le suivi d’une application métier est chiffré sur devis.
-          </p>
-          <BoutonReservation source="sites_web_abonnements" class="btn-primary justify-center">
-            {bookingLabel}
-          </BoutonReservation>
-        </div>
+        <p class="reveal mt-[var(--spacing-bloc)] mb-0 max-w-[72ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
+          {maintenanceScope} La rédaction récurrente d’articles est distincte de l’abonnement blog. Le suivi d’une application métier est chiffré sur devis.
+        </p>
       </div>
     </section>
 
-    <section id="methode" data-section class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+    {/* Les étapes gardent leur numéro : ici l'ordre est l'information. */}
+    <section id="methode" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            De votre idée à la <mark>mise en ligne.</mark>
-          </h2>
-          <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Vous validez les choix importants et testez le résultat avant publication. Voici comment nous avançons.
-          </p>
-        </div>
+        <SectionHeader
+          title="De votre idée à la mise en ligne."
+          body="Vous validez les choix importants et testez le résultat avant publication. Voici comment nous avançons."
+          titleMaxWidth="18ch"
+        />
 
-        <ol class="m-0 p-0 list-none grid grid-cols-1 lg:grid-cols-2 gap-x-14">
+        <ol class="m-0 p-0 list-none grid grid-cols-1 lg:grid-cols-2 gap-x-[var(--spacing-gouttiere)] gap-y-[var(--spacing-groupe)]">
           {manufacturingSteps.map((step, index) => (
-            <li class="reveal grid grid-cols-[auto_minmax(0,1fr)] gap-5 py-8 border-b border-[var(--color-divider)]">
+            <li class="reveal grid grid-cols-[auto_minmax(0,1fr)] gap-x-4">
               <span class="method-index" aria-hidden="true">{index + 1}</span>
               <div>
-                <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] text-[var(--color-ink)] m-0 max-w-[24ch]">{step.title}</h3>
-                <p class="mt-4 mb-0 text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)] max-w-[66ch]">{step.description}</p>
-                <p class="mt-4 mb-0 text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink)]"><strong>Livrable&nbsp;:</strong> {step.output}</p>
+                <h3 class="m-0 max-w-[24ch]">{step.title}</h3>
+                <p class="mt-3 mb-0 max-w-[58ch] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">{step.description}</p>
+                <p class="mt-3 mb-0 max-w-[58ch] text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink)]"><strong>Livrable&nbsp;:</strong> {step.output}</p>
               </div>
             </li>
           ))}
@@ -320,67 +293,41 @@ const serviceSchema = {
       </div>
     </section>
 
-    <section id="realisations" data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+    <section id="realisations" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
       <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[16ch] text-balance">
-            Quelques sites que <mark>j’ai créés.</mark>
-          </h2>
-          <p class="m-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[62ch]">
-            Recrutement, formation, catalogues et outils de recherche : ouvrez les sites pour voir le résultat.
-          </p>
-        </div>
+        <SectionHeader
+          title="Quelques sites que j’ai créés."
+          body={`Recrutement, formation, catalogues et outils de recherche : ouvrez les sites pour voir le résultat.`}
+          titleMaxWidth="16ch"
+        />
 
-        <div class="portfolio-grid reveal-stagger mt-10">
+        <div class="portfolio-grid reveal-stagger">
           {projectList.map((project) => (
-            <ProjectVisual {...project} ratio="landscape" class="reveal" interactive />
+            <ProjectVisual
+              src={project.src}
+              href={project.href}
+              name={project.name}
+              detail={project.detail}
+              alt={project.alt}
+              class="reveal"
+            />
           ))}
         </div>
 
-        <div class="reveal mt-9 flex flex-col sm:flex-row gap-4 sm:gap-7">
+        <div class="reveal mt-[var(--spacing-groupe)] flex flex-col sm:flex-row gap-x-7 gap-y-2">
           <LinkCTA href="/cas-clients">Lire les cas clients</LinkCTA>
           <LinkCTA href="/principes">Voir ma méthode</LinkCTA>
         </div>
       </div>
     </section>
 
-    {/* Même raison que plus haut : pas de filet bas avant un panneau arrondi. */}
-    <section id="faq" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal grid grid-cols-1 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-8 lg:gap-20 items-end pb-9 border-b border-[var(--color-border-strong)]">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[17ch] text-balance">
-            Vos questions, avant de <mark class="inv">vous lancer.</mark>
-          </h2>
-        </div>
+    <Questions id="faq" titre="Vos questions, avant de vous lancer." titreLargeur="14ch" items={siteFaqs} />
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-14">
-          {siteFaqs.map((faq) => (
-            <article class="reveal py-8 border-b border-[var(--color-divider)]">
-              <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] text-[var(--color-ink)] m-0 max-w-[32ch]">{faq.q}</h3>
-              <p class="mt-4 mb-0 text-[length:var(--text-body)] leading-[1.65] text-[var(--color-ink-mid)] max-w-[68ch]">{faq.a}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto reveal grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-9 lg:gap-16 items-end">
-        <div>
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[18ch] text-balance">
-            Que voulez-vous <mark>simplifier ?</mark>
-          </h2>
-          <p class="mt-6 mb-0 text-[length:var(--text-body-large)] leading-[1.55] text-[var(--color-ink-mid)] max-w-[58ch]">
-            En {DUREE_RESERVATION_MINUTES} minutes, vous me montrez votre besoin. Nous faisons le tri dans les priorités et je vous explique ce qui est faisable, avec quel type de site ou d’application. Le bouton ouvre mon agenda pour choisir votre créneau.
-          </p>
-        </div>
-        <div class="lg:pb-1">
-          <BoutonReservation source="sites_web_final" class="btn-primary justify-center lg:min-w-[220px]">
-            {bookingLabel}
-          </BoutonReservation>
-        </div>
-      </div>
-    </section>
+    <FinDePage
+      source="sites_web_fin"
+      titre={`Que <span class="whitespace-nowrap">voulez-vous</span> <mark>créer&nbsp;?</mark>`}
+      suite={`Une phrase suffit. Je vous réponds <span class="whitespace-nowrap">moi-même</span> et je vous dis ce qui est faisable, avec quel type de site ou d’application.`}
+    />
   </main>
 
   <Footer />
@@ -393,6 +340,7 @@ const serviceSchema = {
     gap: clamp(0.75rem, 1.4vw, 1rem);
   }
 
+  /* Le rang d'une étape de la méthode. */
   .method-index {
     display: inline-grid;
     place-items: center;
@@ -405,45 +353,56 @@ const serviceSchema = {
     color: var(--color-ink);
   }
 
-  /* `.dark-mark` a été retirée : elle forçait un noir neutre sur les fragments
-     surlignés des deux panneaux clairs, du temps où `mark` héritait sa couleur.
-     `mark` lit désormais la nuit partout, et la classe ne faisait plus que
-     court-circuiter le tracé du surligneur. */
-
   /* ── Les repères de prix du hero ──
-     Un objet posé sur la bande, à la place d'un filet vertical : c'est la seule
-     surface du premier écran, et elle est arrondie. Rayon de grande carte, les
-     filets internes restent droits. */
-  .hero-reperes {
-    padding: clamp(1.25rem, 2.2vw, 1.75rem);
+     La seule surface du premier écran : un panneau relevé d'un cran, arrondi,
+     qui dit en trois lignes ce que coûte un site. Ni filet ni pastille :
+     l'espace sépare, et le prix se lit à sa graisse. */
+  .reperes {
+    display: grid;
+    gap: var(--spacing-lie);
+    padding: var(--spacing-panneau);
     border: 1px solid var(--color-divider);
     border-radius: var(--radius-lg);
-    background: var(--color-surface-high);
+    background: var(--color-surface-low);
   }
 
-  /* Une étiquette, donc ronde. Pêche sur accent-soft : 6,93:1. */
-  .pastille-prix {
+  .reperes p {
     margin: 0;
-    padding: 0.3rem 0.8rem;
-    border-radius: var(--radius-full);
-    background: var(--color-accent-soft);
-    color: var(--color-accent-text);
-    font-size: var(--text-body-sm);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.4;
-    white-space: nowrap;
+    color: var(--color-ink-mid);
+    line-height: 1.5;
   }
 
-  /* Ce que chaque formule comprend : trois étiquettes, pas une liste à puces
-     répartie sur trois colonnes où la plus longue passait à la ligne. Elles ne
-     se cliquent pas, donc aucun survol. */
-  .inclus li {
-    padding: 0.3rem 0.8rem;
-    border: 1px solid var(--color-divider);
-    border-radius: var(--radius-full);
-    color: var(--color-ink-mid);
+  .reperes .reperes__devis {
     font-size: var(--text-body-sm);
-    line-height: 1.4;
+  }
+
+  .reperes dl {
+    display: grid;
+    gap: var(--spacing-colle);
+    margin: 0;
+  }
+
+  /* Le rôle à gauche, le prix à droite ; s'il manque de place, le prix passe
+     dessous, entier. */
+  .reperes dl > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 1rem;
+  }
+
+  .reperes dt {
+    color: var(--color-ink-mid);
+  }
+
+  .reperes dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   @media (max-width: 767px) {

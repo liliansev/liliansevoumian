@@ -1,34 +1,22 @@
 ---
 /*
- * Methode — « comment ça se passe », en quatre étapes.
+ * Methode — « comment ça se passe », en quatre étapes, dans l'île claire de la
+ * page (`.bloc-encre`) : c'est ce que le lecteur vient vérifier avant
+ * d'écrire, et il le lit posément. Le panneau remappe les jetons de couleur,
+ * tout ce qu'il contient suit sans variante ; le schéma des contrôles, lui,
+ * reste une fenêtre sombre.
  *
- * LE TROU LE PLUS NET DE LA HOME. Un prospect se pose quatre questions avant
- * d'engager un freelance : que sait-il faire, peut-il résoudre mon problème,
- * comment, et quelle est l'étape suivante. La page répondait à la première
- * (depuis l'ajout de la section « ce que j'automatise »), à la deuxième (les
- * cas), à la quatrième dix fois — et à « comment » nulle part.
+ * Le titre tient la colonne de gauche et accompagne les étapes, qui se lisent
+ * à droite, l'une sous l'autre : même grille que les questions de fin de page.
  *
- * La méthode existait pourtant, écrite : « Cadrage, conception, mise en
- * production, transfert », deuxième des huit principes de /principes. Une page
- * atteignable seulement par une entrée de nav. Elle remonte ici, dépliée en une
- * ligne par étape.
+ * Rien n'est inventé, et c'est ce qui borne le texte de chaque étape : le
+ * devis vient de la section des offres, les contrôles et les validations
+ * humaines des cas clients, l'alerte dans le canal de l'équipe de la FAQ, la
+ * documentation des principes, le suivi mensuel de l'offre. Aucune durée
+ * n'est annoncée : les cas publiés vont de quatre semaines à plusieurs mois.
  *
- * RIEN N'EST INVENTÉ, et c'est ce qui borne le texte de chaque étape. Le devis
- * ferme après l'appel vient de la section « offres » et de la FAQ ; les
- * contrôles déterministes autour de l'IA, du cas Humble+ (« l'IA extrait, mais
- * les contrôles critiques restent déterministes ») ; l'alerte posée là où
- * l'équipe regarde déjà, de la réponse FAQ sur les outils qui changent ; la
- * documentation à la livraison, des principes 4 et 7. Le suivi mensuel et son
- * périmètre viennent de l’offre validée. Aucune durée n'est annoncée : les quatre cas publiés vont
- * de quatre semaines à plusieurs mois, et un délai unique serait faux trois
- * fois sur quatre.
- *
- * POURQUOI DES NUMÉROS ICI, alors qu'ils ont été retirés des sections de la
- * home, du menu mobile et des principes. Parce que la raison de leur retrait ne
- * s'applique pas : on les avait posés sur des ensembles que le lecteur parcourt
- * dans l'ordre qu'il veut — une navigation n'est pas une séquence, des
- * principes non plus. Une méthode, si. L'étape 3 ne peut pas précéder l'étape
- * 1, et le chiffre porte ici une information que la mise en page ne porte pas.
+ * Les étapes gardent un numéro parce que l'ordre est l'information : l'étape 3
+ * ne peut pas précéder l'étape 1.
  */
 import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
@@ -53,7 +41,7 @@ const etapes = [
   {
     titre: 'Livraison et suivi',
     corps:
-      'Je documente la solution et vous forme à son utilisation. Chaque projet s’accompagne d’un abonnement mensuel : hébergement, maintenance et petits ajustements de l’existant. Les nouveaux besoins font l’objet d’un devis.',
+      'Je documente la solution et vous forme à son utilisation. Chaque projet s’accompagne d’un abonnement mensuel : hébergement, maintenance et petits ajustements de l’existant. Les nouveaux besoins font l’objet d’un devis.',
   },
 ];
 ---
@@ -61,82 +49,90 @@ const etapes = [
 <section
   id="methode"
   data-section
-  class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  class="bloc-encre relative px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
+  <div class="relative mx-auto max-w-[1200px]">
 
-    <SectionHeader
-      title="Du premier échange au <mark>suivi mensuel.</mark>"
-      body="Le périmètre et le calendrier sont définis avant de commencer."
-      titleMaxWidth="22ch"
-      bodyMaxWidth="62ch"
-    />
+    <div class="methode">
+      {/* Sur grand écran le titre accompagne les étapes, plus hautes que lui. */}
+      <SectionHeader
+        class="lg:sticky lg:top-28"
+        title="Du premier échange au suivi mensuel."
+        body="Le périmètre et le calendrier sont définis avant de commencer."
+        titleMaxWidth="14ch"
+        bodyMaxWidth="34ch"
+        spacing="none"
+      />
 
-    <ol class="reveal-stagger methode-etapes">
-      {etapes.map((e) => (
-        <li class="reveal methode-etape">
-          <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
-            {e.titre}
-          </h3>
-          <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
-            {e.corps}
-          </p>
-        </li>
-      ))}
-    </ol>
+      <ol class="reveal-stagger methode-etapes">
+        {etapes.map((e) => (
+          <li class="reveal methode-etape">
+            <h3 class="m-0">{e.titre}</h3>
+            <p class="m-0 mt-[var(--spacing-colle)] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">
+              {e.corps}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
 
     <AutomationControlDiagram />
 
-    <div class="reveal methode-pied">
+    <p class="reveal m-0 mt-[var(--spacing-groupe)]">
       <LinkCTA href="/principes">Les 8 principes que je suis sur chaque mission</LinkCTA>
-    </div>
+    </p>
 
   </div>
 </section>
 
 <style>
+  .methode {
+    display: grid;
+    gap: var(--spacing-groupe);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .methode {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      column-gap: var(--spacing-gouttiere);
+    }
+  }
+
   .methode-etapes {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: clamp(1.75rem, 4vw, 3rem);
+    gap: var(--spacing-groupe);
     margin: 0;
     padding: 0;
     list-style: none;
     counter-reset: etape;
   }
 
+  /* Le numéro dans sa colonne, le titre et le texte dans la leur : le texte
+     s'aligne sous le titre, pas sous le chiffre. */
   .methode-etape {
-    position: relative;
-    border-top: 1px solid var(--color-divider);
-    padding: 1.75rem 0 0;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
   }
 
-  /* Le numéro en compteur CSS et non en texte : la liste reste une <ol>
-     sémantique — un lecteur d'écran annonce déjà « 1 sur 4 » — et le chiffre ne
-     part pas dans le presse-papier avec la phrase. Même dispositif que les
-     trois étapes de la carte de réservation, à l'échelle d'une section.
-     Il est posé SUR le filet de tête, dans un pastille de papier : c'est ce qui
-     fait lire les quatre blocs comme une suite plutôt que comme quatre colonnes
-     voisines, sans ajouter un second trait au système. */
+  .methode-etape > :global(*) {
+    grid-column: 2;
+  }
+
+  /* Le numéro est un compteur CSS : la liste reste une `ol`, qu'un lecteur
+     d'écran annonce déjà « 1 sur 4 », et le chiffre ne part pas dans le
+     presse-papier avec la phrase. Au corps du titre, en retrait : il donne
+     l'ordre sans faire un second titre. */
   .methode-etape::before {
     counter-increment: etape;
     content: counter(etape);
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translateY(-50%);
-    padding-right: 0.6rem;
-    background: var(--color-section-band);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    color: var(--color-ink);
-  }
-
-  .methode-pied {
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-divider);
+    grid-column: 1;
+    grid-row: 1;
+    color: var(--color-ink-low);
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 500;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
   }
 </style>

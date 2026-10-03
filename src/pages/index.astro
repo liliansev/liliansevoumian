@@ -7,8 +7,8 @@ import HomeTodayPath from '../components/home-today-path.astro';
 import HomeServices from '../components/home-services.astro';
 import HomeContent from '../components/home-content.astro';
 import HomeVoices from '../components/home-voices.astro';
-import HomeQuestions from '../components/home-questions.astro';
-import HomeOffers from '../components/home-offers.astro';
+import Questions from '../components/questions.astro';
+import FinDePage from '../components/fin-de-page.astro';
 import HomeInvite from '../components/home-invite.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
@@ -45,6 +45,7 @@ const pageSchema = {
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
   pageSchema={pageSchema}
+  causerie={false}
   faqSchema={homeFaqs.map((item) => ({ question: item.q, answer: item.a }))}
 >
   <Navigation
@@ -53,7 +54,7 @@ const pageSchema = {
     trackHero={true}
   />
 
-  <main id="main-content" tabindex="-1" class="accueil outline-none">
+  <main id="main-content" tabindex="-1" class="outline-none">
     <HomeHero />
     {/* La barre où l'on écrit à Lilian : sous le titre, puis en bas à droite.
         Sans serveur : elle ouvre WhatsApp, la messagerie ou l'agenda avec le
@@ -66,8 +67,8 @@ const pageSchema = {
       <HomeTodayPath />
       <HomeContent />
       <HomeVoices />
-      <HomeQuestions />
-      <HomeOffers />
+      <Questions />
+      <FinDePage id="offres" source="home_offres" prix />
     </div>
   </main>
 
@@ -88,117 +89,13 @@ const pageSchema = {
    *   le surligné une pastille pêche, droite et ronde, à la place de la
    *               bande penchée.
    */
-  .accueil {
-    --color-divider: color-mix(in srgb, var(--color-ink) 9%, transparent);
-    background: var(--color-night-deep);
-  }
-
-  /* Le fond se règle sur la racine, pas sur `main` : la barre, le menu mobile,
-     l'agenda en plein écran, la gouttière de défilement et le rebond d'iOS
-     lisent tous `--color-paper`, et montraient le bleu du reste du site autour
-     d'une page plus sombre. */
-  html:has(.accueil) {
-    --color-paper: var(--color-night-deep);
-  }
-
-  /* La maille de 96 px des gouttières appartient à l'ancienne tenue. Ici elle
-     dessinait des fragments à cheval sur les deux lignes de cadre. */
-  html:has(.accueil) .technical-grid {
-    display: none;
-  }
-
-  /* Une ancre s'arrête sous la barre, quelle que soit la section visée. Trois
-     `scroll-margin-top` différents (64, 96 et rien) faisaient ce travail, une
-     section sur deux. */
-  html:has(.accueil) {
-    scroll-padding-top: var(--spacing-barre);
-  }
-
-  /* Le corps du texte n'est pas resserré sur l'accueil. `-0.005em` posé sur
-     `body` s'hérite en longueur absolue : les petits corps (14 et 12 px) se
-     retrouvaient relativement plus serrés que le texte courant, l'inverse de
-     ce qu'un texte clair sur fond sombre demande. */
-  html:has(.accueil) body {
-    letter-spacing: 0;
-  }
-
-  /* La barre d'écriture est posée en bas à droite : le pied de page lui laisse
-     sa place, pour que ses derniers liens ne restent pas dessous. */
-  html:has(.causerie) footer {
-    padding-bottom: 5.5rem;
-  }
-
-  /* Un seul bouton primaire sur la page : bas de casse, 14 px, sans approche.
-     La barre, la fin de page et la newsletter le réglaient chacune de leur
-     côté, et la newsletter avait oublié la taille : son bouton faisait 12 px
-     quand les deux autres en faisaient 14. */
-  html:has(.accueil) .btn-primary {
-    font-size: var(--text-body-sm);
-    font-weight: 500;
-    letter-spacing: 0;
-    line-height: 1.35;
-    text-transform: none;
-  }
-
-  /* Le pied de page et le menu, communs à tout le site, gardent ailleurs leurs
-     petites capitales espacées. Ici ils parlent comme le reste de la page. */
-  html:has(.accueil) :is(footer, .mobile-menu) :is(.mono-label, .mono-caption),
-  html:has(.accueil) .cal-overlay :is(.cal-overlay-title, .cal-overlay-action) {
-    font-size: var(--text-mono-label);
-    letter-spacing: 0;
-    text-transform: none;
-  }
-
-  /* Un seul traitement pour le texte qui se clique : bas de casse, comme la
-     barre et les boutons. Les capitales espacées du lien fléché restent sur
-     les autres pages. */
-  .accueil .link-cta {
-    font-size: var(--text-body-sm);
-    letter-spacing: 0;
-    text-transform: none;
-  }
-
-  /* Au survol, la même pastille que dans les titres : droite et ronde, qui se
-     déroule de gauche à droite, à la place de la bande penchée. */
-  .accueil .link-cta__label {
-    margin-left: -0.5em;
-    padding: 0.14em 0.5em 0.18em;
-  }
-
-  .accueil .link-cta__label::before {
-    inset: 0;
-    border-radius: 9999px;
-    transform: none;
-    clip-path: inset(0 100% 0 0 round 9999px);
-    transition: clip-path var(--duration-default) var(--ease-out-quint);
-  }
-
-  .accueil .link-cta:hover .link-cta__label::before,
-  .accueil .link-cta:focus-visible .link-cta__label::before {
-    transform: none;
-    clip-path: inset(0 0 0 0 round 9999px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .accueil .link-cta__label::before {
-      transition: none;
-    }
-  }
-
+  /* Le fond, les titres, le surlignage en pastille, les boutons et les liens
+     en bas de casse étaient réglés ici, pour l'accueil seul : ils sont
+     maintenant la tenue de tout le site (voir « La tenue commune » dans
+     `global.css`). Il ne reste ici que ce qui est propre à cette page. */
   .accueil__suite {
     --marge: var(--spacing-cadre);
     position: relative;
-  }
-
-  /* Sur téléphone, la page faisait seize écrans de haut (mesure du 3 octobre
-     2026, 402 × 874). Les sections et les blocs se resserrent : 56 px au lieu
-     de 80 entre deux sections, 40 au lieu de 48 autour d'un métier. Le reste du
-     gain vient de ce qui se replie (le parcours, les questions). */
-  @media (max-width: 640px) {
-    .accueil {
-      --spacing-section-y: 3.5rem;
-      --spacing-bloc: 2.5rem;
-    }
   }
 
   .accueil__suite::before,
@@ -228,28 +125,5 @@ const pageSchema = {
     .accueil__suite::after {
       display: none;
     }
-  }
-
-  .accueil :is(h2, h3) {
-    font-weight: 500;
-  }
-
-  /* Les titres de section respirent comme le titre du premier écran. Ils
-     étaient plus serrés que lui (1,05 et -0,035em, contre 1,12 et -0,028em),
-     alors qu'ils sont plus petits. */
-  .accueil h2 {
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-  }
-
-  .accueil mark {
-    --angle: 0deg;
-    --radius-bande: 9999px;
-    display: inline-block;
-    padding: 0.02em 0.36em 0.08em;
-  }
-
-  .accueil mark::before {
-    inset: 0;
   }
 </style>

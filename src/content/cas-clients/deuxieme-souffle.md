@@ -35,13 +35,13 @@ Le choix du coach restait donc une décision humaine. Les automatisations accomp
 
 ## Le pointage et le suivi des paiements
 
-L’application comprenait également un système de pointage et un tableau de bord destiné au client pour estimer les paiements des coachs.
+L’application comprenait également un système de pointage et un dashboard destiné au client pour estimer les paiements des coachs.
 
 Ce périmètre portait sur le suivi des interventions et l’estimation des montants. L’exécution automatique des paiements ne faisait pas partie des fonctionnalités décrites dans ce premier lot.
 
 ## Le périmètre documenté
 
-Ce cas présente le premier lot réalisé : sessions disponibles, candidatures, affectations, pointage et tableau de bord client. L’usage actuel de la solution reste à confirmer.
+Ce cas présente le premier lot réalisé : sessions disponibles, candidatures, affectations, pointage et dashboard client. L’usage actuel de la solution reste à confirmer.
 
 Je ne dispose pas de mesures de temps gagné, de données d’adoption ni d’un témoignage client à publier pour ce projet. Le cas documente donc le besoin et les fonctionnalités réalisées, sans leur attribuer un résultat chiffré.
 

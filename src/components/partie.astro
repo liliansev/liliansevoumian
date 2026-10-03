@@ -1,0 +1,208 @@
+---
+/*
+ * partie — une partie d'une page de lecture : son titre à gauche, son texte à
+ * droite, à une mesure de lecture.
+ *
+ * Elle sert aux pages qu'on lit d'un bout à l'autre (la page de reprise, les
+ * pages-réponses). Le contenu passe par le slot : des paragraphes, une liste,
+ * un tableau, écrits dans la page avec leurs liens. Ni cadre ni filet autour ;
+ * sur grand écran le titre reste en vue pendant qu'on lit la partie.
+ *
+ * `clair` fait de la partie une île claire (`.bloc-encre`) : la section entière
+ * passe au clair, son contenu reste calé sur la colonne de la page. À réserver
+ * à ce que le lecteur est venu vérifier (un prix, un comparatif, une méthode) :
+ * une par page, deux au plus, jamais la première ni la dernière.
+ */
+interface Props {
+  titre: string;
+  id?: string;
+  clair?: boolean;
+}
+
+const { titre, id, clair = false } = Astro.props;
+---
+
+<section
+  id={id}
+  data-section
+  class:list={[
+    'relative px-[var(--spacing-section-x)] py-[var(--spacing-bloc)]',
+    clair ? 'bloc-encre' : 'border-b border-[var(--color-divider)]',
+  ]}
+>
+  <div class="partie mx-auto max-w-[1200px]">
+    <h2 class="partie__titre reveal">{titre}</h2>
+    <div class="partie__corps reveal">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .partie {
+    display: grid;
+    gap: var(--spacing-groupe);
+  }
+
+  .partie__titre {
+    max-width: 18ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-phrase);
+    line-height: var(--leading-phrase);
+    letter-spacing: var(--tracking-phrase);
+    text-wrap: balance;
+  }
+
+  .partie__corps {
+    display: grid;
+    gap: var(--spacing-lie);
+    max-width: 40rem;
+    min-width: 0;
+  }
+
+  .partie__corps :global(p) {
+    max-width: none;
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.65;
+    text-wrap: pretty;
+  }
+
+  .partie__corps :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .partie__corps :global(ul) {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .partie__corps :global(li) {
+    position: relative;
+    padding-left: 1.4em;
+    color: var(--color-ink);
+    line-height: var(--leading-body);
+  }
+
+  /* Une puce discrète, à l'encre : la pêche reste au surlignage et au bouton. */
+  .partie__corps :global(li)::before {
+    content: '';
+    position: absolute;
+    top: 0.68em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-ink-faint);
+  }
+
+  /* Un tableau : des données, donc des filets fins entre les rangées et rien
+     autour. La première colonne nomme la rangée. */
+  .partie__corps :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body);
+    line-height: 1.5;
+  }
+
+  .partie__corps :global(caption) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .partie__corps :global(th),
+  .partie__corps :global(td) {
+    padding: 0.875rem 1rem 0.875rem 0;
+    border-bottom: 1px solid var(--color-divider);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .partie__corps :global(thead th) {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+  }
+
+  .partie__corps :global(tbody th) {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  .partie__corps :global(td) {
+    color: var(--color-ink-mid);
+  }
+
+  .partie__corps :global(tr:last-child) :global(:is(th, td)) {
+    border-bottom: 0;
+  }
+
+  /* Téléphone : trois colonnes de texte ne tiennent pas dans 350 px. Chaque
+     rangée devient un bloc : son nom, puis chaque cellule précédée de l'en-tête
+     de sa colonne (`data-colonne`). */
+  @media (max-width: 719px) {
+    .partie__corps :global(thead) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .partie__corps :global(:is(table, tbody, tr, th, td)) {
+      display: block;
+    }
+
+    .partie__corps :global(tr) {
+      padding-block: 1rem;
+      border-bottom: 1px solid var(--color-divider);
+    }
+
+    .partie__corps :global(tr:first-child) {
+      padding-top: 0;
+    }
+
+    .partie__corps :global(tr:last-child) {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .partie__corps :global(:is(th, td)) {
+      padding: 0;
+      border-bottom: 0;
+    }
+
+    .partie__corps :global(td) {
+      margin-top: 0.5rem;
+    }
+
+    .partie__corps :global(td[data-colonne])::before {
+      content: attr(data-colonne) '\00a0: ';
+      color: var(--color-ink);
+      font-weight: 500;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .partie {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .partie__titre {
+      position: sticky;
+      top: calc(var(--spacing-barre) + var(--spacing-groupe));
+    }
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+/*
+ * pourquoi-moi — qui construit, dans le panneau clair.
+ *
+ * Sur l'accueil, « Pourquoi moi. » est le seul endroit où le clair revient
+ * (`home-today-path`). Les pages intérieures reprennent le même geste pour la
+ * même question : un panneau clair, le portrait, puis deux voix qui ne se
+ * mélangent pas. La fiche, à la troisième personne, se lit comme une notice
+ * (c'est elle qu'un moteur cite) ; le texte à la première personne reprend
+ * ensuite.
+ *
+ * La section entière est une île claire (`.bloc-encre`) : elle remappe les
+ * jetons de couleur, tout ce qu'elle contient suit sans variante, et son
+ * contenu reste calé sur la colonne de la page.
+ */
+import { Image } from 'astro:assets';
+import lilianPhoto from '../assets/lilian-photo.jpg';
+
+interface Props {
+  id?: string;
+  /** Le titre du panneau. */
+  titre: string;
+  /** La notice, à la troisième personne : datée, citable telle quelle. */
+  fiche: string;
+  /** La suite, à la première personne. */
+  texte: string;
+}
+
+const { id = 'pourquoi-moi', titre, fiche, texte } = Astro.props;
+---
+
+<section
+  id={id}
+  data-section
+  class="bloc-encre relative px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
+>
+  <div class="moi reveal mx-auto max-w-[1200px]">
+    <div class="moi__tete">
+      <Image src={lilianPhoto} alt="Portrait de Lilian Sevoumian" width={160} class="moi__portrait" loading="lazy" />
+      <h2 class="moi__titre">{titre}</h2>
+    </div>
+    <div class="moi__voix">
+      <p class="moi__fiche">{fiche}</p>
+      <p class="moi__texte">{texte}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .moi {
+    display: grid;
+    gap: var(--spacing-groupe);
+  }
+
+  .moi__tete {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lie);
+  }
+
+  .moi__portrait {
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    object-position: center 18%;
+  }
+
+  .moi__titre {
+    max-width: 16ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
+    text-wrap: balance;
+  }
+
+  .moi__voix {
+    display: grid;
+    align-content: start;
+    gap: var(--spacing-lie);
+    max-width: 40rem;
+  }
+
+  .moi__fiche,
+  .moi__texte {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .moi__fiche {
+    color: var(--color-ink);
+    font-size: var(--text-body-large);
+    line-height: 1.5;
+  }
+
+  .moi__texte {
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
+  }
+
+  @media (min-width: 1024px) {
+    .moi {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      column-gap: var(--spacing-gouttiere);
+    }
+
+    /* Le texte s'aligne sur le titre, pas sur le portrait. */
+    .moi__voix {
+      padding-top: calc(4rem + var(--spacing-lie));
+    }
+  }
+</style>

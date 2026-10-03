@@ -37,7 +37,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
   <div class="mx-auto max-w-[1200px]">
     <div class="content-columns grid gap-[var(--spacing-bloc)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-[var(--spacing-gouttiere)] lg:gap-y-[var(--spacing-groupe)]">
       <article class="grid min-w-0 gap-[var(--spacing-groupe)] lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="Je montre comment je fais." titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+        <SectionHeader title="Je montre comment je fais." titleMaxWidth="none" spacing="none" class="h-full" />
         <div class="video min-w-0">
         <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
           <div class="video-cadre">
@@ -65,7 +65,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
         </div>
       </article>
       <aside id="newsletter" aria-label="La newsletter" class="grid min-w-0 gap-[var(--spacing-groupe)] lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="Un mail par semaine." titleMaxWidth="none" spacing="none" rule={false} class="h-full" />
+        <SectionHeader title="Un mail par semaine." titleMaxWidth="none" spacing="none" class="h-full" />
         <div class="min-w-0">
         <form id="newsletter-form" action="/api/newsletter" method="post" class="courrier">
           {/* L'objet est un exemple, inventé à la demande de Lilian : il donne le
@@ -107,7 +107,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
   /* Les deux titres partagent une rangée, et chacun se cale en bas de la
      sienne : quand l'un passe sur deux lignes (à 1024 px), l'autre restait en
      haut, à 73 px de sa vidéo au lieu de 32. */
-  .content-columns :global(.section-header-row) {
+  .content-columns :global(.section-header) {
     display: grid;
     align-content: end;
     height: 100%;

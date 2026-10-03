@@ -1,10 +1,15 @@
 ---
-// Scènes illustratives générées par IA, distinctes des vrais cas clients.
+/*
+ * Automatisations — six points de départ, rangés sous trois scènes de travail.
+ * Les photos sont des scènes illustratives générées par IA, distinctes des
+ * vrais cas clients.
+ */
 import { Image } from 'astro:assets';
 import dossiers from '../assets/work-scenes/dossiers.png';
 import commandes from '../assets/work-scenes/commandes.png';
 import appel from '../assets/work-scenes/appel.png';
 import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
 
 interface Famille {
   titre: string;
@@ -40,7 +45,7 @@ const familles: Famille[] = [
   {
     titre: 'Demandes entrantes',
     corps:
-      'Classer les emails et les formulaires, rassembler le contexte et <strong>transmettre chaque demande à la bonne personne.</strong>',
+      'Classer les e-mails et les formulaires, rassembler le contexte et <strong>transmettre chaque demande à la bonne personne.</strong>',
   },
 ];
 
@@ -54,15 +59,14 @@ const scenes = [
 <section
   id="automatisations"
   data-section
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
+  <div class="relative mx-auto max-w-[1200px]">
 
     <SectionHeader
-      title="Quelles tâches prennent <mark>trop de temps ?</mark>"
+      title="Quelles tâches prennent trop de temps&nbsp;?"
       body="Voici quelques points de départ pour alléger le quotidien de vos équipes."
       titleMaxWidth="20ch"
-      bodyMaxWidth="62ch"
     />
 
     <div class="process-grille">
@@ -78,7 +82,7 @@ const scenes = [
               alt={scene.alt}
               width={768}
               widths={[384, 768, 1200]}
-              sizes="(min-width: 1340px) 368px, (min-width: 900px) 29vw, (min-width: 768px) 90vw, calc(100vw - 48px)"
+              sizes="(min-width: 1340px) 352px, (min-width: 900px) 27vw, (min-width: 768px) 90vw, calc(100vw - 48px)"
               format="webp"
               quality={82}
               loading="lazy"
@@ -88,21 +92,21 @@ const scenes = [
           </div>
           {scene.familles.map((f) => (
             <div class="process-item">
-              <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
-                {f.titre}
-              </h3>
-              <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0" set:html={f.corps} />
+              <h3 class="m-0">{f.titre}</h3>
+              <p class="m-0 mt-[var(--spacing-colle)] leading-[var(--leading-body)] text-[var(--color-ink-mid)]" set:html={f.corps} />
             </div>
           ))}
         </div>
       ))}
     </div>
 
+    {/* La sortie de la section : un lien fléché. Le bouton plein reste celui
+        de la conversation, dans la barre et en fin de page. */}
     <div class="reveal process-pied">
       <p>
         Nous partons de <strong>vos outils et de vos tâches réelles</strong> pour choisir ce qui mérite d’être automatisé.
       </p>
-      <a href="#offres" class="btn-primary">Voir les offres et le suivi <span class="process-fleche" aria-hidden="true">→</span></a>
+      <LinkCTA href="#offres">Voir les offres et le suivi</LinkCTA>
     </div>
 
   </div>
@@ -112,17 +116,20 @@ const scenes = [
   .process-grille {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2.5rem;
+    gap: var(--spacing-gouttiere);
   }
 
+  /* Trois rangées par scène : la photo, puis deux tâches de même hauteur, pour
+     que les titres de la seconde rangée s'alignent d'une colonne à l'autre.
+     L'espace les sépare, sans filet. */
   .process-group {
     display: grid;
     grid-template-rows: auto 1fr 1fr;
-    gap: 1.5rem;
+    gap: var(--spacing-groupe);
     min-width: 0;
   }
 
-  /* Le fond d'attente passe sur l'enveloppe : posé sur l'image, il dépassait
+  /* Le fond d'attente est sur l'enveloppe : posé sur l'image, il dépasserait
      du rayon pendant le chargement. */
   .process-media {
     background: var(--color-surface-low);
@@ -136,54 +143,27 @@ const scenes = [
     object-fit: cover;
   }
 
-  .process-item + .process-item {
-    border-top: 1px solid var(--color-divider);
-    padding-top: 1.5rem;
-  }
-
   @media (max-width: 899px) {
     .process-grille {
       grid-template-columns: minmax(0, 1fr);
-      gap: 3rem;
+      gap: var(--spacing-bloc);
     }
 
     .process-group {
-      grid-template-rows: auto auto auto;
+      grid-template-rows: auto;
     }
   }
 
   .process-pied {
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-divider);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.25rem;
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-colle);
+    margin-top: var(--spacing-bloc);
   }
 
   .process-pied p {
     margin: 0;
-    max-width: 62ch;
-    font-size: var(--text-body);
-    line-height: 1.6;
-    color: var(--color-ink-low);
-  }
-
-  /* La flèche du bouton avance au survol, comme celle des autres CTA. La règle
-     de global.css ne vise que les `svg` ; celle-ci est un glyphe, elle restait
-     donc immobile. `inline-block` : un inline ne se transforme pas. */
-  .process-fleche {
-    display: inline-block;
-    transition: transform var(--duration-default) var(--ease-out-quint);
-  }
-  .btn-primary:hover .process-fleche,
-  .btn-primary:focus-visible .process-fleche {
-    transform: translateX(3px);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .process-fleche { transition: none; }
-    .btn-primary:hover .process-fleche,
-    .btn-primary:focus-visible .process-fleche { transform: none; }
+    line-height: var(--leading-body);
+    color: var(--color-ink-mid);
   }
 </style>

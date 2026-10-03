@@ -1,31 +1,16 @@
 ---
 /*
- * SectionHeader — le bloc titre d'une section : un titre, un filet, un chapô.
+ * SectionHeader — le bloc titre d'une section : un titre, puis un chapô.
  *
- * Il a longtemps porté une prop `label`, rendue en petites capitales espacées
- * au-dessus du titre. DESIGN.md rangeait déjà ce sur-titre parmi les trois
- * marqueurs les plus universels du site généré, retirés en chemin — mais il
- * coiffait neuf sections de la home et onze autres endroits, et la règle
- * n'avait jamais atteint le code.
+ * Pas de sur-titre : la prop `label`, rendue en petites capitales au-dessus du
+ * titre, a été supprimée plutôt que rendue optionnelle, pour que le motif ne
+ * revienne pas. Ce que ces sur-titres portaient réellement se lit dans le
+ * chapô, dans une phrase.
  *
- * La prop a été supprimée plutôt que rendue optionnelle. La différence compte :
- * une prop optionnelle laisse le motif à un caractère de distance, et
- * l'historique de ce fichier montre qu'une règle écrite ailleurs ne suffit pas
- * à l'empêcher de revenir. Les informations que quelques-uns de ces sur-titres
- * portaient réellement — le nombre d'outils, le nombre de questions, la durée
- * de l'appel — sont descendues dans le chapô, où elles se lisent dans une
- * phrase.
- *
- * Deux sections l'ignoraient et refaisaient cet en-tête à la main : Témoignages
- * et FAQ. Le coût était mesurable, et il portait sur le filet plus que sur les
- * pixels : les six sections qui passaient par ici avaient un trait sous leur
- * titre, ces deux-là non. Dans une DA sans ombre, où l'élévation vient
- * uniquement des filets, un titre de section sans son trait annonce un rang
- * inférieur — la preuve sociale et la FAQ se présentaient comme des
- * sous-parties. S'y ajoutaient trois valeurs d'écart au lieu d'une : titre vers
- * chapô à 24 px contre 53, bloc vers contenu à 48 et 0 contre 64.
- * Elles passent toutes les deux par ce composant. Ce qui leur était propre est
- * devenu des props — largeurs de mesure, et `spacing` pour la colonne de la FAQ.
+ * Pas de filet non plus sous le titre, depuis le 3 octobre 2026 : l'accueil
+ * n'en traçait aucun, les autres pages en traçaient partout. La taille, la
+ * graisse et l'approche du titre viennent de « La tenue commune », dans
+ * `global.css`.
  */
 interface Props {
   title: string;
@@ -54,50 +39,38 @@ interface Props {
    * l'ordre des classes écrites. `mb-0` perdrait, silencieusement.
    */
   spacing?: 'section' | 'none';
-  /**
-   * Le filet sous le titre. À couper quand le contenu annoncé ouvre lui-même
-   * par un filet (un registre, une liste de lignes) : deux traits à soixante
-   * pixels l'un de l'autre, sans rien entre eux, se lisent comme une erreur.
-   */
-  rule?: boolean;
 }
 
 const {
   title,
   body,
-  bodyMaxWidth = '60ch',
+  /* 46ch : dans Geist, un `ch` vaut un caractère et demi de prose, soit une
+     ligne d'environ 70 caractères. */
+  bodyMaxWidth = '46ch',
   titleMaxWidth = '18ch',
   class: className = '',
   as: Heading = 'h2',
   spacing = 'section',
-  rule = true,
 } = Astro.props;
 
 const spacingClass = spacing === 'section' ? 'mb-12 md:mb-16' : '';
 ---
 
-<div class={`reveal ${spacingClass} ${className}`.replace(/\s+/g, ' ').trim()}>
-  {/* Header en flow naturel (block, full-width) plutôt qu'une card flottante en
-      coin. Le titre respire avec son max-width, le filet du dessous porte la
-      structure. Pas de border outer ni corners — la grille technique 1px en
-      background suffit. */}
-  <div class:list={['section-header-row', { 'section-header-row--nu': !rule }]}>
-    {/* La TAILLE suit le niveau, elle n'est plus codée en dur.
-        `as="h1"` ne changeait que la balise : le titre de /principes rendait
-        48 px là où les h1 de toutes les autres pages font 84 px, soit 43 % de
-        moins. Le titre de la page y était visuellement un titre de section. */}
-    <Heading
-      class:list={[
-        'font-display font-semibold leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)]',
-        Heading === 'h1'
-          ? 'text-[length:var(--text-display)]'
-          : 'text-[length:var(--text-headline)]',
-      ]}
-      style={`max-width: ${titleMaxWidth};`}
-    >
-      <Fragment set:html={title} />
-    </Heading>
-  </div>
+{/* `section-header` est le nom par lequel une page cale cet en-tête (par
+    exemple sur la hauteur d'un voisin) : il ne porte aucun style ici. */}
+<div class={`reveal section-header ${spacingClass} ${className}`.replace(/\s+/g, ' ').trim()}>
+  {/* La taille suit le niveau : `as="h1"` ne change pas que la balise. */}
+  <Heading
+    class:list={[
+      'font-display m-0 text-[var(--color-ink)]',
+      Heading === 'h1'
+        ? 'text-[length:var(--text-display)]'
+        : 'text-[length:var(--text-headline)]',
+    ]}
+    style={`max-width: ${titleMaxWidth};`}
+  >
+    <Fragment set:html={title} />
+  </Heading>
 
   {body && (
     <p
@@ -108,42 +81,3 @@ const spacingClass = spacing === 'section' ? 'mb-12 md:mb-16' : '';
     </p>
   )}
 </div>
-
-<style>
-  .section-header-row {
-    position: relative;
-    padding-bottom: 1.5rem;
-  }
-
-  /* Le filet est un pseudo-élément et non une bordure, pour pouvoir se tirer.
-     L'en-tête d'une section arrive en trois temps, dans l'ordre où on le lit :
-     le titre apparaît, son fragment est surligné, puis le trait se tire de
-     gauche à droite et pose la section. Sans JS, ou mouvement réduit, il est
-     simplement là — c'est une bordure, dessinée autrement. */
-  .section-header-row::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0;
-    height: 1px;
-    background: var(--color-divider);
-    transform-origin: left center;
-    transition: transform var(--duration-entree) var(--ease-out-expo) 120ms;
-  }
-
-  :global(.js-ready) .reveal:not(.is-visible) .section-header-row::after {
-    transform: scaleX(0);
-  }
-
-  .section-header-row--nu {
-    padding-bottom: 0;
-  }
-
-  .section-header-row--nu::after {
-    content: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .section-header-row::after { transition: none; }
-    :global(.js-ready) .reveal:not(.is-visible) .section-header-row::after { transform: none; }
-  }
-</style>

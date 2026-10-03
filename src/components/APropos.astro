@@ -1,27 +1,21 @@
 ---
-/* Présentation personnelle compacte ; faits issus du parcours fourni par Lilian. */
+/*
+ * APropos — qui construit, en bref : deux paragraphes à la première personne,
+ * et à côté ce qu'on retient. Les faits viennent du parcours fourni par Lilian.
+ */
 import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
 
-const faits = [
-  { cle: 'Depuis', valeur: '2020' },
-  // Insécables en caractère littéral (U+00A0), pas en entité : ce sont des
-  // chaînes JS, un &nbsp; y ressortirait tel quel à l'écran.
-  { cle: 'Formation', valeur: '300+ personnes formées' },
-];
+const faits = ['Depuis 2020', '300+ personnes formées'];
 ---
 
 <section
   id="a-propos"
   data-section
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
-    {/* Sans sur-titre : « À PROPOS » nommait en petit ce que le titre dit en
-        grand, avec le nom, le métier et la date en plus. */}
-    <SectionHeader
-      title="Moi, c’est <mark>Lilian.</mark>"
-      titleMaxWidth="24ch"
-    />
+  <div class="relative mx-auto max-w-[1200px]">
+    <SectionHeader title="Moi, c’est Lilian." titleMaxWidth="24ch" />
 
     <div class="reveal apropos">
       <div class="apropos-texte">
@@ -36,24 +30,16 @@ const faits = [
           automatisations. Je partage aussi ce que j’apprends en formant des
           équipes à ces outils.
         </p>
-
       </div>
 
-      <dl class="apropos-faits">
-        {faits.map((f) => (
-          <div class="apropos-fait">
-            <dt>{f.cle}</dt>
-            <dd>{f.valeur}</dd>
-          </div>
-        ))}
-        <div class="apropos-fait">
-          <dt>Cas publiés</dt>
-          {/* « chiffres à l'appui » signait un chèque que deux des quatre cas
-              n'encaissent pas : Celeris et Humble+ ne contiennent aucune durée
-              de travail humain, et Celeris n'est pas encore en production. */}
-          <dd><a class="lien-prose" href="/cas-clients">Voir les cas clients</a></dd>
-        </div>
-      </dl>
+      {/* Ce qu'on retient, une ligne par fait, puis la sortie vers les cas :
+          ni étiquette en capitales, ni filet. */}
+      <div class="apropos-retenir">
+        <ul class="apropos-faits">
+          {faits.map((fait) => <li>{fait}</li>)}
+        </ul>
+        <LinkCTA href="/cas-clients">Voir les cas clients</LinkCTA>
+      </div>
     </div>
   </div>
 </section>
@@ -61,100 +47,50 @@ const faits = [
 <style>
   .apropos {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 3.5rem;
+    gap: var(--spacing-groupe);
     align-items: start;
-    margin-top: 2.5rem;
+  }
+
+  /* Même partage que les recommandations juste au-dessus : la colonne de
+     droite des deux sections tombe sur la même verticale. */
+  @media (min-width: 900px) {
+    .apropos {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      column-gap: var(--spacing-gouttiere);
+    }
   }
 
   .apropos-texte p {
-    max-width: 62ch;
+    margin: 0;
     color: var(--color-ink-mid);
-    line-height: 1.65;
-  }
-  /* 30 px d'écart pour un interligne de 26,4 px, soit 1,14 ligne. Il valait
-     20 px, donc 0,76 : moins d'une ligne pleine, ce qui est l'écart d'un
-     paragraphe de note, pas celui d'une chronologie. Or ce bloc est le seul du
-     site à aligner six paragraphes d'affilée, et rien d'autre que le millésime
-     en gras ne les séparait : la bio se lisait comme un pavé. L'air fait
-     désormais la moitié du travail que le gras faisait seul. */
-  .apropos-texte p + p { margin-top: 1.875rem; }
-  /* Le premier paragraphe ne prend plus l'encre pleine. Depuis que chaque
-     paragraphe s'ouvre sur son année en gras, ce traitement rendait le premier
-     millésime discernable par la SEULE graisse, quand les quatre suivants se
-     détachent par la graisse ET la couleur. La colonne de dates se lisait de
-     travers. Tous les corps sont désormais au même rang. */
-
-  /* L'année ouvre le paragraphe et sert de seul repère de lecture au bloc :
-     encre pleine sur un corps en gris moyen. Chiffres tabulaires pour que les
-     cinq millésimes s'alignent optiquement d'un paragraphe à l'autre — c'est
-     ce qui fait lire la colonne comme une chronologie plutôt que comme cinq
-     phrases qui commencent par un nombre. Le lime ne descend pas ici : il est
-     déjà sur le titre et sur le seul fragment surligné du texte. */
-  .apropos-texte .annee {
-    color: var(--color-ink);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
+    line-height: var(--leading-body);
   }
 
-  /* Filet de tête à 1 px, comme les soixante autres du site. Il était le seul
-     filet de structure à 2 px, dans un système qui déclare « des filets, d'un
-     seul poids : 1 px » (DESIGN.md). Le poids servait à marquer la tête de
-     fiche, mais la valeur le fait déjà : les filets de séparation en dessous
-     sont en gris divider, et l'écart suffit à ouvrir le tableau sans dérober
-     un second poids au système.
-     Cette valeur est `border-strong` et plus l'encre : sur la nuit l'encre vaut
-     blanc pur, et un filet blanc d'un pixel éblouit. */
+  .apropos-texte p + p {
+    margin-top: var(--spacing-lie);
+  }
+
+  .apropos-retenir {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-lie);
+  }
+
   .apropos-faits {
+    display: grid;
+    gap: 0.75rem;
     margin: 0;
-    border-top: 1px solid var(--color-border-strong);
+    padding: 0;
+    list-style: none;
   }
 
-  .apropos-fait {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.9rem 0;
-    border-bottom: 1px solid var(--color-divider);
-  }
-
-  /* Rattrapage optique de la première ligne, en deux colonnes seulement. Les
-     deux boîtes démarrent au même pixel, c'est la grille qui l'impose, mais la
-     fiche ouvrait sur son filet puis 14,4 px de padding : sa première étiquette
-     tombait 16,4 px sous le haut de la colonne et sa ligne de base 10,4 px sous
-     celle de « 2020. ». Une demi-ligne, mesurée sur la page vivante, et la
-     fiche pendait à côté de la prose. Le filet passé à 1 px en reprend un, les
-     5 px de padding les neuf autres : écart résiduel 0,01 px. Le rythme des
-     lignes suivantes ne bouge pas. */
-  .apropos-faits > .apropos-fait:first-child { padding-top: 0.3125rem; }
-
-  .apropos-fait dt {
-    font-size: var(--text-mono-caption);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ink-low);
-  }
-
-  .apropos-fait dd {
-    margin: 0;
-    font-size: var(--text-body-sm);
-    font-weight: 500;
+  /* Au corps d'un titre de rang 3, à l'encre pleine. */
+  .apropos-faits li {
     color: var(--color-ink);
-  }
-
-  /* Le lien de la fiche n'a plus de règle ici : il redéclarait à l'identique
-     `.lien-prose` de global.css (soulignement lime de 2 px qui passe à l'encre
-     au survol), et cette copie locale était le second filet de 2 px du
-     fichier. Ce n'en est pas un : c'est le soulignement d'un lien, le seul
-     endroit où le lime a le droit d'être un trait et non une surface. Il n'en
-     existe désormais qu'une définition, partagée avec les deux pages outils. */
-
-  @media (max-width: 52rem) {
-    .apropos { grid-template-columns: 1fr; gap: 2.5rem; }
-    /* En une colonne la fiche ne longe plus la prose : il n'y a plus de ligne
-       de base à rejoindre, la première ligne reprend le pas des autres. */
-    .apropos-faits > .apropos-fait:first-child { padding-top: 0.9rem; }
+    font-family: var(--font-display);
+    font-size: var(--text-title);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 </style>

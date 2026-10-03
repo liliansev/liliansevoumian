@@ -1,71 +1,62 @@
 ---
 /*
- * /principes — manifesto, format scroll rapide.
+ * /principes — huit principes sur l'automatisation, à lire d'une traite.
  *
- * 8 principes opinionated sur l'automatisation no-code. La page existe comme
- * page-de-vérité : si on n'est pas alignés sur ces principes, on ne devrait pas
- * travailler ensemble. La méthode en quatre étapes que PRODUCT.md promet est ici,
- * et la nav y mène désormais par l'entrée « Méthode » — la page n'était
- * atteignable que depuis le pied de page.
+ * La page existe comme page de vérité : si l'on n'est pas alignés sur ces
+ * principes, mieux vaut le savoir avant de travailler ensemble. La méthode en
+ * quatre étapes que PRODUCT.md promet est ici, et la barre y mène par l'entrée
+ * « Méthode ».
  *
- * Ton direct, mais au VOUVOIEMENT comme le reste du site. La page a longtemps
- * tutoyé, sur douze occurrences dont la meta description, pendant que la home
- * disait « ce que vos équipes font » : sur une page dont l'argument est la
- * rigueur, c'était la fissure la plus visible.
+ * Ton direct, au vouvoiement comme le reste du site.
  *
- * Plus de numéro : des principes ne forment pas une séquence. Format libellé +
- * headline + body court.
+ * C'est une page de lecture : chaque principe est une phrase qui se dit en
+ * grand, puis ce qui la précise. Ni carte, ni filet, ni numéro (des principes
+ * ne forment pas une séquence), ni sur-titre : la phrase est le titre.
  */
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
-import MobileCTABar from '../components/MobileCTABar.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import BoutonReservation from '../components/BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
+import TeteDePage from '../components/tete-de-page.astro';
+import FinDePage from '../components/fin-de-page.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
 const principes = [
   {
-    label: "L'IA ET LES WORKFLOWS SE COMPLÈTENT",
-    headline: "L'IA classifie, écrit, qualifie. Les workflows exécutent.",
-    body: "Le bon outil, c'est l'enchaînement des deux. Ce que l'IA décide, le workflow le porte jusqu'au bout : la donnée écrite dans le bon outil, la relance envoyée, l'alerte remontée.",
+    titre: 'L’IA classifie, écrit, qualifie. Les workflows exécutent.',
+    texte: 'Le bon outil, c’est l’enchaînement des deux. Ce que l’IA propose, le workflow le porte jusqu’au bout : la donnée écrite dans le bon outil, la relance envoyée, l’alerte remontée.',
   },
   {
-    label: "UNE MÉTHODE EN QUATRE ÉTAPES",
-    headline: "Quatre étapes claires, du cadrage au transfert.",
-    body: "Cadrage, conception, mise en production, transfert. Vous savez à chaque instant où en est le projet et ce qui vient ensuite.",
+    titre: 'Quatre étapes claires, du cadrage au transfert.',
+    texte: 'Cadrage, conception, mise en production, transfert. Vous savez à chaque instant où en est le projet et ce qui vient ensuite.',
   },
   {
-    label: "LE MOINS D'OUTILS POSSIBLE",
-    headline: "Un workflow qui passe par 8 outils finit par casser.",
-    body: "Trois bien branchés tiennent 3 ans. Chaque intégration ajoutée multiplie les surfaces d'erreur (changement d'API, rate limits, déprécations). Si on peut faire avec un outil de moins, on le fait.",
+    titre: 'Un workflow qui passe par 8 outils finit par casser.',
+    texte: 'Trois bien branchés tiennent 3 ans. Chaque intégration ajoutée multiplie les surfaces d’erreur (changement d’API, limites de débit, dépréciations). Si on peut faire avec un outil de moins, on le fait.',
   },
   {
-    label: "DOCUMENTATION À LA LIVRAISON OU RIEN",
-    headline: "Vos équipes doivent pouvoir modifier le workflow sans moi.",
-    body: "Je livre une doc custom qui explique la logique, les déclencheurs et les modifications courantes. Ajouter un destinataire, changer un filtre : votre équipe le fait seule.",
+    titre: 'Vos équipes doivent pouvoir modifier le workflow sans moi.',
+    texte: 'Je livre une documentation écrite pour votre installation : la logique, les déclencheurs et les modifications courantes. Ajouter un destinataire, changer un filtre : votre équipe le fait seule.',
   },
   {
-    label: "LE GAIN DE TEMPS D'ABORD",
-    headline: "Je lance une automatisation quand elle vous fait gagner du temps.",
-    body: `On le regarde ensemble à l'appel de ${DUREE_RESERVATION_MINUTES} min : le temps que vous récupérez face à ce que ce process vous coûte aujourd'hui en temps. Le calcul décide.`,
+    titre: 'Je lance une automatisation quand elle vous fait gagner du temps.',
+    texte: `On le regarde ensemble à l’appel de ${DUREE_RESERVATION_MINUTES} min : le temps que vous récupérez, face à ce que ce process vous coûte aujourd’hui. Le calcul décide.`,
   },
   {
-    label: "DU SUR-MESURE, À CHAQUE FOIS",
-    headline: "Vos process ont leur propre logique.",
-    body: "Chaque workflow que je conçois part de vos vraies données, vos vrais outils, vos vrais bottlenecks. Le cadrage sert exactement à ça.",
+    titre: 'Vos process ont leur propre logique.',
+    texte: 'Chaque workflow que je conçois part de vos vraies données, de vos vrais outils, de vos vrais points de blocage. Le cadrage sert exactement à ça.',
   },
   {
-    label: "LA QUALITÉ SE MESURE EN PRODUCTION",
-    headline: "Un workflow se juge après 6 mois en production.",
-    body: "Chaque projet s’accompagne d’un abonnement mensuel pour l’hébergement, la maintenance et les petits ajustements de la solution livrée. Les nouveaux processus, agents et fonctionnalités sont chiffrés séparément.",
+    titre: 'Un workflow se juge après 6 mois en production.',
+    texte: 'Chaque projet s’accompagne d’un abonnement mensuel pour l’hébergement, la maintenance et les petits ajustements de la solution livrée. Les nouveaux processus, agents et fonctionnalités sont chiffrés séparément.',
   },
   {
-    label: "LE BON MATCH AVANT LE PROJET",
-    headline: "Je prends les projets que je sais livrer.",
-    body: `Secteur trop spécialisé (santé, défense, certains régulés), contraintes que je ne maîtrise pas, équipe qui vise une internalisation rapide : je vous le dis dès l'appel de ${DUREE_RESERVATION_MINUTES} min et je vous redirige.`,
+    titre: 'Je prends les projets que je sais livrer.',
+    texte: `Secteur trop spécialisé (santé, défense, certains secteurs régulés), contraintes que je ne maîtrise pas, équipe qui vise une internalisation rapide : je vous le dis dès l’appel de ${DUREE_RESERVATION_MINUTES} min et je vous redirige.`,
   },
-];
+].map((p) => ({
+  titre: p.titre.replace(/(\d) (outils|ans|mois)/g, '$1 $2'),
+  texte: p.texte.replace(/ ([:;?!])/g, ' $1').replace(/(\d) (min|ans|mois)/g, '$1 $2'),
+}));
 
 /* Page indexée : elle a droit à son fil d'Ariane, comme /cas-clients et les
    pages de cas. Seules les mentions légales, en noindex, s'en passent. */
@@ -78,70 +69,84 @@ const breadcrumbs = [
 <Layout
   breadcrumbs={breadcrumbs}
   title="Principes · Lilian Sevoumian, expert no-code"
-  description="Les 8 principes que je suis sur chaque mission d'automatisation. Publics, pour savoir à quoi vous attendre avant le premier appel."
+  description="Les 8 principes que je suis sur chaque mission d’automatisation. Publics, pour savoir à quoi vous attendre avant le premier appel."
 >
-  <Navigation />
+  <Navigation ctaSource="principes_nav" />
 
-  <main id="main-content">
-    <section
-      data-section
-      class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]"
-    >
-      <div class="relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-[var(--spacing-section-y)]">
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <TeteDePage
+      titre="Ce que je crois sur l’automatisation <mark>no-code.</mark>"
+      titreLargeur="18ch"
+      chapo="On travaille bien ensemble quand on est alignés sur ces principes. Ils sont publics pour ça&nbsp;: vous savez à quoi vous attendre avant le premier appel."
+    />
 
-        <SectionHeader
-          as="h1"
-          title="Ce que je crois sur l’automatisation <mark>no-code.</mark>"
-          body="On travaille bien ensemble quand on est alignés sur ces principes. Ils sont publics pour ça : vous savez à quoi vous attendre avant le premier appel."
-          titleMaxWidth="22ch"
-          bodyMaxWidth="60ch"
-        />
-
-        <!-- Liste principes — chaque principe revendique sa cellule de grille
-             (paper-island bordé). Sans numéro : des principes ne forment pas une
-             séquence, le troisième ne vient pas après le deuxième, il vient à
-             côté. Le chiffre ne disait rien que le lecteur ait besoin de savoir,
-             et c'était la numérotation en écaille que le reste du site a
-             retirée. Le label, lui, nomme le principe. -->
-        <ol class="reveal-stagger flex flex-col gap-4 md:gap-6 list-none m-0 p-0">
-          {principes.map((p, i) => (
-            <li class="reveal relative bg-[var(--color-paper)] border border-[var(--color-divider)] rounded-[var(--radius-md)] p-6 md:p-8 grid grid-cols-1 md:grid-cols-[7rem_1fr] gap-x-6 gap-y-3">
-
-              <div class="flex flex-col gap-1">
-                <span class="mono-caption text-[var(--color-ink-low)]">{p.label}</span>
-              </div>
-              <div class="flex flex-col gap-3 max-w-[60ch]">
-                <h2
-                  class="font-display font-semibold text-[length:var(--text-title-lg)] tracking-[-0.025em] text-[var(--color-ink)] leading-[1.2] m-0"
-                >
-                  {p.headline}
-                </h2>
-                <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
-                  {p.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-
-        {/* CTA pied : une boîte posée dans la colonne, pas une bande bord à
-            bord. Elle dessine son fond, elle prend donc un rayon — celui d'une
-            grande carte, un cran au-dessus des principes qu'elle clôt. */}
-        <div class="reveal bloc-lime mt-20 md:mt-24 p-8 md:p-10 flex flex-col gap-5 rounded-[var(--radius-lg)]">
-          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.55] m-0">
-            <span class="text-[var(--color-ink)]">Vous trouvez ça aligné ?</span>
-            En {DUREE_RESERVATION_MINUTES} min, on regarde un de vos process ensemble, et je vous dis ce
-            qui s'automatise. Sans engagement.
-          </p>
-          <BoutonReservation source="principes" class="btn-primary w-full sm:w-auto sm:self-start">
-            {LIBELLE_CONTACT_RESERVATION}
-          </BoutonReservation>
-        </div>
-
-      </div>
+    <section data-section class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
+      <ol class="principes mx-auto max-w-[1200px]">
+        {principes.map((p) => (
+          <li class="principe reveal">
+            <h2>{p.titre}</h2>
+            <p>{p.texte}</p>
+          </li>
+        ))}
+      </ol>
     </section>
+
+    <FinDePage
+      source="principes_fin"
+      titre="Vous trouvez ça <mark>aligné&nbsp;?</mark>"
+      suite={'Décrivez-moi un de vos process en une phrase. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et on regarde ensemble ce qui s’automatise.'}
+    />
   </main>
 
   <Footer />
-  <MobileCTABar />
 </Layout>
+
+<style>
+  /* Une phrase qui se dit en grand, puis ce qui la précise : à gauche et à
+     droite sur grand écran, l'une sous l'autre ailleurs. L'espace sépare les
+     principes ; il n'y a ni cadre ni filet. */
+  .principes {
+    display: grid;
+    gap: var(--spacing-bloc);
+    margin-block: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .principe {
+    display: grid;
+    gap: var(--spacing-lie);
+  }
+
+  .principe h2 {
+    max-width: 22ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-phrase);
+    line-height: var(--leading-phrase);
+    letter-spacing: var(--tracking-phrase);
+    text-wrap: balance;
+  }
+
+  .principe p {
+    max-width: 40ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 1024px) {
+    .principe {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    /* Le texte se cale sur la première ligne de la phrase. */
+    .principe p {
+      padding-top: 0.35em;
+    }
+  }
+</style>

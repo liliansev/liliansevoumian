@@ -1,6 +1,8 @@
 ---
-/* Cas clients : preuves éditoriales et illustrations statiques, sans écran simulé. */
+/* Cas clients : un carrousel de quatre missions, chacune avec son contexte, ce
+   qu'elle a changé et un schéma en trois étapes. Sans écran simulé. */
 import SectionHeader from './SectionHeader.astro';
+import LinkCTA from './LinkCTA.astro';
 import CaseIllustration from './CaseIllustration.astro';
 import { Icon } from 'astro-icon/components';
 
@@ -8,90 +10,94 @@ const fraichTouch = {
   client: 'Fraich Touch',
   logo: '/logos/fraichtouch.svg',
   logoScale: 2.2,
-  sector: 'AGENCE DE GESTION DE TALENTS',
+  sector: 'Agence de gestion de talents',
   title: 'Comment Fraich Touch a automatisé sa facturation HubSpot et Pennylane',
   description:
-    "Agence de gestion de talents (santé, sport, entrepreneuriat) qui pilote les partenariats marques de ses créateurs. J'ai reconstruit leur facturation dans <strong>Make</strong> : un deal signé dans <strong>HubSpot</strong> devient un devis puis jusqu'à douze factures <strong>Pennylane</strong>, suivies dans <strong>Notion</strong>. Les relances partent toutes seules, l'équipe se concentre sur ses talents.",
+    "Agence de gestion de talents (santé, sport, entrepreneuriat) qui pilote les partenariats marques de ses créateurs. J’ai reconstruit leur facturation dans <strong>Make</strong> : un deal signé dans <strong>HubSpot</strong> devient un devis puis jusqu’à douze factures <strong>Pennylane</strong>, suivies dans <strong>Notion</strong>. Les relances partent toutes seules, l’équipe se concentre sur ses talents.",
   /* Ce que le client a GAGNÉ — du temps, de l'effort en moins — et jamais ce
      que le système fait techniquement : « 0,00 € d'écart sur le cas test » ne
      dit rien à un dirigeant. Tout vient du .md correspondant, sans exception ;
      quand la fiche ne contient aucune durée (Celeris, Humble+), le gain reste
-     qualitatif plutôt qu'inventé. Mêmes valeurs que le frontmatter, qui
-     alimente aussi les cartes « cas voisins ». */
-  results: ['~4 H PAR SEMAINE RÉCUPÉRÉES', 'UN NOUVEAU COLLABORATEUR FORMÉ EN 30 MIN'],
+     qualitatif plutôt qu'inventé. Les secteurs sont écrits comme dans le
+     frontmatter des fiches. */
+  results: ['~4\u00a0h par semaine récupérées', 'Un nouveau collaborateur formé en 30\u00a0min'],
   href: '/cas-clients/facturation-automatisee-fraich-touch',
 };
 const mPartners = {
   client: 'M Partners',
-  sector: 'EXECUTIVE SEARCH · TECH & VC',
+  sector: 'Executive Search · Tech & VC',
   title: 'Comment M Partners scrape et qualifie ses prospects avec un agent IA',
   description:
-    "Cabinet de chasse de têtes spécialisé sur l'écosystème startup et capital-risque. J'ai industrialisé leur prospection dans <strong>Make</strong> : le <strong>scraping</strong> des pages d'équipe est automatisé, un <strong>agent IA</strong> qualifie les bons dirigeants, puis <strong>Loxo</strong> centralise le CRM et les séquences de prospection. L'équipe garde son temps pour la relation.",
-  results: ['~10 MIN PAR RUN AU LIEU DE 1 À 3 H', '6× PLUS D’ENTREPRISES TRAITABLES PAR SEMAINE'],
+    "Cabinet de chasse de têtes spécialisé sur l’écosystème startup et capital-risque. J’ai industrialisé leur prospection dans <strong>Make</strong> : le <strong>scraping</strong> des pages d’équipe est automatisé, un <strong>agent IA</strong> qualifie les bons dirigeants, puis <strong>Loxo</strong> centralise le CRM et les séquences de prospection. L’équipe garde son temps pour la relation.",
+  results: ['~10\u00a0min par run au lieu de 1 à 3\u00a0h', '6× plus d’entreprises traitables par semaine'],
   href: '/cas-clients/m-partners',
 };
 const celeris = {
   client: 'Celeris',
   logo: '/logos/celeris.webp',
-  sector: 'DISTRIBUTEUR IT B2B',
-  title: "Comment Celeris a automatisé l'enrichissement de son catalogue Odoo",
+  sector: 'Distributeur IT B2B',
+  title: "Comment Celeris a automatisé l’enrichissement de son catalogue Odoo",
   description:
-    "Distributeur IT B2B, acteur établi du marché français. J'accompagne leurs équipes dans leur montée en compétence sur l'automatisation, et j'ai conçu deux <strong>agents IA</strong> sur <strong>n8n</strong> qui enrichissent leur catalogue produits directement dans <strong>Odoo</strong>. Le moteur est <strong>Mistral</strong>, une IA française, parce que les données doivent rester en Europe.",
-  /* « EN TEST » vient de la fiche source (celeris.md:13, « 319 sur ~515, en
-     test ») : le chiffre circulait sans sa réserve, ce qui le faisait passer
-     pour un résultat de production. */
-  results: ['L’AGENT RÉDIGE LES FICHES, LE COMMERCIAL VALIDE', '6 PRODUITS SUR 10 APPARIÉS AUTOMATIQUEMENT, EN TEST'],
+    "Distributeur IT B2B, acteur établi du marché français. J’accompagne leurs équipes dans leur montée en compétence sur l’automatisation, et j’ai conçu deux <strong>agents IA</strong> sur <strong>n8n</strong> qui enrichissent leur catalogue produits directement dans <strong>Odoo</strong>. Le moteur est <strong>Mistral</strong>, une IA française, parce que les données doivent rester en Europe.",
+  /* « en test » vient de la fiche source (celeris.md, « 319 sur ~515, en
+     test ») : sans sa réserve, le chiffre passerait pour un résultat de
+     production. */
+  results: ['L’agent rédige les fiches, le commercial valide', '6 produits sur 10 appariés automatiquement, en test'],
   href: '/cas-clients/celeris',
 };
 const humblePlus = {
   client: 'Humble+',
-  sector: 'NUTRITION FONCTIONNELLE · E-COMMERCE B2B',
+  sector: 'Nutrition fonctionnelle · E-commerce B2B',
   title: 'Comment Humble+ a automatisé ses commandes Shopify et ses factures B2B',
   description:
-    "Marque française de compléments alimentaires distribuée en direct et via un réseau <strong>e-commerce B2B</strong>. J'ai porté leur scénario <strong>Make</strong> dans un workflow <strong>n8n</strong> qui lit les bons de commande PDF ou Excel, sécurise les montants, crée la commande <strong>Shopify</strong> puis la facture <strong>Pennylane</strong>, avec validation <strong>Slack</strong> pendant la phase de stabilisation.",
-  results: ['COMMANDE → FACTURE SANS RESSAISIE', 'LES COMMANDES S’ENCHAÎNENT SANS ATTENDRE'],
+    "Marque française de compléments alimentaires distribuée en direct et via un réseau <strong>e-commerce B2B</strong>. J’ai porté leur scénario <strong>Make</strong> dans un workflow <strong>n8n</strong> qui lit les bons de commande PDF ou Excel, sécurise les montants, crée la commande <strong>Shopify</strong> puis la facture <strong>Pennylane</strong>, avec validation <strong>Slack</strong> pendant la phase de stabilisation.",
+  results: ['De la commande à la facture, sans ressaisie', 'Les commandes s’enchaînent sans attendre'],
   href: '/cas-clients/humble-plus',
 };
 ---
 
+{/* Sans filet en pied : la section qui suit sur la page est une île claire,
+    qui sépare d'elle-même. */}
 <section
   id="cas"
   data-section
   data-case-carousel
-  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-b border-[var(--color-divider)]"
+  class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
 
-    {/* Sans sur-titre : « CAS CLIENTS » nommait la section en petites capitales
-        au-dessus d'un titre qui dit « mes derniers projets », et la navigation
-        porte déjà l'entrée du même nom. */}
-    <SectionHeader
-      title="Ce que ça change <mark>chez mes clients.</mark>"
-      titleMaxWidth="24ch"
-    />
+    {/* Le titre et les flèches partagent une ligne : le carrousel suit son
+        titre de près, sans rangée vide entre les deux. */}
+    <div class="case-tete">
+      <SectionHeader
+        title="Ce que ça change chez mes clients."
+        titleMaxWidth="24ch"
+        spacing="none"
+      />
 
-    <div class="case-carousel-toolbar reveal">
-      <p class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 4 : Humble+</p>
-      <div class="case-carousel-arrows" aria-label="Navigation des cas clients">
-        <button
-          type="button"
-          class="case-carousel-arrow"
-          aria-label="Projet précédent"
-          aria-controls="case-carousel-track"
-          data-case-prev
-          disabled
-        >
-          <Icon name="lucide:arrow-left" aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          class="case-carousel-arrow"
-          aria-label="Projet suivant"
-          aria-controls="case-carousel-track"
-          data-case-next
-        >
-          <Icon name="lucide:arrow-right" aria-hidden="true" />
-        </button>
+      <div class="case-carousel-toolbar reveal">
+        <p class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 4 : Humble+</p>
+        <div class="case-carousel-arrows" aria-label="Navigation des cas clients">
+          <button
+            type="button"
+            class="case-carousel-arrow"
+            aria-label="Projet précédent"
+            aria-controls="case-carousel-track"
+            data-case-prev
+            disabled
+          >
+            <Icon name="lucide:arrow-left" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            class="case-carousel-arrow"
+            aria-label="Projet suivant"
+            aria-controls="case-carousel-track"
+            data-case-next
+          >
+            <Icon name="lucide:arrow-right" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -114,7 +120,6 @@ const humblePlus = {
           une page qui promet des automatisations « qui tiennent en production ».
           Les trois cas livrés passent devant, dans leur ordre chronologique ;
           celui qui n'a pas encore ses chiffres ferme la marche. */}
-      {/* ── 01 · Humble+ · juillet 2026 ── */}
       <article
         class="case-slide"
         role="group"
@@ -128,22 +133,19 @@ const humblePlus = {
           <div class="case-copy">
             <div class="case-meta">
               <span class="case-client">{humblePlus.client}</span>
-              <span class="mono-caption text-[var(--color-ink-low)]">{humblePlus.sector}</span>
-              <time class="case-date" datetime="2026-07-23">JUIL. 2026</time>
+              <span class="case-secteur">{humblePlus.sector}</span>
+              <time class="case-date" datetime="2026-07-23">Juillet 2026</time>
             </div>
             <h3>{humblePlus.title}</h3>
             <p class="case-description" set:html={humblePlus.description} />
             <p class="case-results">
               {humblePlus.results.map((result, i) => (
-                <Fragment>
-                  {i > 0 && <span aria-hidden="true">·</span>}
-                  <span>{result}</span>
-                </Fragment>
+                <span>{result}</span>
               ))}
             </p>
             <a href={humblePlus.href} class="case-cta group">
-              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-              <span class="case-cta-text">VOIR LE CAS</span>
+              <span class="case-cta-dot" aria-hidden="true"><Icon name="lucide:arrow-right" class="case-cta-arrow" /></span>
+              <span class="case-cta-text">Voir le cas</span>
             </a>
           </div>
 
@@ -169,22 +171,19 @@ const humblePlus = {
           <div class="case-copy">
             <div class="case-meta">
               <span class="case-client">{mPartners.client}</span>
-              <span class="mono-caption text-[var(--color-ink-low)]">{mPartners.sector}</span>
-              <time class="case-date" datetime="2026-05-05">MAI 2026</time>
+              <span class="case-secteur">{mPartners.sector}</span>
+              <time class="case-date" datetime="2026-05-05">Mai 2026</time>
             </div>
             <h3>{mPartners.title}</h3>
             <p class="case-description" set:html={mPartners.description} />
             <p class="case-results">
               {mPartners.results.map((result, i) => (
-                <Fragment>
-                  {i > 0 && <span aria-hidden="true">·</span>}
-                  <span>{result}</span>
-                </Fragment>
+                <span>{result}</span>
               ))}
             </p>
             <a href={mPartners.href} class="case-cta group">
-              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-              <span class="case-cta-text">VOIR LE CAS</span>
+              <span class="case-cta-dot" aria-hidden="true"><Icon name="lucide:arrow-right" class="case-cta-arrow" /></span>
+              <span class="case-cta-text">Voir le cas</span>
             </a>
           </div>
 
@@ -210,22 +209,19 @@ const humblePlus = {
           <div class="case-copy">
             <div class="case-meta">
               <img class="case-logo" src={fraichTouch.logo} alt={fraichTouch.client} width="810" height="810" style={`--logo-scale:${fraichTouch.logoScale ?? 1}`} loading="lazy" decoding="async" />
-              <span class="mono-caption text-[var(--color-ink-low)]">{fraichTouch.sector}</span>
-              <time class="case-date" datetime="2026-01-30">JANV. 2026</time>
+              <span class="case-secteur">{fraichTouch.sector}</span>
+              <time class="case-date" datetime="2026-01-30">Janvier 2026</time>
             </div>
             <h3>{fraichTouch.title}</h3>
             <p class="case-description" set:html={fraichTouch.description} />
             <p class="case-results">
               {fraichTouch.results.map((result, i) => (
-                <Fragment>
-                  {i > 0 && <span aria-hidden="true">·</span>}
-                  <span>{result}</span>
-                </Fragment>
+                <span>{result}</span>
               ))}
             </p>
             <a href={fraichTouch.href} class="case-cta group">
-              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-              <span class="case-cta-text">VOIR LE CAS</span>
+              <span class="case-cta-dot" aria-hidden="true"><Icon name="lucide:arrow-right" class="case-cta-arrow" /></span>
+              <span class="case-cta-text">Voir le cas</span>
             </a>
           </div>
 
@@ -251,22 +247,19 @@ const humblePlus = {
           <div class="case-copy">
             <div class="case-meta">
               <img class="case-logo" src={celeris.logo} alt={celeris.client} width="512" height="218" style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
-              <span class="mono-caption text-[var(--color-ink-low)]">{celeris.sector}</span>
-              <time class="case-date" datetime="2026-06-20">JUIN 2026</time>
+              <span class="case-secteur">{celeris.sector}</span>
+              <time class="case-date" datetime="2026-06-20">Juin 2026</time>
             </div>
             <h3>{celeris.title}</h3>
             <p class="case-description" set:html={celeris.description} />
             <p class="case-results">
               {celeris.results.map((result, i) => (
-                <Fragment>
-                  {i > 0 && <span aria-hidden="true">·</span>}
-                  <span>{result}</span>
-                </Fragment>
+                <span>{result}</span>
               ))}
             </p>
             <a href={celeris.href} class="case-cta group">
-              <span class="case-cta-dot" aria-hidden="true"><span class="case-cta-arrow">→</span></span>
-              <span class="case-cta-text">VOIR LE CAS</span>
+              <span class="case-cta-dot" aria-hidden="true"><Icon name="lucide:arrow-right" class="case-cta-arrow" /></span>
+              <span class="case-cta-text">Voir le cas</span>
             </a>
           </div>
 
@@ -282,25 +275,16 @@ const humblePlus = {
     </div>
 
     <div class="case-carousel-pagination reveal" aria-label="Accès direct aux cas clients">
-      {/* Sans numéro. DESIGN.md déclare la numérotation retirée partout et cite
-          nommément la pagination des cas ; elle y tournait encore. Le `01 / 04`
-          des pages de cas a été gardé, lui, parce qu'il dit une progression dans
-          un article long — où j'en suis, combien il reste. Ici les quatre
-          boutons sont visibles ensemble, avec le nom du client et le filet
-          d'état : le chiffre ne répondait à aucune question.
+      {/* Sans numéro : les quatre boutons sont visibles ensemble, avec le nom
+          du client et le trait d'état.
 
-          LE SECTEUR EST MONTÉ ICI, sous le nom du client, et c'est ce qui fait
-          de cette rangée autre chose qu'une commande de carrousel. La question
-          du lecteur à cet endroit est « est-ce que l'un de ces quatre me
-          ressemble ? », et « Celeris » ne lui apprend rien ; « distributeur IT
-          B2B », si. Le carrousel n'en montre qu'un à la fois — c'est le choix de
-          présenter chaque mission avec son contexte — donc c'est cette rangée qui
-          doit rendre les quatre lisibles d'un coup d'œil, sans trois clics.
-
-          Les libellés ne sont plus une liste à part. Ils étaient recopiés à la
-          main dans un tableau de quatre chaînes, à côté des quatre objets qui
-          portent déjà `client` et `sector` : une troisième écriture des mêmes
-          noms, que rien ne vérifiait. */}
+          Le secteur est écrit sous le nom du client, et c'est ce qui fait de
+          cette rangée autre chose qu'une commande de carrousel. La question du
+          lecteur à cet endroit est « est-ce que l'un de ces quatre me
+          ressemble ? », et « Celeris » ne lui apprend rien ; « Distributeur IT
+          B2B », si. Le carrousel n'en montre qu'un à la fois, donc c'est cette
+          rangée qui rend les quatre lisibles d'un coup d'œil, sans trois clics.
+          Les libellés viennent des quatre objets du frontmatter. */}
       {[humblePlus, mPartners, fraichTouch, celeris].map((cas, index) => (
         <button
           type="button"
@@ -317,29 +301,31 @@ const humblePlus = {
     </div>
 
     <div class="case-carousel-footer reveal">
-      <a href="/cas-clients" class="link-cta">
-        <span class="link-cta__label">VOIR TOUS LES CAS</span>
-        <span class="link-cta__arrow" aria-hidden="true">→</span>
-      </a>
+      <LinkCTA href="/cas-clients">Voir tous les cas</LinkCTA>
     </div>
 
   </div>
 </section>
 
 <style>
+  /* Le titre à gauche, les flèches à droite, calées sur sa dernière ligne.
+     Faute de place, les flèches passent dessous et restent à droite. */
+  .case-tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--spacing-lie);
+    margin-bottom: var(--spacing-groupe);
+  }
+
   .case-carousel-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 1.25rem;
+    margin-left: auto;
   }
 
   .case-carousel-arrows {
     display: flex;
     align-items: center;
-  }
-
-  .case-carousel-arrows {
     gap: 0.5rem;
   }
 
@@ -421,23 +407,12 @@ const humblePlus = {
   }
 
   /* La diapositive ne prend pas toute la largeur de la piste : il lui manque de
-     quoi laisser dépasser le bord de la suivante. Quatre cas chiffrés vivaient
-     derrière un geste que rien n'annonçait — la carte occupait la largeur
-     entière, et un lecteur qui ne balaie pas repartait avec une preuve sur
-     quatre.
-     Ce qui dépasse est désormais calé sur le rembourrage de la carte, et non sur
-     une courbe indépendante. Mesuré avant : 28 px dépassaient à 375, 402 et
-     430 px, pour 18 px de rembourrage — soit 10 px de colonne de texte, dont
-     9 px de glyphes tranchés sur chacune des six lignes de la carte suivante. On
-     y lisait une colonne de lettres orphelines, pas « il y en a d'autres » : trop
-     peu pour qu'un mot se devine, assez pour que l'œil s'y arrête. L'autre issue
-     — 110 à 130 px, où un mot entier se lit — laissait 214 px de carte à 402 px
-     de fenêtre, soit 176 px de contenu : la maquette produit n'y tient pas.
-     Le filet vaut donc le rembourrage moins 2 px : la coupe tombe juste avant la
-     colonne de texte, à toutes les largeurs et sans exception mobile à écrire.
-     Ce qui dépasse est un bord de carte — 1 px de filet et du papier — c'est-à-dire
-     exactement ce que le bureau montrait déjà (35,6 px pour 36 px de
-     rembourrage), et que le mobile était seul à ne pas faire. */
+     quoi laisser dépasser le bord de la suivante, sans quoi rien n'annonce
+     qu'il y a quatre cas et pas un.
+     Ce qui dépasse est calé sur le rembourrage de la carte, moins 2 px : la
+     coupe tombe juste avant la colonne de texte de la carte suivante, à toutes
+     les largeurs. On voit un bord de carte (son filet et sa surface), jamais
+     une colonne de lettres tranchées. */
   .case-slide {
     --case-padding: clamp(1.25rem, 3vw, 2.25rem);
     --case-peek: calc(var(--case-padding) - 2px);
@@ -447,7 +422,7 @@ const humblePlus = {
     padding: var(--case-padding);
     background:
       linear-gradient(var(--color-grid-line), var(--color-grid-line)) 0 0 / 100% 1px no-repeat,
-      var(--color-surface-high);
+      var(--color-surface-low);
     border: 1px solid var(--color-divider);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
@@ -502,13 +477,17 @@ const humblePlus = {
     letter-spacing: -0.02em;
   }
 
+  /* Le secteur et la date : deux libellés du même rang, en bas de casse. */
+  .case-secteur,
+  .case-date {
+    color: var(--color-ink-low);
+    font-size: var(--text-mono-label);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
   .case-date {
     margin-left: auto;
-    color: var(--color-ink-low);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 500;
-    letter-spacing: 0.04em;
     white-space: nowrap;
   }
 
@@ -518,7 +497,6 @@ const humblePlus = {
     color: var(--color-ink);
     font-family: var(--font-display);
     font-size: var(--text-title-lg);
-    font-weight: 600;
     line-height: 1.15;
     letter-spacing: -0.02em;
   }
@@ -542,19 +520,15 @@ const humblePlus = {
     font-weight: 600;
   }
 
-  /* Le point médian devient inutile dès que chaque résultat a son propre
-     aplat : deux pastilles séparées se lisent sans séparateur. */
-  .case-results > span[aria-hidden='true'] { display: none; }
-
-  /* Une étiquette est ronde, comme tout ce qui porte un libellé court dans
-     cette DA. Le retrait latéral monte de 0,7 à 0,9em : sur mobile les plus
-     longs résultats passent sur deux lignes, et à 0,7em la première lettre
-     venait toucher l'arrondi. */
-  .case-results > span:not([aria-hidden='true']) {
+  /* Chaque résultat est une pastille pêche, texte nuit : ronde, comme tout ce
+     qui porte un libellé court. Sur téléphone les plus longs passent sur deux
+     lignes : le rayon se borne alors à celui d'une petite carte, et le retrait
+     latéral garde la première lettre à distance de l'arrondi. */
+  .case-results > span {
     background: var(--color-peche);
     color: var(--color-night);
     padding: 0.4em 0.9em;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
   }
 
   .case-results {
@@ -563,18 +537,10 @@ const humblePlus = {
     align-items: center;
     gap: 0.4rem 0.5rem;
     margin: 0;
-    /* Le plafond de 46ch des paragraphes se calcule ici sur un corps de 11 px,
-       soit 330 px : le plus long résultat s'y repliait sur deux lignes alors
-       que la colonne en offre presque le double. Une étiquette ronde se lit
-       mieux d'un seul tenant ; elle ne se replie plus que sur mobile. */
     max-width: 100%;
-    color: var(--color-ink-mid);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
+    font-size: var(--text-mono-label);
     font-weight: 500;
-    line-height: 1.5;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    line-height: 1.4;
   }
 
   .case-visual {
@@ -603,27 +569,23 @@ const humblePlus = {
     background: transparent;
     border: 0;
     cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    letter-spacing: 0.02em;
+    font: inherit;
+    font-size: var(--text-mono-label);
     text-align: left;
   }
 
-  /* LA HIÉRARCHIE DES DEUX RANGS PASSE PAR LA GRAISSE, PAS PAR LA COULEUR, et
-     c'est une correction : le secteur avait d'abord été posé en ink-faint, qui
-     vaut 3,03:1 sur papier. C'est le seuil des indicateurs NON textuels — celui
-     que le filet d'état au-dessus a le droit d'utiliser — et le secteur est du
-     texte de onze pixels, donc il lui en faut 4,5. Trois des quatre boutons sont
-     inactifs à tout instant : la règle fautive concernait les trois quarts de la
-     rangée.
-     Le secteur hérite donc de la couleur du bouton (ink-low, 5,33:1) et c'est le
-     nom du client qui se détache, en 600. Quand le cas devient actif, le bouton
-     passe à l'encre et le secteur reste en ink-low : la hiérarchie se rejoue
-     alors en couleur, sans qu'aucun des deux rangs ne descende sous le seuil.
+  /* La hiérarchie des deux rangs passe par la taille et la graisse, pas par
+     une couleur plus pâle : trois des quatre boutons sont inactifs à tout
+     instant, et le secteur est du petit texte, il lui faut 4,5:1. Il hérite
+     donc de la couleur du bouton (ink-low) et c'est le nom du client qui se
+     détache. Quand le cas devient actif, le bouton passe à l'encre et le
+     secteur reste en ink-low : la hiérarchie se rejoue alors en couleur, sans
+     qu'aucun des deux rangs ne descende sous le seuil.
      `text-wrap: balance` parce que ces secteurs tiennent sur deux lignes dans
      une colonne de quart de page, et qu'un mot orphelin en seconde ligne
      désaligne toute la rangée. */
   .case-carousel-dot-label {
+    font-size: var(--text-body-sm);
     font-weight: 600;
   }
 
@@ -638,10 +600,9 @@ const humblePlus = {
 
   /* Deux colonnes sous 40rem, et non quatre. Le secteur ajoute une seconde
      ligne à chaque bouton : à 375 px de fenêtre, une colonne de quart de page
-     fait 76 px, où « NUTRITION FONCTIONNELLE · E-COMMERCE B2B » tombe sur cinq
-     lignes. La rangée entière y faisait sept lignes de haut. À deux colonnes
-     elle en fait deux, et les quatre cas restent visibles ensemble — ce qui est
-     toute la raison d'être de cette rangée. */
+     fait 76 px, où le plus long secteur tomberait sur quatre ou cinq lignes.
+     À deux colonnes les quatre cas restent visibles ensemble, ce qui est toute
+     la raison d'être de cette rangée. */
   @media (max-width: 40rem) {
     .case-carousel-pagination {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -649,10 +610,9 @@ const humblePlus = {
     }
   }
 
-  /* ink-faint et non divider : cette barre est le seul indicateur d'état des
-     cas non sélectionnés, et à 1,26:1 elle était invisible — la pagination
-     n'annonçait donc pas qu'il restait trois cas à voir. 3,03:1, seuil des
-     indicateurs non textuels. */
+  /* ink-faint et non divider : ce trait est le seul indicateur d'état des cas
+     non sélectionnés, il lui faut le seuil des indicateurs non textuels
+     (3:1), sinon la pagination n'annonce pas qu'il reste trois cas à voir. */
   .case-carousel-dot::before {
     position: absolute;
     inset: 0 0 auto;
@@ -678,13 +638,9 @@ const humblePlus = {
     background: var(--color-ink);
   }
 
-  /* Le nom du client reste affiché à toutes les largeurs. Il disparaissait sous
-     640 px et la pagination se réduisait à « 01 02 03 04 » : quatre traits
-     numérotés ne disent pas ce qu'ils contiennent, et c'est précisément là que
-     les libellés manquaient le plus, l'écran ne montrant qu'un cas. Mesuré à
-     402 px, chaque colonne fait 80 px — de quoi poser « 02 Celeris » en entier
-     et « 03 M Partne… » tronqué. Un nom coupé nomme encore ; un numéro nu ne
-     nomme rien. */
+  /* Le nom du client reste affiché à toutes les largeurs : sur téléphone
+     l'écran ne montre qu'un cas, c'est là que les noms comptent le plus. S'il
+     manque de place il est tronqué : un nom coupé nomme encore. */
   .case-carousel-dot-label {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -698,8 +654,8 @@ const humblePlus = {
     margin-top: clamp(1.25rem, 2vw, 1.75rem);
   }
 
-  /* CTA "Voir le cas" — DA dédiée : pastille flèche circulaire qui se remplit de
-     l'accent flamme au hover (distincte du CTA-texte souligné du reste du site). */
+  /* « Voir le cas » : une flèche dans un cercle, qui se remplit de pêche au
+     survol, puis le libellé en bas de casse comme tout ce qui se clique. */
   .case-cta {
     display: inline-flex;
     align-items: center;
@@ -730,19 +686,18 @@ const humblePlus = {
     border-color: var(--color-accent);
     color: var(--color-night);
   }
-  .case-cta-arrow {
+  .case-cta-dot :global(.case-cta-arrow) {
+    width: 1rem;
+    height: 1rem;
     transition: transform var(--duration-default) var(--ease-out-quint);
   }
-  .case-cta:hover .case-cta-arrow,
-  .case-cta:focus-visible .case-cta-arrow {
+  .case-cta:hover :global(.case-cta-arrow),
+  .case-cta:focus-visible :global(.case-cta-arrow) {
     transform: translateX(3px);
   }
   .case-cta-text {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-label);
+    font-size: var(--text-body-sm);
     font-weight: 500;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
     color: var(--color-ink-mid);
     transition: color var(--duration-default) var(--ease-out-quint);
   }
@@ -751,16 +706,14 @@ const humblePlus = {
     color: var(--color-ink);
   }
   @media (prefers-reduced-motion: reduce) {
-    .case-cta-dot, .case-cta-arrow, .case-cta-text { transition: none; }
-    .case-cta:hover .case-cta-arrow,
-    .case-cta:focus-visible .case-cta-arrow { transform: none; }
+    .case-cta-dot, .case-cta-dot :global(.case-cta-arrow), .case-cta-text { transition: none; }
+    .case-cta:hover :global(.case-cta-arrow),
+    .case-cta:focus-visible :global(.case-cta-arrow) { transform: none; }
   }
 
-  /* Logo client : silhouette monochrome, BLANCHE. `brightness(0)` seul la
-     rendait noire, ce qui valait sur l'ancien papier ; sur la carte nuit le
-     logo de Fraich Touch et celui de Celeris étaient à peu près invisibles.
-     `invert(1)` retourne ce noir en blanc. À revoir si la section passe un
-     jour dans un panneau clair. */
+  /* Logo client : silhouette monochrome, blanche (`brightness(0)` la met en
+     noir, `invert(1)` retourne ce noir en blanc). À revoir si la section passe
+     un jour dans un panneau clair. */
   .case-logo {
     height: calc(26px * var(--logo-scale, 1));
     width: auto;
@@ -788,10 +741,6 @@ const humblePlus = {
   }
 
   @media (max-width: 639px) {
-    .case-carousel-toolbar {
-      margin-bottom: 1rem;
-    }
-
     /* Le rembourrage seul : la largeur et la marge de fin suivent, puisqu'elles
        le lisent. Écrire `padding` en dur ici aurait laissé le filet calé sur la
        valeur du bureau, ce qui est exactement la dérive d'origine. */

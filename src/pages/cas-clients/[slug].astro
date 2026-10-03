@@ -2,15 +2,14 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import MobileCTABar from '../../components/MobileCTABar.astro';
+import Retour from '../../components/retour.astro';
+import FinDePage from '../../components/fin-de-page.astro';
 import { getCollection, render } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import MockupWindow from '../../components/mockups/MockupWindow.astro';
 import WorkflowCanvas from '../../components/mockups/WorkflowCanvas.astro';
 import { brandColorFor } from '../../data/brands';
 import Outil from '../../components/Outil.astro';
-import BoutonReservation from '../../components/BoutonReservation.astro';
-import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../../lib/reservation';
 
 export async function getStaticPaths() {
   const entries = await getCollection('cas-clients', (entry) =>
@@ -25,9 +24,10 @@ const cs = entry.data;
 const subject = cs.category === 'application' ? 'Application métier' : 'Automatisation des processus';
 
 /*
- * Le corps du cas était rendu d'un seul tenant : 5 000 px de prose grise sans
- * une respiration. Il est découpé ici en PIÈCES, une par <h2>, chacune posée
- * sur sa propre surface avec son cartouche numéroté.
+ * Un cas est une page de lecture. Son corps est découpé en PIÈCES, une par
+ * <h2> : le titre de la pièce tient dans la marge de gauche, où il accompagne
+ * la lecture, et le texte dans une colonne calme à droite. Sur une colonne
+ * (téléphone, tablette), le titre passe au-dessus.
  *
  * Le découpage lit `entry.rendered.html` et coupe sur les ancres que Astro
  * pose déjà (`<h2 id="…">`). Pas de plugin rehype : il faudrait une dépendance,
@@ -36,18 +36,7 @@ const subject = cs.category === 'application' ? 'Application métier' : 'Automat
  */
 const HTML_RENDU: string = (entry as unknown as { rendered?: { html?: string } }).rendered?.html ?? '';
 
-/* L'icône dit de quoi parle la pièce : elle distingue le constat du remède, et
-   c'est le seul repère qui tienne quand on balaie la page au pouce. La clé est
-   l'ancre que Astro dérive du titre, insensible à la casse et aux accents. */
-const ICONES: Record<string, string> = {
-  lentreprise: 'lucide:building-2',
-  'le-problème': 'lucide:triangle-alert',
-  'la-solution': 'lucide:workflow',
-  'les-étapes': 'lucide:list-ordered',
-  'les-résultats': 'lucide:target',
-};
-
-interface Piece { id: string; titre: string; reserve: string; corps: string; icone: string }
+interface Piece { id: string; titre: string; reserve: string; corps: string }
 
 function decouper(html: string): Piece[] {
   if (!html) return [];
@@ -71,13 +60,27 @@ function decouper(html: string): Piece[] {
       titre: tete[2].replace(/<[^>]+>/g, '').trim(),
       reserve,
       corps,
-      icone: ICONES[tete[1]] ?? 'lucide:square-dot',
     });
   }
   return pieces;
 }
 
-const pieces = decouper(HTML_RENDU);
+/* Le Markdown ne pose pas les espaces insécables du français : sans elles, un
+   deux-points ou un « € » passait seul à la ligne. Elles sont posées ici, sur
+   le texte rendu : avant `: ; ? !` et le guillemet fermant, après le guillemet
+   ouvrant, entre un nombre et son unité. Aucune balise ne contient ces suites. */
+const espaces = (texte: string) =>
+  texte
+    .replace(/ ([:;?!»])/g, '\u00a0$1')
+    .replace(/« /g, '«\u00a0')
+    .replace(/(\d) (?=(?:h|min|%|€)(?![\p{L}\d]))/gu, '$1\u00a0');
+
+const pieces = decouper(espaces(HTML_RENDU));
+
+/* Le clair de la page : la pièce des résultats, et elle seule. C'est ce que le
+   lecteur est venu vérifier. Un cas sans résultats mesurés n'a pas d'île. La
+   clé est l'ancre que Astro dérive du titre. */
+const ILE = 'les-résultats';
 
 const ROLES: Record<string, string> = {
   declencheur: 'Déclencheur',
@@ -86,9 +89,10 @@ const ROLES: Record<string, string> = {
   controle: 'Contrôle',
 };
 const dateISO = cs.date.toISOString();
+const datePubliee = cs.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
 
 // Cas voisins : meme tag d abord, puis complement par les plus recents. Deux
-// cartes, jamais le cas courant. Transforme quatre culs-de-sac en carrefours.
+// cas, jamais le cas courant.
 const tous = await getCollection('cas-clients', (e) => import.meta.env.DEV || !e.data.draft);
 const autres = tous.filter((e) => e.id !== entry.id);
 /* Le tri par tags partagés ne discriminait rien : les quatre cas portent tous
@@ -151,432 +155,458 @@ const articleSchema = {
   articleSchema={articleSchema}
   breadcrumbs={breadcrumbs}
 >
-  <Navigation ctaLabel="Parler de mon projet" />
+  <Navigation ctaSource="cas_article_nav" />
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1" class="outline-none">
 
-    <!-- HERO -->
-    <section data-section class="relative pt-[80px] md:pt-[88px] px-[var(--spacing-section-x)]">
-      {/* `.entree` : le fil de retour, la ligne de contexte, le titre puis les
+    <section data-section class="relative px-[var(--spacing-section-x)]">
+      {/* `.entree` : le fil de retour, le titre, la ligne de contexte puis les
           chiffres montent l'un après l'autre, dans l'ordre de lecture. Ce sont
           des `@keyframes` jouées au chargement et non un voile levé par
-          script : les `.reveal` que portaient la ligne de contexte et les
-          chiffres sont partis, on n'empile pas deux entrées. */}
-      <div class="entree relative max-w-[1200px] mx-auto pt-12 md:pt-20 pb-12">
+          script : le titre du cas est le message de la page, sans script il
+          est simplement là. */}
+      <div class="entree relative max-w-[1200px] mx-auto pt-[calc(var(--spacing-barre)+var(--spacing-bloc))] pb-[var(--spacing-bloc)]">
 
-        <a
-          href="/cas-clients"
-          class="group tap-44 inline-flex items-center gap-2 mono-caption text-[var(--color-ink-low)] hover:text-[var(--color-ink)] transition-colors mb-8"
-        >
-          <span aria-hidden="true" class="inline-block transition-transform motion-safe:group-hover:-translate-x-[0.2rem]">←</span>
-          RETOUR AUX CAS
-        </a>
-
-        <!-- Meta header -->
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mono-caption text-[var(--color-ink-low)] mb-6 md:mb-8">
-          {cs.secteur && <span>{cs.secteur.toUpperCase()}</span>}
-          {cs.tags.length > 0 && (
-            <>
-              <span aria-hidden="true">·</span>
-              <span>{cs.tags.join(' · ').toUpperCase()}</span>
-            </>
-          )}
-          <>
-            <span aria-hidden="true">·</span>
-            <span>Publié en {cs.date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })}</span>
-          </>
+        <div class="mb-[var(--spacing-groupe)]">
+          <Retour href="/cas-clients">Retour aux cas</Retour>
         </div>
 
-        <!-- Title -->
-        {/* Pas de `.reveal` sur ce bloc : le titre du cas est le message de la
-            page, il ne peut pas dépendre d'un module JavaScript. Son entrée
-            vient de `.entree`, en CSS seul — sans script il est simplement là. */}
-        <div class="mb-10 md:mb-12 bg-[var(--color-paper)] max-w-[64ch] py-2 pr-2 relative">
-          <h1 class="font-display font-semibold text-[length:var(--text-display)] leading-[0.98] tracking-[-0.035em] text-[var(--color-ink)] m-0">
-            {cs.title}
-          </h1>
-          {cs.scopeNote && (
-            <p class="mt-6 mb-0 max-w-[55ch] text-[length:var(--text-body-large)] leading-relaxed text-[var(--color-ink-mid)]">
-              {cs.scopeNote}
-            </p>
-          )}
-        </div>
+        <h1 class="cas-titre">{espaces(cs.title)}</h1>
 
-        <!-- KPIs row -->
-        {/* Les trois chiffres s'arrondissent comme UN bloc : le rayon et le
-            rognage sont sur le conteneur, les cellules restent d'équerre. */}
+        {cs.scopeNote && <p class="cas-chapo">{cs.scopeNote}</p>}
+
+        {/* Le secteur, les sujets et la date sont de vraies informations : une
+            ligne sobre sous le titre, comme la signature d'un article. */}
+        <p class="cas-meta">
+          {cs.secteur && <span class="cas-meta__secteur">{cs.secteur}</span>}
+          {cs.tags.length > 0 && <span>{cs.tags.join(', ')}</span>}
+          <span>Publié en <time datetime={dateISO.slice(0, 10)}>{datePubliee}</time></span>
+        </p>
+
+        {/* Les chiffres du cas, un par colonne, sans cadre : ce qu'on retient,
+            puis ce qui le précise. Ils partent des mêmes lignes verticales que
+            les pièces qui suivent. */}
         {cs.kpis.length > 0 && (
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[var(--color-divider)] border border-[var(--color-divider)] rounded-[var(--radius-md)] overflow-hidden max-w-3xl">
+          <dl class="faits">
             {cs.kpis.map((kpi) => (
-              <div class="bg-[var(--color-paper)] p-5 md:p-6 flex flex-col gap-1.5">
-                <div class="font-display font-semibold tabular-nums text-3xl md:text-4xl tracking-[-0.035em] text-[var(--color-ink)] leading-none">
-                  {kpi.value}
-                </div>
-                <div class="mono-caption text-[var(--color-ink-low)]">{kpi.label}</div>
+              <div>
+                <dt class="fait__valeur">{espaces(kpi.value)}</dt>
+                <dd class="fait__detail">{espaces(kpi.label)}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         )}
 
       </div>
     </section>
 
-    <!-- CORPS DU CAS (Markdown) -->
-    {/* Une pièce par <h2>, chacune sur sa propre surface. Les surfaces
-        alternent nuit / bande relevée pour donner un rythme vertical, et la
-        DERNIÈRE passe sur le panneau clair inversé : c'est le pic de la page,
-        et c'est là que sont les résultats. */}
-    {pieces.map((piece, i) => (
+    {/* Une pièce par <h2>, toutes sur la nuit, séparées par un filet. Seule la
+        pièce des résultats passe sur le panneau clair : c'est le pic de la
+        page. Le filet s'efface autour de lui, le panneau se détache seul. */}
+    {pieces.map((piece, i) => {
+      const ile = piece.id === ILE;
+      const apresIle = i > 0 && pieces[i - 1].id === ILE;
+      return (
+        <section
+          data-section
+          id={piece.id}
+          class:list={[
+            'piece relative px-[var(--spacing-section-x)]',
+            ile && 'bloc-encre',
+            !ile && !apresIle && 'piece--filet',
+          ]}
+        >
+          <div class="piece__grille relative max-w-[1200px] mx-auto">
+            <h2 class="piece__titre">{piece.titre}</h2>
+
+            <div class="piece__corps">
+              {piece.reserve && <div class="reveal case-prose piece-reserve" set:html={piece.reserve} />}
+
+              {/* Le schéma ouvre « La solution » : le lecteur voit le parcours
+                  avant de lire les paragraphes qui le détaillent. C'est une
+                  reconstitution, jamais une capture (les écrans clients sont
+                  confidentiels), et la barre de la fenêtre le dit (`schema`).
+                  Un cas dont la chaîne ne rentre pas dans la géométrie n'a pas
+                  de `flow`, donc pas de schéma : rien vaut mieux qu'un dessin
+                  faux. */}
+              {piece.id === 'la-solution' && cs.flow && (
+                <div class="reveal piece-schema">
+                  <MockupWindow file={`${cs.tools[0] ?? 'workflow'} · parcours`} schema flush>
+                    <WorkflowCanvas
+                      describe={cs.flow.describe}
+                      trigger={{ ...cs.flow.trigger, color: brandColorFor(cs.flow.trigger.icon) }}
+                      agent={{ ...cs.flow.agent, color: brandColorFor(cs.flow.agent.icon) }}
+                      actions={cs.flow.actions.map((a) => ({ ...a, color: brandColorFor(a.icon) }))}
+                    />
+                  </MockupWindow>
+                </div>
+              )}
+
+              {/* La bascule ouvre « Les résultats » : ce que le client achète,
+                  c'est un écart, et il doit se lire avant la liste qui le
+                  détaille. La pastille pêche ne marque QUE la colonne
+                  « après » : un état obtenu, jamais un terme d'avant, jamais
+                  un objectif. */}
+              {ile && cs.bascule && (
+                <dl class="reveal bascule">
+                  <div class="bascule-entete" aria-hidden="true">
+                    <dt>Avant</dt>
+                    <dd>Après</dd>
+                  </div>
+                  {cs.bascule.map((ligne) => (
+                    <div class="bascule-ligne">
+                      <dt>{espaces(ligne.avant)}</dt>
+                      <dd><mark>{espaces(ligne.apres)}</mark></dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+
+              <div class="reveal case-prose" set:html={piece.corps} />
+
+              {/* La nomenclature clôt « La solution » : après le récit, le
+                  relevé, dans son panneau. Ses rangs restent : l'ordre des
+                  étapes est l'information. La pastille pêche y marque les
+                  CONTRÔLES, et eux seuls : c'est la thèse du portfolio rendue
+                  visible d'un coup d'œil, l'IA extrait et les règles
+                  décident. */}
+              {piece.id === 'la-solution' && cs.nomenclature && (
+                <div class="reveal nomenclature">
+                  <p class="nomenclature-tete">
+                    <strong>Nomenclature</strong>
+                    <span>{cs.nomenclature.length} étapes · {cs.nomenclature.filter((n) => n.role === 'controle').length} contrôles</span>
+                  </p>
+                  <ol class="nomenclature-liste">
+                    {cs.nomenclature.map((n, k) => (
+                      <li class="nomenclature-ligne">
+                        <span class="nomenclature-rang">{k + 1}</span>
+                        <span class="nomenclature-etape">{espaces(n.etape)}</span>
+                        <span class="nomenclature-porte">
+                          {n.outil && <span class="nomenclature-outil">{n.outil}</span>}
+                          <span class:list={['nomenclature-role', n.role === 'controle' && 'est-controle']}>
+                            {ROLES[n.role]}
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      );
+    })}
+
+    {/* CAS VOISINS. Deux autres cas, sur la même grille que les pièces : le
+        titre dans la marge, un cas par colonne. Le lien est le titre et
+        s'étend à tout le bloc, comme sur la page des cas. Le filet du haut
+        s'efface quand le panneau clair précède ; celui du bas sépare de la fin
+        de page. */}
+    {voisins.length > 0 && (
       <section
         data-section
-        id={piece.id}
         class:list={[
-          'relative px-[var(--spacing-section-x)] piece-cas',
-          i === pieces.length - 1 ? 'bloc-encre' : i % 2 === 1 ? 'section-band' : '',
+          'relative border-b border-[var(--color-divider)] py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]',
+          pieces.at(-1)?.id !== ILE && 'border-t',
         ]}
       >
-        <div class="relative max-w-[72ch] mx-auto">
-          <header class="reveal piece-tete">
-            <span class="piece-cartouche">
-              <Icon name={piece.icone} class="piece-icone" aria-hidden="true" />
-              <span>{String(i + 1).padStart(2, '0')} / {String(pieces.length).padStart(2, '0')}</span>
-            </span>
-            <h2 class="piece-titre">{piece.titre}</h2>
-          </header>
-          {piece.reserve && <div class="reveal case-prose" set:html={piece.reserve} />}
+        <div class="voisins relative max-w-[1200px] mx-auto">
+          <h2 class="m-0">Autres cas</h2>
 
-          {/* Le schéma ouvre « La solution » : le lecteur voit le parcours
-              avant de lire les seize paragraphes qui le détaillent. C'est une
-              reconstitution, jamais une capture — les écrans clients sont
-              confidentiels — et le châssis de fenêtre le dit assez. Un cas dont
-              la chaîne ne rentre pas dans la géométrie n'a pas de `flow`, donc
-              pas de schéma : rien vaut mieux qu'un dessin faux. */}
-          {piece.id === 'la-solution' && cs.flow && (
-            <div class="reveal piece-schema">
-              {/* `schema` et non `status="reconstitution"` : passé en statut, le
-                  mot prenait la pastille du badge d'état et se lisait comme un
-                  état de l'application, à côté d'« actif » et de « synchronisé ».
-                  La mention dédiée est en encre pleine, sans pastille, et c'est
-                  la même sur les quatre fenêtres de la home. */}
-              <MockupWindow file={`${cs.tools[0] ?? 'workflow'} · parcours`} schema flush>
-                <WorkflowCanvas
-                  describe={cs.flow.describe}
-                  trigger={{ ...cs.flow.trigger, color: brandColorFor(cs.flow.trigger.icon) }}
-                  agent={{ ...cs.flow.agent, color: brandColorFor(cs.flow.agent.icon) }}
-                  actions={cs.flow.actions.map((a) => ({ ...a, color: brandColorFor(a.icon) }))}
-                />
-              </MockupWindow>
-            </div>
-          )}
-
-          {/* La bascule ouvre « Les résultats » : ce que le client achète,
-              c'est un écart, et il doit se lire avant la liste qui le détaille.
-              Le lime ne marque QUE la colonne « après » — un état obtenu,
-              jamais un terme d'avant, jamais un objectif. */}
-          {piece.id === 'les-résultats' && cs.bascule && (
-            <dl class="reveal bascule">
-              <div class="bascule-entete" aria-hidden="true">
-                <dt>Avant</dt>
-                <dd>Après</dd>
-              </div>
-              {cs.bascule.map((ligne) => (
-                <div class="bascule-ligne">
-                  <dt>{ligne.avant}</dt>
-                  <dd><mark>{ligne.apres}</mark></dd>
-                </div>
-              ))}
-            </dl>
-          )}
-
-          <div class="reveal case-prose" set:html={piece.corps} />
-
-          {/* La nomenclature clôt « La solution » : après le récit, le relevé.
-              La colonne de rôle porte le lime sur les CONTRÔLES, et sur eux
-              seuls — c'est la thèse du portfolio rendue visible d'un coup d'œil,
-              l'IA extrait et les règles décident. */}
-          {piece.id === 'la-solution' && cs.nomenclature && (
-            <div class="reveal nomenclature">
-              <div class="nomenclature-tete">
-                <span>Nomenclature</span>
-                <span>{cs.nomenclature.length} étapes · {cs.nomenclature.filter((n) => n.role === 'controle').length} contrôles</span>
-              </div>
-              <ol class="nomenclature-liste">
-                {cs.nomenclature.map((n, k) => (
-                  <li class="nomenclature-ligne">
-                    <span class="nomenclature-rang">{String(k + 1).padStart(2, '0')}</span>
-                    <span class="nomenclature-etape">{n.etape}</span>
-                    {n.outil && <span class="nomenclature-outil">{n.outil}</span>}
-                    <span class:list={['nomenclature-role', n.role === 'controle' && 'est-controle']}>
-                      {ROLES[n.role]}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-        </div>
-      </section>
-    ))}
-
-    {/* Le bloc « TÉMOIGNAGE + STACK » vivait ici. Il ne se rendait jamais :
-        aucun cas ne publie de `testimonial`, et les quatre ont une
-        `nomenclature`, qui donne les mêmes outils dans l'ordre du parcours et
-        avec leur rôle — sa branche STACK était donc doublement éteinte.
-        Le champ `testimonial` du schéma partait avec : il n'était alimenté par
-        aucun cas et n'avait que ce bloc pour lecteur. Le jour où un client en
-        donne un, il faudra un champ ET un bloc, écrits pour lui. */}
-
-    {/* CAS VOISINS.
-        Le titre de cette grille était un sur-titre, le seul du site à ne
-        coiffer aucun titre : il servait d'en-tête tout en étant rendu comme un
-        libellé de onze pixels. La grille gagne son h2, la page gagne un niveau
-        de structure.
-        (Commentaire JSX, et non HTML : le commentaire HTML est expédié au
-        client sur les quatre pages de cas. La raison invoquée pour l'éviter —
-        « une expression Astro casse le rendu » — visait un commentaire qui
-        citait les marqueurs de commentaire littéralement, ce qui refermait le
-        bloc plus tôt qu'écrit. C'est ce libellé littéral qui pose problème,
-        pas la forme JSX ; voir le frontmatter de Navigation.astro.) */}
-    {voisins.length > 0 && (
-      <section data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
-        <div class="relative max-w-[1200px] mx-auto">
-          <h2 class="font-display font-semibold text-[length:var(--text-title-lg)] leading-[1.1] tracking-[-0.025em] text-[var(--color-ink)] m-0 mb-6">
-            Autres cas
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="voisins__liste">
             {voisins.map((v) => (
-              <a href={`/cas-clients/${v.id}`} class="voisin">
-                <span class="voisin-secteur">{v.data.secteur}</span>
-                <span class="voisin-titre">{v.data.title}</span>
+              <article class="voisin">
+                <h3 class="voisin__titre">
+                  <a href={`/cas-clients/${v.id}`} class="voisin__lien">{v.data.title}</a>
+                </h3>
+                {v.data.secteur && <p class="voisin__meta">{v.data.secteur}</p>}
                 {v.data.kpis.length > 0 && (
-                  <span class="voisin-kpi">{v.data.kpis[0].value} {v.data.kpis[0].label}</span>
+                  <p class="voisin__fait"><strong>{espaces(v.data.kpis[0].value)}</strong> {espaces(v.data.kpis[0].label)}</p>
                 )}
-              </a>
+                <span class="link-cta" aria-hidden="true">
+                  <span class="link-cta__label">Lire le détail</span>
+                  <Icon name="lucide:arrow-right" class="link-cta__arrow" />
+                </span>
+              </article>
             ))}
           </div>
 
           {pageOutil && (
             <p class="voisin-outil">
-              Expertise associée : <Outil icon={pageOutil.icone}><a href={pageOutil.href}>{pageOutil.nom}</a></Outil>.
+              Expertise associée&nbsp;: <Outil icon={pageOutil.icone}><a href={pageOutil.href}>{pageOutil.nom}</a></Outil>.
             </p>
           )}
         </div>
       </section>
     )}
 
-    <!-- CTA -->
-    <section data-section class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
-      <div class="relative max-w-[1200px] mx-auto">
-        <div class="reveal mb-8 md:mb-10 inline-block py-2 pr-2 relative">
-          <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] text-[var(--color-ink)] m-0 max-w-[22ch]">
-            Un projet <mark>similaire&nbsp;?</mark>
-          </h2>
-          <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] m-0 pt-3 max-w-[55ch]">
-            {DUREE_RESERVATION_MINUTES}&nbsp;min pour parler de votre besoin et voir comment je peux vous aider.
-          </p>
-        </div>
-
-        <div class="reveal flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-          <BoutonReservation source="cas_article" class="btn-primary justify-center">
-            {LIBELLE_CONTACT_RESERVATION}
-          </BoutonReservation>
-        </div>
-      </div>
-    </section>
+    <FinDePage source="cas_article_fin" titre="Un projet <mark>similaire&nbsp;?</mark>" />
 
   </main>
 
   <Footer />
-  <MobileCTABar label="Parler de mon projet" />
 </Layout>
 
 <style>
-  /* Le voisin n'a pas de boîte : un filet au-dessus, et c'est lui qui répond.
-     Il reste droit — on n'arrondit pas un trait — et passe à la pêche au
-     survol comme au clavier. La transition du filet vient de la règle de base
-     des liens. */
-  .voisin {
+  /* ── L'en-tête ── */
+  /* Le titre d'un cas est une phrase : il prend la taille d'affiche de
+     l'accueil, un rang sous le titre des pages d'index. */
+  .cas-titre {
+    max-width: 20ch;
+    margin: 0;
+    font-size: var(--text-affiche);
+  }
+
+  .cas-chapo {
+    margin: var(--spacing-lie) 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.5;
+  }
+
+  .cas-meta {
     display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    border-top: 2px solid var(--color-ink);
-    padding-top: 1rem;
-    text-decoration: none;
-  }
-  .voisin:focus-visible { border-top-color: var(--color-peche); }
-  @media (hover: hover) and (pointer: fine) {
-    .voisin:hover { border-top-color: var(--color-peche); }
-  }
-  .voisin-secteur {
-    font-size: var(--text-mono-caption);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    max-width: none;
+    margin: var(--spacing-lie) 0 0;
     color: var(--color-ink-low);
-  }
-  .voisin-titre {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-title);
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
-  }
-  .voisin-kpi {
-    margin-top: 0.35rem;
-    align-self: flex-start;
-    background: var(--color-peche);
-    color: var(--color-night);
-    padding: 0.3em 0.6em;
-    border-radius: var(--radius-xs);
     font-size: var(--text-body-sm);
-    font-weight: 600;
+    line-height: 1.5;
   }
-  .voisin-outil {
-    margin-top: 2.5rem;
+
+  .cas-meta__secteur {
     color: var(--color-ink-mid);
   }
-  .voisin-outil a {
+
+  .faits {
+    display: grid;
+    gap: var(--spacing-lie) var(--spacing-gouttiere);
+    margin: var(--spacing-bloc) 0 0;
+  }
+
+  .fait__valeur {
     color: var(--color-ink);
-    font-weight: 600;
-    border-bottom: 2px solid var(--color-peche);
+    font-family: var(--font-display);
+    font-size: var(--text-title-lg);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
   }
-</style>
 
-<style>
+  .fait__detail {
+    max-width: 34ch;
+    margin: var(--spacing-colle) 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  @media (min-width: 48rem) {
+    .faits {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
   /* ── La pièce ── */
-  /* Un demi-pas de section : cinq pièces à pleine hauteur de section auraient
-     ajouté 700 px à une page qui en faisait déjà 8 000. Le rythme vient de
-     l'alternance des surfaces, pas du vide entre elles. */
-  .piece-cas {
-    padding-top: clamp(2.5rem, 4vw, 4rem);
-    padding-bottom: clamp(2.5rem, 4vw, 4rem);
+  .piece {
+    padding-block: var(--spacing-bloc);
   }
 
-  /* ── La nomenclature ── */
+  .piece--filet {
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .piece__grille {
+    display: grid;
+    gap: var(--spacing-groupe);
+  }
+
+  .piece__titre {
+    margin: 0;
+  }
+
+  .piece__corps {
+    min-width: 0;
+  }
+
+  /* Grand écran : trois colonnes, les mêmes que celles des chiffres de
+     l'en-tête. Le titre de la pièce tient dans la première et reste en vue
+     pendant qu'on lit la pièce ; le texte occupe les deux autres. */
+  @media (min-width: 64rem) {
+    .piece__grille {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .piece__titre {
+      position: sticky;
+      top: 7rem;
+    }
+
+    .piece__corps {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  /* Le schéma est la seule figure qui prend toute la colonne. L'encadré de
+     réserve, la bascule et la nomenclature gardent la mesure du texte : un
+     seul bord droit pour tout ce qui se lit. */
+  .piece-schema,
+  .piece-reserve {
+    margin-bottom: var(--spacing-groupe);
+  }
+
+  /* ── La nomenclature : un relevé dans son panneau. Pas de filet entre les
+        lignes : les colonnes sont communes à toutes (`subgrid`), c'est
+        l'alignement qui tient le tableau. La taille posée ici ne sert qu'à
+        donner au plafond de 46ch la mesure des paragraphes. ── */
   .nomenclature {
-    margin-top: clamp(2rem, 4vw, 3rem);
-    border-top: 2px solid var(--color-ink);
+    max-width: 46ch;
+    margin-top: var(--spacing-groupe);
+    padding: var(--spacing-panneau);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-low);
+    font-size: var(--text-body-large);
   }
 
   .nomenclature-tete {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-divider);
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    gap: 0.25rem 1rem;
+    max-width: none;
+    margin: 0 0 var(--spacing-lie);
     color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .nomenclature-tete strong {
+    color: var(--color-ink);
+    font-weight: 500;
   }
 
   .nomenclature-liste {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content max-content;
+    gap: 0.75rem 1rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  /* La règle de base plafonne tout `li` à une mesure de prose. Ici la ligne
+     est une rangée de tableau, sur toute la largeur du panneau. */
   .nomenclature-ligne {
     display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) auto auto;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
     align-items: baseline;
-    gap: 0.5rem 1rem;
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--color-divider);
-    /* La règle de base plafonne tout `li` à 46ch, une mesure de prose. Ici la
-       ligne est une rangée de tableau : plafonnée, elle s'arrêtait à 488 px
-       sous un en-tête de 763, et le relevé avait deux bords droits. */
     max-width: none;
+  }
+
+  .nomenclature-porte {
+    display: contents;
   }
 
   .nomenclature-rang,
   .nomenclature-outil,
   .nomenclature-role {
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    letter-spacing: 0.04em;
+    font-size: var(--text-mono-label);
+    white-space: nowrap;
   }
 
-  /* ink-low et non ink-faint : ce rang est l'index 01→08 d'un tableau
-     d'architecture qu'on lit dans l'ordre, donc du texte porteur, et ink-faint
-     ne tient que 3,03:1 sur papier. DESIGN.md le dit noir sur blanc — ink-faint
-     sert aux traits et aux puces creuses, « jamais du texte lisible ». Le
-     marquee avait déjà corrigé exactement ce cas ; celui-ci était passé au
-     travers. 5,33:1. */
-  .nomenclature-rang { color: var(--color-ink-low); }
-  .nomenclature-etape {
-    font-size: var(--text-body-sm);
-    color: var(--color-ink);
-    line-height: 1.4;
-    min-width: 0;
-  }
-  .nomenclature-outil {
+  /* ink-low et non ink-faint : le rang se lit, c'est du texte porteur. */
+  .nomenclature-rang {
     color: var(--color-ink-low);
-    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .nomenclature-etape {
+    min-width: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    line-height: 1.4;
+  }
+
+  .nomenclature-outil {
+    grid-column: 3;
+    color: var(--color-ink-low);
   }
 
   .nomenclature-role {
-    text-transform: uppercase;
+    grid-column: 4;
+    justify-self: start;
+    padding: 0.15rem 0.6rem;
     color: var(--color-ink-low);
-    white-space: nowrap;
-    padding: 0.15rem 0.5rem;
   }
 
-  /* La pêche ne marque QUE le contrôle. Son texte lit `--color-night`, le seul
-     des deux jetons qu'aucun bloc ne remappe : `--color-ink` vaut blanc sur la
-     nuit, 1,74:1 sur la pastille. Elle prend le plus petit rayon, celui d'un
-     détail. */
+  /* La pêche ne marque QUE le contrôle, en pastille, comme un mot surligné.
+     Son texte lit `--color-night`, le seul des deux jetons qu'aucun bloc ne
+     remappe : `--color-ink` vaut blanc sur la nuit, 1,74:1 sur la pastille. */
   .nomenclature-role.est-controle {
+    border-radius: var(--radius-full);
     background: var(--color-peche);
     color: var(--color-night);
-    border-radius: var(--radius-xs);
     font-weight: 600;
   }
 
+  /* Téléphone : le rang et l'étape sur une ligne, l'outil et le rôle dessous. */
   @media (max-width: 40rem) {
-    .nomenclature-ligne {
-      grid-template-columns: 2rem minmax(0, 1fr);
+    .nomenclature-liste {
+      grid-template-columns: max-content minmax(0, 1fr);
     }
-    .nomenclature-outil,
-    .nomenclature-role {
+
+    .nomenclature-ligne {
+      row-gap: 0.25rem;
+    }
+
+    .nomenclature-porte {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.25rem 0.75rem;
       grid-column: 2;
-      justify-self: start;
+    }
+
+    .nomenclature-role:not(.est-controle) {
+      padding-inline: 0;
     }
   }
 
-  /* ── La bascule avant / après ── */
+  /* ── La bascule avant / après : deux colonnes, sans filet, à la mesure
+        des paragraphes (même taille posée, même plafond de 46ch) ── */
   .bascule {
-    margin: 0 0 clamp(1.75rem, 3vw, 2.5rem);
-    border-top: 1px solid var(--color-divider);
+    display: grid;
+    row-gap: var(--spacing-lie);
+    max-width: 46ch;
+    margin: 0 0 var(--spacing-groupe);
+    font-size: var(--text-body-large);
   }
 
   .bascule-entete,
   .bascule-ligne {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 1rem 1.5rem;
+    gap: 0.35rem 1.5rem;
     align-items: baseline;
-    padding: 0.85rem 0;
-    border-bottom: 1px solid var(--color-divider);
   }
 
-  .bascule-entete {
-    padding-bottom: 0.5rem;
-  }
   .bascule-entete dt,
   .bascule-entete dd {
     margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
     color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
   }
 
   .bascule-ligne dt {
     color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
+    font-size: var(--text-body);
     line-height: 1.45;
   }
 
@@ -588,191 +618,292 @@ const articleSchema = {
     line-height: 1.45;
   }
 
-  /* Le fragment surligné peut être long ici : la bande n'a pas à rester sur une
-     ligne dans une cellule étroite, donc `nowrap` est levé localement et la
-     bande couvre le rectangle englobant. C'est acceptable dans une cellule dont
-     le texte occupe toute la largeur, pas dans un titre. */
+  /* Le fragment surligné peut être long ici : dans une cellule étroite, la
+     pastille n'a pas à rester sur une ligne, donc `nowrap` est levé localement
+     et elle couvre le rectangle englobant. C'est acceptable dans une cellule
+     dont le texte occupe toute la largeur, pas dans un titre. Le rayon vaut
+     la moitié d'une ligne : sur une ligne c'est la pastille du site, sur deux
+     un rectangle arrondi, et non une gélule qui mord sur la première lettre. */
   .bascule-ligne dd :global(mark) {
+    --radius-bande: 0.78em;
     white-space: normal;
-    /* `--color-night`, pas `--color-ink` : la bande est toujours pêche, quelle
-       que soit la surface qui la porte, donc son texte est toujours la nuit —
-       le seul des deux jetons qu'aucun bloc ne remappe. 10,19:1. */
-    color: var(--color-night);
   }
 
   @media (max-width: 34rem) {
     .bascule-entete { display: none; }
+
     .bascule-ligne {
-      grid-template-columns: 1fr;
-      gap: 0.35rem;
+      grid-template-columns: minmax(0, 1fr);
     }
+
     /* Sans l'en-tête, il faut dire lequel est lequel. */
     .bascule-ligne dt::before {
-      content: 'AVANT · ';
-      font-family: var(--font-mono);
-      font-size: var(--text-mono-caption);
-      letter-spacing: 0.06em;
+      content: 'Avant\00a0: ';
       color: var(--color-ink-low);
     }
   }
 
-  .piece-schema {
-    margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
-  }
-
-  .piece-tete {
-    margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
-  }
-
-  /* Cartouche : le seul numéro conservé quand le reste de la numérotation a été
-     retiré du site, et pour une raison précise. Ailleurs, `01 / 02 / 03`
-     ordonnait des choses qui n'ont pas d'ordre — des sections de landing, des
-     principes, des entrées de navigation. Ici il dit `02 / 04` : où l'on en est
-     dans un article long, et combien il en reste. C'est une progression, pas un
-     ordinal, et c'est ce que l'icône seule ne dit pas.
-     (Il ne reprend plus `.section-number`, qui n'existe plus : le style est
-     porté par cette règle.) */
-  .piece-cartouche {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: var(--color-ink-low);
-  }
-
-  .piece-icone {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    color: var(--color-ink);
-    stroke-width: 1.6;
-  }
-
-  .piece-titre {
-    margin: 0.6rem 0 0;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-headline);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    color: var(--color-ink);
-  }
-
-  /* Sur le panneau inversé, les jetons de rôle sont déjà remappés par
-     `.bloc-encre` : la prose, les titres, les filets et l'icône suivent sans
-     variante à écrire. */
-
-  /* Corps Markdown des cas — calé sur les tokens du site. */
-  .case-prose :global(h2) {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-headline);
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    color: var(--color-ink);
-    margin: 2.5em 0 0.75em;
-  }
-  /* Plus aucun h2 dans le corps : le titre de pièce est rendu par le gabarit.
-     La règle reste pour un cas qui en poserait un second dans son texte. */
-  .case-prose :global(h2:first-child) { margin-top: 0; }
+  /* ── Le corps Markdown : la colonne de lecture. Les paragraphes, les listes
+        et l'encadré partagent une taille et donc une mesure (le plafond de
+        46ch de la règle de base, environ 70 caractères). Les titres prennent
+        leur taille et leur graisse de la règle commune. ── */
   .case-prose :global(h3) {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: var(--text-title);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
-    margin: 1.75em 0 0.5em;
+    margin: var(--spacing-groupe) 0 var(--spacing-colle);
   }
+
+  .case-prose :global(h3:first-child) {
+    margin-top: 0;
+  }
+
   .case-prose :global(p) {
+    margin: 0 0 1.1em;
     color: var(--color-ink-mid);
     font-size: var(--text-body-large);
-    line-height: 1.65;
-    margin: 0 0 1.1em;
+    line-height: var(--leading-body);
   }
-  .case-prose :global(strong) { color: var(--color-ink); font-weight: 600; }
-  .case-prose :global(ul) {
-    margin: 0 0 1.3em;
-    padding-left: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
+
+  .case-prose :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .case-prose :global(:is(ul, ol)) {
+    display: grid;
     gap: 0.6em;
+    margin: 0 0 1.3em;
+    padding: 0;
+    list-style: none;
   }
+
+  .case-prose :global(:is(p, ul, ol, blockquote):last-child) {
+    margin-bottom: 0;
+  }
+
   .case-prose :global(li) {
     position: relative;
     padding-left: 1.4em;
     color: var(--color-ink-mid);
-    font-size: var(--text-body);
-    line-height: 1.6;
+    font-size: var(--text-body-large);
+    line-height: var(--leading-body);
   }
-  .case-prose :global(li::before) {
+
+  .case-prose :global(ul > li::before) {
     content: '';
     position: absolute;
     left: 0;
-    top: 0.65em;
+    top: 0.7em;
     width: 6px;
     height: 6px;
     border-radius: var(--radius-full);
-    /* accent-text et non accent : la dernière pièce d'un cas est un panneau
-       clair, où une puce pêche de 6 px ne tient que 1,64:1. Ce jeton vaut la
-       pêche sur la nuit et la nuit sur le clair. */
+    /* accent-text et non accent : la pièce des résultats est un panneau clair,
+       où une puce pêche de 6 px ne tient que 1,64:1. Ce jeton vaut la pêche
+       sur la nuit et la nuit sur le clair. */
     background: var(--color-accent-text);
   }
 
-  /* Le lime dit un gain, partout ailleurs sur le site. Dans « Le problème » il
-     marquait des pannes : seize factures bloquées, un bug d'acomptes, zéro
+  /* La pêche dit un gain, partout ailleurs sur le site. Dans « Le problème »
+     elle marquait des pannes : seize factures bloquées, un bug d'acomptes, zéro
      visibilité. La puce y devient un anneau creux, qui énumère sans féliciter.
      Même raison dans « Les étapes », qui décrit un déroulé, pas un résultat. */
-  #le-problème .case-prose :global(li::before),
-  #les-étapes .case-prose :global(li::before) {
+  #le-problème .case-prose :global(ul > li::before),
+  #les-étapes .case-prose :global(ul > li::before) {
     background: transparent;
     box-shadow: inset 0 0 0 1.5px var(--color-ink-faint);
   }
+
+  /* Une liste ordonnée garde ses numéros : l'ordre y est l'information. */
+  .case-prose :global(ol) {
+    counter-reset: rang;
+  }
+
+  .case-prose :global(ol > li) {
+    counter-increment: rang;
+  }
+
+  .case-prose :global(ol > li::before) {
+    content: counter(rang) '.';
+    position: absolute;
+    left: 0;
+    color: var(--color-ink-low);
+    font-variant-numeric: tabular-nums;
+  }
+
   /* L'encadré de réserve. Les deux qui existent sur ce site disent la même
      chose : où en est le projet, et ce que les chiffres qui suivent valent
-     vraiment. Ils portaient jusqu'ici la mise en forme d'une citation, si bien
-     qu'on pouvait les lire comme un témoignage flatteur alors qu'ils
-     restreignent la portée de tout ce qui suit.
+     vraiment. Une surface relevée et arrondie, sans cadre (il est déjà dans un
+     panneau) et sans la mise en forme d'une citation : on pourrait le lire
+     comme un témoignage flatteur alors qu'il restreint la portée de tout ce
+     qui suit.
 
      Le libellé est posé en CSS parce que le corps vient du markdown : il ne
      peut pas porter de composant. Il est vrai pour les deux (« projet en phase
      de stabilisation », « projet en cours de déploiement ») et le restera pour
-     tout encadré du même genre, puisque c'est la seule chose qu'on encadre.
-
-     Bordure pleine, jamais de liseré latéral coloré : c'est un interdit du
-     design system. */
+     tout encadré du même genre, puisque c'est la seule chose qu'on encadre. */
   .case-prose :global(blockquote) {
-    margin: 1.5em 0;
-    padding: 1em 1.25em;
-    border: 1px solid var(--color-border-strong);
-    background: var(--color-surface-low);
-    /* Une ligne encadrée de la largeur de la colonne : le rayon d'une carte,
-       celui des questions de la FAQ, et non celui d'une vignette. */
+    margin: 0 0 var(--spacing-groupe);
+    padding: var(--spacing-lie) var(--spacing-panneau);
     border-radius: var(--radius-md);
-    color: var(--color-ink-mid);
+    background: var(--color-surface-low);
+    /* La taille des paragraphes, pour que le plafond de 46ch donne à l'encadré
+       la largeur de la colonne de texte. */
+    font-size: var(--text-body-large);
   }
 
   .case-prose :global(blockquote)::before {
     content: 'Statut du projet';
     display: block;
-    margin-bottom: 0.6em;
-    font-family: var(--font-mono);
-    font-size: var(--text-mono-caption);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    margin-bottom: var(--spacing-colle);
     color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
   }
 
-  .case-prose :global(blockquote p:last-child) { margin-bottom: 0; }
+  .case-prose :global(blockquote p) {
+    max-width: none;
+  }
+
+  /* Le lien de prose du site : le texte à l'encre, un trait d'accent dessous.
+     accent-text : la pêche sur la nuit, la nuit sur le panneau clair. */
   .case-prose :global(a) {
-    /* accent-text (pas accent vif) : lien dans du corps de texte → AA 4.5:1. */
+    padding-bottom: 1px;
+    border-bottom: 2px solid var(--color-accent-text);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .case-prose :global(a:hover) {
+    border-bottom-color: var(--color-ink);
+  }
+
+  /* ── Les cas voisins ── */
+  .voisins {
+    display: grid;
+    gap: var(--spacing-groupe);
+  }
+
+  .voisins__liste {
+    display: grid;
+    gap: var(--spacing-bloc) var(--spacing-gouttiere);
+  }
+
+  .voisin {
+    position: relative;
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: var(--spacing-colle);
+  }
+
+  .voisin__titre {
+    margin: 0;
+  }
+
+  .voisin__lien {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Tout le bloc se clique ; la zone déborde un peu du texte, pour que le
+     cadre de focus ne le serre pas. */
+  .voisin__lien::after {
+    content: '';
+    position: absolute;
+    inset: -0.75rem;
+    border-radius: var(--radius-md);
+  }
+
+  .voisin__meta,
+  .voisin__fait {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+  }
+
+  .voisin__meta {
+    color: var(--color-ink-low);
+  }
+
+  .voisin__fait {
+    color: var(--color-ink-mid);
+  }
+
+  /* La valeur sur sa ligne, ce qui la précise dessous. */
+  .voisin__fait strong {
+    display: block;
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  /* Le bloc répond par son lien fléché, au survol comme au clavier : la
+     pastille se déroule sous « Lire le détail » et la flèche avance. */
+  .voisin:focus-within .link-cta__label::before {
+    clip-path: inset(0 0 0 0 round 9999px);
+  }
+
+  .voisin:focus-within .link-cta__label {
+    color: var(--color-night);
+  }
+
+  .voisin:focus-within :global(.link-cta__arrow) {
+    transform: translateX(4px);
     color: var(--color-accent-text);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .voisin:hover .link-cta__label::before {
+      clip-path: inset(0 0 0 0 round 9999px);
+    }
+
+    .voisin:hover .link-cta__label {
+      color: var(--color-night);
+    }
+
+    .voisin:hover :global(.link-cta__arrow) {
+      transform: translateX(4px);
+      color: var(--color-accent-text);
+    }
+  }
+
+  /* Le cadre de focus entoure le bloc, pas le seul titre. Même condition que
+     la règle générale : pas de cadre sur un écran purement tactile. */
+  @media (any-hover: hover), (any-pointer: fine) {
+    .voisin__lien:focus-visible {
+      outline: none;
+    }
+
+    .voisin__lien:focus-visible::after {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  .voisin-outil {
+    margin: 0;
+    color: var(--color-ink-mid);
+  }
+
+  .voisin-outil a {
+    color: var(--color-ink);
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-peche);
+  }
+
+  @media (min-width: 40rem) {
+    .voisins__liste {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .voisins {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .voisins__liste,
+    .voisin-outil {
+      grid-column: 2 / span 2;
+    }
   }
 </style>

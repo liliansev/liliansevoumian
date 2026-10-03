@@ -10,13 +10,11 @@ import Testimonials from '../components/Testimonials.astro';
 import APropos from '../components/APropos.astro';
 import Stack from '../components/Stack.astro';
 import Offres from '../components/Offres.astro';
-import FAQ from '../components/FAQ.astro';
-import CTA from '../components/CTA.astro';
-import Footer from '../components/Footer.astro';
+import Questions from '../components/questions.astro';
 import ROICalculator from '../components/ROICalculator.astro';
-import MobileCTABar from '../components/MobileCTABar.astro';
+import FinDePage from '../components/fin-de-page.astro';
+import Footer from '../components/Footer.astro';
 import { faqs } from '../data/faq';
-import { LIBELLE_RESERVATION } from '../lib/reservation';
 import { automationSubscriptions } from '../data/maintenance';
 
 const faqSchema = faqs.map((faq) => ({ question: faq.q, answer: faq.a }));
@@ -78,7 +76,6 @@ const serviceSchema = {
 >
   <Navigation
     links={navLinks}
-    ctaLabel={LIBELLE_RESERVATION}
     ctaSource="automatisations_nav"
     trackHero={true}
   />
@@ -92,12 +89,18 @@ const serviceSchema = {
     <Testimonials />
     <APropos />
     <Stack />
+    {/* La seconde moitié : les prix dans l'île claire, puis les questions, le
+        simulateur, et la fin commune à toutes les pages. Le simulateur précède
+        la fin : il fait compter les heures perdues, elle demande lesquelles. */}
     <Offres />
-    <FAQ body="" />
+    <Questions id="faq" titre="Vos questions sur l’automatisation." titreLargeur="20ch" items={faqs} />
     <ROICalculator />
-    <CTA />
+    <FinDePage
+      source="automatisations_fin"
+      titre="Qu’est-ce qui vous prend <mark>trop de temps&nbsp;?</mark>"
+      suite="Une tâche, un document, un dossier&nbsp;: <span class='whitespace-nowrap'>écrivez-le</span> en une phrase. Je vous réponds <span class='whitespace-nowrap'>moi-même</span>."
+    />
   </main>
 
   <Footer />
-  <MobileCTABar />
 </Layout>

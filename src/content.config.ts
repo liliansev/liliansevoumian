@@ -69,8 +69,8 @@ const casClients = defineCollection({
      *
      * La colonne `role` est le porteur de couleur le plus honnête de la page :
      * elle montre où sont les CONTRÔLES déterministes, c'est-à-dire la thèse du
-     * portfolio — l'IA extrait, les règles décident. Le lime n'y marque donc
-     * pas « c'est bien », il marque « ici rien n'est laissé à l'IA ».
+     * portfolio — l'IA extrait, les règles décident. La marque de contrôle n'y
+     * dit donc pas « c'est bien », elle dit « ici rien n'est laissé à l'IA ».
      *
      * Minimum six lignes : en dessous, ce n'est plus une nomenclature, c'est
      * une liste, et le corps du texte la dit déjà mieux.

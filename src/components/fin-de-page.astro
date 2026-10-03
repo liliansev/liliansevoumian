@@ -1,34 +1,54 @@
 ---
 /*
- * home-offers — la fin de la page : un appel, et ce que ça coûte.
+ * fin-de-page — la fin de chaque page : une phrase, un champ, le bouton.
+ *
+ * Elle est née sur l'accueil (elle s'appelait `home-offers`) et ferme toutes
+ * les pages depuis le 3 octobre 2026 : chacune avait sa propre section de
+ * contact, avec son titre, sa carte et son libellé de bouton. Il n'y a plus
+ * qu'un geste, écrit une fois. Une page change le titre et la phrase qui le
+ * suit ; l'accueil ajoute la ligne des prix.
  *
  * La page s'ouvre sur un titre posé sur une grille ; elle se ferme de la même
  * façon. Une phrase, centrée, qui dit ce qu'on fait ensuite, puis le champ et
- * le bouton. La grille du premier écran revient derrière, immobile : on est
- * revenu au point de départ, avec une réponse.
+ * le bouton.
  *
  * Le bouton est précédé d'un champ, comme une barre de prompt : le visiteur
  * écrit en une phrase ce qui lui fait perdre du temps. Écrire une phrase
  * engage moins que réserver un appel. Ce qu'il écrit ouvre la conversation de
  * `home-invite`, qui lui propose ensuite son moyen : WhatsApp, e-mail ou un
  * appel. Le champ est facultatif : vide, le bouton ouvre la même conversation.
- * Tous les « Parlons de votre projet » de la page font ce même geste
- * (`data-causerie-ouvrir`) : un seul appel à l'action, voulu par Lilian le
- * 2 octobre 2026. Si la barre d'écriture n'a pas démarré, le bouton ouvre
- * l'agenda, où la phrase écrite est reprise (voir l'embed, dans Layout) ; sans
- * aucun script, c'est un simple lien vers l'agenda.
- *
- * Les prix tiennent en une ligne sous le bouton. Ils étaient deux rangées à
- * filets qui redisaient ce que les blocs des métiers annoncent déjà ; ils
- * restent là pour qui est descendu jusqu'ici en cherchant un ordre de
- * grandeur, et chacun mène à sa page d'offre.
+ * Si la barre d'écriture n'a pas démarré, le bouton ouvre l'agenda, où la
+ * phrase écrite est reprise (voir l'embed, dans Layout) ; sans aucun script,
+ * c'est un simple lien vers l'agenda.
  *
  * Tout lien vers l'agenda passe par `BoutonReservation`.
  */
 import { Icon } from 'astro-icon/components';
 import BoutonReservation from './BoutonReservation.astro';
 import { automationStartingPrice } from '../data/service-pricing';
-import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/reservation';
+
+interface Props {
+  /** Ancre de la section. `contact` partout ; l'accueil garde `offres`. */
+  id?: string;
+  /** Le titre, en HTML : un fragment court peut y être surligné par `mark`. */
+  titre?: string;
+  /** La phrase sous le titre, en HTML (un lien `lien-prose` y est permis). */
+  suite?: string;
+  /** D'où vient le clic, dans les statistiques. */
+  source: string;
+  /** La ligne des prix sous l'invite : l'accueil seulement, les pages d'offre
+      portent déjà leurs prix. */
+  prix?: boolean;
+}
+
+const {
+  id = 'contact',
+  titre = 'Dites-moi ce qui vous fait <mark>perdre du temps.</mark>',
+  suite = 'Une phrase suffit. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et on voit si c’est un projet pour moi.',
+  source,
+  prix = false,
+} = Astro.props;
 
 /* Mêmes noms que dans les blocs des métiers : une offre n'a qu'un nom sur la
    page. Les sites web ont quitté l'accueil le 3 octobre 2026 : la seconde
@@ -53,20 +73,15 @@ const offres = [
 ] as const;
 ---
 
-<section id="offres" data-section class="fin relative px-[var(--spacing-section-x)]">
+<section id={id} data-section class="fin relative px-[var(--spacing-section-x)]">
   <div class="fin__grille" aria-hidden="true"></div>
 
   <div class="fin__centre reveal">
-    {/* Le titre répond à celui qui ouvre le récit (« Vous avez la sensation de
-        perdre votre temps ? ») : la page se ferme sur la même question, posée
-        cette fois au visiteur. Il disait « 45 minutes pour voir si je suis la
-        bonne personne » tant que le bouton ouvrait l'agenda. */}
-    <h2 class="fin__titre">
-      Dites-moi ce qui vous fait <mark>perdre du temps.</mark>
-    </h2>
-    <p class="fin__suite">
-      Une phrase suffit. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et on voit si c’est un projet pour moi.
-    </p>
+    {/* Sur l'accueil, le titre répond à celui qui ouvre le récit (« Vous avez
+        la sensation de perdre votre temps ? ») : la page se ferme sur la même
+        question, posée cette fois au visiteur. */}
+    <h2 class="fin__titre" set:html={titre} />
+    <p class="fin__suite" set:html={suite} />
     <form class="invite" data-invite novalidate>
       <label class="sr-only" for="besoin">Ce qui vous fait perdre du temps, en une phrase (facultatif)</label>
       <textarea
@@ -80,15 +95,13 @@ const offres = [
         data-invite-champ
       ></textarea>
       <BoutonReservation
-        source="home_offres"
+        source={source}
         class="btn-primary invite__envoi"
         aria-describedby="fin-apres"
         data-cal-note-from="#besoin"
-        goal="causerie_opened"
-        data-causerie-ouvrir=""
         data-invite-envoi=""
       >
-        Parlons de votre projet <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+        {LIBELLE_CONTACT_RESERVATION} <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
       </BoutonReservation>
     </form>
     {/* Ce qui se passe après le clic. Rien n'est promis ici qui ne soit vrai du
@@ -102,7 +115,10 @@ const offres = [
       {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio, sans engagement.
     </p>
 
-    <p class="fin__prix">
+    {/* Les prix tiennent en une ligne sous le bouton, pour qui est descendu
+        jusqu'ici en cherchant un ordre de grandeur ; chacun mène à sa page
+        d'offre. */}
+    {prix && <p class="fin__prix">
       {offres.map((offre, i) => (
         <>
           {i > 0 && <span class="fin__sep" aria-hidden="true"> · </span>}
@@ -111,7 +127,7 @@ const offres = [
           </a>
         </>
       ))}
-    </p>
+    </p>}
   </div>
 </section>
 
@@ -163,7 +179,7 @@ const offres = [
     text-wrap: balance;
   }
 
-  .fin__titre mark {
+  .fin__titre :global(mark) {
     margin-top: 0.14em;
   }
 
@@ -236,8 +252,7 @@ const offres = [
   }
 
   /* Le même bouton que dans la barre de navigation : même libellé, même casse,
-     même flèche. Une action n'a qu'un seul traitement sur la page, réglé une
-     fois dans `index.astro`. */
+     même flèche. Une action n'a qu'un seul traitement sur le site. */
   .invite :global(.invite__envoi) {
     min-height: 44px;
     white-space: nowrap;

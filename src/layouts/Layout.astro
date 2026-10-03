@@ -3,6 +3,7 @@ import '@fontsource-variable/geist';
 import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
+import HomeInvite from '../components/home-invite.astro';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { organisations, profils, resume } from '../data/parcours';
 
@@ -22,6 +23,13 @@ interface Props {
   noindex?: boolean;
   faqSchema?: Array<{ question: string; answer: string }>;
   directionContract?: string;
+  /**
+   * La barre d'écriture (`home-invite`) : le bouton « Parlons de votre projet »
+   * de chaque page ouvre sa conversation. Elle est rendue ici, pour tout le
+   * site. `false` pour la page qui la place elle-même (l'accueil, juste après
+   * son premier écran).
+   */
+  causerie?: boolean;
 }
 
 const {
@@ -39,7 +47,8 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   breadcrumbs,
   noindex = false,
   faqSchema,
-  directionContract
+  directionContract,
+  causerie = true
 } = Astro.props;
 
 /* Impeccable demande que le contrat d'une nouvelle surface survive dans le
@@ -94,7 +103,7 @@ const personSchema = {
   "knowsAbout": ["Automatisation des processus", "Agents IA", "Make", "n8n", "Airtable", "Workflow", "Intégration API", "No-Code", "Vibe coding", "Création de sites web", "Astro", "Claude", "Claude Code", "Codex", "Mistral AI", "Notion", "IA"],
   "hasCredential": [
     { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
-      "name": "Make Certified Niveau 5 (premier certifié en France)",
+      "name": "Make niveau 5 (premier Français certifié, 2022)",
       "recognizedBy": { "@type": "Organization", "name": "Make", "url": "https://www.make.com" } },
     { "@type": "EducationalOccupationalCredential", "credentialCategory": "certification",
       "name": "Airtable Certified",
@@ -372,7 +381,7 @@ const faqPageSchema = faqSchema ? {
           var inited = false;
           var lastFocused = null;
           // Le mot que le visiteur a écrit avant d'ouvrir l'agenda (voir
-          // `home-offers.astro`). Il est repris dans le champ « notes » de la
+          // `fin-de-page.astro`). Il est repris dans le champ « notes » de la
           // réservation : Cal le lit dans la configuration de l'embed. Quand il
           // change, l'agenda est remonté, sinon l'ancien mot resterait dedans.
           var noteMontee = '';
@@ -528,8 +537,8 @@ const faqPageSchema = faqSchema ? {
     <a href="#main-content" class="skip-link">
       Aller au contenu principal
     </a>
-    <div class="technical-grid" aria-hidden="true"></div>
     <slot />
+    {causerie && <HomeInvite />}
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
     <!-- data-cal-link est réservé à Cal : le poser ici ouvre aussi sa popup au clic Fermer. -->
@@ -645,27 +654,19 @@ const faqPageSchema = faqSchema ? {
         }, true);
 
         // Une question ouverte est une objection nommée : le libellé dit
-        // laquelle. `toggle` ne remonte pas — d'où la phase de capture.
+        // laquelle. On compte le geste (toucher une question fermée), pas
+        // l'événement `toggle` : les questions sont des `details` rendus ouverts
+        // sur grand écran, et `toggle` y partait pour chacune au chargement.
         var faqSeen = {};
-        document.addEventListener('toggle', function (ev) {
-          var d = ev.target;
-          if (!d || d.tagName !== 'DETAILS' || !d.open || !d.closest('#faq')) return;
-          // Le caret est du chrome : laissé dans le libellé, le goal remonterait
-          // « … + ». `.faq-num` est retiré par précaution — les numéros de
-          // question ont disparu du markup, mais un libellé de goal ne doit pas
-          // dépendre de ce qui décore le résumé.
-          var sum = d.querySelector('summary');
-          var label = '?';
-          if (sum) {
-            var clone = sum.cloneNode(true);
-            var chrome = clone.querySelectorAll('[aria-hidden="true"], .faq-num');
-            for (var i = 0; i < chrome.length; i++) chrome[i].remove();
-            label = clone.textContent.trim().replace(/\s+/g, ' ').slice(0, 80);
-          }
+        document.addEventListener('click', function (ev) {
+          var sum = ev.target && ev.target.closest ? ev.target.closest('summary') : null;
+          var d = sum ? sum.parentElement : null;
+          if (!d || d.tagName !== 'DETAILS' || d.open || !d.closest('#faq, #questions')) return;
+          var label = sum.textContent.trim().replace(/\s+/g, ' ').slice(0, 80);
           if (faqSeen[label]) return;
           faqSeen[label] = 1;
           goal('faq_opened', { question: label });
-        }, true);
+        });
 
         // Aller lire un cas entier est le geste de preuve le plus coûteux que la
         // page propose. Aucun de ces liens n'était tagué.
@@ -677,22 +678,20 @@ const faqPageSchema = faqSchema ? {
       })();
     </script>
 
-    <!-- Tracking DataFast — inventaire des goals émis.
-         1) "lead_call"     → clic sur un CTA de réservation, posé en attribut sur
-                              chaque lien cal.com, avec sa source (hero, offres…).
-         2) "call_booked"   → réservation confirmée, émis par le listener embed.
-         3) "cal_abandoned" → overlay fermé sans réservation. Comble le trou entre
-                              1 et 2, qui se jouait dans un iframe cross-origin.
-         4) "lead_email"    → clic sur l'adresse mail (pied de page, contact).
-         5) "roi_used"      → premier mouvement d'un curseur du simulateur.
-         6) "faq_opened"    → première ouverture d'une question, libellé en prop.
-         7) "case_opened"   → clic vers un cas client, href en prop.
-         8) "outbound_formations" → sortie vers augmentes.fr.
-         9) "outbound_agence" → sortie vers agenceafk.fr, depuis l'accueil.
-         Le goal "lead_form" n'est plus émis : le formulaire de contact a été
-         retiré au profit du créneau. Les funnels du dashboard qui en dépendaient
-         tomberont à zéro à partir de cette mise en ligne — c'est attendu, ce
-         n'est pas une régression de tracking.
-         Toujours pas de scroll-depth. -->
+    <!-- Suivi DataFast : inventaire des objectifs émis (détail dans
+         DATAFAST-FUNNEL.md).
+         1) "causerie_opened" → clic sur un « Parlons de votre projet », posé par
+                                BoutonReservation avec sa source (page et place).
+         2) "lead_message"    → dans la conversation, clic sur WhatsApp ou e-mail.
+         3) "lead_call"       → dans la conversation, clic sur « Réserver un
+                                appel » : le seul lien direct vers l'agenda.
+         4) "call_booked"     → réservation confirmée, émis par l'écouteur de l'embed.
+         5) "cal_abandoned"   → agenda refermé sans réservation.
+         6) "roi_used"        → premier mouvement d'un curseur du simulateur.
+         7) "faq_opened"      → une question fermée qu'on ouvre (téléphone), libellé en prop.
+         8) "case_opened"     → clic vers un cas client, href en prop.
+         9) "service_path_opened", "youtube_opened", "outbound_formations",
+            "outbound_agence" → les sorties et les choix d'offre.
+         Pas de mesure de profondeur de défilement. -->
   </body>
 </html>

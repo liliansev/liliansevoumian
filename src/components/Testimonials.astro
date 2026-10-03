@@ -1,13 +1,19 @@
 ---
 /*
- * Testimonials.astro — bande de preuve sociale (3 témoignages clients réels).
+ * Testimonials — trois recommandations de vraies personnes, sur
+ * /automatisations-ia. Sur l'accueil, `home-voices` porte les mêmes mots, une
+ * voix à la fois ; ici, page de référence, elles se lisent à la suite : la
+ * citation à gauche, qui la signe à droite, et l'espace seul entre deux voix.
  *
- * Placée après CaseStudy, dans la zone de preuve. Volontairement SANS numéro de
- * section (≠ étape numérotée) : c'est une bande de réassurance, pas un chapitre
- * du parcours — ça évite de renuméroter Stack/Offres/FAQ/Contact + la nav.
+ * Ce sont des recommandations, pas des rapports de mission : aucune ne porte
+ * de chiffre. Les chiffres sont dans les cas clients, plus haut sur la page.
  *
- * Contenu restauré depuis l'ancien composant (commit 48577f1~1) : vrais clients,
- * pas d'invention. Avatars dans src/assets/testimonials/.
+ * Les trois citations sont tronquées, et la règle de coupe est stricte : on ne
+ * retire que des phrases entières ou des fins de phrase, jamais un fragment au
+ * milieu d'une idée, et aucun mot n'est reformulé. Toutes les coupes retirent
+ * un éloge : aucune ne peut faire dire à quelqu'un plus que ce qu'il a écrit,
+ * seulement moins. Les versions intégrales sont dans l'historique git de ce
+ * fichier. Portraits dans `src/assets/testimonials/`.
  */
 import { Image } from 'astro:assets';
 import LinkCTA from './LinkCTA.astro';
@@ -23,34 +29,15 @@ interface Testimonial {
   image: ImageMetadata;
 }
 
-/* Les trois citations sont tronquées, et la règle de coupe est stricte : on ne
- * retire que des phrases entières ou des fins de phrase, jamais un fragment au
- * milieu d'une idée, et aucun mot n'est reformulé. Toutes les coupes retirent
- * un éloge — aucune ne peut donc faire dire à quelqu'un plus que ce qu'il a
- * écrit, seulement moins. Les versions intégrales sont dans l'historique git de
- * ce fichier.
- *
- * Ce qui part, et pourquoi :
- *  · Ismail — « Un Champion du no-code d'Airtable et de Make avéré ! » Le
- *    registre jurait avec la voix du reste du site, et la phrase gardée est la
- *    seule des deux à nommer un sujet de travail.
- *  · Alexis — « et de sa volonté infaillible de servir un projet ». Le fait le
- *    plus probant de toute la section est ailleurs dans sa phrase : quelqu'un
- *    qui revient « à de nombreuses reprises ». Le superlatif le diluait.
- *  · Benjamin — « Il a une approche très professionnelle, un large spectre de
- *    connaissances, et un bon esprit de synthèse. » Trois adjectifs devant la
- *    seule phrase de résultat des trois témoignages. Elle reste seule, et
- *    courte, ce qui la fait entendre.
- */
 const testimonials: Testimonial[] = [
   {
-    quote: "Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.",
+    quote: 'Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.',
     name: 'Ismail Landoulsi',
     role: 'Cofondateur & COO · CasanovaParis',
     image: ismailImg,
   },
   {
-    quote: "J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.",
+    quote: 'J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.',
     name: 'Alexis Kovalenko',
     role: 'Cofondateur · Contournement',
     image: alexisImg,
@@ -67,91 +54,114 @@ const testimonials: Testimonial[] = [
 <section
   id="temoignages"
   data-section
-  class="bloc-lime relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
+  class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
-  <div class="relative max-w-[1200px] mx-auto">
+  <div class="relative mx-auto max-w-[1200px]">
 
-    {/* L'en-tête passe par SectionHeader. Il était réimplémenté à la main, et
-        trois écarts en découlaient, tous mesurés sur la page vivante : aucun
-        filet sous le titre là où les six autres sections de la home en ont un,
-        24 px entre le titre et le chapô contre 53 ailleurs, et 48 px entre le
-        bloc et le contenu contre 64. Comme cette DA fait porter l'élévation par
-        les filets et non par l'ombre, un titre de section sans son filet annonce
-        un rang inférieur : la seule section en bande relevée, celle qui porte la
-        preuve sociale, se présentait comme une sous-partie.
-        Les deux mesures propres à cette section — 22ch de titre, 52ch de chapô —
-        passent en props ; elles ne justifiaient pas un markup à part.
+    <SectionHeader title="Ils ont travaillé avec moi." titleMaxWidth="22ch" />
 
-        Le chapô, lui, ne bouge pas. Il dit ce que ces trois voix apportent, et
-        surtout ce qu'elles n'apportent pas : aucune ne contient de chiffre, de
-        délai ni de nom de projet — ce sont des recommandations, pas des rapports
-        de mission, et elles ne le deviendront pas. Le problème n'était pas leur
-        contenu mais leur place : posées juste après quatre cas chiffrés, elles
-        se lisaient comme une preuve qui faiblit. Nommer les deux registres remet
-        chacun à son travail, et évite au lecteur de chercher ici une mesure qui
-        est à deux mille pixels au-dessus. */}
-    <SectionHeader
-      title="Ils ont <mark>travaillé avec moi.</mark>"
-      titleMaxWidth="22ch"
-      body=""
-      bodyMaxWidth="52ch"
-      rule={false}
-    />
-
-    {/* Pull-quotes éditoriaux pleine largeur, séparés par des filets — texture
-        volontairement distincte de la grille de cartes des cas clients (le bloc
-        de preuve sociale ne doit pas se confondre avec le catalogue). */}
-    <div class="reveal-stagger flex flex-col">
+    <div class="reveal-stagger temoins">
       {testimonials.map((t) => (
-        <figure class="reveal grid grid-cols-1 md:grid-cols-[1fr_minmax(0,240px)] gap-5 md:gap-12 items-start py-7 md:py-9 border-t border-[var(--color-divider)] m-0">
-          <blockquote class="font-display font-medium text-[length:var(--text-title-lg)] leading-[1.4] tracking-[-0.015em] text-[var(--color-ink)] m-0 max-w-[36ch]">
-            «&nbsp;{t.quote}&nbsp;»
-          </blockquote>
-          <figcaption class="flex items-center gap-3 shrink-0 md:pt-2">
+        <figure class="reveal temoin">
+          <blockquote>«&nbsp;{t.quote}&nbsp;»</blockquote>
+          <figcaption>
             <Image
               src={t.image}
-              alt={`Photo de ${t.name}`}
-              width={80}
-              height={80}
+              alt=""
+              width={88}
+              height={88}
               format="webp"
               quality={82}
-              class="testi-avatar"
+              class="temoin__portrait"
               loading="lazy"
             />
-            <div class="flex flex-col gap-0.5 min-w-0">
-              <span class="font-display font-semibold text-[var(--color-ink)] leading-tight">{t.name}</span>
-              <span class="mono-caption text-[var(--color-ink-low)]">{t.role}</span>
-            </div>
+            <span class="temoin__nom">{t.name}</span>
+            <span class="temoin__role">{t.role}</span>
           </figcaption>
         </figure>
       ))}
     </div>
 
-    {/* Le seul lien de réservation de la zone de preuve. Entre le hero et la
-        section outils, quatre sections et trois mille cinq cents pixels de cas,
-        de recommandations et de parcours n'en portaient aucun : le lecteur
-        traversait le moment où il est le plus convaincu sans rien à cliquer.
-        Lien secondaire et non bouton plein — l'action primaire de la page reste
-        la même, elle n'a pas besoin d'un quatorzième bouton noir. */}
-    <div class="reveal mt-10 md:mt-12 pt-7 border-t border-[var(--color-divider)]">
-      <LinkCTA
-        href="#offres"
-      >
-        Voir les offres et le suivi
-      </LinkCTA>
+    {/* La sortie de la section, dans la colonne des signatures. */}
+    <div class="reveal temoins__suite">
+      <LinkCTA href="#offres">Voir les offres et le suivi</LinkCTA>
     </div>
+
   </div>
 </section>
 
 <style>
-  /* `.testi-header-row` est partie avec le markup d'en-tête : elle ne portait
-     qu'un `position: relative` dont plus rien ne dépendait. */
-  .testi-avatar {
+  .temoins {
+    display: grid;
+    gap: var(--spacing-bloc);
+  }
+
+  .temoin {
+    display: grid;
+    gap: var(--spacing-lie);
+    margin: 0;
+  }
+
+  /* Un rang sous le titre de la section, à la graisse des titres. */
+  .temoin blockquote {
+    max-width: 34ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: var(--text-title-lg);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Le portrait, puis le nom au-dessus du rôle. */
+  .temoin figcaption {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+  }
+
+  .temoin :global(.temoin__portrait) {
+    grid-row: 1 / span 2;
     width: 44px;
     height: 44px;
     border-radius: var(--radius-full);
     object-fit: cover;
-    flex-shrink: 0;
-    border: 1px solid var(--color-divider);
+  }
+
+  .temoin__nom {
+    align-self: end;
+    color: var(--color-ink);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .temoin__role {
+    align-self: start;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.35;
+  }
+
+  .temoins__suite {
+    margin-top: var(--spacing-groupe);
+  }
+
+  /* Deux colonnes : la citation, puis sa signature sur la même ligne. La
+     sortie se range sous les signatures. */
+  @media (min-width: 900px) {
+    .temoin,
+    .temoins__suite {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .temoins__suite > :global(*) {
+      grid-column: 2;
+    }
   }
 </style>

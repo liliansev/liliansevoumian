@@ -1,4 +1,5 @@
 ---
+import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
 import BoutonReservation from './BoutonReservation.astro';
 import SubscriptionGrid from './SubscriptionGrid.astro';
@@ -6,34 +7,25 @@ import { automationSubscriptions, webSubscriptions, maintenanceScope } from '../
 import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 /*
- * Offres.astro — les formats de collaboration.
+ * Offres — les trois formats de collaboration, puis ce qu'ils coûtent.
  *
- * Pas de numéro de section dans cet en-tête : il portait « §04 » quand l'ordre
- * de la home en faisait la quatrième, et elle y est huitième depuis que le
- * calculateur est remonté en deuxième position. L'ordre vit dans index.astro,
- * à un seul endroit ; le répéter ici crée une deuxième vérité qui se périme
- * sans que rien ne le signale.
+ * C'est l'île claire de la page (`.bloc-encre`) : le lecteur y vient vérifier
+ * un prix. Les deux prix se lisent donc dans un titre, pas dans une note : la
+ * création (à partir de, sur devis), puis le suivi mensuel et sa grille.
  *
- * Trois formats décrits ; création sur devis et grilles de suivi mensuel.
+ * Tout est posé sur une même grille de trois colonnes : les trois formats, les
+ * deux prix (le titre dans la première colonne, son explication dans les deux
+ * autres), la liste des abonnements (`SubscriptionGrid`, dont la première
+ * colonne est calée ici sur cette grille) et la rangée de fin (l'action, puis
+ * les deux autres portes). Ni cadre ni filet : l'espace sépare.
  *
- * La version précédente tenait en cinquante mots et citait quatre formats
- * (« Régie, mission cadrée, mentoring d'équipe, coaching ponctuel… ») sans en
- * définir un seul : ni livrable, ni périmètre, ni point de départ. C'était la
- * section la plus courte de la page — cinq fois moins haute que celle des
- * outils — et la seule qui vend. Ne rien décrire ne protégeait de rien : ça
- * repoussait la totalité de la décision à l'appel de 20 min, ce qui est
- * l'inverse de ce que la page promet.
+ * Les trois formats ne sont pas inventés : ils recouvrent ce que le site
+ * prouve ailleurs, les cas clients (créer), la page « reprendre une
+ * automatisation qui casse » (fiabiliser), la certification de formateur et
+ * les trois cents personnes formées (former).
  *
- * Le prix de création dépend du périmètre. Les tarifs de suivi mensuel sont
- * partagés avec la home et la FAQ via data/maintenance.ts.
- *
- * Les trois formats ne sont pas inventés : ils recouvrent ce que le site prouve
- * déjà ailleurs — les quatre cas clients (construire), la page « reprendre une
- * automatisation qui casse » et la question « Et si un de mes outils change et
- * que tout casse ? » de la FAQ (reprendre), la certification formateur et les
- * trois cents personnes formées (rendre la main). Les questions de la FAQ sont
- * citées par leur énoncé et non par leur rang, pour la même raison que le
- * numéro de section a disparu : leur ordre bouge.
+ * Les tarifs viennent de data/maintenance.ts et de data/service-pricing.ts,
+ * partagés avec l'accueil et les questions.
  */
 
 const formats = [
@@ -61,215 +53,196 @@ const formats = [
 <section
   id="offres"
   data-section
-  {/* Bande grise et non aplat lime. Deux raisons qui vont dans le même sens.
-      La section « contact » 900 px plus bas portait le même aplat, le même
-      bouton et la même destination : deux fins de page en lime se disputaient
-      la conclusion. Et le lime perd son sens s'il revient trop souvent : il est
-      rendu ici à trois moments qui se distinguent — le début (hero), la preuve
-      (témoignages), la fin (contact). Le panneau de résultat du simulateur est
-      une incrustation dans une bande grise, pas un aplat de section.
-      (Décision de ce fichier, pas une règle écrite dans DESIGN.md — une version
-      antérieure de ce commentaire la citait comme telle, à tort.) */}
-  class="section-band relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]"
+  class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]"
 >
   <div class="relative max-w-[1200px] mx-auto">
+    <SectionHeader
+      title="Une solution à créer ou à reprendre."
+      body="Nous partons de ce qui existe chez vous et de ce que vous voulez améliorer."
+      titleMaxWidth="20ch"
+    />
 
-    <div class="reveal mb-12 md:mb-16">
-      {/* Sans sur-titre : « TRAVAILLER ENSEMBLE » annonçait en petites capitales
-          ce que le titre annonce en grand, et le verbe du titre est plus précis
-          que le sien. */}
-      <div class="offres-header">
-        <h2 class="font-display font-semibold text-[length:var(--text-headline)] leading-[1.05] tracking-[-0.035em] m-0 text-[var(--color-ink)] max-w-[20ch]">
-          Une solution à créer ou <mark>à reprendre.</mark>
-        </h2>
+    <div class="offres">
+      <div class="offres-grille reveal-stagger">
+        {formats.map((f) => (
+          <div class="reveal offres-format">
+            <h3>{f.titre}</h3>
+            <p class="offres-format__corps">{f.corps}</p>
+            <p class="offres-format__depart">{f.depart}</p>
+          </div>
+        ))}
       </div>
-      <p class="text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5] mt-6 md:mt-7 mb-0 max-w-[56ch]">
-        Nous partons de ce qui existe chez vous et de ce que vous voulez améliorer.
-      </p>
-    </div>
 
-    {/* Filets et non cartes : le rythme de la page vient des traits, et une
-        grille de trois cartes à icône est le motif que ce site évite partout
-        ailleurs. `auto-fit` plutôt qu'un nombre de colonnes figé — trois
-        formats aujourd'hui, la grille ne casse pas s'il y en a deux ou quatre. */}
-    <div class="reveal-stagger offres-grille">
-      {formats.map((f) => (
-        <div class="reveal offres-item">
-          <h3 class="font-display font-semibold text-[length:var(--text-title)] leading-[1.2] tracking-[-0.02em] m-0 text-[var(--color-ink)]">
-            {f.titre}
-          </h3>
-          <p class="text-[length:var(--text-body)] text-[var(--color-ink-mid)] leading-[1.6] mt-3 mb-0">
-            {f.corps}
-          </p>
-          <p class="text-[length:var(--text-body-sm)] text-[var(--color-ink-low)] leading-[1.5] mt-4 mb-0 offres-depart">
-            {f.depart}
+      {/* Le prix de création, énoncé une fois pour les trois formats. */}
+      <div class="reveal offres-grille offres-prix">
+        <h3>
+          Création à partir de {automationStartingPrice.toLocaleString('fr-FR')}&nbsp;€&nbsp;HT, sur devis.
+        </h3>
+        <p>
+          Nous priorisons les workflows et les agents pendant l’appel de {DUREE_RESERVATION_MINUTES}&nbsp;min.
+          Vous recevez ensuite un devis pour le périmètre convenu, distinct de l’abonnement de suivi. Il précise
+          le travail à réaliser et le calendrier.
+        </p>
+      </div>
+
+      <div id="abonnements" class="offres-suivi">
+        <div class="reveal offres-grille offres-prix">
+          <h3>Un suivi prévu dès le départ.</h3>
+          <p>
+            Chaque automatisation livrée s’accompagne d’un abonnement mensuel. Hébergement, maintenance et petits
+            ajustements de l’existant sont inclus.
           </p>
         </div>
-      ))}
+        <div class="reveal">
+          <SubscriptionGrid offers={automationSubscriptions} label="Abonnements automatisations et IA" />
+        </div>
+        <p class="offres-note">{maintenanceScope}</p>
+      </div>
+
+      {/* La fin de l'île : l'action à gauche, puis les deux autres portes. Le
+          lien vers les cas mène à la page et non à l'ancre `#cas`, qui ferait
+          remonter le lecteur au milieu d'un carrousel déjà dépassé. Il ne
+          porte pas de `goal` : Layout tague déjà tout lien vers /cas-clients
+          en `case_opened`. */}
+      <div class="reveal offres-grille offres-fin">
+        <div class="offres-action">
+          <BoutonReservation source="offres" class="btn-primary justify-center" />
+          <LinkCTA href="/cas-clients">Voir les cas clients</LinkCTA>
+        </div>
+
+        <div class="offres-porte">
+          <p>
+            Pour un site web, la création commence à {webStartingPrice.toLocaleString('fr-FR')}&nbsp;€&nbsp;HT, puis
+            l’abonnement de suivi commence à {webSubscriptions[0].schemaPrice}&nbsp;€&nbsp;HT&nbsp;/&nbsp;mois pour une
+            landing page.
+          </p>
+          <LinkCTA href="/sites-web-abonnement">Voir l’offre sites web</LinkCTA>
+        </div>
+
+        {/* La sortie vers augmentes.fr, pour qui veut apprendre à le faire
+            lui-même plutôt que confier une mission. */}
+        <div class="offres-porte">
+          <p>Vous préférez apprendre à le faire vous-même&nbsp;?</p>
+          <LinkCTA href="https://augmentes.fr" external goal="outbound_formations" goalSource="offres">
+            Voir les formations Make et n8n
+          </LinkCTA>
+        </div>
+      </div>
     </div>
-
-    {/* La durée, le mode d'engagement et le budget, énoncés une fois pour les
-        trois — les répéter par format aurait donné trois fois la même phrase.
-
-        La ligne budget est la seule mention entrante du mot sur la page : les
-        deux autres occurrences étaient des liens SORTANTS vers augmentes.fr, si
-        bien que le lecteur qui cherchait « budget » ne trouvait qu'une porte de
-        sortie. Elle porte le mot en tête, en encre pleine, pour qu'il se
-        repère au balayage sans ajouter un sur-titre en capitales. */}
-    <div class="reveal offres-cadre">
-      <p>
-        Le devis précise le travail à réaliser et le calendrier. Le suivi est prévu dès le départ.
-      </p>
-      <p class="offres-budget">
-        <strong>Création à partir de {automationStartingPrice.toLocaleString('fr-FR')}&nbsp;€ HT, sur devis.</strong> Nous priorisons les workflows et les agents
-        pendant l’appel de {DUREE_RESERVATION_MINUTES} min. Vous recevez ensuite un devis
-        pour le périmètre convenu, distinct de l’abonnement de suivi.
-      </p>
-    </div>
-
-    <div class="mt-12" id="abonnements">
-      <h3 class="m-0 mb-5 font-semibold text-[length:var(--text-title-lg)] text-[var(--color-ink)]">Un suivi prévu dès le départ.</h3>
-      <p class="m-0 mb-8 max-w-[65ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">Chaque automatisation livrée s’accompagne d’un abonnement mensuel. Hébergement, maintenance et petits ajustements de l’existant sont inclus.</p>
-      <SubscriptionGrid offers={automationSubscriptions} label="Abonnements automatisations et IA" />
-      <p class="mt-6 mb-0 max-w-[65ch] text-[length:var(--text-body-sm)] leading-relaxed text-[var(--color-ink-mid)]">{maintenanceScope}</p>
-    </div>
-
-    {/* Actions */}
-    <div class="reveal mt-10 md:mt-12 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-      <BoutonReservation source="offres" class="btn-primary justify-center">
-        Choisir un créneau · {DUREE_RESERVATION_MINUTES} min
-      </BoutonReservation>
-      {/* La page, pas l'ancre. `#cas` renvoyait le lecteur six mille pixels en
-          arrière, au milieu d'un carrousel qu'il venait de dépasser : un lien
-          qui remonte aussi loin se vit comme une perte de place, pas comme une
-          sortie. `/cas-clients` va vers l'avant et montre les quatre cas
-          entiers plutôt qu'une slide sur quatre. */}
-      {/* Pas de `goal` en attribut ici : le listener délégué de Layout tague
-          déjà tout lien vers /cas-clients en `case_opened`, et deux goals sur
-          le même clic compteraient la même intention deux fois. */}
-      <LinkCTA href="/cas-clients">Voir les cas clients</LinkCTA>
-    </div>
-
-    {/* L'offre web reste une route distincte : ce pont qualifie l'intention sans
-        ajouter un septième lien dans la barre de navigation de la home. */}
-    <div class="reveal mt-10 pt-7 border-t border-[var(--color-divider)] flex flex-col md:flex-row md:items-center md:justify-between gap-5">
-      <p class="m-0 max-w-[58ch] text-[length:var(--text-body)] leading-[1.6] text-[var(--color-ink-mid)]">
-        Pour un site web, la création commence à {webStartingPrice.toLocaleString('fr-FR')}&nbsp;€ HT, puis
-        l’abonnement de suivi commence à {webSubscriptions[0].schemaPrice}&nbsp;€ HT / mois pour une landing page.
-      </p>
-      <LinkCTA href="/sites-web-abonnement">Voir l’offre sites web</LinkCTA>
-    </div>
-
-    {/* Pont augmentes.fr — route l'intention « apprendre soi-même » vers la
-        plateforme formations. Lien secondaire, jamais primaire. */}
-    {/* CASSE NORMALE ET NON PETITES CAPITALES, et c'est la même correction aux
-        trois endroits du site où une PHRASE entière était composée en capitales
-        à onze pixels. Les capitales suppriment la silhouette des mots : l'œil ne
-        lit plus une forme, il déchiffre lettre à lettre. Passe encore sur un
-        libellé de bouton de trois mots ; sur quatre-vingts caractères, à la plus
-        petite taille du système et avec 0,06 em d'interlettrage, c'était la
-        ligne la moins lisible de la page. Le détecteur d'anti-patterns la
-        relève sous `all-caps-body`, et le site avait déjà pris cette décision
-        ailleurs — la réassurance de /reprendre-une-automatisation-qui-casse est
-        descendue du sur-titre dans le chapô pour exactement ce motif.
-        Le corps passe à --text-body-sm, la mesure que le cadre budget de cette
-        même section emploie déjà. */}
-    <p class="reveal mt-8 max-w-[70ch] text-[length:var(--text-body-sm)] leading-[1.6] text-[var(--color-ink-low)]">
-      Vous préférez apprendre à le faire vous-même&nbsp;?
-      <a
-        href="https://augmentes.fr"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="offres-sortie tap-44 text-[var(--color-accent-text)] hover:text-[var(--color-ink)] transition-colors ml-1"
-        data-fast-goal="outbound_formations"
-        data-fast-goal-source="offres"
-      >
-        Voir les formations Make et n8n&nbsp;<span class="offres-sortie__fleche" aria-hidden="true">↗</span>
-      </a>
-    </p>
-
   </div>
 </section>
 
 <style>
-  .offres-header {
-    position: relative;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-divider);
+  .offres {
+    display: grid;
+    gap: var(--spacing-bloc);
   }
 
+  /* Une colonne, puis trois dès que chacune garde une mesure lisible. */
   .offres-grille {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    /* Une seule gouttière, sur les deux axes, fluide. Les trois règles qu'elle
-       remplace se contredisaient dans deux plages mesurées : `auto-fit` passe à
-       deux colonnes dès 578 px alors que la gouttière horizontale n'arrivait
-       qu'à 640 — les colonnes s'y touchaient et leurs deux filets de tête n'en
-       formaient qu'un. Et de 640 à 1008 px, la gouttière verticale nulle faisait
-       toucher le filet du troisième format à la dernière ligne du premier, au
-       pixel près. */
-    gap: clamp(1.75rem, 4vw, 4rem);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-groupe) var(--spacing-gouttiere);
   }
 
-  .offres-item {
-    /* La note « On part de… » se cale en bas de colonne. Sans ça, la troisième
-       carte la posait 26 px plus haut que les deux autres — son corps fait trois
-       lignes contre quatre — et un rôle répété se lisait à trois horizontales
-       différentes, dans une grille explicitement filetée en colonnes. */
+  /* La note « Pour… » se cale en bas de colonne : les trois corps n'ont pas la
+     même longueur, et un rôle répété se lirait sinon à trois hauteurs. */
+  .offres-format {
     display: flex;
     flex-direction: column;
-    /* Le filet ouvre chaque format, comme les pull-quotes des témoignages. En
-       une seule colonne il devient une séparation horizontale, en plusieurs il
-       coiffe chaque colonne — même trait, deux lectures. */
-    border-top: 1px solid var(--color-divider);
-    padding: 1.75rem 0 0;
   }
 
-  /* Le filet court sur toute la largeur, le texte s'arrête à sa mesure : posé
-     sur le paragraphe lui-même, le trait s'interrompait au milieu de la grille
-     et se lisait comme une bordure cassée. */
-  .offres-depart { margin-top: auto; padding-top: 1rem; }
-
-  .offres-cadre {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-divider);
-  }
-  .offres-cadre p {
+  .offres-format h3 {
     margin: 0;
-    max-width: 62ch;
-    font-size: var(--text-body-sm);
-    line-height: 1.6;
-    color: var(--color-ink-low);
-  }
-  /* 24 px pour un interligne de 22,4 : l'écart entre les deux lignes du cadre
-     dépasse la ligne pleine, sinon le budget se lirait comme la suite de la
-     phrase sur l'engagement. */
-  .offres-cadre p + p { margin-top: 1.5rem; }
-
-  /* La ligne budget monte d'un rang par rapport au reste du cadre : ce n'est
-     plus de la mention légale, c'est la réponse à la question que le lecteur
-     se pose ici. Encre moyenne pour le corps (6,6:1 sur la bande grise), encre
-     pleine sur le mot lui-même. */
-  .offres-budget { color: var(--color-ink-mid); }
-  .offres-budget strong {
     color: var(--color-ink);
-    font-weight: 600;
+    font-size: var(--text-title);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 
-  /* La flèche du lien sortant part dans sa direction, en diagonale : même
-     geste que les flèches des liens internes, qui avancent à l'horizontale. */
-  .offres-sortie__fleche {
-    display: inline-block;
-    transition: transform var(--duration-default) var(--ease-out-quint);
+  .offres-format__corps {
+    max-width: 60ch;
+    margin: 0.75rem 0 0;
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
   }
-  @media (hover: hover) and (pointer: fine) {
-    .offres-sortie:hover .offres-sortie__fleche { transform: translate(2px, -2px); }
+
+  .offres-format__depart {
+    margin: auto 0 0;
+    padding-top: 1rem;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
   }
-  .offres-sortie:focus-visible .offres-sortie__fleche { transform: translate(2px, -2px); }
-  @media (prefers-reduced-motion: reduce) {
-    .offres-sortie__fleche { transition: none; }
-    .offres-sortie:hover .offres-sortie__fleche,
-    .offres-sortie:focus-visible .offres-sortie__fleche { transform: none; }
+
+  /* Un prix : le titre le dit, le paragraphe l'explique. */
+  .offres-prix {
+    align-items: baseline;
+    row-gap: var(--spacing-lie);
+  }
+
+  .offres-prix h3 {
+    max-width: 18ch;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-title-lg);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .offres-prix p {
+    max-width: 62ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
+  }
+
+  .offres-suivi {
+    display: grid;
+    gap: var(--spacing-groupe);
+  }
+
+  /* La note colle à la grille qu'elle précise. */
+  .offres-note {
+    max-width: 65ch;
+    margin: calc(var(--spacing-lie) - var(--spacing-groupe)) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .offres-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-colle);
+  }
+
+  .offres-porte p {
+    max-width: 48ch;
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 900px) {
+    .offres-grille {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .offres-prix p {
+      grid-column: 2 / -1;
+    }
+
+    /* La liste des abonnements se cale sur la grille de l'île : sa première
+       colonne prend la largeur d'une des trois, pour que ses phrases partent
+       de la même verticale que les textes au-dessus et au-dessous d'elle. Le
+       prix reste à droite, à sa largeur. */
+    .offres-suivi :global(.formules) {
+      grid-template-columns: calc((100% - 2 * var(--spacing-gouttiere)) / 3) minmax(0, 1fr) auto;
+    }
   }
 </style>

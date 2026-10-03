@@ -1,4 +1,9 @@
 ---
+/*
+ * Stack — les quatre outils de la page, une ligne d'usage chacun, en blocs de
+ * texte sur deux colonnes. Dernière section avant l'île claire des offres :
+ * elle ne trace donc pas de filet à son pied.
+ */
 import SectionHeader from './SectionHeader.astro';
 
 const tools = [
@@ -9,24 +14,26 @@ const tools = [
 ];
 ---
 
-<section id="stack" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-t border-[var(--color-divider)]">
-  <div class="max-w-[1200px] mx-auto">
+<section id="stack" data-section class="relative px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
+  <div class="mx-auto max-w-[1200px]">
     <SectionHeader
-      title="Des outils choisis pour <mark>votre usage.</mark>"
+      title="Des outils choisis pour votre usage."
       body="Vos logiciels, vos données et les personnes qui les utilisent guident le choix technique."
       titleMaxWidth="24ch"
     />
-    {/* Quatre entrées sœurs : la liste entre en cascade, dans l'ordre de
-        lecture. C'était le seul contenu de la page sans aucune entrée. */}
-    <dl class="reveal-stagger m-0 grid grid-cols-1 md:grid-cols-2 gap-x-12">
+
+    {/* Quatre entrées sœurs : elles entrent en cascade, dans l'ordre de lecture. */}
+    <div class="reveal-stagger grid grid-cols-1 gap-x-[var(--spacing-gouttiere)] gap-y-[var(--spacing-groupe)] md:grid-cols-2">
       {tools.map((tool) => (
-        <div class="reveal py-6 border-t border-[var(--color-divider)]">
-          <dt class="font-semibold text-[length:var(--text-title)] text-[var(--color-ink)]">{tool.name}</dt>
-          <dd class="m-0 mt-3 max-w-[55ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">{tool.use}</dd>
+        <div class="reveal">
+          <h3 class="m-0">{tool.name}</h3>
+          <p class="m-0 mt-[var(--spacing-colle)] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">{tool.use}</p>
         </div>
       ))}
-    </dl>
-    <p class="m-0 mt-7 max-w-[70ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-ink-mid)]">
+    </div>
+
+    {/* Une note, pas un cinquième outil : elle se détache de la grille. */}
+    <p class="reveal m-0 mt-[var(--spacing-bloc)] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">
       Pour développer une interface ou une intégration sur mesure, je m’aide aussi
       de Claude Code et Codex. Je relis le code et teste son fonctionnement avant livraison.
     </p>

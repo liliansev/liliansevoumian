@@ -1,75 +1,165 @@
 ---
-import type { MaintenanceOffer } from '../data/maintenance';
+/*
+ * SubscriptionGrid — une liste de prix : une formule par ligne.
+ *
+ * Le nom est hérité : c'était une grille de cartes dans un cadre, pour les
+ * seuls abonnements. C'est aujourd'hui la façon d'écrire un tarif, pour une
+ * création comme pour un suivi : le nom de la formule à gauche, ce qu'elle est
+ * et ce qu'elle comprend au milieu, le prix à droite. Ni cadre, ni fond, ni
+ * filet : l'espace sépare les lignes. Les trois colonnes sont celles de toute
+ * la liste, pour que les prix tombent les uns sous les autres.
+ *
+ * Aucune couleur propre à un fond : la liste ne lit que des jetons de rôle.
+ * Elle se pose donc telle quelle sur la nuit comme dans un panneau clair
+ * `.bloc-encre`, qui remappe ces jetons.
+ *
+ * Sur téléphone, le prix vient juste sous le nom : c'est lui qu'on vient
+ * vérifier.
+ */
+interface Formule {
+  name: string;
+  schemaPrice: number;
+  /** Le prix est un plancher : il s'affiche précédé de « dès ». */
+  minimum?: boolean;
+  /** À quoi sert la formule, sous son nom. */
+  useCase?: string;
+  promise: string;
+  includes: readonly string[];
+}
 
 interface Props {
-  offers: readonly MaintenanceOffer[];
+  offers: readonly Formule[];
   label: string;
+  /** Ce qui suit le montant : « HT / mois » pour un suivi, « HT » pour une création. */
+  unite?: string;
 }
-const { offers, label } = Astro.props;
+
+const { offers, label, unite = 'HT / mois' } = Astro.props;
+const montant = (valeur: number) => `${valeur.toLocaleString('fr-FR')} €`;
 ---
 
-<div class:list={['subscription-grid', { 'subscription-grid--three': offers.length === 3 }]} role="group" aria-label={label}>
+<div class="formules" role="group" aria-label={label}>
   {offers.map((offer) => (
-    <article class="subscription-plan">
-      <h3>{offer.name}</h3>
-      <p class="subscription-plan__price">
-        <span>{offer.minimum ? 'Dès ' : ''}{offer.schemaPrice} €</span>
-        <span class="subscription-plan__period">HT / mois</span>
+    <article class="formule">
+      <div class="formule__nom">
+        <h3>{offer.name}</h3>
+        {offer.useCase && <p>{offer.useCase}</p>}
+      </div>
+      <p class="formule__prix">
+        {offer.minimum && <span class="formule__note">dès</span>}
+        <span class="formule__montant">{montant(offer.schemaPrice)}</span>
+        <span class="formule__note">{unite}</span>
       </p>
-      <p class="subscription-plan__description">{offer.promise}</p>
-      <ul>{offer.includes.map((item) => <li>{item}</li>)}</ul>
+      <div class="formule__texte">
+        <p>{offer.promise}</p>
+        <ul>{offer.includes.map((item) => <li>{item}</li>)}</ul>
+      </div>
     </article>
   ))}
 </div>
 
 <style>
-  /* UN cadre arrondi pour toute la grille, et des filets droits à l'intérieur.
-     Les deux traits forts qui la bordaient en haut et en bas en faisaient un
-     tableau ouvert, à angle droit, posé dans un panneau arrondi. Fermée, elle
-     devient un objet : les formules se comparent toujours colonne à colonne,
-     mais ce qui se voit d'abord est une forme, pas une trame.
-     Le rayon est celui d'une grande carte, donc plus petit que celui du
-     panneau qui la porte sur /sites-web-abonnement. `overflow: hidden` parce
-     que les filets internes courent jusqu'au bord et doivent s'arrêter à
-     l'arrondi. Aucune valeur propre à un fond : le cadre lit les jetons de
-     rôle, il suit donc le panneau clair comme la bande nuit de
-     /automatisations-ia. */
-  .subscription-grid {
+  .formules {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    overflow: hidden;
-    border: 1px solid var(--color-divider);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface-high);
+    row-gap: var(--spacing-bloc);
   }
-  .subscription-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .subscription-plan {
+
+  .formule {
     display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 4;
-    gap: 1.5rem;
+    row-gap: 0.75rem;
     min-width: 0;
-    padding: var(--spacing-service-card);
   }
-  /* Un filet de séparation reste droit : on n'arrondit pas un trait. */
-  .subscription-plan + .subscription-plan { border-left: 1px solid var(--color-divider); }
-  .subscription-plan h3 {
+
+  .formule__nom h3 {
     margin: 0;
-    font-size: var(--text-title);
-    font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    color: var(--color-ink);
   }
-  .subscription-plan__price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.6rem; margin: 0; color: var(--color-ink); font-size: var(--text-headline); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
-  .subscription-plan__price > span:first-child { white-space: nowrap; }
-  .subscription-plan__period { font-size: var(--text-body-sm); font-weight: 400; }
-  .subscription-plan__description { margin: 0; color: var(--color-ink-mid); font-size: var(--text-body); line-height: 1.6; }
-  .subscription-plan ul { margin: 0; padding: 1.5rem 0 0; list-style: none; border-top: 1px solid var(--color-divider); color: var(--color-ink-mid); font-size: var(--text-body); line-height: 1.6; }
-  .subscription-plan li + li { margin-top: 0.5rem; }
-  @media (max-width: 899px) {
-    .subscription-grid { grid-template-columns: 1fr; }
-    .subscription-plan { grid-template-rows: auto; grid-row: auto; }
-    .subscription-plan + .subscription-plan { border-left: 0; border-top: 1px solid var(--color-divider); }
+
+  .formule__nom p {
+    margin: var(--spacing-colle) 0 0;
+    max-width: 32ch;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  /* Le montant en grand, ce qui le précise en petit, sur une même ligne de
+     base. Un prix ne se coupe pas. */
+  .formule__prix {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.4em;
+    max-width: none;
+    margin: 0;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  .formule__montant {
+    font-size: var(--text-title-lg);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .formule__note {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+  }
+
+  .formule__texte p {
+    margin: 0;
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
+  }
+
+  /* Ce que la formule comprend : une ligne qui se lit à la suite, pas une
+     liste à puces. Le point médian suit chaque terme, pour ne jamais ouvrir
+     une ligne. */
+  .formule__texte ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.5em;
+    margin: var(--spacing-colle) 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .formule__texte li {
+    max-width: none;
+  }
+
+  .formule__texte li:not(:last-child)::after {
+    content: '·';
+    margin-left: 0.5em;
+  }
+
+  @media (min-width: 900px) {
+    .formules {
+      grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 1.3fr) auto;
+      column-gap: var(--spacing-gouttiere);
+      row-gap: var(--spacing-groupe);
+    }
+
+    /* Le nom, la phrase et le prix d'une formule partent de la même ligne de
+       base. */
+    .formule {
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      align-items: baseline;
+    }
+
+    .formule__texte {
+      order: 2;
+    }
+
+    .formule__prix {
+      order: 3;
+      justify-content: flex-end;
+    }
   }
 </style>

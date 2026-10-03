@@ -1,0 +1,84 @@
+---
+/*
+ * tete-de-page — l'en-tête d'une page intérieure : le fil de retour, le titre,
+ * le chapô, et au besoin le bouton et une ligne de preuves.
+ *
+ * Chaque page intérieure écrivait le sien, avec ses marges, sa taille de titre
+ * et son sur-titre en capitales. Il n'y en a plus qu'un. Pas de sur-titre : le
+ * titre porte seul.
+ *
+ * `.entree` : les éléments montent l'un après l'autre au chargement, et le
+ * surlignage du titre se trace une fois le titre arrivé. Ce sont des
+ * `@keyframes`, pas un voile levé par script : le h1 n'attend aucun module.
+ */
+import BoutonReservation from './BoutonReservation.astro';
+import Retour from './retour.astro';
+
+interface Props {
+  /** Le h1, en HTML : un fragment court peut y être surligné par `mark`. */
+  titre: string;
+  /** Largeur du titre, en `ch`. */
+  titreLargeur?: string;
+  /** Le chapô, en HTML (un lien `lien-prose` y est permis). */
+  chapo?: string;
+  /** Où mène le fil de retour. Sans cette prop : l'accueil. */
+  retour?: { href: string; libelle: string };
+  /** Pose le bouton sous le chapô ; la valeur est sa source dans les statistiques. */
+  bouton?: string;
+  /** Une ligne sous le bouton : ce qui se vérifie. */
+  preuves?: string;
+}
+
+const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves } = Astro.props;
+---
+
+<section data-section class="tete relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)]">
+  <div class="entree relative mx-auto max-w-[1200px]">
+    {retour ? <Retour href={retour.href}>{retour.libelle}</Retour> : <Retour />}
+    <h1 class="tete__titre" style={`max-width: ${titreLargeur};`} set:html={titre} />
+    {chapo && <p class="tete__chapo" set:html={chapo} />}
+    {bouton && (
+      <div class="tete__action">
+        <BoutonReservation source={bouton} />
+      </div>
+    )}
+    {preuves && <p class="tete__preuves">{preuves}</p>}
+  </div>
+</section>
+
+<style>
+  /* Sous la barre fixe, puis l'écart d'une section. */
+  .tete {
+    padding-block: calc(var(--spacing-barre) + var(--spacing-bloc)) var(--spacing-section-y);
+  }
+
+  .tete__titre {
+    margin: var(--spacing-groupe) 0 0;
+    color: var(--color-ink);
+    font-size: var(--text-display);
+    text-wrap: balance;
+  }
+
+  /* 46ch : dans Geist, un `ch` vaut un caractère et demi de prose, soit une
+     ligne d'environ 70 caractères. */
+  .tete__chapo {
+    max-width: 46ch;
+    margin: var(--spacing-lie) 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  .tete__action {
+    margin-top: var(--spacing-groupe);
+  }
+
+  .tete__preuves {
+    max-width: 46ch;
+    margin: var(--spacing-lie) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+</style>

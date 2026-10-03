@@ -21,8 +21,10 @@
  * 2 octobre 2026 à sa première version : un sous-titre « je vous réponds
  * moi-même », trois points de frappe, puis « Merci, c'est clair. » quel que
  * soit le texte ; un visiteur pouvait fermer en croyant avoir écrit à Lilian,
- * alors que rien n'était parti. Ici : pas de frappe simulée, et chaque réponse
- * dit où en est le message (« pas encore parti », « il reste à l'envoyer »).
+ * alors que rien n'était parti. Ici, chaque réponse dit où en est le message
+ * (« pas encore parti », « il reste à l'envoyer »). Les trois points de frappe
+ * sont revenus le 3 octobre 2026, à la demande de Lilian : ils précèdent
+ * chaque réponse, le temps de la lire arriver, sans rien promettre.
  *
  *   1. le visiteur écrit son besoin dans la barre ;
  *   2. la barre s'ouvre en fenêtre : « Votre message n'est pas encore parti :
@@ -144,7 +146,7 @@ const exemples = [
       d'astro-icon serait inerte, et les autres icônes de la page qui s'y
       réfèrent ne se dessineraient plus. */}
   <template data-causerie-appel>
-    <BoutonReservation source="home_causerie" class="causerie__option" data-cal-note-from="#causerie-note">
+    <BoutonReservation source="home_causerie" class="causerie__option" direct data-cal-note-from="#causerie-note">
       <Icon name="lucide:clock" size={16} aria-hidden="true" is:inline /> Réserver un appel · {DUREE_RESERVATION_MINUTES}&nbsp;min
     </BoutonReservation>
   </template>
@@ -217,7 +219,7 @@ const exemples = [
   }
 
   /* Le champ a le focus : le cadre entier le dit, comme l'invite de fin de
-     page (`home-offers`), par une bordure pêche et un halo de 3 px. Un pixel
+     page (`fin-de-page`), par une bordure pêche et un halo de 3 px. Un pixel
      de bordure seul ne se voyait pas. Le halo s'ajoute aux ombres du cadre. Il
      suit le champ, pas les boutons : un champ focalisé garde son repère même
      au doigt (voir FOCUS dans `global.css`), un bouton touché n'en reçoit pas. */
@@ -975,10 +977,10 @@ const exemples = [
     /* ── Ouvrir, réduire ── */
     /* Un seul champ à la fois. La barre s'efface devant le champ de fin de
        page ; à l'inverse, conversation ouverte, c'est ce champ qui se met en
-       retrait (inerte, atténué par `home-offers`). Sur téléphone la fenêtre
+       retrait (inerte, atténué par `fin-de-page`). Sur téléphone la fenêtre
        s'ouvre juste sous lui : resté actif, il invitait à y écrire, et le
        toucher refermait la conversation. */
-    const champDeFin = document.querySelector<HTMLElement>('#offres [data-invite]');
+    const champDeFin = document.querySelector<HTMLElement>('[data-invite]');
 
     const ouvrir = () => {
       allerA('coin');

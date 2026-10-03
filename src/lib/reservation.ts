@@ -19,33 +19,10 @@ export const URL_RESERVATION = 'https://cal.com/lilian-sevoumian/20min';
 /** Durée de l'événement Cal.com ; son URL historique reste inchangée. */
 export const DUREE_RESERVATION_MINUTES = 45;
 
-/** Une seule action de contact en fin de page, commune aux deux expertises. */
-export const LIBELLE_CONTACT_RESERVATION = `Choisir un créneau · ${DUREE_RESERVATION_MINUTES}\u00a0min`;
-
 /**
- * Libellé par défaut d'un bouton de réservation.
- *
- * IL NOMME CE QUE LE LECTEUR VEUT, PAS CE QU'IL SUBIT. Il a porté « Réserver
- * mon diagnostic · 20 min », et ce libellé demandait deux efforts avant de
- * promettre quoi que ce soit : réserver (un créneau à bloquer) et diagnostic
- * (un examen, dont on ne ressort par définition pas indemne). L'objet du clic
- * était la procédure ; le résultat, lui, n'était écrit nulle part sur le
- * bouton. Il l'est maintenant ; la durée affichée vient de la constante ci-dessus.
- *
- * La durée est descendue dans la copy qui borde les boutons, où elle rassure
- * au lieu de tenir la moitié d'un libellé.
- *
- * LA LONGUEUR EST UNE CONTRAINTE, pas un détail de rédaction : `.btn-primary`
- * rend son libellé en capitales, et global.css cale la courbe de --text-button
- * pour qu'il tienne sur une ligne jusqu'à 320 px de large. Mesuré dans Geist à
- * 14 px avec l'interlettrage du bouton, « AUTOMATISER MON BUSINESS » réclame
- * 216 px, contre 266 px pour l'ancien libellé le plus long : la marge s'est
- * agrandie de 50 px, elle ne s'est pas réduite. Le libellé plus long qui avait
- * été envisagé — « Automatiser une partie de mon business », 326 px — repassait
- * le bouton sur deux lignes dès 375 px de fenêtre.
- *
- * Un seul emplacement a demandé un réglage : le CTA central de la barre de nav,
- * plus étroit que n'importe quel bouton. Il est traité dans global.css, au
- * niveau de `.nav-mid-cta`.
+ * Le libellé du bouton d'appel, le même sur tout le site depuis le 3 octobre
+ * 2026 : il ouvre la conversation, où l'on choisit WhatsApp, l'e-mail ou un
+ * appel. Il a porté « Choisir un créneau · 45 min » tant que le bouton ouvrait
+ * l'agenda ; la durée se lit maintenant dans la conversation.
  */
-export const LIBELLE_RESERVATION = LIBELLE_CONTACT_RESERVATION;
+export const LIBELLE_CONTACT_RESERVATION = 'Parlons de votre projet';

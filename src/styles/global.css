@@ -58,11 +58,6 @@
      84 px). Vérifié : 3 lignes à 1440 px comme avant, aucun débordement. */
   --text-display-hero: clamp(3.25rem, 6vw + 1.2rem, 6.25rem);
   --spacing-home-hero-y: clamp(3rem, 5vw, 5rem);
-  --spacing-service-card: clamp(1.25rem, 3vw, 2.5rem);
-  /* Le hero de l'offre web garde le plafond du manifeste tout en descendant à
-     48 px sur iPhone : son fragment surligné reste ainsi dans la colonne sans
-     rogner le dernier glyphe. La courbe vit ici, avec les autres rangs. */
-  --text-sites-hero: clamp(2.5rem, 7.5vw, 5.5rem);
   --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
   /* La phrase d'un métier et la citation : un rang sous le titre de section.
      Elles prenaient --text-headline, donc exactement la taille du h2 qui les
@@ -114,29 +109,6 @@
   --text-body: 1rem;
   --text-body-sm: 0.875rem;
   --text-mono-label: 0.75rem;
-  /* Le libellé du bouton primaire, et lui seul.
-     Il valait --text-mono-label, soit 12 px : l'action la plus importante de la
-     page portait exactement la taille des liens secondaires, de « COPIER LE
-     LIEN DE CE CALCUL » et du deuxième plus petit rang du système. Sa hiérarchie
-     ne tenait plus que par l'aplat noir.
-     Pourquoi une courbe et non 0,875rem sec, alors que tout le bas de l'échelle
-     est fixe : « RÉSERVER MON DIAGNOSTIC · 20 MIN » était le libellé le plus
-     long du site, et à 14 px il réclamait 298 px. Mesuré à 320 px sur la home,
-     il n'en avait que 261, et quatre des six boutons passaient de 44 à 65 px de
-     haut. Le libellé actuel, « AUTOMATISER MON BUSINESS », mesure 216 px dans
-     la même police à 14 px, soit 50 px de moins : la courbe garde donc de la
-     marge partout où elle en avait juste assez. Elle reste calée sur l'ancien
-     cas, plus serré — c'est le seul réglage qui ne redevient pas faux si un
-     libellé plus long revient un jour.
-     La pente est calée par le cas le plus serré du site, qui n'est pas celui-là :
-     le CTA de /principes vit dans un encart à 32 px de padding, et sa
-     colonne reste sous 300 px jusqu'à 480 px de fenêtre. Mesuré palier par
-     palier, 3,6vw le faisait déborder de 400 à 479 px là où il tenait avant ;
-     3,1vw reproduit exactement le comportement d'avant sur toutes les largeurs.
-     Plancher 12 px sous 387 px, plafond 14 px au-dessus de 452, une seule pente
-     monotone entre les deux. Vérifié de 320 à 1920 px sur les neuf pages : aucun
-     bouton ne déborde, aucun ne change de hauteur par rapport à l'état d'avant. */
-  --text-button: clamp(0.75rem, 3.1vw, 0.875rem);
   /* --text-mono-body a été retiré. Le rang de 13 px avait déjà quitté
      l'échelle rendue (il était à 1,08 de --text-body-sm et à 1,08 de
      --text-mono-label : trois rangs pour deux pixels, indiscernables), et le
@@ -198,14 +170,6 @@
      de la home s'animent dessus, contre 6 sur --duration-mount. La valeur la
      plus vue du système était la seule à ne pas être un jeton. */
   --duration-reveal: 380ms;
-  /* La descente de la FAQ. Deux valeurs qui doivent rester ÉGALES entre elles à
-     deux endroits chacune : la durée de transition de la question et celle de
-     l'animation `faq-surligne` qui la balaie (sinon la bande sort du cadre avant
-     ou après que la carte ait fini d'arriver), et le pas de `--rang` répété sur
-     la transition et sur l'`animation-delay`. Quatre littéraux couplés deux à
-     deux, qu'aucun outil ne signalait en cas de dérive. */
-  --duration-faq-balayage: 900ms;
-  --duration-faq-pas: 160ms;
   /* Le coup de surligneur qui se trace, et l'entrée du hero : deux entrées
      d'auteur, jouées une fois, jamais un retour d'interaction. */
   --duration-trace: 700ms;
@@ -222,25 +186,28 @@
   --radius-lg: clamp(1rem, 0.6rem + 1.2vw, 1.5rem);
   --radius-xl: clamp(1.25rem, 0.6rem + 2vw, 2rem);
   --radius-cta: 9999px;
-  /* La bande du surligneur : proportionnelle au corps du mot qu'elle porte. */
-  --radius-bande: 0.14em;
+  /* Le surlignage est une pastille, droite et ronde, sur tout le site. */
+  --radius-bande: 9999px;
   --radius-diagram: 16px;
   --radius-full: 9999px;
 
   /* ── Surfaces ──
-     Le fond général est le bleu nuit. Une surface monte en s'éclaircissant :
-     bande de section, puis carte ou média, puis surface haute. `night` et
+     Le fond général est la nuit profonde. Une surface monte en
+     s'éclaircissant, et seulement pour un panneau arrondi : fenêtre ou média,
+     puis surface haute. `night` et
      `night-deep` sont des valeurs FIXES, qu'aucun bloc ne remappe : ce sont
      elles qu'un composant lit quand il veut la nuit quel que soit son parent
      (libellé d'un CTA pêche, pied de page, panneau toujours sombre). */
-  --color-paper: #111827;
+  /* Le fond de tout le site est la nuit profonde, celle de l'accueil, depuis le
+     3 octobre 2026 (il valait #111827, resté la couleur du texte posé sur la
+     pêche : `--color-night`). */
+  --color-paper: #0c121f;
   --color-surface-low: #1a2439;
   --color-night: #111827;
   --color-night-soft: #263449;
   --color-night-deep: #0c121f;
   --color-service-border: #2f3b52;
   --color-surface-high: #1f2a42;
-  --color-section-band: #161f32;
 
   /* ── Encres, teintées vers la nuit plutôt que grises. Sur le fond général :
      10,67:1 pour le texte secondaire, 7,75:1 pour les légendes. `ink-faint`
@@ -251,7 +218,7 @@
   --color-ink-faint: #7c8799;
 
   /* ── Filets ── */
-  --color-divider: #2a3548;
+  --color-divider: rgb(255 255 255 / 0.09);
   --color-grid-line: #1d2739;
   --color-grid-line-active: #3d4a62;
   /* 5,57:1 sur la nuit, donc au-dessus des 3:1 exigés pour un contour de
@@ -316,7 +283,7 @@
      les lisent encore (MockupWindow, WorkflowCanvas deux fois, CaseStudy) :
      les retirer y ferait échouer `box-shadow: var(--shadow-card)` en silence.
      Ce qui a été retiré, ce sont les déclarations inertes qui les peignaient
-     dans ce fichier — voir la section CARDS. */
+     dans ce fichier. */
   --shadow-card: 0 0 0 0 transparent;
   --shadow-card-hover: 0 0 0 0 transparent;
 }
@@ -343,18 +310,14 @@
    SECTION SURFACES — bandes teintées pour le rythme vertical
    ========================================================================= */
 
-/* Applique le fond de bande "gris sobre" (Calculateur ROI, Offres).
-   Réutilisable : ajouter cette classe à la racine d'une <section> suffit. */
-.section-band {
-  background-color: var(--color-section-band);
-}
-
 /* =========================================================================
    BASE
    ========================================================================= */
 
 html {
   scroll-behavior: smooth;
+  /* Une ancre s'arrête sous la barre, quelle que soit la section visée. */
+  scroll-padding-top: var(--spacing-barre);
   background: var(--color-paper);
   overflow-x: hidden;
   transition: background-color var(--duration-default) var(--ease-out-quint);
@@ -372,7 +335,10 @@ body {
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: 1.55;
-  letter-spacing: -0.005em;
+  /* Pas de resserrement : hérité en longueur absolue, il serrait davantage les
+     petits corps que le texte courant, l'inverse de ce qu'un texte clair sur
+     fond sombre demande. */
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -565,16 +531,60 @@ body {
 }
 
 /* =========================================================================
+   LA TENUE COMMUNE — les règles nées sur l'accueil, étendues à tout le site
+   le 3 octobre 2026. `:root` donne à ces sélecteurs le poids d'une classe :
+   ils l'emportent sur les utilitaires posés dans le balisage (`font-semibold`,
+   `leading-[1.05]`), sans qu'il faille toucher chaque titre.
+   ========================================================================= */
+
+/* Une graisse moyenne : c'est la taille qui parle. */
+:root :is(h1, h2, h3, h4) {
+  font-weight: 500;
+}
+
+:root :is(h1, h2) {
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+/* Ce que la tenue commune interdit, et qu'aucune règle ne peut retirer du
+   balisage à la place de celui qui l'écrit :
+     — un libellé en capitales, qu'il vienne d'une classe ou qu'il soit tapé
+       tel quel dans le texte ;
+     — un sur-titre au-dessus d'un titre, un numéro de section (« 01 / 05 ») ;
+     — une bande de fond bord à bord : toute la page est sur la nuit profonde,
+       une surface ne monte (`--color-surface-low`) que pour un panneau arrondi ;
+     — un surlignage penché : `mark` est une pastille droite ;
+     — une section de contact propre à la page (`fin-de-page`), un accordéon de
+       questions (`questions`), un lien de retour écrit à la main (`retour`). */
+
+/* Téléphone : 56 px entre deux sections au lieu de 80, 40 autour d'un bloc. */
+@media (max-width: 640px) {
+  :root {
+    --spacing-section-y: 3.5rem;
+    --spacing-bloc: 2.5rem;
+  }
+}
+
+/* La barre d'écriture se tient en bas à droite : le pied de page lui laisse
+   sa place, pour que ses derniers liens ne restent pas dessous. */
+html:has(.causerie) footer {
+  padding-bottom: 5.5rem;
+}
+
+/* =========================================================================
    MONO TEXT UTILITIES
    ========================================================================= */
 
+/* Bas de casse et sans approche, sur tout le site : les capitales espacées
+   appartenaient à l'ancienne tenue. Les noms de classes sont restés. */
 .mono-label {
   font-family: var(--font-mono);
   font-size: var(--text-mono-label);
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* `.mono-body` a été retirée : aucun élément du markup ne la portait. Le jeton
@@ -582,120 +592,11 @@ body {
 
 .mono-caption {
   font-family: var(--font-mono);
-  font-size: var(--text-mono-caption);
+  font-size: var(--text-mono-label);
   font-weight: 500;
   line-height: 1.4;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* =========================================================================
-   STRUCTURAL FRAME — signature element (refonte "Vercel", juin 2026)
-   La grille ne passe plus DERRIÈRE le contenu (papier millimétré) : elle se
-   réduit à deux filets verticaux 1px qui encadrent la colonne de contenu, dans
-   les gouttières. Le contenu flotte sur le papier nu ; la structure vit au bord.
-   La largeur de colonne réplique celle des sections (max-w 1200px + padding).
-   ========================================================================= */
-
-.technical-grid {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  /* Largeur de la colonne de contenu (réplique des sections) et largeur de
-     gouttière qui en découle. Le quadrillage ne vit QUE dans la gouttière. */
-  --content-w: min(1200px, 100% - 2 * var(--spacing-section-x));
-  --gutter-w: calc((100% - var(--content-w)) / 2);
-}
-
-/* Gouttières gauche/droite : vrai quadrillage 96px, mais fondu en patch radial
-   pour qu'il émerge du bord de l'écran et se dissipe avant de toucher le contenu
-   — texture organique, non linéaire. Les deux patchs sont décalés en hauteur
-   (35% à gauche, 65% à droite) pour casser la symétrie. */
-.technical-grid::before,
-.technical-grid::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: var(--gutter-w);
-  background-image:
-    linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
-  background-size: var(--spacing-grid-cell) var(--spacing-grid-cell);
-}
-
-/* Plusieurs patchs radiaux à hauteurs irrégulières : la grille « fleurit » à
-   certains endroits et s'efface entre. Ancrés au bord extérieur (0%/100%) → ils
-   se dissipent vers le contenu. Positions en px pour des patchs discrets (pas
-   un seul grand dégradé). Gauche et droite décalés pour casser la symétrie. */
-/* Les deux derniers patchs de chaque gouttière sont ancrés au BAS de la page
-   (calc(100% - …)) : la signature couvre FAQ/Contact/Footer quelle que soit la
-   hauteur totale, et suivra les futurs ajouts de sections sans retouche. */
-.technical-grid::before {
-  left: 0;
-  -webkit-mask-image:
-    radial-gradient(460px 320px at 0% 240px,  black 0%, transparent 72%),
-    radial-gradient(420px 300px at 0% 1640px, black 0%, transparent 72%),
-    radial-gradient(480px 340px at 0% 3160px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% 4600px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%),
-    radial-gradient(460px 330px at 0% 7600px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% calc(100% - 480px), black 0%, transparent 72%);
-  mask-image:
-    radial-gradient(460px 320px at 0% 240px,  black 0%, transparent 72%),
-    radial-gradient(420px 300px at 0% 1640px, black 0%, transparent 72%),
-    radial-gradient(480px 340px at 0% 3160px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% 4600px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% 6100px, black 0%, transparent 72%),
-    radial-gradient(460px 330px at 0% 7600px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 0% calc(100% - 480px), black 0%, transparent 72%);
-}
-
-.technical-grid::after {
-  right: 0;
-  -webkit-mask-image:
-    radial-gradient(440px 300px at 100% 820px,  black 0%, transparent 72%),
-    radial-gradient(460px 340px at 100% 2360px, black 0%, transparent 72%),
-    radial-gradient(420px 300px at 100% 3880px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 100% 5320px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%),
-    radial-gradient(420px 310px at 100% 8300px, black 0%, transparent 72%),
-    radial-gradient(460px 340px at 100% calc(100% - 1200px), black 0%, transparent 72%);
-  mask-image:
-    radial-gradient(440px 300px at 100% 820px,  black 0%, transparent 72%),
-    radial-gradient(460px 340px at 100% 2360px, black 0%, transparent 72%),
-    radial-gradient(420px 300px at 100% 3880px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 100% 5320px, black 0%, transparent 72%),
-    radial-gradient(440px 320px at 100% 6800px, black 0%, transparent 72%),
-    radial-gradient(420px 310px at 100% 8300px, black 0%, transparent 72%),
-    radial-gradient(460px 340px at 100% calc(100% - 1200px), black 0%, transparent 72%);
-}
-
-/* Sous 1024 px : pas de quadrillage, papier nu.
-
-   Le seuil était à 640 px, et DESIGN.md déclarait 1024 depuis le début — le
-   document et le code disaient deux choses différentes. Mesuré sur la page
-   vivante, la gouttière rendue vaut 32 px à 641 px de large, 38 à 768, 45 à 900
-   et 51 à 1023, pour une maille de 96 : dans toute cette bande il ne reste pas
-   une cellule entière, donc pas de quadrillage — un filet vertical collé au
-   bord de l'écran, et des tirets horizontaux de 32 à 51 px de long tous les
-   96 px. Ce n'est pas une grille atténuée, c'est un reste de grille, et il se
-   lit comme de la salissure au bord du papier.
-
-   1024 et non une valeur choisie pour l'occasion : c'est le SEUL seuil desktop
-   du site — le `lg:` de Tailwind, celui où la navigation passe du burger au
-   wordmark, celui du `scrollbar-gutter: stable` plus haut dans ce fichier. La
-   signature de structure apparaît là où la mise en page desktop apparaît, pas
-   quatre cents pixels avant.
-
-   Gain de côté : sous 1024 px, deux calques de la hauteur du document, masqués
-   par sept dégradés radiaux chacun, cessent d'être composés — sur les appareils
-   où le budget de rendu est le plus serré. */
-@media (max-width: 1023px) {
-  .technical-grid::before,
-  .technical-grid::after { display: none; }
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* =========================================================================
@@ -725,17 +626,14 @@ body {
   background: var(--color-peche);
   color: var(--color-night);
   font-family: var(--font-mono);
-  /* Un cran au-dessus des liens secondaires, et c'est le seul rang du système
-     qui sépare l'action primaire du reste. À 12 px, le bouton portait la taille
-     exacte de `.link-cta`, de `.nav-link` et de « COPIER LE LIEN DE CE CALCUL » :
-     la chose la plus importante de la page ne se distinguait plus que par son
-     fond noir. Le jeton monte à 14 px dès 389 px de large et retombe à 12 px
-     sur les écrans de 320, seule largeur où le libellé le plus long ne tient
-     pas sur une ligne. */
-  font-size: var(--text-button);
+  /* Bas de casse, 14 px, graisse 500, sans approche : le réglage de l'accueil,
+     étendu à tout le site le 3 octobre 2026. Le bouton se distingue par son
+     aplat de pêche, pas par ses capitales. */
+  font-size: var(--text-body-sm);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
   padding: 11px 22px;
   border: none;
   border-radius: var(--radius-cta);
@@ -832,10 +730,10 @@ body {
   min-height: 44px;
   width: fit-content;
   font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
+  font-size: var(--text-body-sm);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--color-ink);
   cursor: pointer;
 }
@@ -854,24 +752,27 @@ body {
 .link-cta__label {
   position: relative;
   isolation: isolate;
-  padding: 0.02em 0.2em;
+  margin-left: -0.5em;
+  padding: 0.14em 0.5em 0.18em;
   transition: color var(--duration-default) var(--ease-out-quint);
 }
 
+/* La même pastille que dans les titres, droite et ronde, qui se déroule de
+   gauche à droite. */
 .link-cta__label::before {
   content: '';
   position: absolute;
-  inset: 0.06em 0 0.1em;
-  background: var(--color-peche);
-  transform: rotate(-1.8deg) scaleX(0);
-  transform-origin: left center;
+  inset: 0;
   z-index: -1;
-  transition: transform var(--duration-default) var(--ease-out-quint);
+  border-radius: 9999px;
+  background: var(--color-peche);
+  clip-path: inset(0 100% 0 0 round 9999px);
+  transition: clip-path var(--duration-default) var(--ease-out-quint);
 }
 
 .link-cta:hover .link-cta__label::before,
 .link-cta:focus-visible .link-cta__label::before {
-  transform: rotate(-1.8deg) scaleX(1);
+  clip-path: inset(0 0 0 0 round 9999px);
 }
 
 /* Le libellé est blanc sur la nuit, et le blanc ne tient que 1,74:1 sur la
@@ -904,7 +805,7 @@ body {
 }
 
 /* =========================================================================
-   CHIPS — Two-Voice
+   PUCES — un nom d'outil, en bas de casse, dans une gélule au filet fin.
    ========================================================================= */
 
 .chip {
@@ -913,11 +814,9 @@ body {
   gap: 5px;
   background: transparent;
   color: var(--color-ink-mid);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-caption);
+  font-size: var(--text-mono-label);
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   padding: 4px 10px;
   border: 1px solid var(--color-divider);
   border-radius: var(--radius-full);
@@ -937,102 +836,6 @@ body {
   transform: scale(0.98);
   transition-duration: var(--duration-quick);
 }
-
-.chip-accent {
-  background: var(--color-accent-soft);
-  /* Pêche sur accent-soft (#3c3439) : 6,93:1, au-delà de l'AA exigé pour un
-     mono-caption de 11 px. Sur un panneau clair, les deux jetons sont
-     remappés et la chip passe en nuit sur pêche pâle. */
-  color: var(--color-accent-text);
-  border-color: transparent;
-}
-
-/* .chip:hover l'emporte en spécificité (0,2,0 contre 0,1,0) et repeignait le
-   fond en surface-low : survoler une chip de rôle lui faisait perdre sa teinte
-   d'accent. Les chips de rôle ne sont pas cliquables, ce survol n'avait rien à
-   signaler — et il retirait de la couleur à la seule section qui en manquait. */
-.chip-accent:hover {
-  background-color: var(--color-accent-soft);
-  color: var(--color-accent-text);
-  border-color: transparent;
-}
-
-.chip-dashed {
-  border-style: dashed;
-  color: var(--color-ink-low);
-}
-
-/* =========================================================================
-   CARDS — à plat, un filet, et le filet est la seule chose qui bouge.
-
-   Cette section portait une élévation entière qui ne rendait rien. Les deux
-   jetons d'ombre valent `0 0 0 0 transparent` — c'est la position de DESIGN.md,
-   « il n'y en a pas » — et sept déclarations les peignaient quand même, dont
-   trois transitions `box-shadow` et deux états de survol dont c'était le seul
-   contenu. Le coût n'est pas nul : une transition déclarée sur une propriété
-   qui ne change jamais reste une propriété que le navigateur surveille, et
-   surtout un état de survol vide se lit au code comme une intention, si bien
-   que la carte suivante le recopie.
-
-   LES DEUX JETONS RESTENT dans @theme, et c'est vérifié plutôt que supposé :
-   quatre déclarations hors de ce fichier les appellent encore — MockupWindow,
-   WorkflowCanvas (deux fois) et CaseStudy. Les supprimer y rendrait
-   `box-shadow: var(--shadow-card)` invalide à l'exécution, sans erreur ni
-   avertissement. Ce qui part ici, ce sont les déclarations inertes, pas le
-   jeton qu'elles lisaient.
-   ========================================================================= */
-
-.card {
-  position: relative;
-  background: var(--color-paper);
-  border: 1px solid var(--color-divider);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  /* Seul le filet s'anime, parce que seul le filet change — `.card-interactive`
-     ci-dessous le passe à `ink-faint` au survol et au focus. */
-  transition: border-color var(--duration-default) var(--ease-out-quint);
-}
-
-/* `.card-soft` a été retirée en entier : elle ne déclarait qu'une ombre
-   transparente, sa transition, et un survol qui repeignait la même ombre
-   transparente. Zéro pixel rendu, à l'arrêt comme au survol.
-   La transition `border-color` qu'elle portait aussi ne servait rien : vérifié
-   sur ses deux seuls porteurs d'alors, `.stack-card` (StackLayer, supprimé
-   depuis) et `.roi-carte` (ROICalculator), aucun des deux ne changeait sa
-   propre couleur de filet. Le nom a quitté le markup. */
-
-.card-interactive {
-  cursor: pointer;
-  position: relative;
-}
-
-/* Le survol revendique la cellule par son filet, et par lui seul : il passe à
-   l'accent, comme sur les cartes de services de la home. Sur la nuit,
-   `ink-faint` ne se distinguait presque pas du filet de repos. */
-.card-interactive:hover {
-  border-color: var(--color-accent);
-}
-
-/* Clavier : le focus revendique sa cellule comme le hover. */
-.card-interactive:focus-visible {
-  border-color: var(--color-accent);
-}
-
-/* Il y avait ici un bloc `prefers-reduced-motion` qui coupait une animation sur
-   `.card-interactive:hover::after`. Ce pseudo-élément n'existe nulle part :
-   grep sur tout `src/`, `.card-interactive` n'apparaît que dans ce fichier et
-   sur une carte de `/cas-clients`, qui ne déclare aucun `::after`. Le bloc
-   protégeait donc les personnes sensibles au mouvement d'une animation qui
-   n'avait jamais existé — et il donnait à lire, à qui ouvrait ce fichier, une
-   carte animée qu'on chercherait en vain. */
-
-/* =========================================================================
-   CODE BLOCK
-   ========================================================================= */
-
-/* =========================================================================
-   INPUTS
-   ========================================================================= */
 
 /* =========================================================================
    ROI CALCULATOR — range slider mono-style
@@ -1206,83 +1009,10 @@ body {
 [data-hero-stagger] > .reveal:nth-child(4) { transition-delay: 400ms; }
 [data-hero-stagger] > .reveal:nth-child(5) { transition-delay: 540ms; }
 
-/* Grille technique — fade-in subtil au page-load (signature respiration). */
-.js-ready .technical-grid {
-  animation: grid-fade-in 1.2s var(--ease-out-expo) both;
-}
-
-@keyframes grid-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .js-ready .technical-grid {
-    animation: none;
-    opacity: 1;
-  }
-}
-
-/* Grilles de gouttière animées au scroll — une parallaxe de bloc, en sens
-   opposés (gauche vers le bas, droite vers le haut), qui donne la profondeur.
-   Calme à l'arrêt, vivant au scroll. 100 % CSS scroll-driven (zéro JS), absente
-   gracieusement si le navigateur ne connaît pas `animation-timeline`, coupée en
-   reduced-motion.
-
-   IL Y AVAIT UN SECOND MOUVEMENT, ET IL EST RETIRÉ SUR MESURE. Chacun des deux
-   calques portait DEUX animations menées de front : `background-position-y`,
-   qui faisait défiler le quadrillage à l'intérieur des patchs, et `translate3d`,
-   la parallaxe. La seconde est compositable — le compositeur déplace un calque
-   déjà peint, sans repasser par le rendu ; la première ne l'est pas — elle
-   oblige à REPEINDRE puis re-rastériser les deux calques, sur toute la hauteur
-   du document et derrière sept masques radiaux chacun, à chaque image de
-   défilement.
-
-   Mesuré par trace CDP (catégories devtools.timeline) sur un même scroll
-   scripté de 3 000 px à 1440 × 900, médiane de trois passes :
-
-       les deux animations      : 867 Paint · 967 RasterTask
-       grille masquée (témoin)  : 445 Paint ·  88 RasterTask
-       la parallaxe seule       : 445 Paint ·  94 RasterTask
-
-   soit 422 peintures et 879 rastérisations imputables aux seules gouttières —
-   la rastérisation était multipliée par onze — pour un défilé de lignes que le
-   masque efface à 72 % et dont le motif se répète de toute façon tous les
-   96 px. Le mouvement le plus cher de la page était aussi celui qu'on y voit
-   le moins. La parallaxe reste : elle porte l'effet, et elle est GRATUITE — la
-   troisième ligne est celle du témoin à six rastérisations près, les deux
-   calques composés. Rastérisation cumulée : 24,5 ms avant, 8,2 ms après.
-
-   `will-change` retombe du coup sur `transform` seul. Annoncer
-   `background-position` demandait au navigateur de préparer un calque pour une
-   propriété qu'il ne sait pas composer — c'est-à-dire de payer le calque sans
-   jamais en tirer le bénéfice. */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: scroll()) {
-    .technical-grid::before {
-      animation: grid-parallax-down linear both;
-      animation-timeline: scroll(root block);
-      will-change: transform;
-    }
-    .technical-grid::after {
-      animation: grid-parallax-up linear both;
-      animation-timeline: scroll(root block);
-      will-change: transform;
-    }
-  }
-}
-
-@keyframes grid-parallax-down {
-  from { transform: translate3d(0, -48px, 0); }
-  to   { transform: translate3d(0, 48px, 0); }
-}
-@keyframes grid-parallax-up {
-  from { transform: translate3d(0, 48px, 0); }
-  to   { transform: translate3d(0, -48px, 0); }
-}
-
 /* =========================================================================
    NAV — fixed top, no shadow, border-bottom shifts on scroll
+   La même barre sur toutes les pages : fond plein, liens en bas de casse,
+   un seul bouton. Le gabarit est dans `Navigation.astro`.
    ========================================================================= */
 
 .nav-root {
@@ -1291,9 +1021,7 @@ body {
   left: 0;
   right: 0;
   z-index: 50;
-  background: color-mix(in oklch, var(--color-paper) 92%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--color-paper);
   border-bottom: 1px solid var(--color-divider);
   /* En rem, comme --spacing-barre : quand le visiteur agrandit le texte, la
      barre grandit avec lui au lieu de couper ses libellés. */
@@ -1328,15 +1056,15 @@ body {
   position: relative;
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
+  min-height: 44px;
+  font-size: var(--text-body-sm);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--color-ink-mid);
   padding: 8px 12px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   text-decoration: none;
+  transition: color var(--duration-default) var(--ease-out-quint);
 }
 
 .nav-link:hover,
@@ -1344,71 +1072,22 @@ body {
   color: var(--color-ink);
 }
 
-/* Le lien actif se distingue uniquement par le poids, sans filet décoratif. */
+/* Le lien de la section en cours garde un point pêche : avec la pastille de
+   survol, la graisse seule ne suffisait plus à le distinguer. */
 .nav-link.is-active {
   font-weight: 600;
 }
 
-/* CTA central mobile. Ici et non en style scopé dans Navigation.astro : le lien
-   est rendu par BoutonReservation, il ne porte donc pas le `data-astro-cid` de
-   la nav, et un sélecteur scopé ne l'atteindrait plus. */
-.nav-mid-cta {
-  white-space: nowrap;
-  transition: color var(--duration-default) var(--ease-out-quint),
-              opacity var(--duration-default) var(--ease-out-quint),
-              visibility var(--duration-default);
-}
-
-/* LA SEULE ZONE DU SITE OÙ LE LIBELLÉ DE RÉSERVATION EST À L'ÉTROIT, et la
-   seule qui a demandé un réglage quand il a changé. Sur `.btn-primary` le
-   nouveau libellé est 50 px plus court que l'ancien, donc tous les boutons ont
-   gagné de la marge ; ici, la comparaison s'inverse : le CTA central portait
-   « RÉSERVER UN DIAGNOSTIC », 175 px dans Geist à 12 px avec 0,06 em
-   d'interlettrage, contre 196 px pour « AUTOMATISER MON BUSINESS ».
-
-   La cellule qui l'accueille est le `1fr` de la grille de la barre, entre le
-   repère de 28 px (plus 16 px de gouttière et son filet, soit 45 px) et le
-   déclencheur de menu (44 px de cible tactile et son filet, 45 px). À 320 px de
-   fenêtre, gouttières de section déduites, il reste donc 182 px — moins que le
-   libellé, et l'élément est en `nowrap` : il passait sous le déclencheur de
-   menu. L'ancien libellé y tenait à quatre pixels près, ce qui explique que
-   personne ne l'ait vu.
-
-   Deux réglages, tous les deux bornés à ce qui est mesuré :
-   — le chevron et sa gouttière (11 px) sautent sous 384 px, largeur en dessous
-     de laquelle la cellule ne peut plus les payer ;
-   — le corps descend d'un cran, de 12 à 11 px, sur la plage 320-352 px : le
-     libellé y tombe à 180 px et rentre dans les 182 disponibles.
-   Au-dessus de 384 px, rien ne change : 246 px de cellule pour 207 px de
-   libellé et de chevron. */
-@media (max-width: 23.999rem) {
-  .nav-mid-cta {
-    font-size: clamp(0.6875rem, 3.4vw, 0.75rem);
-    gap: 0;
-  }
-  .nav-mid-cta > span[aria-hidden='true'] {
-    display: none;
-  }
-}
-.nav-mid-cta:hover { color: var(--color-accent-text); }
-
-/* Une seule instance de « Réserver » visible à la fois. Deux surfaces peuvent
-   en poser une deuxième dans le même écran, et chacune éteint le CTA central :
-
-   — la MobileCTABar, quand elle remonte en thumb-zone ;
-   — le menu plein écran, qui porte son propre bouton de réservation en bas.
-
-   Le second cas manquait. La barre de nav reste au-dessus du menu (z-50 contre
-   z-49), donc le CTA central et le bouton du menu s'affichaient ensemble, à
-   deux cents pixels l'un de l'autre — exactement le triple-CTA que la première
-   règle avait été écrite pour empêcher.
-
-   `visibility` retire aussi le lien de l'ordre de tabulation : menu ouvert, le
-   piège à focus ne peut pas laisser filer le clavier vers un lien de la barre. */
-body.cta-bar-visible .nav-mid-cta,
-body.menu-ouvert .nav-mid-cta {
-  opacity: 0;
-  visibility: hidden;
+.nav-link.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: var(--radius-full);
+  background: var(--color-peche);
 }
 
 /* Menu natif en top layer : aucune barre fixe de la page ne passe au-dessus.
@@ -1465,14 +1144,30 @@ body.menu-ouvert .nav-mid-cta {
   font-size: var(--text-body-sm);
   cursor: pointer;
 }
+.mobile-menu__marque {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+/* Une liste en grand, une suite plus discrète, et le bouton en bas, sous le
+   pouce. Tout est calé vers le bas : la liste était collée en haut de l'écran,
+   au-dessus de 560 px de vide. Pas de filet entre les liens : c'est la taille
+   qui les sépare. */
 .mobile-menu__content {
+  display: grid;
+  align-content: end;
+  gap: var(--spacing-groupe);
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-block: 1.5rem 2rem;
+  padding-block: 1.5rem;
   -webkit-overflow-scrolling: touch;
 }
-.mobile-menu__offers { display: grid; }
 .mobile-link {
   display: flex;
   align-items: center;
@@ -1480,27 +1175,20 @@ body.menu-ouvert .nav-mid-cta {
   color: var(--color-ink);
   text-decoration: none;
 }
-.mobile-menu__offer {
-  justify-content: space-between;
-  gap: 1rem;
-  padding-block: 1.25rem;
-  border-bottom: 1px solid var(--color-border-strong);
-  font-size: var(--text-title-lg);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-}
-.mobile-menu__offer span { min-width: 0; }
-.mobile-menu__offer svg { flex-shrink: 0; }
-.mobile-menu__links {
+.mobile-menu__links,
+.mobile-menu__suite {
   display: grid;
-  margin-top: 2rem;
 }
 .mobile-menu__link {
-  padding-block: 0.75rem;
-  border-bottom: 1px solid var(--color-divider);
+  padding-block: 0.4rem;
+  font-size: var(--text-title-lg);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.mobile-menu__suite .mobile-link {
+  color: var(--color-ink-mid);
   font-size: var(--text-body-large);
-  line-height: 1.4;
 }
 .mobile-menu__footer {
   padding-block: 1rem max(1rem, env(safe-area-inset-bottom));
@@ -1526,12 +1214,12 @@ body.menu-ouvert .nav-mid-cta {
     animation: menu-lien 560ms var(--ease-out-expo) backwards;
     animation-delay: calc(70ms + var(--rang, 0) * 50ms);
   }
-  .mobile-menu__offers .mobile-link:nth-child(2) { --rang: 1; }
-  .mobile-menu__links .mobile-link:nth-child(1) { --rang: 2; }
-  .mobile-menu__links .mobile-link:nth-child(2) { --rang: 3; }
-  .mobile-menu__links .mobile-link:nth-child(3) { --rang: 4; }
-  .mobile-menu__links .mobile-link:nth-child(4) { --rang: 5; }
-  .mobile-menu__links .mobile-link:nth-child(n + 5) { --rang: 6; }
+  .mobile-menu__links .mobile-link:nth-child(2) { --rang: 1; }
+  .mobile-menu__links .mobile-link:nth-child(3) { --rang: 2; }
+  .mobile-menu__links .mobile-link:nth-child(n + 4) { --rang: 3; }
+  .mobile-menu__suite .mobile-link { --rang: 4; }
+  .mobile-menu__suite .mobile-link:nth-child(2) { --rang: 5; }
+  .mobile-menu__suite .mobile-link:nth-child(n + 3) { --rang: 6; }
 }
 
 @keyframes menu-ouvre { from { opacity: 0; } }
@@ -1547,194 +1235,6 @@ footer a {
 a[href^="mailto:"] {
   overflow-wrap: anywhere;
   word-break: break-word;
-}
-
-/* =========================================================================
-   FAQ — accordion native style
-   ========================================================================= */
-
-.faq-item {
-  position: relative;
-  background: var(--color-paper);
-  /* border-strong : >=3:1 vs paper (WCAG 1.4.11 non-text), vs ink-faint 1.97:1. */
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
-  /* Même nettoyage qu'au-dessus sur `.card` : l'ombre transparente et sa
-     transition ne rendaient rien. Le filet, lui, passe bien à `ink-low` au
-     survol — c'est la seule chose à animer. */
-  transition: border-color var(--duration-default) var(--ease-out-quint);
-}
-
-.faq-item:hover,
-.faq-item:focus-within {
-  border-color: var(--color-ink-low);
-}
-
-.faq-details {
-  display: block;
-}
-
-/* L'ouverture d'une question était une coupe franche : la carte passait de 70 à
-   248 px en une seule image, +254 %, et toutes les questions du dessous se
-   téléportaient avec elle — décalage mesuré à 0,0588. C'est l'interaction la
-   plus utilisée de la page, celle qui a son propre goal, et la seule motion
-   qu'elle portait était la rotation du caret.
-   `interpolate-size` autorise l'animation vers `auto`, que la hauteur d'un
-   contenu replié ne peut pas connaître autrement. Là où le navigateur ne
-   supporte pas ces propriétés, on retrouve exactement le comportement
-   d'avant — le repli reste instantané, rien ne casse. */
-@supports (interpolate-size: allow-keywords) {
-  :root { interpolate-size: allow-keywords; }
-
-  .faq-details::details-content {
-    block-size: 0;
-    overflow: clip;
-    transition: block-size 260ms var(--ease-out-quint),
-                content-visibility 260ms var(--ease-out-quint) allow-discrete;
-  }
-  .faq-details[open]::details-content {
-    block-size: auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .faq-details::details-content { transition: none; }
-}
-
-.faq-summary {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  padding: 20px 24px;
-  cursor: pointer;
-  list-style: none;
-  /* La courbe manquait, et son absence n'est pas neutre : sans elle le
-     navigateur applique `ease`, c'est-à-dire cubic-bezier(0.25, 0.1, 0.25, 1),
-     un ease-in-out. Quatrième courbe hors jetons du fichier, et la seule qui
-     n'était écrite nulle part — elle venait du défaut CSS.
-     `summary` n'est pas couvert par la règle d'élément de @layer base, qui ne
-     liste que a/button/input/textarea/select : cette déclaration est bien la
-     seule à piloter le survol d'une question. */
-  transition: color var(--duration-default) var(--ease-out-quint);
-}
-
-.faq-summary::-webkit-details-marker {
-  display: none;
-}
-
-/* Le survol d'une question est un soulignement : il dit « cliquable » sans
-   repeindre le texte. */
-.faq-summary:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 2px;
-}
-
-/* `.faq-num` a été retirée avec les libellés `Q01`…`Q06` : l'ordre des questions
-   ne porte aucune information — on cherche la sienne, pas la troisième — et le
-   numéro réservait 36 px de gouttière à gauche de chacune. */
-
-.faq-question {
-  flex: 1;
-  font-family: var(--font-display);
-  font-size: var(--text-body-large);
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.015em;
-  color: var(--color-ink);
-}
-
-.faq-caret {
-  flex-shrink: 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-label);
-  color: var(--color-ink-mid);
-  transition: transform var(--duration-default) var(--ease-out-quint);
-}
-
-.faq-details[open] .faq-caret {
-  transform: rotate(45deg);
-  color: var(--color-accent-text);
-}
-
-.faq-answer {
-  /* 24 px à gauche et non 76 : les 52 px de plus réservaient la gouttière du
-     numéro `Q01`, retiré depuis. La réponse démarrait donc 52 px à droite de sa
-     question, en retrait de rien.
-     Et la mesure suit le `ch` réel de Geist : son glyphe `0` fait 10,53 px quand
-     le caractère moyen d'une prose française en fait 6,87, si bien qu'un `ch`
-     vaut une fois et demie un caractère rendu. `72ch` plafonnait à cent dix
-     caractères, pas soixante-douze. */
-  padding: 0 24px 20px 24px;
-  color: var(--color-ink-mid);
-  font-size: var(--text-body);
-  line-height: 1.65;
-  max-width: 46ch;
-}
-
-/* ── L'entrée de la FAQ : un surligneur qui descend la liste ──
-   Chaque question monte à son tour, et une bande claire la balaie de gauche à
-   droite pendant qu'elle arrive. C'est le dispositif de la DA joué dans le
-   temps : ailleurs le surligneur marque un mot, ici il parcourt une liste.
-
-   Le rythme est volontairement lent — 160 ms entre deux questions, 900 ms
-   d'entrée. Plus serré, la cascade se lit comme un défilement de chargement ;
-   plus lâche, on attend. Sur huit éléments, la descente complète dure environ
-   deux secondes et demie. */
-.faq-liste > .reveal {
-  transition-duration: var(--duration-faq-balayage);
-  transition-delay: calc(var(--rang, 0) * var(--duration-faq-pas));
-}
-
-.faq-item {
-  /* Le balayage est en overflow: hidden sur la carte, sinon la bande déborde
-     du filet à gauche et à droite pendant sa course. */
-  overflow: hidden;
-}
-
-.faq-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: var(--color-surface-low);
-  /* Au repos la bande est hors cadre à gauche ; elle traverse à l'apparition
-     puis sort à droite. `transform` seul : aucune propriété de layout animée. */
-  transform: translateX(-101%);
-}
-
-/* Le déclencheur est `.balaye`, posé par l'observateur de FAQ.astro, et NON
-   `.is-visible`. Le failsafe du <head> pose `.is-visible` sur tous les
-   `.reveal` de la page au bout de 2,5 s, où qu'ils soient : le balayage
-   partait donc hors écran, et il était terminé avant qu'on arrive dessus.
-   Pour un fondu ça n'a pas d'importance, pour une animation qui ne joue
-   qu'une fois c'est rédhibitoire. */
-.faq-item.balaye::after {
-  animation: faq-surligne var(--duration-faq-balayage) var(--ease-out-quint) both;
-  animation-delay: calc(var(--rang, 0) * var(--duration-faq-pas));
-}
-
-@keyframes faq-surligne {
-  0%   { transform: translateX(-101%); }
-  45%  { transform: translateX(0); }
-  100% { transform: translateX(101%); }
-}
-
-/* Le contenu passe au-dessus de la bande, SANS fond : la bande glisse entre le
-   papier de la carte et le texte, comme un surligneur sous l'encre. Un fond
-   opaque ici masquerait complètement le balayage — c'est le piège, et il ne se
-   voit pas au code, seulement à l'écran.
-   La bande est `surface-low`, à peine plus claire que la carte : la question
-   reste lisible pendant tout le passage. */
-.faq-details {
-  position: relative;
-  z-index: 2;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .faq-liste > .reveal { transition-delay: 0ms; }
-  .faq-item.balaye::after { animation: none; display: none; }
 }
 
 /* =========================================================================
@@ -1773,11 +1273,9 @@ a[href^="mailto:"] {
   /* Le jeton vaut exactement la valeur qui était écrite ici en dur : le
      remplacement ne change rien au rendu, il remet simplement le lien-évitement
      sous la même source que le reste de l'échelle. */
-  font-size: var(--text-mono-label);
+  font-size: var(--text-body-sm);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
@@ -1852,9 +1350,9 @@ a[href^="mailto:"] {
 }
 .cal-overlay-title {
   font-family: var(--font-mono);
-  font-size: var(--text-mono-caption);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: var(--text-mono-label);
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--color-ink);
 }
 .cal-overlay-close {
@@ -1925,9 +1423,9 @@ a[href^="mailto:"] {
   border: 1px solid var(--color-ink);
   background: var(--color-paper);
   color: var(--color-ink);
-  font-size: var(--text-button);
-  font-weight: 600;
-  text-transform: uppercase;
+  font-size: var(--text-mono-label);
+  font-weight: 500;
+  text-transform: none;
   text-decoration: none;
   cursor: pointer;
 }
@@ -1961,18 +1459,17 @@ mark {
      pêche tombe à 1,74:1. `--color-night` n'est remappé par aucun bloc, le
      fragment surligné reste donc lisible partout, 10,19:1. */
   color: var(--color-night);
-  padding: 0.02em 0.2em;
+  display: inline-block;
+  padding: 0.02em 0.36em 0.08em;
   white-space: nowrap;
 }
 
 mark::before {
   content: '';
   position: absolute;
-  inset: 0.06em 0 0.1em;
+  inset: 0;
   background: var(--color-peche);
   border-radius: var(--radius-bande);
-  transform: rotate(var(--angle, -1.8deg));
-  transform-origin: center;
   z-index: -1;
 }
 
@@ -2028,37 +1525,9 @@ mark::before {
   .js-ready .reveal:not(.is-visible) mark { --draw: 1; }
 }
 
-/* Un surlignage sur deux penche dans l'autre sens, et la classe est posée à la
-   main : `:nth-of-type(even)` ne s'appliquerait jamais, chaque <mark> étant
-   seul dans son parent. Douze bandes du même côté se lisent comme un réglage,
-   pas comme un geste. */
-mark.inv::before { --angle: 1.5deg; }
-
-/* Sur les très gros corps l'inclinaison diminue : à 76 px, un degré déplace la
-   bande de plusieurs pixels aux extrémités et elle mord la ligne voisine. */
-/* À 76 px pour un interlignage de 72 px, la bande dépassait la ligne et
+/* À 76 px pour un interlignage de 72 px, la pastille dépassait la ligne et
    mordait celle du dessus. Elle est resserrée ici, et seulement ici. */
-h1 mark::before { --angle: -1.3deg; inset: 0.14em 0 0.16em; }
-h1 mark.inv::before { --angle: 1.1deg; }
-
-/* ── La bande ──
-   `.bloc-lime` est un nom hérité : la classe n'a plus rien de lime depuis
-   septembre 2026, et elle n'est plus claire non plus. Sur le fond nuit elle
-   désigne une bande légèrement relevée — hero des pages d'offre, témoignages,
-   bloc de contact — qui rythme la page sans changer de monde.
-   Elle remappe les jetons de rôle : tout composant réutilisable s'y adapte
-   sans variante. Le remap ne lit que des valeurs fixes — lire un rôle
-   produirait un cycle. */
-.bloc-lime {
-  background: #161f32;
-
-  --color-paper: #161f32;
-  --color-surface-low: #1a2439;
-  --color-surface-high: #1f2a42;
-  --color-section-band: #161f32;
-  --color-divider: rgba(255, 255, 255, 0.14);
-  --color-grid-line: rgba(255, 255, 255, 0.08);
-}
+h1 mark::before { inset: 0.14em 0 0.16em; }
 
 ::selection { background: var(--color-peche); color: var(--color-night); }
 
@@ -2088,7 +1557,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
   --color-paper: #f7f8fa;
   --color-surface-low: #eef0f4;
   --color-surface-high: #ffffff;
-  --color-section-band: #eef0f4;
   --color-service-border: #dce1e8;
   /* Encres teintées vers la nuit : 16,69:1, 7,09:1 et 5,38:1 sur ce panneau. */
   --color-ink: #111827;
@@ -2106,6 +1574,13 @@ h1 mark.inv::before { --angle: 1.1deg; }
   --color-focus: #111827;
   --color-error: #b3261e;
   --color-success: #111827;
+}
+
+/* La section qui précède une île ne trace pas son filet de pied : l'île se
+   détache déjà de la nuit, un trait à vingt pixels au-dessus d'elle ferait
+   double emploi. */
+section:has(+ .bloc-encre) {
+  border-bottom-color: transparent;
 }
 
 /* Un bouton pêche sur panneau clair n'aurait que 1,64:1 de contour. L'action
@@ -2284,7 +1759,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
     --color-paper: #ffffff;
     --color-surface-low: #ffffff;
     --color-surface-high: #ffffff;
-    --color-section-band: #ffffff;
     --color-ink: #111827;
     --color-ink-mid: #4b5565;
     --color-ink-low: #5d6777;
@@ -2293,6 +1767,6 @@ h1 mark.inv::before { --angle: 1.1deg; }
     --color-border-strong: #111827;
     --color-accent-text: #111827;
   }
-  html, body, .bloc-lime { background: #ffffff; }
-  .nav-root, .technical-grid { display: none; }
+  html, body { background: #ffffff; }
+  .nav-root { display: none; }
 }

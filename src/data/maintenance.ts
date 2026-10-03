@@ -13,14 +13,14 @@ export const maintenanceScope = 'Les nouveaux processus, agents, fonctionnalité
 export const automationSubscriptions: readonly MaintenanceOffer[] = [
   {
     name: 'Automatisation sans IA',
-    price: '90\u00a0€\u00a0HT / mois',
+    price: '90\u00a0€\u00a0HT\u00a0/\u00a0mois',
     schemaPrice: 90,
     promise: 'Pour vos workflows et les connexions entre vos outils.',
     includes: maintenanceIncludes,
   },
   {
     name: 'Automatisation IA & agents',
-    price: '190\u00a0€\u00a0HT / mois',
+    price: '190\u00a0€\u00a0HT\u00a0/\u00a0mois',
     schemaPrice: 190,
     promise: 'Pour vos automatisations avec IA et vos agents. Coûts IA inclus.',
     includes: [...maintenanceIncludes, 'Coûts IA inclus'],
@@ -30,7 +30,7 @@ export const automationSubscriptions: readonly MaintenanceOffer[] = [
 export const webSubscriptions: readonly MaintenanceOffer[] = [
   {
     name: 'Landing page',
-    price: 'Dès 90\u00a0€\u00a0HT / mois',
+    price: 'Dès 90\u00a0€\u00a0HT\u00a0/\u00a0mois',
     schemaPrice: 90,
     minimum: true,
     promise: 'Une page pour présenter votre offre.',
@@ -38,14 +38,14 @@ export const webSubscriptions: readonly MaintenanceOffer[] = [
   },
   {
     name: 'Site multipage',
-    price: '190\u00a0€\u00a0HT / mois',
+    price: '190\u00a0€\u00a0HT\u00a0/\u00a0mois',
     schemaPrice: 190,
     promise: 'Plusieurs pages pour présenter votre activité et vos services.',
     includes: maintenanceIncludes,
   },
   {
     name: 'Site avec blog',
-    price: '390\u00a0€\u00a0HT / mois',
+    price: '390\u00a0€\u00a0HT\u00a0/\u00a0mois',
     schemaPrice: 390,
     promise: 'Un site avec un espace pour publier vos contenus.',
     includes: maintenanceIncludes,
