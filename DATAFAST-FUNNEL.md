@@ -38,17 +38,20 @@ Jusqu'au 2 octobre 2026 les blocs des métiers et les lignes de prix émettaient
 la même source, et le funnel ne pouvait pas dire lequel des deux avait servi.
 
 ### `lead_call` — clic « Réserver un appel » (cal.com)
-Émis nativement sur **tout lien cal.com** via `data-fast-goal="lead_call"`.
-C'est une **intention de call** (le clic), pas la réservation confirmée — celle-ci
-se passe sur cal.com (voir Limite plus bas).
+Émis sur le **seul lien direct vers l'agenda** : le moyen « Réserver un appel ·
+45 min » de la conversation (`home-invite.astro`), source `home_causerie`, sur
+toutes les pages. C'est une **intention de call** (le clic), pas la réservation
+confirmée — celle-ci se passe sur cal.com (voir Limite plus bas).
 
-| Param `source` | Où |
-|----------------|-----|
-| `automatisations_nav` · `automatisations_nav_mobile` · `automatisations` · `hero` · `roi` · `temoignages` · `stack-automation` · `stack-productivite` · `stack-ia` · `stack-vibe-coding` · `offres` · `contact` · `footer` · `barre-mobile` | Offre `/automatisations-ia` |
-| `home_nav` · `home_nav_mobile` (bouton du menu mobile) · `home_pourquoi_moi` (lien du panneau « Pourquoi moi ») · `home_offres` · `footer` | Accueil `/` |
-| `expert-n8n` · `expert-n8n-bottom` · `expert-make` · `expert-make-bottom` | Pages expert SEO |
-| `cas_index` · `cas_index_empty` · `cas_article` | Pages cas-clients |
-| `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_tarifs` · `sites_web_abonnements` · `sites_web_final` | Offre `/sites-web-abonnement` |
+Jusqu'au 3 octobre 2026, chaque bouton du site ouvrait l'agenda et émettait
+`lead_call` avec sa source (`hero`, `offres`, `expert-make`, `cas_article`…).
+Depuis, tous les « Parlons de votre projet » ouvrent la conversation et
+émettent `causerie_opened` (ci-dessous) : la source par page se lit là. Un
+`lead_call` vient après, si le visiteur choisit l'appel.
+
+Sans script, ou si la conversation n'a pas démarré, un bouton reste un lien
+vers l'agenda : l'overlay s'ouvre, mais le goal émis est celui que porte le
+lien, `causerie_opened`.
 
 ### `call_booked` — réservation cal.com confirmée (embed on-site)
 La **vraie conversion appel** (pas juste le clic). Les boutons cal.com ouvrent une
@@ -71,10 +74,10 @@ entre `lead_call` (le clic) et `call_booked` (la résa), tout se passait dans un
 iframe cross-origin, donc dans l'angle mort. `lead_call − call_booked` donnait un
 écart sans cause ; `cal_abandoned` dit lesquels sont allés voir le calendrier.
 
-### `lead_email` — clic sur l'adresse mail
-Sources : `footer`, `contact`. La deuxième porte. Treize appels à l'action
-menaient au même agenda et à rien d'autre ; ce goal mesure ce que cette
-unique-porte coûtait.
+### `lead_email` — n'est plus émis
+Il comptait le clic sur l'adresse e-mail du pied de page et de la section de
+contact. Aucune adresse n'est plus affichée en lien : écrire par e-mail passe
+par la conversation, et se compte dans `lead_message` (`canal` = `email`).
 
 ### `roi_used` — premier mouvement d'un curseur du simulateur
 Émis **une fois par page**. Le simulateur est la deuxième section et le principal
@@ -82,25 +85,41 @@ signal d'intérêt de la page — il n'était pas instrumenté du tout.
 
 ### `faq_opened` — première ouverture d'une question
 Prop `question` = le libellé. Une question ouverte est une objection nommée : le
-classement des libellés dit laquelle bloque le plus.
+classement des libellés dit laquelle bloque le plus. Depuis le 3 octobre 2026
+les questions sont des bulles (`questions.astro`), toutes ouvertes sur grand
+écran : le goal ne part donc que **sur téléphone**, quand le visiteur touche une
+question fermée. Sur grand écran il n'y a plus de geste à mesurer.
 
 ### `case_opened` — clic vers un cas client
 Prop `href`. Couvre les « VOIR LE CAS » du carrousel, « VOIR TOUS LES CAS », et
 les liens de `/cas-clients` depuis À propos et Offres. Aucun n'était tagué.
 
-### `causerie_opened` — ouverture de la conversation depuis un bouton de l'accueil
-Prop `source` = `home_nav`, `home_nav_mobile`, `home_pourquoi_moi` ou `home_offres`.
-Sur l'accueil, les « Parlons de votre projet » n'ouvrent plus l'agenda mais la
-conversation de `home-invite.astro`, qui propose WhatsApp, l'e-mail ou l'appel.
-Le `lead_call` de l'accueil ne vient donc plus que du moyen
-« Réserver un appel · 45 min » (source `home_causerie`).
+### `causerie_opened` — ouverture de la conversation depuis un bouton
+Posé par `BoutonReservation` sur tous les « Parlons de votre projet » du site,
+qui ouvrent la conversation de `home-invite.astro` (WhatsApp, e-mail ou appel).
+La prop `source` dit d'où :
 
-### `lead_message` — message envoyé depuis la barre d'écriture de l'accueil
+| Param `source` | Où |
+|----------------|-----|
+| `home_nav` · `home_nav_mobile` · `home_pourquoi_moi` · `home_offres` | Accueil `/` |
+| `automatisations_nav` · `automatisations_nav_mobile` · `hero` · `roi` · `offres` · `automatisations_fin` | Offre `/automatisations-ia` |
+| `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_applications` · `sites_web_fin` | Offre `/sites-web-abonnement` |
+| `expert-make` · `expert-make_nav` · `expert-make_fin` · `expert-n8n` · `expert-n8n_nav` · `expert-n8n_fin` | Pages d'outil |
+| `cas_index_nav` · `cas_index_fin` · `cas_article_nav` · `cas_article_fin` | Pages cas-clients |
+| `reprise_nav` · `reprise-hero` · `reprise_fin` | `/reprendre-une-automatisation-qui-casse` |
+| `make-ou-n8n_nav` · `make-ou-n8n_fin` · `combien-coute-une-automatisation_nav` · `combien-coute-une-automatisation_fin` · `agent-ia-pour-pme_nav` · `agent-ia-pour-pme_fin` | Pages-réponses |
+| `principes_nav` · `principes_fin` · `mentions_nav` · `404_nav` · `404` · `footer` | Autres pages |
+| `nav_mobile_cta` | Bouton du menu mobile, sur les pages qui portent les liens du site (toutes sauf l'accueil et les deux pages d'offre, qui émettent `…_nav_mobile`) |
+
+Les sources `…_fin` sont celles du champ de fin de page (`fin-de-page.astro`) :
+le visiteur y a peut-être écrit une phrase avant de cliquer.
+
+### `lead_message` — message envoyé depuis la barre d'écriture
 Prop `canal` = `whatsapp` ou `email`. Posé sur les deux liens de la conversation
-(`home-invite.astro`) : le clic ouvre WhatsApp ou la messagerie du visiteur avec
-son message déjà rédigé. Il mesure l'ouverture, pas l'envoi : celui-ci se fait
-hors du site. Le troisième moyen, l'appel, est un `lead_call` de source
-`home_causerie`.
+(`home-invite.astro`), présente sur toutes les pages : le clic ouvre WhatsApp ou
+la messagerie du visiteur avec son message déjà rédigé. Il mesure l'ouverture,
+pas l'envoi : celui-ci se fait hors du site. Le troisième moyen, l'appel, est
+un `lead_call` de source `home_causerie`.
 
 ### `youtube_opened` — sortie vers YouTube depuis l'accueil
 Sources : `home_content` (la dernière vidéo, vignette et titre) et
@@ -145,42 +164,41 @@ dans la même session compte comme converti.
 | 1 | Visite accueil | Page visit | URL equals `/` |
 | 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_metier_automation, home_metier_web, home_services_automation, home_services_web)* |
 
-### Funnel A2 — « Automatisation → Call » (funnel complet en 4 étapes)
+### Funnel A2 — « Automatisation → Call » (funnel complet en 5 étapes)
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
 | 1 | Visite landing | Page visit | URL equals `/automatisations-ia` |
-| 2 | A **cliqué** Réserver | Goal | `lead_call` *(filtrer `source` ∈ automatisations_nav, automatisations_nav_mobile, automatisations, hero, roi, temoignages, stack-automation, stack-productivite, stack-ia, stack-vibe-coding, offres, contact, footer, barre-mobile)* |
-| 3 | A **ouvert le calendrier sans réserver** | Goal | `cal_abandoned` *(étape de diagnostic, pas de conversion)* |
-| 4 | A **réservé** (résa confirmée) | Goal | `call_booked` |
+| 2 | A **ouvert la conversation** | Goal | `causerie_opened` *(filtrer `source` ∈ automatisations_nav, automatisations_nav_mobile, hero, roi, offres, automatisations_fin, footer)* |
+| 3 | A **choisi l'appel** | Goal | `lead_call` *(source `home_causerie`)* |
+| 4 | A **ouvert le calendrier sans réserver** | Goal | `cal_abandoned` *(étape de diagnostic, pas de conversion)* |
+| 5 | A **réservé** (résa confirmée) | Goal | `call_booked` |
 
-> ⚠️ Ce filtre a longtemps listé `nav_mobile` et `mobile_bar`, deux valeurs que
-> le code n'émet pas : il émet `nav_mobile_cta` et `barre-mobile`. Un funnel
-> configuré sur l'ancienne liste ne comptait aucun clic mobile.
+> ⚠️ Jusqu'au 3 octobre 2026 l'étape 2 était `lead_call`, filtré sur les sources
+> de la page. Un funnel resté sur cette configuration tombe à zéro : les boutons
+> n'émettent plus `lead_call`. Même remarque pour les funnels B et C.
+> Celui qui écrit plutôt qu'il n'appelle sort par `lead_message` : à suivre en
+> parallèle de l'étape 3.
 
-> L'étape 2→4 montre enfin la **déperdition clic → résa réelle** (le fameux « 10 clics, 1 résa »),
-> et `cal_abandoned` dit combien de ces clics sont allés jusqu'au calendrier avant de repartir.
 > Le filtre `source` à l'étape 2 isole les clics venus de la landing. Les funnels B et C
 > ci-dessous suivent le même schéma (remplace juste l'URL et le filtre `source` de l'étape 2) ;
 > l'étape finale `call_booked` est commune (la résa se fait dans la popup, peu importe la page d'origine).
 
-### Funnel B — « Cas d'usage → Call »
+### Funnel B — « Cas d'usage → Conversation »
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
 | 1 | Visite cas-clients | Page visit | URL contains `/cas-clients` |
-| 2 | A réservé un appel | Goal | `lead_call` *(filtrer `source` ∈ cas_index, cas_index_empty, cas_article)* |
+| 2 | A ouvert la conversation | Goal | `causerie_opened` *(filtrer `source` ∈ cas_index_nav, cas_index_fin, cas_article_nav, cas_article_fin)* |
 
 > Couvre l'index `/cas-clients` **et** les articles `/cas-clients/<slug>` (URL contains).
-> ⚠️ Ces 3 CTA viennent d'être taguées — avant, un call depuis une page cas-clients
-> était invisible. Les données ne remontent donc qu'à partir du déploiement de ce commit.
 
-### Funnel C — « Page expert → Call » (le 3ᵉ que je vois)
+### Funnel C — « Page expert → Conversation »
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
 | 1 | Visite page expert | Page visit | URL contains `/expert-` *(n8n + make)* |
-| 2 | A réservé un appel | Goal | `lead_call` *(filtrer `source` ∈ expert-n8n, expert-n8n-bottom, expert-make, expert-make-bottom)* |
+| 2 | A ouvert la conversation | Goal | `causerie_opened` *(filtrer `source` ∈ expert-n8n, expert-n8n_nav, expert-n8n_fin, expert-make, expert-make_nav, expert-make_fin)* |
 
 > Les pages `/expert-n8n` et `/expert-make` sont des pages d'acquisition SEO à forte
-> intention. C'est le funnel « → call » le plus naturel après LP et cas-clients.
+> intention. C'est le funnel « → conversation » le plus naturel après LP et cas-clients.
 
 ## ✅ Les signaux (du moins au plus fiable)
 - `lead_call` = **clic** « Réserver » (intention). Peut être gonflé par tes propres clics de test → **exclus ton trafic** (`localStorage.datafast_ignore = true`, IP dans Exclusions, ou teste sur preview Vercel non-trackée).

@@ -28,56 +28,69 @@ pnpm preview    # Preview production build locally
 ```
 src/
 ├── components/
-│   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
-│   ├── home-hero.astro        # accueil : titre centré, emplacement de la barre d'écriture, grille, défilé clients
-│   ├── home-story.astro       # accueil : récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues (à la main, puis les 3 réponses)
-│   ├── home-services.astro    # accueil : 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations), une scène animée chacun ; sur téléphone, quatre onglets et un bloc à la fois
-│   ├── home-sites.astro       # vitrine de trois sites, sortie de l'accueil le 3 octobre 2026 ; visible sur /explorations-metiers/vitrine
+│   │   # — communs à toutes les pages —
+│   ├── Navigation.astro       # la barre, la même partout : nom, liens, un seul bouton « Parlons de votre projet », menu mobile
+│   ├── Footer.astro
+│   ├── BoutonReservation.astro # le bouton d'appel : ouvre la conversation (goal causerie_opened) ; `direct` pour l'agenda
+│   ├── home-invite.astro      # la barre d'écriture et sa conversation (WhatsApp, e-mail, agenda), rendue par Layout sur toutes les pages, sans serveur
+│   ├── tete-de-page.astro     # en-tête d'une page intérieure : retour, h1, chapô, bouton, preuves
+│   ├── partie.astro           # une partie d'une page de lecture : titre à gauche, texte à droite ; `clair` en fait une île claire
+│   ├── questions.astro        # les questions en bulles de conversation (remplace tout accordéon)
+│   ├── fin-de-page.astro      # la fin de chaque page : une phrase, un champ, le bouton (prix en une ligne sur l'accueil)
+│   ├── pourquoi-moi.astro     # île claire : portrait, notice à la troisième personne, puis « je »
+│   ├── retour.astro           # fil de retour d'une page intérieure
+│   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
+│   ├── LinkCTA.astro          # lien secondaire fléché
+│   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
+│   │   # — accueil —
+│   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé clients
+│   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
+│   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations), une scène animée chacun ; onglets sur téléphone
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
-│   ├── explorations/          # essais non retenus (bureau, plateau, terminal, plan), page /explorations-metiers
-│   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours
-│   ├── home-content.astro     # accueil : dernière vidéo + newsletter écrite comme un mail
-│   ├── home-voices.astro      # accueil : trois recommandations, une voix à la fois
-│   ├── home-questions.astro   # accueil : quatre questions écrites comme un échange (texte et balisage FAQ dans data/home-faq.ts)
-│   ├── home-offers.astro      # accueil : fin de page, champ + bouton d'appel, prix en une ligne
-│   ├── home-invite.astro      # accueil : barre d'écriture (hero puis coin bas droit) ; ouvre WhatsApp, la messagerie ou l'agenda avec le message rédigé, sans serveur
-│   ├── HeroManifesto.astro    # aplat lime, typographie seule
+│   ├── home-today-path.astro  # « Pourquoi moi » (panneau clair) + frise du parcours
+│   ├── home-content.astro     # dernière vidéo + newsletter écrite comme un mail
+│   ├── home-voices.astro      # trois recommandations, une voix à la fois
+│   │   # — page d'offre /automatisations-ia —
+│   ├── HeroManifesto.astro    # hero : titre, chapô, bouton
 │   ├── LogoMarquee.astro      # bandeau d'outils défilant
-│   ├── CaseStudy.astro        # carrousel de 4 projets, sur /automatisations-ia
+│   ├── Automatisations.astro  # les tâches qu'on automatise
+│   ├── CaseStudy.astro        # carrousel de 4 projets
+│   ├── Methode.astro          # 4 étapes, en île claire, + schéma (automation-control-diagram)
 │   ├── Testimonials.astro     # recommandations
 │   ├── APropos.astro          # trajectoire 2020 → aujourd'hui
+│   ├── Stack.astro            # 4 outils (n8n, Make, Notion, Airtable), une ligne d'usage chacun
+│   ├── Offres.astro           # formats, prix de création et abonnements, en île claire
 │   ├── ROICalculator.astro    # simulateur de temps (2 curseurs)
-│   ├── Stack.astro            # 4 outils (n8n, Make, Notion, Airtable) en liste, une ligne d'usage chacun, sur /automatisations-ia
-│   ├── Offres.astro           # formats de collaboration
-│   ├── FAQ.astro              # 7 objections + balayage lime
-│   ├── CTA.astro              # section contact, réservation seule
-│   ├── Footer.astro
-│   ├── MobileCTABar.astro     # barre fixe sous le hero, mobile
-│   ├── SectionHeader.astro    # label + titre + chapô, partagé
-│   ├── LinkCTA.astro          # lien secondaire fléché
-│   ├── BoutonReservation.astro # TOUT lien vers l'agenda passe par ici
-│   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   └── mockups/               # mini-UI produit des pages de cas clients
-│       ├── MockupWindow.astro     # châssis fenêtre commun
-│       └── WorkflowCanvas.astro   # faux canvas n8n/Make
+│   │   # — page d'offre /sites-web-abonnement —
+│   ├── SubscriptionGrid.astro # liste de prix à plat (sert aussi à Offres)
+│   ├── ProjectVisual.astro    # vignette d'une réalisation
+│   ├── application-system-diagram.astro
+│   │   # — cas clients —
+│   ├── mockups/               # MockupWindow (châssis fenêtre), WorkflowCanvas (faux canvas n8n/Make)
+│   │   # — hors site —
+│   ├── home-sites.astro       # vitrine de trois sites, sortie de l'accueil ; visible sur /explorations-metiers/vitrine
+│   └── explorations/          # essais non retenus, page /explorations-metiers
 ├── content/
 │   └── cas-clients/           # 5 cas en .md, frontmatter typé
-├── data/                      # brands.ts, faq.ts, clients.ts, realisations.ts, parcours.ts
-├── lib/                       # roi.ts, reservation.ts, contact.ts (e-mail et WhatsApp de la barre d'écriture), metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
+├── data/                      # faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, realisations.ts, sites-web.ts, brands.ts
+├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (e-mail et WhatsApp), roi.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
-│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, failsafe reveal
-│   └── PageExpertOutil.astro  # charpente commune des pages SEO par outil
+│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, barre d'écriture, suivi DataFast
+│   ├── PageExpertOutil.astro  # charpente des pages d'outil (/expert-make, /expert-n8n)
+│   └── PageReponse.astro      # charpente des pages-réponses (une question, sa réponse dans le chapô)
 ├── pages/
 │   ├── index.astro
-│   ├── automatisations-ia.astro  # offre automation complète, ancienne home
+│   ├── automatisations-ia.astro   # offre automation complète
 │   ├── sites-web-abonnement.astro # offre web complète
 │   ├── cas-clients/index.astro et [slug].astro
 │   ├── expert-make.astro · expert-n8n.astro   # contenu seul, charpente partagée
-│   ├── principes.astro · mentions-legales.astro
+│   ├── make-ou-n8n.astro · combien-coute-une-automatisation.astro · agent-ia-pour-pme.astro   # pages-réponses
+│   ├── reprendre-une-automatisation-qui-casse.astro
+│   ├── principes.astro · mentions-legales.astro · 404.astro
 │   └── llms.txt.ts            # fiche générée au build pour les moteurs IA
 ├── content.config.ts          # schéma Zod de la collection
 └── styles/
-    └── global.css             # jetons @theme + dispositif de la DA
+    └── global.css             # jetons @theme, « La tenue commune », dispositif de la DA
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
 └── newsletter.ts              # inscription à la newsletter (délègue à src/lib/newsletter-signup)
@@ -86,42 +99,61 @@ api/
 ## Design System
 
 `DESIGN.md` is the source of truth; tokens live in the `@theme` block of
-`src/styles/global.css`. In short ("nuit et pêche", October 2026):
+`src/styles/global.css`. In short ("nuit et pêche", "tech propre"; the home
+page direction of 2 October 2026 was extended to every page on 3 October 2026,
+see *La tenue commune* in `global.css` and `DESIGN.md`):
 
-- Background: night blue `#111827`; white text, greys tinted toward the night
-- One accent: peach `#ffb38a` (highlights, CTAs, accent text, focus ring)
+- Background: deep night `#0c121f` everywhere (`--color-paper`); white text,
+  greys tinted toward the night. `#111827` is `--color-night`
+- One accent: peach `#ffb38a` (highlight, primary button, focus ring)
 - Any text placed ON peach reads `--color-night`, never `--color-ink` (white)
-- Light only in the inverted panel `.bloc-encre` (a rounded island);
-  `.bloc-lime` is a raised night band. Both class names are legacy
+- No full-width colour bands. Light only in `.bloc-encre`, a rounded island
+  that remaps every colour token: it carries what the reader came to check
+  (a price, results, a method, "pourquoi moi"). At most two per page, never
+  two in a row, never the first or the last section
 - No sharp corners: radius scale `--radius-xs` to `--radius-xl`, pill controls
-- Motion: traced highlighter (`<mark>`), hero entrance (`.entree`),
+- Headings `h1`–`h4` at weight 500; `mark` is a straight pill, one per title,
+  only in the page `h1` and in the closing title
+- No uppercase styling, no eyebrow above a heading, no section numbers
+- Measure: in Geist `1ch` is about one and a half characters of prose, so
+  `46ch` is a 70-character line (base rule on `p, li`)
+- Motion: traced highlighter (`<mark>`), page-header entrance (`.entree`),
   scroll-opened media (`.media-ouvre`), cross-page view transitions
 
 Typography:
 - One family: Geist (`--font-display`, `--font-body`); no monospace
 
-Home page only ("tech propre", validated 2 October 2026; see the section
-*L'accueil* in `DESIGN.md`): deep night `#0c121f`, everything laid on a grid,
-two page-level frame lines, `mark` as a straight pill, `h2`/`h3` at weight 500,
-one animated 2D interface scene per service (`src/components/metiers/`, engine
-in `src/lib/metiers/scene.ts`; the glass 3D shapes were dropped on 3 October
-2026 and only remain on `/explorations-blocs`). These
-rules live in the `.accueil` block of `src/pages/index.astro`. The other pages
-still carry the previous look until Lilian asks to propagate it.
+Every page is built from the shared components: `Navigation`, `tete-de-page`
+(or its own hero on the home and offer pages), sections, `questions`,
+`fin-de-page`, `Footer`. Reading pages use `partie`. A new inner page must not
+hand-roll a header, an FAQ accordion, a contact section or a back link.
+
+Home page only: everything laid on a grid with two page-level frame lines
+(`.accueil__suite` in `src/pages/index.astro`), one animated 2D interface
+scene per service (`src/components/metiers/`, engine in
+`src/lib/metiers/scene.ts`; the glass 3D shapes only remain on
+`/explorations-blocs`).
 
 ## Key Implementation Notes
 
-- Tout lien vers l'agenda passe par `BoutonReservation` : sa prop `source` est
-  requise, et c'est ce qui garantit que le goal `lead_call` est posé. Un `<a>`
-  écrit à la main vers cal.com ouvre bien l'overlay mais n'apparaît dans aucun
-  funnel. Hors composant (données du pied de page, réponses de FAQ, llms.txt),
-  l'URL vient de `lib/reservation.ts`.
+- Un seul geste sur tout le site : « Parlons de votre projet » ouvre la
+  conversation de `home-invite` (WhatsApp, e-mail ou appel). Tout bouton d'appel
+  passe par `BoutonReservation` : sa prop `source` est requise, et c'est ce qui
+  garantit que le goal `causerie_opened` est posé avec sa provenance. Un `<a>`
+  écrit à la main vers cal.com ouvre bien l'agenda mais n'apparaît dans aucun
+  funnel. Le seul lien direct vers l'agenda est le moyen « Réserver un appel »
+  de la conversation (`direct`, goal `lead_call`). Hors composant (réponses de
+  FAQ, llms.txt), l'URL vient de `lib/reservation.ts`. Voir `DATAFAST-FUNNEL.md`.
+- Un fait, une source : les prix se lisent dans `data/service-pricing.ts` et
+  `data/maintenance.ts`, la réponse « Make ou n8n » dans `data/make-ou-n8n.ts`,
+  le parcours dans `data/parcours.ts`. Rien ne s'écrit sur une page qui ne soit
+  dans `PRODUCT.md` (« Evidence on Hand »).
 - Ne jamais citer les marqueurs `{/*` et `*/}` littéralement à l'intérieur d'un
   commentaire : le `*/` interne le referme, et la fin du texte est rendue comme
   du contenu. Écrire ce genre de note en commentaires de ligne, dans le
   frontmatter.
 - All text content is in French
-- Short dual-service home plus two dedicated offer pages
+- A narrative home, two offer pages, tool pages, answer pages and case studies
 - JSON-LD structured data for SEO (Person + ProfessionalService schemas)
 - Mobile-first responsive design with `md:` and `lg:` breakpoints
 - Custom scrollbar styling and infinite scroll animations in global.css

@@ -1,9 +1,8 @@
 ---
 name: Lilian Sevoumian
-description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Bleu nuit en fond général, un seul accent pêche, le clair seulement dans un panneau inversé arrondi. Sur l'accueil, direction « tech propre » : tout se pose sur une grille, le surlignage devient une pastille droite, et chaque métier a sa scène d'interface animée."
+description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, surlignage en pastille droite, tout en bas de casse, un seul bouton qui ouvre la conversation. L'accueil y ajoute sa grille et une scène d'interface animée par métier."
 colors:
-  paper: "#111827"
-  section-band: "#161f32"
+  paper: "#0c121f"
   surface-low: "#1a2439"
   surface-high: "#1f2a42"
   night: "#111827"
@@ -13,7 +12,7 @@ colors:
   ink-mid: "#c3c9d4"
   ink-low: "#a3acbb"
   ink-faint: "#7c8799"
-  divider: "#2a3548"
+  divider: "rgb(255 255 255 / 0.09)"
   service-border: "#2f3b52"
   grid-line: "#1d2739"
   grid-line-active: "#3d4a62"
@@ -35,6 +34,7 @@ colors:
   feuille: "#f7f8fa"
   feuille-trait: "#dce1e8"
   feuille-barre: "#c3c9d4"
+  feuille-note: "#4b5565"
   lueur-froide: "#6f7cff"
   braise: "#ff8a65"
 typography:
@@ -50,34 +50,34 @@ typography:
     fontWeight: 500
     lineHeight: 1.1
     letterSpacing: "-0.03em"
-  phrase:
-    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(1.625rem, 2.2vw + 0.6rem, 2.5rem)"
-    fontWeight: 500
-    lineHeight: 1.14
-    letterSpacing: "-0.025em"
   display-hero:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(3.25rem, 6vw + 1.2rem, 6.25rem)"
-    fontWeight: 600
-    lineHeight: 0.95
-    letterSpacing: "-0.035em"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
   display:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2.25rem, 5vw + 1rem, 5.25rem)"
-    fontWeight: 600
-    lineHeight: 0.98
-    letterSpacing: "-0.045em"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
   headline:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2rem, 3vw + 0.5rem, 3rem)"
-    fontWeight: 600
-    lineHeight: 1.05
-    letterSpacing: "-0.035em"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
+  phrase:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "clamp(1.625rem, 2.2vw + 0.6rem, 2.4375rem)"
+    fontWeight: 500
+    lineHeight: 1.14
+    letterSpacing: "-0.025em"
   title-lg:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(1.5rem, 1.5vw + 0.75rem, 1.875rem)"
-    fontWeight: 600
+    fontWeight: 500
   title:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(1.25rem, 1vw + 0.875rem, 1.5rem)"
@@ -88,33 +88,32 @@ typography:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(1.0625rem, 0.5vw + 0.875rem, 1.25rem)"
     fontWeight: 400
+    lineHeight: 1.5
   body:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.55
-    letterSpacing: "-0.005em"
+    letterSpacing: "0"
   body-sm:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
   button:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(0.75rem, 3.1vw, 0.875rem)"
+    fontSize: "0.875rem"
     fontWeight: 500
-    letterSpacing: "0.02em"
+    lineHeight: 1.35
+    letterSpacing: "0"
   label:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "0.75rem"
     fontWeight: 500
     lineHeight: 1.4
-    letterSpacing: "0.06em"
+    letterSpacing: "0"
   caption:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "0.6875rem"
-    fontWeight: 500
-    lineHeight: 1.4
-    letterSpacing: "0.06em"
 rounded:
   xs: "6px"
   sm: "10px"
@@ -127,7 +126,15 @@ rounded:
 spacing:
   section-y: "clamp(5rem, 8vw, 8rem)"
   section-x: "clamp(1.5rem, 5vw, 7.5rem)"
-  service-card: "clamp(1.25rem, 3vw, 2.5rem)"
+  bloc: "clamp(3rem, 7vw, 5rem)"
+  gouttiere: "clamp(2rem, 5vw, 4.5rem)"
+  groupe: "clamp(2rem, 3vw, 2.5rem)"
+  lie: "clamp(1.25rem, 2vw, 1.75rem)"
+  colle: "0.5rem"
+  cadre: "clamp(1rem, 2.2vw, 2rem)"
+  maille: "clamp(3.5rem, 5.6vw, 5.5rem)"
+  panneau: "clamp(1.5rem, 2.4vw, 2rem)"
+  barre: "4rem"
   home-hero-y: "clamp(3rem, 5vw, 5rem)"
   grid-cell: "96px"
 components:
@@ -152,20 +159,53 @@ components:
   link-cta:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
-    typography: "{typography.label}"
+    typography: "{typography.button}"
     height: "44px"
   link-cta-hover:
     backgroundColor: "{colors.peche}"
     textColor: "{colors.night}"
+    rounded: "{rounded.full}"
   mark:
-    backgroundColor: "{colors.peche}"
-    textColor: "{colors.night}"
-    padding: "0.02em 0.2em"
-  mark-pastille:
     backgroundColor: "{colors.peche}"
     textColor: "{colors.night}"
     rounded: "{rounded.full}"
     padding: "0.02em 0.36em 0.08em"
+  chip:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-mid}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: "4px 10px"
+  nav-link:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-mid}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.full}"
+    padding: "8px 12px"
+    height: "44px"
+  bulle-question:
+    backgroundColor: "{colors.peche}"
+    textColor: "{colors.night}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "0.75rem 1rem"
+  bulle-reponse:
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "0.75rem 1rem"
+  invite:
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.lg}"
+    padding: "0.5rem 0.5rem 0.5rem 1.25rem"
+  media:
+    backgroundColor: "{colors.surface-low}"
+    rounded: "{rounded.lg}"
+  panneau-clair:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.night}"
+    rounded: "{rounded.xl}"
   logo-client:
     backgroundColor: "transparent"
     textColor: "{colors.ink-mid}"
@@ -173,55 +213,6 @@ components:
   scene-cadre:
     backgroundColor: "{colors.night-deep}"
     rounded: "{rounded.md}"
-  chip:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink-mid}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.full}"
-    padding: "4px 10px"
-  chip-accent:
-    backgroundColor: "{colors.accent-soft}"
-    textColor: "{colors.peche}"
-    rounded: "{rounded.full}"
-    padding: "4px 10px"
-  card:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    padding: "24px"
-  service-card:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-  service-card-hover:
-    backgroundColor: "{colors.section-band}"
-    textColor: "{colors.ink}"
-  faq-item:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    padding: "20px 24px"
-  input:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.cta}"
-    height: "48px"
-    padding: "0 16px"
-  media:
-    backgroundColor: "{colors.surface-low}"
-    rounded: "{rounded.lg}"
-  nav-link:
-    backgroundColor: "transparent"
-    textColor: "{colors.ink-mid}"
-    rounded: "{rounded.sm}"
-    padding: "8px 12px"
-  bande-nuit:
-    backgroundColor: "{colors.section-band}"
-    textColor: "{colors.ink}"
-  panneau-clair:
-    backgroundColor: "{colors.panel}"
-    textColor: "{colors.night}"
-    rounded: "{rounded.xl}"
   footer:
     backgroundColor: "{colors.night-deep}"
     textColor: "{colors.ink-mid}"
@@ -235,72 +226,216 @@ components:
 
 Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait
 aujourd'hui. L'accueil raconte, dans l'ordre fixé par lui : vous perdez du
-temps, voilà pourquoi, voilà pourquoi automatiser, voilà pourquoi moi. Quatre
-métiers s'y lisent sans ambiguïté (automatisation, agents IA, formations, sites
-web et dashboards) ; les deux offres chiffrées, **Automatisation & IA** et
-**Sites web**, gardent ensuite chacune leur page. Le site doit tenir debout
-tout seul, sans ornement pour rattraper une hiérarchie molle : le contraste
-vient du poids typographique, de la taille et de l'espace.
+temps, voilà pourquoi, voilà pourquoi automatiser, voilà pourquoi moi. Les deux
+offres chiffrées, **Automatisation & IA** et **Sites web**, gardent ensuite
+chacune leur page, à côté des pages d'outil, des pages de lecture, des cas
+clients et des principes. Le site doit tenir debout tout seul, sans ornement
+pour rattraper une hiérarchie molle : le contraste vient de la taille, de
+l'espace et d'un accent unique.
 
-**Deux états cohabitent, et c'est su.** L'accueil porte la direction validée le
-2 octobre 2026, « tech moderne, propre », décrite dans la section *L'accueil*.
-Les autres pages (offres, cas clients, pages outil, principes) vivent encore
-sur la version précédente de « nuit et pêche » : surlignage incliné, titres en
-600, fond `#111827`. Elles suivront, sur décision de Lilian ; d'ici là, ne pas
-« corriger » l'une vers l'autre au passage.
+**Une seule tenue, sur toutes les pages.** La direction « tech moderne,
+propre », validée par Lilian sur l'accueil le 2 octobre 2026, a été étendue à
+tout le site le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est
+énoncée dans *La tenue commune* ; la section *L'accueil* ne décrit plus que ce
+qui est propre à cette page (sa grille, ses filets de cadre, ses scènes).
 
-Depuis la direction validée le 1er octobre 2026, le site vit sur le bleu nuit
-`#111827`, et non plus sur le papier blanc. Le texte est blanc, les gris sont
+Le site vit sur la nuit profonde `#0c121f`. Le texte est blanc, les gris sont
 teintés vers la nuit, et il n'y a qu'un accent : la pêche `#ffb38a`. Elle
-surligne les mots en bande pleine, porte les boutons primaires, et — parce
-qu'elle tient 10,19:1 sur la nuit — elle a aussi le droit d'être du texte
-d'accent, un trait de lien et l'anneau de focus. Le clair devient l'exception :
-il ne revient que dans le panneau inversé, une île arrondie `#f7f8fa` posée sur
-la nuit, où la pêche retombe à 1,64:1 et redevient une simple surface.
+surligne un mot en pastille, porte le bouton, et, parce qu'elle tient 10,76:1
+sur le fond, elle a aussi le droit d'être du texte d'accent, un trait de lien
+et l'anneau de focus. Le clair est l'exception : il ne revient que dans l'île,
+un panneau `#f7f8fa` détaché et arrondi, où la pêche retombe à 1,64:1 et
+redevient une simple surface.
 
 Plus d'angle vif. Une surface s'arrondit selon sa taille, de 6 px pour un
-détail de maquette à 32 px pour un panneau, et ce qui se clique est rond :
-bouton, champ, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un
+détail de maquette à 32 px pour l'île, et ce qui se clique est rond : bouton,
+lien de la barre, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un
 site « trop carré » : c'est le retour explicite du client.
 
-Le mouvement porte trois gestes d'auteur : le surligneur qui se trace, l'entrée
-du hero, les médias qui s'ouvrent au défilement. Le reste est du retour
-d'interaction ou de l'accompagnement de lecture (voir *Components → Mouvement*).
+Rien n'est encadré pour être rangé. Les sections se suivent sur le même fond,
+séparées par un filet d'un pixel ; à l'intérieur, les blocs de texte sont posés
+à plat et c'est l'espace qui les sépare. Listes à filets, grilles de cartes
+bordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ».
 
-Deux choses restent retirées, et l'absence est le geste : le monospace et les
-sur-titres en petites capitales espacées au-dessus des titres de section.
-`SectionHeader` n'a plus de prop `label`, et la numérotation `01 / 02 / 03`
-a quitté la navigation, les pages outil, les principes, la FAQ et la pagination
-des cas. Les libellés fonctionnels en petites capitales (`.mono-label`,
-`.mono-caption`) restent : un rôle sous un nom, une métrique de pied de page, un
-statut dans une maquette, le libellé d'un curseur.
+Le mouvement porte trois gestes d'auteur : le surligneur qui se trace, l'entrée
+d'un en-tête de page, les médias qui s'ouvrent au défilement. Le reste est du
+retour d'interaction ou de l'accompagnement de lecture (voir *Components →
+Mouvement*).
+
+Trois choses restent retirées, et l'absence est le geste : le monospace, les
+sur-titres au-dessus des titres, et les capitales de style. `SectionHeader` n'a
+ni prop `label` ni filet, et la numérotation `01 / 02 / 03` n'existe plus que
+là où l'ordre est l'information (les étapes d'une méthode, les rangs d'un
+relevé).
 
 **Les noms de jetons et de classes sont hérités, leurs valeurs ne le sont pas.**
-`--color-paper` vaut la nuit, `--color-ink` vaut le blanc, `.bloc-lime` est une
-bande nuit relevée et `.bloc-encre` est le panneau clair. Les 25 composants
-consomment les mêmes noms qu'avant : seule la valeur a changé, et toute la page
-a basculé d'un coup. Ne jamais déduire une couleur d'un nom.
+`--color-paper` vaut la nuit, `--color-ink` vaut le blanc, `.bloc-encre` est le
+panneau clair, `.mono-label` et `.mono-caption` sont des libellés en bas de
+casse dans la police de texte, `--font-mono` vaut Geist, `SubscriptionGrid` est
+une liste de prix à plat. Les composants consomment les mêmes noms qu'avant :
+seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 
 **Caractéristiques clés :**
 
-- Bleu nuit en fond général ; le clair n'existe que dans une île arrondie.
-- Un seul accent, la pêche. Texte posé dessus : toujours la nuit.
+- Nuit profonde en fond, partout ; aucune bande de fond ; le clair n'existe que
+  dans une île arrondie.
+- Un seul accent, la pêche. Texte posé dessus : toujours `--color-night`.
+- Titres en graisse 500 : c'est la taille qui parle.
+- Le surlignage est une pastille droite, une par titre au plus.
+- Tout en bas de casse, sans approche : aucun libellé en capitales.
 - Aucun angle vif ; le rayon suit la taille de la surface, le cliquable est rond.
-- Aucune ombre ; la profondeur vient des filets de 1 px et des paliers de surface.
+- Des blocs de texte à plat, séparés par l'espace ; ni carte bordée ni liste à
+  filets.
+- Un seul geste de contact : « Parlons de votre projet » ouvre la conversation.
 - Une seule famille, Geist Variable.
 - Trois gestes d'auteur de mouvement, joués une fois, jamais bloquants.
-- Sur la home, Lilian apparaît avant les offres ; les deux expertises gardent
-  ensuite le même poids dans leur routeur dédié.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
   visuels, jamais dans le chrome du site.
 
-## L'accueil : tech propre, sur une grille
+## La tenue commune
+
+Les règles nées sur l'accueil, étendues à toutes les pages le 3 octobre 2026.
+Elles vivent dans `src/styles/global.css` (le bloc `@theme`, puis le bloc « LA
+TENUE COMMUNE ») et dans six composants partagés. Une page intérieure ne les
+réécrit pas : elle les compose.
+
+### Les neuf règles
+
+1. **Un seul fond.** `--color-paper` vaut la nuit profonde `#0c121f` sur tout
+   le site : la page, la barre, le menu mobile, l'agenda en plein écran.
+   `#111827` reste `--color-night`, la couleur du texte posé sur la pêche. Les
+   filets sont adoucis : `--color-divider` vaut 9 % de blanc, transparent.
+2. **Aucune bande de fond.** Une section ne change pas de couleur pour se
+   distinguer de sa voisine : elle trace un filet à son pied
+   (`border-b`, `--color-divider`). Une surface ne monte d'un cran
+   (`--color-surface-low`) que pour un panneau arrondi posé dans la colonne : un
+   média, la fenêtre du simulateur, les repères de prix d'un en-tête, un relevé.
+3. **Le clair n'existe que par `.bloc-encre`, sous une seule forme : l'île.**
+   La `<section>` entière porte la classe ; elle se détache par une marge fine
+   (`clamp(0,5rem, 1,5vw, 1,25rem)`) et le rayon `--radius-xl`, et son contenu
+   reste calé sur la colonne de 1 200 px. Elle porte ce que le lecteur est venu
+   vérifier : un prix, des résultats, une méthode, un comparatif, « pourquoi
+   moi ». **Deux par page au plus, jamais deux de suite, jamais la première ni
+   la dernière section.** La section qui précède une île ne trace pas son filet
+   de pied (`section:has(+ .bloc-encre)`) : l'île se détache déjà de la nuit.
+   Seule exception de forme : sur l'accueil, le panneau « Pourquoi moi » est
+   une carte dans une colonne (`home-today-path`), parce qu'il n'occupe pas
+   toute la largeur.
+4. **Les titres sont en graisse 500**, de `h1` à `h4`. `h1` et `h2` prennent
+   `--leading-display` (1,1) et `--tracking-display` (−0,03em). La règle est
+   écrite une fois, avec `:root :is(…)` : ce poids de classe l'emporte sur un
+   utilitaire resté dans le balisage (`font-semibold`, `leading-[1.05]`).
+5. **`mark` est une pastille pêche, droite et ronde.** Une seule par titre, et
+   sur une page intérieure seulement dans le `h1` et dans le titre de fin de
+   page. Jamais sur deux lignes : le fragment doit tenir à 320 px de large
+   (voir *Components → Le surlignage*).
+6. **Aucune capitale de style.** `.mono-label`, `.mono-caption`, `.chip`,
+   `.btn-primary`, `.link-cta` et `.nav-link` sont en bas de casse, approche 0.
+   Pas de sur-titre, pas de numéro de section. Un numéro reste là où l'ordre
+   est l'information : les étapes de la méthode (`Methode`, compteur CSS),
+   celles de la page des sites, les rangs d'un relevé de cas.
+7. **La mesure est de `46ch`.** Dans Geist, `1ch` vaut environ un caractère et
+   demi de prose : `46ch` donne une ligne d'environ 70 caractères. C'est le
+   plafond de base de `p, li, blockquote`, le défaut de
+   `SectionHeader.bodyMaxWidth`, et la largeur des chapôs.
+8. **Un seul geste de contact.** Tous les boutons disent « Parlons de votre
+   projet » (`LIBELLE_CONTACT_RESERVATION`, dans `lib/reservation.ts`) et
+   ouvrent la conversation de `home-invite`, que `Layout` rend sur toutes les
+   pages (l'accueil la place lui-même, après son premier écran).
+   `BoutonReservation` ouvre la conversation par défaut ; sa prop `direct` mène
+   à l'agenda, et seul le moyen « Réserver un appel » de la conversation s'en
+   sert. Sans script, le bouton reste un lien vers l'agenda.
+9. **Une seule barre de navigation** (`Navigation.astro`) : fond plein, nom en
+   bas de casse, liens à 14 px, pastille de survol, un bouton. Seule la liste
+   des liens change d'une page à l'autre. Le menu mobile a la même composition
+   partout : une liste en grand, une suite plus discrète, le bouton en bas.
+
+### Les composants communs
+
+Ils sont dans `src/components/`, en kebab-case. Chacun remplace une chose que
+plusieurs pages écrivaient à la main, chacune à sa façon.
+
+- **`tete-de-page`** : l'en-tête d'une page intérieure. Le fil de retour, le
+  `h1` (`--text-display`, largeur réglable en `ch`, un `mark` permis), le chapô
+  (`--text-body-large`, `ink-mid`, `46ch`), puis au besoin le bouton (prop
+  `bouton`, qui est aussi sa source dans les statistiques) et une ligne de
+  preuves en `--text-body-sm`. Il dégage la barre fixe
+  (`--spacing-barre` + `--spacing-bloc` au-dessus) et ses éléments arrivent par
+  `.entree`. Aucun sur-titre. S'en servir pour toute page qui n'a pas un
+  premier écran à elle.
+- **`partie`** : une partie d'une page qu'on lit d'un bout à l'autre. Le titre
+  à gauche (`--text-phrase`, `18ch`, collant sous la barre à partir de
+  1024 px), le texte à droite (`40rem` au plus, `--text-body-large`,
+  interligne 1,65), sur une grille `1fr / 1,4fr`. Le contenu passe par le
+  slot : paragraphes, liste à puce d'encre, tableau. Un tableau n'a que des
+  filets fins entre ses rangées ; sous 720 px chaque rangée devient un bloc,
+  chaque cellule précédée du nom de sa colonne (`data-colonne`). La prop
+  `clair` fait de la partie une île.
+- **`questions`** : les questions d'une page, écrites comme un échange (voir
+  *Components → Questions*). Sans `items`, elle lit `data/home-faq`.
+- **`fin-de-page`** : la fin de chaque page, une phrase centrée sur la maille,
+  le champ et le bouton (voir *Components → La fin de page*). Une page ne
+  change que le titre et la phrase qui le suit ; l'accueil ajoute la ligne des
+  prix (prop `prix`).
+- **`pourquoi-moi`** : qui construit, dans une île claire. Le portrait rond
+  (4rem) et le titre à gauche ; à droite deux voix qui ne se mélangent pas, la
+  notice à la troisième personne (datée, citable) puis le texte à la première.
+- **`retour`** : le fil de retour, une flèche et une destination en bas de
+  casse (`--text-body-sm`, `ink-low`, cible de 44 px). `tete-de-page` le pose ;
+  les pages de cas l'appellent directement.
+
+Partagés aussi, mais plus anciens : `SectionHeader` (titre puis chapô, sans
+sur-titre ni filet ; un seul écart vers le contenu, 48 px puis 64 px au-delà de
+768 px), `BoutonReservation` (tout lien vers l'agenda ou la conversation ; sa
+prop `source` est requise), `LinkCTA` (le lien secondaire fléché).
+
+### Les deux gabarits
+
+- **`layouts/PageExpertOutil.astro`** : `/expert-make` et `/expert-n8n`. Le
+  plan est fixe : `tete-de-page` avec son bouton et ses preuves ; quatre
+  raisons en blocs de texte sur deux colonnes ; les usages en liste et les cas
+  en une phrase chacun, titre à gauche et contenu à droite ; `pourquoi-moi`,
+  l'île de la page ; `questions` ; `fin-de-page`. Tout ce qui se rédige reste
+  dans la page.
+- **`layouts/PageReponse.astro`** : les pages qui répondent à une question
+  (`/make-ou-n8n`, `/combien-coute-une-automatisation`, `/agent-ia-pour-pme`).
+  La réponse tient dans le chapô, sous le titre, avant tout développement ; la
+  ligne de preuves dit qui répond. Le corps est une suite de `partie`, dont une
+  seule en île ; puis `questions` (« Questions courtes. ») et `fin-de-page`.
+
+### Ce qu'une page intérieure n'écrit pas à la main
+
+Un en-tête (c'est `tete-de-page`), une FAQ (`questions`), une section de
+contact (`fin-de-page`), un lien de retour (`retour`), un lien vers l'agenda
+(`BoutonReservation`). Trois pages gardent un premier écran à elles, parce
+qu'il porte autre chose qu'un titre : `/automatisations-ia` (`HeroManifesto`),
+`/sites-web-abonnement` (le titre face aux repères de prix) et les pages de cas
+(la liste, dont l'en-tête et les rangées partagent une section ; un cas, avec
+sa ligne de contexte et ses chiffres). Elles suivent les mêmes règles :
+`h1` en `--text-display`, entrée par `.entree` ou par la cascade du manifeste,
+un seul `mark` au plus.
+
+### Où sont les îles
+
+| Page | Île(s) |
+|---|---|
+| `/automatisations-ia` | la méthode (`Methode`) et les offres (`Offres`) |
+| `/sites-web-abonnement` | les tarifs de création et les abonnements |
+| `/expert-make`, `/expert-n8n` | `pourquoi-moi` |
+| pages de lecture et page de reprise | une `partie clair` : le comparatif, le prix du suivi, la première tâche à confier |
+| `/cas-clients/[slug]` | la pièce « Les résultats » |
+| accueil | la carte « Pourquoi moi » |
+| `/cas-clients`, `/principes`, mentions légales, 404 | aucune |
+
+## L'accueil : ce qui lui est propre
 
 Direction validée par Lilian le 2 octobre 2026, après le rejet de quatre pistes
 dessinées et d'une première version jugée « IA slop ». Les références qu'il a
 choisies lui-même sur un mur de vrais sites : Novu, Vimcal, Juan Mora, Qdrant.
 Sa consigne tient en une ligne : « tech moderne, clean, privilégie les grilles ».
-La palette ne change pas ; ce qui change, c'est la tenue.
+Le fond, la graisse des titres, la pastille, le bas de casse et le bouton
+unique sont devenus *La tenue commune* ; il reste ici ce que seule cette page
+porte.
 
 **Ce qu'il a refusé, et qui ne revient pas :** les listes séparées par des
 filets, les grilles de cartes, un titre surligné posé au-dessus de chaque
@@ -308,37 +443,24 @@ section comme seul geste, un hero décoratif sans rapport avec le métier. Une
 section de l'accueil porte **un composant qui n'existe que là**, dont la forme
 vient de ce qu'elle raconte.
 
-### Le fond et le cadre
+### Le cadre
 
-- **Fond `night-deep` `#0c121f`** sur toute la page, pas `#111827` : la grille
-  et le verre ont besoin d'un noir plus profond pour se détacher. Blanc
-  dessus : 18,72:1 ; pêche : 10,76:1. Le remap de `--color-paper` se fait sur
-  la racine (`html:has(.accueil)`), pas sur `main` : la barre, le menu mobile,
-  l'agenda en plein écran et la gouttière de défilement lisent tous ce jeton,
-  et montraient sinon le bleu du reste du site autour d'une page plus sombre.
-- **La maille de 96 px des gouttières (`.technical-grid`) est coupée** sur
-  l'accueil : elle dessinait des fragments à cheval sur les lignes de cadre.
-- **Filets adoucis** : `--color-divider` vaut 9 % de blanc, transparent. Sur
-  une page quadrillée, un filet plein devient du bruit.
 - **Deux lignes verticales de 1 px** courent de la fin du hero au pied de page
-  (`.accueil__suite::before/::after`), à `--marge` (16 à 32 px) à l'extérieur
-  de la colonne de 1 200 px. Elles appartiennent à la page, pas aux sections :
-  une section qui redessine les siennes produit un escalier. Absentes sous
-  1024 px, où la gouttière ne les contient pas.
-- **Les repères d'angle** (`.repere`, quatre équerres de 1 px qui débordent de
-  7 px) cadrent ce qui est une scène : la scène du récit, la scène de chaque
-  métier, la vidéo. Jamais autour d'un texte.
-- **Un seul traitement pour le texte qui se clique** : bas de casse, comme la
-  barre et les boutons. Le lien fléché (`LinkCTA`) perd ici ses capitales
-  espacées, et son survol déroule une pastille droite au lieu de la bande
-  penchée.
+  (`.accueil__suite::before/::after`, dans `src/pages/index.astro`), à
+  `--spacing-cadre` (16 à 32 px) à l'extérieur de la colonne de 1 200 px, en
+  encre à 9 %. Elles appartiennent à la page, pas aux sections : une section
+  qui redessine les siennes produit un escalier. Absentes sous 1024 px, où la
+  marge ne les contient pas.
+- **Les repères d'angle** (`.repere`, quatre équerres de 1 px) cadrent ce qui
+  est une scène : la scène du récit, la scène de chaque métier, la vidéo.
+  Jamais autour d'un texte.
 - **Une offre n'a qu'un nom sur la page** : « Automatisation », « Agents IA »,
   « Dashboards et outils métiers », « Formations », dans cet ordre (donné par
   Lilian le 3 octobre 2026), dans les blocs des métiers et la ligne de prix.
   La barre et les onglets disent « Dashboards », faute de place. **Les sites
   web ont quitté la page d'accueil ce jour-là** : plus de bloc, plus de
   vitrine, plus de prix. Leur page d'offre reste en ligne et le pied de page y
-  mène toujours (« Sites web et dashboards »).
+  mène toujours.
 - **On dit « dashboard », jamais « tableau de bord »** dans le texte visible :
   choix de Lilian le 2 octobre 2026, pour n'avoir qu'un mot. Les commentaires
   du code gardent le français.
@@ -353,24 +475,13 @@ vient de ce qu'elle raconte.
   « Suivant : … ». Ils ne reprennent pas la piste à pastille des boutons de
   mode du récit, qui les précèdent d'un écran avec presque les mêmes noms :
   deux commandes voisines, deux dessins (demande de Lilian). Sur un petit
-  téléphone la rangée défile. À la suite, ils faisaient près de cinq écrans (page de
-  16 écrans, 10,5 après). Des onglets et non un carrousel à glisser : les
+  téléphone la rangée défile. Des onglets et non un carrousel à glisser : les
   quatre noms restent visibles, rien n'est caché derrière un geste. Les liens
   de la barre et du menu ouvrent le bon onglet. Sans script, les blocs se
   suivent.
-- **Le menu mobile de l'accueil** liste ces quatre métiers en grand
-  (`--text-title-lg`, sans filet entre eux), puis le reste de la page en plus
-  petit (« Pourquoi moi », « Vidéos et newsletter », « Cas clients »), et se
-  termine par le bouton d'appel, en bas, sous le pouce. Tout est calé vers le
-  bas de l'écran. La barre n'a que les quatre métiers : le menu est la seule
-  entrée vers le reste avant le pied de page.
-- **Un seul bouton primaire** : bas de casse, 14 px, graisse 500, sans
-  approche. Réglé une fois dans `index.astro` (`html:has(.accueil)
-  .btn-primary`), jamais par composant.
-- **Le pied de page et le menu parlent en bas de casse** sur l'accueil : leurs
-  libellés sont écrits en bas de casse dans la source, et c'est la classe
-  (`.mono-label`, `.mono-caption`) qui les met en capitales sur les autres
-  pages.
+- **La barre de l'accueil nomme les quatre métiers**, et rien d'autre. Son menu
+  mobile les liste en grand, puis mène à ce que la barre ne nomme pas
+  (« Pourquoi moi », « Vidéos et newsletter », « Cas clients »).
 
 ### Le hero
 
@@ -432,83 +543,15 @@ sort de l'écran (`data-motion-pause`).
 - `prefers-reduced-motion` : plus de défilement, la liste passe à la ligne et
   n'affiche qu'un exemplaire de chaque logo.
 
-### Le surlignage devient une pastille
+### Quatre pastilles, pas une par titre
 
-Sur l'accueil, `mark` est une gélule droite : `--angle: 0deg`,
-`--radius-bande: 9999px`, `display: inline-block`, padding
-`0,02em 0,36em 0,08em`, bande à `inset: 0`. Plus d'inclinaison, plus de
-`.inv`. Le tracé animé (`--draw`) et la règle du texte nuit sur pêche restent.
-
-**Quatre pastilles sur la page, pas une par titre** : la réponse du hero, les
-actes 1 et 3 du récit, et le titre de fin. Onze titres en portaient une, trois
-dans un seul écran de téléphone : c'était devenu « un titre surligné posé
-au-dessus de chaque section », ce que Lilian a refusé, et l'accent unique n'y
-désignait plus rien. Les titres de section sont nus. 
-
-### La graisse
-
-Les `h2` et `h3` de l'accueil sont en **500**, pas 600. Le 600 serré donnait
-l'affiche ; le 500 donne l'interface. Le hero et les titres du récit montent
-en taille (`--text-affiche`, `--text-story`), pas en graisse.
-
-### Les rôles de texte
-
-Dix tailles, pas une de plus, chacune avec un rôle (passe typographique du
-2 octobre 2026, mesurée à 1440, 1024, 402 et 320 px) :
-
-| Rôle | Jeton | 402 → 1440 | Interligne, approche |
-|---|---|---|---|
-| Affiche (h1) | `--text-affiche` | 34 → 72 | 1,12 · −0,028em |
-| Énoncé (h2 du récit, « Mes expertises. », fin) | `--text-story` | 32 → 60 | `--leading-display` · `--tracking-display` |
-| Titre de section (h2) | `--text-headline` | 32 → 48 | idem (1,1 · −0,03em) |
-| Phrase (phrase d'un métier, citation) | `--text-phrase` | 26 → 40 | `--leading-phrase` · `--tracking-phrase` (1,14 · −0,025em) |
-| Titre lg (année, titre de vidéo) | `--text-title-lg` | 24 → 30 | 1,05 à 1,15 |
-| Titre (chiffre de preuve, fait, nom de site) | `--text-title` | 20 → 24 | 1,2 |
-| Chapô, nom de métier | `--text-body-large` | 17 → 20 | 1,3 à 1,5 |
-| Corps | `--text-body` | 16 | `--leading-body` (1,6) |
-| Petit corps, tout ce qui se clique | `--text-body-sm` | 14 | 1,35 à 1,5 |
-| Libellé | `--text-mono-label` | 12 | 1,4 |
-
-- **La phrase est un rang sous le titre qui l'annonce.** Elle prenait
-  `--text-headline` : la phrase d'un métier et la citation avaient exactement
-  la taille du `h2` de leur section, à toutes les largeurs.
-- **Un titre plus petit n'est jamais plus serré qu'un plus grand.** Les `h2`
-  étaient à 1,05 / −0,04em sous une affiche à 1,12 / −0,028em.
-- **Le corps n'a pas d'approche négative** sur l'accueil (`body` à 0). Le
-  −0,005em hérité de `body` valait −0,08 px quelle que soit la taille : les
-  textes de 14 et 12 px étaient relativement plus serrés que le corps.
-- **Le français se compose** : espace insécable avant `: ; ? !`, dans les
-  unités (« 45 minutes », « 24 h/24 », « 60 % ») et avant « € HT ».
-- **Les scènes ont leur propre échelle**, de quatre tailles (voir plus bas).
-
-### Les espacements
-
-Une échelle nommée par rôle, dans `@theme`. Elle remplace 33 `clamp()` écrits
-sur place dans neuf composants, qui donnaient 13 pas entre 18 et 72 px et cinq
-gouttières différentes.
-
-| Jeton | 402 → 1440 | Où |
-|---|---|---|
-| `--spacing-section-y` | 80 → 115 | au-dessus et au-dessous d'une section |
-| `--spacing-bloc` | 48 → 80 | entre deux sous-blocs d'une section (deux métiers, deux colonnes empilées) |
-| `--spacing-gouttiere` | 32 → 72 | entre deux colonnes : la même partout |
-| `--spacing-groupe` | 32 → 40 | d'un titre à son composant, d'un composant à sa sortie, d'une scène à son texte |
-| `--spacing-lie` | 20 → 28 | d'un titre à son chapô, d'un texte à ce qui l'étaie |
-| `--spacing-colle` | 8 | d'un nom à la phrase qu'il coiffe |
-
-Hors rythme : `--spacing-cadre` (marge des filets de cadre), `--spacing-maille`
-(la grille du premier et du dernier écran), `--spacing-panneau` (marge
-intérieure d'un panneau), `--spacing-barre` (hauteur de la barre : éléments
-collants, et `scroll-padding-top` posé sur la racine pour toutes les ancres).
-
-- **Les écarts disent qui va avec qui.** Dans le texte d'un métier : le nom
-  colle à sa phrase (8), la phrase ouvre sur le corps (20 à 28), la preuve s'en
-  détache (28), la sortie ferme (24). Un écart unique de 18 px séparait tout.
-- **Deux blocs qui se lisent ensemble partent de la même ligne** : le texte
-  d'un métier et sa scène, les deux titres de « Pourquoi moi », les deux
-  titres de « Ce que je publie » (calés en bas de leur rangée commune).
-- **Un composant ne dépasse jamais la hauteur de l'écran** : une scène empilée
-  borne sa largeur sur `100svh` moins la barre.
+L'accueil est la seule page à surligner ailleurs que dans son `h1` et son titre
+de fin : la réponse du hero, les actes 1 et 3 du récit, et le titre de fin.
+Onze titres en portaient une, trois dans un seul écran de téléphone : c'était
+devenu « un titre surligné posé au-dessus de chaque section », ce que Lilian a
+refusé, et l'accent unique n'y désignait plus rien. Les titres de section sont
+nus. Le hero et les titres du récit montent en taille (`--text-affiche`,
+`--text-story`), pas en graisse.
 
 ### Le récit (`home-story`)
 
@@ -706,7 +749,9 @@ les scènes se ressemblent le plus vite.
 ### Pourquoi moi
 
 Le seul panneau clair de la page, à gauche, reste en place pendant que la
-frise défile à droite.
+frise défile à droite. C'est une carte dans sa colonne, et non une île : la
+seule exception de forme à la règle 3 de *La tenue commune*. Les pages
+d'outil reprennent la même question dans `pourquoi-moi`, en île.
 
 - **Les quatre faits ouvrent le panneau**, un par ligne : ce qu'on retient en
   `--text-title`, ce qui le précise dessous en petit. Ils étaient le plus
@@ -746,7 +791,7 @@ Deux objets, pas deux cartes.
   « De », une ligne « Objet » (un exemple, inventé à la demande de Lilian, pas
   le titre d'un numéro paru), et la ligne « À » qui est le champ du
   formulaire. Pas de champ encadré dans une carte : le focus teinte la ligne
-  entière. C'est le seul endroit où des filets séparent des lignes, parce que
+  entière. C'est le seul endroit de l'accueil où des filets séparent des lignes, parce que
   c'est l'objet lui-même qui en a.
 
 ### Les voix (`home-voices`)
@@ -782,55 +827,43 @@ le focus le suspendent.
   tabulation). Sans script, les trois citations se lisent à la suite, signées.
 - Ce sont des recommandations, sans chiffre : le lien du bas mène aux cas
   clients, dont le nombre est lu dans la collection.
-- Les pages d'offre gardent `Testimonials.astro`, mêmes citations.
+- `/automatisations-ia` garde `Testimonials.astro` : les mêmes citations, lues
+  à la suite, la citation à gauche et qui la signe à droite.
 
-### Les questions (`home-questions`)
+### Les questions (`questions`)
 
 Quatre questions, juste avant la fin : pour qui, combien, seul ou non, comment
-se passe le premier échange. Elles sont écrites **comme un échange**, dans le
-vocabulaire de la barre d'écriture : la question à droite, sur pêche, en nuit,
-comme ce qu'écrit le visiteur ; la réponse à gauche, sur encre à 9 %, comme ce
-que dit Lilian. Mêmes rayons que les bulles de `home-invite`, à la taille du
-texte courant. La section suivante est le champ où l'on écrit vraiment.
+se passe le premier échange. Le composant est celui de toutes les pages (voir
+*Components → Questions*) ; ici il garde son titre par défaut, « Avant de
+m'écrire. », et lit `data/home-faq.ts`, qui alimente aussi le `FAQPage` de la
+page : une seule écriture par réponse. Rien n'y est affirmé qui ne soit dans
+PRODUCT.md ou `/llms.txt`.
 
-- **Tout est à l'écran, rien n'est replié** : pas d'accordéon, pas de filets,
-  pas de cartes. Un moteur lit ce qu'un visiteur lit.
-- **Rien ne s'écrit tout seul** : ce sont des réponses rédigées, pas une
-  conversation simulée.
-- Le titre (« Avant de m'écrire. ») reste en place à gauche sur grand écran
-  pendant que l'échange défile.
-- Le texte vient de `data/home-faq.ts`, qui alimente aussi le `FAQPage` de la
-  page : une seule écriture par réponse. Rien n'y est affirmé qui ne soit dans
-  PRODUCT.md ou `/llms.txt`.
-
-### La fin (`home-offers`)
+### La fin (`fin-de-page`)
 
 La page se ferme comme elle s'ouvre : une phrase seule, centrée, sur la maille
-du premier écran, cette fois immobile et effacée vers les bords.
+du premier écran, cette fois immobile et effacée vers les bords. C'est le
+composant de toutes les pages (voir *Components → La fin de page*), avec ce qui
+est propre à l'accueil :
 
-- **Le titre** : « Dites-moi ce qui vous fait perdre du temps. » Il répond au
-  titre qui ouvre le récit (« Vous avez la sensation de perdre votre temps ? »).
-  Il disait « 45 minutes pour voir si je suis la bonne personne » tant que le
-  bouton ouvrait l'agenda ; Lilian l'a fait changer quand l'appel à l'action
-  est devenu la conversation.
-- **Un champ et le bouton dans un même cadre**, comme une barre de prompt :
-  ce qu'on y écrit devient le premier message de la conversation
-  (`home-invite`). Vide, le bouton ouvre la même conversation.
-- **Une ligne collée au champ** dit la suite : le visiteur choisit comment
-  envoyer, WhatsApp, e-mail ou un appel de 45 minutes en visio, sans
-  engagement (« en visio » vient de l'événement Cal.com, « sans engagement »
-  de `/llms.txt`).
-- Les deux prix tiennent en **une ligne** dessous, chacun lié à sa page
-  d'offre. Hors du grand écran la section ne prend plus tout un écran
-  (`min(40rem, 70svh)`).
+- **Le titre par défaut** : « Dites-moi ce qui vous fait perdre du temps. » Il
+  répond au titre qui ouvre le récit (« Vous avez la sensation de perdre votre
+  temps ? »).
+- **Les deux prix tiennent en une ligne** sous l'invite (prop `prix`), chacun
+  lié à sa page d'offre : « Automatisation et agents IA, à partir de… » et
+  « Dashboards et outils métiers, sur devis ». Sous 640 px, une offre par
+  ligne. Les pages d'offre ne l'affichent pas : elles portent déjà leurs prix.
+- L'ancre de la section reste `#offres` ; partout ailleurs c'est `#contact`.
 
 **Un seul appel à l'action sur la page.** Tous les « Parlons de votre projet »
 (barre de navigation, menu mobile, lien de « Pourquoi moi », bouton de fin)
 ouvrent la conversation (`data-causerie-ouvrir`), décision de Lilian du
-2 octobre 2026. Ce sont des `BoutonReservation` : sans script, ils mènent à
-l'agenda.
+2 octobre 2026, devenue la règle de tout le site.
 
 ### La barre d'écriture (`home-invite`)
+
+Née sur l'accueil, elle est depuis le 3 octobre 2026 la conversation de tout
+le site : le nom du composant est resté.
 
 Idée de Lilian (2 octobre 2026), pour ôter toute friction au premier contact :
 une barre de prompt où le visiteur écrit son besoin en une phrase, et qui
@@ -893,9 +926,11 @@ il répond déjà.
   le perd pas, et la pastille dit alors « Message prêt, pas encore envoyé ».
 - **Valider un champ vide ouvre la fenêtre**, avec les trois moyens proposés
   d'emblée : la flèche ne reste jamais sans effet.
-- **Elle est rendue juste après le hero** dans la page, pour venir au clavier
-  là où on la voit (elle était 55ᵉ sur 57 arrêts, rendue après le pied de
-  page).
+- **Sur l'accueil, elle est rendue juste après le hero**, pour venir au
+  clavier là où on la voit (elle était 55ᵉ sur 57 arrêts, rendue après le pied
+  de page). **Sur les autres pages, c'est `Layout` qui la rend** (prop
+  `causerie`, vraie par défaut) : sans premier écran pour l'accueillir, elle
+  vit dans le coin, et tous les boutons de la page l'ouvrent.
 - **Pas d'outil de chat tiers** (Lilian ne veut pas payer Crisp), pas de bulle
   flottante générique : la fenêtre est dans la tenue de la page (nuit, filet,
   pêche, Geist), avec son portrait. Un vrai agent, branché sur une base de
@@ -915,77 +950,79 @@ repli aux sculptures de verre, ont été supprimées le 2 octobre 2026.
 
 Une nuit bleutée, des encres teintées vers elle plutôt que grises, une pêche
 unique. Tous les contrastes ci-dessous sont recalculés (luminance relative
-WCAG 2.x) sur les valeurs du bloc `@theme` de `src/styles/global.css`.
+WCAG 2.x) sur les valeurs du bloc `@theme` de `src/styles/global.css`, contre
+le fond général `#0c121f`.
 
 ### Primary
 
 - **Pêche** (`peche`, alias `--color-accent`, `--color-accent-text`,
-  `--color-focus`) : surlignage derrière les mots, fond des boutons primaires,
-  trait des liens, texte d'accent et anneau de focus **sur la nuit**. 10,19:1
-  sur le fond général, 9,46:1 sur la bande, 8,90:1 sur `surface-low`, 10,76:1
-  sur le pied de page.
-- **Pêche claire** (`peche-clair`) : survol du bouton primaire. Le libellé nuit
-  y gagne du contraste, 11,55:1 contre 10,19:1 au repos : sur un fond sombre un
-  survol doit gagner de la lumière, pas en perdre.
-- **Pêche éteinte** (`accent-soft`, 18 % de pêche dans la nuit) : fond de chip
-  d'accent et survol des lignes du menu mobile. Blanc dessus : 12,05:1 ; pêche
-  dessus : 6,93:1.
+  `--color-focus`) : pastille derrière un mot, fond du bouton, fond d'une
+  question, trait des liens, texte d'accent et anneau de focus **sur la nuit**.
+  10,76:1 sur le fond général, 8,90:1 sur `surface-low`.
+- **Pêche claire** (`peche-clair`) : survol du bouton. Le libellé nuit y gagne
+  du contraste, 11,55:1 contre 10,19:1 au repos : sur un fond sombre un survol
+  doit gagner de la lumière, pas en perdre.
+- **Pêche éteinte** (`accent-soft`, 18 % de pêche dans la nuit) : survol des
+  lignes et du bouton de fermeture du menu mobile. Blanc dessus : 12,05:1.
 
 ### Neutral
 
 | Rôle | Usage | Contraste |
 |---|---|---|
-| `paper` / `night` | Fond général, cartes, navigation | — |
-| `section-band` | Bande de section (`.section-band`, `.bloc-lime`), survol des cartes de services | 1,08:1 contre la nuit : un palier, pas un contraste |
-| `surface-low` | Fond des médias, panneau newsletter, balayage FAQ | 1,14:1 contre la nuit |
-| `surface-high` | Nœuds de schéma, grille d'abonnements | blanc dessus : 14,30:1 |
-| `night-deep` | Pied de page, voile des captures, capture absente | blanc dessus : 18,72:1 |
-| `night-soft` | Survol du bouton primaire sur panneau clair | blanc dessus : 12,58:1 |
-| `ink` | Texte principal, titres | 17,74:1 (16,46:1 sur la bande) |
-| `ink-mid` | Corps secondaire, chapôs | 10,67:1 (9,89:1 sur la bande, 9,32:1 sur `surface-low`) |
-| `ink-low` | Légendes, libellés | 7,75:1 (7,19:1 sur la bande) |
-| `ink-faint` | Traits, puces, pouce de barre de défilement ; jamais du texte de lecture | 4,88:1 |
-| `border-strong` | Contour de composant : question de FAQ, champ, filet haut de liste | 5,57:1 (5,17:1 sur la bande) |
-| `divider` | Filets de séparation, 1 px | 1,44:1 : un filet, pas un contour de composant |
-| `service-border` | Filet au repos des cartes de services et des captures | 1,58:1 |
-| `grid-line` / `grid-line-active` | Quadrillage des gouttières, trames de maquette | décoratif |
-| `error` | Message d'erreur, toujours porté par une phrase | 7,25:1 |
+| `paper` / `night-deep` | Fond général, barre, menu mobile, agenda, pied de page | — |
+| `night` | Texte posé sur la pêche, valeur fixe ; fond du bouton sur l'île | 10,19:1 sur la pêche |
+| `surface-low` | Panneau arrondi relevé d'un cran : média, fenêtre du simulateur, repères de prix, relevé d'un cas | 1,21:1 contre le fond : un palier, pas un contraste |
+| `surface-high` | Nœuds de schéma, fenêtres de maquette, flèches du carrousel | blanc dessus : 14,30:1 |
+| `night-soft` | Survol du bouton sur l'île claire | blanc dessus : 12,58:1 |
+| `ink` | Texte principal, titres | 18,72:1 |
+| `ink-mid` | Corps secondaire, chapôs | 11,25:1 (9,32:1 sur `surface-low`) |
+| `ink-low` | Légendes, notes, fil de retour | 8,18:1 |
+| `ink-faint` | Traits, puces, pouce de barre de défilement, filet de la barre une fois la page défilée ; jamais du texte de lecture | 5,15:1 |
+| `border-strong` | Contour d'un contrôle rond : flèches du carrousel, rang d'une étape | 5,88:1 |
+| `divider` | Filet de pied de section, filets d'un tableau, 1 px, 9 % de blanc | 1,25:1 : un filet, pas un contour de composant |
+| `service-border` | Filet posé sur une vignette de projet | 1,67:1 |
+| `grid-line` / `grid-line-active` | Trames et fils des maquettes et schémas | décoratif |
+| `error` | Message d'erreur, toujours porté par une phrase | 7,65:1 |
 
 `--color-success` vaut le blanc : la pêche étant la couleur de marque, elle ne
 peut pas signifier « valide ». Le succès passe en encre, porté par un libellé.
 L'erreur garde un rouge éclairci pour le fond sombre ; il est voisin de la pêche
 en teinte (1,41:1 entre les deux), donc jamais seul.
 
+Deux surfaces ne sont pas des jetons mais des mélanges d'encre, écrits avec
+`color-mix` : l'encre à 9 % (réponse d'un échange, pastille de survol de la
+barre ; blanc dessus : 14,94:1) et les filets de cadre et de maille (encre à 9
+ou 10 %).
+
 Les jetons `--color-text-on-dark*`, `--color-divider-dark` et
 `--color-surface-on-dark` portent les mêmes valeurs que les encres du fond
 général. Ils servent aux éléments qui restent sombres quel que soit leur parent
-(légende d'une capture, scènes 3D) et ne sont remappés par aucun bloc.
+(légende d'une vignette de projet, scènes 3D) et ne sont remappés par aucun
+bloc. Les teintes `feuille*`, `lueur-froide` et `braise` n'existent que dans
+les scènes de l'accueil.
 
 ### Le panneau clair (`.bloc-encre`)
 
-Le seul endroit où le clair revient. Le panneau remappe les jetons de rôle, et
-les composants suivent sans variante.
+Le seul endroit où le clair revient, sous une seule forme : l'île (règle 3 de
+*La tenue commune*). La classe remappe les jetons de rôle, et les composants
+suivent sans variante : une liste de prix, un tableau, une méthode se posent
+dans l'île tels quels.
 
 | Rôle remappé | Valeur | Contraste sur le panneau |
 |---|---|---|
-| `paper` → `panel` | `#f7f8fa` | 16,69:1 contre la nuit qui l'entoure |
+| `paper` → `panel` | `#f7f8fa` | 17,61:1 contre la nuit qui l'entoure |
 | `ink`, `border-strong`, `accent-text`, `focus`, `success` | nuit `#111827` | 16,69:1 |
 | `ink-mid` → `panel-ink-mid` | `#4b5565` | 7,09:1 |
 | `ink-low` → `panel-ink-low` | `#5d6777` | 5,38:1 |
 | `ink-faint` → `panel-ink-faint` | `#8b94a3` | 2,88:1 : trait uniquement |
 | `divider`, `service-border` → `panel-divider` | `#dce1e8` | 1,24:1 : filet |
-| `surface-low`, `section-band` → `panel-surface-low` | `#eef0f4` | — |
+| `surface-low` → `panel-surface-low` | `#eef0f4` | — |
 | `surface-high` → `panel-surface-high` | `#ffffff` | — |
 | `accent-soft` → `panel-accent-soft` | `#ffe9dd` | nuit dessus : 15,16:1 |
 | `error` → `panel-error` | `#b3261e` | 6,15:1 |
 
-### La bande nuit (`.bloc-lime`)
-
-Nom hérité : la classe n'a plus rien de lime et n'est plus claire. Elle pose
-`#161f32` et remappe `paper`, `section-band`, les deux surfaces, puis passe
-`divider` à `rgba(255,255,255,0.14)` et `grid-line` à `rgba(255,255,255,0.08)`.
-Elle rythme la page sans changer de monde : hero des pages d'offre et des pages
-outil, témoignages, bloc de contact, 404, barre d'action mobile.
+Un schéma ou une fenêtre de maquette posés dans l'île restent sombres : ils
+lisent les jetons fixes, pas les rôles.
 
 ### Named Rules
 
@@ -993,7 +1030,7 @@ outil, témoignages, bloc de contact, 404, barre d'action mobile.
 `--color-night`, valeur fixe qu'aucun bloc ne remappe, jamais `--color-ink`.
 `--color-ink` vaut le blanc sur la nuit, et le blanc sur la pêche tombe à
 1,74:1. C'est vrai du libellé d'un bouton, d'un fragment surligné, d'une
-pastille, de la sélection de texte, et de tout état de survol qui pose la pêche
+question, de la sélection de texte, et de tout état de survol qui pose la pêche
 derrière un libellé : le libellé change de couleur dans la même transition que
 le fond.
 
@@ -1023,58 +1060,66 @@ dans un commentaire est calculé, jamais estimé à l'œil.
 
 **Display Font :** Geist Variable (repli `system-ui, -apple-system, sans-serif`)
 **Body Font :** Geist Variable
-**Label/Mono Font :** aucune. `--font-mono` existe encore parce que onze
+**Label/Mono Font :** aucune. `--font-mono` existe encore parce que des
 composants l'appellent, mais il vaut la police de texte.
 
-**Caractère.** Une seule famille, tenue par le poids et la chasse : titres en
-600 serrés (jusqu'à `-0,045em`), corps en 400 à `-0,005em`, libellés
-fonctionnels en 500, capitales, `+0,06em`.
+**Caractère.** Une seule famille et une graisse moyenne : les titres sont en
+500, c'est la taille qui fait la hiérarchie. Le 600 serré donnait l'affiche ;
+le 500 donne l'interface. Corps en 400, sans approche ; libellés en 500, en bas
+de casse, sans approche. Du texte clair sur fond sombre demande un peu d'air,
+pas un serrage.
 
 ### Hierarchy
 
-- **Display hero** (600, `clamp(3,25rem, 6vw + 1,2rem, 6,25rem)`, 0,95) :
-  manifestes des landings spécialisées.
-- **Display** (600, `clamp(2,25rem, 5vw + 1rem, 5,25rem)`, 0,98, `-0,045em`) :
-  `h1` par défaut et `SectionHeader as="h1"`. Plancher à 2,25rem : à 320 px,
-  « l'automatisation » se coupait en plein glyphe à 2,75rem.
-- **Headline** (600, `clamp(2rem, 3vw + 0,5rem, 3rem)`, 1,05, `-0,035em`) :
-  titres de section, toujours via `SectionHeader`.
-- **Title lg / Title** (600 ou 500, jusqu'à 1,875rem / 1,5rem, 1,2) : cartes,
-  listes, prix, offres du menu mobile.
-- **Body large** (400, `clamp(1,0625rem, 0,5vw + 0,875rem, 1,25rem)`) : chapôs,
-  questions de FAQ.
-- **Body** (400, `1rem`, 1,55) : prose. Mesure plafonnée à `46ch`, soit 65 à 75
-  caractères réels : le `ch` de Geist (10,53 px à 16 px) vaut une fois et demie
-  un caractère moyen de prose française (6,87 px).
-- **Body sm** (`0,875rem`) : légendes, liens de pied de page, liens de la
-  navigation home.
-- **Button** (500, `clamp(0,75rem, 3,1vw, 0,875rem)`, capitales, `+0,02em`) :
-  libellé du bouton primaire.
-- **Label / Caption** (500, `0,75rem` / `0,6875rem`, capitales, `+0,06em`) :
-  libellés fonctionnels uniquement.
+Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
+
+| Rôle | Jeton | 402 → 1440 | Graisse, interligne, approche |
+|---|---|---|---|
+| Affiche (`h1` de l'accueil) | `--text-affiche` | 34 → 72 | 500 · 1,12 · −0,028em |
+| Manifeste (`h1` de `/automatisations-ia`) | `--text-display-hero` | 52 → 100 | 500 · 1,1 · −0,03em |
+| Titre de page (`h1` des pages intérieures) | `--text-display` | 36 → 84 | 500 · 1,1 · −0,03em |
+| Énoncé (titres du récit, titre de fin de page) | `--text-story` | 32 → 60 | 500 · 1,1 · −0,03em |
+| Titre de section (`h2`) | `--text-headline` | 32 → 48 | 500 · 1,1 · −0,03em |
+| Phrase (titre d'une `partie`, principe, phrase d'un métier, citation) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
+| Titre lg (prix d'une formule, titre d'un cas dans la liste, lien du menu mobile) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,2 |
+| Titre (`h3`, chiffre de preuve, nom d'un site) | `--text-title` | 20 → 24 | 500 · 1,2 · −0,02em |
+| Chapô, texte d'une `partie`, usages | `--text-body-large` | 17 → 20 | 400 · 1,4 à 1,65 |
+| Corps | `--text-body` | 16 | 400 · 1,55 à 1,6 · 0 |
+| Petit corps, et tout ce qui se clique | `--text-body-sm` | 14 | 400, 500 pour un contrôle |
+| Libellé (`.mono-label`, `.mono-caption`, `.chip`) | `--text-mono-label` | 12 | 500 · 1,4 · 0 |
+
+- **Tout ce qui se clique est à 14 px, en bas de casse, graisse 500** : le
+  bouton, le lien fléché, les liens de la barre. Une action n'a qu'un seul
+  traitement sur le site.
+- **La phrase est un rang sous le titre qui l'annonce.** Elle prenait
+  `--text-headline` : la phrase d'un métier et la citation avaient exactement
+  la taille du `h2` de leur section, à toutes les largeurs.
+- **Un titre plus petit n'est jamais plus serré qu'un plus grand.** Interligne
+  et approche sont des jetons par rôle (`--leading-display`,
+  `--tracking-display`, `--leading-phrase`, `--tracking-phrase`,
+  `--leading-body`), pas des littéraux recopiés.
+- **Le corps n'a pas d'approche négative** (`body` à 0) : héritée en longueur
+  absolue, elle serrait davantage les petits corps que le texte courant.
+- **Mesure : `46ch`**, soit environ 70 caractères : le `ch` de Geist (10,53 px à
+  16 px) vaut une fois et demie un caractère moyen de prose française
+  (6,87 px).
+- **Le français se compose** : espace insécable avant `: ; ? !`, dans les
+  unités (« 45 minutes », « 24 h/24 », « 60 % ») et avant « € HT ».
+- **Les scènes de l'accueil ont leur propre échelle**, de quatre tailles (voir
+  *L'accueil*). `--text-mono-caption` (11 px) ne sert plus qu'aux maquettes des
+  pages de cas.
 
 L'échelle est **fluide en haut, fixe en bas**, et la coupure est délibérée. Du
-hero au chapô, chaque rang est un `clamp()`. À partir du corps les rangs sont
-des valeurs fixes : à cette taille une courbe ne produirait qu'un pixel d'écart
-entre les deux extrémités du viewport. Le corps portait une telle courbe et ne
-descendait à 15 px que sous 400 px, précisément là où il doit être le plus
-lisible : il vaut `1rem`, plancher compris.
+manifeste au chapô, chaque rang est un `clamp()`. À partir du corps les rangs
+sont des valeurs fixes : à cette taille une courbe ne produirait qu'un pixel
+d'écart entre les deux extrémités du viewport, et le corps ne doit pas
+descendre sous 16 px, plancher sous lequel iOS zoome un champ de saisie.
 
-Le rang de 13 px (`--text-mono-body`) a disparu de l'échelle rendue : il était
-à 1,08 de ses deux voisins. Le jeton, qui ne survivait que comme alias de
-`--text-body-sm` pour six maquettes, a été retiré avec elles. Il reste un rapport de 1,09 entre les deux
-rangs de petites capitales (11 et 12 px) ; c'est un avis du détecteur, pas un
-défaut bloquant.
-
-**Une seule exception à « fixe en bas », et elle est mesurée.** Le libellé du
-bouton primaire est un `clamp()` sous `0,875rem` : 12 px sous 387 px de large,
-14 px au-dessus de 452. À 14 px sec, quatre des six boutons de la home
-passaient de 44 à 65 px de haut à 320 px. La pente est calée sur le conteneur
-le plus étroit du site, le CTA de `/principes` dans un encart à 32 px de
-padding : 3,6vw le faisait déborder de 400 à 479 px, 3,1vw non.
-
-Aucun rôle ne commute de jeton à un point de rupture : le manifeste perdait
-10,2 px (−14,7 %) quand la fenêtre gagnait un pixel à 1024 px.
+Aucun rôle ne commute de jeton à un point de rupture. Le plancher de
+`--text-display` est à 2,25rem : à 320 px, « l'automatisation » se coupait en
+plein glyphe à 2,75rem. Le manifeste et le titre de fin de page sont en plus
+bornés par la largeur (`min(…, 14,5vw)`, `min(…, 8,6vw)`) pour qu'un mot long
+ou une pastille tiennent à 320 px.
 
 Pas de césure automatique sur les titres. `hyphens: auto` coupait « freelance »
 en « free-lance ».
@@ -1101,72 +1146,102 @@ composant : une courbe recopiée échappe à toute reprise globale.
 ## Layout
 
 Colonne de contenu de 1 200 px au plus, centrée, avec des marges latérales
-fluides (`--spacing-section-x`, de 24 à 120 px) et un rythme vertical unique
-par section (`--spacing-section-y`, de 80 à 128 px). Mobile d'abord.
+fluides (`--spacing-section-x`, de 24 à 120 px). Mobile d'abord. Une section
+s'écrit toujours de la même façon : marges `section-x`, rythme vertical
+`section-y`, contenu en `max-w-[1200px]`, filet `divider` à son pied.
 
-**Un seul seuil desktop, 1024 px.** C'est le `lg:` de Tailwind, celui où la
-navigation passe du menu au wordmark, où `scrollbar-gutter: stable` s'active et
-où la grille de gouttière apparaît. Les autres seuils sont des empilements
-locaux, écrits avec leur composant : 900 px pour les cartes de services et les
-grilles d'abonnement, 800 px pour la section « à propos », 700 px pour la liste
-des publics, 520 px pour le hero de la home, 640 et 768 px pour les utilitaires
-Tailwind.
+**Une échelle d'espacement nommée par rôle**, dans `@theme`. Les écarts disent
+qui va avec qui.
 
-**Le rythme vient du changement de surface, pas du vide.** Fond nuit, bande
-relevée, île claire, pied de page plus profond. L'île claire ne touche jamais
-les bords : elle garde une marge de `clamp(0,5rem, 1,5vw, 1,25rem)`, un liseré
+| Jeton | 402 → 1440 | Où |
+|---|---|---|
+| `--spacing-section-y` | 56 → 115 | au-dessus et au-dessous d'une section |
+| `--spacing-bloc` | 40 → 80 | entre deux sous-blocs d'une section ; au-dessus et au-dessous d'une `partie` |
+| `--spacing-gouttiere` | 32 → 72 | entre deux colonnes : la même partout |
+| `--spacing-groupe` | 32 → 40 | d'un titre à son composant, d'un composant à sa sortie |
+| `--spacing-lie` | 20 → 28 | d'un titre à son chapô, d'un texte à ce qui l'étaie |
+| `--spacing-colle` | 8 | d'un nom à la phrase qu'il coiffe |
+
+Sous 640 px, `section-y` tombe à 56 px et `bloc` à 40 px (ils vaudraient 80 et
+48) : sur un téléphone l'écart entre deux sections ne doit pas coûter un demi-
+écran. Hors rythme : `--spacing-cadre` (marge des filets de cadre de
+l'accueil), `--spacing-maille` (la grille du premier écran de l'accueil et de
+la fin de page), `--spacing-panneau` (marge intérieure d'un panneau),
+`--spacing-barre` (hauteur de la barre : éléments collants, et
+`scroll-padding-top` posé sur la racine pour toutes les ancres).
+
+**Le titre à gauche, ce qu'il annonce à droite.** C'est la composition de base
+d'une section intérieure à partir de 1024 px : une grille `1fr / 1,4fr`, écart
+`gouttiere`, le titre collant sous la barre pendant qu'on lit la colonne de
+droite (`partie`, `questions`, les sections de `PageExpertOutil`, `Methode`,
+les pièces d'un cas). En dessous, le titre passe au-dessus.
+
+**Des blocs de texte à plat.** Quatre raisons, quatre outils, trois formats :
+un titre `h3` et un paragraphe, posés sur une grille de deux ou trois colonnes,
+sans cadre, sans fond, sans filet. L'espace (`groupe` entre les rangées,
+`gouttiere` entre les colonnes) fait le travail. Une liste est une liste : un
+cas par rangée, une formule par ligne.
+
+**Le rythme vient du filet et de l'île, pas d'un changement de fond.** Les
+sections se suivent sur la nuit ; une île claire, deux au plus, marque le pic
+de la page. Elle garde une marge de `clamp(0,5rem, 1,5vw, 1,25rem)`, un liseré
 de nuit et non une gouttière, et son contenu reste aligné sur la colonne.
 
-**L'en-tête de section est unique.** `SectionHeader` porte le titre, son filet
-et le chapô, avec un seul écart vers le contenu (48 px, 64 px au-delà de
-768 px). Deux sections l'avaient refait à la main et se présentaient comme des
-sous-parties.
+**Les seuils.** 1024 px est le seuil des deux colonnes titre/contenu, des
+titres collants, du nom en toutes lettres dans la barre, des filets de cadre de
+l'accueil et de `scrollbar-gutter: stable`. Les autres sont des empilements
+locaux, écrits avec leur composant : 1200 px (texte d'un métier à côté de sa
+scène), 900 px (liste de prix, offres, témoignages, scènes de travail), 768 px
+(blocs sur deux colonnes ; questions toutes ouvertes), 720 px (tableau d'une
+`partie` replié en blocs, onglets des métiers), 640 px (rythme de téléphone,
+fin de page empilée). La barre ne suit pas un seuil en pixels mais une requête
+de conteneur en em (voir *Components → Navigation*).
 
-**Les grilles partagent leurs rangées.** Les deux cartes de services et les
-formules d'abonnement utilisent `subgrid` sur quatre rangées, pour que titres,
-descriptions, médias et pieds s'alignent d'une carte à l'autre. Deux colonnes
-égales, écart de 1,5rem ; padding fluide `--spacing-service-card`.
+**Deux blocs qui se lisent ensemble partent de la même ligne** : le nom, la
+phrase et le prix d'une formule (`subgrid`, même ligne de base), les prix d'une
+liste (une colonne commune, pour qu'ils tombent les uns sous les autres), le
+texte d'un métier et sa scène.
 
-**Une seule maille de grille**, 96 px (`--spacing-grid-cell`). Elle vit dans les
-gouttières, de part et d'autre de la colonne, en patchs radiaux décalés qui se
-dissipent avant de toucher le contenu. Sous 1024 px elle n'existe pas : mesuré,
-la gouttière vaut 32 px à 641, 38 à 768, 45 à 900 et 51 à 1023, il n'y tient
-pas une cellule, et ce qu'on voyait était un reste de grille.
+**Un composant ne dépasse jamais la hauteur de l'écran** : une scène empilée
+borne sa largeur sur `100svh` moins la barre.
 
-Les cibles tactiles font 44 px au moins ; la barre de navigation fait 64 px.
+Les cibles tactiles font 44 px au moins ; la barre de navigation fait 64 px
+(4rem : elle grandit avec le texte).
 
 ## Elevation & Depth
 
-**Il n'y a pas d'ombre.** `--shadow-card` et `--shadow-card-hover` valent
-`0 0 0 0 transparent`. La profondeur vient de deux choses : les filets d'un seul
-poids, 1 px, et les paliers de surface. Sur la nuit, **une surface monte en
-s'éclaircissant** : fond général `#111827`, bande `#161f32`, carte ou média
-`#1a2439`, surface haute `#1f2a42`. Le pied de page descend au contraire, en
-`#0c121f`.
+**Une surface de page n'a pas d'ombre.** `--shadow-card` et
+`--shadow-card-hover` valent `0 0 0 0 transparent`. La profondeur vient de trois
+choses : les filets d'un seul poids, 1 px ; un seul palier de surface,
+`surface-low`, réservé aux panneaux arrondis ; et l'île claire. Le pied de page
+n'est plus un palier : il est sur le même fond que la page, séparé par un
+filet.
 
-Les deux jetons d'ombre restent, et c'est vérifié : quatre déclarations hors de
-`global.css` les lisent (`MockupWindow`, `WorkflowCanvas` deux fois,
-`CaseStudy`). Les supprimer y
-rendrait `box-shadow: var(--shadow-card)` invalide à l'exécution, sans erreur.
-« Pas d'élévation » est écrit comme une valeur plutôt que laissé comme un blanc
-qu'on comblerait un jour au jugé.
+Les deux jetons d'ombre restent, et c'est vérifié : des déclarations hors de
+`global.css` les lisent (`MockupWindow`, `WorkflowCanvas`, `CaseStudy`). Les
+supprimer y rendrait `box-shadow: var(--shadow-card)` invalide à l'exécution,
+sans erreur. « Pas d'élévation » est écrit comme une valeur plutôt que laissé
+comme un blanc qu'on comblerait un jour au jugé.
 
-La barre de navigation et la barre d'action mobile sont translucides (fond nuit
-à 92 % et 90 %, flou de 12 px) pour rester lisibles au-dessus du contenu qui
-défile ; sur la home, la barre est opaque. C'est le seul flou du site.
+**Ce qui flotte au-dessus de la page fait exception, et seulement cela.** La
+fenêtre de conversation (`home-invite`), fixe dans le coin, porte une ombre
+teintée `night-deep` et un liseré intérieur d'encre à 9 % ; les fenêtres des
+scènes de l'accueil, qui sont des dessins d'interface, ont leurs ombres et
+leur verre dépoli à elles. Ni l'un ni l'autre ne passe à une section, à un bloc
+ou à un bouton. La barre de navigation est opaque : aucun flou dans le chrome.
 
 ### Named Rules
 
 **La règle du filet.** Un filet fait 1 px. Deux niveaux : `divider` pour séparer
-(1,44:1, volontairement discret) et `border-strong` pour le contour d'un
-composant qui doit tenir 3:1 (5,57:1). Un filet blanc pur éblouissait autour de
-chaque question de la FAQ.
+(9 % de blanc, 1,25:1, volontairement discret) et `border-strong` pour le
+contour d'un contrôle qui doit tenir 3:1 (5,88:1). Sur une page tenue par une
+grille, un filet plein devient du bruit.
 
-**La règle du trait de lien.** Le soulignement d'un lien (`.lien-prose`,
-question de FAQ au survol) fait 2 px. Ce n'est pas un
-filet : un filet sépare ou encadre une surface, celui-ci souligne des mots. Le
-pixel de plus le distingue d'un filet de séparation par autre chose que la
-teinte, une information portée par la seule couleur n'en étant pas une.
+**La règle du trait de lien.** Le soulignement d'un lien de prose
+(`.lien-prose`) fait 2 px. Ce n'est pas un filet : un filet sépare ou encadre
+une surface, celui-ci souligne des mots. Le pixel de plus le distingue d'un
+filet de séparation par autre chose que la teinte, une information portée par
+la seule couleur n'en étant pas une.
 
 **La règle de la transition utile.** Aucune transition ni état de survol sur une
 propriété qui ne change pas. Sept déclarations d'ombre sur des jetons
@@ -1180,27 +1255,31 @@ est rond.
 
 | Jeton | Valeur | Usage observé |
 |---|---|---|
-| `xs` | 6 px | Détail de maquette, piste du curseur |
-| `sm` | 10 px | Lien de navigation, bouton de fermeture, nœud de schéma animé, vignette |
-| `md` | 16 px | Carte, question de FAQ |
+| `xs` | 6 px | Détail de maquette, piste du curseur, l'angle « queue » d'une bulle |
+| `sm` | 10 px | Bouton de fermeture de l'agenda, nœud de schéma animé |
+| `md` | 16 px | Bulle d'un échange, relevé d'un cas, cadre d'une scène |
 | `diagram` | 16 px | Nœuds des schémas de cas |
-| `lg` | 16 → 24 px, fluide | Média, portrait, carte de service, panneau newsletter, grille d'abonnements |
-| `xl` | 20 → 32 px, fluide | Panneau clair `.bloc-encre` |
-| `cta` / `full` | 9999 px | Bouton, champ, chip, pouce de curseur, pastille |
+| `lg` | 16 → 24 px, fluide | Média, vignette de projet, invite de fin de page, fenêtre de conversation, repères de prix |
+| `xl` | 20 → 32 px, fluide | Île claire `.bloc-encre` |
+| `cta` / `full` | 9999 px | Bouton, lien de la barre et sa pastille de survol, chip, `mark`, pouce de curseur, portrait |
 
 `lg` et `xl` sont fluides : 24 et 32 px sur un panneau de 343 px de large le
 transformeraient en gélule.
 
 **L'intérieur reste plus petit que l'extérieur.** Un nœud dans une fenêtre de
-maquette prend `sm` parce que la fenêtre descend à 16 px sur mobile ; la grille
-d'abonnements prend `lg` parce que le panneau qui la porte prend `xl`.
+maquette prend `sm` parce que la fenêtre descend à 16 px sur mobile ; le champ
+d'une invite prend `xs` parce que l'invite prend `lg`.
 
 **On n'arrondit pas un trait.** Les filets de séparation à l'intérieur d'un
 cadre arrondi restent droits. Le cadre rogne ses filets à l'arrondi.
 
-**Le surlignage est une bande penchée**, de rayon `0,14em`, inclinée de
-`-1,8deg` (ou `+1,5deg` avec `.inv`), ramenée à `-1,3deg` / `+1,1deg` dans un
-`h1`. La bande penche, les lettres restent droites.
+**Le surlignage est une pastille droite**, de rayon 9999 px, sans inclinaison.
+Dans un `h1` elle est resserrée en hauteur (`inset: 0,14em 0 0,16em`) : à 76 px
+pour un interligne de 72, elle mordait la ligne du dessus.
+
+**Une bulle a une queue.** La question d'un échange arrondit trois angles en
+`md` et le quatrième, en bas à droite, en `xs` ; la réponse fait de même en bas
+à gauche. Ce sont les rayons des bulles de la conversation (`home-invite`).
 
 **Le panneau clair est une île, pas une bande.** Bord à bord, il coupait la page
 en trois à angle droit ; détaché et arrondi, il se lit comme un objet posé sur
@@ -1213,22 +1292,23 @@ défilement rogne en `overflow: clip`, jamais en `overflow: hidden`. `hidden`
 fait de l'enveloppe un conteneur de défilement : le `view()` de l'image se
 résolvait contre elle et non contre la fenêtre, et l'image restait figée à la
 fin de sa course. `clip` rogne sans créer de conteneur de défilement.
-`overflow: hidden` reste valable partout ailleurs : cartes, cadres, balayage
-de la FAQ.
+`overflow: hidden` reste valable partout ailleurs.
 
 ## Components
 
 ### Boutons
 
-**Le bouton primaire** est une gélule pêche à libellé nuit (10,19:1), 44 px de
-haut au moins, padding `11px 22px`, libellé en capitales à `+0,02em`. Tout lien
-vers l'agenda passe par `BoutonReservation`.
+**Le bouton** est une gélule pêche à libellé nuit (10,19:1), 44 px de haut au
+moins, padding `11px 22px`, libellé en bas de casse à 14 px, graisse 500, sans
+approche. Il se distingue par son aplat de pêche, pas par des capitales. Il n'y
+en a qu'un sur le site : « Parlons de votre projet », posé par
+`BoutonReservation` (voir règle 8 de *La tenue commune*).
 
 - **Survol et focus :** la pêche s'éclaircit (`peche-clair`), le bouton monte
   d'un pixel, la flèche avance de 3 px. Le libellé ne change pas de couleur.
 - **Pressé :** `translateY(0) scale(0.98)`.
 - **Désactivé :** opacité 0,55, curseur interdit.
-- **Sur panneau clair :** fond nuit, libellé blanc, survol `night-soft`.
+- **Sur l'île claire :** fond nuit, libellé blanc, survol `night-soft`.
 - **La sortie est plus lente que l'entrée :** 150 ms à l'aller, 200 ms au
   retour. Un survol dont l'aller et le retour durent autant se ressent comme
   une commutation.
@@ -1237,67 +1317,87 @@ vers l'agenda passe par `BoutonReservation`.
   du geste.
 - **Mouvement réduit :** la transition de couleur reste, déplacement et échelle
   sautent.
+- **Dans la barre**, le même bouton se resserre (`6px 10px`, puis `11px 18px` à
+  partir de 1024 px) et perd sa flèche sous 480 px ; son libellé tient sur une
+  ligne jusqu'à 320 px.
 
-Dans la navigation de la home, le même bouton perd ses capitales et descend à
-`body-sm` ; dans la newsletter il monte à 48 px et perd ses capitales.
-
-**Le lien secondaire fléché** (`.link-cta`) est un libellé en capitales de
-12 px, blanc, suivi d'une flèche. Au survol et au focus, la bande de surligneur
-se pose derrière le libellé de gauche à droite (même inclinaison et mêmes
-retraits que `mark`), le libellé passe en nuit dans la même transition, et la
-flèche avance de 4 px en prenant la couleur d'accent.
+**Le lien secondaire fléché** (`.link-cta`, composant `LinkCTA`) est un libellé
+blanc en bas de casse à 14 px, graisse 500, suivi d'une flèche Lucide. Au
+survol et au focus, une pastille pêche, la même que celle des titres, se
+déroule derrière le libellé de gauche à droite (`clip-path`) ; le libellé passe
+en nuit dans la même transition, et la flèche avance de 4 px en prenant la
+couleur d'accent. Réservé aux actions secondaires : une sortie vers une autre
+page, une ancre, « Lire le détail ».
 
 **Le lien de prose** (`.lien-prose`) est souligné de 2 px en pêche, encre au
-survol. Il repasse en nuit sur le panneau clair. Le lien souligné fléché
-(`.text-link-arrow`) a été retiré le 2 octobre 2026 avec l'ancienne home, son
-seul porteur.
+survol. Il repasse en nuit sur l'île claire. Un nom qui mène à un récit (cas
+d'une page d'outil, prix de la fin de l'accueil, liens de la 404) est souligné
+d'un trait fin d'encre atténuée, qui passe à la pêche ou s'épaissit au survol :
+un lien se signale par un trait, pas par sa seule teinte.
 
 ### Le surlignage (`mark`)
 
-Une bande pêche pleine derrière les mots, en pseudo-élément avec `z-index: -1`
-et `isolation: isolate`. Le texte surligné est en nuit, 10,19:1, partout : sur
-la nuit, sur la bande, sur le panneau clair. Retraits `0,06em 0 0,1em`,
-resserrés à `0,14em 0 0,16em` dans un `h1`. L'inclinaison alterne à la main via
-`.inv` ; douze bandes du même côté se lisent comme un réglage.
+Une pastille pêche pleine derrière les mots : droite, ronde (9999 px), en
+pseudo-élément avec `z-index: -1` et `isolation: isolate`. Le texte surligné
+est en nuit, 10,19:1, partout : sur la nuit comme sur l'île. `mark` est un
+`inline-block`, padding `0,02em 0,36em 0,08em`.
 
-Contrainte dure : `white-space: nowrap`. Sur un fragment qui passe à la ligne,
-la bande couvre le rectangle englobant et produit un aplat informe. **Le
-fragment fait de 1 à 4 mots**, à toutes les tailles. C'est aux mots d'être
-courts, pas à la bande de se déformer.
+- **Une seule par titre, et pas dans chaque titre.** Sur une page intérieure,
+  elle n'apparaît que dans le `h1` et dans le titre de fin de page ; l'accueil
+  en compte quatre. Posée sur chaque titre de section, elle ne désignait plus
+  rien.
+- **Jamais sur deux lignes** : `white-space: nowrap`. Sur un fragment qui passe
+  à la ligne, la pastille couvre le rectangle englobant et produit un aplat
+  informe. Le fragment fait de un à trois mots et doit tenir à 320 px de large.
+  C'est aux mots d'être courts, pas à la pastille de se déformer.
+- **Hors d'un titre, un seul emploi** : la colonne « après » du tableau
+  avant/après d'un cas, dans l'île des résultats. Le fragment peut y être
+  long : `nowrap` y est levé localement et le rayon ramené à une demi-ligne
+  (`0,78em`), pour qu'il se lise comme un rectangle arrondi sur deux lignes.
+- La sélection de texte reprend le même couple : pêche, texte nuit.
 
 ### Chips
 
-Gélule à filet `divider`, texte `ink-mid` en capitales de 11 px, padding
-`4px 10px`. Survol : texte blanc, filet `ink-faint`, fond `surface-low`.
-`.chip-accent` : fond `accent-soft`, texte pêche (6,93:1), sans filet, sans
-survol (elle n'est pas cliquable). `.chip-dashed` : filet pointillé, `ink-low`.
-Sur le panneau clair, la chip d'accent devient nuit sur pêche pâle (15,16:1).
+Une étiquette : gélule à filet `divider`, texte `ink-mid` en bas de casse à
+12 px, graisse 500, padding `4px 10px`. Survol : texte blanc, filet
+`ink-faint`, fond `surface-low`. Elle nomme un outil dans la liste des cas, et
+c'est son seul emploi : pas de variante d'accent, pas de variante pointillée.
 
-### Cartes et conteneurs
+### Blocs de texte et conteneurs
 
-- **Carte** (`.card`) : fond du parent, filet `divider`, rayon 16 px, padding
-  24 px. Seul le filet s'anime.
-- **Carte interactive** : le survol et le focus revendiquent la cellule par le
-  filet, qui passe à l'accent. Sur la nuit, `ink-faint` ne se distinguait
-  presque pas du filet de repos.
-- **Carte de service** (home) : filet `service-border`, rayon `lg`, média en
-  3:2 bord à bord entre deux filets. Au pointeur fin, le filet passe en pêche,
-  le fond monte d'un palier (`section-band`), le visuel avance (`scale(1.03)`,
-  350 ms à l'aller, 600 ms au retour), l'action se souligne et sa flèche
-  avance de 0,2rem. Une seule destination par carte, aucun lien imbriqué.
-- **Média** : rayon `lg`, fond `surface-low`, enveloppe `.media-ouvre` quand il
-  s'ouvre au défilement.
-- **Grille d'abonnements** (`SubscriptionGrid`) : un cadre arrondi `lg` sur
-  `surface-high`, filets droits à l'intérieur, rangées alignées en `subgrid`,
-  empilement sous 900 px. Elle lit les jetons de rôle et suit donc le panneau
-  clair comme la bande nuit. Aucun bouton par formule.
+Il n'y a plus de carte bordée. Ce qui était une grille de cartes est devenu :
+
+- **Un bloc de texte à plat** : un `h3` (`--text-title`), un paragraphe en
+  `ink-mid` (`46ch`), sur deux ou trois colonnes, sans cadre ni filet (raisons
+  d'une page d'outil, outils de `Stack`, formats d'`Offres`).
+- **Une liste de prix** (`SubscriptionGrid`, nom hérité) : une formule par
+  ligne, son nom à gauche, ce qu'elle est et ce qu'elle comprend au milieu, le
+  prix à droite. Ni cadre, ni fond, ni filet. À partir de 900 px les trois
+  colonnes sont communes à toute la liste (`subgrid`) : les prix tombent les
+  uns sous les autres, sur la même ligne de base que le nom. Le montant est en
+  `--text-title-lg`, chiffres tabulaires, insécable ; ce qui est compris se lit
+  en une ligne, les termes séparés par un point médian. Sur téléphone, le prix
+  vient juste sous le nom. Elle ne lit que des jetons de rôle, et se pose donc
+  telle quelle dans une île. Aucun bouton par formule.
+- **Une liste de cas** (`/cas-clients`) : un cas par rangée, ce qu'il est à
+  gauche, ses chiffres à droite, ses outils en chips au pied. Le lien est le
+  titre et s'étend à toute la rangée. Rien ne l'encadre.
+- **Un tableau** (dans une `partie`) : des données, donc des filets fins entre
+  les rangées et rien autour ; il se replie en blocs sous 720 px.
+- **Un panneau relevé** : quand un objet doit se lire comme un seul bloc (la
+  fenêtre du simulateur, les repères de prix d'un en-tête, le relevé d'étapes
+  d'un cas), il prend `surface-low` et un rayon `md` ou `lg`. C'est la seule
+  surface qui monte, et jamais sur toute la largeur.
+- **Un média** : rayon `lg`, fond `surface-low`, enveloppe `.media-ouvre` quand
+  il s'ouvre au défilement.
 
 ### Champs
 
-Le champ email de la newsletter est une gélule : 48 px de haut, filet
-`border-strong` (5,57:1), fond nuit, texte blanc, indication en `ink-mid`
-(10,67:1). Le texte fait 16 px : en dessous iOS zoome. Erreur en `error`,
-portée par une phrase dans un statut `aria-live`.
+Un champ est dans un cadre qui porte le focus à sa place : l'invite de la fin
+de page et la barre de conversation (voir *La fin de page*), la ligne « À » du
+mail de la newsletter sur l'accueil. Le texte fait 16 px : en dessous iOS
+zoome. Une erreur est en `error`, portée par une phrase dans un statut
+`aria-live`.
 
 Le curseur du simulateur (`.roi-slider`) a une zone tactile de 28 px, une piste
 visible de 4 px en encre, un remplissage pêche de 10 px, un pouce rond pêche à
@@ -1305,56 +1405,107 @@ contour d'encre de 2 px qui grossit à 1,15 au survol et au focus.
 
 ### Focus
 
-Anneau `2px solid var(--color-focus)`, décalage 2 px, en `outline` et jamais en
-`box-shadow`. Pêche sur la nuit (10,19:1), nuit sur le panneau clair (16,69:1).
-Il n'est posé que sur un appareil disposant d'un pointeur fin ou d'un survol
-(`any-hover: hover` ou `any-pointer: fine`) : sur tactile pur, iOS dessine un
-cadre disgracieux au tap et sur tout `.focus()` programmatique. Les champs de
-saisie gardent leur anneau même sur tactile. En couleurs forcées : `CanvasText`.
+Anneau `2px solid var(--color-focus)`, décalage 2 px, en `outline`. Pêche sur
+la nuit (10,76:1), nuit sur l'île claire (16,69:1). Il n'est posé que sur un
+appareil disposant d'un pointeur fin ou d'un survol (`any-hover: hover` ou
+`any-pointer: fine`) : sur tactile pur, iOS dessine un cadre disgracieux au tap
+et sur tout `.focus()` programmatique. Les champs de saisie gardent leur anneau
+même sur tactile. En couleurs forcées : `CanvasText`.
 
 ### Navigation
 
-Barre fixe de 64 px (4rem, `--spacing-barre` : elle grandit avec le texte
-quand le visiteur l'agrandit), filet bas `divider` qui passe à `ink-faint` une
-fois la page défilée, sans ombre. Liens en capitales de 12 px, `ink-mid`, blancs au
-survol ; le lien actif se distingue par le poids (600), sans filet décoratif.
-Sur la home, les liens et le wordmark sont en casse normale.
+La même barre sur toutes les pages. Fixe, 64 px (4rem, `--spacing-barre` : elle
+grandit avec le texte quand le visiteur l'agrandit), fond plein `paper`, filet
+bas `divider` qui passe à `ink-faint` une fois la page défilée, sans ombre ni
+flou.
 
-**Le repère est un emplacement, pas deux objets.** Au-dessus de 1024 px il porte
-le nom en toutes lettres : « Lilian Sevoumian » sur la home, `LILIAN SEVOUMIAN`
-ailleurs. En dessous, l'emplacement tombe à 28 px et porte un « L » tant que le
-hero est à l'écran, puis le visage en fondu croisé. Sur les pages sans hero,
-l'état est posé au rendu, pour ne pas faire clignoter un « L ».
-
-**Une seule instance de réservation visible à la fois.** Le CTA central mobile
-s'éteint quand la barre d'action mobile remonte ou quand le menu est ouvert.
+- **Le nom** : « Lilian Sevoumian », en bas de casse, 16 px, graisse 600,
+  approche −0,02em, à partir de 1024 px. En dessous, le même emplacement tombe
+  à 28 px et porte un « L » tant qu'un hero est à l'écran, puis le visage en
+  fondu croisé. Sur les pages sans hero, l'état est posé au rendu, pour ne pas
+  faire clignoter un « L ».
+- **Les liens** : 14 px, graisse 500, `ink-mid`, blancs au survol, cible de
+  44 px. Une pastille (encre à 9 %, liseré intérieur à 13 %, 36 px de haut)
+  glisse d'un lien à l'autre sous le pointeur : une seule forme qui se déplace,
+  pas un fond par lien. Le lien de la section en cours passe en 600 et garde un
+  point pêche de 4 px dessous.
+- **La liste change, pas la barre** : l'accueil nomme ses quatre métiers, une
+  page d'offre ses ancres, les autres pages les liens du site (les deux offres,
+  les cas clients, la méthode, le parcours).
+- **Un seul bouton**, le même au bureau et sur téléphone : au centre de la
+  barre sur téléphone, à droite au bureau.
 
 **Le menu mobile** est un dialogue natif plein écran sur fond nuit : en-tête et
-pied fixes, seule la liste défile, dans la hauteur dynamique du viewport et avec
-les zones de sécurité du téléphone. Les deux offres sont en `title-lg` sur filet
-`border-strong`, les liens en `body-large` sur filet `divider`. Passer au format
-desktop ferme le menu. Son ouverture est décrite sous *Mouvement*.
+pied fixes, seule la liste défile, dans la hauteur dynamique du viewport et
+avec les zones de sécurité du téléphone. Même composition partout : une liste
+en grand (`--text-title-lg`, graisse 500 : les quatre métiers sur l'accueil,
+les deux offres ailleurs), une suite plus discrète (`--text-body-large`,
+`ink-mid`), et le bouton en bas, sous le pouce. Tout est calé vers le bas de
+l'écran. Pas de filet entre les liens : c'est la taille qui les sépare. Survol
+en `accent-soft`. Passer au format bureau ferme le menu.
 
 **Texte agrandi : la barre passe au menu.** Ses liens demandent environ 56em de
 large ; une requête de conteneur en em (`barre-nav`, dans `global.css`) masque
 les liens et montre le bouton du menu dès que la place manque, y compris
-au-dessus de 1024 px quand le texte est agrandi. Le menu s'ouvre tant que les
-liens sont masqués, quelle que soit la largeur.
+au-dessus de 1024 px quand le texte est agrandi.
 
-### FAQ
+### Questions (`questions`)
 
-Chaque question est une carte de rayon 16 px à filet `border-strong`, qui passe
-à `ink-low` au survol et au focus interne. La question se souligne de 2 px au
-survol ; le caret pivote de 45° et prend la couleur d'accent à l'ouverture. La
-réponse est en `ink-mid`, mesure `46ch`. L'ouverture anime la hauteur en 260 ms
-là où `interpolate-size` existe ; ailleurs elle reste instantanée.
+Une seule façon de poser une question sur le site. Les questions sont écrites
+**comme un échange**, dans le vocabulaire de la conversation : la question à
+droite, sur pêche, en nuit, comme ce qu'écrit le visiteur ; la réponse à
+gauche, sur encre à 9 %, comme ce que dit Lilian. Mêmes rayons que les bulles
+de `home-invite`, à la taille du texte courant (16 px, padding `0,75rem 1rem`).
+La section suivante est le champ où l'on écrit vraiment : l'échange se poursuit
+là.
+
+- **Sur grand écran tout est affiché, rien n'est replié** : la question ne se
+  clique pas. Le titre reste en place à gauche pendant que l'échange défile
+  (grille `1fr / 1,4fr` à partir de 1024 px).
+- **Sous 768 px, seule la première réponse est ouverte** ; on touche une
+  question pour lire la sienne (cible de 44 px, un « plus » qui devient
+  « moins »). La réponse arrive comme une bulle de la conversation.
+- Ce sont des `details` : sans script ils sont tous ouverts, et un moteur lit
+  toutes les réponses dans tous les cas.
+- **Rien ne s'écrit tout seul** : ce sont des réponses rédigées, pas une
+  conversation simulée.
+- Une réponse peut porter un `.lien-prose` (champ `html`) ; le balisage
+  `FAQPage` est posé par la page à partir de la même liste, en texte brut.
+
+### La fin de page (`fin-de-page`)
+
+Toutes les pages se ferment de la même façon, sauf les mentions légales et la
+404. Une section d'un écran au plus (`min(46rem, 88svh)`, `min(40rem, 70svh)`
+sous 1024 px), sans filet, sur une maille (`--spacing-maille`, traits d'encre à
+10 %) comptée depuis le centre, immobile, effacée vers les bords par un masque
+radial.
+
+- **Un titre** en `--text-story`, centré, avec sa pastille ; chaque page écrit
+  le sien, en question courte (« Un cas précis en tête ? », « Que voulez-vous
+  créer ? »). **Une phrase** dessous, en `--text-body-large`.
+- **L'invite** : un champ et le bouton dans un même cadre, comme une barre de
+  prompt (rayon `lg`, filet d'encre à 18 %, fond nuit relevé d'encre). Le focus
+  se lit sur le cadre entier : filet pêche et halo de 3 px. Le champ grandit
+  avec ce qu'on y écrit ; Entrée envoie. Ce qu'on y écrit devient le premier
+  message de la conversation ; vide, le bouton ouvre la même conversation. Sous
+  640 px, le champ au-dessus, le bouton dessous, pleine largeur.
+- **Une ligne collée à l'invite** dit la suite : le visiteur choisit comment
+  envoyer, WhatsApp, e-mail ou un appel de 45 minutes en visio, sans
+  engagement. La durée vient de `DUREE_RESERVATION_MINUTES`.
+- Conversation ouverte, l'invite se met en retrait (inerte, à 35 %) : jamais
+  deux champs où écrire à l'écran.
+
+La conversation elle-même est décrite dans *L'accueil → La barre d'écriture* :
+c'est le même composant sur toutes les pages.
 
 ### Pied de page
 
-Fond `night-deep`, filets `divider`, texte `ink-mid` (11,25:1), libellés de
-colonne en capitales `ink-low` (8,18:1). Les trois canaux prennent la couleur
-de leur plateforme au survol et au focus. Le bouton de réservation n'y figure
-que sur la page légale, seule page sans bloc de contact.
+Sur le fond général, séparé par un filet `divider`. Texte `ink-mid` (11,25:1),
+titres de colonne en bas de casse `ink-low` (8,18:1), à 12 px. Les trois canaux
+prennent la couleur de leur plateforme au survol et au focus. Le bouton n'y
+figure que sur la page légale (`showContact`), seule page sans fin de page.
+Quand la barre d'écriture est rendue, le pied garde 5,5rem sous ses derniers
+liens pour qu'ils ne restent pas dessous.
 
 ### Mouvement
 
@@ -1363,19 +1514,20 @@ CSS, et aucun ne conditionne l'affichage : sans script, sans support ou en
 mouvement réduit, l'élément est simplement là.
 
 1. **Le surligneur qui se trace.** Une propriété enregistrée, `@property
-   --draw` (de 0 à 1), pilote deux choses à la fois : la bande, rognée par un
-   `clip-path` et non étirée par un `scaleX` (qui déplacerait le pivot de la
-   rotation), et le texte, peint par un dégradé à arrêt franc, blanc là où la
-   nuit est encore derrière lui, nuit là où la pêche l'a recouvert. 700 ms
-   (`--duration-trace`), `ease-out-expo`, 220 ms après l'apparition du bloc qui
-   le porte, 520 ms dans un hero. Armé uniquement sous `.js-ready` et là où
-   `background-clip: text` existe.
-2. **L'entrée du hero** (`.entree`). Chaque enfant direct monte de 18 px, se
-   dévoile et fait le point (flou de 6 px), l'un après l'autre : 900 ms
+   --draw` (de 0 à 1), rogne la pastille par un `clip-path`, de gauche à
+   droite. Le texte ne change jamais de couleur : il est en nuit, donc
+   invisible sur la nuit tant que la pêche n'est pas passée derrière lui.
+   C'est le surligneur qui fait apparaître le mot, et il n'est illisible à
+   aucune image. 700 ms (`--duration-trace`), `ease-out-expo`, 140 ms après
+   l'apparition du bloc qui le porte, 420 ms dans un en-tête. Armé uniquement
+   sous `.js-ready`.
+2. **L'entrée d'un en-tête** (`.entree`). Chaque enfant direct monte de 18 px,
+   se dévoile et fait le point (flou de 6 px), l'un après l'autre : 900 ms
    (`--duration-entree`), 110 ms entre deux, cinq crans puis un plafond.
-   `backwards` et non `both` : aucun filtre ne reste sur le titre. L'entrée du
-   portrait (`.entree-portrait`) a été retirée le 2 octobre 2026 avec l'ancien
-   hero, son seul porteur.
+   `backwards` et non `both` : aucun filtre ne reste sur le titre. C'est
+   l'entrée de `tete-de-page`, des pages de cas, de la page des sites et de la
+   404. Le manifeste de `/automatisations-ia` garde son `h1` peint dès la
+   première image et fait entrer la suite en cascade (`data-hero-stagger`).
 3. **Les médias qui s'ouvrent au défilement** (`.media-ouvre`). Le média entre
    rogné (`inset(9% 5%)`) et grossi (`scale(1.12)`), puis s'ouvre à mesure
    qu'il monte dans la fenêtre : `animation-timeline: view()`, de `entry 5%` à
@@ -1386,14 +1538,12 @@ mouvement réduit, l'élément est simplement là.
 
 - **Révélations.** Un bloc isolé (`.reveal`) se contente d'un fondu de 380 ms,
   sans déplacement. Les éléments d'une liste (`.reveal-stagger`) montent de
-  12 px en 700 ms avec 80 ms de décalage, plafonné à 400 ms au-delà du dixième.
-  Le voile n'est armé que sous `.js-ready`, et un garde-fou lève tout à 2,5 s.
-- **Le filet des en-têtes de section se tire** de gauche à droite (`scaleX`,
-  900 ms, 120 ms de retard) après l'apparition du titre.
-- **La descente de la FAQ.** Chaque question arrive à son tour (900 ms, 160 ms
-  entre deux) pendant qu'une bande `surface-low` la balaie de gauche à droite.
-  Les deux durées sont des jetons parce qu'elles doivent rester égales à deux
-  endroits chacune. Le déclencheur est `.balaye`, pas `.is-visible`.
+  12 px en 700 ms avec 80 ms de décalage. Le voile n'est armé que sous
+  `.js-ready`, et un garde-fou lève tout à 2,5 s.
+- **La pastille de la barre** glisse d'un lien à l'autre en 420 ms
+  (`ease-out-expo`).
+- **La réponse d'une question**, sur téléphone, arrive en 420 ms avec 8 px de
+  montée.
 - **L'ouverture du menu mobile en cascade.** Le voile se fond en 260 ms, puis
   les liens montent de 14 px l'un après l'autre (560 ms, 50 ms de pas, 70 ms de
   retard). Seule l'ouverture est animée : on ne fait pas attendre quelqu'un qui
@@ -1402,7 +1552,6 @@ mouvement réduit, l'élément est simplement là.
   L'ancienne page se fond en 160 ms, la nouvelle entre en 420 ms avec 10 px de
   montée. La barre de navigation porte son propre nom de transition et ne
   clignote pas. Chaque page reste un chargement complet.
-- **La parallaxe des gouttières**, liée au défilement, en `transform` seul.
 
 **Le retour d'interaction** est court : 150 ms (`--duration-quick`) et 200 ms
 (`--duration-default`). Trois courbes, toutes en *ease-out*, toutes dans
@@ -1417,87 +1566,54 @@ transitions de page sont coupées. La couleur continue de répondre : c'est un
 retour d'information, pas du mouvement.
 
 **Les boucles ambiantes ne tournent que si on les regarde.** Les conteneurs
-marqués `data-motion-idle` mettent leurs animations en pause hors écran :
-mesuré, cinquante-deux animations infinies tournaient pour des maquettes
-situées six mille pixels plus bas.
+marqués `data-motion-pause` reçoivent `data-motion-idle` hors écran, qui met
+leurs animations en pause : mesuré, cinquante-deux animations infinies
+tournaient pour des maquettes situées six mille pixels plus bas.
 
 **Une animation liée au défilement ne porte que des propriétés compositables**,
-`transform`, `opacity`, et `clip-path` pour l'ouverture des médias. Mesuré par
-trace CDP sur un scroll de 3 000 px à 1440 × 900, médiane de trois passes :
-
-| | Paint | RasterTask |
-|---|---|---|
-| parallaxe + défilé des lignes en `background-position` | 867 | 967 |
-| grille masquée (témoin) | 445 | 88 |
-| la parallaxe seule | 445 | 94 |
-
-Le défilé des lignes coûtait 422 peintures et 879 rastérisations pour un
-mouvement que le masque efface à 72 %.
+`transform`, `opacity`, et `clip-path` pour l'ouverture des médias.
 
 Un jeton déclaré pour être adopté plus tard vit dans un bloc `@theme static` :
 Tailwind v4 n'émet pas un jeton que rien ne référence.
 
-### La home personnelle et son routeur de services
-
-Cette section décrit l'ancienne home, remplacée par *L'accueil* plus haut : ses
-composants (`Home*.astro` en PascalCase, `service-workflow-visual.astro`) et
-les images de `src/assets/home-services/` ont été supprimés le 2 octobre 2026
-et restent dans l'historique git.
-
-Le premier viewport présente d'abord la personne qui construit. Sur desktop, le
-titre « Gagnez du temps avec l'IA et l'automatisation. » occupe la gauche et le
-portrait de Lilian la droite ; « l'automatisation » est surligné. Le portrait
-est au ratio carré, arrondi en `lg`, sans bordure ni ombre ; son nom et son
-ancienneté figurent en légende. Sous 1024 px, l'image passe sous le texte, avec
-une largeur maximale de 30rem. Un filet `border-strong` ferme le hero. L'unique
-bouton commercial de la home, pêche à libellé nuit, ouvre l'agenda depuis
-l'en-tête fixe ; le lien secondaire « Voir les services » descend vers
-`#services`.
-
-La section suivante présente Lilian sur un ton personnel, avec deux repères
-sous le récit et le lien vers les cas clients. Une photo réelle dans son espace
-de travail occupe la droite et s'ouvre au défilement, puis passe sous le récit
-sous 800 px. `src/assets/lilian-au-bureau.jpg` est une copie du fichier fourni
-par Lilian ; cette provenance reste attachée à l'actif. Le portrait est chargé
-en priorité, la photo de bureau à la demande.
-
-Le choix arrive ensuite dans deux cartes de même poids : **Automatisation & IA**
-et **Sites & applications web**, décrites plus haut. À gauche,
-`ServiceWorkflowVisual` affiche la capture Make originale de Lilian, recadrée ;
-à droite, un suivi commercial généré, aux données fictives mentionnées comme
-telles. La provenance des deux PNG était documentée dans
-`src/assets/home-services/README.md`, supprimé avec eux. Les prix viennent de
-`src/data/service-pricing.ts`, partagé avec les pages d'offre.
-
-Après ce routeur, **le panneau clair** aide les fondateurs et équipes Ops, les
-dirigeants de PME, puis les agences et studios à se reconnaître : une liste à
-deux colonnes sur filets, empilée sous 700 px. Avant la FAQ, deux colonnes ont
-chacune leur en-tête : la dernière vidéo YouTube (vignette 16:9 qui s'ouvre au
-défilement, pastille « Voir la vidéo » qui passe en pêche à libellé nuit au
-survol) et la newsletter (panneau `surface-low` arrondi en `lg`). Le formulaire
-envoie vers `/api/newsletter` avec double opt-in ; le chargement désactive le
-bouton, le succès demande la confirmation par email, l'échec conserve la saisie
-et explique comment réessayer via un statut accessible.
-
-La home se termine après la FAQ. Aucun bouton de réservation ne se répète dans
-le hero, après les services ou en bas de la home. Les autres pages gardent une
-seule action de contact terminale. La durée affichée vient de
-`DUREE_RESERVATION_MINUTES`, dans `src/lib/reservation.ts`.
-
 ### Pages d'offre et pages de cas
 
-Les landings ouvrent sur une bande nuit (`HeroManifesto`, typographie seule).
-La landing web distingue les sites commerciaux des applications métiers par
-deux ancres ; ses abonnements et un second bloc vivent sur le panneau clair.
-Tarifs et inclusions viennent de `src/data/maintenance.ts`.
+**`/automatisations-ia`** ouvre sur `HeroManifesto` : typographie seule, sur la
+nuit, sans portrait. Le `h1` en `--text-display-hero`, un chapô, le bouton et
+un lien fléché, puis une phrase qui dit ce que le bouton ouvre. Une trame de
+96 px (`--spacing-grid-cell`, encre à 5 %) entre par la droite et se dissipe
+avant le titre ; elle n'existe pas sous 1024 px. Suivent le bandeau d'outils,
+les besoins, le carrousel de cas, la méthode (île), les recommandations, « à
+propos », les outils, les offres (île), les questions, le simulateur, la fin.
+Le simulateur précède la fin : il fait compter les heures perdues, elle demande
+lesquelles.
 
-Les pages de cas découpent leur corps markdown en pièces, une par titre, sur
-des surfaces alternées : fond nuit, bande, et **la dernière pièce est le
-panneau clair**. Trois dispositifs sont pilotés par le frontmatter, chacun avec
-un seuil : `flow` exige exactement trois actions, `bascule` au moins trois
-lignes, `nomenclature` au moins six. **Un cas qui n'a pas la matière n'a pas le
+**`/sites-web-abonnement`** ouvre sur son titre face aux repères de prix : un
+panneau `surface-low` arrondi en `lg`, seule surface du premier écran. Les
+tarifs de création puis les abonnements sont deux îles, séparées par la partie
+des applications métier ; chacune porte une liste de prix. Tarifs et inclusions
+viennent de `src/data/maintenance.ts`.
+
+**Les pages de cas** (`/cas-clients/[slug]`) ouvrent sur le fil de retour, le
+titre, une ligne de contexte (secteur, sujets, date de publication) et les
+chiffres du cas, un par colonne, sans cadre. Le corps markdown est découpé en
+pièces, une par `h2`, toutes sur la nuit et séparées par un filet, titre à
+gauche et texte à droite. **Seule la pièce « Les résultats » est une île** :
+c'est le pic de la page, et les filets s'effacent autour d'elle. Trois
+dispositifs sont pilotés par le frontmatter, chacun avec un seuil : `flow`
+exige exactement trois actions, `bascule` au moins trois lignes,
+`nomenclature` au moins six. **Un cas qui n'a pas la matière n'a pas le
 visuel.** Un cas d'application métier peut documenter un premier lot sans KPI,
-capture ni témoignage ; la date affichée est une date de publication.
+capture ni témoignage ; la date affichée est une date de publication. Deux
+« autres cas » ferment la page avant la fin commune.
+
+**`/principes`** : une phrase qui se dit en grand (`--text-phrase`), puis ce
+qui la précise, à gauche et à droite à partir de 1024 px. L'espace sépare les
+principes ; il n'y a ni cadre, ni filet, ni numéro.
+
+**La 404** n'a pas l'air d'une erreur : un titre, une phrase, le bouton et un
+lien fléché, puis quatre liens soulignés vers les routes qui couvrent à peu
+près toutes les intentions.
 
 ### Marques tierces et preuves
 
@@ -1506,18 +1622,21 @@ jamais celle de la marque. Le couple logo + nom est en `nowrap`. L'alignement
 est optique et se corrige par marque.
 
 **Les maquettes produit** (`MockupWindow`, `WorkflowCanvas`) sont des
-reconstitutions schématiques. Les écrans clients sont confidentiels : aucun
-visuel ne doit pouvoir passer pour une capture. Les couleurs de marque tierces
-y sont posées au repos parce qu'on montre l'outil réel, relevées de blanc quand
-elles sont sombres.
+reconstitutions schématiques, sur les pages de cas. Les écrans clients sont
+confidentiels : aucun visuel ne doit pouvoir passer pour une capture. Les
+couleurs de marque tierces y sont posées au repos parce qu'on montre l'outil
+réel, relevées de blanc quand elles sont sombres.
 
-**Les captures de projets publics** (`ProjectVisual`) montrent une vraie page
-publique, arrondie en `lg`, dans les ratios `16 / 7`, `16 / 10` ou `4 / 5`, avec
-un filet `service-border` posé par-dessus l'image. La légende tient dans
-l'image, sur un voile teinté vers `night-deep` et non vers le noir neutre,
-limité au bas de l'image. Le survol agrandit l'image sur pointeur fin (600 ms
-au retour), la légende ne bouge pas. Une image absente devient un aplat
-`night-deep`, jamais une icône cassée. Ni fenêtre de navigateur ni appareil.
+**Les vignettes de projets publics** (`ProjectVisual`, sur la page des sites)
+montrent une vraie page publique : la capture en haut (16 / 9,4, calée en
+haut), un pied plein dessous sur `night-deep` avec le nom du site
+(`--text-title`, graisse 500) et ce qu'il est. La vignette entière est un lien
+qui s'ouvre dans un nouvel onglet. Rayon `lg`, filet `service-border` posé
+par-dessus l'image ; au survol et au focus le filet passe en pêche, la capture
+avance (`scale(1.03)`, 350 ms à l'aller, 600 ms au retour) et la flèche part
+vers l'extérieur. La légende n'est pas incrustée sur la capture : sur un voile,
+le détail tombait sous 4,5:1 dès que la capture était claire. Une image absente
+laisse un aplat, jamais une icône cassée. Ni fenêtre de navigateur ni appareil.
 
 **La capture comme preuve.** Une capture n'est admissible que si la page est
 publique, l'URL source conservée et le fichier traçable. Sa palette reste
@@ -1525,8 +1644,8 @@ enfermée dans l'image.
 
 **Une couleur de marque au survol.** Dans le chrome du site, au repos, tout est
 encre ; la marque tierce n'apparaît qu'au survol, et jamais sur pointeur
-grossier : logos du bandeau (`LogoMarquee`), logo en tête de carte outil
-(`Stack`), canaux du pied de page.
+grossier : logos du bandeau d'outils (`LogoMarquee`), canaux du pied de page.
+Une marque dont la teinte est un noir (Notion) reste à l'encre.
 
 ### Scènes de travail et schémas des cas clients
 
@@ -1534,25 +1653,24 @@ La page `/automatisations-ia` associe trois scènes photoréalistes à six
 usages : dossiers et reporting, commandes et catalogue, prospection et demandes
 entrantes. Images illustratives de personnes fictives générées par IA ;
 provenance et prompts conservés dans `src/assets/work-scenes/README.md`. Photos
-en 3:2, WebP responsive et chargement différé, trois colonnes puis empilement
-sous 900 px.
+en 3:2, qui s'ouvrent au défilement, trois colonnes puis empilement sous
+900 px.
 
 Les visuels du carrousel utilisent `CaseIllustration.astro` : trois étapes
 reliées, outils nommés et logos de marque disponibles ; les outils sans logo
 utilisent une icône fonctionnelle. Les nœuds ont un rayon de 16 px
 (`--radius-diagram`), un filet `ink-low` et un fond `surface-high`. Sous
-380 px, le schéma passe à la verticale. M Partners cite Loxo dans le texte, le
-schéma et sa fiche.
+380 px, le schéma passe à la verticale.
 
 ### Three.js : laboratoire et schémas intégrés
 
-La route `/explorations-3d` réunit trois études manipulables, **Orbites**,
-**Flux** et **Structure**. Elle reste expérimentale, en `noindex` et hors
-sitemap. Les deux pages d'offre conservent deux scènes intégrées, Flux et
-Structure ; la home n'en porte aucune.
+La route `/explorations-3d` réunit trois études manipulables. Elle reste
+expérimentale, en `noindex` et hors sitemap. Les deux pages d'offre conservent
+chacune une scène intégrée (le schéma des contrôles dans la méthode, le schéma
+d'application sur la page des sites) ; l'accueil n'en porte aucune.
 
-**La règle du mouvement fini sur les offres.** Flux et Structure parcourent
-leurs deux états en 4,6 secondes puis s'arrêtent. Deux boutons affichent les
+**La règle du mouvement fini sur les offres.** Une scène intégrée parcourt ses
+deux états en 4,6 secondes puis s'arrête. Deux boutons affichent les
 extrémités ; la lecture peut être suspendue, reprise ou rejouée. Avec mouvement
 réduit, l'état final est statique. Ces scènes ne reçoivent pas l'enveloppe
 `.media-ouvre` : elles ont déjà leur propre mouvement.
@@ -1563,77 +1681,94 @@ textes projetés sont du HTML en Geist. Les commandes conservent les cibles de
 44 px.
 
 **L'accent des scènes est la pêche.** Libellés d'accent, état sélectionné et
-focus des commandes lisent `--color-peche`, comme le reste du site sur la nuit ;
-le moteur lit le jeton au runtime. L'ancienne exception « lime sur encre » n'a
-plus lieu d'être : ce qui était une exception locale est devenu la règle
-générale. Aucun halo, verre ni nouvelle couleur.
-
-Les compositions et seuils de chargement sont décrits dans
-`src/lib/site-scenes/README.md`.
-
-### Documents historiques
-
-Les contrats et preuves cités par les versions précédentes de ce document
-(`.impeccable/surfaces/site-scenes.md`,
-`.impeccable/surfaces/src-pages-explorations-3d-astro.md`,
-`.impeccable/review/night-home-contract.md`,
-`.impeccable/review/night-home-finish-review.md`,
-`.impeccable/review/newsletter-lumail-runtime.json`, preuves `paper-home-*` et
-`scroll-scenes-*`) décrivent la direction précédente — papier blanc, encre
-noire, surlignages lime, angles droits — et sont **historiques**. Ils valent
-pour la structure et les comportements qu'ils ont vérifiés, pas pour les
-couleurs, les rayons ni le mouvement. La critique
-`.impeccable/critique/2026-09-04T11-58-59Z__src-pages-sites-web-abonnement-astro.md`
-est dans le même cas.
+focus des commandes lisent `--color-peche` ; le moteur lit le jeton au runtime.
+Posée dans une île, la scène reste une fenêtre sombre. Les compositions et
+seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
 
 ## Do's and Don'ts
 
 ### Do:
 
+- **Do** composer une page intérieure avec `tete-de-page`, `partie`,
+  `questions`, `fin-de-page`, `pourquoi-moi` et `retour`, ou partir d'un des
+  deux gabarits (`PageExpertOutil`, `PageReponse`).
+- **Do** séparer deux sections par un filet `divider` d'un pixel, sur le même
+  fond.
+- **Do** réserver l'île claire à ce que le lecteur est venu vérifier : deux par
+  page au plus, jamais deux de suite, jamais la première ni la dernière
+  section.
 - **Do** lire `--color-night` pour tout texte posé sur la pêche : libellé de
-  bouton, fragment surligné, pastille, état de survol qui pose la pêche.
-- **Do** laisser les composants lire les jetons de rôle : ils suivent la bande
-  nuit et le panneau clair sans variante.
-- **Do** passer le bouton primaire en nuit, et les traits et le focus en nuit,
-  sur le panneau clair.
+  bouton, fragment surligné, question d'un échange, état de survol qui pose la
+  pêche.
+- **Do** laisser les composants lire les jetons de rôle : ils suivent l'île
+  claire sans variante.
+- **Do** passer le bouton en nuit, et les traits et le focus en nuit, sur l'île
+  claire.
+- **Do** garder les titres en graisse 500 et faire monter la taille, pas le
+  poids.
+- **Do** garder un fragment surligné court, sur une ligne, et vérifier qu'il
+  tient à 320 px.
+- **Do** écrire tout libellé en bas de casse dans la source.
+- **Do** poser des blocs de texte à plat, séparés par l'espace, et aligner
+  leurs colonnes sur l'échelle (`gouttiere`, `groupe`, `lie`, `colle`).
+- **Do** passer par `BoutonReservation` pour tout bouton d'appel, avec sa
+  `source` ; l'URL de l'agenda vient de `lib/reservation.ts`.
 - **Do** relever de blanc une teinte de marque sombre avant de la poser sur la
   nuit, ou prendre la teinte que la plateforme publie pour les fonds sombres.
 - **Do** vérifier chaque contraste par le calcul. Toutes les valeurs de ce
   document sont calculées.
-- **Do** garder les fragments surlignés entre 1 et 4 mots, sur une ligne, et
-  alterner l'inclinaison.
 - **Do** choisir le rayon selon la taille de la surface, et garder l'intérieur
   plus petit que l'extérieur.
 - **Do** rogner en `overflow: clip` toute enveloppe qui porte une animation
   liée au défilement.
 - **Do** écrire une entrée de sorte que la page soit peinte dans son état final
   sans script : `@keyframes` en `backwards`, voile armé sous `.js-ready`.
-- **Do** faire porter le rythme par le changement de surface, pas par le vide.
 - **Do** laisser une absence quand la matière manque. Sur ce site, ce qui n'est
   pas montré est aussi une affirmation.
 - **Do** montrer un projet public par une capture réelle, légendée et
   traçable ; cantonner sa palette à l'image.
-- **Do** garder les deux cartes du routeur de la home strictement égales en
-  poids et en nombre de surfaces interactives.
-- **Do** passer par `SectionHeader` pour tout en-tête de section, et par
-  `BoutonReservation` pour tout lien vers l'agenda.
+- **Do** donner à chaque section de l'accueil un composant qui n'existe que là,
+  dont la forme vient de ce qu'elle raconte.
 
 ### Don't:
 
+- **Don't** écrire à la main, sur une page intérieure, un en-tête, une FAQ, une
+  section de contact ou un lien de retour : ce sont `tete-de-page`,
+  `questions`, `fin-de-page`, `retour`.
+- **Don't** poser une bande de fond bord à bord, ni changer de fond pour
+  rythmer la page. Une surface ne monte que pour un panneau arrondi dans la
+  colonne.
+- **Don't** étendre le panneau clair bord à bord, ni en faire une carte hors de
+  l'accueil : c'est une île à marge, la section entière.
+- **Don't** composer une section en grille de cartes bordées ou en liste à
+  filets : c'est ce que Lilian a rejeté comme « IA slop ».
+- **Don't** replier des questions dans un accordéon à cadres.
+- **Don't** incliner le surlignage, en poser deux dans un titre, ni le laisser
+  passer à la ligne dans un titre.
+- **Don't** écrire un libellé en capitales, que ce soit par une classe ou tapé
+  tel quel dans le texte, ni lui donner une approche positive.
+- **Don't** poser un sur-titre au-dessus d'un titre, ni une numérotation de
+  section `01 / 02 / 03`. Un numéro ne reste que là où l'ordre est
+  l'information.
+- **Don't** remonter un titre en graisse 600 par un utilitaire : la règle
+  commune l'emporte, et le balisage mentirait.
+- **Don't** ajouter un second libellé de bouton, ni un bouton qui ouvre
+  l'agenda sans passer par la conversation (hors du moyen « Réserver un
+  appel »).
 - **Don't** écrire `color: var(--color-ink)` sur un fond pêche : c'est du blanc
   à 1,74:1.
-- **Don't** poser la pêche en texte, en trait ou en anneau de focus sur le
-  panneau clair : 1,64:1.
-- **Don't** déduire une couleur d'un nom hérité. `.bloc-lime` est une bande
-  nuit, `.bloc-encre` un panneau clair, `--color-paper` la nuit.
+- **Don't** poser la pêche en texte, en trait ou en anneau de focus sur l'île
+  claire : 1,64:1.
+- **Don't** déduire une couleur ou une forme d'un nom hérité. `.bloc-encre` est
+  un panneau clair, `--color-paper` la nuit, `.mono-label` un libellé en bas
+  de casse, `SubscriptionGrid` une liste.
 - **Don't** lire un jeton de rôle dans le bloc qui le remappe : valeurs
   littérales uniquement, sinon cycle.
 - **Don't** réintroduire un second accent, le lime, ou un fond général clair.
 - **Don't** laisser un angle vif sur une surface, un média ou un contrôle ; ni
   arrondir un filet de séparation.
-- **Don't** étendre le panneau clair bord à bord : c'est une île à marge.
-- **Don't** ajouter une ombre. La profondeur vient des filets et des paliers
-  de surface.
+- **Don't** ajouter une ombre à une section, à un bloc ou à un bouton. Seul ce
+  qui flotte au-dessus de la page en porte une.
 - **Don't** utiliser `overflow: hidden` sur une enveloppe animée par
   `animation-timeline: view()` : l'image reste figée.
 - **Don't** animer autre chose que `transform`, `opacity` ou `clip-path` sur
@@ -1645,9 +1780,6 @@ est dans le même cas.
   traverse deux fonds et devient illisible au milieu du geste.
 - **Don't** déclarer une transition, ou un état de survol, sur une propriété
   qui ne change pas.
-- **Don't** poser un sur-titre en petites capitales espacées au-dessus d'un
-  titre de section, ni une numérotation `01 / 02 / 03`. C'est la grammaire du
-  site généré, retirée volontairement.
 - **Don't** réintroduire une police monospace.
 - **Don't** entourer une capture de projet d'un faux navigateur ou d'un
   appareil, ni faire passer une reconstitution pour une capture d'écran.
@@ -1661,5 +1793,6 @@ est dans le même cas.
   Astro (dans un `.map()`, un `&&`, ou entre les attributs d'un composant) : le
   compilateur rend `Expected ")" but found "$$render"` et toutes les pages
   tombent en 500. Le commentaire va avant l'expression.
-- **Don't** présenter le vibe coding comme une troisième offre, ni faire
-  remonter le choix entre les deux services dans le hero personnel.
+- **Don't** mettre un cas client au premier plan de l'accueil, ni y remettre
+  une forme 3D, une scène collante sous 1024 px ou les prix en rangées.
+- **Don't** présenter le vibe coding comme une troisième offre.

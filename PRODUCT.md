@@ -102,7 +102,7 @@ Ce qui peut être affirmé aujourd'hui, avec sa source. « LinkedIn » désigne 
 **Ce qu'il a fait**
 
 - **Chiffres** : plus de 100 entreprises accompagnées, plus de 300 personnes formées à Make, n8n et à l'IA (LinkedIn, `src/pages/llms.txt.ts`).
-- **Certifications** : premier Français certifié Make niveau 5 ; Airtable Certified (`src/layouts/Layout.astro`, bloc `hasCredential`).
+- **Certifications** : premier Français certifié Make niveau 5, certification obtenue en 2022 (année donnée par Lilian le 3 octobre 2026, sans lien de preuve public à ce jour) ; Airtable Certified (`src/layouts/Layout.astro`, bloc `hasCredential`).
 - **La Capsule** : cofondateur et COO du studio de podcast, à Vanves, de novembre 2023 à février 2026. Il y a automatisé le back-office : réservations et paiements, livraison des fichiers, support client, comptabilité (LinkedIn).
 - **Jellysmack** : No-Code Engineer en CDI, d'avril 2022 à avril 2023 (LinkedIn).
 - **École O'clock** : développeur back-end, stage d'avril à octobre 2023 (LinkedIn).
