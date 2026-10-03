@@ -79,7 +79,7 @@ import { faits, parcours } from '../data/parcours';
     <div id="parcours" class="duo__parcours">
       <SectionHeader title="D’où je viens." titleMaxWidth="14ch" rule={false} spacing="none" />
 
-      <ol class="frise">
+      <ol class="frise" id="frise" data-frise>
         {parcours.map((periode) => (
           <li class="frise__annee">
             <h3 class="frise__an">{periode.annee}</h3>
@@ -101,9 +101,44 @@ import { faits, parcours } from '../data/parcours';
           </li>
         ))}
       </ol>
+      {/* Sur téléphone, la frise s'ouvre sur ses jalons seuls (voir le script).
+          Sans script le bouton reste caché et tout est affiché. */}
+      <button type="button" class="frise__plus" aria-controls="frise" aria-expanded="true" data-frise-plus hidden>
+        Voir tout le parcours
+      </button>
     </div>
   </div>
 </section>
+
+<script>
+  /* Sur téléphone, la frise tenait un écran et quart à elle seule. Elle s'ouvre
+     repliée : les jalons (un titre, une date), sans leur détail ni les
+     missions, qu'un bouton déplie. Au-delà de 767 px, et sans script, tout est
+     affiché. */
+  const frise = document.querySelector<HTMLElement>('[data-frise]');
+  const bouton = document.querySelector<HTMLButtonElement>('[data-frise-plus]');
+
+  if (frise && bouton) {
+    const etroit = window.matchMedia('(max-width: 767px)');
+    const regler = (replie: boolean) => {
+      frise.toggleAttribute('data-replie', replie);
+      bouton.setAttribute('aria-expanded', String(!replie));
+      bouton.textContent = replie ? 'Voir tout le parcours' : 'Réduire le parcours';
+    };
+    const suivre = () => {
+      bouton.hidden = !etroit.matches;
+      regler(etroit.matches);
+    };
+    bouton.addEventListener('click', () => {
+      const replie = !frise.hasAttribute('data-replie');
+      regler(replie);
+      /* Repliée, la frise raccourcit au-dessus du bouton : il reste à l'écran. */
+      if (replie) bouton.scrollIntoView({ block: 'nearest' });
+    });
+    etroit.addEventListener('change', suivre);
+    suivre();
+  }
+</script>
 
 <style>
   .duo {
@@ -280,6 +315,40 @@ import { faits, parcours } from '../data/parcours';
 
   .frise__etapes li {
     max-width: 52ch;
+  }
+
+  /* Repliée (téléphone) : les jalons seuls. Une année qui n'a que des missions
+     s'efface avec elles. */
+  .frise[data-replie] .frise__detail,
+  .frise[data-replie] .frise__mission,
+  .frise[data-replie] .frise__annee:not(:has(.frise__jalon)) {
+    display: none;
+  }
+
+  .frise[data-replie] .frise__annee {
+    padding-bottom: var(--spacing-lie);
+  }
+
+  .frise__plus {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: var(--spacing-colle);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 40%, transparent);
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .frise__plus[hidden] {
+    display: none;
   }
 
   .frise__titre {

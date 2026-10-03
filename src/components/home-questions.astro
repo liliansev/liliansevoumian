@@ -7,9 +7,11 @@
  * la réponse à gauche, comme ce que dit Lilian. La section suivante est le
  * champ où l'on écrit vraiment : l'échange se poursuit là.
  *
- * Tout est à l'écran, rien n'est replié : quatre questions ne méritent pas un
- * accordéon, et un moteur lit ce qu'un visiteur lit. Rien ne s'écrit tout
- * seul ni ne fait semblant d'être en direct, ce sont des réponses rédigées.
+ * Sur grand écran tout est affiché, rien n'est replié : quatre questions ne
+ * méritent pas un accordéon. Sur téléphone, où la section tenait un écran et
+ * demi, seule la première réponse est ouverte ; on touche une question pour
+ * lire la sienne. Ce sont des `details` : sans script ils sont tous ouverts, et
+ * un moteur lit les quatre réponses dans tous les cas.
  *
  * Le texte vient de `data/home-faq`, qui alimente aussi le balisage `FAQPage`
  * posé par la page.
@@ -34,16 +36,42 @@ import { homeFaqs } from '../data/home-faq';
       spacing="none"
     />
 
-    <div class="echanges reveal">
+    <div class="echanges reveal" data-echanges>
       {homeFaqs.map((item) => (
-        <div class="echange">
-          <h3 class="echange__question">{item.q}</h3>
+        <details class="echange" open>
+          <summary class="echange__tete">
+            <h3 class="echange__question">{item.q}</h3>
+          </summary>
           <p class="echange__reponse">{item.a}</p>
-        </div>
+        </details>
       ))}
     </div>
   </div>
 </section>
+
+<script>
+  /* Téléphone : une seule réponse ouverte au départ, la première. Au-delà de
+     767 px, toutes le restent (et la question n'y est pas cliquable, voir les
+     styles). */
+  const echanges = [...document.querySelectorAll<HTMLDetailsElement>('[data-echanges] details')];
+  const etroit = window.matchMedia('(max-width: 767px)');
+  const regler = () => {
+    echanges.forEach((echange, rang) => {
+      echange.open = !etroit.matches || rang === 0;
+      /* Hors téléphone la question n'est pas un bouton : elle sort de l'ordre
+         de tabulation. */
+      const tete = echange.querySelector('summary');
+      if (tete) tete.tabIndex = etroit.matches ? 0 : -1;
+    });
+  };
+  for (const echange of echanges) {
+    echange.querySelector('summary')?.addEventListener('click', (e) => {
+      if (!etroit.matches) e.preventDefault();
+    });
+  }
+  etroit.addEventListener('change', regler);
+  regler();
+</script>
 
 <style>
   .questions {
@@ -57,9 +85,15 @@ import { homeFaqs } from '../data/home-faq';
     max-width: 44rem;
   }
 
-  .echange {
-    display: grid;
-    gap: var(--spacing-colle);
+  /* La question est le `summary` : sans puce, et calée à droite. */
+  .echange__tete {
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+  }
+
+  .echange__tete::-webkit-details-marker {
+    display: none;
   }
 
   /* Les deux bulles de la conversation (voir `home-invite`), à la taille du
@@ -76,7 +110,6 @@ import { homeFaqs } from '../data/home-faq';
   /* La question tient sur une ligne tant que l'écran le permet : elle peut
      prendre toute la largeur, là où la réponse garde son retrait. */
   .echange__question {
-    justify-self: end;
     max-width: 100%;
     text-wrap: pretty;
     border-radius: var(--radius-md) var(--radius-md) var(--radius-xs) var(--radius-md);
@@ -85,15 +118,75 @@ import { homeFaqs } from '../data/home-faq';
   }
 
   .echange__reponse {
-    justify-self: start;
+    width: fit-content;
     max-width: 92%;
+    margin-top: var(--spacing-colle);
     border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-xs);
     background: color-mix(in srgb, var(--color-ink) 9%, transparent);
     color: var(--color-ink);
     text-wrap: pretty;
   }
 
-  /* Grand écran : le titre à gauche, l'échange à droite, comme les voix. */
+  /* ── Téléphone : la question se touche. Un signe « plus » le dit, qui devient
+        « moins » une fois la réponse ouverte ; la réponse arrive comme une
+        bulle de la conversation. ── */
+  @media (max-width: 767px) {
+    .echanges {
+      gap: var(--spacing-colle);
+    }
+
+    .echange[open] {
+      margin-bottom: var(--spacing-colle);
+    }
+
+    .echange__tete {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .echange__question {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      min-height: 44px;
+    }
+
+    .echange__question::after {
+      content: '';
+      flex: none;
+      width: 0.75rem;
+      height: 0.75rem;
+      background:
+        linear-gradient(currentColor, currentColor) 50% 50% / 100% 1.5px no-repeat,
+        linear-gradient(currentColor, currentColor) 50% 50% / 1.5px 100% no-repeat;
+      transition: transform 260ms var(--ease-out-quint);
+    }
+
+    .echange[open] .echange__question::after {
+      background:
+        linear-gradient(currentColor, currentColor) 50% 50% / 100% 1.5px no-repeat;
+      transform: rotate(180deg);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .echange[open] .echange__reponse {
+        animation: reponse-arrive 420ms var(--ease-out-expo) backwards;
+      }
+    }
+  }
+
+  @keyframes reponse-arrive {
+    from { opacity: 0; transform: translateY(0.5rem); }
+  }
+
+  /* Grand écran : le titre à gauche, l'échange à droite, comme les voix. Tout
+     est ouvert et le reste : la question ne se clique pas. */
+  @media (min-width: 768px) {
+    .echange__tete {
+      pointer-events: none;
+    }
+  }
+
   @media (min-width: 1024px) {
     .questions {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);

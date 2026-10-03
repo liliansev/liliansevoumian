@@ -91,12 +91,12 @@ const navColumns: NavColumn[] = [
 ---
 
 <footer class="relative bg-[var(--color-night-deep)] border-t border-[var(--color-divider)] px-[var(--spacing-section-x)]">
-  <div class="relative max-w-[1200px] mx-auto py-16 md:py-20">
+  <div class="relative max-w-[1200px] mx-auto py-10 md:py-20">
 
     <!-- Top: brand + content channels -->
-    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-16 pb-12 border-b border-[var(--color-divider)]">
+    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-6 md:gap-16 pb-6 md:pb-12 border-b border-[var(--color-divider)]">
       <div>
-        <div class="flex items-center gap-2.5 mb-5 text-[var(--color-ink)]">
+        <div class="flex items-center gap-2.5 mb-3 md:mb-5 text-[var(--color-ink)]">
           <span class="mono-label">Lilian Sevoumian</span>
         </div>
         <p class="text-[var(--color-ink-mid)] max-w-md">
@@ -110,8 +110,8 @@ const navColumns: NavColumn[] = [
       </div>
 
       <div>
-        <div class="mono-caption text-[var(--color-ink-low)] mb-4">Contenu</div>
-        <ul class="space-y-2">
+        <div class="mono-caption text-[var(--color-ink-low)] mb-1 md:mb-4">Contenu</div>
+        <ul class="md:space-y-2">
           {channels.map((ch) => {
             const externe = ch.href.startsWith('http');
             return (
@@ -149,11 +149,11 @@ const navColumns: NavColumn[] = [
       décalage du texte et sans toucher à la grille — mesuré, aucune colonne ne
       descend sous 80 px, même à 375 px de fenêtre.
     -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-5 md:gap-12 py-6 md:py-12">
       {navColumns.map((col) => (
         <div>
-          <div class="mono-caption text-[var(--color-ink-low)] mb-4">{col.title}</div>
-          <ul class="space-y-2.5">
+          <div class="mono-caption text-[var(--color-ink-low)] mb-1 md:mb-4">{col.title}</div>
+          <ul class="md:space-y-2.5">
             {col.links.map((link) => (
               <li>
                 <a
@@ -176,7 +176,7 @@ const navColumns: NavColumn[] = [
     </div>
 
     <!-- Bottom: legal -->
-    <div class="pt-8 border-t border-[var(--color-divider)]">
+    <div class="pt-5 md:pt-8 border-t border-[var(--color-divider)]">
       <p class="mono-caption text-[var(--color-ink-low)]">
         © {year} · Lilian Sevoumian · Tous droits réservés
       </p>
