@@ -822,10 +822,15 @@ il répond déjà.
 - **La fenêtre ne fait pas semblant.** Sa première version affichait « je vous
   réponds moi-même », trois points de frappe, puis « Merci, c'est clair. »
   quel que soit le texte : un visiteur pouvait fermer en croyant avoir écrit à
-  Lilian (critique du 2 octobre 2026). Donc : pas de frappe simulée, un
-  sous-titre qui dit le mécanisme (« Vous choisissez comment l'envoyer »), et
-  chaque réponse dit où en est le message (« pas encore parti », « il reste à
-  l'envoyer »). Sous la barre du hero, une ligne dit ce qu'elle fait : une
+  Lilian (critique du 2 octobre 2026). Donc : un sous-titre qui dit le
+  mécanisme (« Vous choisissez comment l'envoyer »), et chaque réponse dit où
+  en est le message (« pas encore parti », « il reste à l'envoyer »).
+  **Les trois points de frappe sont revenus le 3 octobre 2026, à la demande de
+  Lilian** : sans eux la réponse tombait d'un coup et la fenêtre semblait se
+  rafraîchir. Ils précèdent chaque réponse, 0,9 à 1,5 s selon sa longueur,
+  cachés aux lecteurs d'écran et absents en mouvement réduit. Ils donnent un
+  rythme, ils ne changent pas ce qui est dit : le message n'est toujours pas
+  parti tant que le visiteur n'a pas choisi son moyen. Sous la barre du hero, une ligne dit ce qu'elle fait : une
   barre de prompt sous « expert en agents IA » se lisait comme un robot.
 - **Deux places, un seul élément.** Sous le titre du premier écran, puis, dès
   qu'on a défilé d'un tiers d'écran, en bas à droite : elle s'y envole, et
