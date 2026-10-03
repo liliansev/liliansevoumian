@@ -2,11 +2,14 @@
 /*
  * home-services — ce que fait Lilian, en quatre métiers.
  *
- * Il l'a demandé en clair : en passant sur la page, on doit comprendre qu'il
- * fait de l'automatisation, de l'IA, des formations et des sites web ou des
- * tableaux de bord. Quatre blocs donc, un par métier, et chacun porte sa
- * scène : de petites fenêtres d'interface reliées par des fils, où l'on voit
- * le métier se faire.
+ * Il l'a demandé en clair : en passant sur la page, on doit comprendre ce
+ * qu'il fait. Quatre blocs donc, un par métier, et chacun porte sa scène : de
+ * petites fenêtres d'interface reliées par des fils, où l'on voit le métier se
+ * faire. Depuis le 3 octobre 2026, dans l'ordre qu'il a donné : automatisation,
+ * agents IA, dashboards et outils métiers, formations. Les sites web sont
+ * sortis de la page d'accueil ce jour-là (le bloc s'appelait « Sites web et
+ * dashboards » et montrait trois sites dans une vitrine) ; leur page d'offre
+ * reste en ligne.
  *
  * C'est la direction qu'il a retenue le 3 octobre 2026 parmi cinq essais
  * (`/explorations-metiers`), à la place des sculptures de verre : celles-ci
@@ -17,10 +20,17 @@
  *   agents IA        on pose une question, l'agent part chercher la réponse
  *                    dans ses sources, recoupe et répond ; le doute reste à
  *                    un humain ;
+ *   dashboards       un outil métier se monte, l'équipe s'en sert, et le
+ *                    dashboard compte ;
  *   formations       le formateur monte un scénario, l'équipe le refait, puis
- *                    le lance seule ;
- *   sites web        une page se compose, des visiteurs cliquent, et le
- *                    tableau de bord compte.
+ *                    le lance seule.
+ *
+ * Sur téléphone, les quatre blocs à la suite faisaient près de cinq écrans. Ils
+ * tiennent dans un seul : quatre onglets sous le titre, un bloc à la fois, et
+ * au pied de chaque bloc un bouton vers le suivant. Des onglets et non un
+ * carrousel à glisser : les quatre noms restent lisibles d'un coup d'œil, rien
+ * n'est caché derrière un geste. Au-delà de 719 px, et sans script, les blocs
+ * restent l'un sous l'autre.
  *
  * Un sujet par scène, et une silhouette par scène : Lilian l'a demandé en
  * voyant la page sur son téléphone (« quand on scrolle, il faut qu'à chaque
@@ -35,17 +45,15 @@
  *
  * Rien n'est affirmé qui ne soit dans PRODUCT.md : les preuves viennent des
  * cas clients publiés et des faits du parcours ; les prix, de
- * `data/service-pricing`. Les trois sites montrés sont les trois premiers de
- * la liste commune, hors ce site-ci ; ils sont présentés par `home-sites`.
+ * `data/service-pricing`.
  */
+import { Icon } from 'astro-icon/components';
 import LinkCTA from './LinkCTA.astro';
-import HomeSites from './home-sites.astro';
 import SceneAutomatisation from './metiers/scene-automatisation.astro';
 import SceneAgents from './metiers/scene-agents.astro';
 import SceneFormations from './metiers/scene-formations.astro';
 import SceneSites from './metiers/scene-sites.astro';
-import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
-import { projects } from '../data/realisations';
+import { automationStartingPrice } from '../data/service-pricing';
 
 const prix = (montant: number) => `À partir de ${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 
@@ -53,6 +61,7 @@ const metiers = [
   {
     id: 'automatisation',
     nom: 'Automatisation',
+    onglet: 'Automatisation',
     phrase: 'Je relie vos outils, et les ressaisies disparaissent.',
     /* Seul texte de la liste qui porte du balisage : Make et n8n mènent à leur
        page. Il est rendu par `set:html`, comme les trois autres ; tous sont
@@ -67,6 +76,7 @@ const metiers = [
   {
     id: 'agents-ia',
     nom: 'Agents IA',
+    onglet: 'Agents IA',
     phrase: 'Un agent qui va chercher la réponse à votre place.',
     texte:
       'Vous posez une question, il va chercher l’information là où elle est\u00a0: vos documents, vos outils, le web. Il lit, recoupe et répond, sources à l’appui. Les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
@@ -80,48 +90,74 @@ const metiers = [
     lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
   },
   {
+    /* Le troisième métier, depuis le 3 octobre 2026 : plus de sites web sur
+       l'accueil. Ce qui est affirmé vient de /llms.txt (« dashboards, portails
+       clients et applications métiers, sur un périmètre chiffré
+       séparément ») ; le prix est donc « sur devis », choix de Lilian. Le lien
+       mène à la partie « Applications » de la page d'offre, qui reste en
+       ligne. La phrase est de moi : à lui de la valider. */
+    id: 'dashboards',
+    nom: 'Dashboards et outils métiers',
+    onglet: 'Dashboards',
+    phrase: 'Un dashboard qui dit où vous en êtes, un outil fait pour votre métier.',
+    texte:
+      'Dashboards, portails clients et applications internes, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
+    note: 'Sur devis',
+    lien: { href: '/sites-web-abonnement#applications', label: 'Voir les applications métier', goal: 'service_path_opened', source: 'home_metier_web' },
+  },
+  {
     id: 'formations',
     nom: 'Formations',
+    onglet: 'Formations',
     phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
     texte:
       'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou directement avec vos équipes. On construit sur vos cas, pas sur des exemples d’école.',
     preuve: { chiffre: 'Plus de 300', suite: 'personnes formées, par le premier Français certifié Make niveau 5.' },
     lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
   },
-  {
-    id: 'sites',
-    nom: 'Sites web et dashboards',
-    phrase: 'Des pages qui transforment vos visiteurs en demandes, des dashboards qui servent.',
-    texte:
-      'Landing pages, sites vitrines, portails clients et dashboards métier, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
-    note: prix(webStartingPrice),
-    lien: { href: '/sites-web-abonnement', label: 'Voir l’offre sites web', goal: 'service_path_opened', source: 'home_metier_web' },
-  },
 ] as const;
-
-const sites = [projects.agenceafk, projects.augmentes, projects.youmanista];
 
 const scenes = {
   automatisation: SceneAutomatisation,
   'agents-ia': SceneAgents,
+  dashboards: SceneSites,
   formations: SceneFormations,
-  sites: SceneSites,
 };
 ---
 
 <section id="services" data-section class="metiers relative px-[var(--spacing-section-x)]">
   <div class="metiers__cadre relative mx-auto max-w-[1200px]">
-    {/* Le titre seul. Il était suivi de quatre pastilles, une par métier : la
-        barre de navigation les nomme déjà, juste au-dessus, et chaque bloc
-        s'ouvre sur son nom. */}
+    {/* Le titre seul : chaque bloc s'ouvre sur son nom. Il disait « Je fais
+        quatre choses. » ; Lilian l'a jugé faible et a demandé un mot simple
+        (« mes services, mes expertises »), le 3 octobre 2026. « Expertises »
+        répond au titre du premier écran, « je suis expert en… ». */}
     <header class="metiers__tete reveal">
-      <h2>Je fais quatre choses.</h2>
+      <h2>Mes expertises.</h2>
     </header>
+
+    {/* Téléphone seulement : les quatre noms, pour passer d'un métier à
+        l'autre. Le script les montre et leur donne leurs rôles ; sans lui ils
+        restent cachés et les quatre blocs se suivent. */}
+    <div class="metiers__onglets" role="tablist" aria-label="Mes expertises" data-metiers-onglets hidden>
+      {metiers.map((metier, index) => (
+        <button
+          type="button"
+          role="tab"
+          id={`onglet-${metier.id}`}
+          aria-controls={metier.id}
+          aria-selected={index === 0 ? 'true' : 'false'}
+          tabindex={index === 0 ? 0 : -1}
+          data-metier-onglet
+        >
+          {metier.onglet}
+        </button>
+      ))}
+    </div>
 
     {metiers.map((metier, index) => {
       const Scene = scenes[metier.id];
       return (
-      <article id={metier.id} class:list={['metier', { 'metier--miroir': index % 2 === 1 }]}>
+      <article id={metier.id} class:list={['metier', { 'metier--miroir': index % 2 === 1 }]} data-metier>
         <div class="metier__texte reveal">
           <h3>{metier.nom}</h3>
           <p class="metier__phrase">{metier.phrase}</p>
@@ -177,10 +213,13 @@ const scenes = {
           <div class="metier__cadre"><Scene /></div>
         </div>
 
-        {metier.id === 'sites' && (
-          <div class="metier__sites">
-            <HomeSites sites={sites} class="reveal" />
-          </div>
+        {/* Téléphone : au pied du bloc, le métier suivant, sans remonter aux
+            onglets. Le script le montre ; le dernier bloc n'en a pas. */}
+        {index < metiers.length - 1 && (
+          <button type="button" class="metier__suivant" data-metier-suivant hidden>
+            <span>Suivant&nbsp;: {metiers[index + 1].nom}</span>
+            <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+          </button>
         )}
       </article>
       );
@@ -402,15 +441,6 @@ const scenes = {
   .repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
   .repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
 
-  /* Trois sites, sous le métier qui les a faits : une vitrine de fenêtres de
-     navigateur où chaque page défile (`home-sites.astro`), et non des captures
-     posées telles quelles, qui cassaient la tenue de la page. */
-  .metier__sites {
-    grid-column: 1 / -1;
-    order: 3;
-    min-width: 0;
-  }
-
   /* Sur le plan étroit (voir `scene-metier.css`), la scène est plus haute :
      9:8 au lieu de 4:3. Le seuil est celui du socle, plus les deux pixels de
      bordure du cadre. */
@@ -493,6 +523,113 @@ const scenes = {
     }
   }
 
+  /* ── Les onglets (téléphone) ──
+     Le bloc masqué l'est vraiment : `.metier` est une grille, qui l'emporterait
+     sur l'attribut `hidden`. */
+  .metier[hidden],
+  .metiers__onglets[hidden],
+  .metier__suivant[hidden] {
+    display: none;
+  }
+
+  /* Des onglets au sens propre : quatre noms sur une ligne, un trait pêche sous
+     celui qui est ouvert. Sur téléphone ils arrivent juste après les boutons de
+     mode du récit, qui sont une piste à pastille : deux commandes voisines aux
+     noms presque identiques, donc deux dessins (demande de Lilian, le
+     3 octobre 2026). La rangée court jusqu'aux bords de l'écran ; si les
+     quatre noms n'y tiennent pas, elle défile, et le nom coupé le dit. */
+  .metiers__onglets {
+    display: flex;
+    gap: 1rem;
+    margin: 0 calc(-1 * var(--spacing-section-x)) var(--spacing-lie);
+    padding-inline: var(--spacing-section-x);
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  .metiers__onglets::-webkit-scrollbar {
+    display: none;
+  }
+
+  .metiers__onglets button {
+    flex: none;
+    min-width: 44px;
+    min-height: 44px;
+    margin-bottom: -1px;
+    padding: 0;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--color-ink-mid);
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      border-color var(--duration-default) var(--ease-out-quint),
+      color var(--duration-default);
+  }
+
+  .metiers__onglets button[aria-selected='true'] {
+    border-bottom-color: var(--color-peche);
+    color: var(--color-ink);
+  }
+
+  /* En onglets, le bloc n'a plus de voisin au-dessus : son filet et son
+     espace du haut s'effacent, les onglets en tiennent lieu. */
+  .metiers[data-onglets] .metier {
+    padding-top: 0;
+  }
+
+  .metiers[data-onglets] .metier::before {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .metiers[data-onglets] .metier:not([hidden]) {
+      animation: metier-arrive 420ms var(--ease-out-expo) backwards;
+    }
+  }
+
+  @keyframes metier-arrive {
+    from { opacity: 0; transform: translateY(0.75rem); }
+  }
+
+  .metier__suivant {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    order: 3;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 1.125rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Téléphone : la scène prend presque toute la largeur de l'écran, comme
+     celle du récit (voir `home-story`) : dessinée à taille fixe puis mise à
+     l'échelle, elle y gagne 10 % à 402 px. */
+  @media (max-width: 640px) {
+    .metier__scene,
+    .metier--miroir .metier__scene {
+      width: auto;
+      margin-inline: calc(0.5rem - var(--spacing-section-x));
+    }
+  }
+
   @media (max-width: 640px) {
     /* Le prix passe toujours sous le lien : selon la longueur du libellé il
        tenait tantôt à côté, tantôt dessous, d'un métier à l'autre. */
@@ -502,3 +639,97 @@ const scenes = {
     }
   }
 </style>
+
+<script>
+  /* Téléphone : quatre onglets, un bloc à la fois. Au-delà de 719 px, les blocs
+     se suivent et rien de tout cela ne s'applique. Les scènes des blocs
+     masqués s'arrêtent d'elles-mêmes (leur moteur ne joue qu'à l'écran). */
+  const section = document.querySelector<HTMLElement>('#services');
+  const liste = section?.querySelector<HTMLElement>('[data-metiers-onglets]');
+  const onglets = [...(liste?.querySelectorAll<HTMLButtonElement>('[data-metier-onglet]') ?? [])];
+  const blocs = [...(section?.querySelectorAll<HTMLElement>('[data-metier]') ?? [])];
+
+  if (section && liste && blocs.length > 1 && onglets.length === blocs.length) {
+    const etroit = window.matchMedia('(max-width: 719px)');
+    let actif = 0;
+
+    const montrer = (rang: number) => {
+      actif = rang;
+      onglets.forEach((onglet, i) => {
+        onglet.setAttribute('aria-selected', String(i === rang));
+        onglet.tabIndex = i === rang ? 0 : -1;
+      });
+      /* Sur un petit téléphone la rangée défile : l'onglet choisi revient en
+         vue, sans faire bouger la page. */
+      const retrait = Number.parseFloat(getComputedStyle(liste).paddingLeft) || 0;
+      const cadre = liste.getBoundingClientRect();
+      const choisi = onglets[rang].getBoundingClientRect();
+      if (choisi.left < cadre.left + retrait) liste.scrollLeft -= cadre.left + retrait - choisi.left;
+      else if (choisi.right > cadre.right - retrait) liste.scrollLeft += choisi.right - (cadre.right - retrait);
+      blocs.forEach((bloc, i) => {
+        bloc.hidden = etroit.matches && i !== rang;
+      });
+    };
+
+    /* Ramène les onglets sous la barre : le nouveau bloc se lit depuis le haut. */
+    const remonter = () => liste.scrollIntoView({ block: 'start' });
+
+    const regler = () => {
+      const enOnglets = etroit.matches;
+      liste.hidden = !enOnglets;
+      section.toggleAttribute('data-onglets', enOnglets);
+      blocs.forEach((bloc, i) => {
+        if (enOnglets) {
+          bloc.setAttribute('role', 'tabpanel');
+          bloc.setAttribute('aria-labelledby', onglets[i].id);
+        } else {
+          bloc.removeAttribute('role');
+          bloc.removeAttribute('aria-labelledby');
+        }
+        const suivant = bloc.querySelector<HTMLElement>('[data-metier-suivant]');
+        if (suivant) suivant.hidden = !enOnglets;
+      });
+      montrer(actif);
+    };
+
+    onglets.forEach((onglet, i) => {
+      onglet.addEventListener('click', () => montrer(i));
+      onglet.addEventListener('keydown', (e) => {
+        const pas = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+        const cible = e.key === 'Home' ? 0 : e.key === 'End' ? onglets.length - 1 : pas ? (i + pas + onglets.length) % onglets.length : -1;
+        if (cible < 0) return;
+        e.preventDefault();
+        montrer(cible);
+        onglets[cible].focus();
+      });
+    });
+
+    blocs.forEach((bloc, i) => {
+      bloc.querySelector('[data-metier-suivant]')?.addEventListener('click', () => {
+        montrer(i + 1);
+        remonter();
+      });
+    });
+
+    /* Un lien vers un métier (la barre, le menu, une adresse partagée) ouvre
+       son onglet : masqué, le bloc ne pourrait pas être atteint. Au clic, le
+       bloc est montré avant que le navigateur n'y défile. */
+    const rangDe = (ancre: string) => blocs.findIndex((bloc) => `#${bloc.id}` === ancre);
+    document.addEventListener('click', (e) => {
+      const lien = e.target instanceof Element ? e.target.closest<HTMLAnchorElement>('a[href^="#"]') : null;
+      const rang = lien ? rangDe(lien.getAttribute('href') ?? '') : -1;
+      if (rang >= 0 && etroit.matches) montrer(rang);
+    });
+    const suivreLAncre = () => {
+      const rang = rangDe(window.location.hash);
+      if (rang < 0 || !etroit.matches) return;
+      montrer(rang);
+      remonter();
+    };
+    window.addEventListener('hashchange', suivreLAncre);
+
+    etroit.addEventListener('change', regler);
+    regler();
+    suivreLAncre();
+  }
+</script>

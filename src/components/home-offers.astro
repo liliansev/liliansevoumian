@@ -14,8 +14,9 @@
  * appel. Le champ est facultatif : vide, le bouton ouvre la même conversation.
  * Tous les « Parlons de votre projet » de la page font ce même geste
  * (`data-causerie-ouvrir`) : un seul appel à l'action, voulu par Lilian le
- * 2 octobre 2026. Sans script, le bouton mène à l'agenda, et la phrase écrite
- * y est reprise (voir l'embed, dans Layout).
+ * 2 octobre 2026. Si la barre d'écriture n'a pas démarré, le bouton ouvre
+ * l'agenda, où la phrase écrite est reprise (voir l'embed, dans Layout) ; sans
+ * aucun script, c'est un simple lien vers l'agenda.
  *
  * Les prix tiennent en une ligne sous le bouton. Ils étaient deux rangées à
  * filets qui redisaient ce que les blocs des métiers annoncent déjà ; ils
@@ -26,22 +27,27 @@
  */
 import { Icon } from 'astro-icon/components';
 import BoutonReservation from './BoutonReservation.astro';
-import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
+import { automationStartingPrice } from '../data/service-pricing';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 
 /* Mêmes noms que dans les blocs des métiers : une offre n'a qu'un nom sur la
-   page. */
+   page. Les sites web ont quitté l'accueil le 3 octobre 2026 : la seconde
+   offre est « Dashboards et outils métiers », sur devis, et mène à la partie
+   « Applications » de la page d'offre. */
+const euros = (montant: number) => `${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 const offres = [
   {
     href: '/automatisations-ia',
     nom: 'Automatisation et agents\u00a0IA',
-    prix: automationStartingPrice,
+    avant: 'à partir de',
+    prix: euros(automationStartingPrice),
     source: 'home_services_automation',
   },
   {
-    href: '/sites-web-abonnement',
-    nom: 'Sites web et dashboards',
-    prix: webStartingPrice,
+    href: '/sites-web-abonnement#applications',
+    nom: 'Dashboards et outils métiers',
+    avant: '',
+    prix: 'sur devis',
     source: 'home_services_web',
   },
 ] as const;
@@ -86,7 +92,8 @@ const offres = [
       </BoutonReservation>
     </form>
     {/* Ce qui se passe après le clic. Rien n'est promis ici qui ne soit vrai du
-        bouton lui-même : il ouvre l'agenda dans la page, avec le mot écrit.
+        bouton lui-même : il ouvre la conversation de `home-invite` avec le mot
+        écrit, et c'est elle qui propose WhatsApp, l'e-mail ou l'appel.
         « En visio » vient de l'événement Cal.com, qui se tient sur Google Meet
         (vérifié dans l'agenda le 2 octobre 2026) ; « sans engagement » est déjà
         écrit dans /llms.txt. */}
@@ -100,7 +107,7 @@ const offres = [
         <>
           {i > 0 && <span class="fin__sep" aria-hidden="true"> · </span>}
           <a href={offre.href} data-fast-goal="service_path_opened" data-fast-goal-source={offre.source}>
-            {offre.nom}, à partir de <strong>{offre.prix.toLocaleString('fr-FR')}&nbsp;€&nbsp;HT</strong>
+            {offre.nom}, {offre.avant}{offre.avant && ' '}<strong>{offre.prix}</strong>
           </a>
         </>
       ))}
@@ -146,8 +153,9 @@ const offres = [
     margin: 0;
     color: var(--color-ink);
     font-family: var(--font-display);
-    /* Borné par la largeur sous 372 px : à 320, la pastille « la bonne
-       personne. », qui ne se coupe pas, dépassait de la colonne de 10 px. */
+    /* Borné par la largeur sous 372 px : la pastille, qui ne se coupe pas,
+       doit tenir dans la colonne. À 320, « perdre du temps. » y tient à 1 px
+       près (mesuré le 3 octobre 2026). */
     font-size: min(var(--text-story), 8.6vw);
     font-weight: 500;
     line-height: var(--leading-display);
@@ -340,16 +348,15 @@ const offres = [
 
 <script>
   /* Entrée envoie, comme dans une barre de prompt (Maj + Entrée va à la ligne) :
-     l'envoi est un clic sur le lien de réservation, que Layout intercepte pour
-     ouvrir l'agenda avec le mot écrit. Sans ce script, le lien marche seul. */
+     l'envoi est un clic sur le bouton, que `home-invite` intercepte pour ouvrir
+     la conversation avec le mot écrit (si elle n'a pas démarré, Layout ouvre
+     l'agenda). Sans ce script, le bouton marche seul.
+     Pas d'écouteur `submit` : le formulaire n'a ni bouton d'envoi ni champ
+     d'une ligne, rien ne peut donc le soumettre. */
   const invite = document.querySelector<HTMLFormElement>('[data-invite]');
   const champ = invite?.querySelector<HTMLTextAreaElement>('[data-invite-champ]');
   const envoi = invite?.querySelector<HTMLAnchorElement>('[data-invite-envoi]');
   if (invite && champ && envoi) {
-    invite.addEventListener('submit', (e) => {
-      e.preventDefault();
-      envoi.click();
-    });
     champ.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
       e.preventDefault();

@@ -224,7 +224,7 @@ const projets = [
   { nom: 'Espace membres', etat: 'afaire', p: 0 },
   { nom: 'Catalogue en ligne', etat: 'afaire', p: 0 },
   { nom: 'Portail client', etat: 'cours', p: 30 },
-  { nom: 'Site vitrine', etat: 'cours', p: 45 },
+  { nom: 'Suivi des stocks', etat: 'cours', p: 45 },
   { nom: 'Planning d’équipe', etat: 'cours', p: 60 },
   { nom: 'Intranet', etat: 'cours', p: 75 },
   { nom: 'Application terrain', etat: 'cours', p: 90 },
@@ -516,7 +516,7 @@ const vues = [
                 </div>
                 <i class="scene__sablier" data-sablier aria-hidden="true"></i>
                 <button type="button" class="sm-pause scene__pause" aria-pressed="false" hidden data-pause>
-                  <span class="sr-only" data-pause-nom>Mettre l’animation en pause</span>
+                  <span class="sr-only">Mettre l’animation en pause</span>
                   <svg class="sm-pause__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1" /><rect x="9" y="3" width="3" height="10" rx="1" /></svg>
                   <svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z" /></svg>
                 </button>
@@ -1169,6 +1169,15 @@ const vues = [
 
   .doc__ligne .ref {
     font-weight: 600;
+  }
+
+  /* Une référence ou un montant ne passe jamais à la ligne. « A-2041 » tenait
+     dans sa case au pixel près : sur iPhone, où le texte est rendu un cheveu
+     plus large, elle se coupait au trait d'union et les rangées se
+     chevauchaient (vu par Lilian le 3 octobre 2026). */
+  .doc__ligne span,
+  .facture__ligne span {
+    white-space: nowrap;
   }
 
   .doc__ligne i {
@@ -2298,6 +2307,19 @@ const vues = [
     .scene__mode {
       --bouton-marge: clamp(0.3125rem, 1.9vw, 1rem);
     }
+  }
+
+  /* Téléphone : le panneau prend presque toute la largeur de l'écran, 8 px de
+     chaque côté, au lieu de s'arrêter aux marges de la page. La scène est
+     dessinée à taille fixe puis mise à l'échelle : plus large, tout y est plus
+     grand (10 % à 402 px). Demandé par Lilian le 3 octobre 2026 ; les boutons
+     de mode restent juste dessous, calés sur la colonne du texte. */
+  @media (max-width: 640px) {
+    .scene__boite {
+      justify-self: stretch;
+      width: auto;
+      margin-inline: calc(0.5rem - var(--spacing-section-x));
+    }
 
     /* Dans une fenêtre basse, la scène se règle sur la hauteur et peut être
        plus étroite que ses trois boutons : la ligne dépasse alors du panneau
@@ -2340,13 +2362,18 @@ const vues = [
      Sous 640 px (ou dans une fenêtre basse), la scène est redessinée plutôt
      que réduite : trois lignes au lieu de cinq, une seule pastille de
      compteur, une facture sans pied. Les quatre tailles sont celles de ce
-     plan-là : rendu entre 0,8 (fenêtre de 320) et 1,04 (402), la note fait
-     9,1 à 12 px à l'écran. Au-delà d'un téléphone il ne grossit plus
-     (`--scene-max`). */
+     plan-là : rendu entre 0,89 (fenêtre de 320) et 1,13 (402), la note fait
+     10,2 à 13 px à l'écran. Au-delà d'un téléphone il ne grossit plus
+     (`--scene-max`).
+     Il est plus haut que large (340 × 420) : un téléphone a de la place en
+     hauteur, et à 356 de haut les deux fenêtres se recouvraient de 23 px
+     (retour de Lilian, le 3 octobre 2026). Le bon de commande et la facture
+     se suivent maintenant sans se toucher, la conversation et les piles du
+     suivi ont gagné en hauteur. */
   @media (max-width: 640px), (max-height: 560px) {
     .scene {
       --plan-l: 340;
-      --plan-h: 356;
+      --plan-h: 420;
       --scene-max: 27.5rem;
       --retrait: 1;
       --sm-note: 11.5px;
@@ -2424,14 +2451,14 @@ const vues = [
     .page { padding: 10px 10px 7px; }
 
     .colonnes {
-      grid-template-columns: 44px minmax(0, 1fr) 18px 42px;
+      grid-template-columns: 48px minmax(0, 1fr) 18px 46px;
       gap: 5px;
       margin-top: 8px;
       padding: 0 4px 5px;
     }
 
     .doc__ligne {
-      grid-template-columns: 44px minmax(0, 1fr) 18px 42px;
+      grid-template-columns: 48px minmax(0, 1fr) 18px 46px;
       gap: 5px;
       height: 24px;
       padding-inline: 4px;
@@ -2440,21 +2467,21 @@ const vues = [
     .doc__ligne:nth-child(3) { border-bottom: 0; }
 
     .fenetre--app {
-      top: 198px;
-      left: 104px;
+      top: 240px;
+      left: 120px;
       width: 206px;
     }
 
     .fenetre--app .fenetre__corps { padding: 8px; }
 
     .colonnes--app {
-      grid-template-columns: 44px minmax(0, 1fr) 18px 42px 10px;
+      grid-template-columns: 48px minmax(0, 1fr) 18px 46px 10px;
       margin-top: 0;
       padding: 0 6px 5px;
     }
 
     .facture__ligne {
-      grid-template-columns: 44px minmax(0, 1fr) 18px 42px 10px;
+      grid-template-columns: 48px minmax(0, 1fr) 18px 46px 10px;
       gap: 5px;
       height: 25px;
       padding-inline: 6px;
@@ -2492,7 +2519,7 @@ const vues = [
       padding: 2px 8px 3px 7px;
     }
 
-    .conversation { height: 170px; }
+    .conversation { height: 226px; }
 
     .echange {
       display: none;
@@ -2509,7 +2536,7 @@ const vues = [
 
     .fenetre--base {
       --sortie: translate(-18px, 26px) scale(var(--retrait));
-      top: 272px;
+      top: 332px;
       left: 10px;
       width: auto;
       border-radius: var(--radius-full);
@@ -2531,7 +2558,7 @@ const vues = [
     /* Les outils n'ont plus de fenêtre : il ne reste que leurs pastilles. */
     .fenetre--outils {
       --sortie: translate(22px, 26px) scale(var(--retrait));
-      top: 271px;
+      top: 331px;
       left: 196px;
       width: auto;
       overflow: visible;
@@ -2604,14 +2631,14 @@ const vues = [
     }
 
     .pile ul {
-      gap: 4px;
-      height: calc(5 * 16px + 4 * 4px);
+      gap: 6px;
+      height: calc(5 * 26px + 4 * 6px);
     }
 
     .carte {
       grid-template-columns: 6px minmax(0, 1fr) 9px;
       gap: 5px;
-      height: 16px;
+      height: 26px;
       padding-inline: 5px;
       border-radius: 5px;
     }
@@ -4018,7 +4045,9 @@ const vues = [
        arrêtée, au clavier comme au doigt. Le bouton est dans le balisage,
        hors du plan (qui est `aria-hidden`), et sort masqué : il n'est montré
        que s'il y a quelque chose à arrêter, donc pas en mouvement réduit.
-       L'arrêt tient tant que le visiteur ne le relève pas. */
+       L'arrêt tient tant que le visiteur ne le relève pas.
+       `aria-pressed` porte l'état, le libellé reste le même : c'est la
+       convention d'un bouton à bascule (comme le défilé des logos). */
     const suspendre = () => {
       arretDepuis = performance.now();
       arretee = true;
@@ -4055,14 +4084,12 @@ const vues = [
       reveiller();
     };
     const commande = scene.querySelector<HTMLButtonElement>('[data-pause]');
-    const nomCommande = commande?.querySelector<HTMLElement>('[data-pause-nom]');
     if (commande && !reduit) {
       commande.hidden = false;
       commande.addEventListener('click', () => {
         if (arretee) relancer();
         else suspendre();
         commande.setAttribute('aria-pressed', String(arretee));
-        if (nomCommande) nomCommande.textContent = arretee ? 'Relancer l’animation' : 'Mettre l’animation en pause';
       });
     }
 

@@ -31,8 +31,8 @@ src/
 │   ├── Navigation.astro       # nav + menu mobile + overlay cal.com
 │   ├── home-hero.astro        # accueil : titre centré, emplacement de la barre d'écriture, grille, défilé clients
 │   ├── home-story.astro       # accueil : récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues (à la main, puis les 3 réponses)
-│   ├── home-services.astro    # accueil : 4 métiers, une scène d'interface animée chacun
-│   ├── home-sites.astro       # accueil : trois sites dans des fenêtres de navigateur où la page défile
+│   ├── home-services.astro    # accueil : 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations), une scène animée chacun ; sur téléphone, quatre onglets et un bloc à la fois
+│   ├── home-sites.astro       # vitrine de trois sites, sortie de l'accueil le 3 octobre 2026 ; visible sur /explorations-metiers/vitrine
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
 │   ├── explorations/          # essais non retenus (bureau, plateau, terminal, plan), page /explorations-metiers
 │   ├── home-today-path.astro  # accueil : « Pourquoi moi » + frise du parcours

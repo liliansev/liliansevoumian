@@ -333,16 +333,31 @@ vient de ce qu'elle raconte.
   espacées, et son survol déroule une pastille droite au lieu de la bande
   penchée.
 - **Une offre n'a qu'un nom sur la page** : « Automatisation », « Agents IA »,
-  « Formations », « Sites web et dashboards », dans la barre, les blocs des
-  métiers et la ligne de prix. Le pied de page dit pareil (« Automatisation et
-  agents IA », « Sites web et dashboards »).
+  « Dashboards et outils métiers », « Formations », dans cet ordre (donné par
+  Lilian le 3 octobre 2026), dans les blocs des métiers et la ligne de prix.
+  La barre et les onglets disent « Dashboards », faute de place. **Les sites
+  web ont quitté la page d'accueil ce jour-là** : plus de bloc, plus de
+  vitrine, plus de prix. Leur page d'offre reste en ligne et le pied de page y
+  mène toujours (« Sites web et dashboards »).
 - **On dit « dashboard », jamais « tableau de bord »** dans le texte visible :
   choix de Lilian le 2 octobre 2026, pour n'avoir qu'un mot. Les commentaires
   du code gardent le français.
 - **Chaque offre qui a un prix l'affiche en « À partir de »** : 900 € HT sur
   les blocs Automatisation et Agents IA (c'est la même offre, au même prix
-  d'entrée), 1 500 € HT sur Sites web et dashboards. Les formations n'en
+  d'entrée). Dashboards et outils métiers : « Sur devis ». Les formations n'en
   affichent pas : Lilian ne le veut pas.
+- **Sur téléphone, les quatre métiers tiennent dans un seul bloc**
+  (`home-services`, sous 720 px) : quatre onglets sous le titre, sur une
+  ligne, en vrais onglets (le nom, un trait pêche sous celui qui est ouvert, un
+  filet sous la rangée) ; un bloc à la fois ; au pied de chaque bloc,
+  « Suivant : … ». Ils ne reprennent pas la piste à pastille des boutons de
+  mode du récit, qui les précèdent d'un écran avec presque les mêmes noms :
+  deux commandes voisines, deux dessins (demande de Lilian). Sur un petit
+  téléphone la rangée défile. À la suite, ils faisaient près de cinq écrans (page de
+  16 écrans, 10,5 après). Des onglets et non un carrousel à glisser : les
+  quatre noms restent visibles, rien n'est caché derrière un geste. Les liens
+  de la barre et du menu ouvrent le bon onglet. Sans script, les blocs se
+  suivent.
 - **Le menu mobile de l'accueil** liste ces quatre métiers en grand
   (`--text-title-lg`, sans filet entre eux), puis le reste de la page en plus
   petit (« Pourquoi moi », « Vidéos et newsletter », « Cas clients »), et se
@@ -444,7 +459,7 @@ Dix tailles, pas une de plus, chacune avec un rôle (passe typographique du
 | Rôle | Jeton | 402 → 1440 | Interligne, approche |
 |---|---|---|---|
 | Affiche (h1) | `--text-affiche` | 34 → 72 | 1,12 · −0,028em |
-| Énoncé (h2 du récit, « Je fais quatre choses. », fin) | `--text-story` | 32 → 60 | `--leading-display` · `--tracking-display` |
+| Énoncé (h2 du récit, « Mes expertises. », fin) | `--text-story` | 32 → 60 | `--leading-display` · `--tracking-display` |
 | Titre de section (h2) | `--text-headline` | 32 → 48 | idem (1,1 · −0,03em) |
 | Phrase (phrase d'un métier, citation) | `--text-phrase` | 26 → 40 | `--leading-phrase` · `--tracking-phrase` (1,14 · −0,025em) |
 | Titre lg (année, titre de vidéo) | `--text-title-lg` | 24 → 30 | 1,05 à 1,15 |
@@ -582,6 +597,23 @@ n'y a plus de ronde automatique sur ordinateur.
   suivi de projets appartiennent à cette scène ; aucune scène de métier ne les
   rejoue.
 
+### Les scènes sur téléphone
+
+Décidé avec Lilian le 3 octobre 2026, après son test sur iPhone :
+
+- **Elles débordent dans les marges de la page** : 8 px de chaque côté de
+  l'écran au lieu des 24 px de la colonne (récit et métiers). Dessinées à
+  taille fixe puis mises à l'échelle, elles y gagnent 10 % à 402 px.
+- **Le plan étroit du récit est plus haut que large** (340 × 420) : le bon de
+  commande et la facture se suivent sans se recouvrir, la conversation et les
+  piles du suivi ont plus de hauteur. Les boutons de mode restent juste
+  dessous, calés sur la colonne du texte.
+- **Aucun texte au pixel près dans sa case.** Une référence (« A-2041 »)
+  tenait dans 44 px pour 44 px de texte sous Chrome ; sur iPhone, rendue un peu
+  plus large, elle se coupait au trait d'union. Les valeurs d'une rangée ne
+  passent jamais à la ligne (`white-space: nowrap`) et leurs cases gardent de
+  la marge. Chrome ne suffit pas à valider un rendu iPhone.
+
 ### Les scènes des métiers (`src/components/metiers/`)
 
 Chaque métier a sa scène : de petites fenêtres d'interface en 2D, reliées par
@@ -598,7 +630,7 @@ légende pour comprendre ; elles restent visibles sur `/explorations-blocs`.
 | Automatisation | une réservation : paiement encaissé, créneau posé dans l'agenda, confirmation envoyée | un **grand agenda** en grille où le créneau vient se poser ; sur téléphone la grille prend toute la largeur, la demande et la confirmation passent par-dessus |
 | Agents IA | une question (« Quelles entreprises approcher cette semaine ? »), et l'agent part chercher la réponse | une **étoile** : l'agent au centre réfléchit étape par étape, envoie des sondes vers ses sources autour, en ramène des extraits, puis compose une réponse sourcée, avec une ligne « à valider par vous » |
 | Formations | le formateur monte un scénario, l'équipe le refait en hésitant une fois, puis le lance seule | **deux fenêtres jumelles**, des blocs et des curseurs |
-| Sites web et dashboards | une page se compose bloc par bloc, des visiteurs cliquent, le tableau de bord compte | une **page claire** à côté d'un tableau de bord sombre ; sur téléphone, la page claire en haut sur toute la largeur et le tableau de bord en bande dessous |
+| Dashboards et outils métiers | un outil métier se monte bloc par bloc et passe en service, l'équipe s'en sert, le dashboard compte | un **écran clair** (l'outil) à côté d'un dashboard sombre ; sur téléphone, l'écran clair en haut sur toute la largeur et le dashboard en bande dessous |
 
 **Un sujet par scène, et une silhouette par scène.** C'est la règle née du
 retour de Lilian sur son téléphone : « les animations sont toutes un peu
@@ -692,24 +724,12 @@ frise défile à droite.
   téléphone, le bouton de fin est à treize écrans du premier. Un lien, pas un
   second bouton plein : l'action pleine reste celle de la barre et de la fin.
 
-### Les trois sites (`home-sites`)
+### Les trois sites (`home-sites`) : hors accueil
 
-Sous le bloc Sites web, trois sites réalisés, chacun dans une **fenêtre de
-navigateur dessinée dans la tenue de la page** (barre fine, pastille d'adresse
-avec le domaine), où la page **défile par crans** à l'intérieur. Des captures
-de sites clairs posées telles quelles sur la page nuit cassaient la tenue, et
-s'enchaînaient bizarrement sur téléphone : retour de Lilian.
-
-- Une seule fenêtre défile à la fois ; les autres attendent sous un voile de
-  nuit, sans filtre sur l'active. Les repères d'angle glissent vers elle.
-- **Ordinateur :** une grande fenêtre et deux étroites ; celle qu'on vise
-  s'ouvre en grand. **Téléphone :** une fenêtre à la fois, à faire glisser,
-  avec « 1 / 3 » et deux flèches de 44 px.
-- Chaque site est accompagné : son nom, ce que c'est, « Voir le site ». Rien
-  d'autre que ce que porte `src/data/realisations.ts` (champ `long` pour la
-  capture longue, `public/sites-web/projects/*-long.webp`).
-- Une commande d'arrêt dans la barre de la fenêtre active ; rien ne défile en
-  mouvement réduit ni hors écran.
+La vitrine des trois sites (fenêtres de navigateur où la page défile par
+crans) vivait sous le bloc « Sites web et dashboards ». Elle a quitté la page
+d'accueil le 3 octobre 2026, avec les sites web. Le composant existe toujours
+et se voit sur `/explorations-metiers/vitrine`.
 
 ### Ce que je publie (`home-content`)
 

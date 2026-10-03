@@ -1,6 +1,6 @@
 import type { FaqItem } from './faq';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
-import { automationStartingPrice, webStartingPrice } from './service-pricing';
+import { automationStartingPrice } from './service-pricing';
 
 /*
  * Les questions de la page d'accueil : le texte visible de `home-questions`
@@ -8,7 +8,8 @@ import { automationStartingPrice, webStartingPrice } from './service-pricing';
  * lise jamais deux réponses à la même question.
  *
  * Rien n'y est affirmé qui ne soit déjà dans PRODUCT.md ou /llms.txt : le
- * public visé, les prix d'entrée (`service-pricing`), le devis ferme,
+ * public visé, le prix d'entrée (`service-pricing`), les outils métiers sur
+ * devis, le devis ferme,
  * l'abonnement de suivi, la zone, la durée de l'appel.
  */
 const euros = (montant: number) => `${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
@@ -20,7 +21,7 @@ export const homeFaqs: FaqItem[] = [
   },
   {
     q: 'Combien ça coûte\u00a0?',
-    a: `Une automatisation ou un agent\u00a0IA démarre à ${euros(automationStartingPrice)}, un site web à ${euros(webStartingPrice)}. Le devis est ferme une fois le périmètre posé. Chaque projet livré s’accompagne d’un abonnement de suivi\u00a0: hébergement, maintenance et petits ajustements.`,
+    a: `Une automatisation ou un agent\u00a0IA démarre à ${euros(automationStartingPrice)}\u00a0; un dashboard ou un outil métier se chiffre sur devis. Le devis est ferme une fois le périmètre posé. Chaque projet livré s’accompagne d’un abonnement de suivi\u00a0: hébergement, maintenance et petits ajustements.`,
   },
   {
     q: 'Vous travaillez seul\u00a0?',

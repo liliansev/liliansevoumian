@@ -22,12 +22,15 @@ confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir 
 Émis à trois endroits de l'accueil et depuis le menu mobile des autres pages.
 La prop `source` dit lequel a converti :
 
-- `home_metier_automation`, `home_metier_web` : le lien « Voir l'offre » des
-  blocs Automatisation et Sites web de la section « Je fais quatre choses » ;
+- `home_metier_automation`, `home_metier_web` : le lien d'offre des blocs
+  Automatisation et Dashboards et outils métiers de la section « Mes expertises ». `home_metier_web` garde son nom pour ne pas casser les filtres : le
+  bloc s'appelait « Sites web et dashboards » jusqu'au 3 octobre 2026, et son
+  lien mène maintenant à `/sites-web-abonnement#applications` ;
 - `home_metier_agents` : le prix du bloc Agents IA, qui mène à
   `/automatisations-ia` (le bouton du bloc, lui, sort vers agenceafk) ;
 - `home_services_automation`, `home_services_web` : la ligne de prix sous le
-  bouton de fin de page ;
+  bouton de fin de page (`home_services_web` : « Dashboards et outils métiers,
+  sur devis », même remarque) ;
 - `nav_mobile_offers` : le menu mobile, hors accueil (sur l'accueil le menu ne
   liste que les quatre métiers).
 
@@ -89,8 +92,8 @@ les liens de `/cas-clients` depuis À propos et Offres. Aucun n'était tagué.
 Prop `source` = `home_nav`, `home_nav_mobile`, `home_pourquoi_moi` ou `home_offres`.
 Sur l'accueil, les « Parlons de votre projet » n'ouvrent plus l'agenda mais la
 conversation de `home-invite.astro`, qui propose WhatsApp, l'e-mail ou l'appel.
-Le `lead_call` de l'accueil ne vient donc plus que du moyen « Plutôt un appel »
-(source `home_causerie`).
+Le `lead_call` de l'accueil ne vient donc plus que du moyen
+« Réserver un appel · 45 min » (source `home_causerie`).
 
 ### `lead_message` — message envoyé depuis la barre d'écriture de l'accueil
 Prop `canal` = `whatsapp` ou `email`. Posé sur les deux liens de la conversation
@@ -98,6 +101,12 @@ Prop `canal` = `whatsapp` ou `email`. Posé sur les deux liens de la conversatio
 son message déjà rédigé. Il mesure l'ouverture, pas l'envoi : celui-ci se fait
 hors du site. Le troisième moyen, l'appel, est un `lead_call` de source
 `home_causerie`.
+
+### `youtube_opened` — sortie vers YouTube depuis l'accueil
+Sources : `home_content` (la dernière vidéo, vignette et titre) et
+`home_content_chaine` (le lien « Voir toutes les vidéos sur YouTube »), tous deux
+dans la section « Je montre comment je fais » (`home-content.astro`). Le clic
+ouvre YouTube dans un nouvel onglet : il mesure la sortie, pas le visionnage.
 
 ### `outbound_formations` — sortie vers augmentes.fr
 Sources : `offres`, `faq`, `home_services`, `footer`. Ce n'est pas une perte : c'est

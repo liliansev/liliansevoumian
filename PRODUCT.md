@@ -36,6 +36,8 @@ Aucun objectif chiffré n'est fixé à ce jour (abonnés, clics sortants, positi
 
 Précision du 2 octobre 2026 : en passant sur la page, on doit comprendre que Lilian fait **de l'automatisation, de l'IA, des formations et des sites web ou des dashboards**. La page le dit dans sa barre de navigation et dans une section « Je fais quatre choses. », un bloc par métier, chacun avec sa sculpture de verre en trois dimensions. Trois sites suffisent sur l'accueil. Aucun titre ne doit en répéter un autre.
 
+Précision du 3 octobre 2026 : Lilian retire les sites web de la page d'accueil. Les quatre métiers, dans l'ordre qu'il a donné : **automatisation, agents IA, dashboards et outils métiers, formations**. Le troisième est « sur devis ». La vitrine des trois sites disparaît de l'accueil ; la page d'offre `/sites-web-abonnement` reste en ligne et dans le pied de page. Sur téléphone, les quatre métiers se présentent en onglets, un bloc à la fois. La section ne s'intitule plus « Je fais quatre choses. », qu'il juge faible, mais « Mes expertises. ».
+
 Ce que la page doit mettre en avant, sans ordre imposé : construire des automatisations et des agents IA personnalisés ; créer des landing pages qui convertissent ; créer des vidéos en motion design ; ses formations ou son agence ; sa newsletter (Lumail) ; sa chaîne YouTube.
 
 Pour « qui je suis » : il fait ça depuis six ans, il l'a appliqué dans ses propres activités, et il connaît de l'intérieur la contrainte d'avoir une équipe et des clients, de devoir livrer tout en perdant du temps ou sans avoir les bons outils métier.

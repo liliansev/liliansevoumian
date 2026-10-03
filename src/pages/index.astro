@@ -14,13 +14,15 @@ import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
 import { homeFaqs } from '../data/home-faq';
 
-/* La barre nomme les quatre métiers : avant même de défiler, on lit ce que
-   fait Lilian. Chaque lien mène au bloc du métier, dans `home-services`. */
+/* La barre nomme les quatre métiers, dans l'ordre de la page : avant même de
+   défiler, on lit ce que fait Lilian. Chaque lien mène au bloc du métier, dans
+   `home-services` (sur téléphone, il ouvre son onglet). Le troisième s'appelle
+   « Dashboards et outils métiers » ; la barre garde le mot court. */
 const homeNavigation = [
   { href: '#automatisation', label: 'Automatisation' },
   { href: '#agents-ia', label: 'Agents IA' },
+  { href: '#dashboards', label: 'Dashboards' },
   { href: '#formations', label: 'Formations' },
-  { href: '#sites', label: 'Sites web et dashboards' },
 ];
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
@@ -186,6 +188,17 @@ const pageSchema = {
   .accueil__suite {
     --marge: var(--spacing-cadre);
     position: relative;
+  }
+
+  /* Sur téléphone, la page faisait seize écrans de haut (mesure du 3 octobre
+     2026, 402 × 874). Les sections et les blocs se resserrent : 56 px au lieu
+     de 80 entre deux sections, 40 au lieu de 48 autour d'un métier. Le reste du
+     gain vient de ce qui se replie (le parcours, les questions). */
+  @media (max-width: 640px) {
+    .accueil {
+      --spacing-section-y: 3.5rem;
+      --spacing-bloc: 2.5rem;
+    }
   }
 
   .accueil__suite::before,

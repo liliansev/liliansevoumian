@@ -1,80 +1,94 @@
 ---
 /*
- * scene-sites — la scène du métier Sites web et dashboards : « Des landing
- * pages qui convertissent, des tableaux de bord qui servent. »
+ * scene-sites — la scène du métier Dashboards et outils métiers : « un outil
+ * fait pour votre équipe, et le dashboard qui compte ce qu'elle y fait ».
+ * Le fichier, sa classe racine et son attribut `data-scene-sites` gardent
+ * leur nom d'origine : d'autres composants les importent.
  *
- * L'idée à faire passer en cinq secondes, téléphone en main : une page, des
- * clics, un tableau de bord qui compte.
+ * L'idée à faire passer en cinq secondes, téléphone en main : un outil métier
+ * se monte, l'équipe s'en sert, le dashboard compte.
  *
  * Le fil de la boucle, un seul mouvement à la fois :
- *   1. un cadre de sélection pose la page bloc par bloc (titre, bouton,
- *      preuve, logos), comme on la monte dans un éditeur ;
- *   2. la page passe en ligne ;
+ *   1. un cadre de sélection pose l'écran bloc par bloc (titre, bouton,
+ *      équipe, champs), comme on le monte dans un éditeur ;
+ *   2. l'écran passe en service ;
  *   3. le bouton est cliqué, trois à cinq fois, de plus en plus vite : chaque
  *      clic traverse le fil et devient une unité de plus sur la barre du jour,
- *      le nombre de demandes monte, le taux de conversion monte avec lui ;
+ *      le nombre de dossiers monte, l'objectif du mois se remplit avec lui ;
  *   4. l'image est tenue, puis on change de jour : les barres glissent d'une
- *      colonne, la page se défait, la suivante se monte.
+ *      colonne, l'écran se défait, le suivant se monte.
  *
  * Le panneau, les fenêtres, la feuille, le fil, le temps et les quatre tailles
  * de texte viennent du socle (`scene-metier.css` et `lib/metiers/scene.ts`).
- * Ce composant n'écrit que ce qui lui est propre : la page et son cadre de
- * sélection, le clic, le tableau de bord (deux nombres, des barres en unités),
- * et l'ordre de sa boucle.
+ * Ce composant n'écrit que ce qui lui est propre : l'écran de l'outil et son
+ * cadre de sélection, le clic, le dashboard (deux nombres, des barres en
+ * unités), et l'ordre de sa boucle.
  *
- * Ce qui se lit est compté : l'adresse, l'état de la page, le libellé du
- * bouton, « Demandes », « Conversion », « Visites » et leurs nombres. Tout le
- * reste est un trait. Il n'y a ni échelle, ni lettres de jours, ni cotes :
- * à la taille de la note, ils ne tenaient pas.
+ * Ce qui se lit est compté : l'adresse, l'état de l'outil, le libellé du
+ * bouton, « Dossiers », « Objectif », « Objectif du mois » et leurs nombres.
+ * Tout le reste est un trait : les onglets, le titre, les visages de l'équipe,
+ * les champs du formulaire. Il n'y a ni échelle, ni lettres de jours, ni
+ * cotes : à la taille de la note, ils ne tenaient pas.
  *
  * Sur le plan étroit (téléphone), la scène change de silhouette pour ne pas
- * ressembler à ses voisines : la page claire prend toute la largeur, en haut,
- * et le tableau de bord devient une bande en bas (les demandes, la
- * conversion, les barres), reliée par un fil vertical et court. Une seule
- * pastille, celle de la promesse.
+ * ressembler à ses voisines : la fenêtre de l'outil prend toute la largeur, en
+ * haut, et le dashboard devient une bande en bas (les dossiers, l'objectif,
+ * les barres), reliée par un fil vertical et court. Une seule pastille, celle
+ * de la promesse.
  *
- * Sans script ou en mouvement réduit, la scène est une image fixe : la page
- * montée et en ligne, le tableau de bord rempli.
+ * Sans script ou en mouvement réduit, la scène est une image fixe : l'écran
+ * monté et en service, le dashboard rempli.
  *
  * Tous les chiffres sont inventés pour la scène, et ils sont justes entre eux
- * à chaque instant : la conversion est le nombre de demandes divisé par le
- * nombre de visites, sur le mois en cours. Elle ne part donc jamais de zéro :
- * le site a déjà reçu des demandes avant la journée que la scène montre.
+ * à chaque instant : « Objectif » est le nombre de dossiers traités ce mois-ci
+ * divisé par l'objectif du mois. Il ne part jamais de zéro (le mois est déjà
+ * entamé quand la scène commence) et ne dépasse jamais 100 % : quand
+ * l'objectif est atteint, le mois est bouclé et la scène repart sur le
+ * suivant, entamé au même point.
  */
 import './scene-metier.css';
 
-/* Trois pages qui tournent : d'une boucle à l'autre, ce n'est pas la même qui
-   revient. `titre` et `texte` sont les longueurs des barres, en pour cent. */
-const pages = [
-  { chemin: '/devis', bouton: 'Demander un devis', centre: false, titre: [90, 62], texte: [76, 48] },
-  { chemin: '/demo', bouton: 'Réserver une démo', centre: true, titre: [74, 52], texte: [62, 40] },
-  { chemin: '/contact', bouton: 'Prendre rendez-vous', centre: false, titre: [70, 86], texte: [80, 54] },
+/* Trois écrans du même outil, qui tournent : d'une boucle à l'autre, ce n'est
+   pas le même geste d'équipe qui revient. `titre` et `texte` sont les
+   longueurs des barres, `champs` celles des valeurs saisies, en pour cent. */
+const ecrans = [
+  { chemin: '/interventions', bouton: 'Clôturer l’intervention', titre: [90, 62], texte: [76, 48], champs: [62, 44] },
+  { chemin: '/stock', bouton: 'Enregistrer une sortie', titre: [74, 52], texte: [62, 40], champs: [40, 60] },
+  { chemin: '/chantiers', bouton: 'Valider le relevé', titre: [70, 86], texte: [80, 54], champs: [72, 34] },
 ];
 
-/* Le nombre de clics sur le bouton, journée après journée. */
+/* Le nombre de clics sur le bouton, journée après journée : un dossier traité
+   par clic. */
 const CLICS = [4, 3, 5];
-/* Les six jours d'avant, en demandes par jour. */
+/* Les six jours d'avant, en dossiers par jour : 23 à eux six. */
 const HISTORIQUE = [3, 5, 2, 4, 6, 3];
-/* Les demandes déjà reçues ce mois-ci avant la première journée de la scène,
-   et ce qu'il a fallu de visites pour chacune : vingt, soit 5 % de
-   conversion au matin. Avec quatre demandes de plus dans la journée, la
-   première image finale lit 44 demandes, 800 visites, 5,5 %. */
-const DEJA = 40;
-const VISITES_PAR_DEMANDE = 20;
-/* La hauteur d'une barre, en demandes : une unité par demande. */
+/* L'objectif du mois, en dossiers, et ceux que l'équipe a déjà traités ce
+   mois-ci avant la première journée de la scène : 26 sur 50, soit 52 % au
+   matin. Un dossier vaut deux points, tous les pourcentages tombent juste.
+   Avec quatre dossiers de plus dans la journée, la première image finale lit
+   30 dossiers, 60 %. Les trois écrans en apportent douze à eux trois : en six
+   journées (60, 66, 76, 84, 90, puis 100 %), l'objectif est atteint tout
+   rond, et le mois suivant repart de 26. */
+const OBJECTIF_DU_MOIS = 50;
+const DEJA_TRAITES = 26;
+/* La hauteur d'une barre, en dossiers : une unité par dossier. */
 const UNITES = 6;
 
-const formatTaux = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const formatEntier = new Intl.NumberFormat('fr-FR');
 
-const recit = { pages, clics: CLICS, historique: HISTORIQUE, deja: DEJA, visitesParDemande: VISITES_PAR_DEMANDE };
+const recit = {
+  ecrans,
+  clics: CLICS,
+  historique: HISTORIQUE,
+  dejaTraites: DEJA_TRAITES,
+  objectif: OBJECTIF_DU_MOIS,
+};
 
-/* L'image fixe : la première page, la première journée, tout est passé. */
-const page = pages[0];
+/* L'image fixe : le premier écran, la première journée, tout est passé. */
+const ecran = ecrans[0];
 const clics = CLICS[0] ?? 0;
-const demandes = DEJA + clics;
-const visites = DEJA * VISITES_PAR_DEMANDE;
-const taux = `${formatTaux.format((demandes / visites) * 100)} %`;
+const dossiers = DEJA_TRAITES + clics;
+const avancement = `${formatEntier.format(Math.round((dossiers / OBJECTIF_DU_MOIS) * 100))} %`;
 const colonnes = [...HISTORIQUE, clics, 0];
 const voyageurs = Array.from({ length: Math.max(...CLICS) });
 ---
@@ -84,63 +98,66 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   data-scene-sites
   data-recit={JSON.stringify(recit)}
   role="img"
-  aria-label="Une landing page se monte bloc par bloc et passe en ligne&nbsp;; des visiteurs cliquent sur son bouton, et le dashboard compte chaque demande&nbsp;: le taux de conversion monte avec elles."
+  aria-label="Un outil métier se monte bloc par bloc et passe en service&nbsp;; l’équipe s’en sert, et le dashboard compte chaque dossier traité&nbsp;: l’objectif du mois se remplit."
 >
   <div class="sm-plan" aria-hidden="true" data-nosnippet>
     {/* Deux pastilles sur le grand plan, une seule sur l'étroit : celle de la
-       promesse, la conversion. */}
+       promesse, l'objectif qui se remplit. */}
     <div class="sm-puces">
       <span class="sm-puce sm-large">
-        <svg viewBox="0 0 16 16"><path d="M2.5 9.5l1.8-5.5h7.4l1.8 5.5v3h-11v-3zM2.5 9.5h3.2l.8 1.5h3l.8-1.5h3.2" /></svg>
-        <span>Demandes</span>
-        <b data-puce-demandes>{formatEntier.format(demandes)}</b>
+        <svg viewBox="0 0 16 16"><path d="M2.5 4.5h3.9l1.4 1.5h5.7v6.5h-11z" /></svg>
+        <span>Dossiers</span>
+        <b data-puce-dossiers>{formatEntier.format(dossiers)}</b>
       </span>
       <span class="sm-puce sm-puce--peche">
-        <svg viewBox="0 0 16 16"><path d="M2.5 11.5l3.5-3.6 2.5 2.4 5-5.6M10 4.7h3.5v3.5" /></svg>
-        <span>Conversion</span>
-        <b data-puce-taux>{taux}</b>
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" /><circle cx="8" cy="8" r="2.2" /></svg>
+        <span>Objectif</span>
+        <b data-puce-avancement>{avancement}</b>
       </span>
     </div>
 
-    {/* Le fil : du bouton de la page au tableau de bord. Les deux mêmes ports,
-       deux tracés : à l'horizontale sur le grand plan, à la verticale sur
-       l'étroit, où le tableau est sous la page. Un seul se voit à la fois.
-       Le tracé est calculé par le moteur d'après la place des ports. */}
+    {/* Le fil : du bouton de l'outil au dashboard. Les deux mêmes ports, deux
+       tracés : à l'horizontale sur le grand plan, à la verticale sur l'étroit,
+       où le dashboard est sous l'outil. Un seul se voit à la fois. Le tracé
+       est calculé par le moteur d'après la place des ports. */}
     <svg class="sm-fils" viewBox="0 0 760 570">
-      <g class="sm-fil fil--large est-allume" data-sm-fil="demande" data-de="bouton" data-vers="tableau" data-sens="h">
+      <g class="sm-fil fil--large est-allume" data-sm-fil="dossier" data-de="bouton" data-vers="tableau" data-sens="h">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
-      <g class="sm-fil fil--etroit est-allume" data-sm-fil="demande-bas" data-de="bouton" data-vers="tableau" data-sens="v">
+      <g class="sm-fil fil--etroit est-allume" data-sm-fil="dossier-bas" data-de="bouton" data-vers="tableau" data-sens="v">
         <path class="sm-fil__trait"></path>
         <path class="sm-fil__flux"></path>
       </g>
     </svg>
 
-    {/* La page, dans son navigateur. Tout ce qui s'y lit : l'adresse, l'état,
-       le libellé du bouton, la note. Le reste est en traits. */}
-    <div class="sm-poste poste--page">
+    {/* L'outil, dans sa fenêtre. Tout ce qui s'y lit : l'adresse, l'état, le
+       libellé du bouton. Le reste est en traits. */}
+    <div class="sm-poste poste--outil">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
-          <svg class="fleches" viewBox="0 0 28 12"><path d="M7.5 2.5L4 6l3.5 3.5M20.5 2.5L24 6l-3.5 3.5" /></svg>
           <span class="adresse">
             <svg viewBox="0 0 12 12"><path d="M3 5.5h6v4.5H3zM4.4 5.5V4a1.6 1.6 0 0 1 3.2 0v1.5" /></svg>
-            <span class="adresse__texte">votre-site.fr<span class="adresse__chemin" data-chemin>{page.chemin}</span></span>
+            <span class="adresse__texte">app.votre-societe.fr<span class="adresse__chemin" data-chemin>{ecran.chemin}</span></span>
           </span>
-          <span class="sm-etat" data-etat="fait" data-etat-de="page">
+          <span class="sm-etat" data-etat="fait" data-etat-de="outil">
             <span class="sm-etat__avant">Brouillon</span>
-            <span class="sm-etat__apres">En ligne</span>
+            <span class="sm-etat__apres">En service</span>
           </span>
         </div>
         <div class="sm-corps">
           <div
-            class:list={['sm-feuille', 'page', { 'est-centree': page.centre }]}
-            data-page
-            style={`--t1: ${page.titre[0]}%; --t2: ${page.titre[1]}%; --p1: ${page.texte[0]}%; --p2: ${page.texte[1]}%`}
+            class="sm-feuille ecran"
+            data-ecran
+            style={`--t1: ${ecran.titre[0]}%; --t2: ${ecran.titre[1]}%; --p1: ${ecran.texte[0]}%; --p2: ${ecran.texte[1]}%; --c1: ${ecran.champs[0]}%; --c2: ${ecran.champs[1]}%`}
           >
-            <div class="page__entete">
-              <i class="page__marque"></i>
-              <span class="page__menu"><i></i><i></i><i></i></span>
+            {/* L'en-tête de l'outil : sa marque, puis un onglet par écran.
+               Celui de l'écran du moment est en nuit. */}
+            <div class="ecran__entete">
+              <i class="ecran__marque"></i>
+              <span class="ecran__onglets">
+                {ecrans.map((_, n) => <i class:list={{ 'est-actif': n === 0 }} data-onglet />)}
+              </span>
             </div>
 
             <div class="bloc bloc--titre est-pose" data-bloc data-nom="Titre">
@@ -152,23 +169,32 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
             <div class="bloc bloc--bouton est-pose" data-bloc data-nom="Bouton">
               <span class="bouton" data-bouton>
-                <span data-libelle>{page.bouton}</span>
-                <svg viewBox="0 0 12 12"><path d="M2.5 6h7M6.5 3l3 3-3 3" /></svg>
+                <span data-libelle>{ecran.bouton}</span>
+                <svg viewBox="0 0 12 12"><path d="M2.7 6.3l2.2 2.2 4.4-4.8" /></svg>
               </span>
             </div>
 
-            <div class="bloc bloc--preuve est-pose" data-bloc data-nom="Preuve">
+            {/* L'équipe : ceux qui se servent de l'écran. Trois visages et,
+               sur le grand plan, le trait de leurs noms. */}
+            <div class="bloc bloc--equipe est-pose" data-bloc data-nom="Équipe">
               <span class="visages"><i></i><i></i><i></i></span>
-              <svg class="etoile" viewBox="0 0 12 12"><path d="M6 1.2l1.5 3.1 3.4.4-2.5 2.3.7 3.4L6 8.7l-3.1 1.7.7-3.4L1.1 4.7l3.4-.4z" /></svg>
-              <b>4,9</b>
-              <i class="preuve__texte sm-large"></i>
+              <i class="equipe__noms sm-large"></i>
             </div>
 
-            <div class="bloc bloc--logos est-pose sm-large" data-bloc data-nom="Logos">
-              <span class="logo"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="3.6" /></svg><i></i></span>
-              <span class="logo"><svg viewBox="0 0 12 12"><path d="M6 2.2l4 7.2H2z" /></svg><i></i></span>
-              <span class="logo"><svg viewBox="0 0 12 12"><path d="M2.6 2.6h6.8v6.8H2.6z" /></svg><i></i></span>
-              <span class="logo"><svg viewBox="0 0 12 12"><path d="M6 1.8L10.2 6 6 10.2 1.8 6z" /></svg><i></i></span>
+            {/* Les champs : deux lignes de formulaire, en traits. Un nom, une
+               saisie ; la seconde est une liste, elle porte un chevron. */}
+            <div class="bloc bloc--champs est-pose sm-large" data-bloc data-nom="Champs">
+              <span class="champ">
+                <i class="champ__nom"></i>
+                <span class="champ__saisie"><i class="champ__valeur champ__valeur--un"></i></span>
+              </span>
+              <span class="champ">
+                <i class="champ__nom"></i>
+                <span class="champ__saisie">
+                  <i class="champ__valeur champ__valeur--deux"></i>
+                  <svg viewBox="0 0 12 12"><path d="M3.5 4.8L6 7.3l2.5-2.5" /></svg>
+                </span>
+              </span>
             </div>
           </div>
         </div>
@@ -176,8 +202,8 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       <span class="sm-port port--bouton est-actif" data-sm-port="bouton"></span>
     </div>
 
-    {/* Le tableau de bord : les demandes et la conversion, qui portent
-       l'action, puis les barres, puis les visites. */}
+    {/* Le dashboard : les dossiers et l'objectif, qui portent l'action, puis
+       les barres, puis l'objectif du mois en nombre de dossiers. */}
     <div class="sm-poste poste--tableau">
       <div class="sm-fenetre">
         <div class="sm-fenetre__barre">
@@ -194,22 +220,22 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
         </div>
         <div class="sm-corps tableau">
           <div class="tuiles">
-            <div class="tuile tuile--demandes">
-              <span class="tuile__nom">Demandes</span>
+            <div class="tuile tuile--dossiers">
+              <span class="tuile__nom">Dossiers</span>
               <div class="tuile__ligne">
-                <b data-demandes>{formatEntier.format(demandes)}</b>
+                <b data-dossiers>{formatEntier.format(dossiers)}</b>
                 <span class="plus est-visible" data-plus>
                   +<span data-plus-n>{clics}</span><span class="sm-large">&nbsp;aujourd’hui</span>
                 </span>
               </div>
             </div>
-            <div class="tuile tuile--taux">
-              <span class="tuile__nom">Conversion</span>
-              <b data-taux>{taux}</b>
+            <div class="tuile tuile--avancement">
+              <span class="tuile__nom">Objectif</span>
+              <b data-avancement>{avancement}</b>
             </div>
           </div>
 
-          {/* Les barres : une colonne par jour, une unité par demande, la
+          {/* Les barres : une colonne par jour, une unité par dossier, la
              dernière colonne en pêche pour aujourd'hui. La piste porte une
              colonne de plus que la vue n'en montre : c'est elle qui entre
              quand on change de jour. */}
@@ -227,28 +253,29 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
             </div>
           </div>
 
-          <div class="sm-pied visites sm-large">
-            <span>Visites</span>
-            <b data-visites>{formatEntier.format(visites)}</b>
+          <div class="sm-pied objectif sm-large">
+            <span>Objectif du mois</span>
+            <b data-objectif>{formatEntier.format(OBJECTIF_DU_MOIS)}</b>
           </div>
         </div>
       </div>
       <span class="sm-port port--tableau est-actif" data-sm-port="tableau"></span>
     </div>
 
-    <span class="sm-noeud est-allume" data-sm-noeud="demande">
+    <span class="sm-noeud est-allume" data-sm-noeud="dossier">
       <svg viewBox="0 0 16 16"><path d="M6.4 6.4l6.4 2.3-2.8 1.3-1.3 2.8zM6 2.2v1.6M2.2 6h1.6M3.3 3.3l1.2 1.2" /></svg>
     </span>
 
-    {/* Le cadre de sélection : il pose chaque bloc de la page, l'un après
+    {/* Le cadre de sélection : il pose chaque bloc de l'écran, l'un après
        l'autre, et le nomme. Hors de la feuille, qui rognerait son étiquette. */}
     <span class="cadre" data-cadre>
       <em data-cadre-nom>Titre</em>
       <i></i><i></i><i></i><i></i>
     </span>
 
-    {/* Ce qui voyage, une série par clic : le pointeur d'un visiteur, l'onde
-       de son appui, la bande qui en part et le grain qui traverse le fil. */}
+    {/* Ce qui voyage, une série par clic : le pointeur d'un membre de
+       l'équipe, l'onde de son appui, la bande qui en part et le grain qui
+       traverse le fil. */}
     {voyageurs.map(() => (
       <>
         <span class="onde"></span>
@@ -261,27 +288,29 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 </div>
 
 <style>
-  /* Ce que le socle ne sait pas : où sont les deux postes et leurs ports, la
-     page et son cadre de sélection, le clic, et les composants du tableau de
-     bord. Longueurs en pixels du plan ; les tailles de texte sont les quatre
-     du socle, jamais une valeur en pixels. */
+  /* Ce que le socle ne sait pas : où sont les deux postes et leurs ports,
+     l'écran de l'outil et son cadre de sélection, le clic, et les composants
+     du dashboard. Longueurs en pixels du plan ; les tailles de texte sont les
+     quatre du socle, jamais une valeur en pixels. */
   .sm {
     --sm-lumiere: 70% 54%;
   }
 
-  .poste--page {
+  /* L'outil est un peu plus large que le dashboard : son adresse est longue,
+     et elle doit se lire en entier. */
+  .poste--outil {
     top: 88px;
     left: 24px;
-    width: 322px;
+    width: 336px;
   }
 
   .poste--tableau {
     top: 150px;
-    left: 412px;
-    width: 324px;
+    left: 422px;
+    width: 314px;
   }
 
-  /* Le port de la page est à la hauteur de son bouton. */
+  /* Le port de l'outil est à la hauteur de son bouton. */
   .port--bouton { top: 225px; right: -6px; }
   .port--tableau { top: 76px; left: -6px; }
 
@@ -299,7 +328,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   /* Le socle coupe les transitions en mouvement réduit, mais à spécificité
      plus faible que celles de cette scène : il faut les couper ici aussi. */
   @media (prefers-reduced-motion: reduce) {
-    .page::before,
+    .ecran::before,
     .cadre em,
     .plus,
     .unite {
@@ -307,15 +336,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     }
   }
 
-  /* ── Le navigateur : deux flèches, une adresse en pastille, l'état ── */
-  .fleches {
-    flex-shrink: 0;
-    width: 28px;
-    height: 12px;
-    stroke: var(--color-ink-low);
-    stroke-width: 1.4;
-  }
-
+  /* ── La barre de l'outil : son adresse en pastille, puis son état ──
+     Le cadenas et le sous-domaine `app.` disent un outil à soi, derrière une
+     connexion. L'adresse prend toute la barre : rien d'autre à côté d'elle. */
   .adresse {
     display: flex;
     flex: 1;
@@ -348,14 +371,14 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     color: var(--color-ink-low);
   }
 
-  /* ── La page ──
+  /* ── L'écran ──
      Une feuille claire. En chantier, ses deux marges sont tracées en
-     pointillé, comme les repères d'un éditeur ; en ligne, elles s'effacent. */
-  .page {
+     pointillé, comme les repères d'un éditeur ; en service, elles s'effacent. */
+  .ecran {
     padding: 18px 20px 22px;
   }
 
-  .page::before {
+  .ecran::before {
     content: '';
     position: absolute;
     inset: 0 20px;
@@ -365,11 +388,11 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     pointer-events: none;
   }
 
-  .page.est-en-chantier::before {
+  .ecran.est-en-chantier::before {
     opacity: 0.55;
   }
 
-  .page__entete {
+  .ecran__entete {
     position: relative;
     display: flex;
     align-items: center;
@@ -377,24 +400,30 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     margin-bottom: 28px;
   }
 
-  .page__marque {
+  .ecran__marque {
     width: 15px;
     height: 15px;
     border-radius: 4.5px;
     background: var(--color-night);
   }
 
-  .page__menu {
+  /* Les onglets : un trait par écran de l'outil. Celui du moment est en nuit,
+     il change avec le chemin de l'adresse. */
+  .ecran__onglets {
     display: flex;
     gap: 7px;
     margin-left: auto;
   }
 
-  .page__menu i {
+  .ecran__onglets i {
     width: 18px;
     height: 3px;
     border-radius: 2px;
     background: var(--color-feuille-barre);
+  }
+
+  .ecran__onglets i.est-actif {
+    background: var(--color-night);
   }
 
   /* Un bloc n'existe pas tant qu'il n'est pas posé. */
@@ -405,18 +434,6 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
   .bloc.est-pose {
     opacity: 1;
-  }
-
-  .page.est-centree .bloc {
-    margin-inline: auto;
-  }
-
-  .page.est-centree .bloc--titre i {
-    margin-inline: auto;
-  }
-
-  .page.est-centree .bloc--logos {
-    justify-content: center;
   }
 
   .bloc--titre {
@@ -450,8 +467,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     margin-top: 26px;
   }
 
-  /* Le bouton : la seule pêche de la page, et ce sur quoi on clique. Son
-     libellé est le texte le plus fort de la page ; il est en nuit. */
+  /* Le bouton : la seule pêche de l'écran, et ce sur quoi l'équipe clique.
+     Son libellé est le texte le plus fort de l'écran ; il est en nuit. La
+     coche dit un geste qu'on valide. */
   .bouton {
     display: inline-flex;
     align-items: center;
@@ -476,18 +494,17 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     stroke-width: 1.6;
   }
 
-  .bloc--preuve {
+  /* L'équipe : trois visages qui se chevauchent, puis le trait de leurs noms. */
+  .bloc--equipe {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     width: fit-content;
     margin-top: 26px;
-    font-size: var(--sm-texte);
   }
 
   .visages {
     display: flex;
-    margin-right: 3px;
   }
 
   .visages i {
@@ -507,54 +524,68 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     background: linear-gradient(135deg, var(--color-feuille-barre), var(--color-peche));
   }
 
-  .etoile {
-    width: 13px;
-    height: 13px;
-    fill: var(--color-night);
-  }
-
-  .bloc--preuve b {
-    font-weight: 600;
-  }
-
-  .preuve__texte {
-    width: 58px;
+  .equipe__noms {
+    width: 64px;
     height: 4px;
-    border-radius: 2px;
+    border-radius: var(--radius-full);
     background: var(--color-feuille-barre);
   }
 
-  .bloc--logos {
-    display: flex;
-    gap: 6px;
+  /* Les champs : deux lignes de formulaire côte à côte, sous un filet. Chacune
+     a son nom, un trait court, et sa saisie : un cadre où la valeur est un
+     trait plus sombre que le nom, comme un texte tapé. */
+  .bloc--champs {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 10px;
     margin-top: 26px;
     padding-top: 16px;
     border-top: 1px solid var(--color-feuille-trait);
   }
 
-  .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    height: 27px;
-    padding: 0 10px 0 8px;
-    border: 1px solid var(--color-feuille-trait);
+  .champ {
+    display: grid;
+    gap: 6px;
+  }
+
+  .champ__nom {
+    width: 34%;
+    height: 4px;
     border-radius: var(--radius-full);
+    background: var(--color-feuille-barre);
+  }
+
+  .champ + .champ .champ__nom {
+    width: 48%;
+  }
+
+  .champ__saisie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    height: 25px;
+    padding: 0 8px 0 9px;
+    border: 1px solid var(--color-feuille-trait);
+    border-radius: var(--radius-xs);
     background: color-mix(in srgb, var(--color-night) 4%, transparent);
   }
 
-  .logo svg {
-    width: 12px;
-    height: 12px;
-    stroke: var(--color-feuille-note);
-    stroke-width: 1.5;
+  .champ__valeur {
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-feuille-note);
   }
 
-  .logo i {
-    width: 19px;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--color-feuille-barre);
+  .champ__valeur--un { width: var(--c1, 62%); }
+  .champ__valeur--deux { width: var(--c2, 44%); }
+
+  .champ__saisie svg {
+    flex-shrink: 0;
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-feuille-note);
+    stroke-width: 1.5;
   }
 
   /* ── Le cadre de sélection ──
@@ -568,8 +599,8 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     border: 1.25px solid var(--color-night);
     border-radius: 3px;
     background: color-mix(in srgb, var(--color-peche) 30%, transparent);
-    /* La teinte se multiplie avec la page, comme un surligneur : elle colore
-       le blanc sans ternir les barres sombres du bloc. */
+    /* La teinte se multiplie avec la feuille, comme un surligneur : elle
+       colore le blanc sans ternir les barres sombres du bloc. */
     mix-blend-mode: multiply;
     opacity: 0;
     pointer-events: none;
@@ -647,11 +678,11 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     background: color-mix(in srgb, var(--color-night) 10%, transparent);
   }
 
-  /* ── Le tableau de bord ── */
+  /* ── Le dashboard ── */
   .tableau {
     --u: 18px;
     --g: 2px;
-    --col: 41px;
+    --col: 40px;
     padding: 16px 16px 14px;
   }
 
@@ -678,8 +709,8 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   }
 
   /* Les deux nombres qui portent l'action : un nom à la taille forte, un
-     nombre qui se lit de loin. La conversion est la promesse du métier : elle
-     est en pêche. */
+     nombre qui se lit de loin. L'objectif qui se remplit est la promesse du
+     métier : il est en pêche. */
   .tuiles {
     display: flex;
     align-items: flex-end;
@@ -710,12 +741,15 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     margin-top: 8px;
   }
 
-  .tuile--taux {
+  .tuile--avancement {
     padding-left: 16px;
     border-left: 1px solid var(--sm-filet);
   }
 
-  .tuile--taux b {
+  /* Le nombre garde la place de « 100 % » : le jour où l'objectif est
+     atteint, le filet de la tuile ne bouge pas. */
+  .tuile--avancement b {
+    min-width: 64px;
     margin-top: 8px;
     color: var(--color-peche);
   }
@@ -742,7 +776,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     translate: 0 0;
   }
 
-  /* Les barres. Une unité vaut une demande : elles se comptent à l'œil, sans
+  /* Les barres. Une unité vaut un dossier : elles se comptent à l'œil, sans
      échelle. Un seul filet, le sol. */
   .barres {
     margin-top: 18px;
@@ -800,20 +834,21 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     transition: none;
   }
 
-  /* Les visites : le pied de la fenêtre, à la manière du socle. Le sol des
-     barres fait déjà le filet. */
-  .visites {
+  /* L'objectif du mois, en dossiers : le pied de la fenêtre, à la manière du
+     socle. C'est le diviseur : avec lui, on peut refaire le compte. Le sol
+     des barres fait déjà le filet. */
+  .objectif {
     margin-top: 0;
     padding-inline: 0;
     border-top: 0;
   }
 
   /* ── Le plan étroit ──
-     Une autre silhouette que le grand plan. La page claire prend toute la
-     largeur, en haut ; le tableau de bord n'est plus une fenêtre mais une
-     bande en bas (les demandes, la conversion, les barres) ; le fil descend
-     tout droit du bouton à la bande. La hauteur gagnée par le plan (320 au
-     lieu de 270) va au texte : le libellé du bouton et les deux nombres. */
+     Une autre silhouette que le grand plan. La fenêtre de l'outil prend toute
+     la largeur, en haut ; le dashboard n'est plus une fenêtre mais une bande
+     en bas (les dossiers, l'objectif, les barres) ; le fil descend tout droit
+     du bouton à la bande. La hauteur gagnée par le plan (320 au lieu de 270)
+     va au texte : le libellé du bouton et les deux nombres. */
   @container sm (max-width: 519.98px) {
     .sm::before {
       --sm-lumiere: 50% 84%;
@@ -827,12 +862,12 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       visibility: visible;
     }
 
-    /* Entre la page et la bande, il n'y a que la place du fil. */
+    /* Entre l'outil et la bande, il n'y a que la place du fil. */
     .sm-noeud {
       display: none;
     }
 
-    .poste--page {
+    .poste--outil {
       top: 38px;
       left: 10px;
       width: 340px;
@@ -850,11 +885,6 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     .port--bouton { top: auto; right: auto; bottom: -5px; left: 46px; }
     .port--tableau { top: -5px; left: 46px; }
 
-    .fleches {
-      width: 24px;
-      height: 10px;
-    }
-
     .adresse {
       gap: 4px;
       height: 19px;
@@ -866,42 +896,35 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       height: 10px;
     }
 
-    /* La page, large et basse : le titre sur toute la largeur, puis le bouton
-       et la preuve sur une même ligne. Toujours calée à gauche, pour que le
-       bouton reste au-dessus de son port. */
-    .page {
+    /* L'écran, large et bas : le titre sur toute la largeur, puis le bouton
+       et l'équipe sur une même ligne. Le bouton reste au-dessus de son port. */
+    .ecran {
       padding: 10px 12px 10px;
     }
 
-    .page::before {
+    .ecran::before {
       inset: 0 12px;
     }
 
     /* Sous l'en-tête, la place de l'étiquette du cadre. */
-    .page__entete {
+    .ecran__entete {
       height: 9px;
       margin-bottom: 12px;
     }
 
-    .page__marque {
+    .ecran__marque {
       width: 9px;
       height: 9px;
       border-radius: 3px;
     }
 
-    .page__menu {
+    .ecran__onglets {
       gap: 5px;
     }
 
-    .page__menu i {
+    .ecran__onglets i {
       width: 13px;
       height: 2.5px;
-    }
-
-    .page.est-centree .bloc--titre,
-    .page.est-centree .bloc--titre i,
-    .page.est-centree .bloc--bouton {
-      margin-inline: 0;
     }
 
     .bloc--titre {
@@ -913,26 +936,21 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       border-radius: 3.5px;
     }
 
-    /* Le faux paragraphe sort de la page : sa place va à l'étiquette du
+    /* Le faux paragraphe sort de l'écran : sa place va à l'étiquette du
        cadre, qui nomme le bouton sans rien recouvrir. */
     .fin {
       display: none;
     }
 
     .bloc--bouton,
-    .bloc--preuve {
+    .bloc--equipe {
       display: inline-flex;
       vertical-align: middle;
       margin-top: 23px;
     }
 
-    /* Un peu d'air à droite de la note : la poignée du cadre ne la touche
-       pas. */
-    .bloc--preuve,
-    .page.est-centree .bloc--preuve {
-      gap: 5px;
+    .bloc--equipe {
       margin-inline: 14px 0;
-      padding-right: 5px;
     }
 
     .bouton {
@@ -956,12 +974,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       margin-left: -6px;
     }
 
-    .etoile {
-      width: 11px;
-      height: 11px;
-    }
-
-    /* L'étiquette se décale : au coin, elle toucherait la marque de la page. */
+    /* L'étiquette se décale : au coin, elle toucherait la marque de l'outil. */
     .cadre em {
       left: 14px;
       padding: 1px 6px 2px;
@@ -969,7 +982,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     }
 
     /* Sur la rangée du bouton, elle revient au coin : rien à éviter. */
-    .cadre.est-en-ligne em {
+    .cadre.est-sur-rangee em {
       left: -1.25px;
       border-radius: 4px 4px 4px 0;
     }
@@ -997,8 +1010,8 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       margin: -18px 0 0 -18px;
     }
 
-    /* La bande : sans barre de titre, sur une seule ligne. Les demandes à
-       gauche, sous l'arrivée du fil ; la conversion ; les barres à droite. */
+    /* La bande : sans barre de titre, sur une seule ligne. Les dossiers à
+       gauche, sous l'arrivée du fil ; l'objectif ; les barres à droite. */
     .poste--tableau .sm-fenetre__barre {
       display: none;
     }
@@ -1018,9 +1031,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       display: contents;
     }
 
-    /* Le nombre et son « +n » ne poussent pas la conversion quand ils
+    /* Le nombre et son « +n » ne poussent pas l'objectif quand ils
        grandissent. */
-    .tuile--demandes {
+    .tuile--dossiers {
       min-width: 74px;
     }
 
@@ -1029,11 +1042,14 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       margin-top: 5px;
     }
 
-    .tuile--taux {
+    .tuile--avancement {
       padding-left: 14px;
     }
 
-    .tuile--taux b {
+    /* Ici « 100 % » s'étend vers les barres, calées à droite : rien à
+       réserver. */
+    .tuile--avancement b {
+      min-width: 0;
       margin-top: 5px;
     }
 
@@ -1061,6 +1077,21 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       border-style: solid;
     }
   }
+
+  /* Sur le plan étroit la colonne du jour arrive dans l'angle bas droit, là où
+     le socle pose la commande de pause : elle recouvrait trois unités, celles
+     qui se remplissent à chaque clic. Ici elle monte dans l'angle haut gauche,
+     qui est libre. Le moteur la crée à côté de la scène, dans son cadre : elle
+     ne porte pas l'attribut de portée, et c'est le conteneur du cadre
+     (`scene`, voir `home-services`) qui donne la largeur. */
+  @container scene (max-width: 521.98px) {
+    :global(.sm[data-scene-sites] ~ .sm-pause) {
+      top: 10px;
+      right: auto;
+      bottom: auto;
+      left: 10px;
+    }
+  }
 </style>
 
 <script>
@@ -1073,20 +1104,20 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Cadre, Pt } from '../../lib/metiers/scene';
 
-  interface PageRecit {
+  interface EcranRecit {
     chemin: string;
     bouton: string;
-    centre: boolean;
     titre: number[];
     texte: number[];
+    champs: number[];
   }
 
   interface Recit {
-    pages: PageRecit[];
+    ecrans: EcranRecit[];
     clics: number[];
     historique: number[];
-    deja: number;
-    visitesParDemande: number;
+    dejaTraites: number;
+    objectif: number;
   }
 
   /* Le récit arrive du balisage en JSON : c'est une frontière, on vérifie sa
@@ -1095,37 +1126,39 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   const estNombres = (v: unknown): v is number[] => Array.isArray(v) && v.every((n) => typeof n === 'number');
   const estPositif = (v: unknown): v is number => typeof v === 'number' && v > 0;
 
-  const estPage = (v: unknown): v is PageRecit =>
+  const estEcran = (v: unknown): v is EcranRecit =>
     estObjet(v) &&
     typeof v.chemin === 'string' &&
     typeof v.bouton === 'string' &&
-    typeof v.centre === 'boolean' &&
     estNombres(v.titre) &&
-    estNombres(v.texte);
+    estNombres(v.texte) &&
+    estNombres(v.champs);
 
   const lireRecit = (brut: string | undefined): Recit => {
     const lu: unknown = JSON.parse(brut ?? 'null');
-    /* `deja` et `visitesParDemande` sont strictement positifs : c'est ce qui
-       garantit qu'un taux n'est jamais une division par zéro, ni un zéro. */
+    /* `dejaTraites` et `objectif` sont strictement positifs, et la plus grosse
+       journée tient dans ce qui reste de l'objectif : c'est ce qui garantit
+       qu'« Objectif » n'est jamais une division par zéro, ni un zéro, ni plus
+       de 100 %. */
     const valide =
       estObjet(lu) &&
-      Array.isArray(lu.pages) &&
-      lu.pages.length > 0 &&
-      lu.pages.every(estPage) &&
+      Array.isArray(lu.ecrans) &&
+      lu.ecrans.length > 0 &&
+      lu.ecrans.every(estEcran) &&
       estNombres(lu.clics) &&
       lu.clics.length > 0 &&
       estNombres(lu.historique) &&
-      estPositif(lu.deja) &&
-      estPositif(lu.visitesParDemande);
-    if (!valide) throw new Error('Scène Sites : `data-recit` est illisible');
+      estPositif(lu.dejaTraites) &&
+      estPositif(lu.objectif) &&
+      lu.dejaTraites + Math.max(...lu.clics) <= lu.objectif;
+    if (!valide) throw new Error('Scène Outils métiers : `data-recit` est illisible');
     return lu as unknown as Recit;
   };
 
   const formatEntier = new Intl.NumberFormat('fr-FR');
-  const formatTaux = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const entier = (n: number): string => formatEntier.format(Math.round(n));
-  /* « 5,5 % », avec son espace insécable. */
-  const pourCent = (part: number): string => `${formatTaux.format(part * 100)} %`;
+  /* « 60 % », avec son espace insécable. */
+  const pourCent = (part: number): string => `${entier(part * 100)} %`;
 
   /* Ce que le cadre de sélection laisse autour du bloc qu'il pose, sur le
      grand plan puis sur l'étroit. */
@@ -1134,8 +1167,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   const TIRET = { w: 16, h: 6 };
   /* Le départ de chaque clic, en ms : de plus en plus rapprochés. */
   const DEPARTS = [0, 1050, 1800, 2350, 2750];
-  /* Où chaque visiteur appuie sur le bouton (en part de sa largeur), et d'où
-     arrive son pointeur (en pixels du plan) : ce n'est pas le même deux fois. */
+  /* Où chaque membre de l'équipe appuie sur le bouton (en part de sa largeur),
+     et d'où arrive son pointeur (en pixels du plan) : ce n'est pas le même
+     deux fois. */
   const APPUIS = [0.34, 0.66, 0.48, 0.78, 0.24];
   const ARRIVEES: Pt[] = [
     { x: 26, y: 24 },
@@ -1151,9 +1185,10 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   monterScenes('[data-scene-sites]', (s) => {
     const recit = lireRecit(s.racine.dataset.recit);
 
-    const elPage = s.un('[data-page]');
+    const elEcran = s.un('[data-ecran]');
     const elChemin = s.un('[data-chemin]');
     const elLibelle = s.un('[data-libelle]');
+    const onglets = s.tous('[data-onglet]');
     const bouton = s.un('[data-bouton]');
     const blocs = s.tous('[data-bloc]');
     const cadre = s.un('[data-cadre]');
@@ -1163,19 +1198,21 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     const piste = s.un('[data-piste]');
     const colonnes = s.tous('[data-colonne]');
     const piles = colonnes.map((colonne) => [...colonne.querySelectorAll<HTMLElement>('.unite')]);
-    const elDemandes = s.un('[data-demandes]');
+    const elDossiers = s.un('[data-dossiers]');
     const elPlus = s.un('[data-plus]');
     const elPlusN = s.un('[data-plus-n]');
-    const elVisites = s.un('[data-visites]');
-    const elTaux = s.un('[data-taux]');
-    const elPuceDemandes = s.un('[data-puce-demandes]');
-    const elPuceTaux = s.un('[data-puce-taux]');
+    const elObjectif = s.un('[data-objectif]');
+    const elAvancement = s.un('[data-avancement]');
+    const elPuceDossiers = s.un('[data-puce-dossiers]');
+    const elPuceAvancement = s.un('[data-puce-avancement]');
+    /* Les quatre nombres qui bougent avec les dossiers. */
+    const nombres = [elDossiers, elPuceDossiers, elAvancement, elPuceAvancement];
 
     const etats = {
-      page: s.un('[data-etat-de="page"]'),
+      outil: s.un('[data-etat-de="outil"]'),
       tableau: s.un('[data-etat-de="tableau"]'),
     };
-    const noeud = s.un('[data-sm-noeud="demande"]');
+    const noeud = s.un('[data-sm-noeud="dossier"]');
     const pointeurs = s.tous<SVGSVGElement>('.pointeur');
     const ondes = s.tous('.onde');
     const bandes = s.tous('.sm-bande');
@@ -1183,42 +1220,44 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
     /* Le fil du moment : à l'horizontale sur le grand plan, à la verticale
        sur l'étroit. */
-    const filDuPlan = (): string => (s.etroit ? 'demande-bas' : 'demande');
+    const filDuPlan = (): string => (s.etroit ? 'dossier-bas' : 'dossier');
 
-    /* L'état de la scène. `rang` choisit la page et la journée ; `historique`
-       glisse d'un jour à chaque boucle ; `deja` est le total des demandes du
-       mois avant la journée en cours. */
+    /* L'état de la scène. `rang` choisit l'écran et la journée ; `historique`
+       glisse d'un jour à chaque boucle ; `traites` est le total des dossiers
+       du mois avant la journée en cours. Il se cumule d'un jour à l'autre et
+       repart de `dejaTraites` quand le mois est bouclé (voir le raccord, à la
+       fin de `tour`). */
     let rang = 0;
     let historique = [...recit.historique];
-    let deja = recit.deja;
+    let traites = recit.dejaTraites;
 
     /* Les listes tournent ; `lireRecit` a vérifié qu'aucune n'est vide. */
     const auRang = <T,>(liste: T[]): T => {
       const element = liste[rang % liste.length];
-      if (element === undefined) throw new Error('Scène Sites : le récit est vide');
+      if (element === undefined) throw new Error('Scène Outils métiers : le récit est vide');
       return element;
     };
-    const pageCourante = (): PageRecit => auRang(recit.pages);
+    const ecranCourant = (): EcranRecit => auRang(recit.ecrans);
     /* Jamais plus de clics que la barre n'a d'unités, ni que la scène n'a de
        pointeurs. */
     const clicsDuJour = (): number => Math.min(auRang(recit.clics), pointeurs.length, piles[0]?.length ?? 0);
-    /* Les visites du mois, comptées au matin : la journée part du taux du
-       site, pas de zéro. Elles ne bougent pas pendant qu'on clique, si bien
-       que demandes ÷ visites = conversion à chaque instant. */
-    const visites = (): number => deja * recit.visitesParDemande;
     /* La colonne d'aujourd'hui : celle qui suit l'historique. */
     const AUJOURDHUI = historique.length;
 
-    /* La page du moment, écrite dans le balisage. */
+    /* L'écran du moment, écrit dans le balisage : son chemin, son onglet, le
+       libellé de son bouton, les longueurs de ses traits. */
     const charger = () => {
-      const page = pageCourante();
-      elChemin.textContent = page.chemin;
-      elLibelle.textContent = page.bouton;
-      elPage.classList.toggle('est-centree', page.centre);
-      elPage.style.setProperty('--t1', `${page.titre[0] ?? 90}%`);
-      elPage.style.setProperty('--t2', `${page.titre[1] ?? 62}%`);
-      elPage.style.setProperty('--p1', `${page.texte[0] ?? 76}%`);
-      elPage.style.setProperty('--p2', `${page.texte[1] ?? 48}%`);
+      const ecran = ecranCourant();
+      const actif = rang % recit.ecrans.length;
+      elChemin.textContent = ecran.chemin;
+      elLibelle.textContent = ecran.bouton;
+      onglets.forEach((onglet, n) => onglet.classList.toggle('est-actif', n === actif));
+      elEcran.style.setProperty('--t1', `${ecran.titre[0] ?? 90}%`);
+      elEcran.style.setProperty('--t2', `${ecran.titre[1] ?? 62}%`);
+      elEcran.style.setProperty('--p1', `${ecran.texte[0] ?? 76}%`);
+      elEcran.style.setProperty('--p2', `${ecran.texte[1] ?? 48}%`);
+      elEcran.style.setProperty('--c1', `${ecran.champs[0] ?? 62}%`);
+      elEcran.style.setProperty('--c2', `${ecran.champs[1] ?? 44}%`);
     };
 
     /* Les barres : l'historique, puis aujourd'hui, puis la colonne de réserve. */
@@ -1230,50 +1269,53 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       });
     };
 
-    const tauxApres = (n: number): string => pourCent((deja + n) / visites());
+    /* La part de l'objectif atteinte après `n` dossiers dans la journée.
+       L'objectif du mois ne bouge pas pendant qu'on clique, si bien que
+       dossiers ÷ objectif du mois = « Objectif » à chaque instant. */
+    const avancementApres = (n: number): string => pourCent((traites + n) / recit.objectif);
 
-    /* Les nombres, après `n` demandes dans la journée. */
+    /* Les nombres, après `n` dossiers dans la journée. */
     const poserNombres = (n: number) => {
-      const taux = tauxApres(n);
-      elDemandes.textContent = entier(deja + n);
-      elPuceDemandes.textContent = entier(deja + n);
+      const avancement = avancementApres(n);
+      elDossiers.textContent = entier(traites + n);
+      elPuceDossiers.textContent = entier(traites + n);
       elPlusN.textContent = String(n);
       elPlus.classList.toggle('est-visible', n > 0);
-      elVisites.textContent = entier(visites());
-      elTaux.textContent = taux;
-      elPuceTaux.textContent = taux;
+      elObjectif.textContent = entier(recit.objectif);
+      elAvancement.textContent = avancement;
+      elPuceAvancement.textContent = avancement;
     };
 
     /* Ce qu'une boucle interrompue peut laisser derrière elle. */
     const ranger = () => {
-      cadre.classList.remove('est-visible', 'est-en-vol', 'est-en-ligne');
+      cadre.classList.remove('est-visible', 'est-en-vol', 'est-sur-rangee');
       barres.classList.remove('sans-transition');
     };
 
-    /* Le repos : une page vide, en chantier, et un tableau de bord qui attend
-       la journée, avec les nombres du mois au matin. */
+    /* Le repos : un écran vide, en chantier, et un dashboard qui attend la
+       journée, avec les nombres du mois au matin. */
     const repos = () => {
       s.racine.classList.remove('est-abouti');
       s.eteindre();
       ranger();
       charger();
       blocs.forEach((bloc) => bloc.classList.remove('est-pose'));
-      elPage.classList.add('est-en-chantier');
-      etats.page.dataset.etat = 'attente';
+      elEcran.classList.add('est-en-chantier');
+      etats.outil.dataset.etat = 'attente';
       etats.tableau.dataset.etat = 'attente';
       poserBarres(0);
       poserNombres(0);
     };
 
-    /* L'image fixe : la page est en ligne, la journée est passée. C'est aussi
-       ce que le HTML rend sans script. */
+    /* L'image fixe : l'outil est en service, la journée est passée. C'est
+       aussi ce que le HTML rend sans script. */
     const figer = () => {
       const clics = clicsDuJour();
       ranger();
       charger();
       blocs.forEach((bloc) => bloc.classList.add('est-pose'));
-      elPage.classList.remove('est-en-chantier');
-      etats.page.dataset.etat = 'fait';
+      elEcran.classList.remove('est-en-chantier');
+      etats.outil.dataset.etat = 'fait';
       etats.tableau.dataset.etat = 'cours';
       poserBarres(clics);
       poserNombres(clics);
@@ -1305,9 +1347,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     const poser = async (bloc: HTMLElement, avant: Cadre | null): Promise<Cadre> => {
       const cible = autour(bloc);
       const nom = bloc.dataset.nom ?? '';
-      /* Seul le titre partage sa ligne avec la marque de la page : pour lui,
+      /* Seul le titre partage sa ligne avec la marque de l'outil : pour lui,
          sur le plan étroit, l'étiquette se décale. */
-      const enLigne = bloc !== blocs[0];
+      const surRangee = bloc !== blocs[0];
       placerCadre(cible);
       cadre.classList.add('est-visible');
       if (avant) {
@@ -1318,11 +1360,11 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
         });
         /* Le nom change à l'arrivée, quand le cadre reparle. */
         nomCadre.textContent = nom;
-        cadre.classList.toggle('est-en-ligne', enLigne);
+        cadre.classList.toggle('est-sur-rangee', surRangee);
         cadre.classList.remove('est-en-vol');
       } else {
         nomCadre.textContent = nom;
-        cadre.classList.toggle('est-en-ligne', enLigne);
+        cadre.classList.toggle('est-sur-rangee', surRangee);
         cadre.style.transformOrigin = '0 0';
         await s.animer(
           cadre,
@@ -1343,9 +1385,10 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       return cible;
     };
 
-    /* Un clic : le pointeur d'un visiteur arrive sur le bouton et appuie, la
-       demande part par le fil, et devient une unité de plus sur la barre du
-       jour. Les nombres suivent : une demande de plus, un taux qui monte. */
+    /* Un clic : le pointeur d'un membre de l'équipe arrive sur le bouton et
+       appuie, le dossier part par le fil, et devient une unité de plus sur la
+       barre du jour. Les nombres suivent : un dossier de plus, un objectif
+       qui se remplit. */
     const cliquer = async (i: number) => {
       const pointeur = pointeurs[i];
       const onde = ondes[i];
@@ -1440,14 +1483,14 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       unite.classList.add('est-pleine');
       s.jouer(unite, [{ transform: 'scaleY(0.35)' }, { transform: 'none' }], { duration: 380, easing: EXPO });
       /* Les deux nombres changent dans la même image : à aucun instant le
-         tableau de bord n'affiche un taux qui ne soit pas celui de ses
-         demandes. */
+         dashboard n'affiche un objectif qui ne soit pas celui de ses
+         dossiers. */
       const n = i + 1;
-      const taux = tauxApres(n);
-      s.tictac(elDemandes, entier(deja + n));
-      s.tictac(elPuceDemandes, entier(deja + n));
-      s.tictac(elTaux, taux);
-      s.tictac(elPuceTaux, taux);
+      const avancement = avancementApres(n);
+      s.tictac(elDossiers, entier(traites + n));
+      s.tictac(elPuceDossiers, entier(traites + n));
+      s.tictac(elAvancement, avancement);
+      s.tictac(elPuceAvancement, avancement);
       elPlusN.textContent = String(n);
       elPlus.classList.add('est-visible');
     };
@@ -1458,21 +1501,21 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
       await s.attendre(320);
 
-      /* 1. La page se monte, bloc par bloc. */
+      /* 1. L'écran se monte, bloc par bloc. */
       let avant: Cadre | null = null;
       for (const bloc of visibles) avant = await poser(bloc, avant);
       await s.animer(cadre, { opacity: [1, 0] }, { duration: 200 });
       cadre.classList.remove('est-visible');
 
-      /* 2. Elle passe en ligne : les repères s'effacent, le tableau de bord
-         se met à l'écoute. */
-      elPage.classList.remove('est-en-chantier');
-      s.basculer(etats.page);
+      /* 2. Il passe en service : les repères s'effacent, le dashboard se met
+         à l'écoute. */
+      elEcran.classList.remove('est-en-chantier');
+      s.basculer(etats.outil);
       await s.attendre(320);
       s.basculer(etats.tableau, 'cours');
       await s.attendre(340);
 
-      /* 3. Les clics, de plus en plus rapprochés. */
+      /* 3. Les clics de l'équipe, de plus en plus rapprochés. */
       s.allumer(filDuPlan());
       await Promise.all(
         Array.from({ length: clics }, async (_, i) => {
@@ -1482,14 +1525,14 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       );
       s.racine.classList.add('est-abouti');
 
-      /* Le temps de lire l'image : la page tourne, le tableau de bord le dit. */
+      /* Le temps de lire l'image : l'outil tourne, le dashboard le dit. */
       await s.attendre(2800);
 
-      /* 4. On change de jour : la page se défait, les barres glissent d'une
-         colonne (aujourd'hui devient hier). Les demandes du mois restent. */
+      /* 4. On change de jour : l'écran se défait, les barres glissent d'une
+         colonne (aujourd'hui devient hier). Les dossiers du mois restent. */
       s.racine.classList.remove('est-abouti');
       s.eteindre();
-      etats.page.dataset.etat = 'attente';
+      etats.outil.dataset.etat = 'attente';
       etats.tableau.dataset.etat = 'attente';
       elPlus.classList.remove('est-visible');
       colonnes[AUJOURDHUI]?.classList.add('est-hier');
@@ -1518,20 +1561,29 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
       /* Le raccord, invisible : chaque colonne prend la valeur de sa voisine
          dans l'image même où la piste revient à sa place. Le mois compte une
-         journée de plus : ses demandes sont acquises, ses visites s'ajoutent,
-         et le taux repart de celui du matin, jamais de zéro. La page suivante
-         est chargée, de nouveau en chantier. */
+         journée de plus : ses dossiers sont acquis, et « Objectif » repart
+         d'où la journée l'a laissé, jamais de zéro. L'écran suivant est
+         chargé, de nouveau en chantier. */
       historique = [...historique.slice(1), clics];
-      deja += clics;
+      traites += clics;
       rang += 1;
+      /* Le mois est bouclé quand la journée qui vient ne tient plus dans ce
+         qui reste de l'objectif : la scène repart alors sur le mois suivant,
+         entamé au même point que le premier. C'est ce qui tient « Objectif »
+         sous 100 %, aussi longtemps que la scène tourne. */
+      const moisBoucle = traites + clicsDuJour() > recit.objectif;
+      if (moisBoucle) traites = recit.dejaTraites;
       barres.classList.add('sans-transition');
       charger();
       poserBarres(0);
       poserNombres(0);
+      /* Un changement de mois ne se cache pas : les nombres tombent en place,
+         comme à chaque dossier. */
+      if (moisBoucle) nombres.forEach((nombre) => s.tictac(nombre, nombre.textContent ?? ''));
       /* La lecture force le rendu sans transition avant de les rétablir. */
       void barres.offsetWidth;
       barres.classList.remove('sans-transition');
-      elPage.classList.add('est-en-chantier');
+      elEcran.classList.add('est-en-chantier');
       await s.attendre(160);
     }
 
