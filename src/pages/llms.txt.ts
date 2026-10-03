@@ -58,7 +58,7 @@ export const GET: APIRoute = async () => {
 - Nom : Lilian Sevoumian
 - Activité : automatisation, agents IA, création de sites web et formation, depuis 2020
 - Structures fondées : ${organisations.map((o) => `${o.nom} (${o.fondation.slice(0, 4)}, ${o.url})`).join(' ; ')}
-- Certifications : Make niveau 5 (premier Français certifié), Airtable Certified
+- Certifications : Make niveau 5 (premier Français certifié, en 2022), Airtable Certified
 - Formation : plus de 300 personnes formées à Make, n8n et à l'IA
 - Entreprises accompagnées : plus de 100
 - Zone : Île-de-France, France, Europe
@@ -109,6 +109,9 @@ ${cas.map(ligneCas).join('\n')}
 - [Expert Make](https://liliansevoumian.fr/expert-make)
 - [Expert n8n](https://liliansevoumian.fr/expert-n8n)
 - [Reprendre une automatisation qui casse](https://liliansevoumian.fr/reprendre-une-automatisation-qui-casse)
+- [Make ou n8n : lequel choisir ?](https://liliansevoumian.fr/make-ou-n8n) : les critères de choix entre les deux outils, avec les cas construits sur chacun
+- [Combien coûte une automatisation ?](https://liliansevoumian.fr/combien-coute-une-automatisation) : prix d'entrée, abonnement de suivi, ce qui fait varier le devis
+- [Agent IA pour PME : par où commencer ?](https://liliansevoumian.fr/agent-ia-pour-pme) : par quelle tâche commencer, ce qui reste aux règles et à l'équipe
 - [Sites et applications web](https://liliansevoumian.fr/sites-web-abonnement)
 - [Principes de travail](https://liliansevoumian.fr/principes)
 

@@ -1,0 +1,138 @@
+---
+/*
+ * /agent-ia-pour-pme — la réponse à « Agent IA pour PME : par où commencer ? ».
+ *
+ * Sources des faits, à relire avant toute modification :
+ *  — les deux cas : les fiches M Partners (agent orchestré dans Make, validé
+ *    par le dirigeant) et Celeris (deux agents sur n8n, moteur Mistral, fiches
+ *    créées en brouillon, phase de test) de `src/content/cas-clients` ;
+ *  — les prix : `data/service-pricing` et `data/maintenance`, lus ici ;
+ *  — la position tenue partout sur le site : l'IA lit et propose, des règles
+ *    écrites contrôlent, un humain garde la main.
+ * Le statut de Celeris (« phase de test ») est à mettre à jour si la
+ * production a démarré.
+ */
+import PageReponse from '../layouts/PageReponse.astro';
+import Partie from '../components/partie.astro';
+import { automationStartingPrice } from '../data/service-pricing';
+import { automationSubscriptions } from '../data/maintenance';
+
+const entree = `${automationStartingPrice.toLocaleString('fr-FR')} € HT`;
+const suiviIa = automationSubscriptions[1].price.replace(/\s\/\smois/, '\u00a0par mois');
+
+const faqs = [
+  {
+    q: 'Combien coûte un agent IA ?',
+    a: `Un agent IA démarre à ${entree}, sur un devis ferme une fois le périmètre posé. L’abonnement de suivi est de ${suiviIa}, coûts IA inclus.`,
+    html: `Un agent IA démarre à ${entree}, sur <a class="lien-prose" href="/combien-coute-une-automatisation">un devis ferme</a> une fois le périmètre posé. L’abonnement de suivi est de ${suiviIa}, coûts IA inclus.`,
+  },
+  {
+    q: 'Mes données partent-elles chez un fournisseur d’IA ?',
+    a: 'Le choix du modèle et de l’hébergement se fait au cadrage, avant de construire. Chez Celeris, qui tenait à garder la maîtrise de ses données, le moteur est Mistral et la partie sensible tourne en local.',
+  },
+  {
+    q: 'Faut-il Make ou n8n pour un agent IA ?',
+    a: 'Les deux le permettent. L’agent de M Partners est orchestré dans Make, ceux de Celeris dans n8n. Le choix dépend de vos données et de la personne qui maintiendra le système.',
+    html: 'Les deux le permettent. L’agent de M Partners est orchestré dans <a class="lien-prose" href="/expert-make">Make</a>, ceux de Celeris dans <a class="lien-prose" href="/expert-n8n">n8n</a>. <a class="lien-prose" href="/make-ou-n8n">Le choix dépend de vos données</a> et de la personne qui maintiendra le système.',
+  },
+  {
+    q: 'Un agent IA peut-il travailler sans surveillance ?',
+    a: 'Il répond ou prépare jour et nuit. Le contrôle reste en place : des règles écrites pour ce qui se calcule, une personne de votre équipe pour ce qui se décide.',
+  },
+];
+---
+
+<PageReponse
+  url="/agent-ia-pour-pme"
+  nom="Agent IA pour PME : par où commencer ?"
+  titreSeo="Agent IA pour PME : par où commencer ?"
+  descriptionSeo="Commencez par une tâche répétitive où l’agent prépare et où un humain valide. Ce qu’un agent IA fait, ce qui reste aux règles, ce qu’il faut avant."
+  titre="Agent IA pour PME : par où <mark>commencer ?</mark>"
+  titreLargeur="16ch"
+  reponse="Commencez par une seule tâche : répétitive, faite de textes ou de documents à lire, et dont quelqu’un chez vous vérifie le résultat en quelques secondes. L’agent prépare, un humain valide. Les contrôles qui comptent restent des règles écrites."
+  fiche="Lilian Sevoumian, freelance en automatisation et agents IA depuis septembre 2020 et premier Français certifié Make niveau 5 (2022), construit ses agents IA sur un même schéma : l’IA lit et propose, des règles écrites contrôlent, un humain garde la main."
+  publie="2026-10-03"
+  sujets={['Agent IA', 'PME', 'Automatisation des processus']}
+  faqs={faqs}
+  titreFin="Une tâche <mark>en tête ?</mark>"
+  suiteFin={'Décrivez-la-moi en une phrase. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et je vous dis si un agent IA est le bon outil.'}
+>
+  <Partie titre="Ce qu’un agent IA fait">
+    <p>
+      Un agent IA utilise un modèle d’intelligence artificielle pour traiter une tâche et agir dans les outils auxquels
+      on lui donne accès. Il lit une demande ou un document, va chercher l’information là où elle se trouve (vos
+      documents, vos outils, le web), recoupe et prépare une réponse.
+    </p>
+    <p>
+      Une automatisation classique applique des règles fixées à l’avance&nbsp;: un devis signé déclenche une facture.
+      L’agent prend le relais quand il faut interpréter&nbsp;: un fichier fournisseur dont les colonnes changent d’une
+      marque à l’autre, une question de client posée en langage courant.
+    </p>
+  </Partie>
+
+  <Partie titre="Ce qui reste aux règles et à votre équipe">
+    <p>Un modèle d’IA peut se tromper sans le signaler. Dans ce que je construis, il travaille dans un cadre.</p>
+    <p>
+      Les calculs et les contrôles qui comptent (montants, TVA, doublons) sont des règles écrites, qui donnent le même
+      résultat à chaque passage. L’agent crée un brouillon, et quelqu’un de votre équipe le valide avant l’envoi ou la
+      publication. Les cas douteux reviennent à un humain.
+    </p>
+    <p>Cette validation peut s’alléger avec le temps, une fois le comportement vérifié sur vos dossiers réels.</p>
+  </Partie>
+
+  <Partie titre="Par quelle tâche commencer" clair>
+    <p>
+      La bonne première tâche revient chaque jour ou chaque semaine, et commence par de la lecture&nbsp;: des e-mails,
+      des formulaires, des PDF, des pages web. Une erreur s’y rattrape, puisque l’agent produit un brouillon. Et
+      quelqu’un chez vous sait dire en quelques secondes si le résultat est bon.
+    </p>
+    <p>Quelques points de départ&nbsp;:</p>
+    <ul>
+      <li>répondre aux questions de vos clients à partir de votre base de connaissances, jour et nuit&nbsp;;</li>
+      <li>classer les demandes entrantes et les transmettre à la bonne personne&nbsp;;</li>
+      <li>qualifier des prospects selon vos critères&nbsp;;</li>
+      <li>préparer des fiches produit à partir de documents fournisseurs.</li>
+    </ul>
+    <p>
+      Gardez le processus le plus critique de l’entreprise pour plus tard&nbsp;: un premier agent se juge mieux sur une
+      tâche où l’erreur coûte peu.
+    </p>
+  </Partie>
+
+  <Partie titre="Deux cas réels">
+    <p>
+      Chez <a class="lien-prose" href="/cas-clients/m-partners">M Partners</a>, cabinet de chasse de têtes, un agent IA
+      note et classe les dirigeants à contacter, et le dirigeant du cabinet valide avant le lancement des
+      séquences&nbsp;: un passage prend environ 10&nbsp;minutes, contre 1 à 3&nbsp;heures à la main pour
+      50&nbsp;entreprises.
+    </p>
+    <p>
+      Chez <a class="lien-prose" href="/cas-clients/celeris">Celeris</a>, distributeur informatique B2B, deux agents IA
+      préparent les fiches produit dans l’ERP Odoo&nbsp;; chaque fiche est créée en brouillon et un commercial la valide
+      avant publication. Le cas publié décrit la phase de test.
+    </p>
+  </Partie>
+
+  <Partie titre="Ce qu’il faut avoir en place avant">
+    <ul>
+      <li>
+        <strong>Un processus qui existe.</strong> Quelqu’un chez vous sait décrire comment la tâche se fait
+        aujourd’hui. Je pars de ce processus réel.
+      </li>
+      <li>
+        <strong>Des exemples réels.</strong> Des demandes, des documents, des dossiers déjà traités&nbsp;: nous testons
+        dessus avant la mise en service.
+      </li>
+      <li>
+        <strong>Des sources à jour.</strong> Une base de connaissances, des documents, des outils auxquels l’agent peut
+        se connecter.
+      </li>
+      <li><strong>Vos règles, écrites.</strong> Ce qui est accepté, refusé, arrondi, transmis à quelqu’un.</li>
+      <li><strong>Une personne qui valide</strong>, et un canal où les erreurs remontent.</li>
+    </ul>
+    <p>
+      Quand l’un de ces points manque, le projet commence par lui. La première étape est alors parfois une
+      <a class="lien-prose" href="/automatisations-ia">automatisation sans IA</a>.
+    </p>
+  </Partie>
+</PageReponse>

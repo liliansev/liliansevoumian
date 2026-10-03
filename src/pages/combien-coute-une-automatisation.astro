@@ -1,0 +1,160 @@
+---
+/*
+ * /combien-coute-une-automatisation — la réponse à « Combien coûte une
+ * automatisation ? ».
+ *
+ * Les prix ne sont pas écrits ici : ils sont lus dans `data/service-pricing`
+ * (prix d'entrée) et `data/maintenance` (abonnements), comme sur les pages
+ * d'offre et dans /llms.txt. Changer un prix là-bas le change partout.
+ *
+ * Sources des autres faits, à relire avant toute modification :
+ *  — ce que couvre la création, le devis ferme : `Offres.astro`, `Methode.astro`,
+ *    `data/home-faq` ;
+ *  — les deux exemples chiffrés : les fiches Fraich Touch et M Partners de
+ *    `src/content/cas-clients`.
+ * Le site dit « sans engagement », jamais « gratuit » : la page aussi.
+ */
+import PageReponse from '../layouts/PageReponse.astro';
+import Partie from '../components/partie.astro';
+import { automationStartingPrice } from '../data/service-pricing';
+import { automationSubscriptions, maintenanceIncludes, maintenanceScope } from '../data/maintenance';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+
+const entree = `${automationStartingPrice.toLocaleString('fr-FR')} € HT`;
+const [sansIa, avecIa] = automationSubscriptions;
+/* « 90 € HT / mois » s'écrit « 90 € HT par mois » dans une phrase. */
+const parMois = (prix: string) => prix.replace(/\s\/\smois/, '\u00a0par mois');
+
+const faqs = [
+  {
+    q: 'Le devis peut-il augmenter en cours de projet ?',
+    a: 'À périmètre égal, non : le devis est ferme une fois le périmètre posé. Un besoin nouveau fait l’objet d’un devis complémentaire.',
+  },
+  {
+    q: 'L’abonnement de suivi est-il compris dans le devis ?',
+    a: `Non, il est facturé à part de la création. Chaque automatisation livrée s’accompagne de son abonnement : ${parMois(sansIa.price)} sans IA, ${parMois(avecIa.price)} avec IA ou agents.`,
+  },
+  {
+    q: 'Les coûts d’IA s’ajoutent-ils à l’abonnement ?',
+    a: `Ils sont inclus dans la formule à ${parMois(avecIa.price)}.`,
+  },
+  {
+    q: 'Comment obtenir un devis ?',
+    a: `Vous m’écrivez en une phrase ce qui vous fait perdre du temps, par WhatsApp ou par e-mail, ou vous réservez un appel de ${DUREE_RESERVATION_MINUTES} minutes en visio, sans engagement. On regarde ce qui est faisable, et le devis vient ensuite.`,
+  },
+];
+---
+
+<PageReponse
+  url="/combien-coute-une-automatisation"
+  nom="Combien coûte une automatisation ?"
+  titreSeo="Combien coûte une automatisation ? Prix et abonnement"
+  descriptionSeo={`Une automatisation ou un agent IA démarre à ${entree}, sur devis ferme. Puis un suivi à ${sansIa.schemaPrice} ou ${avecIa.schemaPrice} € HT par mois. Ce qui fait varier le prix.`}
+  titre="<mark>Combien coûte</mark> une automatisation ?"
+  titreLargeur="14ch"
+  reponse={`Une automatisation ou un agent IA démarre à ${entree}. Je fixe le montant exact dans un devis, ferme une fois le périmètre posé. Chaque projet livré s’accompagne d’un abonnement de suivi : ${parMois(sansIa.price)} sans IA, ${parMois(avecIa.price)} avec IA ou agents.`}
+  fiche={`Lilian Sevoumian, freelance en automatisation et agents IA depuis septembre 2020, publie ses prix sur ce site : création à partir de ${entree}, puis suivi à ${sansIa.schemaPrice} ou ${avecIa.schemaPrice} € HT par mois.`}
+  publie="2026-10-03"
+  sujets={['Prix d’une automatisation', 'Abonnement de suivi', 'Agents IA']}
+  faqs={faqs}
+  titreFin="Un devis pour <mark>votre cas ?</mark>"
+  suiteFin={'Décrivez-moi en une phrase ce qui vous fait perdre du temps. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et le devis vient ensuite.'}
+>
+  <Partie titre="Ce que couvre le devis de création">
+    <p>
+      Le devis couvre le projet du cadrage à la mise en production&nbsp;: je relie vos outils, je construis le workflow
+      ou l’agent, nous testons sur vos dossiers, je documente la solution et je vous forme à son utilisation. Il
+      précise le travail à réaliser et le calendrier. L’abonnement de suivi se chiffre à part.
+    </p>
+  </Partie>
+
+  <Partie titre="Ce qui fait varier le prix">
+    <ul>
+      <li>
+        <strong>Le nombre d’outils à relier.</strong> Deux logiciels qui se parlent demandent moins de travail qu’une
+        chaîne entière, du CRM à la comptabilité.
+      </li>
+      <li>
+        <strong>La logique métier.</strong> Chaque règle s’écrit et se teste&nbsp;: une TVA qui dépend du pays, des
+        factures échelonnées, des bons de commande dont le format change d’un client à l’autre.
+      </li>
+      <li>
+        <strong>La présence d’IA.</strong> Faire lire un document ou une demande
+        <a class="lien-prose" href="/agent-ia-pour-pme">par une IA</a> suppose des contrôles et des validations
+        humaines autour.
+      </li>
+      <li>
+        <strong>Le point de départ.</strong> Une création part de zéro. Une
+        <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">reprise</a> commence par l’audit de ce qui
+        existe&nbsp;; après l’audit, je vous dis s’il faut réparer ou reconstruire.
+      </li>
+    </ul>
+    <p>Le délai dépend des mêmes éléments. Je vous l’annonce au cadrage.</p>
+  </Partie>
+
+  <Partie titre="L’abonnement de suivi" clair>
+    <p>Chaque automatisation livrée s’accompagne d’un abonnement mensuel.</p>
+    <table>
+      <caption>Les deux formules de l’abonnement de suivi</caption>
+      <thead>
+        <tr>
+          <th scope="col">Formule</th>
+          <th scope="col">Prix</th>
+          <th scope="col">Ce qui est compris</th>
+        </tr>
+      </thead>
+      <tbody>
+        {automationSubscriptions.map((offre) => (
+          <tr>
+            <th scope="row">{offre.name}</th>
+            <td data-colonne="Prix">{parMois(offre.price)}</td>
+            <td data-colonne="Compris">{offre.includes.map((ligne, i) => (i === 0 ? ligne : ligne.charAt(0).toLowerCase() + ligne.slice(1))).join(', ')}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p>{maintenanceScope.replace(', fonctionnalités et pages', ' et fonctionnalités')}</p>
+    <p>
+      Vos outils publient de nouvelles versions et vos process évoluent&nbsp;: le suivi
+      ({maintenanceIncludes.map((ligne) => ligne.charAt(0).toLowerCase() + ligne.slice(1)).join(', ')}) garde
+      l’automatisation à jour de ces changements.
+    </p>
+  </Partie>
+
+  <Partie titre="Ce qui se chiffre sur devis">
+    <p>
+      Un dashboard ou un outil métier (portail client, application interne) se chiffre sur devis, pour la création
+      comme pour l’abonnement. Le prix dépend des fonctionnalités, des utilisateurs, des données et des outils à
+      connecter&nbsp;: voir la page des
+      <a class="lien-prose" href="/sites-web-abonnement#applications">applications métier</a>.
+    </p>
+    <p>
+      La <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">reprise d’une automatisation existante</a>
+      se chiffre après son audit.
+    </p>
+    <p>
+      Pour apprendre à le faire vous-même, mes formations Make et n8n sont sur
+      <a class="lien-prose" href="https://augmentes.fr" target="_blank" rel="noopener noreferrer">augmentes.fr</a>.
+    </p>
+  </Partie>
+
+  <Partie titre="Ce que la tâche vous coûte déjà">
+    <p>Ce coût se mesure chez vous, tâche par tâche.</p>
+    <p>
+      Chez <a class="lien-prose" href="/cas-clients/facturation-automatisee-fraich-touch">Fraich Touch</a>,
+      16&nbsp;factures attendaient dans une file d’erreurs sans que personne le sache&nbsp;: du chiffre d’affaires en
+      suspens.
+    </p>
+    <p>
+      Chez <a class="lien-prose" href="/cas-clients/m-partners">M Partners</a>, passer 50&nbsp;entreprises en revue
+      prenait 1 à 3&nbsp;heures à la main&nbsp;; un passage automatisé prend environ 10&nbsp;minutes.
+    </p>
+    <p>
+      Ces chiffres sont ceux de ces deux entreprises et ne se transposent pas tels quels. Pour la vôtre, on regarde
+      ensemble, pendant l’appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes, le temps que vous récupérez face à ce que
+      la tâche vous coûte aujourd’hui. Le simulateur de la page
+      <a class="lien-prose" href="/automatisations-ia#roi">Automatisation et IA</a> en donne une première
+      estimation&nbsp;: c’est une simulation, à confirmer sur vos tâches.
+    </p>
+  </Partie>
+</PageReponse>

@@ -1,0 +1,157 @@
+---
+/*
+ * /make-ou-n8n — la réponse à « Make ou n8n : lequel choisir ? ».
+ *
+ * La question était posée à quatre endroits du site, avec quatre réponses.
+ * Elle a maintenant sa page, et les quatre endroits y renvoient par la même
+ * phrase (`data/make-ou-n8n`).
+ *
+ * Sources des faits, à relire avant toute modification :
+ *  — les cas : `src/content/cas-clients` (Fraich Touch et M Partners sur Make,
+ *    Humble+ et Celeris sur n8n ; Humble+ a commencé sur Make) ;
+ *  — la certification et l'ancienneté : `data/parcours`, PRODUCT.md ;
+ *  — le fonctionnement des deux éditeurs (hébergement, mode de comptage) : des
+ *    faits généraux, écrits sans aucun prix, à relire sur leurs sites.
+ * Le critère « gros volumes de données » n'est pas repris : aucun cas publié
+ * ne le prouve.
+ */
+import PageReponse from '../layouts/PageReponse.astro';
+import Partie from '../components/partie.astro';
+
+const faqs = [
+  {
+    q: 'Lequel est le plus simple à prendre en main ?',
+    a: 'Make. Son écran se lit sans formation technique, et c’est l’outil que je retiens quand votre équipe veut faire elle-même les modifications courantes. n8n demande plus d’aisance, surtout quand on y écrit du code.',
+  },
+  {
+    q: 'Peut-on construire un agent IA avec Make ?',
+    a: 'Oui. Chez M Partners, un scénario Make orchestre un agent IA qui note et classe les profils à contacter. Je passe à n8n quand les données doivent rester en interne, comme chez Celeris, ou quand l’agent a besoin de code autour de lui.',
+    html: 'Oui. Chez <a class="lien-prose" href="/cas-clients/m-partners">M Partners</a>, un scénario Make orchestre <a class="lien-prose" href="/agent-ia-pour-pme">un agent IA</a> qui note et classe les profils à contacter. Je passe à n8n quand les données doivent rester en interne, comme chez <a class="lien-prose" href="/cas-clients/celeris">Celeris</a>, ou quand l’agent a besoin de code autour de lui.',
+  },
+  {
+    q: 'Peut-on utiliser Make et n8n en même temps ?',
+    a: 'C’est possible. Je préfère un seul outil quand il suffit : chaque intégration ajoutée multiplie les occasions de panne.',
+    html: 'C’est possible. Je préfère un seul outil quand il suffit : <a class="lien-prose" href="/principes">chaque intégration ajoutée</a> multiplie les occasions de panne.',
+  },
+  {
+    q: 'Peut-on changer d’outil plus tard ?',
+    a: 'Oui. Humble+ a commencé sur Make et tourne aujourd’hui sur n8n. Le changement se prépare par un audit de l’existant, puis par une reconstruction.',
+  },
+];
+---
+
+<PageReponse
+  url="/make-ou-n8n"
+  nom="Make ou n8n : lequel choisir ?"
+  titreSeo="Make ou n8n : lequel choisir pour votre entreprise ?"
+  descriptionSeo="Make si votre équipe doit modifier l’automatisation elle-même. n8n si vos données restent chez vous ou si l’IA entre dans le flux. Mes critères."
+  titre="Make ou n8n : <mark>lequel choisir ?</mark>"
+  titreLargeur="14ch"
+  reponse="Je choisis Make quand votre équipe doit pouvoir lire et modifier l’automatisation elle-même, sur des logiciels en ligne courants. Je choisis n8n quand vos données doivent rester sur vos serveurs, ou quand le flux mêle lecture de documents par IA, contrôles par règles et code. Si vous avez déjà l’un des deux, je commence par examiner ce qui existe."
+  fiche="Lilian Sevoumian, premier Français certifié Make niveau 5 (2022) et freelance en automatisation depuis septembre 2020, construit avec les deux outils : Make chez Fraich Touch et M Partners, n8n chez Humble+ et Celeris."
+  publie="2026-10-03"
+  sujets={['Make', 'n8n', 'Automatisation des processus']}
+  faqs={faqs}
+  titreFin="Un cas précis <mark>en tête ?</mark>"
+  suiteFin={'Écrivez-le-moi en une phrase. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, avec l’outil que je retiendrais et pourquoi.'}
+>
+  <Partie titre="Deux outils pour le même métier">
+    <p>
+      Make et n8n relient vos logiciels pour qu’une information passe de l’un à l’autre sans ressaisie. Dans les deux,
+      l’automatisation se dessine à l’écran, étape par étape&nbsp;: Make l’appelle un scénario, n8n un workflow. Make
+      est le nom que porte aujourd’hui Integromat.
+    </p>
+  </Partie>
+
+  <Partie titre="Make et n8n, critère par critère" clair>
+    <table>
+      <caption>Make et n8n comparés sur six critères</caption>
+      <thead>
+        <tr>
+          <th scope="col">Critère</th>
+          <th scope="col">Make</th>
+          <th scope="col">n8n</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Où passent vos données</th>
+          <td data-colonne="Make">Chez l’éditeur. Rien à installer.</td>
+          <td data-colonne="n8n">Chez l’éditeur, ou sur vos propres serveurs&nbsp;: n8n peut s’installer chez vous.</td>
+        </tr>
+        <tr>
+          <th scope="row">Qui peut le modifier chez vous</th>
+          <td data-colonne="Make">Une personne à l’aise avec ses logiciels, sans profil technique.</td>
+          <td data-colonne="n8n">Plutôt un profil technique&nbsp;: l’outil est plus long à prendre en main.</td>
+        </tr>
+        <tr>
+          <th scope="row">Comment l’éditeur compte</th>
+          <td data-colonne="Make">À l’étape&nbsp;: chaque action exécutée est décomptée.</td>
+          <td data-colonne="n8n">Au lancement&nbsp;: un workflow exécuté compte une fois, quel que soit son nombre d’étapes (offre en ligne).</td>
+        </tr>
+        <tr>
+          <th scope="row">IA dans le flux</th>
+          <td data-colonne="Make">Oui&nbsp;: un scénario peut appeler un modèle d’IA et orchestrer un agent.</td>
+          <td data-colonne="n8n">Oui&nbsp;: l’agent, ses outils et ses contrôles se construisent dans le même workflow.</td>
+        </tr>
+        <tr>
+          <th scope="row">Logique métier complexe</th>
+          <td data-colonne="Make">À l’aise sur des enchaînements lisibles entre logiciels courants.</td>
+          <td data-colonne="n8n">À l’aise quand il faut du code (JavaScript, Python) dans le flux.</td>
+        </tr>
+        <tr>
+          <th scope="row">Ce que ça vous demande</th>
+          <td data-colonne="Make">Un compte, et quelqu’un qui regarde les erreurs.</td>
+          <td data-colonne="n8n">La même chose, plus un serveur à tenir à jour si vous l’hébergez.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Le mode de comptage se juge sur vos volumes. Un scénario long qui tourne souvent pèse quand chaque étape
+      compte&nbsp;; un workflow court lancé des milliers de fois pèse quand chaque lancement compte. Ce que coûte le
+      projet lui-même est sur la page
+      <a class="lien-prose" href="/combien-coute-une-automatisation">Combien coûte une automatisation&nbsp;?</a>
+    </p>
+  </Partie>
+
+  <Partie titre="Quand je choisis Make">
+    <p>
+      Je choisis Make quand l’automatisation relie des logiciels en ligne courants (un CRM, un outil de facturation) et
+      que votre équipe veut comprendre ce qui s’est passé et ajuster un filtre sans m’appeler. Un scénario Make se lit
+      étape par étape, et je le livre avec une documentation écrite pour votre installation.
+    </p>
+    <p>
+      Chez <a class="lien-prose" href="/cas-clients/facturation-automatisee-fraich-touch">Fraich Touch</a>,
+      4&nbsp;scénarios Make remplacent les 33&nbsp;précédents pour la facturation, et l’équipe a récupéré environ
+      4&nbsp;heures par semaine.
+    </p>
+    <p>Ma pratique de l’outil est détaillée sur la page <a class="lien-prose" href="/expert-make">Expert Make</a>.</p>
+  </Partie>
+
+  <Partie titre="Quand je choisis n8n">
+    <p>
+      Je choisis n8n quand vos données doivent rester chez vous&nbsp;: l’outil s’installe sur votre propre serveur. Je
+      le choisis aussi quand une IA lit des documents au milieu du flux et que des règles contrôlent chaque sortie, ou
+      quand la logique métier demande du code.
+    </p>
+    <p>
+      Chez <a class="lien-prose" href="/cas-clients/humble-plus">Humble+</a>, un workflow n8n lit les bons de commande
+      PDF et Excel, puis crée la commande Shopify et la facture Pennylane sans ressaisie. Le projet est en phase de
+      stabilisation.
+    </p>
+    <p>Ma pratique de l’outil est détaillée sur la page <a class="lien-prose" href="/expert-n8n">Expert n8n</a>.</p>
+  </Partie>
+
+  <Partie titre="Si vous avez déjà l’un des deux">
+    <p>
+      Je commence par un audit du compte&nbsp;: ce qui tourne, ce qui dort, ce qui casse. Le choix de l’outil vient
+      après, et je vous l’explique avant de construire.
+    </p>
+    <p>
+      Fraich Touch est resté sur Make, avec un système reconstruit. Humble+ est passé de Make à n8n, parce que son flux
+      mêlait lecture de documents par IA, contrôles par règles et validations humaines. Le critère&nbsp;: ce que le
+      flux doit faire, et qui le maintiendra ensuite. La démarche complète est sur la page
+      <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Reprendre une automatisation qui casse</a>.
+    </p>
+  </Partie>
+</PageReponse>

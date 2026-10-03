@@ -1,0 +1,106 @@
+---
+/*
+ * PageReponse — le gabarit des pages qui répondent à une question précise
+ * (« Make ou n8n ? », « Combien coûte une automatisation ? », « Agent IA pour
+ * PME : par où commencer ? »).
+ *
+ * Ce sont des pages de lecture, écrites pour être citées : la réponse tient
+ * dans le chapô, sous le titre, avant tout développement. Le corps passe par
+ * le slot, en parties (`partie`) : le titre de chacune à gauche, son texte à
+ * droite. Puis les questions courtes (`questions`) et la fin (`fin-de-page`).
+ *
+ * Aucun fait n'y est écrit qui ne soit déjà dans le site : chaque page cite ses
+ * sources en tête de son fichier.
+ */
+import Layout from './Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import TeteDePage from '../components/tete-de-page.astro';
+import Questions from '../components/questions.astro';
+import FinDePage from '../components/fin-de-page.astro';
+
+/** `html` est la réponse affichée quand elle porte un lien ; `a` reste le texte
+    brut, lu par le balisage `FAQPage`. */
+interface Question { q: string; a: string; html?: string }
+
+interface Props {
+  /** Chemin de la page, sans domaine : `/make-ou-n8n`. */
+  url: string;
+  /** Le nom de la page dans le fil d'Ariane. */
+  nom: string;
+  titreSeo: string;
+  descriptionSeo: string;
+  /** Le h1, en HTML : un fragment court peut y être surligné par `mark`. */
+  titre: string;
+  titreLargeur?: string;
+  /** La réponse, en une ou deux phrases. Texte brut : elle est aussi reprise
+      dans le balisage. */
+  reponse: string;
+  /** Qui répond, à la troisième personne : une phrase datée, citable seule. */
+  fiche: string;
+  /** Date de publication, au format ISO (`2026-10-03`). */
+  publie: string;
+  /** De quoi parle la page, pour le balisage. */
+  sujets: string[];
+  faqs: Question[];
+  titreFin: string;
+  suiteFin: string;
+}
+
+const {
+  url, nom, titreSeo, descriptionSeo, titre, titreLargeur = '18ch', reponse, fiche,
+  publie, sujets, faqs, titreFin, suiteFin,
+} = Astro.props;
+
+const adresse = `https://liliansevoumian.fr${url}`;
+const source = url.replace(/^\//, '');
+
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: nom, url },
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': `${adresse}#article`,
+  headline: titre.replace(/<[^>]+>/g, ''),
+  description: descriptionSeo,
+  abstract: reponse,
+  author: { '@id': 'https://liliansevoumian.fr/#person' },
+  publisher: { '@id': 'https://liliansevoumian.fr/#person' },
+  image: 'https://liliansevoumian.fr/og-image.png',
+  datePublished: publie,
+  inLanguage: 'fr-FR',
+  about: sujets.map((name) => ({ '@type': 'Thing', name })),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': adresse },
+};
+---
+
+<Layout
+  title={titreSeo}
+  description={descriptionSeo}
+  ogType="article"
+  publishedDate={publie}
+  breadcrumbs={breadcrumbs}
+  faqSchema={faqs.map((f) => ({ question: f.q, answer: f.a }))}
+  articleSchema={articleSchema}
+>
+  <Navigation ctaSource={`${source}_nav`} />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <TeteDePage titre={titre} titreLargeur={titreLargeur} chapo={reponse} preuves={fiche} />
+
+    <slot />
+
+    <Questions
+      id="questions"
+      titre="Questions courtes."
+      items={faqs}
+    />
+
+    <FinDePage source={`${source}_fin`} titre={titreFin} suite={suiteFin} />
+  </main>
+
+  <Footer />
+</Layout>
