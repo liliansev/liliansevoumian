@@ -1,12 +1,42 @@
 # Funnel de conversion DataFast — liliansevoumian.fr
 
-Objectif business : **être contacté pour une mission**. Le site n'a plus qu'un
-seul canal, le **diagnostic de 20 min** réservé sur cal.com.
+Objectif business : **être contacté pour une mission**. Un seul geste sur tout
+le site : « Parlons de votre projet » ouvre la conversation, où le visiteur
+choisit WhatsApp, l'e-mail ou un appel de 45 minutes réservé sur cal.com.
 
 Le tracking est posé en code : attributs `data-fast-goal` lus nativement par le
-script DataFast cookieless sur les liens cal.com, plus un appel JS sur la résa
-confirmée. Les **funnels** se configurent dans le dashboard DataFast à partir des
-9 goals ci-dessous.
+script DataFast cookieless, plus quelques appels JS (conversation ouverte par la
+barre, réservation confirmée). Les **funnels** se configurent dans le dashboard
+DataFast à partir des goals ci-dessous.
+
+## 0. État vérifié le 8 octobre 2026
+
+**Le chemin en production** (VPS Hostinger, plus Vercel) :
+1. le script : `GET /js/script.js` → `deploy/server.mjs` → `datafa.st/js/script.cookieless.js` ;
+2. les événements : `POST /api/dfst-events` → `deploy/server.mjs` → `datafa.st/api/events`, avec
+   le `User-Agent`, l'`Origin` et l'IP du visiteur (`x-datafast-real-ip`, posée par Caddy) ;
+3. les robots d'IA : chaque requête hors `/api` passe par `trackAICrawlerResponse`
+   (`@datafast/ai-crawl`), c'est ce qui alimente l'onglet des robots.
+Le dossier `api/`, `vercel.json` et `middleware.ts` datent de Vercel et ne servent plus rien.
+
+**Vérifié par l'API** : aucun trou de collecte depuis le passage sur le VPS (3 octobre),
+9 pays et 20 villes en six jours (l'IP et le navigateur sont bien transmis), et les goals
+`causerie_opened`, `lead_call`, `lead_message`, `cal_abandoned`, `case_opened`,
+`youtube_opened` reçus. Le script se coupe de lui-même dans un navigateur automatisé
+(« bot detected ») : un test par robot ne produit aucun événement.
+
+**À faire dans le tableau de bord DataFast** (rien de tout cela n'est dans le dépôt) :
+- les funnels en place ne mesurent pas le parcours actuel : « Page expert → Call » filtre
+  l'étape 1 en `equals` sur `/expert-` (zéro visiteur depuis sa création), « Bonus » finit
+  sur `lead_form` qui n'existe plus, les deux autres finissent sur `lead_call` sans passer
+  par `causerie_opened`. Les refaire selon le §2 : étape 1 en `contains`, étape 2
+  `causerie_opened`, étape 3 `lead_call`, et un funnel parallèle vers `lead_message` ;
+- exclure votre propre trafic (réglage des IP exclues, ou
+  `localStorage.setItem('datafast_ignore','true')` dans chacun de vos navigateurs) :
+  du 3 au 8 octobre, une seule ville portait 8 visiteurs sur 35 et 18 sessions sur 51,
+  et sur les 30 jours d'avant 4 `lead_call` sur 11 ;
+- neuf visiteurs de Chine, Hong Kong et Singapour, une page vue chacun, sans aucun goal :
+  des robots, à exclure par pays si ces pays ne sont pas visés.
 
 > ⚠️ **DataFast est cookieless** (empreinte IP+UA serveur, aucun `datafast_visitor_id`
 > exposé). Conséquence : impossible d'attribuer une conversion depuis un backend tiers
@@ -85,18 +115,28 @@ signal d'intérêt de la page — il n'était pas instrumenté du tout.
 
 ### `faq_opened` — première ouverture d'une question
 Prop `question` = le libellé. Une question ouverte est une objection nommée : le
-classement des libellés dit laquelle bloque le plus. Depuis le 3 octobre 2026
-les questions sont des bulles (`questions.astro`), toutes ouvertes sur grand
-écran : le goal ne part donc que **sur téléphone**, quand le visiteur touche une
-question fermée. Sur grand écran il n'y a plus de geste à mesurer.
+classement des libellés dit laquelle bloque le plus. Depuis le 8 octobre 2026
+les questions sont un accordéon classique (`questions.astro`) sur toutes les
+largeurs : la première est ouverte à l'arrivée, les autres fermées. Le goal part
+donc **sur tous les écrans**, quand le visiteur ouvre une question fermée (du 3
+au 8 octobre il ne partait que sur téléphone). La première question de chaque
+page, déjà ouverte, n'est jamais comptée.
 
 ### `case_opened` — clic vers un cas client
 Prop `href`. Couvre les « VOIR LE CAS » du carrousel, « VOIR TOUS LES CAS », et
 les liens de `/cas-clients` depuis À propos et Offres. Aucun n'était tagué.
+Depuis le 8 octobre 2026 l'accueil n'a plus qu'un lien vers les cas, celui de
+leur index sous les recommandations : les liens vers Humble+ (récit), Fraich
+Touch et M Partners (métiers) en sont sortis, et les `case_opened` venus de
+l'accueil baissent d'autant.
 
-### `causerie_opened` — ouverture de la conversation depuis un bouton
+### `causerie_opened` — ouverture de la conversation
 Posé par `BoutonReservation` sur tous les « Parlons de votre projet » du site,
-qui ouvrent la conversation de `home-invite.astro` (WhatsApp, e-mail ou appel).
+qui ouvrent la conversation de `home-invite.astro` (WhatsApp, e-mail ou appel),
+et, depuis le 8 octobre 2026, émis en JS quand le visiteur ouvre la conversation
+par la barre d'écriture elle-même (une fois par page, et pas si un bouton l'a
+déjà ouverte). Avant cette date, écrire dans la barre du premier écran
+n'émettait rien : un `lead_message` pouvait arriver sans `causerie_opened`.
 La prop `source` dit d'où :
 
 | Param `source` | Où |
@@ -109,6 +149,7 @@ La prop `source` dit d'où :
 | `reprise_nav` · `reprise-hero` · `reprise_fin` | `/reprendre-une-automatisation-qui-casse` |
 | `make-ou-n8n_nav` · `make-ou-n8n_fin` · `combien-coute-une-automatisation_nav` · `combien-coute-une-automatisation_fin` · `agent-ia-pour-pme_nav` · `agent-ia-pour-pme_fin` | Pages-réponses |
 | `principes_nav` · `principes_fin` · `mentions_nav` · `404_nav` · `404` · `footer` | Autres pages |
+| `barre_hero` · `barre_coin` | La barre d'écriture : sous le titre de l'accueil, ou dans le coin bas droit (toutes les pages) |
 | `nav_mobile_cta` | Bouton du menu mobile, sur les pages qui portent les liens du site (toutes sauf l'accueil et les deux pages d'offre, qui émettent `…_nav_mobile`) |
 
 Les sources `…_fin` sont celles du champ de fin de page (`fin-de-page.astro`) :
@@ -121,10 +162,18 @@ la messagerie du visiteur avec son message déjà rédigé. Il mesure l'ouvertur
 pas l'envoi : celui-ci se fait hors du site. Le troisième moyen, l'appel, est
 un `lead_call` de source `home_causerie`.
 
+Le lien WhatsApp écrit dans la page ne porte pas le message (`https://wa.me/<numéro>`
+seul) : le texte est ajouté au moment du clic. DataFast relève l'adresse de
+tout lien sortant cliqué, et jusqu'au 8 octobre 2026 ce que le visiteur venait
+d'écrire partait chez lui avec elle (visible dans les « exit clicks »). Ne pas
+remettre le message dans le `href`. Le second traceur du site, taap.it (posé le
+1er avril 2026, que Lilian n'utilisait pas), a été retiré le même jour.
+
 ### `youtube_opened` — sortie vers YouTube depuis l'accueil
 Sources : `home_content` (la dernière vidéo, vignette et titre) et
 `home_content_chaine` (le lien « Voir toutes les vidéos sur YouTube »), tous deux
-dans la section « Je montre comment je fais » (`home-content.astro`). Le clic
+dans la section « Ma dernière vidéo YouTube. » (`home-content.astro`). La vidéo
+change d'elle-même quand une nouvelle sort : la source reste `home_content`. Le clic
 ouvre YouTube dans un nouvel onglet : il mesure la sortie, pas le visionnage.
 
 ### `outbound_formations` — sortie vers augmentes.fr

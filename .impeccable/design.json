@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-03T00:00:00Z",
+  "generatedAt": "2026-10-08T00:00:00Z",
   "title": "Design System: Lilian Sevoumian",
   "extensions": {
     "colorMeta": {
@@ -561,11 +561,11 @@
       },
       "title": {
         "displayName": "Titre",
-        "purpose": "h3 d’un bloc de texte, chiffre de preuve, nom d’un site."
+        "purpose": "h3 d’un bloc de texte, fait de « Pourquoi moi », nom d’un site."
       },
       "body-large": {
         "displayName": "Chapô",
-        "purpose": "Chapôs, texte d’une partie, usages."
+        "purpose": "Chapôs, texte d’une partie, usages ; intitulé d’une question, en graisse 500."
       },
       "body": {
         "displayName": "Corps",
@@ -609,7 +609,7 @@
       {
         "name": "ease-out-expo",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Entrées longues : surligneur, entrée d’en-tête, pastille de la barre, menu, page entrante."
+        "purpose": "Entrées longues : soulignement, entrée d’en-tête, pastille de la barre, menu, page entrante."
       },
       {
         "name": "ease-out-quart",
@@ -637,9 +637,9 @@
         "purpose": "Montée de 12 px des éléments d'une liste (.reveal-stagger), décalés de 80 ms."
       },
       {
-        "name": "geste-1-surligneur",
+        "name": "geste-1-soulignement",
         "value": "@property --draw 0→1 · 700ms cubic-bezier(0.16, 1, 0.3, 1) · retard 140ms après le bloc, 420ms dans un en-tête",
-        "purpose": "Geste d’auteur : la pastille pêche est rognée par clip-path de gauche à droite ; le texte reste en nuit et n’apparaît que là où la pêche est passée. Armé sous .js-ready."
+        "purpose": "Geste d’auteur : --draw règle la largeur du trait pêche sous un fragment de titre (fond d’une ligne, épaisseur --trait-souligne), tiré de gauche à droite ; le texte est là dès le départ et garde l’encre du titre. Armé sous .js-ready."
       },
       {
         "name": "geste-2-entree",
@@ -667,9 +667,24 @@
         "purpose": "La pastille de survol glisse d’un lien de la barre à l’autre."
       },
       {
-        "name": "reponse-arrive",
-        "value": "opacity + translateY(0.5rem) · 420ms cubic-bezier(0.16, 1, 0.3, 1) backwards",
-        "purpose": "Sous 768 px, la réponse d’une question arrive comme une bulle de la conversation."
+        "name": "signe-question",
+        "value": "transform 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Le « plus » d’une question devient « moins » : son trait vertical se couche. La réponse s’ouvre sans animation."
+      },
+      {
+        "name": "lien-fleche-trait",
+        "value": "background-size 0% → 100% · 2px · 200ms cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Au survol et au focus, le trait pêche se tire sous le libellé d’un lien fléché ; le libellé garde sa couleur, la flèche avance de 4 px."
+      },
+      {
+        "name": "tour-scene-metier",
+        "value": "10 à 14 s · joué une fois à l’entrée à l’écran (jouerTour)",
+        "purpose": "Une scène de métier joue un tour puis reste sur son image finale ; la commande d’arrêt n’est montrée que le temps du tour."
+      },
+      {
+        "name": "cellules-hero",
+        "value": "opacity 1200ms cubic-bezier(0.22, 1, 0.36, 1) · retard 2s + 420ms par cellule · une fois",
+        "purpose": "Dix cellules de la grille du premier écran s’allument l’une après l’autre en un seul passage, puis restent éteintes."
       },
       {
         "name": "media-survol",
@@ -751,17 +766,17 @@
       "name": "Lien secondaire fléché",
       "kind": "button",
       "refersTo": "link-cta",
-      "description": "Libellé blanc en bas de casse à 14 px. Au survol, une pastille pêche se déroule derrière le libellé, qui passe en nuit dans la même transition ; la flèche avance de 4 px.",
+      "description": "Libellé blanc en bas de casse à 14 px. Au survol et au focus, le même trait pêche que sous un titre se tire sous le libellé, qui garde sa couleur ; la flèche avance de 4 px.",
       "html": "<div class=\"ds-nuit\"><a class=\"ds-lien\" href=\"#\"><span class=\"ds-lien__l\">Voir les cas clients</span><svg viewBox=\"0 0 24 24\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></a></div>",
-      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-lien { display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#fff; font-size:.875rem; font-weight:500; text-decoration:none; } .ds-lien__l { position:relative; isolation:isolate; margin-left:-.5em; padding:.14em .5em .18em; transition:color 200ms cubic-bezier(.22,1,.36,1); } .ds-lien__l::before { content:\"\"; position:absolute; inset:0; z-index:-1; border-radius:9999px; background:var(--color-peche,#ffb38a); clip-path:inset(0 100% 0 0 round 9999px); transition:clip-path 200ms cubic-bezier(.22,1,.36,1); } .ds-lien svg { transition:transform 200ms cubic-bezier(.22,1,.36,1); } .ds-lien:hover .ds-lien__l::before,.ds-lien:focus-visible .ds-lien__l::before { clip-path:inset(0 0 0 0 round 9999px); } .ds-lien:hover .ds-lien__l,.ds-lien:focus-visible .ds-lien__l { color:var(--color-night,#111827); } .ds-lien:hover svg,.ds-lien:focus-visible svg { transform:translateX(4px); color:var(--color-peche,#ffb38a); } .ds-lien:focus-visible { outline:2px solid var(--color-peche,#ffb38a); outline-offset:2px; }"
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-lien { display:inline-flex; align-items:center; gap:8px; min-height:44px; color:#fff; font-size:.875rem; font-weight:500; text-decoration:none; } .ds-lien__l { padding-bottom:.3em; background:linear-gradient(var(--color-peche,#ffb38a),var(--color-peche,#ffb38a)) no-repeat 0 100% / 0% 2px; transition:background-size 200ms cubic-bezier(.22,1,.36,1); } .ds-lien svg { transition:transform 200ms cubic-bezier(.22,1,.36,1); } .ds-lien:hover .ds-lien__l,.ds-lien:focus-visible .ds-lien__l { background-size:100% 2px; } .ds-lien:hover svg,.ds-lien:focus-visible svg { transform:translateX(4px); color:var(--color-peche,#ffb38a); } .ds-lien:focus-visible { outline:2px solid var(--color-peche,#ffb38a); outline-offset:2px; }"
     },
     {
-      "name": "Surlignage en pastille",
+      "name": "Soulignement",
       "kind": "custom",
       "refersTo": "mark",
-      "description": "Une pastille pêche droite et ronde derrière un à trois mots, texte en nuit. Une seule par titre, jamais sur deux lignes.",
+      "description": "Un trait pêche tiré sous un fragment de titre, à l’encre du titre. Un seul par titre, jamais dans une île claire ; le fragment passe à la ligne avec le titre et le trait le suit.",
       "html": "<div class=\"ds-nuit\"><h2 class=\"ds-titre\">Un cas précis <mark class=\"ds-mark\">en tête ?</mark></h2></div>",
-      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-titre { margin:0; font-size:clamp(2rem,3vw + .5rem,3rem); font-weight:500; line-height:1.1; letter-spacing:-.03em; } .ds-mark { position:relative; isolation:isolate; display:inline-block; padding:.02em .36em .08em; background:none; color:var(--color-night,#111827); white-space:nowrap; } .ds-mark::before { content:\"\"; position:absolute; inset:0; z-index:-1; border-radius:9999px; background:var(--color-peche,#ffb38a); }"
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-titre { margin:0; font-size:clamp(2rem,3vw + .5rem,3rem); font-weight:500; line-height:1.1; letter-spacing:-.03em; } .ds-mark { background:linear-gradient(var(--color-peche,#ffb38a),var(--color-peche,#ffb38a)) no-repeat 0 100% / 100% max(2px,.075em); color:inherit; }"
     },
     {
       "name": "Chip",
@@ -780,12 +795,12 @@
       "css": ".ds-barre { display:flex; align-items:center; justify-content:space-between; gap:1rem; height:4rem; padding:0 1.5rem; background:var(--color-paper,#0c121f); border-bottom:1px solid rgb(255 255 255 / .09); font-family:var(--font-body,system-ui,sans-serif); } .ds-nom { color:#fff; font-size:1rem; font-weight:600; letter-spacing:-.02em; text-decoration:none; } .ds-liens { display:flex; gap:.25rem; } .ds-nl { position:relative; display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border-radius:9999px; color:var(--color-ink-mid,#c3c9d4); font-size:.875rem; font-weight:500; text-decoration:none; transition:color 200ms cubic-bezier(.22,1,.36,1),background-color 200ms cubic-bezier(.22,1,.36,1); } .ds-nl:hover,.ds-nl:focus-visible { color:#fff; background:rgb(255 255 255 / .09); } .ds-nl.est-la { color:#fff; font-weight:600; } .ds-nl.est-la::after { content:\"\"; position:absolute; bottom:3px; left:50%; width:4px; height:4px; margin-left:-2px; border-radius:9999px; background:var(--color-peche,#ffb38a); } .ds-nb { display:inline-flex; align-items:center; min-height:44px; padding:11px 18px; border-radius:9999px; background:var(--color-peche,#ffb38a); color:var(--color-night,#111827); font-size:.875rem; font-weight:500; text-decoration:none; transition:background-color 200ms cubic-bezier(.22,1,.36,1); } .ds-nb:hover,.ds-nb:focus-visible { background:var(--color-peche-clair,#ffc4a3); } .ds-nl:focus-visible,.ds-nb:focus-visible { outline:2px solid var(--color-peche,#ffb38a); outline-offset:2px; }"
     },
     {
-      "name": "Question et réponse",
+      "name": "Question",
       "kind": "custom",
-      "refersTo": "bulle-question",
-      "description": "Les questions d’une page, écrites comme un échange : la question à droite sur pêche, la réponse à gauche sur encre à 9 %. Tout est affiché sur grand écran ; sur téléphone, une réponse ouverte à la fois.",
-      "html": "<div class=\"ds-nuit ds-echange\"><p class=\"ds-q\">Pour qui travaillez-vous ?</p><p class=\"ds-r\">Pour des dirigeants de PME, des fondateurs de startup et des responsables des opérations, le plus souvent dans des entreprises de 5 à 50 personnes.</p></div>",
-      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-echange { display:grid; gap:.5rem; max-width:44rem; } .ds-q,.ds-r { margin:0; padding:.75rem 1rem; font-size:1rem; line-height:1.6; } .ds-q { justify-self:end; border-radius:16px 16px 6px 16px; background:var(--color-peche,#ffb38a); color:var(--color-night,#111827); } .ds-r { justify-self:start; max-width:88%; border-radius:16px 16px 16px 6px; background:rgb(255 255 255 / .09); color:#fff; }"
+      "refersTo": "question",
+      "description": "Les questions d’une page, en FAQ classique : des details qui portent le même name (en ouvrir une referme l’autre), la première ouverte, sans script. Une ligne par question entre deux filets, un « plus » qui devient « moins ».",
+      "html": "<div class=\"ds-nuit\"><div class=\"ds-faq\"><details class=\"ds-question\" name=\"ds-questions\" open><summary><h3>Pour qui travaillez-vous ?</h3><span class=\"ds-signe\" aria-hidden=\"true\"></span></summary><p>Pour des dirigeants de PME, des fondateurs de startup et des responsables des opérations, le plus souvent dans des entreprises de 5 à 50 personnes.</p></details><details class=\"ds-question\" name=\"ds-questions\"><summary><h3>Combien ça coûte ?</h3><span class=\"ds-signe\" aria-hidden=\"true\"></span></summary><p>La réponse de la page, lue dans data/home-faq.</p></details></div></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-faq { max-width:44rem; border-bottom:1px solid var(--color-divider,rgb(255 255 255 / .09)); } .ds-question { border-top:1px solid var(--color-divider,rgb(255 255 255 / .09)); } .ds-question summary { display:flex; align-items:center; justify-content:space-between; gap:1.5rem; min-height:44px; padding-block:1.25rem; list-style:none; cursor:pointer; } .ds-question summary::-webkit-details-marker { display:none; } .ds-question h3 { margin:0; font-size:clamp(1.0625rem,.5vw + .875rem,1.25rem); font-weight:500; line-height:1.35; } .ds-signe { position:relative; flex:none; width:.875rem; height:.875rem; color:var(--color-ink-low,#a3acbb); transition:color 160ms cubic-bezier(.22,1,.36,1); } .ds-signe::before,.ds-signe::after { content:\"\"; position:absolute; top:50%; left:0; width:100%; height:1.5px; margin-top:-.75px; background:currentColor; transition:transform 260ms cubic-bezier(.22,1,.36,1); } .ds-signe::after { transform:rotate(90deg); } .ds-question[open] .ds-signe::after { transform:rotate(0deg); } .ds-question summary:hover .ds-signe,.ds-question[open] .ds-signe { color:#fff; } .ds-question summary:focus-visible { outline:2px solid var(--color-peche,#ffb38a); outline-offset:2px; } .ds-question p { margin:0; padding:0 2.375rem 1.5rem 0; color:var(--color-ink-mid,#c3c9d4); line-height:1.55; }"
     },
     {
       "name": "Invite de fin de page",
@@ -807,36 +822,43 @@
       "name": "Logo client du défilé",
       "kind": "custom",
       "refersTo": "logo-client",
-      "description": "Chaque logo du bandeau « J'ai travaillé avec » est ramené à une silhouette claire (brightness(0) invert(1), opacité 0,78) et à une hauteur de 1,5em corrigée à l'œil par --echelle. Un nom sans logo reste composé en lettres dans la même ligne.",
+      "description": "Chaque logo du défilé « J'ai travaillé avec » (une ligne qui défile en 46 s, avec bouton de pause ; liste posée en mouvement réduit) est ramené à une silhouette claire (brightness(0) invert(1), opacité 0,78) et à une hauteur de 1,5em corrigée à l'œil par --echelle. Un nom sans logo reste composé en lettres dans la même liste.",
       "html": "<div class=\"ds-deep ds-defile\"><img class=\"ds-logo\" src=\"/logos/clients/qonto.svg\" width=\"82\" height=\"24\" alt=\"Qonto\" style=\"--echelle:0.9\"><span class=\"ds-nom\">M Partners</span><img class=\"ds-logo\" src=\"/logos/clients/jellysmack.svg\" width=\"6769\" height=\"1024\" alt=\"Jellysmack\" style=\"--echelle:0.85\"></div>",
-      "css": ".ds-deep { background:#0c121f; padding:1.5rem; } .ds-defile { display:flex; align-items:center; gap:2.25rem; font:500 1.25rem 'Geist Variable',system-ui,sans-serif; letter-spacing:-0.02em; color:#c3c9d4; } .ds-logo { display:block; width:auto; height:calc(1.5em * var(--echelle,1)); filter:brightness(0) invert(1); opacity:0.78; } .ds-nom { white-space:nowrap; }"
+      "css": ".ds-deep { background:#0c121f; padding:1.5rem; } .ds-defile { display:flex; flex-wrap:wrap; align-items:center; gap:1rem 1.5rem; font:500 1.25rem 'Geist Variable',system-ui,sans-serif; letter-spacing:-0.02em; color:#c3c9d4; } .ds-logo { display:block; width:auto; height:calc(1.5em * var(--echelle,1)); filter:brightness(0) invert(1); opacity:0.78; } .ds-nom { white-space:nowrap; }"
     }
   ],
   "narrative": {
     "northStar": "Nuit et pêche",
-    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait\naujourd'hui. L'accueil raconte, dans l'ordre fixé par lui : vous perdez du\ntemps, voilà pourquoi, voilà pourquoi automatiser, voilà pourquoi moi. Les deux\noffres chiffrées, **Automatisation & IA** et **Sites web**, gardent ensuite\nchacune leur page, à côté des pages d'outil, des pages de lecture, des cas\nclients et des principes. Le site doit tenir debout tout seul, sans ornement\npour rattraper une hiérarchie molle : le contraste vient de la taille, de\nl'espace et d'un accent unique.\n\n**Une seule tenue, sur toutes les pages.** La direction « tech moderne,\npropre », validée par Lilian sur l'accueil le 2 octobre 2026, a été étendue à\ntout le site le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est\nénoncée dans *La tenue commune* ; la section *L'accueil* ne décrit plus que ce\nqui est propre à cette page (sa grille, ses filets de cadre, ses scènes).\n\nLe site vit sur la nuit profonde `#0c121f`. Le texte est blanc, les gris sont\nteintés vers la nuit, et il n'y a qu'un accent : la pêche `#ffb38a`. Elle\nsurligne un mot en pastille, porte le bouton, et, parce qu'elle tient 10,76:1\nsur le fond, elle a aussi le droit d'être du texte d'accent, un trait de lien\net l'anneau de focus. Le clair est l'exception : il ne revient que dans l'île,\nun panneau `#f7f8fa` détaché et arrondi, où la pêche retombe à 1,64:1 et\nredevient une simple surface.\n\nPlus d'angle vif. Une surface s'arrondit selon sa taille, de 6 px pour un\ndétail de maquette à 32 px pour l'île, et ce qui se clique est rond : bouton,\nlien de la barre, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un\nsite « trop carré » : c'est le retour explicite du client.\n\nRien n'est encadré pour être rangé. Les sections se suivent sur le même fond,\nséparées par un filet d'un pixel ; à l'intérieur, les blocs de texte sont posés\nà plat et c'est l'espace qui les sépare. Listes à filets, grilles de cartes\nbordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ».\n\nLe mouvement porte trois gestes d'auteur : le surligneur qui se trace, l'entrée\nd'un en-tête de page, les médias qui s'ouvrent au défilement. Le reste est du\nretour d'interaction ou de l'accompagnement de lecture (voir *Components →\nMouvement*).\n\nTrois choses restent retirées, et l'absence est le geste : le monospace, les\nsur-titres au-dessus des titres, et les capitales de style. `SectionHeader` n'a\nni prop `label` ni filet, et la numérotation `01 / 02 / 03` n'existe plus que\nlà où l'ordre est l'information (les étapes d'une méthode, les rangs d'un\nrelevé).\n\n**Les noms de jetons et de classes sont hérités, leurs valeurs ne le sont pas.**\n`--color-paper` vaut la nuit, `--color-ink` vaut le blanc, `.bloc-encre` est le\npanneau clair, `.mono-label` et `.mono-caption` sont des libellés en bas de\ncasse dans la police de texte, `--font-mono` vaut Geist, `SubscriptionGrid` est\nune liste de prix à plat. Les composants consomment les mêmes noms qu'avant :\nseule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.",
+    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait\naujourd'hui. L'accueil raconte, dans l'ordre fixé par lui : vous perdez du\ntemps, voilà pourquoi, voilà pourquoi automatiser, voilà pourquoi moi. Les deux\noffres chiffrées, **Automatisation & IA** et **Sites web**, gardent ensuite\nchacune leur page, à côté des pages d'outil, des pages de lecture, des cas\nclients et des principes. Le site doit tenir debout tout seul, sans ornement\npour rattraper une hiérarchie molle : le contraste vient de la taille, de\nl'espace et d'un accent unique.\n\n**Une seule tenue, sur toutes les pages.** La direction « tech moderne,\npropre », validée par Lilian sur l'accueil le 2 octobre 2026, a été étendue à\ntout le site le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est\nénoncée dans *La tenue commune* ; la section *L'accueil* ne décrit plus que ce\nqui est propre à cette page (sa grille, ses filets de cadre, ses scènes).\n\nLe site vit sur la nuit profonde `#0c121f`. Le texte est blanc, les gris sont\nteintés vers la nuit, et il n'y a qu'un accent : la pêche `#ffb38a`. En\naplat, elle est le bouton d'appel ; et, parce qu'elle tient 10,76:1 sur le\nfond, elle a aussi le droit d'être un trait (sous un fragment de titre, sous\nun lien), du texte d'accent et l'anneau de focus. Le clair est l'exception : il ne revient que dans l'île,\nun panneau `#f7f8fa` détaché et arrondi, où la pêche retombe à 1,64:1 et\nredevient une simple surface.\n\nPlus d'angle vif. Une surface s'arrondit selon sa taille, de 6 px pour un\ndétail de maquette à 32 px pour l'île, et ce qui se clique est rond : bouton,\nlien de la barre, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un\nsite « trop carré » : c'est le retour explicite du client.\n\nRien n'est encadré pour être rangé. Les sections se suivent sur le même fond,\nséparées par un filet d'un pixel ; à l'intérieur, les blocs de texte sont posés\nà plat et c'est l'espace qui les sépare. Listes à filets, grilles de cartes\nbordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ».\n\nLe mouvement porte trois gestes d'auteur : le soulignement qui se tire,\nl'entrée d'un en-tête de page, les médias qui s'ouvrent au défilement. Le reste\nest du retour d'interaction ou de l'accompagnement de lecture (voir\n*Components → Mouvement*). Sur l'accueil, une animation joue une fois puis se\ntait : Lilian a demandé le 8 octobre 2026, après relecture du site en ligne,\nde réduire les animations de la page.\n\nTrois choses restent retirées, et l'absence est le geste : le monospace, les\nsur-titres au-dessus des titres, et les capitales de style. `SectionHeader` n'a\nni prop `label` ni filet, et la numérotation `01 / 02 / 03` n'existe plus que\nlà où l'ordre est l'information (les étapes d'une méthode, les rangs d'un\nrelevé).\n\n**Les noms de jetons et de classes sont hérités, leurs valeurs ne le sont pas.**\n`--color-paper` vaut la nuit, `--color-ink` vaut le blanc, `.bloc-encre` est le\npanneau clair, `.mono-label` et `.mono-caption` sont des libellés en bas de\ncasse dans la police de texte, `--font-mono` vaut Geist, `SubscriptionGrid` est\nune liste de prix à plat. Les composants consomment les mêmes noms qu'avant :\nseule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.",
     "keyCharacteristics": [
       "Nuit profonde en fond, partout ; aucune bande de fond ; le clair n'existe que dans une île arrondie.",
       "Un seul accent, la pêche. Texte posé dessus : toujours `--color-night`.",
       "Titres en graisse 500 : c'est la taille qui parle.",
-      "Le surlignage est une pastille droite, une par titre au plus.",
+      "La pastille pêche pleine est le bouton d'appel, et rien d'autre.",
+      "`mark` souligne : un trait pêche sous un fragment de titre, un par titre au plus.",
       "Tout en bas de casse, sans approche : aucun libellé en capitales.",
       "Aucun angle vif ; le rayon suit la taille de la surface, le cliquable est rond.",
       "Des blocs de texte à plat, séparés par l'espace ; ni carte bordée ni liste à filets.",
       "Un seul geste de contact : « Parlons de votre projet » ouvre la conversation.",
       "Une seule famille, Geist Variable.",
       "Trois gestes d'auteur de mouvement, joués une fois, jamais bloquants.",
+      "Sur l'accueil, une animation joue une fois puis s'arrête ; seule la scène du récit continue de bouger.",
       "Les artefacts publics et les marques tierces gardent leur palette dans leurs visuels, jamais dans le chrome du site."
     ],
     "rules": [
       {
         "name": "La règle du texte sur pêche",
-        "body": "Tout texte posé sur la pêche lit `--color-night`, valeur fixe qu'aucun bloc ne remappe, jamais `--color-ink`. `--color-ink` vaut le blanc sur la nuit, et le blanc sur la pêche tombe à 1,74:1. C'est vrai du libellé d'un bouton, d'un fragment surligné, d'une question, de la sélection de texte, et de tout état de survol qui pose la pêche derrière un libellé : le libellé change de couleur dans la même transition que le fond.",
+        "body": "Tout texte posé sur la pêche lit `--color-night`, valeur fixe qu'aucun bloc ne remappe, jamais `--color-ink`. `--color-ink` vaut le blanc sur la nuit, et le blanc sur la pêche tombe à 1,74:1. C'est vrai du libellé du bouton, du message du visiteur dans la conversation, de la sélection de texte, et de tout contrôle rond dont le survol pose la pêche derrière un glyphe : le glyphe change de couleur dans la même transition que le fond. Un fragment souligné n'est pas concerné : le trait passe sous lui, il garde l'encre du titre.",
+        "section": "colors"
+      },
+      {
+        "name": "La règle de la pastille",
+        "body": "La pastille pêche pleine est la forme du bouton d'appel, et elle ne sert qu'à lui (Lilian, le 8 octobre 2026). Ce qu'on veut faire ressortir dans un texte ne la reprend pas : un fragment de titre est souligné, un résultat se lit à l'encre, un rôle à signaler passe en `--color-accent-text`. Trois pastilles sont tombées ce jour-là : celle de `mark`, celle des résultats du carrousel de cas, celle du rôle « contrôle » d'une nomenclature.",
         "section": "colors"
       },
       {
         "name": "La règle du panneau clair",
-        "body": "Sur `.bloc-encre`, la pêche ne porte ni texte, ni trait, ni focus : 1,64:1. Elle n'y reste qu'en surface, la bande d'un mot surligné. `--color-accent-text` et `--color-focus` y repassent en nuit, le trait de `.lien-prose` aussi, et le bouton primaire y devient nuit à libellé blanc (16,69:1 contre le panneau), survol `night-soft`.",
+        "body": "Sur `.bloc-encre`, la pêche ne porte ni texte, ni trait, ni focus : 1,64:1. Aucun `mark` ne se pose donc dans une île : son trait y serait invisible. `--color-accent-text` et `--color-focus` y repassent en nuit, le trait de `.lien-prose` aussi, et le bouton primaire y devient nuit à libellé blanc (16,69:1 contre le panneau), survol `night-soft`.",
         "section": "colors"
       },
       {
@@ -921,7 +943,7 @@
       },
       {
         "name": "La règle de l'arrêt",
-        "body": "Tout ce qui bouge sans fin sur l'accueil a une commande d'arrêt utilisable au clavier et au doigt (bouton de pause du défilé, onglets des voix, bouton de la scène), et se suspend hors écran.",
+        "body": "Sur l'accueil, une animation joue une fois puis reste sur son image finale (Lilian, le 8 octobre 2026) : cellules du premier écran, scènes des métiers. Rien n'y tourne en boucle sans action du visiteur, à une exception près : la scène du récit, qui garde une commande d'arrêt utilisable au clavier et au doigt et se suspend hors écran. Une scène de métier montre la sienne le temps de son tour seulement.",
         "section": "components"
       },
       {
@@ -953,17 +975,24 @@
         "name": "La règle du geste unique",
         "body": "Tous les boutons disent « Parlons de votre projet » et ouvrent la conversation de `home-invite`, rendue par `Layout` sur toutes les pages. `BoutonReservation` : conversation par défaut, prop `direct` pour l'agenda.",
         "section": "components"
+      },
+      {
+        "name": "La règle des cas discrets",
+        "body": "Aucun bloc de l'accueil ne cite un cas client ni n'y mène. Le seul lien vers les cas est celui de leur index, sous les recommandations.",
+        "section": "components"
       }
     ],
     "dos": [
       "Do composer une page intérieure avec `tete-de-page`, `partie`, `questions`, `fin-de-page`, `pourquoi-moi` et `retour`, ou partir d'un des deux gabarits (`PageExpertOutil`, `PageReponse`).",
       "Do séparer deux sections par un filet `divider` d'un pixel, sur le même fond.",
       "Do réserver l'île claire à ce que le lecteur est venu vérifier : deux par page au plus, jamais deux de suite, jamais la première ni la dernière section.",
-      "Do lire `--color-night` pour tout texte posé sur la pêche : libellé de bouton, fragment surligné, question d'un échange, état de survol qui pose la pêche.",
+      "Do lire `--color-night` pour tout texte posé sur la pêche : libellé du bouton, message du visiteur dans la conversation, glyphe d'un contrôle rond dont le survol pose la pêche.",
+      "Do réserver la pastille pêche pleine au bouton d'appel, et souligner un fragment de titre par `mark`.",
       "Do laisser les composants lire les jetons de rôle : ils suivent l'île claire sans variante.",
       "Do passer le bouton en nuit, et les traits et le focus en nuit, sur l'île claire.",
       "Do garder les titres en graisse 500 et faire monter la taille, pas le poids.",
-      "Do garder un fragment surligné court, sur une ligne, et vérifier qu'il tient à 320 px.",
+      "Do garder un fragment souligné court : un à trois mots, la chute du titre.",
+      "Do écrire une animation de l'accueil pour qu'elle joue une fois et finisse sur une image fixe, la même que sans script.",
       "Do écrire tout libellé en bas de casse dans la source.",
       "Do poser des blocs de texte à plat, séparés par l'espace, et aligner leurs colonnes sur l'échelle (`gouttiere`, `groupe`, `lie`, `colle`).",
       "Do passer par `BoutonReservation` pour tout bouton d'appel, avec sa `source` ; l'URL de l'agenda vient de `lib/reservation.ts`.",
@@ -981,8 +1010,10 @@
       "Don't poser une bande de fond bord à bord, ni changer de fond pour rythmer la page. Une surface ne monte que pour un panneau arrondi dans la colonne.",
       "Don't étendre le panneau clair bord à bord, ni en faire une carte hors de l'accueil : c'est une île à marge, la section entière.",
       "Don't composer une section en grille de cartes bordées ou en liste à filets : c'est ce que Lilian a rejeté comme « IA slop ».",
-      "Don't replier des questions dans un accordéon à cadres.",
-      "Don't incliner le surlignage, en poser deux dans un titre, ni le laisser passer à la ligne dans un titre.",
+      "Don't encadrer les questions ni les récrire en bulles de conversation : c'est une FAQ classique, des lignes séparées par un filet.",
+      "Don't poser une pastille pêche derrière un mot, un résultat ou un rôle : elle est la forme du bouton d'appel.",
+      "Don't souligner deux fragments dans un titre, ni poser un `mark` hors d'un titre ou dans une île claire.",
+      "Don't ajouter à l'accueil une animation qui tourne en boucle sans action du visiteur : ni texte qui se tape seul, ni minuterie, ni scène en boucle. Deux boucles restent, par choix de Lilian, chacune avec sa commande d'arrêt : le défilé des logos du premier écran et la scène du récit.",
       "Don't écrire un libellé en capitales, que ce soit par une classe ou tapé tel quel dans le texte, ni lui donner une approche positive.",
       "Don't poser un sur-titre au-dessus d'un titre, ni une numérotation de section `01 / 02 / 03`. Un numéro ne reste que là où l'ordre est l'information.",
       "Don't remonter un titre en graisse 600 par un utilitaire : la règle commune l'emporte, et le balisage mentirait.",
@@ -1006,7 +1037,7 @@
       "Don't écrire un `clamp()`, une `cubic-bezier()` ou une durée couplée sur place dans un composant. L'échelle, les trois courbes et les durées vivent dans `@theme`.",
       "Don't commuter un rôle typographique entre deux jetons à un point de rupture.",
       "Don't poser un commentaire `{/* … */}` à l'intérieur d'une expression Astro (dans un `.map()`, un `&&`, ou entre les attributs d'un composant) : le compilateur rend `Expected \")\" but found \"$$render\"` et toutes les pages tombent en 500. Le commentaire va avant l'expression.",
-      "Don't mettre un cas client au premier plan de l'accueil, ni y remettre une forme 3D, une scène collante sous 1024 px ou les prix en rangées.",
+      "Don't mettre un cas client au premier plan de l'accueil, ni lier un de ses blocs à un cas précis ; ni y remettre une forme 3D, une scène collante sous 1024 px ou les prix en rangées.",
       "Don't présenter le vibe coding comme une troisième offre."
     ]
   }

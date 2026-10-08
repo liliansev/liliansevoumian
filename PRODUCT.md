@@ -38,6 +38,15 @@ Précision du 2 octobre 2026 : en passant sur la page, on doit comprendre que Li
 
 Précision du 3 octobre 2026 : Lilian retire les sites web de la page d'accueil. Les quatre métiers, dans l'ordre qu'il a donné : **automatisation, agents IA, dashboards et outils métiers, formations**. Le troisième est « sur devis ». La vitrine des trois sites disparaît de l'accueil ; la page d'offre `/sites-web-abonnement` reste en ligne et dans le pied de page. Sur téléphone, les quatre métiers se présentent en onglets, un bloc à la fois. La section ne s'intitule plus « Je fais quatre choses. », qu'il juge faible, mais « Mes expertises. ».
 
+Précision du 8 octobre 2026, après relecture de la page en ligne par Lilian :
+- **Le récit.** Trois phrases courtes, sans nom de client et sans lien vers un cas : « Vous perdez du temps. Regardez où. », « Vos outils ne se parlent pas. » (la cause n'est pas le copier-coller mais des outils qui ne sont pas synchronisés, d'où le temps perdu et les erreurs), « Ce qui se répète s'automatise. ».
+- **Aucun bloc de l'accueil ne mène à un cas client précis** : « si demain j'ai un autre client, ça peut changer ». Les quatre métiers tiennent en un nom, une phrase, une ligne et leur sortie ; les cas gardent leur page et un seul lien vers leur index.
+- **Moins d'animations** : un mouvement joue une fois puis s'arrête (scènes des métiers, cases du premier écran), les recommandations ne défilent plus seules. Deux boucles restent : le défilé des logos du premier écran (posé en liste fixe ce jour-là, Lilian l'a redemandé : « c'était mieux quand ça déroulait ») et la scène du récit. Les images fixes sont admises.
+- **La pastille pêche est le bouton d'appel**, et rien d'autre : un fragment de titre se distingue par un soulignement pêche.
+- **Une FAQ classique** (accordéon), et non des bulles de conversation.
+- **La dernière vidéo YouTube** s'affiche toujours d'elle-même.
+- Titres donnés par lui : « Ma dernière vidéo YouTube. », « Vos questions. », « Mes activités » (pied de page), « Écrivez-moi. » sous le titre de fin. Pour les recommandations il a dicté « On a collaboré ensemble » ; la page dit « On a travaillé ensemble. » (même sens, sans le pléonasme), à lui de trancher.
+
 Ce que la page doit mettre en avant, sans ordre imposé : construire des automatisations et des agents IA personnalisés ; créer des landing pages qui convertissent ; créer des vidéos en motion design ; ses formations ou son agence ; sa newsletter (Lumail) ; sa chaîne YouTube.
 
 Pour « qui je suis » : il fait ça depuis six ans, il l'a appliqué dans ses propres activités, et il connaît de l'intérieur la contrainte d'avoir une équipe et des clients, de devoir livrer tout en perdant du temps ou sans avoir les bons outils métier.
@@ -107,7 +116,8 @@ Ce qui peut être affirmé aujourd'hui, avec sa source. « LinkedIn » désigne 
 - **Jellysmack** : No-Code Engineer en CDI, d'avril 2022 à avril 2023 (LinkedIn).
 - **École O'clock** : développeur back-end, stage d'avril à octobre 2023 (LinkedIn).
 - **Missions freelance datées** (LinkedIn) : Familytrip (mars-avril 2021), Qonto et KlaK (novembre 2021 à février 2022), Edumiam (janvier 2022 à janvier 2024), Movecool (mai 2022 à février 2023), Reborn (juillet 2023 à janvier 2024), Deuxième Souffle (juillet 2023 à mars 2024), Boost ton Biz (juillet 2024 à août 2025).
-- **Cas clients documentés sur le site** : Humble+, M Partners, Fraich Touch, Celeris, Deuxième Souffle (`src/content/cas-clients/`), chacun avec ses outils et ses chiffres mesurés chez le client.
+- **Cas clients documentés sur le site** : Humble+, M Partners, Fraich Touch, Deuxième Souffle (`src/content/cas-clients/`), chacun avec ses outils et ses chiffres mesurés chez le client.
+- **Celeris n'est plus cité** : le cas a été retiré du site le 8 octobre 2026 à la demande de Lilian (« c'était du mentoring en vrai »). Ni fiche, ni logo, ni mention : ne pas le réintroduire comme réalisation.
 - **Réalisations citées** (LinkedIn) : commandes B2B reliées à Shopify et Pennylane ; facturation synchronisée entre HubSpot et Pennylane ; prospection qualifiée par des agents IA ; enrichissement de fiches produits dans Odoo ; back-office de La Capsule.
 - **Recommandations** : Ismail Landoulsi (CasanovaParis), Alexis Kovalenko (Contournement), Benjamin Potet (Solution Architect Customer Experience chez Make, précisé par Lilian le 2 octobre 2026) (`src/components/Testimonials.astro`).
 - **Sites réalisés** : son propre site, agenceafk, Augmentés, Youmanista, meilleurs.tools, La Petite Stack (`src/data/realisations.ts`, captures dans `public/sites-web/projects/`, vérifiées contre les sites en ligne le 1er octobre 2026). Flameborn est sorti de la liste ce jour-là : flameborn.fr ne répondait plus (zone DNS vide).
