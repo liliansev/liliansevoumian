@@ -82,6 +82,10 @@
      écran, dans une demi-largeur. La pente suit la largeur, et la hauteur de la
      fenêtre la borne : six lignes doivent tenir sur un écran de portable. */
   --text-story: clamp(2rem, min(3.6vw + 0.5rem, 8svh), 4rem);
+  /* Les liens du menu plein écran, sur téléphone et tablette : assez grands
+     pour tenir l'écran à quatre. La hauteur de la fenêtre les borne, pour
+     qu'ils tiennent sans défiler sur un petit téléphone. */
+  --text-menu: clamp(2rem, min(9vw + 0.25rem, 5.5svh), 3rem);
   /* La phrase qui ouvre l'accueil, seule et centrée : le plus grand corps du
      site. */
   --text-affiche: clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem);
@@ -1123,18 +1127,21 @@ html:has(.causerie) footer {
   letter-spacing: -0.02em;
   text-decoration: none;
 }
-/* Une liste en grand, une suite plus discrète, et le bouton en bas, sous le
-   pouce. Tout est calé vers le bas : la liste était collée en haut de l'écran,
-   au-dessus de 560 px de vide. Pas de filet entre les liens : c'est la taille
-   qui les sépare. */
+/* Les métiers en grand, en haut ; la suite, plus discrète, en bas, juste
+   au-dessus du bouton. L'écran est tenu par ses deux bouts et l'espace qui
+   reste est entre les deux groupes, où il sépare. Deux essais avant celui-ci :
+   la liste collée en haut laissait 560 px de vide dessous ; calée en bas, elle
+   laissait le même vide au-dessus (capture d'iPhone de Lilian, le 8 octobre
+   2026). C'était la taille des liens qui ne remplissait pas l'écran, pas leur
+   place. Pas de filet entre les liens : c'est la taille qui les sépare. */
 .mobile-menu__content {
   display: grid;
-  align-content: end;
+  align-content: space-between;
   gap: var(--spacing-groupe);
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-block: 1.5rem;
+  padding-block: 2rem 1.5rem;
   -webkit-overflow-scrolling: touch;
 }
 .mobile-link {
@@ -1150,10 +1157,10 @@ html:has(.causerie) footer {
 }
 .mobile-menu__link {
   padding-block: 0.4rem;
-  font-size: var(--text-title-lg);
+  font-size: var(--text-menu);
   font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: 1.15;
+  letter-spacing: var(--tracking-display);
 }
 .mobile-menu__suite .mobile-link {
   color: var(--color-ink-mid);

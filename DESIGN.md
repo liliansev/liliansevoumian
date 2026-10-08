@@ -1186,7 +1186,8 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
 | Énoncé (titres du récit, titre de fin de page) | `--text-story` | 32 → 60 | 500 · 1,1 · −0,03em |
 | Titre de section (`h2`) | `--text-headline` | 32 → 48 | 500 · 1,1 · −0,03em |
 | Phrase (titre d'une `partie`, principe, phrase d'un métier, citation) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
-| Titre lg (prix d'une formule, titre d'un cas dans la liste, lien du menu mobile) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,2 |
+| Lien du menu mobile | `--text-menu` | 32 → 48 | 500 · 1,15 · −0,03em |
+| Titre lg (prix d'une formule, titre d'un cas dans la liste) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,2 |
 | Titre (`h3`, fait de « Pourquoi moi », nom d'un site) | `--text-title` | 20 → 24 | 500 · 1,2 · −0,02em |
 | Chapô, texte d'une `partie`, usages ; l'intitulé d'une question, en 500 | `--text-body-large` | 17 → 20 | 400 · 1,35 à 1,65 |
 | Corps | `--text-body` | 16 | 400 · 1,55 à 1,6 · 0 |
@@ -1549,11 +1550,16 @@ flou.
 **Le menu mobile** est un dialogue natif plein écran sur fond nuit : en-tête et
 pied fixes, seule la liste défile, dans la hauteur dynamique du viewport et
 avec les zones de sécurité du téléphone. Même composition partout : une liste
-en grand (`--text-title-lg`, graisse 500 : les quatre métiers sur l'accueil,
-les deux offres ailleurs), une suite plus discrète (`--text-body-large`,
-`ink-mid`), et le bouton en bas, sous le pouce. Tout est calé vers le bas de
-l'écran. Pas de filet entre les liens : c'est la taille qui les sépare. Survol
-en `accent-soft`. Passer au format bureau ferme le menu.
+en grand, en haut (`--text-menu`, 32 à 48 px, graisse 500 : les quatre métiers
+sur l'accueil, les deux offres ailleurs), une suite plus discrète en bas
+(`--text-body-large`, `ink-mid`), puis le bouton, sous le pouce. L'écran est
+tenu par ses deux bouts et l'espace qui reste est entre les deux groupes
+(`align-content: space-between`). Deux essais avant : la liste collée en haut
+laissait un grand vide dessous ; calée en bas, elle laissait le même au-dessus
+(capture d'iPhone de Lilian, le 8 octobre 2026). C'était la taille des liens
+qui ne tenait pas l'écran, pas leur place. Pas de filet entre les liens : c'est
+la taille qui les sépare. Survol en `accent-soft`. Passer au format bureau
+ferme le menu.
 
 **Texte agrandi : la barre passe au menu.** Ses liens demandent environ 56em de
 large ; une requête de conteneur en em (`barre-nav`, dans `global.css`) masque
