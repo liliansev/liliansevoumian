@@ -4,7 +4,7 @@ import { mkdtemp, mkdir, writeFile, symlink, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { request } from 'node:http';
-import { createSiteServer } from './server.mjs';
+import { createSiteServer, parseLatestVideo } from './server.mjs';
 async function fixture(t, options = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'site-server-'));
   await mkdir(join(dir, 'offre')); await mkdir(join(dir, '_astro'));
@@ -26,6 +26,7 @@ test('static pages, HEAD, MIME, canonical redirects and real 404', async t => {
   assert.equal(head.headers.get('content-length'), '5'); assert.equal(await head.text(), '');
   const redirect = await fetch(`${url}/offre/?x=1`, { redirect: 'manual' });
   assert.equal(redirect.status, 308); assert.equal(redirect.headers.get('location'), '/offre?x=1');
+  for (const [path, target] of [['/offre/index.html?x=1', '/offre?x=1'], ['/index.html', '/'], ['/sitemap.xml', '/sitemap-index.xml'], ['/cas-clients/onboarding-ecommerce?x=1', '/cas-clients?x=1'], ['/cas-clients/celeris', '/cas-clients']]) { const index = await fetch(url + path, { redirect: 'manual' }); assert.equal(index.status, 308); assert.equal(index.headers.get('location'), target); }
   const missing = await fetch(`${url}/absent`); assert.equal(missing.status, 404); assert.equal(await missing.text(), 'missing');
   const font = await fetch(`${url}/_astro/a.woff2`); assert.equal(font.headers.get('content-type'), 'font/woff2'); assert.match(font.headers.get('cache-control'), /immutable/);
   const old = await new Promise((resolve, reject) => { const req = request(`${url}/course?x=1`, { headers: { Host: 'formations.liliansevoumian.fr' } }, res => { res.resume(); resolve(res.headers.location); }); req.on('error', reject); req.end(); });
@@ -59,7 +60,7 @@ test('events preserve upstream status, sanitize IP, bound body and reject invali
   const { url } = await fixture(t, { fetchImpl: async (...args) => { calls.push(args); return Response.json({ ok: true }, { status: 202 }); } });
   const headers = { 'Content-Type': 'application/json', 'X-Real-IP': '203.0.113.4', 'CF-Connecting-IP': '1.1.1.1' };
   assert.equal((await fetch(`${url}/api/dfst-events`, { method: 'POST', headers, body: '{}' })).status, 202);
-  assert.equal(calls[0][1].headers['x-datafast-real-ip'], '203.0.113.4');
+  assert.equal(calls[0][1].headers['x-datafast-real-ip'], '203.0.113.4'); assert.equal(calls[0][1].headers.Origin, 'https://liliansevoumian.fr');
   assert.equal((await fetch(`${url}/api/dfst-events`, { method: 'POST', headers, body: '{' })).status, 400);
   assert.equal((await fetch(`${url}/api/dfst-events`, { method: 'POST', headers, body: 'x'.repeat(65537) })).status, 413);
   assert.equal((await fetch(`${url}/api/dfst-events`)).status, 405);
@@ -78,9 +79,42 @@ test('newsletter delegates original body and canonical origin to shared validato
   assert.equal((await fetch(`${url}/api/newsletter`, { method: 'POST', body: 'a'.repeat(4097) })).status, 413);
 });
 test('crawler hooks receive public URL, response status and no spoofable IP headers', async t => {
-  const calls = [];
-  const { url } = await fixture(t, { analytics: true, track: (...args) => calls.push(args) });
+  const calls = []; const lines = [];
+  const { url } = await fixture(t, { analytics: true, track: (...args) => calls.push(args), log: line => lines.push(JSON.parse(line)) });
   await fetch(`${url}/absent?q=1`, { headers: { 'User-Agent': 'GPTBot', 'X-Real-IP': '203.0.113.5', 'CF-Connecting-IP': '1.1.1.1', 'X-Forwarded-For': '2.2.2.2' } });
-  assert.equal(calls.length, 1); assert.equal(calls[0][0].url, 'https://liliansevoumian.fr/absent?q=1'); assert.equal(calls[0][1].statusCode, 404);
+  await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 Chrome/120' } });
+  assert.deepEqual(lines, [{ crawler: 'GPTBot', category: 'training', path: '/absent', status: 404 }]);
+  assert.equal(calls.length, 2); assert.equal(calls[0][0].url, 'https://liliansevoumian.fr/absent?q=1'); assert.equal(calls[0][1].statusCode, 404);
   assert.equal(calls[0][2].getIp(), '203.0.113.5'); assert.equal(calls[0][0].headers.get('cf-connecting-ip'), null); assert.equal(calls[0][0].headers.get('x-forwarded-for'), null);
+});
+
+test('latest video: parses the feed, caches it, survives an outage and proxies only its own thumbnail', async t => {
+  const feed = id => `<feed><entry><yt:videoId>${id}</yt:videoId><title>Make &amp; n8n : l'un ou l&apos;autre ?</title><published>2026-10-06T09:09:07+00:00</published></entry><entry><yt:videoId>AAAAAAAAAAA</yt:videoId><title>Ancienne</title></entry></feed>`;
+  assert.deepEqual(parseLatestVideo(feed('p7zrKvfo6TY')), { id: 'p7zrKvfo6TY', titre: 'Make & n8n\u00a0: l’un ou l’autre\u00a0?', publiee: '2026-10-06' });
+  assert.equal(parseLatestVideo('<feed></feed>'), null); assert.equal(parseLatestVideo(feed('trop-court')), null);
+  const calls = []; let online = true; let current = 'p7zrKvfo6TY';
+  const { url } = await fixture(t, { videoTtlMs: 0, fetchImpl: async endpoint => {
+    calls.push(endpoint);
+    if (!online) throw new Error('offline');
+    if (endpoint.includes('feeds/videos.xml')) return new Response(feed(current));
+    return endpoint.includes('maxresdefault') ? new Response('', { status: 404 }) : new Response('jpeg');
+  } });
+  const first = await fetch(`${url}/api/derniere-video`);
+  assert.equal(first.status, 200); assert.equal(first.headers.get('content-type'), 'application/json'); assert.equal((await first.json()).id, 'p7zrKvfo6TY');
+  assert.match(calls[0], /playlist_id=UULF/);
+  const image = await fetch(`${url}/api/derniere-video/vignette?v=p7zrKvfo6TY`);
+  assert.equal(image.status, 200); assert.equal(image.headers.get('content-type'), 'image/jpeg'); assert.equal(await image.text(), 'jpeg');
+  assert.ok(calls.some(endpoint => endpoint.endsWith('/vi/p7zrKvfo6TY/hqdefault.jpg'))); assert.equal(image.headers.get('cache-control'), 'public, max-age=600');
+  assert.equal((await fetch(`${url}/api/derniere-video/vignette?v=AAAAAAAAAAA`)).status, 404);
+  assert.equal((await fetch(`${url}/api/derniere-video`, { method: 'POST' })).status, 405);
+  online = false;
+  assert.equal((await (await fetch(`${url}/api/derniere-video`)).json()).id, 'p7zrKvfo6TY');
+  online = true; current = 'BBBBBBBBBBB';
+  assert.equal((await (await fetch(`${url}/api/derniere-video`)).json()).id, 'BBBBBBBBBBB');
+});
+test('latest video answers 503 while the feed has never been read', async t => {
+  const { url } = await fixture(t, { fetchImpl: async () => { throw new Error('offline'); } });
+  const response = await fetch(`${url}/api/derniere-video`);
+  assert.equal(response.status, 503); assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal((await fetch(`${url}/api/derniere-video/vignette?v=p7zrKvfo6TY`)).status, 404);
 });

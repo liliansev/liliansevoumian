@@ -19,7 +19,12 @@ copy those explicitly before the next deployment. This prevents uploaded commits
 from changing the SSH receiver.
 
 HTTPS routes live in /opt/edge/caddy/sites/liliansevoumian.caddy (shared proxy,
-one file per site, versioned with git in /opt/edge). After an edit:
+one file per site, versioned with git in /opt/edge). Both site blocks carry
+`tls { key_type rsa2048 }` since 8 October 2026: Caddy's default ECDSA chain made
+RSA-only clients fail the handshake, and PerplexityBot, meta-externalagent and
+Amazonbot had stopped coming the day the site left Vercel (RSA). Changing the
+key type of a live certificate needs the stored one removed and the site block
+taken out of the config for one reload, otherwise Caddy keeps the cached one. After an edit:
 `docker exec edge-caddy-1 caddy validate --config /etc/caddy/Caddyfile`, then
 `docker exec edge-caddy-1 caddy reload --config /etc/caddy/Caddyfile`.
 
