@@ -3,14 +3,13 @@
  * /agent-ia-pour-pme — la réponse à « Agent IA pour PME : par où commencer ? ».
  *
  * Sources des faits, à relire avant toute modification :
- *  — les deux cas : les fiches M Partners (agent orchestré dans Make, validé
- *    par le dirigeant) et Celeris (deux agents sur n8n, moteur Mistral, fiches
- *    créées en brouillon, phase de test) de `src/content/cas-clients` ;
+ *  — le cas : la fiche M Partners (agent orchestré dans Make, validé par le
+ *    dirigeant) de `src/content/cas-clients`. Le second cas de la page,
+ *    Celeris, en est sorti le 8 octobre 2026 avec sa fiche (c'était du
+ *    mentorat, pas une réalisation) ;
  *  — les prix : `data/service-pricing` et `data/maintenance`, lus ici ;
  *  — la position tenue partout sur le site : l'IA lit et propose, des règles
  *    écrites contrôlent, un humain garde la main.
- * Le statut de Celeris (« phase de test ») est à mettre à jour si la
- * production a démarré.
  */
 import PageReponse from '../layouts/PageReponse.astro';
 import Partie from '../components/partie.astro';
@@ -28,12 +27,12 @@ const faqs = [
   },
   {
     q: 'Mes données partent-elles chez un fournisseur d’IA ?',
-    a: 'Le choix du modèle et de l’hébergement se fait au cadrage, avant de construire. Chez Celeris, qui tenait à garder la maîtrise de ses données, le moteur est Mistral et la partie sensible tourne en local.',
+    a: 'Le choix du modèle et de l’hébergement se fait au cadrage, avant de construire. Quand vos données doivent rester chez vous, l’automatisation peut tourner sur vos serveurs avec n8n, avec un modèle européen comme Mistral.',
   },
   {
     q: 'Faut-il Make ou n8n pour un agent IA ?',
-    a: 'Les deux le permettent. L’agent de M Partners est orchestré dans Make, ceux de Celeris dans n8n. Le choix dépend de vos données et de la personne qui maintiendra le système.',
-    html: 'Les deux le permettent. L’agent de M Partners est orchestré dans <a class="lien-prose" href="/expert-make">Make</a>, ceux de Celeris dans <a class="lien-prose" href="/expert-n8n">n8n</a>. <a class="lien-prose" href="/make-ou-n8n">Le choix dépend de vos données</a> et de la personne qui maintiendra le système.',
+    a: 'Les deux le permettent. L’agent de M Partners est orchestré dans Make ; je passe à n8n quand les données doivent rester en interne ou quand l’agent a besoin de code autour de lui. Le choix dépend de vos données et de la personne qui maintiendra le système.',
+    html: 'Les deux le permettent. L’agent de M Partners est orchestré dans <a class="lien-prose" href="/expert-make">Make</a> ; je passe à <a class="lien-prose" href="/expert-n8n">n8n</a> quand les données doivent rester en interne ou quand l’agent a besoin de code autour de lui. <a class="lien-prose" href="/make-ou-n8n">Le choix dépend de vos données</a> et de la personne qui maintiendra le système.',
   },
   {
     q: 'Un agent IA peut-il travailler sans surveillance ?',
@@ -99,17 +98,12 @@ const faqs = [
     </p>
   </Partie>
 
-  <Partie titre="Deux cas réels">
+  <Partie titre="Un cas réel">
     <p>
       Chez <a class="lien-prose" href="/cas-clients/m-partners">M Partners</a>, cabinet de chasse de têtes, un agent IA
       note et classe les dirigeants à contacter, et le dirigeant du cabinet valide avant le lancement des
       séquences&nbsp;: un passage prend environ 10&nbsp;minutes, contre 1 à 3&nbsp;heures à la main pour
       50&nbsp;entreprises.
-    </p>
-    <p>
-      Chez <a class="lien-prose" href="/cas-clients/celeris">Celeris</a>, distributeur informatique B2B, deux agents IA
-      préparent les fiches produit dans l’ERP Odoo&nbsp;; chaque fiche est créée en brouillon et un commercial la valide
-      avant publication. Le cas publié décrit la phase de test.
     </p>
   </Partie>
 

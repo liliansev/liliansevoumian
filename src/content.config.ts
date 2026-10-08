@@ -34,8 +34,8 @@ const casClients = defineCollection({
      * EXACTEMENT trois actions. Le `.length(3)` est délibérément strict — un
      * gabarit qui accepte deux actions invite à en inventer une troisième pour
      * remplir le dessin. Un cas dont la chaîne ne rentre pas dans cette forme
-     * (Celeris, dont le parcours est linéaire) n'a pas de `flow` : il n'a pas
-     * de schéma, plutôt qu'un schéma faux.
+     * (un parcours linéaire, par exemple) n'a pas de `flow` : il n'a pas de
+     * schéma, plutôt qu'un schéma faux.
      */
     flow: z
       .object({
@@ -54,7 +54,7 @@ const casClients = defineCollection({
      * Minimum trois lignes, délibérément. Une ou deux lignes ne font pas une
      * bascule, elles font un chiffre isolé qu'on aurait tendance à compléter
      * pour équilibrer le bloc. Un cas qui n'a pas trois écarts documentés n'en
-     * a pas (Celeris : un seul, et mesuré en environnement de test).
+     * a pas.
      *
      * Les deux termes doivent être écrits dans le corps du cas. Aucun « avant »
      * reconstruit pour faire valoir un « après ».

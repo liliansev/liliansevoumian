@@ -1,7 +1,7 @@
 /*
  * Les entreprises avec lesquelles Lilian a travaillé : clients en mission,
- * employeurs, écoles où il forme. Une seule liste, lue par le bandeau qui
- * défile au bas du premier écran de l'accueil.
+ * employeurs, écoles où il forme. Une seule liste, lue par le bandeau de logos
+ * au bas du premier écran de l'accueil.
  *
  * Tous les noms viennent du parcours (`parcours.ts`) et des cas clients
  * publiés : rien n'entre ici qui ne soit attesté ailleurs sur le site.
@@ -23,7 +23,6 @@
  *   Jellysmack         jellysmack.com, mot-symbole de l'en-tête (police d'icônes)
  *   Fraich Touch       déjà dans le dépôt (`public/logos/fraichtouch.svg`), recadré sur son contenu
  *   La Capsule         lacapsule.studio, via l'archive du 21 mai 2025 (site fermé)
- *   Celeris            déjà dans le dépôt (`public/logos/celeris.webp`)
  *   Familytrip         familytrip.fr, logo blanc de l'en-tête
  *   Youmanista         youmanista.com/logo.svg
  *   Maria Schools      mariaschools.com, logo blanc
@@ -62,7 +61,6 @@ export const clients: Client[] = [
   { nom: 'M Partners' },
   { nom: 'Fraich Touch', logo: logo('fraich-touch.svg', 746, 474, 1.9) },
   { nom: 'La Capsule', logo: logo('la-capsule.webp', 457, 90) },
-  { nom: 'Celeris', logo: logo('celeris.webp', 314, 120, 1.3) },
   { nom: 'Familytrip', logo: logo('familytrip.svg', 141, 77, 1.55) },
   { nom: 'KlaK' },
   { nom: 'Youmanista', logo: logo('youmanista.svg', 2139, 1085, 1.6) },

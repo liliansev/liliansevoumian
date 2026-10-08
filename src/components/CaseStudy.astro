@@ -1,5 +1,5 @@
 ---
-/* Cas clients : un carrousel de quatre missions, chacune avec son contexte, ce
+/* Cas clients : un carrousel de trois missions, chacune avec son contexte, ce
    qu'elle a changé et un schéma en trois étapes. Sans écran simulé. */
 import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
@@ -17,7 +17,7 @@ const fraichTouch = {
   /* Ce que le client a GAGNÉ — du temps, de l'effort en moins — et jamais ce
      que le système fait techniquement : « 0,00 € d'écart sur le cas test » ne
      dit rien à un dirigeant. Tout vient du .md correspondant, sans exception ;
-     quand la fiche ne contient aucune durée (Celeris, Humble+), le gain reste
+     quand la fiche ne contient aucune durée (Humble+), le gain reste
      qualitatif plutôt qu'inventé. Les secteurs sont écrits comme dans le
      frontmatter des fiches. */
   results: ['~4\u00a0h par semaine récupérées', 'Un nouveau collaborateur formé en 30\u00a0min'],
@@ -31,19 +31,6 @@ const mPartners = {
     "Cabinet de chasse de têtes spécialisé sur l’écosystème startup et capital-risque. J’ai industrialisé leur prospection dans <strong>Make</strong> : le <strong>scraping</strong> des pages d’équipe est automatisé, un <strong>agent IA</strong> qualifie les bons dirigeants, puis <strong>Loxo</strong> centralise le CRM et les séquences de prospection. L’équipe garde son temps pour la relation.",
   results: ['~10\u00a0min par run au lieu de 1 à 3\u00a0h', '6× plus d’entreprises traitables par semaine'],
   href: '/cas-clients/m-partners',
-};
-const celeris = {
-  client: 'Celeris',
-  logo: '/logos/celeris.webp',
-  sector: 'Distributeur IT B2B',
-  title: "Comment Celeris a automatisé l’enrichissement de son catalogue Odoo",
-  description:
-    "Distributeur IT B2B, acteur établi du marché français. J’accompagne leurs équipes dans leur montée en compétence sur l’automatisation, et j’ai conçu deux <strong>agents IA</strong> sur <strong>n8n</strong> qui enrichissent leur catalogue produits directement dans <strong>Odoo</strong>. Le moteur est <strong>Mistral</strong>, une IA française, parce que les données doivent rester en Europe.",
-  /* « en test » vient de la fiche source (celeris.md, « 319 sur ~515, en
-     test ») : sans sa réserve, le chiffre passerait pour un résultat de
-     production. */
-  results: ['L’agent rédige les fiches, le commercial valide', '6 produits sur 10 appariés automatiquement, en test'],
-  href: '/cas-clients/celeris',
 };
 const humblePlus = {
   client: 'Humble+',
@@ -76,7 +63,7 @@ const humblePlus = {
       />
 
       <div class="case-carousel-toolbar reveal">
-        <p class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 4 : Humble+</p>
+        <p class="sr-only" aria-live="polite" data-case-announcement>Projet 1 sur 3 : Humble+</p>
         <div class="case-carousel-arrows" aria-label="Navigation des cas clients">
           <button
             type="button"
@@ -110,21 +97,11 @@ const humblePlus = {
       tabindex="0"
       data-case-track
     >
-      {/* L'ordre n'est plus strictement chronologique, et le critère est celui
-          que DESIGN.md pose déjà pour les visuels : « un cas qui n'a pas la
-          matière n'a pas le visuel ». Celeris est un vrai travail — ERP, agent
-          IA, souveraineté — mais ses deux indicateurs de tête sont un statut
-          (« brouillon ») et un taux « en test », donc pas encore un résultat
-          livré. Il passait en deuxième position, c'est-à-dire à l'endroit où un
-          lecteur qui cherche son analogue le plus proche tombe en premier, sur
-          une page qui promet des automatisations « qui tiennent en production ».
-          Les trois cas livrés passent devant, dans leur ordre chronologique ;
-          celui qui n'a pas encore ses chiffres ferme la marche. */}
       <article
         class="case-slide"
         role="group"
         aria-roledescription="diapositive"
-        aria-label="1 sur 4 : Humble+"
+        aria-label="1 sur 3 : Humble+"
         data-case-slide
         data-case-active
         data-case-name="Humble+"
@@ -140,7 +117,7 @@ const humblePlus = {
             <p class="case-description" set:html={humblePlus.description} />
             <p class="case-results">
               {humblePlus.results.map((result, i) => (
-                <span>{result}</span>
+                <>{i > 0 && ' '}<span>{result}</span></>
               ))}
             </p>
             <a href={humblePlus.href} class="case-cta group">
@@ -163,7 +140,7 @@ const humblePlus = {
         class="case-slide"
         role="group"
         aria-roledescription="diapositive"
-        aria-label="2 sur 4 : M Partners"
+        aria-label="2 sur 3 : M Partners"
         data-case-slide
         data-case-name="M Partners"
       >
@@ -178,7 +155,7 @@ const humblePlus = {
             <p class="case-description" set:html={mPartners.description} />
             <p class="case-results">
               {mPartners.results.map((result, i) => (
-                <span>{result}</span>
+                <>{i > 0 && ' '}<span>{result}</span></>
               ))}
             </p>
             <a href={mPartners.href} class="case-cta group">
@@ -201,7 +178,7 @@ const humblePlus = {
         class="case-slide"
         role="group"
         aria-roledescription="diapositive"
-        aria-label="3 sur 4 : Fraich Touch"
+        aria-label="3 sur 3 : Fraich Touch"
         data-case-slide
         data-case-name="Fraich Touch"
       >
@@ -216,7 +193,7 @@ const humblePlus = {
             <p class="case-description" set:html={fraichTouch.description} />
             <p class="case-results">
               {fraichTouch.results.map((result, i) => (
-                <span>{result}</span>
+                <>{i > 0 && ' '}<span>{result}</span></>
               ))}
             </p>
             <a href={fraichTouch.href} class="case-cta group">
@@ -234,58 +211,20 @@ const humblePlus = {
           </div>
         </div>
       </article>
-
-      <article
-        class="case-slide"
-        role="group"
-        aria-roledescription="diapositive"
-        aria-label="4 sur 4 : Celeris"
-        data-case-slide
-        data-case-name="Celeris"
-      >
-        <div class="case-slide-grid">
-          <div class="case-copy">
-            <div class="case-meta">
-              <img class="case-logo" src={celeris.logo} alt={celeris.client} width="512" height="218" style={`--logo-scale:${celeris.logoScale ?? 1}`} loading="lazy" decoding="async" />
-              <span class="case-secteur">{celeris.sector}</span>
-              <time class="case-date" datetime="2026-06-20">Juin 2026</time>
-            </div>
-            <h3>{celeris.title}</h3>
-            <p class="case-description" set:html={celeris.description} />
-            <p class="case-results">
-              {celeris.results.map((result, i) => (
-                <span>{result}</span>
-              ))}
-            </p>
-            <a href={celeris.href} class="case-cta group">
-              <span class="case-cta-dot" aria-hidden="true"><Icon name="lucide:arrow-right" class="case-cta-arrow" /></span>
-              <span class="case-cta-text">Voir le cas</span>
-            </a>
-          </div>
-
-          <div class="case-visual">
-            <CaseIllustration steps={[
-              { icon: 'lucide:files', tool: 'Fournisseurs', action: 'Récupérer les données produit' },
-              { icon: 'simple-icons:n8n', tool: 'n8n + IA', action: 'Enrichir les fiches' },
-              { icon: 'simple-icons:odoo', tool: 'Odoo', action: 'Créer un brouillon à valider' },
-            ]} />
-          </div>
-        </div>
-      </article>
     </div>
 
     <div class="case-carousel-pagination reveal" aria-label="Accès direct aux cas clients">
-      {/* Sans numéro : les quatre boutons sont visibles ensemble, avec le nom
+      {/* Sans numéro : les trois boutons sont visibles ensemble, avec le nom
           du client et le trait d'état.
 
           Le secteur est écrit sous le nom du client, et c'est ce qui fait de
           cette rangée autre chose qu'une commande de carrousel. La question du
-          lecteur à cet endroit est « est-ce que l'un de ces quatre me
-          ressemble ? », et « Celeris » ne lui apprend rien ; « Distributeur IT
-          B2B », si. Le carrousel n'en montre qu'un à la fois, donc c'est cette
-          rangée qui rend les quatre lisibles d'un coup d'œil, sans trois clics.
-          Les libellés viennent des quatre objets du frontmatter. */}
-      {[humblePlus, mPartners, fraichTouch, celeris].map((cas, index) => (
+          lecteur à cet endroit est « est-ce que l'un de ces trois me
+          ressemble ? », et un nom de client ne lui apprend rien ; son secteur,
+          si. Le carrousel n'en montre qu'un à la fois, donc c'est cette rangée
+          qui rend les trois lisibles d'un coup d'œil, sans deux clics. Les
+          libellés viennent des trois objets du frontmatter. */}
+      {[humblePlus, mPartners, fraichTouch].map((cas, index) => (
         <button
           type="button"
           class="case-carousel-dot"
@@ -408,7 +347,7 @@ const humblePlus = {
 
   /* La diapositive ne prend pas toute la largeur de la piste : il lui manque de
      quoi laisser dépasser le bord de la suivante, sans quoi rien n'annonce
-     qu'il y a quatre cas et pas un.
+     qu'il y a trois cas et pas un.
      Ce qui dépasse est calé sur le rembourrage de la carte, moins 2 px : la
      coupe tombe juste avant la colonne de texte de la carte suivante, à toutes
      les largeurs. On voit un bord de carte (son filet et sa surface), jamais
@@ -520,22 +459,25 @@ const humblePlus = {
     font-weight: 600;
   }
 
-  /* Chaque résultat est une pastille pêche, texte nuit : ronde, comme tout ce
-     qui porte un libellé court. Sur téléphone les plus longs passent sur deux
-     lignes : le rayon se borne alors à celui d'une petite carte, et le retrait
-     latéral garde la première lettre à distance de l'arrondi. */
+  /* Les résultats se lisent à la suite, à l'encre, séparés par un point : la
+     pastille pêche qui portait chacun d'eux est réservée au bouton d'appel
+     (8 octobre 2026). L'espace écrite entre deux résultats est pour qui lit le
+     HTML sans la mise en page : ils se collaient (« 1 à 3 h6× plus… »). */
   .case-results > span {
-    background: var(--color-peche);
-    color: var(--color-night);
-    padding: 0.4em 0.9em;
-    border-radius: var(--radius-md);
+    color: var(--color-ink);
+  }
+
+  .case-results > span + span::before {
+    content: '·';
+    margin-right: 0.75rem;
+    color: var(--color-ink-low);
   }
 
   .case-results {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.4rem 0.5rem;
+    gap: 0.25rem 0.75rem;
     margin: 0;
     max-width: 100%;
     font-size: var(--text-mono-label);
@@ -549,7 +491,7 @@ const humblePlus = {
 
   .case-carousel-pagination {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(0.5rem, 2vw, 1.25rem);
     margin-top: 1.25rem;
   }
@@ -558,7 +500,7 @@ const humblePlus = {
     position: relative;
     /* Colonne et non rangée depuis que le secteur est passé sous le nom : en
        `align-items: center`, les deux lignes se centraient l'une sur l'autre et
-       les quatre noms de clients cessaient de s'aligner entre eux. */
+       les noms de clients cessaient de s'aligner entre eux. */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -575,7 +517,7 @@ const humblePlus = {
   }
 
   /* La hiérarchie des deux rangs passe par la taille et la graisse, pas par
-     une couleur plus pâle : trois des quatre boutons sont inactifs à tout
+     une couleur plus pâle : deux des trois boutons sont inactifs à tout
      instant, et le secteur est du petit texte, il lui faut 4,5:1. Il hérite
      donc de la couleur du bouton (ink-low) et c'est le nom du client qui se
      détache. Quand le cas devient actif, le bouton passe à l'encre et le
@@ -598,14 +540,14 @@ const humblePlus = {
     color: var(--color-ink-low);
   }
 
-  /* Deux colonnes sous 40rem, et non quatre. Le secteur ajoute une seconde
-     ligne à chaque bouton : à 375 px de fenêtre, une colonne de quart de page
-     fait 76 px, où le plus long secteur tomberait sur quatre ou cinq lignes.
-     À deux colonnes les quatre cas restent visibles ensemble, ce qui est toute
-     la raison d'être de cette rangée. */
+  /* Une colonne sous 40rem, et non trois. Le secteur ajoute une seconde ligne
+     à chaque bouton : à 375 px de fenêtre, une colonne d'un tiers de page fait
+     une centaine de pixels, où le plus long secteur tomberait sur trois ou
+     quatre lignes. L'un sous l'autre, les trois cas restent visibles ensemble,
+     ce qui est toute la raison d'être de cette rangée. */
   @media (max-width: 40rem) {
     .case-carousel-pagination {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
       gap: 0.75rem 1rem;
     }
   }
