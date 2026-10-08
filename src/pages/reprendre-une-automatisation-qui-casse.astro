@@ -31,7 +31,7 @@ import TeteDePage from '../components/tete-de-page.astro';
 import Partie from '../components/partie.astro';
 import Questions from '../components/questions.astro';
 import FinDePage from '../components/fin-de-page.astro';
-import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 import { pageMakeOuN8n } from '../data/make-ou-n8n';
 
 const breadcrumbs = [
@@ -45,9 +45,9 @@ const CHAPO =
 
 const serviceSchema = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
+  '@type': 'Service',
   '@id': 'https://liliansevoumian.fr/reprendre-une-automatisation-qui-casse#service',
-  isPartOf: { '@id': 'https://liliansevoumian.fr/automatisations-ia#service' },
+  isRelatedTo: { '@id': 'https://liliansevoumian.fr/automatisations-ia#service' },
   name: 'Reprise d’automatisations Make et n8n · Lilian Sevoumian',
   description:
     'Audit et reprise d’automatisations Make et n8n déjà en place, y compris celles construites par un autre prestataire.',
@@ -170,7 +170,7 @@ const faqs = [
   { q: 'La personne qui a construit notre automatisation est partie. On fait quoi ?', a: 'Ce qui part avec elle, c’est la logique métier. Je la reconstitue depuis le système lui-même et depuis vos équipes, puis je la remets à un endroit lisible : une table de configuration, une documentation, une vidéo de formation. Chez Fraich Touch, former un nouveau collaborateur prend 30 min, contre plusieurs heures avant la reprise.' },
   { q: 'Mon automatisation est sur Make. Faut-il passer sur n8n ?', a: 'L’outil se choisit après l’audit. Fraich Touch est resté sur Make, avec 4 scénarios propres et documentés à la place des 33. Humble+ est passé à n8n parce que le parcours mêlait lecture de documents par IA, contrôles déterministes et validations humaines. Le critère : ce que le flux doit faire, et qui maintiendra le système ensuite.', comparatif: true },
   { q: 'Comment savoir si mon automatisation est en dette ?', a: `Trois signes suffisent. Vous découvrez les erreurs par hasard. Une modification simple se transforme en chantier. Personne ne sait dire à quoi sert la moitié des scénarios en place. Chez Fraich Touch, 28 des 33 scénarios du compte étaient des reliques inutilisées et 16 factures attendaient dans une file d’erreurs que personne ne regardait. L’appel de ${DUREE_RESERVATION_MINUTES} min sert exactement à trancher.` },
-  { q: `Que se passe-t-il pendant l’appel de ${DUREE_RESERVATION_MINUTES} min ?`, a: 'Vous décrivez le symptôme avec vos mots : les factures ne partent plus, les commandes s’accumulent, les chiffres ne tombent pas juste. Je pose des questions sur les outils branchés, sur ce qui a été construit et sur ce que vous voyez remonter comme erreurs. À la fin, vous savez si votre sujet est de mon ressort et ce que l’audit couvrirait.', agenda: true }
+  { q: `Que se passe-t-il pendant l’appel de ${DUREE_RESERVATION_MINUTES} min ?`, a: 'Vous décrivez le symptôme avec vos mots : les factures ne partent plus, les commandes s’accumulent, les chiffres ne tombent pas juste. Je pose des questions sur les outils branchés, sur ce qui a été construit et sur ce que vous voyez remonter comme erreurs. À la fin, vous savez si votre sujet est de mon ressort et ce que l’audit couvrirait.' }
 ];
 ---
 
@@ -178,7 +178,7 @@ const faqs = [
   title="Reprendre une automatisation qui casse · Make et n8n"
   description={`Vos factures ne partent plus et le scénario affiche toujours vert. Lilian Sevoumian reprend les automatisations Make et n8n en place. Appel de ${DUREE_RESERVATION_MINUTES} min.`}
   breadcrumbs={breadcrumbs}
-  faqSchema={faqs.map((f) => ({ question: f.q, answer: 'agenda' in f ? `${f.a} Réservation sur ${URL_RESERVATION}` : f.a }))}
+  faqSchema={faqs.map((f) => ({ question: f.q, answer: f.a }))}
   articleSchema={serviceSchema}
 >
   <Navigation ctaSource="reprise_nav" />

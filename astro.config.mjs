@@ -71,6 +71,15 @@ for (const fichier of readdirSync(CAS_CLIENTS_DIR)) {
   lastmodParCas.set(`/cas-clients/${fichier.slice(0, -'.md'.length)}`, date.toISOString());
 }
 
+/* Les pages-réponses portent aussi une date réelle : la prop `publie` de leur
+   fichier, la même que celle de leur balisage et de leur en-tête. */
+const PAGES_DIR = new URL('./src/pages/', import.meta.url);
+for (const fichier of readdirSync(PAGES_DIR)) {
+  if (!fichier.endsWith('.astro')) continue;
+  const brut = readFileSync(new URL(fichier, PAGES_DIR), 'utf8').match(/\bpublie="(\d{4}-\d{2}-\d{2})"/)?.[1];
+  if (brut) lastmodParCas.set(`/${fichier.slice(0, -'.astro'.length)}`, new Date(brut).toISOString());
+}
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://liliansevoumian.fr',
@@ -130,8 +139,8 @@ export default defineConfig({
          date du build, et chaque déploiement prétendait que tout le site venait
          de changer, y compris les pages intouchées depuis des mois. Un champ
          qui bouge à chaque passage n'apprend rien à un robot, il lui apprend à
-         ne plus le lire. Seuls les cas clients ont une date réelle : eux seuls
-         en déclarent une. Pour les autres, `lastmodParCas.get()` rend
+         ne plus le lire. Seuls les cas clients et les pages-réponses ont une
+         date réelle : eux seuls en déclarent une. Pour les autres, `lastmodParCas.get()` rend
          `undefined`, la balise n'est pas écrite, et c'est le résultat voulu —
          un `lastmod` absent est neutre, un `lastmod` faux est trompeur. */
       serialize: (item) => {

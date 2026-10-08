@@ -133,12 +133,15 @@ const breadcrumbs = [
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
+  '@id': `https://liliansevoumian.fr/cas-clients/${entry.id}#article`,
   headline: cs.title,
   description: seoDescription,
   author: { '@id': 'https://liliansevoumian.fr/#person' },
   publisher: { '@id': 'https://liliansevoumian.fr/#person' },
   image: 'https://liliansevoumian.fr/og-image.png',
   datePublished: dateISO,
+  dateModified: dateISO,
+  inLanguage: 'fr-FR',
   about: [{ '@type': 'Thing', name: subject }],
   mentions: cs.tools.map((t) => ({ '@type': 'Thing', name: t })),
   mainEntityOfPage: { '@type': 'WebPage', '@id': `https://liliansevoumian.fr/cas-clients/${entry.id}` },
@@ -256,7 +259,7 @@ const articleSchema = {
                   {cs.bascule.map((ligne) => (
                     <div class="bascule-ligne">
                       <dt>{espaces(ligne.avant)}</dt>
-                      <dd><mark>{espaces(ligne.apres)}</mark></dd>
+                      <dd>{espaces(ligne.apres)}</dd>
                     </div>
                   ))}
                 </dl>
@@ -546,13 +549,11 @@ const articleSchema = {
     color: var(--color-ink-low);
   }
 
-  /* La pêche ne marque QUE le contrôle, en pastille, comme un mot surligné.
-     Son texte lit `--color-night`, le seul des deux jetons qu'aucun bloc ne
-     remappe : `--color-ink` vaut blanc sur la nuit, 1,74:1 sur la pastille. */
+  /* La pêche ne marque QUE le contrôle, et par la couleur du mot : la pastille
+     pleine est réservée au bouton d'appel. `--color-accent-text` est la pêche
+     sur la nuit, la nuit dans une île claire. */
   .nomenclature-role.est-controle {
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-    color: var(--color-night);
+    color: var(--color-accent-text);
     font-weight: 600;
   }
 
@@ -616,17 +617,6 @@ const articleSchema = {
     font-size: var(--text-body);
     font-weight: 500;
     line-height: 1.45;
-  }
-
-  /* Le fragment surligné peut être long ici : dans une cellule étroite, la
-     pastille n'a pas à rester sur une ligne, donc `nowrap` est levé localement
-     et elle couvre le rectangle englobant. C'est acceptable dans une cellule
-     dont le texte occupe toute la largeur, pas dans un titre. Le rayon vaut
-     la moitié d'une ligne : sur une ligne c'est la pastille du site, sur deux
-     un rectangle arrondi, et non une gélule qui mord sur la première lettre. */
-  .bascule-ligne dd :global(mark) {
-    --radius-bande: 0.78em;
-    white-space: normal;
   }
 
   @media (max-width: 34rem) {

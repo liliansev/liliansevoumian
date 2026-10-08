@@ -80,18 +80,18 @@ const faqs = [
 
 const serviceSchema = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  /* Un `@id` propre, rattaché à l'entité globale par `isPartOf` : sans lui, un
-     moteur voit deux ProfessionalService sans savoir s'il s'agit de la même
-     organisation. */
+  /* Une prestation (`Service`), rattachée à l'offre d'automatisation par
+     `isRelatedTo` et à Lilian par `provider`. Elle était typée
+     `ProfessionalService`, c'est-à-dire comme une seconde entreprise, sans
+     adresse. */
+  "@type": "Service",
   "@id": "https://liliansevoumian.fr/expert-make#service",
-  "isPartOf": { "@id": "https://liliansevoumian.fr/automatisations-ia#service" },
+  "isRelatedTo": { "@id": "https://liliansevoumian.fr/automatisations-ia#service" },
   "name": "Expert Make freelance · Lilian Sevoumian",
   "description": "Lilian Sevoumian, expert Make (ex-Integromat) freelance, premier Français certifié Make niveau 5 (2022). Automatisation des processus métier, intégration d’outils et scénarios maintenables par l’équipe.",
   "url": "https://liliansevoumian.fr/expert-make",
   "areaServed": "France",
   "serviceType": ["Automatisation Make", "Intégration Make", "Conseil no-code", "Formation Make"],
-  "knowsAbout": ["Make", "Integromat", "Automatisation des processus", "Intégration API", "No-Code", "Workflow"],
   "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
 ---
@@ -115,6 +115,7 @@ const serviceSchema = {
   fichePourquoi="Lilian Sevoumian est le premier Français certifié Make niveau 5, une certification obtenue en 2022. Freelance en automatisation depuis septembre 2020, il a formé plus de 300 personnes à Make, à n8n et à l’IA."
   textePourquoi="J’automatise des process depuis 2020, pour des fondateurs, des dirigeants et des équipes ops. Des automatisations qui tiennent dans le temps, documentées, avec une couche d’erreur sur chacune."
   titreFaq="Les questions qui reviennent sur Make."
+  misAJour="2026-10-03"
   faqs={faqs}
   titreFin="Un scénario Make <mark>en tête ?</mark>"
   suiteFin={'Décrivez-le en une phrase, je vous réponds <span class="whitespace-nowrap">moi-même</span>. Il existe déjà et il casse ? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.'}

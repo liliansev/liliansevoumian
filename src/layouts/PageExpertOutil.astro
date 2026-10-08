@@ -61,6 +61,9 @@ interface Props {
   fichePourquoi: string;
   textePourquoi: string;
   titreFaq: string;
+  /** Date de dernière mise à jour du contenu, au format ISO : elle s'affiche
+      sous l'en-tête. */
+  misAJour: string;
   faqs: Question[];
   /** Le titre et la phrase de la fin de page, en HTML. */
   titreFin: string;
@@ -72,7 +75,7 @@ const {
   titreHtml, chapo, preuves,
   titreValeur, valeur, titreCasUsage, casUsage, lienCroise, cas,
   titrePourquoi, fichePourquoi, textePourquoi,
-  titreFaq, faqs, titreFin, suiteFin,
+  titreFaq, faqs, titreFin, suiteFin, misAJour,
 } = Astro.props;
 
 const breadcrumbs = [
@@ -96,7 +99,7 @@ const source = url.replace(/^\//, '');
 
   <main id="main-content" tabindex="-1" class="outline-none">
 
-    <TeteDePage titre={titreHtml} chapo={chapo} bouton={source} preuves={preuves} />
+    <TeteDePage titre={titreHtml} chapo={chapo} bouton={source} preuves={preuves} misAJour={misAJour} />
 
     {/* Ce que je fais avec l'outil. */}
     <section data-section class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
@@ -131,7 +134,7 @@ const source = url.replace(/^\//, '');
     {/* Les cas construits avec l'outil : une phrase chacun, le récit derrière. */}
     <section data-section class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
       <div class="expert-duo relative mx-auto max-w-[1200px]">
-        <h2 class="expert-titre reveal">Cas réalisés avec {outil}.</h2>
+        <h2 class="expert-titre reveal">{cas.length > 1 ? `Cas réalisés avec ${outil}.` : `Un cas réalisé avec ${outil}.`}</h2>
         <div class="reveal">
           <ul class="expert-cas">
             {cas.map((c) => (

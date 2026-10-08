@@ -80,6 +80,8 @@ const breadcrumbSchema = breadcrumbs ? {
   }))
 } : null;
 
+const adresse = { "@type": "PostalAddress", "addressRegion": "Île-de-France", "addressCountry": "FR" };
+
 const personSchema = {
   "@context": "https://schema.org", "@type": "Person",
   "@id": "https://liliansevoumian.fr/#person",
@@ -109,22 +111,27 @@ const personSchema = {
       "name": "Airtable Certified",
       "recognizedBy": { "@type": "Organization", "name": "Airtable", "url": "https://airtable.com" } }
   ],
-  "address": { "@type": "PostalAddress", "addressRegion": "Ile-de-France", "addressCountry": "FR" },
+  "address": adresse,
   "sameAs": Object.values(profils)
 };
 
+/* `ProfessionalService` est une entreprise locale au sens de schema.org :
+   Google lui demande une adresse, et ses propriétés sont celles d'une
+   organisation (`founder`, `knowsAbout`), pas celles d'une prestation
+   (`provider`, `serviceType`). */
 const serviceSchema = {
   "@context": "https://schema.org", "@type": "ProfessionalService",
   "@id": "https://liliansevoumian.fr/#service",
   "name": "Lilian Sevoumian - Automatisation, IA, sites et applications web",
   "description": "Automatisation des processus métier, agents IA, création de sites commerciaux et d’applications métiers.",
   "url": "https://liliansevoumian.fr", "image": new URL('/og-home.png', Astro.site).toString(),
+  "address": adresse,
   "areaServed": [
     { "@type": "Country", "name": "France" },
     { "@type": "Place", "name": "Île-de-France" },
     { "@type": "Place", "name": "Europe" }
   ],
-  "serviceType": ["Automatisation des processus", "Agents IA", "Intégration", "Workflow", "Création de sites web", "Applications métiers", "Maintenance de sites web"],
+  "knowsAbout": ["Automatisation des processus", "Agents IA", "Intégration", "Workflow", "Création de sites web", "Applications métiers", "Maintenance de sites web"],
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Expertises",
@@ -133,7 +140,7 @@ const serviceSchema = {
       { "@type": "Offer", "itemOffered": { "@id": "https://liliansevoumian.fr/sites-web-abonnement#service" } }
     ]
   },
-  "provider": { "@id": "https://liliansevoumian.fr/#person" }
+  "founder": { "@id": "https://liliansevoumian.fr/#person" }
 };
 
 function safeJsonLd(obj: object): string {
@@ -144,7 +151,9 @@ const websiteSchema = {
   "@context": "https://schema.org", "@type": "WebSite",
   "@id": "https://liliansevoumian.fr/#website",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
-  "description": description, "inLanguage": "fr-FR",
+  /* La même phrase sur toutes les pages : c'est le site qu'elle décrit, pas la
+     page en cours. */
+  "description": resume, "inLanguage": "fr-FR",
   "author": { "@id": "https://liliansevoumian.fr/#person" }
 };
 
@@ -161,6 +170,7 @@ const faqPageSchema = faqSchema ? {
 <!doctype html>
 <html lang="fr" class="scroll-smooth">
   <head>
+    <meta charset="UTF-8" />
     <script is:inline>
       // La DA n'a qu'une surface : plus de bascule, donc plus de script de
       // thème. Il ne reste que .js-ready, qui arme le voile des .reveal —
@@ -244,8 +254,7 @@ const faqPageSchema = faqSchema ? {
       })();
     </script>
 
-    <meta charset="UTF-8" />
-    <meta name="theme-color" content="#111827" />
+    <meta name="theme-color" content="#0c121f" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -286,9 +295,6 @@ const faqPageSchema = faqSchema ? {
     <meta name="generator" content={Astro.generator} />
 
     <link rel="preload" as="font" type="font/woff2" href={geistLatin} crossorigin />
-    <link rel="preconnect" href="https://taap.it" />
-
-    <script is:inline async src="https://taap.it/scripts/tracker.js" data-project="pk_b238afbc093083b15bf02b73e03d494f" data-track-outbound="true"></script>
     {/* File DataFast : capture les goals déclenchés avant le chargement du script. */}
     <script is:inline>
       window.datafast = window.datafast || function () {
@@ -654,9 +660,9 @@ const faqPageSchema = faqSchema ? {
         }, true);
 
         // Une question ouverte est une objection nommée : le libellé dit
-        // laquelle. On compte le geste (toucher une question fermée), pas
-        // l'événement `toggle` : les questions sont des `details` rendus ouverts
-        // sur grand écran, et `toggle` y partait pour chacune au chargement.
+        // laquelle. On compte le geste (ouvrir une question fermée), pas
+        // l'événement `toggle` : la première question de chaque page est un
+        // `details` rendu ouvert, et `toggle` partirait pour elle au chargement.
         var faqSeen = {};
         document.addEventListener('click', function (ev) {
           var sum = ev.target && ev.target.closest ? ev.target.closest('summary') : null;
@@ -688,7 +694,7 @@ const faqPageSchema = faqSchema ? {
          4) "call_booked"     → réservation confirmée, émis par l'écouteur de l'embed.
          5) "cal_abandoned"   → agenda refermé sans réservation.
          6) "roi_used"        → premier mouvement d'un curseur du simulateur.
-         7) "faq_opened"      → une question fermée qu'on ouvre (téléphone), libellé en prop.
+         7) "faq_opened"      → une question fermée qu'on ouvre, libellé en prop.
          8) "case_opened"     → clic vers un cas client, href en prop.
          9) "service_path_opened", "youtube_opened", "outbound_formations",
             "outbound_agence" → les sorties et les choix d'offre.

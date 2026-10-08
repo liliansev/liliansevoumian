@@ -4,6 +4,7 @@ import { faqs } from '../data/faq';
 import { creationOffers, subscriptionOffers } from '../data/sites-web';
 import { automationSubscriptions, maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
+import { EMAIL_CONTACT } from '../lib/contact';
 import { activites, organisations, parcours, profils, resume } from '../data/parcours';
 import { automationStartingPrice } from '../data/service-pricing';
 
@@ -63,7 +64,7 @@ export const GET: APIRoute = async () => {
 - Entreprises accompagnées : plus de 100
 - Zone : Île-de-France, France, Europe
 - Profils : LinkedIn ${profils.linkedin} ; YouTube ${profils.youtube}
-- Contact : ${URL_RESERVATION} (appel de ${DUREE_RESERVATION_MINUTES} min, sans engagement) ou bonjour@liliansevoumian.fr
+- Contact : ${URL_RESERVATION} (appel de ${DUREE_RESERVATION_MINUTES} min, sans engagement) ou ${EMAIL_CONTACT}
 
 ## Ce que je fais aujourd'hui
 

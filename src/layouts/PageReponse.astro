@@ -30,7 +30,7 @@ interface Props {
   nom: string;
   titreSeo: string;
   descriptionSeo: string;
-  /** Le h1, en HTML : un fragment court peut y être surligné par `mark`. */
+  /** Le h1, en HTML : un fragment court peut y être souligné par `mark`. */
   titre: string;
   titreLargeur?: string;
   /** La réponse, en une ou deux phrases. Texte brut : elle est aussi reprise
@@ -71,6 +71,7 @@ const articleSchema = {
   publisher: { '@id': 'https://liliansevoumian.fr/#person' },
   image: 'https://liliansevoumian.fr/og-image.png',
   datePublished: publie,
+  dateModified: publie,
   inLanguage: 'fr-FR',
   about: sujets.map((name) => ({ '@type': 'Thing', name })),
   mainEntityOfPage: { '@type': 'WebPage', '@id': adresse },
@@ -89,7 +90,7 @@ const articleSchema = {
   <Navigation ctaSource={`${source}_nav`} />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <TeteDePage titre={titre} titreLargeur={titreLargeur} chapo={reponse} preuves={fiche} />
+    <TeteDePage titre={titre} titreLargeur={titreLargeur} chapo={reponse} preuves={fiche} publie={publie} />
 
     <slot />
 

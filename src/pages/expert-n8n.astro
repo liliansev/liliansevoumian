@@ -7,9 +7,10 @@
  * est partagée : voir PageExpertOutil.
  *
  * Les phrases des cas reprennent les chiffres des fiches de
- * `src/content/cas-clients` : en changer un là-bas, c'est le changer ici. Deux
- * réserves y sont écrites et doivent le rester : Humble+ est en phase de
- * stabilisation, et les chiffres de Celeris viennent de l'environnement de test.
+ * `src/content/cas-clients` : en changer un là-bas, c'est le changer ici. Une
+ * réserve y est écrite et doit le rester : Humble+ est en phase de
+ * stabilisation. Le cas Celeris est sorti du site le 8 octobre 2026 (c'était du
+ * mentorat, pas une réalisation).
  */
 import PageExpertOutil from '../layouts/PageExpertOutil.astro';
 import { reponseMakeOuN8n, reponseMakeOuN8nHtml } from '../data/make-ou-n8n';
@@ -48,11 +49,6 @@ const cas = [
     href: '/cas-clients/humble-plus',
     texte: 'Chez Humble+, marque de compléments alimentaires, un workflow n8n de plus de 60 nœuds lit les bons de commande PDF et Excel, puis crée la commande Shopify et la facture Pennylane sans ressaisie ; sur le cas de référence, les totaux sont identiques au centime dans Slack, Shopify et Pennylane. Le projet est en phase de stabilisation.',
   },
-  {
-    nom: 'Celeris',
-    href: '/cas-clients/celeris',
-    texte: 'Chez Celeris, distributeur informatique B2B, deux agents IA sur n8n enrichissent le catalogue dans Odoo ; en test, plus de 60 % des produits sont appariés automatiquement (319 sur environ 515), pour 2 à 3 centimes par fiche générée.',
-  },
 ];
 
 const faqs = [
@@ -77,18 +73,18 @@ const faqs = [
 
 const serviceSchema = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  /* Un `@id` propre, rattaché à l'entité globale par `isPartOf` : sans lui, un
-     moteur voit deux ProfessionalService sans savoir s'il s'agit de la même
-     organisation. */
+  /* Une prestation (`Service`), rattachée à l'offre d'automatisation par
+     `isRelatedTo` et à Lilian par `provider`. Elle était typée
+     `ProfessionalService`, c'est-à-dire comme une seconde entreprise, sans
+     adresse. */
+  "@type": "Service",
   "@id": "https://liliansevoumian.fr/expert-n8n#service",
-  "isPartOf": { "@id": "https://liliansevoumian.fr/automatisations-ia#service" },
+  "isRelatedTo": { "@id": "https://liliansevoumian.fr/automatisations-ia#service" },
   "name": "Expert n8n freelance · Lilian Sevoumian",
   "description": "Lilian Sevoumian, expert n8n freelance : automatisation des processus, agents IA et workflows auto-hébergés (RGPD). Intégration, code dans le flux et gestion d’erreur sur chaque workflow.",
   "url": "https://liliansevoumian.fr/expert-n8n",
   "areaServed": "France",
   "serviceType": ["Automatisation n8n", "Agents IA", "Intégration n8n", "Auto-hébergement n8n", "Conseil no-code"],
-  "knowsAbout": ["n8n", "Automatisation des processus", "Agents IA", "Auto-hébergement", "RGPD", "Intégration API", "Workflow", "Claude"],
   "provider": { "@id": "https://liliansevoumian.fr/#person" },
 };
 ---
@@ -97,11 +93,11 @@ const serviceSchema = {
   outil="n8n"
   url="/expert-n8n"
   titreSeo="Expert n8n freelance, agents IA · Lilian Sevoumian"
-  descriptionSeo="Je construis vos workflows et vos agents IA sur n8n, installé chez vous quand vos données l’exigent. Deux cas publiés : Humble+ et Celeris."
+  descriptionSeo="Je construis vos workflows et vos agents IA sur n8n, installé chez vous quand vos données l’exigent. Un cas publié, construit avec n8n : Humble+."
   serviceSchema={serviceSchema}
   titreHtml="Expert <mark>n8n</mark> freelance."
   chapo="J’automatise vos processus et je déploie des agents IA avec n8n, installé chez vous quand vos données sont sensibles (RGPD), avec du code quand votre logique métier l’exige."
-  preuves="Deux cas publiés, construits avec n8n : Humble+ et Celeris. Plus de 300 personnes formées à Make, à n8n et à l’IA."
+  preuves="Un cas publié, construit avec n8n : Humble+. Plus de 300 personnes formées à Make, à n8n et à l’IA."
   titreValeur="Vos données chez vous, des agents IA, du code."
   valeur={valeur}
   titreCasUsage="Ce qu’on peut automatiser avec n8n."
@@ -109,9 +105,10 @@ const serviceSchema = {
   lienCroise={{ href: '/expert-make', libelle: 'Plutôt un besoin Make ? La page expert Make' }}
   cas={cas}
   titrePourquoi="n8n, rodé en production."
-  fichePourquoi="Lilian Sevoumian, freelance en automatisation et agents IA depuis septembre 2020 et premier Français certifié Make niveau 5 (2022), construit aussi sur n8n : les cas Celeris et Humble+, documentés sur ce site en 2026, ont été réalisés avec cet outil."
+  fichePourquoi="Lilian Sevoumian, freelance en automatisation et agents IA depuis septembre 2020 et premier Français certifié Make niveau 5 (2022), construit aussi sur n8n : le cas Humble+, documenté sur ce site en 2026, a été réalisé avec cet outil."
   textePourquoi="J’automatise des process depuis 2020, pour des fondateurs, des dirigeants et des équipes ops. Auto-hébergement maîtrisé, agents IA avec garde-fous, gestion d’erreur explicite sur chaque workflow. Des automatisations versionnées, qui tiennent dans le temps."
   titreFaq="Les questions qui reviennent sur n8n."
+  misAJour="2026-10-03"
   faqs={faqs}
   titreFin="Un workflow n8n <mark>en tête ?</mark>"
   suiteFin={'Un agent IA aussi. Décrivez-le en une phrase, je vous réponds <span class="whitespace-nowrap">moi-même</span>. Votre workflow existe déjà et il casse ? <a class="lien-prose" href="/reprendre-une-automatisation-qui-casse">Je le reprends</a>.'}

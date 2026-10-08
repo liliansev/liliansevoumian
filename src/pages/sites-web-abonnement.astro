@@ -93,7 +93,8 @@ const serviceSchema = {
           '@type': 'UnitPriceSpecification',
           ...(offer.minimum ? { minPrice: offer.schemaPrice } : { price: offer.schemaPrice }),
           priceCurrency: 'EUR',
-          billingDuration: 'P1M',
+          billingIncrement: 1,
+          unitCode: 'MON',
           valueAddedTaxIncluded: false,
         },
       })),
@@ -103,7 +104,7 @@ const serviceSchema = {
 ---
 
 <Layout
-  title="Sites web et applications métiers | Lilian Sevoumian"
+  title="Sites web et applications métiers · Lilian Sevoumian"
   description={pageDescription}
   ogImage="/og-sites-web.png"
   ogImageAlt="Création de sites web et applications métiers par Lilian Sevoumian"
@@ -129,7 +130,7 @@ const serviceSchema = {
       <div class="relative max-w-[1200px] mx-auto w-full">
         <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.45fr)_minmax(19rem,0.55fr)] gap-[var(--spacing-gouttiere)] items-end">
           {/* L'entrée d'auteur : le titre, le chapô puis les actions arrivent
-              l'un après l'autre, et le surlignage se trace. Des keyframes CSS
+              l'un après l'autre, et le trait du titre se tire. Des keyframes CSS
               jouées au chargement — sans script, la colonne est peinte dans
               son état final. */}
           <div class="min-w-0 entree">

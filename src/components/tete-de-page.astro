@@ -8,14 +8,14 @@
  * titre porte seul.
  *
  * `.entree` : les éléments montent l'un après l'autre au chargement, et le
- * surlignage du titre se trace une fois le titre arrivé. Ce sont des
+ * trait du titre se tire une fois le titre arrivé. Ce sont des
  * `@keyframes`, pas un voile levé par script : le h1 n'attend aucun module.
  */
 import BoutonReservation from './BoutonReservation.astro';
 import Retour from './retour.astro';
 
 interface Props {
-  /** Le h1, en HTML : un fragment court peut y être surligné par `mark`. */
+  /** Le h1, en HTML : un fragment court peut y être souligné par `mark`. */
   titre: string;
   /** Largeur du titre, en `ch`. */
   titreLargeur?: string;
@@ -27,9 +27,23 @@ interface Props {
   bouton?: string;
   /** Une ligne sous le bouton : ce qui se vérifie. */
   preuves?: string;
+  /** Date de publication, au format ISO (`2026-10-03`). */
+  publie?: string;
+  /** Date de dernière mise à jour, au format ISO. Seule, elle s'affiche seule. */
+  misAJour?: string;
 }
 
-const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves } = Astro.props;
+const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves, publie, misAJour } = Astro.props;
+
+/* La date s'écrit dans la page, et pas seulement dans le balisage : un agent
+   qui lit le texte n'a que cela pour juger de la fraîcheur d'un prix ou d'un
+   comparatif. Midi UTC : la date ne glisse pas d'un jour selon le fuseau. */
+const enClair = (iso: string) => {
+  const date = new Date(`${iso}T12:00:00Z`);
+  const jour = date.getUTCDate() === 1 ? '1er' : String(date.getUTCDate());
+  return `${jour} ${date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric', timeZone: 'UTC' })}`;
+};
+const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
 ---
 
 <section data-section class="tete relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)]">
@@ -43,6 +57,11 @@ const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves } = Astro.p
       </div>
     )}
     {preuves && <p class="tete__preuves">{preuves}</p>}
+    {/* D'un seul tenant : un retour à la ligne ici mettrait une espace avant
+        le point final. */}
+    {(publie || aJour) && (
+      <p class="tete__date">{publie && <>Publié le <time datetime={publie}>{enClair(publie)}</time></>}{publie && aJour && ', '}{aJour && <>{publie ? 'mis à jour le ' : 'Mis à jour le '}<time datetime={aJour}>{enClair(aJour)}</time></>}.</p>
+    )}
   </div>
 </section>
 
@@ -77,6 +96,13 @@ const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves } = Astro.p
   .tete__preuves {
     max-width: 46ch;
     margin: var(--spacing-lie) 0 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .tete__date {
+    margin: var(--spacing-colle) 0 0;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
     line-height: 1.5;
