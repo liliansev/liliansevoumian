@@ -3,9 +3,10 @@
  * home-voices — trois recommandations, une voix à la fois.
  *
  * Une seule citation occupe la scène, et les trois personnes sont à côté, sur
- * un rail. Le rail se remplit pendant qu'une voix parle, puis passe à la
- * suivante ; on peut aussi choisir qui écouter, et le déroulé s'arrête alors
- * pour de bon.
+ * un rail. La première voix est affichée ; on en change en choisissant un nom.
+ * Rien n'avance seul : la parole passait d'elle-même à la suivante toutes les
+ * sept secondes, pendant que le rail se remplissait. Lilian a demandé le
+ * 8 octobre 2026 de réduire les animations de la page.
  *
  * La citation est un rang SOUS le titre de la section (`--text-phrase`). Elle
  * prenait sa taille exacte : « Un vrai bonheur de travailler avec Lilian » se
@@ -23,8 +24,7 @@
  * phrases entières, on ne reformule rien).
  *
  * Sans script, les trois citations se lisent à la suite, chacune avec son
- * auteur. En mouvement réduit, rien n'avance seul. Hors écran, le déroulé est
- * suspendu par `data-motion-pause` (voir Layout).
+ * auteur. En mouvement réduit, la citation change sans fondu.
  */
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
@@ -68,11 +68,10 @@ const nombreDeCas = nombres[cas] ?? String(cas);
 <section
   id="temoignages"
   data-section
-  data-motion-pause
   class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
   <div class="relative mx-auto max-w-[1200px]">
-    <SectionHeader title="Ils m’ont vu travailler." titleMaxWidth="18ch" spacing="none" />
+    <SectionHeader title="On a travaillé ensemble." titleMaxWidth="18ch" spacing="none" />
 
     <div class="voix reveal" data-voix>
       <div class="voix__rail" role="tablist" aria-label="Qui parle">
@@ -130,7 +129,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
   /* ── Sans script : trois citations à la suite, chacune signée. Le rail, qui
         ne servirait à rien, n'est pas montré. ── */
   .voix {
-    --duree: 7s;
     display: grid;
     gap: var(--spacing-groupe);
     margin-top: var(--spacing-groupe);
@@ -247,8 +245,7 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     transition: color var(--duration-default) var(--ease-out-quint);
   }
 
-  /* Le rail : un segment par voix. Celui de la voix qui parle se remplit de
-     pêche de haut en bas, le temps qu'elle a la parole. */
+  /* Le rail : un segment par voix. Celui de la voix qui parle est en pêche. */
   .voix__qui::before,
   .voix__qui::after {
     content: '';
@@ -267,7 +264,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
   .voix__qui::after {
     background: var(--color-peche);
     transform: scaleY(0);
-    transform-origin: 50% 0;
   }
 
   .voix__qui[aria-selected='true'] {
@@ -313,28 +309,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     .voix__qui:hover :global(.voix__portrait) {
       opacity: 1;
     }
-  }
-
-  /* Le déroulé : tant que personne n'a choisi, le segment de la voix active se
-     remplit, et sa fin passe la parole (voir le script). Il se suspend quand
-     on survole ou qu'on a le focus dans le composant. */
-  @media (prefers-reduced-motion: no-preference) {
-    .voix[data-pret]:not([data-manuel]) .voix__qui[aria-selected='true']::after {
-      animation: voix-temps var(--duree) linear both;
-    }
-
-    .voix:hover .voix__qui::after,
-    .voix:focus-within .voix__qui::after {
-      animation-play-state: paused;
-    }
-  }
-
-  @keyframes voix-temps {
-    from { transform: scaleY(0); }
-  }
-
-  @keyframes voix-temps-plat {
-    from { transform: scaleX(0); }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -401,11 +375,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
       height: 2px;
     }
 
-    .voix__qui::after {
-      transform: scaleX(0);
-      transform-origin: 0 50%;
-    }
-
     .voix__qui :global(.voix__portrait) {
       grid-row: auto;
     }
@@ -418,26 +387,19 @@ const nombreDeCas = nombres[cas] ?? String(cas);
       display: none;
     }
   }
-
-  @media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
-    .voix[data-pret]:not([data-manuel]) .voix__qui[aria-selected='true']::after {
-      animation-name: voix-temps-plat;
-    }
-  }
 </style>
 
 <script>
   /* Les trois voix sont des onglets : flèches pour passer de l'une à l'autre,
-     une seule dans l'ordre de tabulation. Choisir une voix arrête le déroulé. */
+     une seule dans l'ordre de tabulation. La voix ne change que si le visiteur
+     en choisit une. */
   const racine = document.querySelector<HTMLElement>('[data-voix]');
   if (racine) {
     const onglets = [...racine.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
     const citations = [...racine.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
-    const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let actif = 0;
 
     const choisir = (rang: number, parLaMain = false) => {
-      actif = (rang + onglets.length) % onglets.length;
+      const actif = (rang + onglets.length) % onglets.length;
       onglets.forEach((onglet, i) => {
         onglet.setAttribute('aria-selected', String(i === actif));
         onglet.tabIndex = i === actif ? 0 : -1;
@@ -448,10 +410,7 @@ const nombreDeCas = nombres[cas] ?? String(cas);
            reste visible 420 ms, et y entrer faisait perdre le focus. */
         citation.tabIndex = i === actif ? 0 : -1;
       });
-      if (parLaMain) {
-        racine.dataset.manuel = '';
-        onglets[actif].focus({ preventScroll: true });
-      }
+      if (parLaMain) onglets[actif].focus({ preventScroll: true });
     };
 
     const TOUCHES: Record<string, (i: number) => number> = {
@@ -470,12 +429,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
         if (!vers) return;
         e.preventDefault();
         choisir(vers(i), true);
-      });
-      /* La fin du segment passe la parole. En mouvement réduit le segment ne
-         s'anime pas, donc rien n'avance seul ; la garde le dit en clair. */
-      onglet.addEventListener('animationend', (e) => {
-        if (reduit || !e.animationName.startsWith('voix-temps') || 'manuel' in racine.dataset) return;
-        choisir(actif + 1);
       });
     });
 

@@ -722,7 +722,10 @@
    Posée par le moteur juste après la scène, dans le coin bas droit de son
    cadre (le cadre, ou son parent, est en `position: relative`). Discrète : elle
    ne se montre qu'au survol du cadre, au focus, ou une fois la scène arrêtée ;
-   au doigt, où il n'y a pas de survol, elle est toujours là. */
+   au doigt, où il n'y a pas de survol, elle se voit sans cela. Le moteur ne la
+   laisse que le temps où la scène joue : sur l'image fixe elle porte `hidden`
+   (la remise à zéro de Tailwind masque tout élément `hidden`, quel que soit
+   son `display`). */
 .sm-pause {
   position: absolute;
   right: 10px;

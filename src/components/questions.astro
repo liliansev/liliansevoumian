@@ -1,20 +1,16 @@
 ---
 /*
- * questions — les questions qu'on pose avant d'écrire, sur toutes les pages.
+ * questions — la foire aux questions, la même sur toutes les pages.
  *
- * Elles sont écrites comme un échange, dans le vocabulaire de la barre
- * d'écriture : la question à droite, sur pêche, comme ce qu'écrit le visiteur ;
- * la réponse à gauche, comme ce que dit Lilian. La section suivante est le
- * champ où l'on écrit vraiment : l'échange se poursuit là.
+ * Une FAQ classique : la liste des questions, une ligne chacune, et la réponse
+ * qui s'ouvre dessous. Lilian a écarté le 8 octobre 2026 la présentation en
+ * bulles de conversation (« j'aime pas du tout ce layout, restons sur une FAQ
+ * classique »).
  *
- * Née sur l'accueil (`home-questions`), elle remplace depuis le 3 octobre 2026
- * les accordéons à cadres des autres pages : une seule façon de poser une
- * question sur le site.
- *
- * Sur grand écran tout est affiché, rien n'est replié. Sur téléphone, seule la
- * première réponse est ouverte ; on touche une question pour lire la sienne.
- * Ce sont des `details` : sans script ils sont tous ouverts, et un moteur lit
- * toutes les réponses dans tous les cas.
+ * Ce sont des `details` qui portent le même `name` : en ouvrir une referme la
+ * précédente, sans script. La première est ouverte à l'arrivée, pour que la
+ * section ne soit pas une liste de titres. Toutes les réponses sont dans le
+ * HTML, ouvertes ou non : un moteur les lit dans tous les cas.
  *
  * Sans `items`, le texte vient de `data/home-faq`. Le balisage `FAQPage` reste
  * posé par la page, à partir de la même liste : il lit `a`, le texte brut.
@@ -34,7 +30,7 @@ interface Props {
 
 const {
   id = 'questions',
-  titre = 'Avant de m’écrire.',
+  titre = 'Vos questions.',
   titreLargeur = '12ch',
   items = homeFaqs,
 } = Astro.props;
@@ -46,8 +42,6 @@ const {
   class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]"
 >
   <div class="questions relative mx-auto max-w-[1200px]">
-    {/* Sur grand écran le titre accompagne l'échange, qui est plus haut que
-        lui : sans cela, la colonne de gauche restait vide sous le titre. */}
     <SectionHeader
       class="lg:sticky lg:top-28"
       title={titre}
@@ -55,42 +49,19 @@ const {
       spacing="none"
     />
 
-    <div class="echanges reveal" data-echanges>
-      {items.map((item) => (
-        <details class="echange" open>
-          <summary class="echange__tete">
-            <h3 class="echange__question">{item.q}</h3>
+    <div class="questions__liste reveal">
+      {items.map((item, rang) => (
+        <details class="question" name={`questions-${id}`} open={rang === 0}>
+          <summary class="question__tete">
+            <h3 class="question__titre">{item.q}</h3>
+            <span class="question__signe" aria-hidden="true"></span>
           </summary>
-          <p class="echange__reponse" set:html={item.html ?? item.a} />
+          <p class="question__reponse" set:html={item.html ?? item.a} />
         </details>
       ))}
     </div>
   </div>
 </section>
-
-<script>
-  /* Téléphone : une seule réponse ouverte au départ, la première. Au-delà de
-     767 px, toutes le restent (et la question n'y est pas cliquable, voir les
-     styles). */
-  const echanges = [...document.querySelectorAll<HTMLDetailsElement>('[data-echanges] details')];
-  const etroit = window.matchMedia('(max-width: 767px)');
-  const regler = () => {
-    echanges.forEach((echange, rang) => {
-      echange.open = !etroit.matches || rang === 0;
-      /* Hors téléphone la question n'est pas un bouton : elle sort de l'ordre
-         de tabulation. */
-      const tete = echange.querySelector('summary');
-      if (tete) tete.tabIndex = etroit.matches ? 0 : -1;
-    });
-  };
-  for (const echange of echanges) {
-    echange.querySelector('summary')?.addEventListener('click', (e) => {
-      if (!etroit.matches) e.preventDefault();
-    });
-  }
-  etroit.addEventListener('change', regler);
-  regler();
-</script>
 
 <style>
   .questions {
@@ -98,123 +69,101 @@ const {
     gap: var(--spacing-groupe);
   }
 
-  .echanges {
-    display: grid;
-    gap: var(--spacing-lie);
+  .questions__liste {
     max-width: 44rem;
+    border-bottom: 1px solid var(--color-divider);
   }
 
-  /* La question est le `summary` : sans puce, et calée à droite. */
-  .echange__tete {
+  .question {
+    border-top: 1px solid var(--color-divider);
+  }
+
+  /* La ligne entière se clique : la question à gauche, le signe à droite. */
+  .question__tete {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 44px;
+    padding-block: 1.25rem;
     list-style: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .echange__tete::-webkit-details-marker {
+  .question__tete::-webkit-details-marker {
     display: none;
   }
 
-  /* Les deux bulles de la conversation (voir `home-invite`), à la taille du
-     texte courant : ici on lit, on ne survole pas une fenêtre. */
-  .echange__question,
-  .echange__reponse {
+  .question__titre {
     margin: 0;
-    padding: 0.75rem 1rem;
-    font-size: var(--text-body);
-    line-height: var(--leading-body);
-    letter-spacing: 0;
-  }
-
-  /* La question tient sur une ligne tant que l'écran le permet : elle peut
-     prendre toute la largeur, là où la réponse garde son retrait. */
-  .echange__question {
-    max-width: 100%;
-    text-wrap: pretty;
-    border-radius: var(--radius-md) var(--radius-md) var(--radius-xs) var(--radius-md);
-    background: var(--color-peche);
-    color: var(--color-night);
-  }
-
-  .echange__reponse {
-    width: fit-content;
-    max-width: 92%;
-    margin-top: var(--spacing-colle);
-    border-radius: var(--radius-md) var(--radius-md) var(--radius-md) var(--radius-xs);
-    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
     color: var(--color-ink);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: 0;
     text-wrap: pretty;
   }
 
-  /* ── Téléphone : la question se touche. Un signe « plus » le dit, qui devient
-        « moins » une fois la réponse ouverte ; la réponse arrive comme une
-        bulle de la conversation. ── */
-  @media (max-width: 767px) {
-    .echanges {
-      gap: var(--spacing-colle);
-    }
+  /* Un « plus » qui devient « moins » : le trait vertical se couche. */
+  .question__signe {
+    position: relative;
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--color-ink-low);
+    transition: color 160ms var(--ease-out-quint);
+  }
 
-    .echange[open] {
-      margin-bottom: var(--spacing-colle);
-    }
+  .question__signe::before,
+  .question__signe::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    margin-top: -0.75px;
+    background: currentColor;
+    transition: transform 260ms var(--ease-out-quint);
+  }
 
-    .echange__tete {
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+  .question__signe::after {
+    transform: rotate(90deg);
+  }
 
-    .echange__question {
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      min-height: 44px;
-    }
+  .question[open] .question__signe::after {
+    transform: rotate(0deg);
+  }
 
-    .echange__question::after {
-      content: '';
-      flex: none;
-      width: 0.75rem;
-      height: 0.75rem;
-      background:
-        linear-gradient(currentColor, currentColor) 50% 50% / 100% 1.5px no-repeat,
-        linear-gradient(currentColor, currentColor) 50% 50% / 1.5px 100% no-repeat;
-      transition: transform 260ms var(--ease-out-quint);
-    }
+  .question__tete:hover .question__signe,
+  .question[open] .question__signe {
+    color: var(--color-ink);
+  }
 
-    .echange[open] .echange__question::after {
-      background:
-        linear-gradient(currentColor, currentColor) 50% 50% / 100% 1.5px no-repeat;
-      transform: rotate(180deg);
-    }
+  .question__reponse {
+    margin: 0;
+    padding: 0 2.375rem 1.5rem 0;
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
+    text-wrap: pretty;
+  }
 
-    @media (prefers-reduced-motion: no-preference) {
-      .echange[open] .echange__reponse {
-        animation: reponse-arrive 420ms var(--ease-out-expo) backwards;
-      }
+  @media (prefers-reduced-motion: reduce) {
+    .question__signe,
+    .question__signe::before,
+    .question__signe::after {
+      transition: none;
     }
   }
 
-  @keyframes reponse-arrive {
-    from { opacity: 0; transform: translateY(0.5rem); }
-  }
-
-  /* Grand écran : le titre à gauche, l'échange à droite, comme les voix. Tout
-     est ouvert et le reste : la question ne se clique pas. */
-  @media (min-width: 768px) {
-    .echange__tete {
-      pointer-events: none;
-    }
-  }
-
+  /* Grand écran : le titre à gauche, qui accompagne la liste, plus haute que
+     lui. */
   @media (min-width: 1024px) {
     .questions {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
       column-gap: var(--spacing-gouttiere);
       align-items: start;
-    }
-
-    .echange__reponse {
-      max-width: 88%;
     }
   }
 </style>

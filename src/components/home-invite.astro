@@ -48,12 +48,19 @@
  *   coin   en bas à droite, fixe, dès qu'on a défilé d'un tiers d'écran.
  *
  * Le passage est un vol : la barre part de là où elle est et va se ranger.
- * Dans le coin, elle écrit UN exemple puis se replie en pastille (« mets juste
- * l'animation puis range la popup ») : son portrait et « Écrire à Lilian » sur
- * ordinateur, son portrait seul sur téléphone. En barre, elle écrivait sans
- * fin et recouvrait des titres, des prix et le bouton de la newsletter. Sur
- * téléphone, la pastille s'efface quand on descend et revient quand on
- * remonte : elle rognait la fin des lignes.
+ * Dans le coin, elle reste en barre six secondes puis se replie en pastille :
+ * son portrait et « Écrire à Lilian » sur ordinateur, son portrait seul sur
+ * téléphone. Restée en barre, elle recouvrait des titres, des prix et le
+ * bouton de la newsletter. Sur téléphone, la pastille s'efface quand on
+ * descend et revient quand on remonte : elle rognait la fin des lignes.
+ *
+ * ELLE N'ÉCRIT PLUS RIEN TOUTE SEULE. Jusqu'au 8 octobre 2026, des exemples
+ * s'y tapaient lettre à lettre : quatre phrases en boucle sous le titre, puis
+ * une dernière dans le coin avant le repli. Lilian a demandé ce jour-là de
+ * réduire les animations de la page : l'invite est fixe (« Écrivez-moi… »),
+ * celle que voyait déjà le mouvement réduit, et le repli ne tient plus qu'à
+ * son délai. Les trois points de la conversation restent : ils répondent à un
+ * geste du visiteur.
  *
  * Elle s'efface quand le champ de fin de page est à l'écran : jamais deux
  * champs en même temps. Sans script, rien n'est rendu visible ; les boutons
@@ -68,16 +75,6 @@ import BoutonReservation from './BoutonReservation.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { EMAIL_CONTACT, WHATSAPP_CONTACT } from '../lib/contact';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
-
-/* Ce que la barre écrit toute seule quand on n'y touche pas : des débuts de
-   phrase, pour montrer qu'on peut répondre en une ligne. Des situations
-   inventées, sans nom ni chiffre de client. */
-const exemples = [
-  'J’ai une agence de 8 personnes et je ressaisis mes devis à la main…',
-  'On est une vingtaine, et le support client nous déborde…',
-  'Je voudrais un dashboard pour suivre mes chantiers…',
-  'J’aimerais former mon équipe à l’automatisation…',
-];
 ---
 
 <aside
@@ -86,7 +83,6 @@ const exemples = [
   data-causerie
   data-etat="veille"
   data-lieu="coin"
-  data-exemples={JSON.stringify(exemples)}
   data-email={EMAIL_CONTACT}
   data-whatsapp={WHATSAPP_CONTACT || undefined}
   data-duree={DUREE_RESERVATION_MINUTES}
@@ -127,8 +123,6 @@ const exemples = [
           placeholder="Écrivez-moi…"
           data-causerie-message
         ></textarea>
-        {/* L'exemple qui s'écrit tout seul, par-dessus le champ vide. */}
-        <span class="causerie__exemple" aria-hidden="true" data-causerie-exemple></span>
       </div>
       {/* Le bouton n'envoie rien : il ouvre le choix du moyen. */}
       <button type="submit" class="causerie__envoi" aria-label="Continuer">
@@ -490,42 +484,10 @@ const exemples = [
     resize: none;
   }
 
+  /* L'invite est fixe : rien ne s'écrit à la place du visiteur. */
   .causerie__saisie ::placeholder {
     color: var(--color-ink-low);
     opacity: 1;
-  }
-
-  /* Quand un exemple s'écrit, il remplace l'invite fixe. */
-  .causerie[data-exemple] .causerie__saisie textarea::placeholder {
-    color: transparent;
-  }
-
-  .causerie__exemple {
-    position: absolute;
-    inset: 0;
-    display: none;
-    padding: 0.625rem 0;
-    overflow: hidden;
-    color: var(--color-ink-low);
-    line-height: 1.5;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    pointer-events: none;
-  }
-
-  .causerie[data-exemple] .causerie__exemple {
-    display: block;
-  }
-
-  /* Le trait d'écriture, au bout de l'exemple. */
-  .causerie__exemple::after {
-    content: '';
-    display: inline-block;
-    width: 1.5px;
-    height: 1.1em;
-    margin-left: 2px;
-    background: var(--color-peche);
-    vertical-align: text-bottom;
   }
 
   .causerie__envoi {
@@ -691,7 +653,6 @@ const exemples = [
   const choix = racine?.querySelector<HTMLElement>('[data-causerie-choix]');
   const barre = racine?.querySelector<HTMLFormElement>('[data-causerie-barre]');
   const champ = racine?.querySelector<HTMLTextAreaElement>('[data-causerie-message]');
-  const exemple = racine?.querySelector<HTMLElement>('[data-causerie-exemple]');
   const note = racine?.querySelector<HTMLInputElement>('[data-causerie-note]');
   const reduire = racine?.querySelector<HTMLButtonElement>('[data-causerie-reduire]');
   const deplieur = racine?.querySelector<HTMLButtonElement>('[data-causerie-deplier]');
@@ -699,7 +660,7 @@ const exemples = [
   /* L'emplacement réservé sous le titre du premier écran, quand la page en a un. */
   const place = document.querySelector<HTMLElement>('[data-causerie-place]');
 
-  if (racine && panneau && fil && choix && barre && champ && exemple && note && reduire && deplieur && etiquette) {
+  if (racine && panneau && fil && choix && barre && champ && note && reduire && deplieur && etiquette) {
     const reduit = window.matchMedia('(prefers-reduced-motion: reduce)');
     const etroit = window.matchMedia('(max-width: 640px)');
     const tactile = window.matchMedia('(hover: none), (pointer: coarse)');
@@ -803,8 +764,8 @@ const exemples = [
     };
 
     /* ── Les moyens ──
-       WhatsApp et l'e-mail sont de vrais liens, refaits à chaque ajout : leur
-       adresse porte le message. L'appel est un `BoutonReservation` cloné de son
+       WhatsApp et l'e-mail sont de vrais liens, refaits à chaque ajout : le
+       message part avec eux. L'appel est un `BoutonReservation` cloné de son
        gabarit, que Layout intercepte pour ouvrir l'agenda dans la page. */
     const icone = (nom: Canal) =>
       racine.querySelector<HTMLTemplateElement>(`[data-causerie-icone="${nom}"]`)?.content.cloneNode(true) ?? null;
@@ -816,8 +777,28 @@ const exemples = [
       const ecrit = message();
       if (canal === 'whatsapp') {
         const texte = `Bonjour Lilian, je vous écris depuis votre site.${ecrit ? `\n\n${ecrit}` : ''}`;
-        a.href = `https://wa.me/${numero}?text=${encodeURIComponent(texte)}`;
+        /* L'adresse écrite sur le lien ne porte pas le message. Les outils de
+           mesure relèvent l'adresse de tout lien sortant qu'on clique : ce que
+           le visiteur venait d'écrire partait chez eux avec elle (constaté le
+           8 octobre 2026). Le message n'est ajouté qu'au moment d'ouvrir
+           WhatsApp, dans une adresse qu'aucun lien de la page ne porte. */
+        a.href = `https://wa.me/${numero}`;
         a.target = '_blank';
+        /* Le clic du milieu émet `auxclick`, pas `click` : sans lui, il ouvrait
+           l'adresse nue et le message était perdu. Si le navigateur refuse la
+           nouvelle fenêtre (certaines vues intégrées), WhatsApp s'ouvre dans
+           celle-ci plutôt que pas du tout. */
+        const ouvrirWhatsApp = (e: MouseEvent) => {
+          e.preventDefault();
+          const adresseComplete = `https://wa.me/${numero}?text=${encodeURIComponent(texte)}`;
+          const fenetre = window.open(adresseComplete, '_blank');
+          if (fenetre) fenetre.opener = null;
+          else window.location.href = adresseComplete;
+        };
+        a.addEventListener('click', ouvrirWhatsApp);
+        a.addEventListener('auxclick', (e) => {
+          if (e.button === 1) ouvrirWhatsApp(e);
+        });
       } else {
         const corps = `Bonjour Lilian,\n\n${ecrit ? `${ecrit}\n\n` : ''}`;
         a.href = `mailto:${adresse}?subject=${encodeURIComponent('Demande depuis votre site')}&body=${encodeURIComponent(corps)}`;
@@ -922,9 +903,12 @@ const exemples = [
       racine.style.setProperty('--hero-largeur', `${cadre.width}px`);
     };
 
-    /* ── Le repli : dans le coin, la barre écrit un exemple puis se range en
-          pastille. Tant qu'on y écrit, qu'elle a le focus ou que la
-          conversation est ouverte, elle reste dépliée. ── */
+    /* ── Le repli : dans le coin, la barre attend six secondes puis se range
+          en pastille. Tant qu'on y écrit, qu'elle a le focus ou que la
+          conversation est ouverte, elle reste dépliée. Jusqu'au 8 octobre
+          2026 un exemple s'écrivait d'abord dans la barre, ce qui la tenait
+          ouverte cinq à six secondes : le délai garde cette durée. ── */
+    const REPLI = 6000;
     let rangement = 0;
 
     const annulerRangement = () => {
@@ -945,7 +929,6 @@ const exemples = [
       rangement = 0;
       if ('rangee' in racine.dataset || lieu !== 'coin' || racine.dataset.etat !== 'veille') return;
       if (champ.value !== '' || document.activeElement === champ) return;
-      arreterExemples();
       muer(() => {
         racine.dataset.rangee = '';
       });
@@ -965,13 +948,9 @@ const exemples = [
         lieu = suivant;
         racine.dataset.lieu = suivant;
       });
-      if (racine.dataset.etat !== 'veille') return;
-      /* Dans le coin : le temps d'écrire un exemple ; s'il ne peut pas s'écrire
-         (mouvement réduit, onglet masqué), elle se range quand même. Sous le
-         titre : l'exemple resté en plan s'efface et la suite reprend. */
-      if (suivant === 'coin') prevoirRangement(9000);
-      else arreterExemples();
-      relancerExemples();
+      /* Arrivée dans le coin, elle se range si on n'y touche pas. Sous le
+         titre, elle reste en barre. */
+      if (suivant === 'coin' && racine.dataset.etat === 'veille') prevoirRangement(REPLI);
     };
 
     /* ── Ouvrir, réduire ── */
@@ -990,7 +969,6 @@ const exemples = [
       delete racine.dataset.retabli;
       panneau.inert = false;
       if (champDeFin) champDeFin.inert = true;
-      arreterExemples();
     };
 
     /* Le focus rendu à la barre par `fermer` ne doit pas rouvrir la fenêtre. */
@@ -1111,7 +1089,23 @@ const exemples = [
       }
     };
 
+    /* ── La conversation ouverte par la barre elle-même ──
+       Les boutons de la page portent leur objectif `causerie_opened` en
+       attribut. La barre n'est pas un lien : envoyer d'ici n'émettait rien, et
+       le geste principal du premier écran n'apparaissait dans aucune
+       statistique. Compté une fois par page, et pas si un bouton a déjà ouvert
+       la conversation. Sources : `barre_hero` sous le titre, `barre_coin`
+       ailleurs (voir DATAFAST-FUNNEL.md). */
+    let ouvertureComptee = false;
+    const compterOuverture = () => {
+      if (ouvertureComptee) return;
+      ouvertureComptee = true;
+      const { datafast } = window as unknown as { datafast?: (nom: string, props?: Record<string, string>) => void };
+      if (typeof datafast === 'function') datafast('causerie_opened', { source: lieu === 'hero' ? 'barre_hero' : 'barre_coin' });
+    };
+
     const envoyerLeChamp = () => {
+      compterOuverture();
       const texte = champ.value.trim();
       champ.value = '';
       soumettre(texte).catch((erreur: unknown) => console.error('[causerie]', erreur));
@@ -1138,6 +1132,7 @@ const exemples = [
       const source = e.target instanceof Element ? e.target.closest('[data-causerie-ouvrir]') : null;
       if (!source) return;
       e.preventDefault();
+      ouvertureComptee = true;
       declencheur = source instanceof HTMLElement ? source : null;
       const cible = source.getAttribute('data-cal-note-from');
       const origine = cible ? document.querySelector<HTMLTextAreaElement | HTMLInputElement>(cible) : null;
@@ -1152,69 +1147,10 @@ const exemples = [
         .catch((erreur: unknown) => console.error('[causerie]', erreur));
     });
 
-    /* ── L'exemple qui s'écrit tout seul ──
-       Sous le titre, les exemples se suivent. Dans le coin, un seul : il
-       s'écrit, tient deux secondes, et la barre se range. */
-    const exemples: string[] = JSON.parse(racine.dataset.exemples ?? '[]');
-    let minuterie = 0;
-    let rang = 0;
-    let lettres = 0;
-    let sens: 1 | -1 = 1;
-
-    const libre = () =>
-      racine.dataset.etat === 'veille' &&
-      !('rangee' in racine.dataset) &&
-      phrases.length === 0 &&
-      champ.value === '' &&
-      document.activeElement !== champ &&
-      !document.hidden &&
-      !reduit.matches &&
-      exemples.length > 0;
-
-    function arreterExemples() {
-      window.clearTimeout(minuterie);
-      minuterie = 0;
-      delete racine!.dataset.exemple;
-    }
-
-    const ecrire = () => {
-      if (!libre()) return arreterExemples();
-      const phrase = exemples[rang % exemples.length];
-      racine.dataset.exemple = '';
-      lettres += sens;
-      exemple.textContent = phrase.slice(0, lettres);
-      let attente = sens === 1 ? 38 : 14;
-      if (sens === 1 && lettres >= phrase.length) {
-        if (lieu === 'coin') {
-          minuterie = 0;
-          lettres = 0;
-          rang += 1;
-          prevoirRangement(2200);
-          return;
-        }
-        sens = -1;
-        attente = 2200;
-      } else if (sens === -1 && lettres <= 0) {
-        sens = 1;
-        rang += 1;
-        attente = 420;
-      }
-      minuterie = window.setTimeout(ecrire, attente);
-    };
-
-    function relancerExemples() {
-      if (minuterie || !libre() || !('apparue' in racine!.dataset)) return;
-      sens = 1;
-      lettres = 0;
-      minuterie = window.setTimeout(ecrire, 900);
-    }
-
-    champ.addEventListener('focus', arreterExemples);
+    /* Le champ quitté sans rien d'écrit, dans le coin : elle se range. */
     champ.addEventListener('blur', () => {
       if (lieu === 'coin' && racine.dataset.etat === 'veille') prevoirRangement(4000);
-      else relancerExemples();
     });
-    document.addEventListener('visibilitychange', relancerExemples);
 
     /* ── Où elle se tient : sous le titre tant qu'on est en haut de page, dans
           le coin dès qu'on a défilé d'un tiers d'écran. Deux seuils, pour
@@ -1241,10 +1177,12 @@ const exemples = [
       if (passe === 'apparue' in racine!.dataset) return;
       if (passe) {
         racine!.dataset.apparue = '';
-        relancerExemples();
+        /* C'était la fin de l'exemple qui la rangeait ici : sans exemple, le
+           délai part de son apparition. */
+        if (racine!.dataset.etat === 'veille') prevoirRangement(REPLI);
       } else if (racine!.dataset.etat === 'veille') {
         delete racine!.dataset.apparue;
-        arreterExemples();
+        annulerRangement();
       }
     }
     window.addEventListener('scroll', voirLaPage, { passive: true });
@@ -1279,7 +1217,7 @@ const exemples = [
 
     if (place) {
       /* Elle naît à sa place du hero si la page est en haut, et entre après le
-         titre et sa pastille, avec le défilé des clients. */
+         titre, avec la liste des clients. */
       caler();
       if (window.scrollY <= window.innerHeight * 0.3) {
         lieu = 'hero';
@@ -1291,8 +1229,7 @@ const exemples = [
       window.setTimeout(
         () => {
           racine.dataset.apparue = '';
-          if (lieu === 'coin') prevoirRangement(phrases.length ? 0 : 9000);
-          relancerExemples();
+          if (lieu === 'coin') prevoirRangement(phrases.length ? 0 : REPLI);
         },
         reduit.matches || lieu === 'coin' ? 0 : 700,
       );

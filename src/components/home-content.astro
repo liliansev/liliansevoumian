@@ -2,29 +2,28 @@
 /*
  * home-content — ce que Lilian publie : une vidéo, un mail par semaine.
  *
- * Deux objets, pas deux cartes. À gauche la dernière vidéo, cadrée comme les
- * scènes de la page (quatre repères d'angle), avec son vrai titre et ce qu'on
- * y voit. À droite l'inscription à la newsletter, écrite comme le mail qu'on
- * va recevoir : un expéditeur, un objet, et le champ « À » qui attend
- * l'adresse du visiteur. Le formulaire est l'objet lui-même.
+ * Deux objets, pas deux cartes. À gauche la dernière vidéo de la chaîne,
+ * cadrée comme les scènes de la page (quatre repères d'angle), avec son vrai
+ * titre. À droite l'inscription à la newsletter, écrite comme le mail qu'on va
+ * recevoir : un expéditeur, un objet, et le champ « À » qui attend l'adresse du
+ * visiteur. Le formulaire est l'objet lui-même.
+ *
+ * La vidéo est toujours la dernière : voir `data/derniere-video.ts` et le
+ * script en bas de ce fichier.
  *
  * L'inscription passe par `/api/newsletter` (voir `lib/newsletter-signup.ts`).
  */
 import { Icon } from 'astro-icon/components';
 import LinkCTA from './LinkCTA.astro';
 import SectionHeader from './SectionHeader.astro';
+import { derniereVideo, urlVideo } from '../data/derniere-video';
 
-// Dernière vidéo longue, vérifiée le 2 octobre 2026 sur le flux officiel (les
-// entrées plus récentes sont des Shorts) :
-// https://www.youtube.com/feeds/videos.xml?channel_id=UCGH0eGI6I9EFsaKpuXXIisg
-// Le titre et la phrase viennent de la vidéo elle-même. La vignette est copiée
-// dans `public/videos/` : appelée chez YouTube, elle laissait un rectangle
-// sombre dès qu'un bloqueur ou le réseau la refusait.
 const video = {
-  title: 'Reflare\u00a0: l’outil qui me manquait pour créer du contenu',
-  resume: 'Reflare redonne vie à d’anciennes vidéos avec des miniatures IA et des tests A/B automatisés.',
-  url: 'https://www.youtube.com/watch?v=g9NvMEE7NK4',
-  thumbnail: '/videos/g9NvMEE7NK4.webp',
+  id: derniereVideo.id,
+  publiee: derniereVideo.publiee,
+  title: derniereVideo.titre,
+  url: urlVideo(derniereVideo.id),
+  thumbnail: `/videos/${derniereVideo.id}.webp`,
 };
 
 // La chaîne, pour qui veut voir les autres : la même adresse que dans le pied
@@ -37,9 +36,9 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
   <div class="mx-auto max-w-[1200px]">
     <div class="content-columns grid gap-[var(--spacing-bloc)] lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-x-[var(--spacing-gouttiere)] lg:gap-y-[var(--spacing-groupe)]">
       <article class="grid min-w-0 gap-[var(--spacing-groupe)] lg:row-span-2 lg:grid-rows-subgrid">
-        <SectionHeader title="Je montre comment je fais." titleMaxWidth="none" spacing="none" class="h-full" />
+        <SectionHeader title="Ma dernière vidéo YouTube." titleMaxWidth="none" spacing="none" class="h-full" />
         <div class="video min-w-0">
-        <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
+        <a href={video.url} target="_blank" rel="noopener noreferrer" class="video-link group block" data-derniere-video={video.id} data-video-publiee={video.publiee} data-fast-goal="youtube_opened" data-fast-goal-source="home_content">
           <div class="video-cadre">
             <span class="repere repere--hg" aria-hidden="true"></span>
             <span class="repere repere--hd" aria-hidden="true"></span>
@@ -52,8 +51,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
               </span>
             </div>
           </div>
-          <h3 class="video-titre">{video.title}</h3>
-          <p class="video-resume">{video.resume}</p>
+          <h3 class="video-titre" data-video-titre>{video.title}</h3>
         </a>
         {/* Une vidéo en montre une : la chaîne est la sortie de cette activité.
             Elle n'était liée que depuis le pied de page. */}
@@ -146,13 +144,6 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
     line-height: 1.15;
     letter-spacing: -0.02em;
     text-wrap: balance;
-  }
-
-  .video-resume {
-    max-width: 46ch;
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink-mid);
-    line-height: var(--leading-body);
   }
 
   .video-suite {
@@ -266,6 +257,41 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
 </style>
 
 <script>
+  /* La vidéo écrite dans la page est celle qui était la dernière à la mise en
+     ligne. Le serveur connaît la dernière de la chaîne (`/api/derniere-video`,
+     dans `deploy/server.mjs`) : si une vidéo plus récente est sortie, le lien,
+     le titre et la vignette sont remplacés, une fois la nouvelle vignette
+     chargée, pour que titre et image changent ensemble. Sans réponse (hors
+     ligne, serveur de développement), la page reste telle qu'elle est. */
+  const lienVideo = document.querySelector<HTMLAnchorElement>('[data-derniere-video]');
+  const imageVideo = lienVideo?.querySelector('img');
+  const titreVideo = lienVideo?.querySelector('[data-video-titre]');
+  if (lienVideo && imageVideo && titreVideo) {
+    fetch('/api/derniere-video', { headers: { Accept: 'application/json' } })
+      .then((reponse) => (reponse.ok ? reponse.json() : null))
+      .then((video: unknown) => {
+        if (!video || typeof video !== 'object') return;
+        const { id, titre, publiee } = video as { id?: unknown; titre?: unknown; publiee?: unknown };
+        if (typeof id !== 'string' || typeof titre !== 'string' || !/^[\w-]{11}$/.test(id)) return;
+        if (id === lienVideo.dataset.derniereVideo) return;
+        /* Une vidéo différente n'est pas forcément plus récente : juste après
+           une publication, le flux peut encore annoncer la précédente. Les
+           dates sont en AAAA-MM-JJ, elles se comparent telles quelles. */
+        const ecrite = lienVideo.dataset.videoPubliee;
+        if (typeof publiee === 'string' && ecrite && publiee <= ecrite) return;
+        const vignette = new Image();
+        vignette.onload = () => {
+          imageVideo.src = vignette.src;
+          titreVideo.textContent = titre;
+          lienVideo.href = `https://www.youtube.com/watch?v=${id}`;
+          lienVideo.dataset.derniereVideo = id;
+          if (typeof publiee === 'string') lienVideo.dataset.videoPubliee = publiee;
+        };
+        vignette.src = `/api/derniere-video/vignette?v=${id}`;
+      })
+      .catch((erreur: unknown) => console.error('[vidéo] dernière vidéo non relevée', erreur));
+  }
+
   // La réponse de `/api/newsletter` tient en deux champs. Elle est vérifiée ici
   // à la main : importer zod dans le navigateur pour ces deux champs chargeait
   // toute la bibliothèque sur la page d'accueil. La validation qui compte,

@@ -3,7 +3,7 @@
  * home-hero — le premier écran de l'accueil : Lilian se présente, sur une
  * grille.
  *
- * Il l'a voulu ainsi : le titre, centré, et au bas de l'écran le défilé des
+ * Il l'a voulu ainsi : le titre, centré, et au bas de l'écran la liste des
  * entreprises avec lesquelles il a travaillé. Pas de portrait, pas de chapô,
  * et pas de sculpture non plus : il l'a essayée sous le titre et l'a jugée de
  * trop. Sous le titre, le premier écran porte la barre où l'on écrit à Lilian :
@@ -15,16 +15,26 @@
  * le propos : vous perdez votre temps, voilà pourquoi.
  *
  * La direction est « tech moderne, propre » : une grille fine tient tout
- * l'écran, centrée sur le titre. Deux choses s'y passent, discrètes. Quelques
- * cellules s'allument l'une après l'autre. Et la grille s'éclaire sous le
- * pointeur. Des faisceaux de lumière couraient aussi le long des lignes :
- * Lilian les a fait retirer le 2 octobre 2026 (« il y a déjà assez d'animation
- * avec les carrés qui s'illuminent »). Des croix marquent quelques intersections,
- * comme sur un plan.
+ * l'écran, centrée sur le titre. Deux choses s'y passent, discrètes. Au
+ * chargement, une fois le titre posé, quelques cellules s'allument l'une après
+ * l'autre, une seule fois. Et la grille s'éclaire sous le pointeur. Des
+ * faisceaux de lumière couraient aussi le long des lignes : Lilian les a fait
+ * retirer le 2 octobre 2026 (« il y a déjà assez d'animation avec les carrés
+ * qui s'illuminent »). Des croix marquent quelques intersections, comme sur un
+ * plan.
  *
- * Le métier est posé dans une pastille pêche, qui arrive après le reste de la
- * phrase. Sur un écran étroit elle se replie sur deux lignes, chacune avec
- * ses bouts ronds.
+ * Lilian a demandé le 8 octobre 2026 de réduire les animations de la page.
+ * Les cellules repassaient toutes les neuf secondes, elles ne font plus qu'un
+ * passage. Les logos des clients, eux, défilent toujours : je les avais posés
+ * en liste fixe le même jour, il a préféré le défilé (« c'était mieux quand ça
+ * déroulait »). C'est la seule boucle du premier écran ; elle s'arrête au
+ * survol, par son bouton, et quand le premier écran sort de la fenêtre
+ * (`data-motion-pause`).
+ *
+ * Le métier est souligné du trait pêche du site (`mark`), et arrive après le
+ * reste de la phrase. La pastille pleine qui le portait jusqu'au 8 octobre
+ * 2026 est réservée au bouton d'appel. Sur un écran étroit il passe sur deux
+ * lignes, et le trait le suit.
  *
  * Sans script, la phrase et la grille sont là ; il manque l'éclairage sous le
  * pointeur, la barre d'écriture et sa ligne. En mouvement réduit, rien ne
@@ -48,7 +58,8 @@ const croix = [
 ];
 
 /* Les cellules qui s'allument, dans l'ordre : un trajet qui traverse l'écran
-   de gauche à droite en contournant le titre par le bas. */
+   de gauche à droite en contournant le titre par le bas. Il se joue une fois,
+   au chargement. */
 const cellules = [
   { x: -7, y: 1 }, { x: -6, y: 1 }, { x: -6, y: 2 }, { x: -5, y: 2 }, { x: -4, y: 2 },
   { x: 3, y: 2 }, { x: 4, y: 2 }, { x: 5, y: 2 }, { x: 5, y: 1 }, { x: 6, y: 1 },
@@ -79,7 +90,7 @@ const cellules = [
           </>
         ))}
       </span>
-      <span class="affiche__reponse">{reponse}</span>
+      <mark class="affiche__reponse">{reponse}</mark>
     </h1>
     {/* La place de la barre où l'on écrit à Lilian (`home-invite.astro`). La
         barre elle-même est rendue juste après cette section (voir
@@ -249,8 +260,12 @@ const cellules = [
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* Un seul passage, à la suite de l'entrée du titre : deux secondes après
+       le chargement la première cellule s'allume, les autres suivent, et
+       chacune s'éteint pour de bon. Elles repassaient toutes les neuf
+       secondes jusqu'au 8 octobre 2026. */
     .cellule {
-      animation: cellule-passe 9s var(--ease-out-quint) infinite;
+      animation: cellule-passe 1200ms var(--ease-out-quint);
       animation-delay: calc(var(--i) * 420ms + 2s);
     }
 
@@ -259,9 +274,10 @@ const cellules = [
     }
   }
 
+  /* Allumée en un tiers de seconde, éteinte en un peu moins d'une. */
   @keyframes cellule-passe {
-    0%, 14%, 100% { opacity: 0; }
-    4% { opacity: 1; }
+    0%, 100% { opacity: 0; }
+    30% { opacity: 1; }
   }
 
   @keyframes grille-leve {
@@ -350,8 +366,12 @@ const cellules = [
     }
   }
 
-  /* Écran bas : le titre et la barre d'écriture ont besoin de la place. */
-  @media (max-height: 720px) {
+  /* Écran bas : le titre et la barre d'écriture ont besoin de la place. Le
+     seuil est monté de 720 à 820 px le 8 octobre 2026 : la liste des logos,
+     devenue fixe, prend deux à trois lignes là où le défilé n'en prenait
+     qu'une, et la flèche touchait la ligne sous la barre à 1024 × 768 et à
+     360 × 800. */
+  @media (max-height: 820px) {
     .affiche__suite {
       display: none;
     }
@@ -383,24 +403,9 @@ const cellules = [
     display: inline-block;
   }
 
-  /* Le métier est une pastille : la pêche pleine, la nuit pour l'encre. Elle
-     est en ligne, pour pouvoir se replier : chaque fragment garde alors ses
-     bouts ronds. */
+  /* Le métier est souligné : le trait vient de `mark` (global.css). */
   .affiche__question {
-    padding-bottom: 0.2em;
-  }
-
-  .affiche__reponse {
-    padding: 0.04em 0.4em 0.1em;
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-    box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 45%, transparent),
-      0 14px 60px -18px color-mix(in srgb, var(--color-peche) 70%, transparent);
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-    color: var(--color-night);
-    line-height: 1.34;
+    padding-bottom: 0.12em;
   }
 
   @media (min-width: 900px) {
@@ -409,24 +414,16 @@ const cellules = [
     }
   }
 
-  /* Repliée sur deux lignes, la pastille devient deux pastilles : un interligne
-     plus ouvert les sépare, elles se mordaient de quelques pixels. */
-  @media (max-width: 899px) {
-    .affiche__reponse {
-      line-height: 1.5;
-    }
-  }
-
   @media (prefers-reduced-motion: no-preference) {
     /* L'entrée tient en une seconde et demie. Elle en prenait plus de trois :
-       la pastille, qui dit le métier, n'était lisible qu'après deux secondes,
-       et les logos après trois. */
+       le métier n'était lisible qu'après deux secondes, et les logos après
+       trois. */
     .affiche .mot {
       animation: mot-pose 800ms var(--ease-out-expo) backwards;
       animation-delay: calc(var(--i) * 45ms + 120ms);
     }
 
-    /* Un temps, puis la pastille se pose. */
+    /* Un temps, puis le métier se pose. */
     .affiche__reponse {
       animation: reponse-pose 900ms var(--ease-out-expo) backwards;
       animation-delay: calc(var(--mots) * 45ms + 320ms);
@@ -638,6 +635,18 @@ const cellules = [
 
     .defile__fenetre {
       padding-inline: var(--spacing-section-x);
+    }
+
+    /* La liste posée faisait sept lignes sur un téléphone, et le premier écran
+       ne tenait plus dans l'écran : plus petits et plus serrés, les logos en
+       font cinq. */
+    .defile__piste {
+      row-gap: 0.625rem;
+    }
+
+    .defile__piste li {
+      padding-inline: 0 1rem;
+      font-size: var(--text-body-sm);
     }
   }
 </style>

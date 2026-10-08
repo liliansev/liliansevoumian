@@ -31,7 +31,7 @@ import { DUREE_RESERVATION_MINUTES, LIBELLE_CONTACT_RESERVATION } from '../lib/r
 interface Props {
   /** Ancre de la section. `contact` partout ; l'accueil garde `offres`. */
   id?: string;
-  /** Le titre, en HTML : un fragment court peut y être surligné par `mark`. */
+  /** Le titre, en HTML : un fragment court peut y être souligné par `mark`. */
   titre?: string;
   /** La phrase sous le titre, en HTML (un lien `lien-prose` y est permis). */
   suite?: string;
@@ -45,7 +45,7 @@ interface Props {
 const {
   id = 'contact',
   titre = 'Dites-moi ce qui vous fait <mark>perdre du temps.</mark>',
-  suite = 'Une phrase suffit. Je vous réponds <span class="whitespace-nowrap">moi-même</span>, et on voit si c’est un projet pour moi.',
+  suite = 'Écrivez-moi.',
   source,
   prix = false,
 } = Astro.props;
@@ -77,9 +77,9 @@ const offres = [
   <div class="fin__grille" aria-hidden="true"></div>
 
   <div class="fin__centre reveal">
-    {/* Sur l'accueil, le titre répond à celui qui ouvre le récit (« Vous avez
-        la sensation de perdre votre temps ? ») : la page se ferme sur la même
-        question, posée cette fois au visiteur. */}
+    {/* Sur l'accueil, le titre répond à celui qui ouvre le récit (« Vous
+        perdez du temps. ») : la page se ferme sur la même idée, rendue cette
+        fois au visiteur. */}
     <h2 class="fin__titre" set:html={titre} />
     <p class="fin__suite" set:html={suite} />
     <form class="invite" data-invite novalidate>
@@ -169,18 +169,13 @@ const offres = [
     margin: 0;
     color: var(--color-ink);
     font-family: var(--font-display);
-    /* Borné par la largeur sous 372 px : la pastille, qui ne se coupe pas,
-       doit tenir dans la colonne. À 320, « perdre du temps. » y tient à 1 px
-       près (mesuré le 3 octobre 2026). */
+    /* Borné par la largeur sous 372 px, pour que « perdre du temps. » reste
+       sur une ligne à 320 px. */
     font-size: min(var(--text-story), 8.6vw);
     font-weight: 500;
     line-height: var(--leading-display);
     letter-spacing: var(--tracking-display);
     text-wrap: balance;
-  }
-
-  .fin__titre :global(mark) {
-    margin-top: 0.14em;
   }
 
   .fin__suite {

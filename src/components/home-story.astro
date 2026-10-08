@@ -3,8 +3,8 @@
  * home-story — le récit qui suit la première phrase de l'accueil.
  *
  * Le premier écran (`home-hero`) présente Lilian. Ici, la page prend
- * position, dans l'ordre qu'il a donné : vous avez la sensation de perdre
- * votre temps, vous avez raison ; voilà pourquoi ; voilà pourquoi automatiser.
+ * position, dans l'ordre qu'il a donné : vous perdez du temps ; voilà
+ * pourquoi (vos outils ne sont pas synchronisés) ; voilà pourquoi automatiser.
  * La suite de la page répond à « pourquoi moi ».
  *
  * À côté du texte, une scène reste en place pendant qu'on défile. C'est un
@@ -41,9 +41,9 @@
  * en clair.
  *
  * La copie à la main et l'automatisation rejouent un cas réel, celui
- * d'Humble+. Les références, quantités et montants sont une illustration, pas
- * une donnée client ; le seul résultat annoncé, « plus aucune ressaisie »,
- * vient du cas publié. L'agent de support et le suivi de projets sont des
+ * d'Humble+, sans le nommer : le texte ne cite aucun client et ne mène à aucun
+ * cas. Les références, quantités et montants sont une illustration, pas une
+ * donnée client. L'agent de support et le suivi de projets sont des
  * exemples : prénoms, questions, articles, outils et noms de projets sont
  * inventés pour la scène, sans marque ni client.
  *
@@ -89,7 +89,6 @@
  * qui ne tient pas à `--sm-note` est un trait ou n'est pas dans la scène : il
  * n'y a pas de cinquième taille plus petite.
  */
-import LinkCTA from './LinkCTA.astro';
 
 interface Segment {
   t: string;
@@ -104,55 +103,53 @@ interface Morceau {
   reponse?: 'auto' | 'agent' | 'tableau';
 }
 
-/* Une pastille par titre, sur la chute de la phrase, et seulement aux deux
-   bouts du récit : la deuxième phrase n'en porte pas. */
+/* Un trait pêche par titre, sous la chute de la phrase, et seulement aux deux
+   bouts du récit : la deuxième phrase n'en porte pas.
+   Textes repris le 8 octobre 2026 avec Lilian : la première phrase était trop
+   longue, la deuxième parlait de copier-coller alors que la cause est ailleurs
+   (des outils qui ne sont pas synchronisés, d'où le temps perdu et les
+   erreurs), la troisième n'était pas claire. Les espaces insécables règlent
+   les coupes : « du temps. » et « Regardez où. » restent chacun d'un bloc. */
 const actes: { id: string; titre: Segment[]; suite: Morceau[] }[] = [
   {
     id: 'constat',
-    titre: [{ t: 'Vous avez la sensation de perdre votre temps\u00a0?' }, { t: 'Vous avez raison.', mark: true }],
+    titre: [{ t: 'Vous perdez du\u00a0temps.' }, { t: 'Regardez\u00a0où.', mark: true }],
     suite: [
       {
-        t: 'Regardez\u00a0: une commande recopiée à la main, d’un outil à l’autre, ligne après ligne, pendant que l’horloge tourne. Quelqu’un fait sûrement ça chez vous, en ce moment même.',
+        t: 'Une commande recopiée à la main, d’un outil à l’autre. Quelqu’un fait ça chez vous, en ce moment même.',
       },
     ],
   },
   {
     id: 'pourquoi',
-    titre: [{ t: 'Personne n’a monté sa boîte pour faire du copier-coller.' }],
+    titre: [{ t: 'Vos outils ne se parlent\u00a0pas.' }],
     suite: [
       {
-        t: 'Et pourtant. Copier, coller, vérifier, relancer\u00a0: le même geste cent fois, fait par des gens payés pour réfléchir. Chaque geste est court, personne ne le compte, et la semaine y passe.',
+        t: 'Rien n’est synchronisé\u00a0: ce qui entre dans l’un doit être ressaisi dans l’autre. C’est du temps perdu, et des erreurs en plus.',
       },
     ],
   },
   {
     id: 'automatiser',
-    /* Deux espaces insécables : le titre se coupe après « répète », jamais
-       entre « se » et « répète » ni entre « n’a » et « pas ». Le découpage en
-       mots de l'entrée (sur l'espace ordinaire) les garde chacun d'un bloc. */
-    titre: [{ t: 'Ce qui se\u00a0répète n’a\u00a0pas' }, { t: 'besoin de vous.', mark: true }],
+    /* Aucun client n'est nommé ici et aucun lien ne mène à un cas : Lilian ne
+       veut pas d'une phrase à reprendre le jour où le client change. */
+    titre: [{ t: 'Ce qui se\u00a0répète' }, { t: 's’automatise.', mark: true }],
     suite: [
       { t: 'Une automatisation fait passer l’information d’un outil à l’autre', reponse: 'auto' },
       { t: ', ' },
       { t: 'un agent IA répond à vos clients jour et nuit', reponse: 'agent' },
       { t: ', ' },
       { t: 'un dashboard montre où en est chaque projet', reponse: 'tableau' },
-      { t: '. Chez Humble+, il n’y a plus aucune ressaisie entre le bon de commande et la facture.' },
+      { t: '.' },
     ],
   },
 ];
 
-/* Chaque mot reçoit son rang dans la phrase : c'est lui qui règle son retard
-   d'apparition. Le fragment surligné compte comme les autres, il arrive en
-   dernier et c'est la pastille qui l'écrit. */
-const actesRendus = actes.map((acte) => {
-  let rang = 0;
-  const titre = acte.titre.map((segment) => ({
-    mark: segment.mark,
-    mots: segment.t.split(' ').map((mot) => ({ mot, rang: rang++ })),
-  }));
-  return { ...acte, titre, total: rang };
-});
+/* Les titres arrivent d'un bloc, avec leur phrase (le `.reveal` du site), puis
+   le trait se tire sous le fragment souligné. Leurs mots arrivaient un par un,
+   flous, comme ceux du premier écran : trois entrées de plus sur une page qui
+   bougeait déjà trop (Lilian, le 8 octobre 2026). Le mot à mot reste au titre
+   du premier écran, qui est l'entrée de la page. */
 
 /* Les lignes du bon de commande. Références, quantités et montants inventés
    pour la scène ; la désignation est une barre, pas un nom de produit. `l`
@@ -253,27 +250,20 @@ const vues = [
 
 <section id="histoire" data-section data-story class="story relative px-[var(--spacing-section-x)]">
   <div class="story__grille relative mx-auto max-w-[1200px]">
-    {actesRendus.map((acte, index) => (
+    {actes.map((acte, index) => (
       <>
         <div id={acte.id} class:list={['acte', index === 2 && 'acte--long']} data-acte={index + 1}>
-          <div class="acte__corps reveal" style={`--mots: ${acte.total}`}>
+          <div class="acte__corps reveal">
             <h2 class="acte__titre">
-              {acte.titre.map((segment) => {
-                const mots = segment.mots.map(({ mot, rang }) => (
-                  <>
-                    <span class="mot" style={`--i: ${rang}`}>{mot}</span>{' '}
-                  </>
-                ));
-                return segment.mark ? <mark>{mots}</mark> : mots;
-              })}
+              {acte.titre.map((segment, rang) => (
+                <>
+                  {rang > 0 && ' '}
+                  {segment.mark ? <mark>{segment.t}</mark> : segment.t}
+                </>
+              ))}
             </h2>
             <p class="acte__suite">{acte.suite.map((morceau) => (morceau.reponse ? <span class="proposition" data-proposition={morceau.reponse}>{morceau.t}</span> : morceau.t))}</p>
 
-            {index === 2 && (
-              <div class="acte__preuve">
-                <LinkCTA href="/cas-clients/humble-plus">Lire le cas Humble+</LinkCTA>
-              </div>
-            )}
           </div>
           {index === 2 && <div class="acte__course" aria-hidden="true"></div>}
         </div>
@@ -288,6 +278,11 @@ const vues = [
                 <span class="repere repere--bd" aria-hidden="true"></span>
                 <div class="scene__cadre">
                 <div class="scene__plan" aria-hidden="true" data-nosnippet>
+                  {/* Pour qui lit le HTML sans la mise en page (un agent, un convertisseur en
+                      texte) : ce qui suit est un décor, ses montants et ses prénoms sont
+                      inventés. Invisible à l'écran, et le plan entier est déjà masqué aux
+                      lecteurs d'écran. */}
+                  <span class="sr-only">Illustration, données fictives&nbsp;:</span>
                   <div class="puces">
                     <span class="puce" data-horloge>
                       <svg class="puce__horloge" viewBox="-10 -10 20 20">
@@ -587,27 +582,6 @@ const vues = [
     overflow-wrap: anywhere;
   }
 
-  /* Le fragment surligné est la pastille de tout le site (`mark`, dans
-     `global.css`). */
-  .acte__titre mark {
-    display: inline-block;
-    /* Texte agrandi : la pastille passe sur deux lignes plutôt que de sortir
-       de la colonne. Bloc en ligne, elle reste entière tant qu'elle tient sur
-       une ligne : `normal` ne change rien à la taille habituelle. */
-    max-width: 100%;
-    white-space: normal;
-    padding: 0.02em 0.36em 0.08em;
-    margin: 0.14em 0 0;
-  }
-
-  .acte__titre mark::before {
-    inset: 0;
-  }
-
-  .mot {
-    display: inline-block;
-  }
-
   .acte__suite {
     max-width: 40ch;
     margin: 0;
@@ -627,30 +601,6 @@ const vues = [
   .acte[data-reponse='agent'] .proposition[data-proposition='agent'],
   .acte[data-reponse='tableau'] .proposition[data-proposition='tableau'] {
     color: var(--color-ink);
-  }
-
-  /* ── Les mots se posent ──
-     Chaque phrase attend d'entrer à l'écran (le `.reveal` du site), puis ses
-     mots arrivent un par un. Le fragment surligné vient en dernier. */
-  @media (prefers-reduced-motion: no-preference) {
-    :global(.js-ready) .acte__corps.reveal .mot {
-      transition:
-        opacity 620ms var(--ease-out-expo),
-        transform 760ms var(--ease-out-expo),
-        filter 620ms var(--ease-out-expo);
-      transition-delay: calc(var(--i) * 50ms + 80ms);
-    }
-
-    :global(.js-ready) .acte__corps.reveal:not(.is-visible) .mot {
-      opacity: 0;
-      transform: translateY(0.45em);
-      filter: blur(8px);
-      transition-delay: 0ms;
-    }
-
-    :global(.js-ready) .acte__corps.reveal.is-visible mark {
-      transition-delay: calc(var(--mots) * 50ms - 60ms);
-    }
   }
 
   /* ── La scène ──
@@ -2116,9 +2066,8 @@ const vues = [
       column-gap: var(--spacing-gouttiere);
     }
 
-    /* Le titre a la largeur qu'il faut à sa plus longue ligne (« sensation
-       de perdre ») : un demi-caractère de moins et la première phrase passe
-       de quatre lignes à cinq. */
+    /* Le titre a la largeur qu'il faut à sa plus longue ligne (« Vos outils
+       ne se »). */
     .acte__titre {
       max-width: 13.5ch;
     }
@@ -4044,7 +3993,7 @@ const vues = [
        que s'il y a quelque chose à arrêter, donc pas en mouvement réduit.
        L'arrêt tient tant que le visiteur ne le relève pas.
        `aria-pressed` porte l'état, le libellé reste le même : c'est la
-       convention d'un bouton à bascule (comme le défilé des logos). */
+       convention d'un bouton à bascule. */
     const suspendre = () => {
       arretDepuis = performance.now();
       arretee = true;

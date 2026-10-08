@@ -43,8 +43,14 @@
  * finale : sans script et en mouvement réduit, on voit une scène fixe et
  * complète. Les sculptures de verre restent visibles sur `/explorations-blocs`.
  *
- * Rien n'est affirmé qui ne soit dans PRODUCT.md : les preuves viennent des
- * cas clients publiés et des faits du parcours ; les prix, de
+ * Chaque bloc tient en quatre choses : le nom du métier, une phrase, une ligne
+ * de précision, la sortie avec son prix. Lilian a jugé le bloc trop chargé le
+ * 8 octobre 2026 : il portait en plus un chiffre de preuve, le nom d'un client
+ * et un lien vers son cas. Ils sont sortis, et aucun bloc ne mène plus à un cas
+ * client (un cas change, la page ne doit pas en dépendre). Les faits du
+ * parcours sont dans « Pourquoi moi », les cas dans leur page.
+ *
+ * Rien n'est affirmé qui ne soit dans PRODUCT.md ; les prix viennent de
  * `data/service-pricing`.
  */
 import { Icon } from 'astro-icon/components';
@@ -67,9 +73,7 @@ const metiers = [
        page. Il est rendu par `set:html`, comme les trois autres ; tous sont
        écrits ici, aucun ne vient d'une saisie. */
     texte:
-      'Commandes, factures, relances, rapports\u00a0: je construis ces automatisations avec <a href="/expert-make">Make</a> et <a href="/expert-n8n">n8n</a>, deux outils faits pour ça. Je livre un système fiable, que votre équipe utilise au quotidien.',
-    /* Humble+ porte déjà le récit, juste au-dessus : ce bloc cite un autre cas. */
-    preuve: { chiffre: '~4\u00a0h par semaine', suite: 'récupérées par l’équipe de Fraich Touch sur sa facturation.', href: '/cas-clients/facturation-automatisee-fraich-touch', cas: 'Fraich Touch' },
+      'Commandes, factures, relances, rapports\u00a0: je les automatise avec <a href="/expert-make">Make</a> et <a href="/expert-n8n">n8n</a>.',
     note: prix(automationStartingPrice),
     lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_metier_automation' },
   },
@@ -79,8 +83,7 @@ const metiers = [
     onglet: 'Agents IA',
     phrase: 'Un agent qui va chercher la réponse à votre place.',
     texte:
-      'Vous posez une question, il va chercher l’information là où elle est\u00a0: vos documents, vos outils, le web. Il lit, recoupe et répond, sources à l’appui. Les contrôles qui comptent restent des règles écrites, et un humain garde la main.',
-    preuve: { chiffre: '~10\u00a0min', suite: 'par passage, contre 1 à 3\u00a0h à la main pour 50 entreprises, chez M\u00a0Partners.', href: '/cas-clients/m-partners', cas: 'M Partners' },
+      'Il lit vos documents et vos outils, répond sources à l’appui, et un humain garde la main.',
     /* L'offre « Automatisation et agents IA » n'a qu'un prix d'entrée : il
        s'affiche sur ses deux blocs, comme sur la ligne de fin de page. */
     note: prix(automationStartingPrice),
@@ -101,7 +104,7 @@ const metiers = [
     onglet: 'Dashboards',
     phrase: 'Un dashboard qui dit où vous en êtes, un outil fait pour votre métier.',
     texte:
-      'Dashboards, portails clients et applications internes, de la conception aux évolutions. La personne qui cadre le projet est celle qui le construit.',
+      'Dashboards, portails clients et applications internes, de la conception aux évolutions.',
     note: 'Sur devis',
     lien: { href: '/sites-web-abonnement#applications', label: 'Voir les applications métier', goal: 'service_path_opened', source: 'home_metier_web' },
   },
@@ -111,8 +114,7 @@ const metiers = [
     onglet: 'Formations',
     phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
     texte:
-      'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou directement avec vos équipes. On construit sur vos cas, pas sur des exemples d’école.',
-    preuve: { chiffre: 'Plus de 300', suite: 'personnes formées, par le premier Français certifié Make niveau 5.' },
+      'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou avec vos équipes, sur vos propres cas.',
     lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
   },
 ] as const;
@@ -162,23 +164,6 @@ const scenes = {
           <h3>{metier.nom}</h3>
           <p class="metier__phrase">{metier.phrase}</p>
           <p class="metier__corps" set:html={metier.texte} />
-
-          {'preuve' in metier && (
-            <p class="metier__preuve">
-              <strong>{metier.preuve.chiffre}</strong>
-              <span>
-                {metier.preuve.suite}
-                {'href' in metier.preuve && (
-                  <>
-                    {' '}
-                    <a href={metier.preuve.href}>
-                      Lire le cas<span class="sr-only"> {metier.preuve.cas}</span>
-                    </a>
-                  </>
-                )}
-              </span>
-            </p>
-          )}
 
           <div class="metier__suite">
             <LinkCTA
@@ -287,9 +272,7 @@ const scenes = {
   .metier--miroir .metier__scene { order: 1; }
 
   /* Les écarts disent qui va avec qui : le nom colle à sa phrase, la phrase
-     ouvre sur le corps, la preuve s'en détache, la sortie ferme. Un seul écart
-     de 18 px séparait tout, et le nom du métier flottait au lieu de coiffer sa
-     phrase. */
+     ouvre sur le corps, la sortie ferme. */
   .metier__texte {
     --mesure: 28.25rem;
     display: grid;
@@ -327,52 +310,7 @@ const scenes = {
     line-height: var(--leading-body);
   }
 
-  /* Le chiffre puis sa phrase, à la suite. Quand la colonne est trop étroite
-     pour les deux, la phrase passe sous le chiffre : en grille `auto 1fr`, elle
-     restait à côté dans une colonne de 100 px, en six lignes de deux mots. */
-  .metier__preuve {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.25rem 1rem;
-    width: 100%;
-    max-width: var(--mesure);
-    margin: 1.75rem 0 0;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--trait);
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
-  }
-
-  .metier__preuve > span {
-    flex: 1 1 14rem;
-    min-width: 0;
-  }
-
-  .metier__preuve strong {
-    color: var(--color-ink);
-    /* Le même traitement que les faits de « Pourquoi moi » : « Plus de 300 »
-       existe dans les deux. */
-    font-size: var(--text-title);
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  /* Souligné : la couleur seule ne suffit pas à dire qu'on peut cliquer. Et
-     jamais coupé en deux lignes. */
-  .metier__preuve a {
-    color: var(--color-ink);
-    text-decoration: underline;
-    text-decoration-color: color-mix(in srgb, var(--color-ink) 40%, transparent);
-    text-underline-offset: 0.2em;
-    white-space: nowrap;
-  }
-
-  /* Les liens du texte courant, soulignés comme celui de la preuve. Le texte
+  /* Les liens du texte courant, soulignés. Le texte
      est injecté (`set:html`) : il ne porte pas l'attribut de portée. */
   .metier__corps :global(a),
   a.metier__note {
@@ -474,14 +412,6 @@ const scenes = {
 
     .metier__texte,
     .metier--miroir .metier__texte { order: 2; }
-
-    /* Le seul chemin vers la preuve : une vraie cible pour le doigt. Le
-       lien reste dans le fil du texte ; son remplissage vertical agrandit la
-       zone d'appui sans écarter les lignes, ce qu'une hauteur minimale
-       faisait. */
-    .metier__preuve a {
-      padding-block: 0.85rem;
-    }
   }
 
   /* Écran bas (téléphone en paysage, zoom fort) : la scène borne sa largeur
@@ -499,15 +429,14 @@ const scenes = {
   @media (min-width: 720px) and (max-width: 1199px) {
     .metier__texte {
       grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
-      grid-template-rows: auto auto auto 1fr;
+      grid-template-rows: auto auto 1fr;
       column-gap: var(--spacing-gouttiere);
     }
 
     .metier h3 { grid-area: 1 / 1; }
-    .metier__phrase { grid-area: 2 / 1 / span 3; }
+    .metier__phrase { grid-area: 2 / 1 / span 2; }
     .metier__corps { grid-area: 1 / 2 / span 2; margin-top: 0; }
-    .metier__preuve { grid-area: 3 / 2; }
-    .metier__suite { grid-area: 4 / 2; align-self: start; }
+    .metier__suite { grid-area: 3 / 2; align-self: start; }
   }
 
   /* Sous 1024 px, les deux filets de cadre de la page ne sont plus là : le

@@ -53,12 +53,16 @@
  *        return {
  *          figer() { …pose l'état final, d'un coup… },
  *          repos() { …pose l'état de départ, d'un coup… },
- *          async tour() { …un tour de boucle, du repos au repos… },
+ *          async tour() { …la scène, du repos à l'image fixe… },
  *        };
  *      });
  *
- *    `figer` est l'image fixe (mouvement réduit, ou boucle en panne) ; `repos`
- *    est appelé à chaque (re)lancement ; `tour` est rappelé sans fin.
+ *    `figer` est l'image fixe (mouvement réduit, ou scène en panne) ; `repos`
+ *    est appelé à chaque (re)lancement ; `tour` est joué UNE fois, quand la
+ *    scène entre à l'écran. Il finit sur l'image de `figer`, exactement, et
+ *    la scène y reste : il ne range rien et ne recommence pas. Les scènes
+ *    tournaient en boucle ; Lilian a demandé le 8 octobre 2026 de réduire les
+ *    animations de la page, et plus rien n'y bouge sans le visiteur.
  *
  * 5. Le temps. Dans `tour`, TOUT le temps passe par le moteur : `attendre`,
  *    `animer`, `jouer`, et les gestes (`voler`, `courir`, `passer`, `lire`,
@@ -66,7 +70,7 @@
  *    parce que chaque attente est une animation que la scène peut s'arrêter
  *    net hors écran et reprendre où elle en était.
  *
- * 6. L'annulation. Quand la boucle est relancée (changement de plan, de
+ * 6. L'annulation. Quand la scène est relancée (changement de plan, de
  *    réglage de mouvement), ses animations sont annulées et l'attente en cours
  *    rejette avec `AbortError` : `tour` se défait tout seul, sans contrôle à
  *    écrire. Deux règles en découlent. Ne pas attraper les erreurs des aides
@@ -74,8 +78,9 @@
  *    fige la scène). Et toute promesse qu'on n'attend pas passe par
  *    `enMarge` : jamais de promesse flottante.
  *
- * Minutage : une boucle de 10 à 14 s, un seul mouvement principal à la fois,
- * une image finale tenue 2 à 3 s, un rangement de moins d'une seconde.
+ * Minutage : 10 à 14 s, un seul mouvement principal à la fois. Sur l'image
+ * finale, plus rien ne bouge : une animation sans fin lancée par `tour` est
+ * arrêtée avant qu'il rende la main.
  */
 
 export const EXPO = 'cubic-bezier(0.16, 1, 0.3, 1)';
@@ -196,9 +201,9 @@ export interface Scene {
 export interface Partition {
   /* L'image fixe : l'état final, posé d'un coup. */
   figer(): void;
-  /* L'état de départ de la boucle, posé d'un coup. */
+  /* L'état de départ, posé d'un coup. */
   repos(): void;
-  /* Un tour de boucle, du repos au repos. */
+  /* La scène, jouée une fois : du repos à l'image fixe. */
   tour(): Promise<void>;
 }
 
@@ -208,7 +213,7 @@ const formatEuros = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, m
 export const euros = (montant: number): string => formatEuros.format(montant);
 
 /* Une animation annulée rejette avec `AbortError`. C'est la seule erreur que
-   le moteur tait : elle veut dire « cette boucle n'a plus cours ». */
+   le moteur tait : elle veut dire « ce tour n'a plus cours ». */
 export const estArret = (erreur: unknown): boolean => erreur instanceof DOMException && erreur.name === 'AbortError';
 
 interface Fil {
@@ -258,9 +263,24 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   horloge.className = 'sm-horloge';
   plan.append(horloge);
 
+  /* La commande d'arrêt (voir en bas) : montrée le temps du tour seulement. */
+  const commande = document.createElement('button');
+  commande.hidden = true;
+  let tourEnCours = false;
+
+  /* Elle se retire quand il n'y a plus rien à arrêter. Si elle porte le focus
+     (un visiteur au clavier vient de s'en servir), elle attend de le perdre :
+     masquée sous lui, elle le renverrait en haut de la page. */
+  function retirerCommande() {
+    if (document.activeElement !== commande) {
+      commande.hidden = true;
+      return;
+    }
+    commande.addEventListener('blur', () => { if (!tourEnCours) commande.hidden = true; }, { once: true });
+  }
+
   const reduit = window.matchMedia('(prefers-reduced-motion: reduce)');
   let partition: Partition | null = null;
-  let jeton = 0;
   let visible = false;
   let enMarche = false;
   /* Le visiteur a mis la scène en pause (voir la commande d'arrêt, en bas). */
@@ -303,7 +323,7 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   /* Les animations que le moteur a lancées et qui ne sont pas finies. Il les
      tient lui-même : `getAnimations()` ne rend plus une animation mise en
      pause sur sa toute dernière image, et celle-là n'était donc jamais
-     relancée. Sa promesse ne se résolvait pas, la boucle l'attendait pour
+     relancée. Sa promesse ne se résolvait pas, le tour l'attendait pour
      toujours, et la scène restait figée après un aller-retour hors écran. */
   const vivantes = new Set<Animation>();
 
@@ -335,15 +355,16 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
 
   const annuler = () => toutes().forEach((animation) => animation.cancel());
 
-  /* Une boucle qui lève s'arrêterait sans bruit, scène figée au milieu d'un
-     geste. Ici elle laisse une trace et la scène retombe sur son image fixe.
-     Un arrêt, lui, est attendu : la boucle a été remplacée. */
+  /* Un tour qui lève s'arrêterait sans bruit, scène figée au milieu d'un
+     geste. Ici il laisse une trace et la scène retombe sur son image fixe.
+     Un arrêt, lui, est attendu : le tour a été remplacé. */
   const signaler = (erreur: unknown) => {
     if (estArret(erreur)) return;
-    console.error(`Scène ${nom} : la boucle s’est arrêtée`, erreur);
-    jeton += 1;
+    console.error(`Scène ${nom} : le tour s’est arrêté`, erreur);
+    tourEnCours = false;
     annuler();
     partition?.figer();
+    retirerCommande();
   };
 
   const enMarge = (travail: Promise<unknown>) => {
@@ -604,20 +625,28 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   const ecrite = ecrire(scene);
   partition = ecrite;
 
-  /* ── La boucle ── */
+  /* ── Le tour ── */
 
-  async function boucler(j: number) {
+  /* La scène joue une fois, du repos à son image fixe, et y reste : il n'y a
+     alors plus rien à arrêter, la commande se retire. */
+  async function jouerTour() {
+    tourEnCours = true;
+    commande.hidden = false;
     ecrite.repos();
-    while (j === jeton) await ecrite.tour();
+    await ecrite.tour();
+    tourEnCours = false;
+    retirerCommande();
   }
 
-  /* Tout ce que l'ancienne boucle attendait est annulé : elle se défait sur
-     son `AbortError`, et la nouvelle part d'un état propre. */
+  /* Tout ce que l'ancien tour attendait est annulé : il se défait sur son
+     `AbortError`, et le nouveau part d'un état propre. */
   function relancer() {
-    jeton += 1;
     annuler();
-    if (reduit.matches) ecrite.figer();
-    else enMarge(boucler(jeton));
+    tourEnCours = false;
+    if (reduit.matches) {
+      ecrite.figer();
+      retirerCommande();
+    } else enMarge(jouerTour());
   }
 
   /* ── L'échelle ── */
@@ -631,8 +660,8 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
     plan.style.setProperty('--x', `${(l - plan.offsetWidth * k) / 2}px`);
     plan.style.setProperty('--y', `${(h - plan.offsetHeight * k) / 2}px`);
     /* Le plan a changé de dessin (large ou étroit) : les ports ont bougé, les
-       fils sont à retracer et la boucle repart sur la nouvelle mise en page,
-       sans vol calculé pour l'ancienne. */
+       fils sont à retracer et la scène rejoue son tour sur la nouvelle mise en
+       page, sans vol calculé pour l'ancienne. */
     if (plan.offsetWidth !== largeurPlan) {
       const premier = largeurPlan === 0;
       largeurPlan = plan.offsetWidth;
@@ -662,30 +691,29 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   reduit.addEventListener?.('change', relancer);
 
   /* ── La commande d'arrêt ──
-     Une scène qui boucle sans fin à côté d'un texte doit pouvoir être arrêtée,
-     au clavier comme au doigt. Le bouton est posé APRÈS la racine, pas dedans :
-     la racine est une image (`role="img"`), ce qu'elle contient n'est pas
-     annoncé. Il s'appuie sur la pause du moteur : la scène s'arrête net et
-     reprend où elle en était. Rien à arrêter en mouvement réduit.
+     Une scène qui joue plus de dix secondes à côté d'un texte doit pouvoir
+     être arrêtée, au clavier comme au doigt. Le bouton est posé APRÈS la
+     racine, pas dedans : la racine est une image (`role="img"`), ce qu'elle
+     contient n'est pas annoncé. Il s'appuie sur la pause du moteur : la scène
+     s'arrête net et reprend où elle en était. Il n'est montré que le temps du
+     tour (`jouerTour`) : sur l'image fixe, à la fin du tour comme en mouvement
+     réduit, il n'y a rien à arrêter.
      `aria-pressed` porte l'état, le libellé reste le même : c'est la convention
-     d'un bouton à bascule (comme le défilé des logos, dans `home-hero`). Changer
+     d'un bouton à bascule. Changer
      les deux à la fois s'annonçait « Relancer l'animation, enfoncé ». */
-  if (!reduit.matches) {
-    const commande = document.createElement('button');
-    commande.type = 'button';
-    commande.className = 'sm-pause';
-    commande.setAttribute('aria-pressed', 'false');
-    commande.innerHTML =
-      '<span class="sr-only">Mettre l’animation en pause</span>' +
-      '<svg class="sm-pause__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>' +
-      '<svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>';
-    commande.addEventListener('click', () => {
-      arretee = !arretee;
-      commande.setAttribute('aria-pressed', String(arretee));
-      regler();
-    });
-    racine.after(commande);
-  }
+  commande.type = 'button';
+  commande.className = 'sm-pause';
+  commande.setAttribute('aria-pressed', 'false');
+  commande.innerHTML =
+    '<span class="sr-only">Mettre l’animation en pause</span>' +
+    '<svg class="sm-pause__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>' +
+    '<svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>';
+  commande.addEventListener('click', () => {
+    arretee = !arretee;
+    commande.setAttribute('aria-pressed', String(arretee));
+    regler();
+  });
+  racine.after(commande);
 
   relancer();
 }

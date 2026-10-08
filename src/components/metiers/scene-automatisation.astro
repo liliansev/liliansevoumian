@@ -20,21 +20,22 @@
  * deux bandes se croisent sur la case, et le créneau traverse la semaine pour
  * venir s'y loger. C'est l'image à retenir.
  *
- * Le fil de la boucle, un seul mouvement à la fois :
+ * Le fil de la scène, un seul mouvement à la fois :
  *   1. une demande de réservation arrive ;
  *   2. un trait de lecture la descend : le client, puis son créneau ;
  *   3. elle passe au paiement, l'acompte est encaissé ;
  *   4. l'agenda vise la bonne case, le créneau s'y pose ;
- *   5. la confirmation repart de l'agenda vers le message, et s'envoie ;
- *   6. tout est rangé, la demande suivante arrive.
- * D'une boucle à l'autre, l'agenda garde les créneaux déjà posés : il se
- * remplit sur trois réservations, puis la semaine tourne et il repart vide.
+ *   5. la confirmation repart de l'agenda vers le message, et s'envoie.
+ * La scène joue une fois, quand elle entre à l'écran, et s'arrête sur cette
+ * image. Elle tournait en boucle, trois réservations par semaine sur trois
+ * semaines : Lilian a demandé le 8 octobre 2026 de réduire les animations de
+ * la page. Il reste une réservation, et rien n'est rangé.
  *
  * Le panneau, les fenêtres, la feuille, les fils et les gestes viennent du
  * socle (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit
  * que ce qui lui est propre : la place de ses quatre postes, la jauge du
- * paiement, la grille de l'agenda avec son viseur et ses créneaux, la bulle
- * du message, et l'ordre de sa boucle.
+ * paiement, la grille de l'agenda avec son viseur et son créneau, la bulle
+ * du message, et l'ordre de son tour.
  *
  * Sur un téléphone (plan étroit), la silhouette se resserre encore : la
  * grille prend toute la largeur, et il n'y a plus ni fenêtres à côté ni fils.
@@ -54,7 +55,7 @@
  * Sans script ou en mouvement réduit, la scène est une image fixe : l'état
  * final, acompte encaissé, créneau posé, confirmation envoyée.
  *
- * Prénoms, dates et horaires sont inventés pour la scène : aucune donnée
+ * Le prénom, la date et l'horaire sont inventés pour la scène : aucune donnée
  * client, aucun nom de marque.
  */
 import './scene-metier.css';
@@ -72,14 +73,10 @@ const JOURS = [
 /* Cinq heures dans la journée, une par ligne de la grille. */
 const HEURES = [9, 11, 14, 16, 18].map((heure) => `${heure}${insecable}h`);
 
-/* Trois réservations par semaine, chacune à sa case : un jour (colonne) et
-   une heure (ligne). `l` est la longueur de la barre qui tient lieu de nom de
-   famille, en pour cent. */
-const CLIENTS = [
-  { prenom: 'Camille', l: 44, jour: 3, heure: 2 },
-  { prenom: 'Hugo', l: 58, jour: 1, heure: 0 },
-  { prenom: 'Inès', l: 36, jour: 4, heure: 3 },
-];
+/* La réservation de la scène, et sa case : un jour (colonne) et une heure
+   (ligne). `l` est la longueur de la barre qui tient lieu de nom de famille,
+   en pour cent. */
+const CLIENT = { prenom: 'Camille', l: 44, jour: 3, heure: 2 };
 
 /* Les cases déjà prises par l'équipe : elles ne bougent pas, elles font de la
    grille un vrai agenda, où tout n'est pas libre. `l` est la longueur de leur
@@ -94,57 +91,49 @@ const PRISES = [
   { jour: 3, heure: 4, l: 58 },
 ];
 
-/* Trois semaines d'octobre qui tournent. Tous les libellés sont composés ici,
-   une fois : le script les reçoit par `data-semaines` et n'a qu'à les écrire,
-   sans refaire aucune date. Le jour s'écrit comme dans l'en-tête de l'agenda
-   (« jeu. 15 » et « Jeu 15 ») : c'est ce que l'œil rapproche. */
-const semaines = [
-  { numero: 42, lundi: 12 },
-  { numero: 43, lundi: 19 },
-  { numero: 44, lundi: 26 },
-].map((semaine) => ({
-  numero: semaine.numero,
-  jours: JOURS.map((_, index) => semaine.lundi + index),
-  reservations: CLIENTS.map((client) => {
-    const jour = JOURS[client.jour];
-    const heure = HEURES[client.heure];
-    const quantieme = semaine.lundi + client.jour;
-    return {
-      prenom: client.prenom,
-      l: client.l,
-      jour: `${jour.abrege}${insecable}${quantieme}`,
-      heure,
-      quand: `${jour.abrege}${insecable}${quantieme} · ${heure}`,
-      long: `${jour.long} ${quantieme} à${insecable}${heure}`,
-    };
-  }),
-}));
+/* Une semaine d'octobre. Tous les libellés sont composés ici, une fois. Le
+   jour s'écrit comme dans l'en-tête de l'agenda (« jeu. 15 » et « Jeu 15 ») :
+   c'est ce que l'œil rapproche. */
+const SEMAINE = { numero: 42, lundi: 12 };
+const quantiemes = JOURS.map((_, index) => SEMAINE.lundi + index);
 
-const premiere = semaines[0];
-const demande = premiere.reservations[0];
+const { abrege, long } = JOURS[CLIENT.jour];
+const horaire = HEURES[CLIENT.heure];
+const quantieme = quantiemes[CLIENT.jour];
+const demande = {
+  prenom: CLIENT.prenom,
+  l: CLIENT.l,
+  jour: `${abrege}${insecable}${quantieme}`,
+  heure: horaire,
+  quand: `${abrege}${insecable}${quantieme} · ${horaire}`,
+  long: `${long} ${quantieme} à${insecable}${horaire}`,
+};
 
 const COLONNES = JOURS.length;
 const caseDe = (jour: number, heure: number) => heure * COLONNES + jour;
 const prises = new Map(PRISES.map((p) => [caseDe(p.jour, p.heure), p.l]));
-/* À quelle case va chaque réservation, et dans quel ordre. */
-const cibles = new Map(CLIENTS.map((client, rang) => [caseDe(client.jour, client.heure), { ...client, rang }]));
+/* La case où la réservation se pose. */
+const cible = caseDe(CLIENT.jour, CLIENT.heure);
 
 /* Plan étroit : la dernière heure de la journée est retirée, pour que les
-   cases qui restent soient grandes. Aucune réservation n'y tombe. */
+   cases qui restent soient grandes. La réservation n'y tombe pas. */
 const derniere = (ligne: number) => (ligne === HEURES.length - 1 ? 'sm-large' : '');
 
-/* Le compteur « Réservations » au chargement : le mois a déjà commencé. */
+/* Le compteur « Réservations » de l'image fixe : le mois a déjà commencé, et
+   celle de la scène est comptée. */
 const RESERVATIONS = 12;
 ---
 
 <div
   class="sm est-abouti"
   data-scene-automatisation
-  data-semaines={JSON.stringify(semaines)}
   role="img"
   aria-label="Un client réserve un créneau en ligne : l’acompte est encaissé, le créneau se pose seul à la bonne case de l’agenda de l’équipe, et la confirmation part, sans aucune ressaisie."
 >
   <div class="sm-plan" aria-hidden="true" data-nosnippet>
+    {/* Pour qui lit le HTML sans la mise en page : ce plan est un décor, ses
+        noms et ses chiffres sont inventés (voir `home-story.astro`). */}
+    <span class="sr-only">Illustration, données fictives&nbsp;:</span>
     <div class="sm-puces">
       <span class="sm-puce sm-large">
         <svg viewBox="0 0 16 16"><path d="M3 4.5h10V13H3zM3 7h10M5.5 3v2.5M10.5 3v2.5M6 10.1l1.3 1.3L10 8.8" /></svg>
@@ -197,13 +186,13 @@ const RESERVATIONS = 12;
               <div class="sm-ligne est-parti" data-ligne>
                 <span>Client</span>
                 <span class="demande__client">
-                  <span data-c="prenom">{demande.prenom}</span>
-                  <i class="sm-barre" data-c="nom" style={`--l: ${demande.l}%`}></i>
+                  <span>{demande.prenom}</span>
+                  <i class="sm-barre" style={`--l: ${demande.l}%`}></i>
                 </span>
               </div>
               <div class="sm-ligne est-parti" data-ligne>
                 <span>Créneau</span>
-                <span data-c="quand">{demande.quand}</span>
+                <span>{demande.quand}</span>
               </div>
               <span class="sm-balai" data-balai></span>
             </div>
@@ -256,7 +245,7 @@ const RESERVATIONS = 12;
           <div class="bulle est-envoyee" data-bulle>
             <b>C’est confirmé</b>
             <span class="bulle__quand">
-              <span data-c="long">{demande.long}</span>
+              <span>{demande.long}</span>
               <svg class="bulle__vu est-envoye" data-envoi viewBox="0 0 16 16"><path d="M1.8 8.6l2.6 2.6 5-5.6M7.6 11.2l.9.9 5.4-6.1" /></svg>
             </span>
           </div>
@@ -274,7 +263,7 @@ const RESERVATIONS = 12;
             <svg viewBox="0 0 16 16"><path d="M3 4.5h10V13H3zM3 7h10M5.5 3v2.5M10.5 3v2.5" /></svg>
           </span>
           <span class="sm-fenetre__nom">Agenda</span>
-          <span class="sm-fenetre__info">Semaine&nbsp;<span data-c="semaine">{premiere.numero}</span></span>
+          <span class="sm-fenetre__info">Semaine&nbsp;{SEMAINE.numero}</span>
           <span class="sm-etat" data-etat="fait" data-etat-de="agenda">
             <span class="sm-etat__avant">À jour</span>
             <span class="sm-etat__apres"><span class="sm-large">Créneau posé</span><span class="sm-etroit">Posé</span></span>
@@ -289,22 +278,19 @@ const RESERVATIONS = 12;
             <i class="viseur viseur--heure" data-viseur="heure"></i>
             <span></span>
             {JOURS.map((jour, index) => (
-              <span class="agenda__jour" data-jour>
-                {jour.court}&nbsp;<span data-c="quantieme">{premiere.jours[index]}</span>
-              </span>
+              <span class="agenda__jour" data-jour>{jour.court}&nbsp;{quantiemes[index]}</span>
             ))}
             {HEURES.map((heure, ligne) => (
               <>
                 <span class:list={['agenda__heure', derniere(ligne)]} data-heure>{heure}</span>
                 {JOURS.map((_, colonne) => {
                   const index = caseDe(colonne, ligne);
-                  const cible = cibles.get(index);
                   return (
                     <span class:list={['case', derniere(ligne)]} data-case={index}>
                       {prises.has(index) && <i class="prise" style={`--l: ${prises.get(index)}%`}></i>}
-                      {cible && (
-                        <span class:list={['creneau', cible.rang === 0 && 'est-pose est-neuf']} data-creneau={cible.rang}>
-                          <b>{cible.prenom}</b>
+                      {index === cible && (
+                        <span class="creneau est-pose" data-creneau>
+                          <b>{demande.prenom}</b>
                           <i class="sm-barre"></i>
                         </span>
                       )}
@@ -330,9 +316,9 @@ const RESERVATIONS = 12;
        confirmation en bulle à côté. */}
     <div class="etiquette est-arrivee sm-etroit" data-etiquette>
       <span class="etiquette__avatar"></span>
-      <span class="morceau est-parti" data-morceau><b data-c="prenom">{demande.prenom}</b></span>
-      <span class="morceau est-parti" data-morceau data-c="jour">{demande.jour}</span>
-      <span class="morceau est-parti" data-morceau data-c="heure">{demande.heure}</span>
+      <span class="morceau est-parti" data-morceau><b>{demande.prenom}</b></span>
+      <span class="morceau est-parti" data-morceau>{demande.jour}</span>
+      <span class="morceau est-parti" data-morceau>{demande.heure}</span>
     </div>
 
     <span class="acompte sm-etroit" data-acompte data-etat="fait">
@@ -506,9 +492,8 @@ const RESERVATIONS = 12;
 
   /* ── L'agenda ──
      Une colonne d'heures, cinq colonnes de jours. Les cases prises sont
-     grises ; un créneau réservé est pêche le temps de sa boucle (`est-neuf`),
-     puis il reste dans la semaine en plus discret. Jours et heures sont en
-     note, dans le gris qui tient 4,5:1 sur le fond de la fenêtre. */
+     grises, le créneau réservé est pêche. Jours et heures sont en note, dans
+     le gris qui tient 4,5:1 sur le fond de la fenêtre. */
   .agenda {
     position: relative;
     display: grid;
@@ -607,7 +592,8 @@ const RESERVATIONS = 12;
   }
 
   /* Le créneau : un prénom, en fort, et un trait. Son heure n'y est plus
-     écrite : la ligne où il se pose la donne, et le viseur l'a montrée. */
+     écrite : la ligne où il se pose la donne, et le viseur l'a montrée. Avant
+     d'être posé il est éteint ; il s'allume en arrivant. */
   .creneau {
     position: absolute;
     inset: 0;
@@ -642,17 +628,14 @@ const RESERVATIONS = 12;
   }
 
   .creneau.est-pose {
+    background: var(--color-peche);
+    box-shadow: 0 10px 20px -10px var(--color-night-deep);
+    color: var(--color-night);
     opacity: 1;
     scale: 1;
   }
 
-  .creneau.est-neuf {
-    background: var(--color-peche);
-    box-shadow: 0 10px 20px -10px var(--color-night-deep);
-    color: var(--color-night);
-  }
-
-  .creneau.est-neuf .sm-barre {
+  .creneau.est-pose .sm-barre {
     background: color-mix(in srgb, var(--color-night) 34%, transparent);
   }
 
@@ -999,15 +982,14 @@ const RESERVATIONS = 12;
 
 <script>
   /*
-   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
-   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de son
+   * tour. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
    * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
-   * cours, une boucle remplacée se défait d'elle-même.
+   * cours, un tour remplacé se défait de lui-même.
    *
-   * La boucle a un tronc commun et deux milieux : `jouerLarge` (quatre outils
-   * et leurs fils) et `jouerEtroit` (la grille seule, une étiquette au-dessus,
-   * une pastille et une bulle dessous). Le geste, lui, est le même : `viser`,
-   * puis `poser`.
+   * Le tour a deux versions : `jouerLarge` (quatre outils et leurs fils) et
+   * `jouerEtroit` (la grille seule, une étiquette au-dessus, une pastille et
+   * une bulle dessous). Le geste, lui, est le même : `viser`, puis `poser`.
    *
    * Trois aides sont écrites ici parce que le socle ne les a pas :
    *   - `tiretAu` : le tiret d'une bande à l'entrée d'un port ;
@@ -1020,53 +1002,6 @@ const RESERVATIONS = 12;
    */
   import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Cadre } from '../../lib/metiers/scene';
-
-  interface Reservation {
-    prenom: string;
-    l: number;
-    jour: string;
-    heure: string;
-    quand: string;
-    long: string;
-  }
-
-  interface Semaine {
-    numero: number;
-    jours: number[];
-    reservations: Reservation[];
-  }
-
-  /* Les semaines arrivent du balisage en JSON : c'est une frontière, on
-     vérifie leur forme avant de s'en servir. */
-  const estReservation = (valeur: unknown): valeur is Reservation => {
-    if (typeof valeur !== 'object' || valeur === null) return false;
-    const v = valeur as Record<string, unknown>;
-    return (
-      typeof v.l === 'number' &&
-      [v.prenom, v.jour, v.heure, v.quand, v.long].every((texte) => typeof texte === 'string')
-    );
-  };
-
-  const estSemaine = (valeur: unknown): valeur is Semaine => {
-    if (typeof valeur !== 'object' || valeur === null) return false;
-    const v = valeur as Record<string, unknown>;
-    return (
-      typeof v.numero === 'number' &&
-      Array.isArray(v.jours) &&
-      v.jours.every((jour) => typeof jour === 'number') &&
-      Array.isArray(v.reservations) &&
-      v.reservations.length > 0 &&
-      v.reservations.every(estReservation)
-    );
-  };
-
-  const lireSemaines = (brut: string | undefined): Semaine[] => {
-    const lu: unknown = JSON.parse(brut ?? 'null');
-    if (!Array.isArray(lu) || lu.length === 0 || !lu.every(estSemaine)) {
-      throw new Error('Scène Automatisation : `data-semaines` est illisible');
-    }
-    return lu;
-  };
 
   monterScenes('[data-scene-automatisation]', (s) => {
     const demande = s.un('[data-demande]');
@@ -1102,65 +1037,16 @@ const RESERVATIONS = 12;
     const avantPaiement = s.un('[data-avant]');
     const bandes = s.tous('.sm-bande');
     const grain = s.un('.sm-grain');
-    const semaines = lireSemaines(s.racine.dataset.semaines);
 
-    /* Les créneaux, rangés dans l'ordre où ils sont réservés, chacun avec la
-       case qui le porte. */
-    const creneaux = s
-      .tous('[data-creneau]')
-      .sort((a, b) => Number(a.dataset.creneau) - Number(b.dataset.creneau))
-      .map((creneau) => {
-        const cellule = creneau.closest<HTMLElement>('[data-case]');
-        if (!cellule) throw new Error('Scène Automatisation : un créneau est hors de sa case');
-        return { creneau, cellule };
-      });
-    const parSemaine = creneaux.length;
+    /* Le créneau de la réservation, et la case qui le porte. */
+    const creneau = s.un('[data-creneau]');
+    const cellule = creneau.closest<HTMLElement>('[data-case]');
+    if (!cellule) throw new Error('Scène Automatisation : le créneau est hors de sa case');
 
-    const ecrire = (nom: string, texte: string) => {
-      s.racine.querySelectorAll<HTMLElement>(`[data-c="${nom}"]`).forEach((cible) => (cible.textContent = texte));
-    };
-
-    /* L'état de la scène. Le compteur part de ce que le balisage a rendu : il
-       n'y a qu'un endroit où l'écrire. */
-    let rang = 0;
-    let reservations = Number(elReservations.textContent);
-
-    const semaineDe = (r: number) => semaines[Math.floor(r / parSemaine) % semaines.length];
-    const placeDe = (r: number) => r % parSemaine;
-
-    /* La demande du moment : ses textes dans la feuille, l'étiquette et la
-       bulle. */
-    const charger = () => {
-      const reservation = semaineDe(rang).reservations[placeDe(rang)];
-      ecrire('prenom', reservation.prenom);
-      ecrire('quand', reservation.quand);
-      ecrire('jour', reservation.jour);
-      ecrire('heure', reservation.heure);
-      ecrire('long', reservation.long);
-      s.racine.querySelector<HTMLElement>('[data-c="nom"]')?.style.setProperty('--l', `${reservation.l}%`);
-    };
-
-    /* La semaine affichée : son numéro et le quantième de chaque jour. Avec
-       `anime`, les nombres tombent en place : la semaine tourne. */
-    const ecrireSemaine = (anime: boolean) => {
-      const semaine = semaineDe(rang);
-      const poser = (cible: HTMLElement | null, texte: string) => {
-        if (!cible) return;
-        if (anime) s.tictac(cible, texte);
-        else cible.textContent = texte;
-      };
-      poser(s.racine.querySelector<HTMLElement>('[data-c="semaine"]'), String(semaine.numero));
-      jours.forEach((jour, i) => poser(jour.querySelector<HTMLElement>('[data-c="quantieme"]'), String(semaine.jours[i])));
-    };
-
-    /* Les créneaux de la semaine : les `poses` premiers sont dans l'agenda, et
-       celui de la boucle en cours (`neuf`) y est en pêche. */
-    const peindreAgenda = (poses: number, neuf: number | null) => {
-      creneaux.forEach(({ creneau }, i) => {
-        creneau.classList.toggle('est-pose', i < poses || i === neuf);
-        creneau.classList.toggle('est-neuf', i === neuf);
-      });
-    };
+    /* Le compteur de l'image fixe, tel que le balisage l'a rendu : il n'y a
+       qu'un endroit où l'écrire. La scène part d'une réservation de moins, et
+       y arrive. */
+    const reservations = Number(elReservations.textContent);
 
     const etatPaiement = (etat: 'attente' | 'cours') => {
       etats.paiement.dataset.etat = etat;
@@ -1177,7 +1063,7 @@ const RESERVATIONS = 12;
 
     /* L'agenda désigne sa case avant de la remplir : le jour et l'heure
        s'allument, une bande couvre la colonne, une autre la ligne. */
-    const viser = (cellule: HTMLElement) => {
+    const viser = () => {
       const index = Number(cellule.dataset.case);
       jours[index % jours.length]?.classList.add('est-vise');
       heures[Math.floor(index / jours.length)]?.classList.add('est-vise');
@@ -1191,11 +1077,11 @@ const RESERVATIONS = 12;
     const deviser = () => {
       [...jours, ...heures].forEach((repere) => repere.classList.remove('est-vise'));
       [viseurJour, viseurHeure].forEach((bande) => bande.classList.remove('est-leve'));
-      creneaux.forEach(({ cellule }) => cellule.classList.remove('est-visee'));
+      cellule.classList.remove('est-visee');
     };
 
     /* Le créneau touche sa case : un cercle s'en écarte et s'efface. */
-    const onduler = (cellule: HTMLElement) => {
+    const onduler = () => {
       Object.assign(onde.style, {
         left: `${cellule.offsetLeft}px`,
         top: `${cellule.offsetTop}px`,
@@ -1235,24 +1121,21 @@ const RESERVATIONS = 12;
       s.eteindre();
     };
 
-    /* Le repos : aucune demande, rien à encaisser, rien à confirmer. L'agenda
-       garde les créneaux déjà posés cette semaine. */
+    /* Le repos : aucune demande, rien à encaisser, rien à confirmer, et dans
+       l'agenda les seules cases déjà prises. */
     const repos = () => {
       eteindreOutils();
       etats.reservation.dataset.etat = 'attente';
       demande.classList.remove('est-arrivee');
       etiquette.classList.remove('est-arrivee');
       [...lignes, ...morceaux].forEach((l) => l.classList.remove('est-lu', 'est-parti'));
-      peindreAgenda(placeDe(rang), null);
-      ecrireSemaine(false);
-      charger();
+      creneau.classList.remove('est-pose');
+      elReservations.textContent = String(reservations - 1);
     };
 
     /* L'image fixe : tout est passé. C'est aussi ce que le HTML rend sans
        script. */
     const figer = () => {
-      charger();
-      ecrireSemaine(false);
       deviser();
       s.racine.classList.add('est-abouti');
       demande.classList.add('est-arrivee');
@@ -1265,7 +1148,8 @@ const RESERVATIONS = 12;
       jauge.classList.add('est-pleine');
       avantPaiement.textContent = 'En attente';
       acompte.dataset.etat = 'fait';
-      peindreAgenda(placeDe(rang), placeDe(rang));
+      creneau.classList.add('est-pose');
+      elReservations.textContent = String(reservations);
       bulle.classList.add('est-envoyee');
       envoi.classList.add('est-envoye');
       confirmation.classList.add('est-ecrite', 'est-envoyee');
@@ -1274,11 +1158,10 @@ const RESERVATIONS = 12;
     };
 
     /* Le créneau touche sa case : il y apparaît, l'onde part, il se cale. */
-    const poser = async (place: number) => {
-      const { creneau, cellule } = creneaux[place];
-      peindreAgenda(place, place);
+    const poser = async () => {
+      creneau.classList.add('est-pose');
       cellule.classList.remove('est-visee');
-      onduler(cellule);
+      onduler();
       /* Un léger trop-plein, puis sa taille. */
       await s.animer(creneau, [{ scale: 1.14 }, { scale: 1 }], { duration: 480, easing: EXPO });
       deviser();
@@ -1286,8 +1169,7 @@ const RESERVATIONS = 12;
     };
 
     /* ── Le grand plan : quatre outils, trois fils ── */
-    async function jouerLarge(place: number) {
-      const { cellule } = creneaux[place];
+    async function jouerLarge() {
       const lues = s.affiches(lignes);
 
       /* 1. La demande arrive : la feuille tombe dans la fenêtre. */
@@ -1344,7 +1226,7 @@ const RESERVATIONS = 12;
       s.allumer('agenda');
       s.enMarge(s.voler(bandes[0], reglement, tiretAu('paye'), { duree: 460, pose: 0.2, arrivee: 0.9, easing: ELAN, eclot: true }));
       await s.attendre(380);
-      viser(cellule);
+      viser();
       s.enMarge(s.courir(grain, 'agenda', { duree: 560 }));
       await s.attendre(520);
       s.port('agenda').classList.add('est-actif');
@@ -1358,7 +1240,7 @@ const RESERVATIONS = 12;
         }),
       );
       await s.attendre(580);
-      await poser(place);
+      await poser();
       await s.attendre(380);
 
       /* 5. La confirmation : le créneau posé repart par le fil du bas vers le
@@ -1383,9 +1265,7 @@ const RESERVATIONS = 12;
     }
 
     /* ── Le plan étroit : la grille, et trois pièces autour d'elle ── */
-    async function jouerEtroit(place: number) {
-      const { cellule } = creneaux[place];
-
+    async function jouerEtroit() {
       /* 1. La demande arrive : une étiquette se pose au-dessus de la grille. */
       etiquette.classList.add('est-arrivee');
       await s.animer(
@@ -1419,7 +1299,7 @@ const RESERVATIONS = 12;
       /* 4. Le créneau se pose. L'agenda vise sa case, le temps qu'on la voie ;
          puis la demande quitte son étiquette, descend dans la grille et vient
          s'y loger. */
-      viser(cellule);
+      viser();
       await s.attendre(620);
       morceaux.forEach((morceau) => {
         morceau.classList.remove('est-lu');
@@ -1435,7 +1315,7 @@ const RESERVATIONS = 12;
         }),
       );
       await s.attendre(630);
-      await poser(place);
+      await poser();
       await s.attendre(480);
 
       /* 5. La confirmation : elle part du créneau posé et vient s'écrire sous
@@ -1456,51 +1336,16 @@ const RESERVATIONS = 12;
     }
 
     async function tour() {
-      const place = placeDe(rang);
-      const etroit = s.etroit;
-
       await s.attendre(340);
-      if (etroit) await jouerEtroit(place);
-      else await jouerLarge(place);
+      if (s.etroit) await jouerEtroit();
+      else await jouerLarge();
 
+      /* Tout a suivi, personne n'a rien saisi : une réservation de plus, et le
+         compteur d'à côté n'a pas bougé. La scène s'arrête là : c'est l'image
+         fixe, rien n'est rangé. */
       s.racine.classList.add('est-abouti');
-      reservations += 1;
       s.tictac(elReservations, String(reservations));
-      /* Une réservation de plus, et le compteur d'à côté n'a pas bougé. */
       s.tictac(elZero, '0');
-
-      /* Le temps de lire l'image : tout a suivi, personne n'a rien saisi. */
-      await s.attendre(etroit ? 2800 : 2400);
-
-      /* 6. On range : la demande s'en va, le paiement et le message se
-         vident. Le créneau, lui, reste dans l'agenda, en plus discret. */
-      await s.animer(
-        etroit ? etiquette : feuille,
-        [
-          { transform: 'none', opacity: 1 },
-          { transform: 'translateY(-10px) scale(0.97)', opacity: 0 },
-        ],
-        { duration: 340, easing: ELAN },
-      );
-      demande.classList.remove('est-arrivee');
-      etiquette.classList.remove('est-arrivee');
-      etats.reservation.dataset.etat = 'attente';
-      eteindreOutils();
-      rang += 1;
-      peindreAgenda(placeDe(rang) === 0 ? parSemaine : placeDe(rang), null);
-      await s.attendre(420);
-
-      /* La semaine est pleine : elle tourne. Les créneaux s'effacent, les
-         dates avancent de sept jours, l'agenda repart vide. */
-      if (placeDe(rang) === 0) {
-        peindreAgenda(0, null);
-        await s.attendre(260);
-        ecrireSemaine(true);
-        await s.attendre(320);
-      }
-
-      [...lignes, ...morceaux].forEach((l) => l.classList.remove('est-lu', 'est-parti'));
-      charger();
     }
 
     return { figer, repos, tour };

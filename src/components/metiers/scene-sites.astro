@@ -8,21 +8,24 @@
  * L'idée à faire passer en cinq secondes, téléphone en main : un outil métier
  * se monte, l'équipe s'en sert, le dashboard compte.
  *
- * Le fil de la boucle, un seul mouvement à la fois :
+ * Le fil de la scène, un seul mouvement à la fois :
  *   1. un cadre de sélection pose l'écran bloc par bloc (titre, bouton,
  *      équipe, champs), comme on le monte dans un éditeur ;
  *   2. l'écran passe en service ;
- *   3. le bouton est cliqué, trois à cinq fois, de plus en plus vite : chaque
- *      clic traverse le fil et devient une unité de plus sur la barre du jour,
- *      le nombre de dossiers monte, l'objectif du mois se remplit avec lui ;
- *   4. l'image est tenue, puis on change de jour : les barres glissent d'une
- *      colonne, l'écran se défait, le suivant se monte.
+ *   3. le bouton est cliqué quatre fois, de plus en plus vite : chaque clic
+ *      traverse le fil et devient une unité de plus sur la barre du jour, le
+ *      nombre de dossiers monte, l'objectif du mois se remplit avec lui.
+ *
+ * La scène joue une fois, quand elle entre à l'écran, et s'arrête sur cette
+ * image. Elle tournait en boucle, de jour en jour et sur trois écrans : Lilian
+ * a demandé le 8 octobre 2026 de réduire les animations de la page. Il reste
+ * un écran et une journée, et rien n'est rangé.
  *
  * Le panneau, les fenêtres, la feuille, le fil, le temps et les quatre tailles
  * de texte viennent du socle (`scene-metier.css` et `lib/metiers/scene.ts`).
  * Ce composant n'écrit que ce qui lui est propre : l'écran de l'outil et son
  * cadre de sélection, le clic, le dashboard (deux nombres, des barres en
- * unités), et l'ordre de sa boucle.
+ * unités), et l'ordre de son tour.
  *
  * Ce qui se lit est compté : l'adresse, l'état de l'outil, le libellé du
  * bouton, « Dossiers », « Objectif », « Objectif du mois » et leurs nombres.
@@ -42,33 +45,32 @@
  * Tous les chiffres sont inventés pour la scène, et ils sont justes entre eux
  * à chaque instant : « Objectif » est le nombre de dossiers traités ce mois-ci
  * divisé par l'objectif du mois. Il ne part jamais de zéro (le mois est déjà
- * entamé quand la scène commence) et ne dépasse jamais 100 % : quand
- * l'objectif est atteint, le mois est bouclé et la scène repart sur le
- * suivant, entamé au même point.
+ * entamé quand la scène commence) et ne dépasse jamais 100 %.
  */
 import './scene-metier.css';
 
-/* Trois écrans du même outil, qui tournent : d'une boucle à l'autre, ce n'est
-   pas le même geste d'équipe qui revient. `titre` et `texte` sont les
-   longueurs des barres, `champs` celles des valeurs saisies, en pour cent. */
-const ecrans = [
-  { chemin: '/interventions', bouton: 'Clôturer l’intervention', titre: [90, 62], texte: [76, 48], champs: [62, 44] },
-  { chemin: '/stock', bouton: 'Enregistrer une sortie', titre: [74, 52], texte: [62, 40], champs: [40, 60] },
-  { chemin: '/chantiers', bouton: 'Valider le relevé', titre: [70, 86], texte: [80, 54], champs: [72, 34] },
-];
+/* L'écran de l'outil. `titre` et `texte` sont les longueurs des barres,
+   `champs` celles des valeurs saisies, en pour cent. */
+const ecran = {
+  chemin: '/interventions',
+  bouton: 'Clôturer l’intervention',
+  titre: [90, 62],
+  texte: [76, 48],
+  champs: [62, 44],
+};
+/* L'outil a trois écrans, un onglet chacun dans son en-tête : la scène montre
+   le premier. */
+const ONGLETS = 3;
 
-/* Le nombre de clics sur le bouton, journée après journée : un dossier traité
-   par clic. */
-const CLICS = [4, 3, 5];
+/* Le nombre de clics sur le bouton dans la journée : un dossier traité par
+   clic. */
+const CLICS = 4;
 /* Les six jours d'avant, en dossiers par jour : 23 à eux six. */
 const HISTORIQUE = [3, 5, 2, 4, 6, 3];
 /* L'objectif du mois, en dossiers, et ceux que l'équipe a déjà traités ce
-   mois-ci avant la première journée de la scène : 26 sur 50, soit 52 % au
-   matin. Un dossier vaut deux points, tous les pourcentages tombent juste.
-   Avec quatre dossiers de plus dans la journée, la première image finale lit
-   30 dossiers, 60 %. Les trois écrans en apportent douze à eux trois : en six
-   journées (60, 66, 76, 84, 90, puis 100 %), l'objectif est atteint tout
-   rond, et le mois suivant repart de 26. */
+   mois-ci avant la journée de la scène : 26 sur 50, soit 52 % au matin. Un
+   dossier vaut deux points, tous les pourcentages tombent juste. Avec quatre
+   dossiers de plus dans la journée, l'image finale lit 30 dossiers, 60 %. */
 const OBJECTIF_DU_MOIS = 50;
 const DEJA_TRAITES = 26;
 /* La hauteur d'une barre, en dossiers : une unité par dossier. */
@@ -77,20 +79,17 @@ const UNITES = 6;
 const formatEntier = new Intl.NumberFormat('fr-FR');
 
 const recit = {
-  ecrans,
   clics: CLICS,
   historique: HISTORIQUE,
   dejaTraites: DEJA_TRAITES,
   objectif: OBJECTIF_DU_MOIS,
 };
 
-/* L'image fixe : le premier écran, la première journée, tout est passé. */
-const ecran = ecrans[0];
-const clics = CLICS[0] ?? 0;
-const dossiers = DEJA_TRAITES + clics;
+/* L'image fixe : la journée est passée. */
+const dossiers = DEJA_TRAITES + CLICS;
 const avancement = `${formatEntier.format(Math.round((dossiers / OBJECTIF_DU_MOIS) * 100))} %`;
-const colonnes = [...HISTORIQUE, clics, 0];
-const voyageurs = Array.from({ length: Math.max(...CLICS) });
+const colonnes = [...HISTORIQUE, CLICS];
+const voyageurs = Array.from({ length: CLICS });
 ---
 
 <div
@@ -101,6 +100,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   aria-label="Un outil métier se monte bloc par bloc et passe en service&nbsp;; l’équipe s’en sert, et le dashboard compte chaque dossier traité&nbsp;: l’objectif du mois se remplit."
 >
   <div class="sm-plan" aria-hidden="true" data-nosnippet>
+    {/* Pour qui lit le HTML sans la mise en page : ce plan est un décor, ses
+        noms et ses chiffres sont inventés (voir `home-story.astro`). */}
+    <span class="sr-only">Illustration, données fictives&nbsp;:</span>
     {/* Deux pastilles sur le grand plan, une seule sur l'étroit : celle de la
        promesse, l'objectif qui se remplit. */}
     <div class="sm-puces">
@@ -138,7 +140,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
         <div class="sm-fenetre__barre">
           <span class="adresse">
             <svg viewBox="0 0 12 12"><path d="M3 5.5h6v4.5H3zM4.4 5.5V4a1.6 1.6 0 0 1 3.2 0v1.5" /></svg>
-            <span class="adresse__texte">app.votre-societe.fr<span class="adresse__chemin" data-chemin>{ecran.chemin}</span></span>
+            <span class="adresse__texte">app.votre-societe.fr<span class="adresse__chemin">{ecran.chemin}</span></span>
           </span>
           <span class="sm-etat" data-etat="fait" data-etat-de="outil">
             <span class="sm-etat__avant">Brouillon</span>
@@ -152,11 +154,11 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
             style={`--t1: ${ecran.titre[0]}%; --t2: ${ecran.titre[1]}%; --p1: ${ecran.texte[0]}%; --p2: ${ecran.texte[1]}%; --c1: ${ecran.champs[0]}%; --c2: ${ecran.champs[1]}%`}
           >
             {/* L'en-tête de l'outil : sa marque, puis un onglet par écran.
-               Celui de l'écran du moment est en nuit. */}
+               Celui de l'écran montré est en nuit. */}
             <div class="ecran__entete">
               <i class="ecran__marque"></i>
               <span class="ecran__onglets">
-                {ecrans.map((_, n) => <i class:list={{ 'est-actif': n === 0 }} data-onglet />)}
+                {Array.from({ length: ONGLETS }, (_, n) => <i class:list={{ 'est-actif': n === 0 }} />)}
               </span>
             </div>
 
@@ -169,7 +171,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
             <div class="bloc bloc--bouton est-pose" data-bloc data-nom="Bouton">
               <span class="bouton" data-bouton>
-                <span data-libelle>{ecran.bouton}</span>
+                <span>{ecran.bouton}</span>
                 <svg viewBox="0 0 12 12"><path d="M2.7 6.3l2.2 2.2 4.4-4.8" /></svg>
               </span>
             </div>
@@ -225,7 +227,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
               <div class="tuile__ligne">
                 <b data-dossiers>{formatEntier.format(dossiers)}</b>
                 <span class="plus est-visible" data-plus>
-                  +<span data-plus-n>{clics}</span><span class="sm-large">&nbsp;aujourd’hui</span>
+                  +<span data-plus-n>{CLICS}</span><span class="sm-large">&nbsp;aujourd’hui</span>
                 </span>
               </div>
             </div>
@@ -236,12 +238,10 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
           </div>
 
           {/* Les barres : une colonne par jour, une unité par dossier, la
-             dernière colonne en pêche pour aujourd'hui. La piste porte une
-             colonne de plus que la vue n'en montre : c'est elle qui entre
-             quand on change de jour. */}
-          <div class="barres" data-barres>
+             dernière colonne en pêche pour aujourd'hui. */}
+          <div class="barres">
             <div class="barres__vue">
-              <div class="barres__piste" data-piste>
+              <div class="barres__piste">
                 {colonnes.map((valeur) => (
                   <div class="colonne" data-colonne>
                     {Array.from({ length: UNITES }, (_, n) => (
@@ -255,7 +255,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
           <div class="sm-pied objectif sm-large">
             <span>Objectif du mois</span>
-            <b data-objectif>{formatEntier.format(OBJECTIF_DU_MOIS)}</b>
+            <b>{formatEntier.format(OBJECTIF_DU_MOIS)}</b>
           </div>
         </div>
       </div>
@@ -817,21 +817,15 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     background: color-mix(in srgb, var(--color-ink) 21%, transparent);
   }
 
-  /* Aujourd'hui, c'est la septième colonne : la seule en pêche. La huitième
-     attend hors de la vue et lui ressemble, vide. Dans les deux, la prochaine
+  /* Aujourd'hui, c'est la septième colonne : la seule en pêche. Sa prochaine
      unité est annoncée par un emplacement en pointillé. */
-  .colonne:nth-child(7):not(.est-hier) .unite.est-pleine {
+  .colonne:nth-child(7) .unite.est-pleine {
     background: var(--color-peche);
   }
 
-  .colonne:nth-child(n + 7):not(.est-hier) .unite:not(.est-pleine):first-child,
-  .colonne:nth-child(n + 7):not(.est-hier) .unite.est-pleine + .unite:not(.est-pleine) {
+  .colonne:nth-child(7) .unite:not(.est-pleine):first-child,
+  .colonne:nth-child(7) .unite.est-pleine + .unite:not(.est-pleine) {
     border: 1px dashed color-mix(in srgb, var(--color-peche) 55%, transparent);
-  }
-
-  /* Le raccord entre deux jours se fait d'un coup, sans transition. */
-  .barres.sans-transition .unite {
-    transition: none;
   }
 
   /* L'objectif du mois, en dossiers : le pied de la fenêtre, à la manière du
@@ -1072,8 +1066,8 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
     /* À six pixels de haut, un pointillé ne se lit plus : l'emplacement de la
        prochaine unité est un filet plein. */
-    .colonne:nth-child(n + 7):not(.est-hier) .unite:not(.est-pleine):first-child,
-    .colonne:nth-child(n + 7):not(.est-hier) .unite.est-pleine + .unite:not(.est-pleine) {
+    .colonne:nth-child(7) .unite:not(.est-pleine):first-child,
+    .colonne:nth-child(7) .unite.est-pleine + .unite:not(.est-pleine) {
       border-style: solid;
     }
   }
@@ -1096,25 +1090,16 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
 
 <script>
   /*
-   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
-   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de son
+   * tour. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
    * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
-   * cours, une boucle remplacée se défait d'elle-même.
+   * cours, un tour remplacé se défait de lui-même.
    */
   import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Cadre, Pt } from '../../lib/metiers/scene';
 
-  interface EcranRecit {
-    chemin: string;
-    bouton: string;
-    titre: number[];
-    texte: number[];
-    champs: number[];
-  }
-
   interface Recit {
-    ecrans: EcranRecit[];
-    clics: number[];
+    clics: number;
     historique: number[];
     dejaTraites: number;
     objectif: number;
@@ -1126,31 +1111,19 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   const estNombres = (v: unknown): v is number[] => Array.isArray(v) && v.every((n) => typeof n === 'number');
   const estPositif = (v: unknown): v is number => typeof v === 'number' && v > 0;
 
-  const estEcran = (v: unknown): v is EcranRecit =>
-    estObjet(v) &&
-    typeof v.chemin === 'string' &&
-    typeof v.bouton === 'string' &&
-    estNombres(v.titre) &&
-    estNombres(v.texte) &&
-    estNombres(v.champs);
-
   const lireRecit = (brut: string | undefined): Recit => {
     const lu: unknown = JSON.parse(brut ?? 'null');
-    /* `dejaTraites` et `objectif` sont strictement positifs, et la plus grosse
-       journée tient dans ce qui reste de l'objectif : c'est ce qui garantit
+    /* `dejaTraites` et `objectif` sont strictement positifs, et la journée
+       tient dans ce qui reste de l'objectif : c'est ce qui garantit
        qu'« Objectif » n'est jamais une division par zéro, ni un zéro, ni plus
        de 100 %. */
     const valide =
       estObjet(lu) &&
-      Array.isArray(lu.ecrans) &&
-      lu.ecrans.length > 0 &&
-      lu.ecrans.every(estEcran) &&
-      estNombres(lu.clics) &&
-      lu.clics.length > 0 &&
+      estPositif(lu.clics) &&
       estNombres(lu.historique) &&
       estPositif(lu.dejaTraites) &&
       estPositif(lu.objectif) &&
-      lu.dejaTraites + Math.max(...lu.clics) <= lu.objectif;
+      lu.dejaTraites + lu.clics <= lu.objectif;
     if (!valide) throw new Error('Scène Outils métiers : `data-recit` est illisible');
     return lu as unknown as Recit;
   };
@@ -1166,17 +1139,16 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
   /* La bande, quand elle entre dans un port ou en sort : un tiret. */
   const TIRET = { w: 16, h: 6 };
   /* Le départ de chaque clic, en ms : de plus en plus rapprochés. */
-  const DEPARTS = [0, 1050, 1800, 2350, 2750];
+  const DEPARTS = [0, 1050, 1800, 2350];
   /* Où chaque membre de l'équipe appuie sur le bouton (en part de sa largeur),
      et d'où arrive son pointeur (en pixels du plan) : ce n'est pas le même
      deux fois. */
-  const APPUIS = [0.34, 0.66, 0.48, 0.78, 0.24];
+  const APPUIS = [0.34, 0.66, 0.48, 0.78];
   const ARRIVEES: Pt[] = [
     { x: 26, y: 24 },
     { x: -20, y: 28 },
     { x: 32, y: 10 },
     { x: 6, y: 32 },
-    { x: -28, y: 16 },
   ];
 
   const tiretAu = (p: Pt): Cadre => ({ x: p.x - TIRET.w / 2, y: p.y - TIRET.h / 2, w: TIRET.w, h: TIRET.h });
@@ -1186,27 +1158,18 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     const recit = lireRecit(s.racine.dataset.recit);
 
     const elEcran = s.un('[data-ecran]');
-    const elChemin = s.un('[data-chemin]');
-    const elLibelle = s.un('[data-libelle]');
-    const onglets = s.tous('[data-onglet]');
     const bouton = s.un('[data-bouton]');
     const blocs = s.tous('[data-bloc]');
     const cadre = s.un('[data-cadre]');
     const nomCadre = s.un('[data-cadre-nom]');
 
-    const barres = s.un('[data-barres]');
-    const piste = s.un('[data-piste]');
-    const colonnes = s.tous('[data-colonne]');
-    const piles = colonnes.map((colonne) => [...colonne.querySelectorAll<HTMLElement>('.unite')]);
+    const piles = s.tous('[data-colonne]').map((colonne) => [...colonne.querySelectorAll<HTMLElement>('.unite')]);
     const elDossiers = s.un('[data-dossiers]');
     const elPlus = s.un('[data-plus]');
     const elPlusN = s.un('[data-plus-n]');
-    const elObjectif = s.un('[data-objectif]');
     const elAvancement = s.un('[data-avancement]');
     const elPuceDossiers = s.un('[data-puce-dossiers]');
     const elPuceAvancement = s.un('[data-puce-avancement]');
-    /* Les quatre nombres qui bougent avec les dossiers. */
-    const nombres = [elDossiers, elPuceDossiers, elAvancement, elPuceAvancement];
 
     const etats = {
       outil: s.un('[data-etat-de="outil"]'),
@@ -1222,50 +1185,19 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
        sur l'étroit. */
     const filDuPlan = (): string => (s.etroit ? 'dossier-bas' : 'dossier');
 
-    /* L'état de la scène. `rang` choisit l'écran et la journée ; `historique`
-       glisse d'un jour à chaque boucle ; `traites` est le total des dossiers
-       du mois avant la journée en cours. Il se cumule d'un jour à l'autre et
-       repart de `dejaTraites` quand le mois est bouclé (voir le raccord, à la
-       fin de `tour`). */
-    let rang = 0;
-    let historique = [...recit.historique];
-    let traites = recit.dejaTraites;
-
-    /* Les listes tournent ; `lireRecit` a vérifié qu'aucune n'est vide. */
-    const auRang = <T,>(liste: T[]): T => {
-      const element = liste[rang % liste.length];
-      if (element === undefined) throw new Error('Scène Outils métiers : le récit est vide');
-      return element;
-    };
-    const ecranCourant = (): EcranRecit => auRang(recit.ecrans);
-    /* Jamais plus de clics que la barre n'a d'unités, ni que la scène n'a de
-       pointeurs. */
-    const clicsDuJour = (): number => Math.min(auRang(recit.clics), pointeurs.length, piles[0]?.length ?? 0);
+    /* Les dossiers du mois avant la journée de la scène. */
+    const traites = recit.dejaTraites;
+    /* Les clics de la journée : jamais plus que la barre n'a d'unités, ni que
+       la scène n'a de pointeurs. */
+    const clics = Math.min(recit.clics, pointeurs.length, piles[0]?.length ?? 0);
     /* La colonne d'aujourd'hui : celle qui suit l'historique. */
-    const AUJOURDHUI = historique.length;
+    const AUJOURDHUI = recit.historique.length;
 
-    /* L'écran du moment, écrit dans le balisage : son chemin, son onglet, le
-       libellé de son bouton, les longueurs de ses traits. */
-    const charger = () => {
-      const ecran = ecranCourant();
-      const actif = rang % recit.ecrans.length;
-      elChemin.textContent = ecran.chemin;
-      elLibelle.textContent = ecran.bouton;
-      onglets.forEach((onglet, n) => onglet.classList.toggle('est-actif', n === actif));
-      elEcran.style.setProperty('--t1', `${ecran.titre[0] ?? 90}%`);
-      elEcran.style.setProperty('--t2', `${ecran.titre[1] ?? 62}%`);
-      elEcran.style.setProperty('--p1', `${ecran.texte[0] ?? 76}%`);
-      elEcran.style.setProperty('--p2', `${ecran.texte[1] ?? 48}%`);
-      elEcran.style.setProperty('--c1', `${ecran.champs[0] ?? 62}%`);
-      elEcran.style.setProperty('--c2', `${ecran.champs[1] ?? 44}%`);
-    };
-
-    /* Les barres : l'historique, puis aujourd'hui, puis la colonne de réserve. */
+    /* Les barres : l'historique, puis aujourd'hui. */
     const poserBarres = (aujourdhui: number) => {
-      colonnes.forEach((colonne, i) => {
-        const valeur = i < AUJOURDHUI ? (historique[i] ?? 0) : i === AUJOURDHUI ? aujourdhui : 0;
-        piles[i]?.forEach((unite, n) => unite.classList.toggle('est-pleine', n < valeur));
-        colonne.classList.remove('est-hier');
+      piles.forEach((pile, i) => {
+        const valeur = i < AUJOURDHUI ? (recit.historique[i] ?? 0) : aujourdhui;
+        pile.forEach((unite, n) => unite.classList.toggle('est-pleine', n < valeur));
       });
     };
 
@@ -1281,15 +1213,13 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       elPuceDossiers.textContent = entier(traites + n);
       elPlusN.textContent = String(n);
       elPlus.classList.toggle('est-visible', n > 0);
-      elObjectif.textContent = entier(recit.objectif);
       elAvancement.textContent = avancement;
       elPuceAvancement.textContent = avancement;
     };
 
-    /* Ce qu'une boucle interrompue peut laisser derrière elle. */
+    /* Ce qu'un tour interrompu peut laisser derrière lui. */
     const ranger = () => {
       cadre.classList.remove('est-visible', 'est-en-vol', 'est-sur-rangee');
-      barres.classList.remove('sans-transition');
     };
 
     /* Le repos : un écran vide, en chantier, et un dashboard qui attend la
@@ -1298,7 +1228,6 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
       s.racine.classList.remove('est-abouti');
       s.eteindre();
       ranger();
-      charger();
       blocs.forEach((bloc) => bloc.classList.remove('est-pose'));
       elEcran.classList.add('est-en-chantier');
       etats.outil.dataset.etat = 'attente';
@@ -1310,9 +1239,7 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     /* L'image fixe : l'outil est en service, la journée est passée. C'est
        aussi ce que le HTML rend sans script. */
     const figer = () => {
-      const clics = clicsDuJour();
       ranger();
-      charger();
       blocs.forEach((bloc) => bloc.classList.add('est-pose'));
       elEcran.classList.remove('est-en-chantier');
       etats.outil.dataset.etat = 'fait';
@@ -1496,12 +1423,12 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
     };
 
     async function tour() {
-      const clics = clicsDuJour();
-      const visibles = s.affiches(blocs);
-
       await s.attendre(320);
 
-      /* 1. L'écran se monte, bloc par bloc. */
+      /* 1. L'écran se monte, bloc par bloc. Les blocs affichés se comptent
+         ici, la scène à l'écran : dans un onglet encore fermé il n'y en a
+         aucun, et le tour ne se rejoue pas pour corriger. */
+      const visibles = s.affiches(blocs);
       let avant: Cadre | null = null;
       for (const bloc of visibles) avant = await poser(bloc, avant);
       await s.animer(cadre, { opacity: [1, 0] }, { duration: 200 });
@@ -1523,68 +1450,9 @@ const voyageurs = Array.from({ length: Math.max(...CLICS) });
           await cliquer(i);
         }),
       );
+      /* L'outil tourne, le dashboard le dit. La scène s'arrête là : c'est
+         l'image fixe, rien n'est rangé. */
       s.racine.classList.add('est-abouti');
-
-      /* Le temps de lire l'image : l'outil tourne, le dashboard le dit. */
-      await s.attendre(2800);
-
-      /* 4. On change de jour : l'écran se défait, les barres glissent d'une
-         colonne (aujourd'hui devient hier). Les dossiers du mois restent. */
-      s.racine.classList.remove('est-abouti');
-      s.eteindre();
-      etats.outil.dataset.etat = 'attente';
-      etats.tableau.dataset.etat = 'attente';
-      elPlus.classList.remove('est-visible');
-      colonnes[AUJOURDHUI]?.classList.add('est-hier');
-      const cran = (colonnes[1]?.offsetLeft ?? 0) - (colonnes[0]?.offsetLeft ?? 0);
-      const GLISSE = 620;
-      const premiere = colonnes[0];
-      /* Le jour qui sort s'efface en partant, et reste effacé jusqu'au raccord. */
-      if (premiere) {
-        s.jouer(premiere, [{ opacity: 1 }, { opacity: 0, offset: 0.4 }, { opacity: 0 }], { duration: GLISSE });
-      }
-      await Promise.all([
-        s.animer(piste, { transform: ['translateX(0)', `translateX(${-cran}px)`] }, { duration: GLISSE, easing: EXPO }),
-        ...[...visibles].reverse().map(async (bloc, i) => {
-          await s.attendre(i * 55);
-          await s.animer(
-            bloc,
-            [
-              { opacity: 1, transform: 'none' },
-              { opacity: 0, transform: 'translateY(5px)' },
-            ],
-            { duration: 240, easing: ELAN },
-          );
-          bloc.classList.remove('est-pose');
-        }),
-      ]);
-
-      /* Le raccord, invisible : chaque colonne prend la valeur de sa voisine
-         dans l'image même où la piste revient à sa place. Le mois compte une
-         journée de plus : ses dossiers sont acquis, et « Objectif » repart
-         d'où la journée l'a laissé, jamais de zéro. L'écran suivant est
-         chargé, de nouveau en chantier. */
-      historique = [...historique.slice(1), clics];
-      traites += clics;
-      rang += 1;
-      /* Le mois est bouclé quand la journée qui vient ne tient plus dans ce
-         qui reste de l'objectif : la scène repart alors sur le mois suivant,
-         entamé au même point que le premier. C'est ce qui tient « Objectif »
-         sous 100 %, aussi longtemps que la scène tourne. */
-      const moisBoucle = traites + clicsDuJour() > recit.objectif;
-      if (moisBoucle) traites = recit.dejaTraites;
-      barres.classList.add('sans-transition');
-      charger();
-      poserBarres(0);
-      poserNombres(0);
-      /* Un changement de mois ne se cache pas : les nombres tombent en place,
-         comme à chaque dossier. */
-      if (moisBoucle) nombres.forEach((nombre) => s.tictac(nombre, nombre.textContent ?? ''));
-      /* La lecture force le rendu sans transition avant de les rétablir. */
-      void barres.offsetWidth;
-      barres.classList.remove('sans-transition');
-      elEcran.classList.add('est-en-chantier');
-      await s.attendre(160);
     }
 
     return { figer, repos, tour };

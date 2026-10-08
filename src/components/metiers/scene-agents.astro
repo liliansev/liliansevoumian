@@ -13,18 +13,19 @@
  * posées autour, la réponse se compose en bas. Rien ne traverse la scène de
  * gauche à droite : tout part du centre et y revient.
  *
- * Le fil de la boucle, un seul mouvement à la fois :
+ * Le fil de la scène, un seul mouvement à la fois :
  *   1. la question se tape et descend jusqu'à l'agent, qui s'éveille ;
  *   2. pour chaque étape de son raisonnement, il envoie une sonde vers une
  *      source, la source est parcourue, et un extrait revient au centre ;
  *   3. une dernière étape se fait sans sortir : il écarte ce qui est déjà
  *      suivi ;
  *   4. la réponse se compose, résultat par résultat, chacun avec la pastille
- *      de sa source, et une ligne reste à valider par un humain ;
- *   5. l'image est tenue, puis tout est rangé et une autre question arrive.
+ *      de sa source, et une ligne reste à valider par un humain.
  *
- * D'une boucle à l'autre la question change, et l'ordre des sources avec
- * elle : c'est l'agent qui choisit par où commencer.
+ * La scène joue une fois, quand elle entre à l'écran, et s'arrête sur cette
+ * image. Elle tournait en boucle, sur trois questions : Lilian a demandé le
+ * 8 octobre 2026 de réduire les animations de la page. Il reste une question,
+ * et rien n'est rangé.
  *
  * Le panneau, les fenêtres, les fils, les rangées et les gestes viennent du
  * socle (`scene-metier.css` et `lib/metiers/scene.ts`). Ce composant n'écrit
@@ -97,59 +98,33 @@ const sources: Source[] = [
   },
 ];
 
-/* Trois demandes qui tournent. Chacune a quatre étapes : trois sorties, une
-   par source et dans un ordre qui lui est propre, puis une étape faite sur
-   place. La première est rendue ici ; le script reçoit les trois.
-   Les espaces avant « ? » et entre un nombre et son nom sont insécables. */
-const demandes: Demande[] = [
-  {
-    question: 'Quelles entreprises approcher cette semaine\u00a0?',
-    courte: 'Qui approcher cette semaine\u00a0?',
-    etapes: [
-      { texte: 'Cherche les levées de fonds', court: 'Cherche sur le web', source: 'web' },
-      { texte: 'Lit 12\u00a0pages de vos dossiers', court: 'Lit 12\u00a0pages', source: 'documents' },
-      { texte: 'Recoupe avec le CRM', court: 'Recoupe le CRM', source: 'crm' },
-      { texte: 'Écarte 2\u00a0clients déjà suivis', court: 'Écarte 2\u00a0clients', source: null },
-    ],
-    resultats: [
-      { l: 74, raison: 'Levée récente' },
-      { l: 56, raison: 'Recrute' },
-      { l: 66, raison: 'Jamais contactée' },
-    ],
-  },
-  {
-    question: 'Qui recrute un directeur technique\u00a0?',
-    courte: 'Qui recrute un directeur\u00a0?',
-    etapes: [
-      { texte: 'Relit vos échanges dans le CRM', court: 'Relit le CRM', source: 'crm' },
-      { texte: 'Cherche les postes ouverts', court: 'Cherche les postes', source: 'web' },
-      { texte: 'Lit 7\u00a0pages de vos dossiers', court: 'Lit 7\u00a0pages', source: 'documents' },
-      { texte: 'Écarte 1\u00a0poste déjà pourvu', court: 'Écarte 1\u00a0poste', source: null },
-    ],
-    resultats: [
-      { l: 60, raison: 'Poste ouvert' },
-      { l: 78, raison: 'Équipe doublée' },
-      { l: 52, raison: 'Ancien contact' },
-    ],
-  },
-  {
-    question: 'Quels dirigeants ont changé de poste\u00a0?',
-    courte: 'Qui a changé de poste\u00a0?',
-    etapes: [
-      { texte: 'Relit vos notes d’appel', court: 'Relit vos notes', source: 'documents' },
-      { texte: 'Cherche les nominations', court: 'Cherche sur le web', source: 'web' },
-      { texte: 'Recoupe avec le CRM', court: 'Recoupe le CRM', source: 'crm' },
-      { texte: 'Écarte 3\u00a0doublons', court: 'Écarte 3\u00a0doublons', source: null },
-    ],
-    resultats: [
-      { l: 68, raison: 'Nouveau poste' },
-      { l: 50, raison: 'Dans vos notes' },
-      { l: 80, raison: 'Déjà en contact' },
-    ],
-  },
-];
+/* La demande de la scène. Quatre étapes : trois sorties, une par source, puis
+   une étape faite sur place. Les espaces avant « ? » et entre un nombre et son
+   nom sont insécables. */
+const demande: Demande = {
+  question: 'Quelles entreprises approcher cette semaine\u00a0?',
+  courte: 'Qui approcher cette semaine\u00a0?',
+  etapes: [
+    { texte: 'Cherche les levées de fonds', court: 'Cherche sur le web', source: 'web' },
+    { texte: 'Lit 12\u00a0pages de vos dossiers', court: 'Lit 12\u00a0pages', source: 'documents' },
+    { texte: 'Recoupe avec le CRM', court: 'Recoupe le CRM', source: 'crm' },
+    { texte: 'Écarte 2\u00a0clients déjà suivis', court: 'Écarte 2\u00a0clients', source: null },
+  ],
+  resultats: [
+    { l: 74, raison: 'Levée récente' },
+    { l: 56, raison: 'Recrute' },
+    { l: 66, raison: 'Jamais contactée' },
+  ],
+};
 
-const demande = demandes[0];
+/* Ce que le script en reçoit : la question, qu'il tape, et la source de chaque
+   étape. Le reste est déjà écrit dans le balisage. */
+const pourLeScript = {
+  question: demande.question,
+  courte: demande.courte,
+  etapes: demande.etapes.map(({ source }) => ({ source })),
+};
+
 /* Le compteur « Sources consultées » au chargement : une par sortie. */
 const CONSULTEES = demande.etapes.filter((etape) => etape.source !== null).length;
 
@@ -160,11 +135,14 @@ const description =
 <div
   class="sm est-abouti"
   data-scene-agents
-  data-demandes={JSON.stringify(demandes)}
+  data-demande={JSON.stringify(pourLeScript)}
   role="img"
   aria-label={description}
 >
   <div class="sm-plan" aria-hidden="true" data-nosnippet>
+    {/* Pour qui lit le HTML sans la mise en page : ce plan est un décor, ses
+        noms et ses chiffres sont inventés (voir `home-story.astro`). */}
+    <span class="sr-only">Illustration, données fictives&nbsp;:</span>
     {/* Deux compteurs sur le grand plan ; le plan étroit ne garde que celui
        de la promesse. */}
     <div class="sm-puces">
@@ -213,7 +191,7 @@ const description =
         <i class="question__qui">
           <svg viewBox="0 0 16 16"><path d="M6 7.2a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4zM2.2 13c0-2.2 1.7-3.6 3.8-3.6S9.8 10.8 9.8 13M10.6 3.1a2.2 2.2 0 0 1 0 4M11.6 9.6c1.4.4 2.3 1.6 2.3 3.4" /></svg>
         </i>
-        <span class="question__texte" data-question-texte>
+        <span class="question__texte">
           <span class="question__invite">Posez une question…</span>
           <span class="sm-large" data-c="question">{demande.question}</span>
           <span class="sm-etroit" data-c="courte">{demande.courte}</span>
@@ -250,8 +228,8 @@ const description =
           <i class="etape__marque">
             <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-6.5" /></svg>
           </i>
-          <span class="sm-large" data-c="texte">{etape.texte}</span>
-          <span class="sm-etroit" data-c="court">{etape.court}</span>
+          <span class="sm-large">{etape.texte}</span>
+          <span class="sm-etroit">{etape.court}</span>
         </div>
       ))}
     </div>
@@ -300,7 +278,7 @@ const description =
               >
                 <i class="resultat__logo"></i>
                 <i class="sm-barre"></i>
-                <span class="resultat__raison" data-c="raison">{resultat.raison}</span>
+                <span class="resultat__raison">{resultat.raison}</span>
                 <i class="pastille"><svg viewBox="0 0 16 16"><path d={sources[index]?.trace} /></svg></i>
               </div>
             ))}
@@ -1160,32 +1138,28 @@ const description =
 
 <script>
   /*
-   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
-   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de son
+   * tour. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
    * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
-   * cours, une boucle remplacée se défait d'elle-même.
+   * cours, un tour remplacé se défait de lui-même.
    */
   import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Cadre, Pt } from '../../lib/metiers/scene';
 
   type IdSource = 'web' | 'documents' | 'crm';
 
+  /* Où l'agent va chercher ; `null` quand il réfléchit sur place. */
   interface Etape {
-    texte: string;
-    court: string;
     source: IdSource | null;
   }
 
-  interface Resultat {
-    l: number;
-    raison: string;
-  }
-
+  /* Ce que le script reçoit de la demande : la question dans ses deux
+     longueurs, qu'il tape, et la source de chaque étape. Les textes des étapes
+     et des résultats sont déjà dans le balisage. */
   interface Demande {
     question: string;
     courte: string;
     etapes: Etape[];
-    resultats: Resultat[];
   }
 
   /* Un trajet le long d'un fil. `inverse` le remonte, de son arrivée à son
@@ -1205,29 +1179,20 @@ const description =
 
   const estEtape = (valeur: unknown): valeur is Etape =>
     estObjet(valeur) &&
-    typeof valeur.texte === 'string' &&
-    typeof valeur.court === 'string' &&
     (valeur.source === null || (typeof valeur.source === 'string' && SOURCES.includes(valeur.source)));
-
-  const estResultat = (valeur: unknown): valeur is Resultat =>
-    estObjet(valeur) && typeof valeur.l === 'number' && typeof valeur.raison === 'string';
 
   const estDemande = (valeur: unknown): valeur is Demande =>
     estObjet(valeur) &&
     typeof valeur.question === 'string' &&
     typeof valeur.courte === 'string' &&
     Array.isArray(valeur.etapes) &&
-    valeur.etapes.every(estEtape) &&
-    Array.isArray(valeur.resultats) &&
-    valeur.resultats.every(estResultat);
+    valeur.etapes.every(estEtape);
 
-  /* Les demandes arrivent du balisage en JSON : c'est une frontière, on
-     vérifie leur forme avant de s'en servir. */
-  const lireDemandes = (brut: string | undefined): Demande[] => {
+  /* La demande arrive du balisage en JSON : c'est une frontière, on vérifie
+     sa forme avant de s'en servir. */
+  const lireDemande = (brut: string | undefined): Demande => {
     const lu: unknown = JSON.parse(brut ?? 'null');
-    if (!Array.isArray(lu) || lu.length === 0 || !lu.every(estDemande)) {
-      throw new Error('Scène Agents : `data-demandes` est illisible');
-    }
+    if (!estDemande(lu)) throw new Error('Scène Agents : `data-demande` est illisible');
     return lu;
   };
 
@@ -1237,7 +1202,6 @@ const description =
 
   monterScenes('[data-scene-agents]', (s) => {
     const question = s.un('[data-question]');
-    const texteQuestion = s.un('[data-question-texte]');
     const coeur = s.un('[data-coeur]');
     const disque = s.un('[data-disque]');
     const orbite = s.un('[data-orbite]');
@@ -1254,7 +1218,7 @@ const description =
     const grainQuestion = s.un('[data-grain="question"]');
     const grainsReponse = s.tous('[data-grain="reponse"]');
     const bandesReponse = s.tous('[data-bande="reponse"]');
-    const demandes = lireDemandes(s.racine.dataset.demandes);
+    const demande = lireDemande(s.racine.dataset.demande);
 
     const tuiles = new Map<string, HTMLElement>();
     s.tous('[data-source]').forEach((tuile) => tuiles.set(tuile.dataset.source ?? '', tuile));
@@ -1265,44 +1229,20 @@ const description =
       if (cible) cible.textContent = texte;
     };
 
-    /* L'état de la scène. Le compteur repart de zéro à chaque question et
-       monte d'un cran par source consultée : à la fin, il vaut trois. */
-    let rang = 0;
+    /* L'état de la scène. Le compteur part de zéro et monte d'un cran par
+       source consultée : à la fin, il vaut trois. */
     let consultees = 0;
     let tourne: Animation | null = null;
-
-    const demandeCourante = (): Demande => {
-      const demande = demandes[rang % demandes.length];
-      if (!demande) throw new Error('Scène Agents : aucune demande à jouer');
-      return demande;
-    };
 
     /* ── Les pièces, posées d'un coup ── */
 
     /* La question, vide ou entière, dans ses deux longueurs. */
-    const poserQuestion = (demande: Demande | null) => {
+    const poserQuestion = (posee: boolean) => {
       question.classList.remove('est-en-frappe');
-      question.classList.toggle('est-vide', demande === null);
-      question.classList.toggle('est-envoyee', demande !== null);
-      ecrireChamp(question, 'question', demande?.question ?? '');
-      ecrireChamp(question, 'courte', demande?.courte ?? '');
-    };
-
-    /* Les textes de la demande : ses étapes et ses résultats. Rien n'est
-       encore montré. */
-    const charger = (demande: Demande) => {
-      demande.etapes.forEach((etape, i) => {
-        const ligne = etapes[i];
-        if (!ligne) return;
-        ecrireChamp(ligne, 'texte', etape.texte);
-        ecrireChamp(ligne, 'court', etape.court);
-      });
-      demande.resultats.forEach((resultat, i) => {
-        const rangee = resultats[i];
-        if (!rangee) return;
-        rangee.style.setProperty('--l', `${resultat.l}%`);
-        ecrireChamp(rangee, 'raison', resultat.raison);
-      });
+      question.classList.toggle('est-vide', !posee);
+      question.classList.toggle('est-envoyee', posee);
+      ecrireChamp(question, 'question', posee ? demande.question : '');
+      ecrireChamp(question, 'courte', posee ? demande.courte : '');
     };
 
     const arreterOrbite = () => {
@@ -1328,8 +1268,7 @@ const description =
     /* Le repos : le champ attend une question. */
     const repos = () => {
       vider();
-      poserQuestion(null);
-      charger(demandeCourante());
+      poserQuestion(false);
       consultees = 0;
       elConsultees.textContent = '0';
     };
@@ -1337,10 +1276,8 @@ const description =
     /* L'image fixe : la question posée, les sources consultées, la réponse
        composée. C'est aussi ce que le HTML rend sans script. */
     const figer = () => {
-      const demande = demandeCourante();
       vider();
-      charger(demande);
-      poserQuestion(demande);
+      poserQuestion(true);
       coeur.dataset.etat = 'actif';
       demande.etapes.forEach((etape, i) => {
         etapes[i]?.classList.add('est-fait');
@@ -1390,7 +1327,7 @@ const description =
 
     /* La question se tape, trois lettres à la fois, dans la longueur affichée ;
        l'autre longueur est écrite d'un coup, pour un changement de plan. */
-    const taper = async (demande: Demande) => {
+    const taper = async () => {
       question.classList.remove('est-vide');
       question.classList.add('est-en-frappe');
       const [nom, texte, autre, entiere] = s.etroit
@@ -1479,14 +1416,13 @@ const description =
     };
 
     async function tour() {
-      const demande = demandeCourante();
       const pose: Promise<void>[] = [];
 
       await s.attendre(300);
 
       /* 1. La question se tape, puis descend jusqu'à l'agent, qui s'éveille :
          son orbite tourne tant qu'il réfléchit. */
-      await taper(demande);
+      await taper();
       s.allumer('question');
       await s.courir(grainQuestion, 'question', { duree: 320 });
       coeur.dataset.etat = 'actif';
@@ -1554,24 +1490,9 @@ const description =
         { duration: 1100, iterations: 2, delay: 200, easing: 'ease-out' },
       );
       s.racine.classList.add('est-abouti');
-      /* Une réponse de plus, et personne n'a cherché à la main : zéro. */
+      /* Une réponse de plus, et personne n'a cherché à la main : zéro. La
+         scène s'arrête là : c'est l'image fixe, rien n'est rangé. */
       s.tictac(elZero, '0');
-
-      /* Le temps de lire l'image. */
-      await s.attendre(2600);
-
-      /* 5. On range : tout s'éteint d'un coup, la question s'efface. Le
-         raccord est là : la scène vide est exactement son repos, et la
-         demande suivante est chargée pendant qu'on ne voit plus rien. */
-      vider();
-      consultees = 0;
-      s.tictac(elConsultees, '0');
-      await s.animer(texteQuestion, { opacity: [1, 0] }, { duration: 300, easing: ELAN });
-      rang += 1;
-      poserQuestion(null);
-      charger(demandeCourante());
-      await s.animer(texteQuestion, { opacity: [0, 1] }, { duration: 320, easing: EXPO });
-      await s.attendre(120);
     }
 
     return { figer, repos, tour };

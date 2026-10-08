@@ -8,7 +8,7 @@
  * blocs (un déclencheur, une étape, une action) s'y construit deux fois, et
  * c'est la différence entre les deux fois qui raconte le métier.
  *
- * La boucle, en trois temps, un seul mouvement à la fois :
+ * La scène, en trois temps, un seul mouvement à la fois :
  *   1. il montre : son curseur prend les trois blocs dans la réserve et les
  *      pose l'un après l'autre, vite, ils se relient ;
  *   2. l'équipe refait : chaque bloc de gauche s'allume, un grain passe d'une
@@ -17,6 +17,9 @@
  *      mauvais emplacement : il se dérobe, le formateur remontre, elle corrige ;
  *   3. l'équipe fait seule : le formateur s'en va, les fils se débranchent,
  *      l'équipe lance son scénario et il tourne, deux fois, sans personne.
+ * Elle joue une fois, quand elle entre à l'écran, et s'arrête sur cette image.
+ * Elle se vidait ensuite pour recommencer avec le groupe suivant : Lilian a
+ * demandé le 8 octobre 2026 de réduire les animations de la page.
  *
  * Le panneau, les fenêtres, les fils entre fenêtres, les ports, le grain et
  * les pastilles viennent du socle (`scene-metier.css`, `lib/metiers/scene.ts`).
@@ -120,6 +123,9 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
   aria-label="Le formateur construit un scénario d’automatisation en trois blocs : nouvelle demande, trier la demande, prévenir l’équipe. L’équipe le refait à son tour, puis le lance et le fait tourner seule : le formateur peut partir."
 >
   <div class="sm-plan" aria-hidden="true" data-nosnippet>
+    {/* Pour qui lit le HTML sans la mise en page : ce plan est un décor, ses
+        noms et ses chiffres sont inventés (voir `home-story.astro`). */}
+    <span class="sr-only">Illustration, données fictives&nbsp;:</span>
     <div class="sm-puces">
       {/* Sur le plan étroit, une seule pastille : celle de la promesse. */}
       <span class="sm-puce sm-large">
@@ -993,10 +999,10 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
 
 <script>
   /*
-   * La partition de la scène : ses états (repos, image fixe) et l'ordre de sa
-   * boucle. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de son
+   * tour. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
    * le moteur ; ici, aucune attente n'a besoin de vérifier qu'elle a encore
-   * cours, une boucle remplacée se défait d'elle-même.
+   * cours, un tour remplacé se défait de lui-même.
    */
   import { ELAN, EXPO, monterScenes } from '../../lib/metiers/scene';
   import type { Pt } from '../../lib/metiers/scene';
@@ -1343,18 +1349,11 @@ const FLECHE = 'M1 1l4.6 12.4 2.2-5.4 5.4-2.2z';
       s.tictac(promesse, 'Autonome');
       s.racine.classList.add('est-abouti');
 
-      /* Le temps de lire l'image, pendant qu'il tourne une seconde fois. */
+      /* Il tourne une seconde fois, et la scène s'arrête là : c'est l'image
+         fixe, rien n'est rangé. */
       await s.attendre(750);
       await executer(false);
       dire(equipe.compte, '2');
-      await s.attendre(1250);
-
-      /* On range : les deux outils se vident, le formateur revient pour le
-         groupe suivant. */
-      repos();
-      dire(modules, '1/3');
-      s.tictac(promesse, 'En formation');
-      await s.attendre(500);
     }
 
     return { figer, repos, tour };

@@ -17,7 +17,7 @@
        — Le site vit sur le bleu nuit, pas sur le papier blanc. Le clair
          devient l'exception : il ne revient que dans `.bloc-encre`, le
          panneau inversé.
-       — La pêche tient 10,19:1 sur la nuit : elle surligne, elle porte les
+       — La pêche tient 10,19:1 sur la nuit : elle souligne, elle porte les
          CTA, et elle a aussi le droit d'être du texte et un trait. Sur un
          panneau clair elle retombe à 1,64:1 et redevient une surface seule.
        — Une seule police. Le monospace disparaît : c'était, avec les
@@ -83,8 +83,7 @@
      fenêtre la borne : six lignes doivent tenir sur un écran de portable. */
   --text-story: clamp(2rem, min(3.6vw + 0.5rem, 8svh), 4rem);
   /* La phrase qui ouvre l'accueil, seule et centrée : le plus grand corps du
-     site. Le plancher est réglé pour que « Vous avez raison. », insécable,
-     tienne dans un écran de 360 px. */
+     site. */
   --text-affiche: clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem);
   /* --text-signature a été retiré. Même plancher et même pente que
      --text-headline, seul son plafond différait : les deux rendaient
@@ -170,7 +169,7 @@
      de la home s'animent dessus, contre 6 sur --duration-mount. La valeur la
      plus vue du système était la seule à ne pas être un jeton. */
   --duration-reveal: 380ms;
-  /* Le coup de surligneur qui se trace, et l'entrée du hero : deux entrées
+  /* Le soulignement qui se tire, et l'entrée du hero : deux entrées
      d'auteur, jouées une fois, jamais un retour d'interaction. */
   --duration-trace: 700ms;
   --duration-entree: 900ms;
@@ -186,8 +185,8 @@
   --radius-lg: clamp(1rem, 0.6rem + 1.2vw, 1.5rem);
   --radius-xl: clamp(1.25rem, 0.6rem + 2vw, 2rem);
   --radius-cta: 9999px;
-  /* Le surlignage est une pastille, droite et ronde, sur tout le site. */
-  --radius-bande: 9999px;
+  /* L'épaisseur du trait pêche tiré sous un fragment de titre (`mark`). */
+  --trait-souligne: max(2px, 0.075em);
   --radius-diagram: 16px;
   --radius-full: 9999px;
 
@@ -236,7 +235,7 @@
   --color-surface-on-dark: #1a2439;
 
   /* ── L'accent ──
-     --color-accent est la pêche en FOND : surlignage, CTA, pastille. Son
+     --color-accent est la pêche en FOND : le bouton d'appel. Son
      libellé est toujours la nuit, 10,19:1. --color-accent-text est ce qu'on
      écrit quand un composant veut du texte accentué : sur la nuit c'est la
      pêche elle-même, sur un panneau clair `.bloc-encre` le remappe en nuit. */
@@ -554,7 +553,8 @@ body {
      — un sur-titre au-dessus d'un titre, un numéro de section (« 01 / 05 ») ;
      — une bande de fond bord à bord : toute la page est sur la nuit profonde,
        une surface ne monte (`--color-surface-low`) que pour un panneau arrondi ;
-     — un surlignage penché : `mark` est une pastille droite ;
+     — une pastille pêche ailleurs que sur le bouton d'appel : `mark` est un
+       soulignement ;
      — une section de contact propre à la page (`fin-de-page`), un accordéon de
        questions (`questions`), un lien de retour écrit à la main (`retour`). */
 
@@ -738,51 +738,21 @@ html:has(.causerie) footer {
   cursor: pointer;
 }
 
-/* Le surligneur, devenu le geste d'interaction.
-   Le lien secondaire portait un trait d'un pixel qui se dessinait de gauche à
-   droite : correct, mais c'était le seul endroit du site où quelque chose
-   s'anime sans rien devoir à la marque. Le coup de surligneur penché est LE
-   dispositif de cette DA ; posé ici, il relie l'emphase du texte au geste du
-   clic, et il met de la pêche là où l'action se joue — sans toucher au bouton
-   primaire, qui est déjà un aplat de pêche et n'a rien à balayer.
-
-   Même inclinaison et mêmes retraits que `mark`, pour que ce soit reconnu comme
-   le même objet. L'échelle part de la gauche : la bande se pose, elle
-   n'apparaît pas. */
+/* Le même trait que sous un titre, tiré au survol : le lien secondaire répond
+   par le soulignement, de gauche à droite. Le libellé garde sa couleur ; la
+   pastille pleine reste au bouton d'appel. `--color-accent-text` et non la
+   pêche en dur : dans une île claire elle tombe à 1,64:1, le trait y passe en
+   nuit, comme la flèche à côté de lui. */
 .link-cta__label {
-  position: relative;
-  isolation: isolate;
-  margin-left: -0.5em;
-  padding: 0.14em 0.5em 0.18em;
-  transition: color var(--duration-default) var(--ease-out-quint);
+  padding-bottom: 0.3em;
+  background:
+    linear-gradient(var(--color-accent-text), var(--color-accent-text)) no-repeat 0 100% / 0% 2px;
+  transition: background-size var(--duration-default) var(--ease-out-quint);
 }
 
-/* La même pastille que dans les titres, droite et ronde, qui se déroule de
-   gauche à droite. */
-.link-cta__label::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: 9999px;
-  background: var(--color-peche);
-  clip-path: inset(0 100% 0 0 round 9999px);
-  transition: clip-path var(--duration-default) var(--ease-out-quint);
-}
-
-.link-cta:hover .link-cta__label::before,
-.link-cta:focus-visible .link-cta__label::before {
-  clip-path: inset(0 0 0 0 round 9999px);
-}
-
-/* Le libellé est blanc sur la nuit, et le blanc ne tient que 1,74:1 sur la
-   pêche : il passe donc en nuit pendant que la bande se pose. Les deux
-   transitions ont la même durée et la même courbe, le texte n'est illisible à
-   aucune image — il est blanc tant que la nuit est derrière lui, nuit dès que
-   la pêche l'a recouvert. */
 .link-cta:hover .link-cta__label,
 .link-cta:focus-visible .link-cta__label {
-  color: var(--color-night);
+  background-size: 100% 2px;
 }
 
 .link-cta__arrow {
@@ -800,7 +770,6 @@ html:has(.causerie) footer {
 
 @media (prefers-reduced-motion: reduce) {
   .link-cta__label,
-  .link-cta__label::before,
   .link-cta__arrow { transition: none; }
 }
 
@@ -1442,63 +1411,33 @@ a[href^="mailto:"] {
 }
 
 /* =========================================================================
-   LE DISPOSITIF DE LA DA — le surlignage penché, la bande et le panneau inversé.
+   LE DISPOSITIF DE LA DA — le soulignement pêche et le panneau inversé.
    ========================================================================= */
 
-/* La bande est un pseudo-élément posé DERRIÈRE le texte, et c'est lui seul qui
-   penche : faire tourner le <mark> inclinerait les lettres, or on veut un coup
-   de surligneur de travers sur un texte droit.
-   Contrepartie assumée : sur un fragment qui passe à la ligne, la bande
-   couvrirait tout le rectangle englobant — d'où `nowrap` et des fragments
-   courts. */
+/* Le soulignement. Un fragment de titre se distingue par un trait pêche tiré
+   sous lui, à l'encre du titre : la pastille pleine est la forme du bouton
+   d'appel, et elle ne sert plus qu'à lui (Lilian, le 8 octobre 2026).
+
+   Le trait est un fond d'une ligne, calé au pied du fragment, et non un
+   `text-decoration` : celui-ci ne passe pas sous des enfants en bloc en ligne,
+   or les titres du récit posent leurs mots un par un de cette façon. Le
+   fragment reste un élément en ligne : il passe à la ligne avec le titre, le
+   trait le suit, et plus rien ne l'oblige à tenir sur une seule ligne. */
 mark {
-  position: relative;
-  isolation: isolate;
-  background: none;
-  /* La nuit, et non `inherit` : le texte courant est blanc, et le blanc sur la
-     pêche tombe à 1,74:1. `--color-night` n'est remappé par aucun bloc, le
-     fragment surligné reste donc lisible partout, 10,19:1. */
-  color: var(--color-night);
-  display: inline-block;
-  padding: 0.02em 0.36em 0.08em;
-  white-space: nowrap;
+  background:
+    linear-gradient(var(--color-peche), var(--color-peche)) no-repeat 0 100% /
+    calc(var(--draw) * 100%) var(--trait-souligne);
+  color: inherit;
 }
 
-mark::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--color-peche);
-  border-radius: var(--radius-bande);
-  z-index: -1;
-}
-
-/* ── Le surligneur se trace ──
-   C'est LE mouvement d'auteur du site : la bande ne s'allume pas, elle est
-   passée de gauche à droite, comme on surligne. Une seule variable la pilote,
-   `--draw`, de 0 à 1.
-
-   La bande est rognée par un `clip-path` plutôt qu'étirée par un `scaleX`. Le
-   rognage se calcule dans le repère de la bande AVANT sa rotation : elle reste
-   donc penchée autour de son centre, exactement où elle est au repos. Un
-   `scaleX` partant de la gauche aurait déplacé le pivot, et une bande de
-   400 px se serait retrouvée douze pixels plus bas à son extrémité droite.
-
-   Le texte, lui, ne change jamais de couleur : il est de la nuit, toujours.
-   Sur le fond nuit, le fragment est donc invisible tant que la pêche n'est pas
-   passée derrière lui — c'est le surligneur qui fait apparaître le mot, lettre
-   après lettre, et le texte n'est illisible à aucune image puisqu'il n'existe
-   que là où la bande est déjà. Sur le panneau clair, le mot est simplement là
-   et la bande se pose dessous.
-   Une première version peignait le texte par un dégradé rogné aux glyphes
-   (`background-clip: text`) pour le faire passer du blanc à la nuit au fil de
-   la bande. Elle tenait sur l'ordre de peinture entre le fond d'un élément en
-   ligne et son enfant d'indice négatif, que les moteurs ne garantissent pas
-   de la même façon : un mot surligné pouvait finir sous sa propre bande.
+/* ── Le trait se tire ──
+   Il ne s'allume pas, il est tiré de gauche à droite, comme on souligne. Une
+   seule variable le pilote, `--draw`, de 0 à 1 ; le texte, lui, est là dès le
+   départ et ne change pas de couleur.
 
    Enregistrer la propriété est ce qui permet de l'animer : sans `@property`,
-   une variable passe de 0 à 1 d'un coup, et le mot apparaît surligné sans
-   transition. Le dispositif n'est armé que sous `.js-ready`. */
+   une variable passe de 0 à 1 d'un coup. Le dispositif n'est armé que sous
+   `.js-ready`. */
 @property --draw {
   syntax: '<number>';
   inherits: true;
@@ -1509,14 +1448,9 @@ mark::before {
   transition: --draw var(--duration-trace) var(--ease-out-expo);
 }
 
-.js-ready mark::before {
-  clip-path: inset(0 calc((1 - var(--draw)) * 100%) 0 0 round var(--radius-bande));
-}
-
 /* Le fragment attend son bloc : tant que le `.reveal` qui le porte n'est pas
-   entré à l'écran, la bande n'est pas tracée. Le bloc est de toute façon
-   voilé à ce moment-là ; le court retard laisse le reste du titre apparaître
-   avant que le surligneur n'écrive le mot. */
+   entré à l'écran, le trait n'est pas tiré. Le court retard laisse le titre
+   apparaître d'abord. */
 .js-ready .reveal:not(.is-visible) mark { --draw: 0; }
 .js-ready .reveal.is-visible mark { transition-delay: 140ms; }
 
@@ -1524,10 +1458,6 @@ mark::before {
   .js-ready mark { transition: none; }
   .js-ready .reveal:not(.is-visible) mark { --draw: 1; }
 }
-
-/* À 76 px pour un interlignage de 72 px, la pastille dépassait la ligne et
-   mordait celle du dessus. Elle est resserrée ici, et seulement ici. */
-h1 mark::before { inset: 0.14em 0 0.16em; }
 
 ::selection { background: var(--color-peche); color: var(--color-night); }
 
@@ -1567,8 +1497,9 @@ h1 mark::before { inset: 0.14em 0 0.16em; }
   --color-grid-line: #e6e9ef;
   --color-grid-line-active: #c3c9d4;
   --color-border-strong: #111827;
-  /* Sur le clair, la pêche retombe à 1,64:1 : elle reste une surface — la
-     bande d'un mot surligné — et ne porte ni texte, ni trait, ni focus. */
+  /* Sur le clair, la pêche retombe à 1,64:1 : elle reste une surface (le
+     bouton) et ne porte ni texte, ni trait, ni focus. Aucun titre souligné
+     (`mark`) ne se pose donc dans une île. */
   --color-accent-text: #111827;
   --color-accent-soft: #ffe9dd;
   --color-focus: #111827;
@@ -1593,27 +1524,6 @@ section:has(+ .bloc-encre) {
    pas sur le clair, le trait y repasse en nuit. */
 .bloc-encre .lien-prose { border-bottom-color: #111827; }
 
-/* Sous 30rem, un fragment surligne long ne tient plus sur une ligne : le
-   `nowrap` qui protege la bande devient une cause de debordement. La bande
-   couvre alors le rectangle englobant, ce qui est moins grave qu un titre
-   coupe hors ecran. */
-/* Il a existé ici une règle qui, sous 30rem, relâchait `mark` en
-   `white-space: normal` et posait `hyphens: auto` sur les titres, pour rattraper
-   un titre qui dépassait de deux pixels. Les deux effets étaient pires que le
-   défaut qu'ils corrigeaient :
-
-   — `hyphens: auto` coupait les mots au tiret, et « freelance » devenait
-     « free-lance » dans le seul titre du site qui porte le nom de l'entité ;
-   — `white-space: normal` laissait le fragment surligné passer à la ligne, or
-     la bande est un pseudo-élément unique posé derrière : sur deux lignes elle
-     couvre le rectangle englobant, donc aussi le vide à droite de la première
-     ligne. Un aplat de couleur informe au milieu du titre.
-
-   La contrainte reste donc celle du dispositif : un fragment surligné tient sur
-   une ligne, à toutes les tailles. C'est aux fragments d'être courts, pas à la
-   bande de se déformer. */
-
-
 /* Lien dans une phrase de prose : souligné d'un trait pêche, qui passe à
    l'encre au survol.
 
@@ -1635,7 +1545,7 @@ section:has(+ .bloc-encre) {
 /* =========================================================================
    MOUVEMENT D'AUTEUR — trois gestes, et pas un de plus.
 
-   1. Le surligneur qui se trace (plus haut, avec `mark`).
+   1. Le soulignement qui se tire (plus haut, avec `mark`).
    2. L'entrée du hero : la page arrive, elle ne s'affiche pas.
    3. Les médias qui s'ouvrent au défilement.
 
@@ -1662,8 +1572,7 @@ section:has(+ .bloc-encre) {
   .entree > :nth-child(5) { --i: 4; }
   .entree > :nth-child(n + 6) { --i: 5; }
 
-  /* Le surlignage du titre se trace une fois le titre arrivé : le mot
-     surligné est le dernier à apparaître, écrit par la bande. */
+  /* Le trait du titre se tire une fois le titre arrivé. */
   .js-ready .entree mark {
     animation: mark-trace var(--duration-trace) var(--ease-out-expo) backwards;
     animation-delay: 420ms;
