@@ -118,3 +118,11 @@ test('latest video answers 503 while the feed has never been read', async t => {
   assert.equal(response.status, 503); assert.equal(response.headers.get('cache-control'), 'no-store');
   assert.equal((await fetch(`${url}/api/derniere-video/vignette?v=p7zrKvfo6TY`)).status, 404);
 });
+test('contact delegates original body, environment and canonical origin to shared sender', async t => {
+  let received;
+  const { url } = await fixture(t, { sendContactMessage: async (req, env, origin) => { received = { origin, body: await req.json(), header: req.headers.get('origin'), env }; return Response.json({ status: 'sent' }); } });
+  const response = await fetch(`${url}/api/contact`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://liliansevoumian.fr' }, body: '{"email":"test@example.com","message":"Bonjour"}' });
+  assert.equal(response.status, 200); assert.equal(received.origin, 'https://liliansevoumian.fr'); assert.equal(received.body.message, 'Bonjour'); assert.equal(received.header, received.origin); assert.equal(received.env, process.env);
+  assert.equal((await fetch(`${url}/api/contact`, { method: 'POST', body: 'a'.repeat(8193) })).status, 413);
+  assert.equal((await fetch(`${url}/api/contact`)).status, 405);
+});

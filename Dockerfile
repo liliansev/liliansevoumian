@@ -4,7 +4,7 @@ RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
-RUN pnpm build && pnpm exec esbuild src/lib/newsletter-signup.ts --bundle --platform=node --format=esm --outfile=runtime/newsletter-signup.mjs
+RUN pnpm build && pnpm exec esbuild src/lib/newsletter-signup.ts --bundle --platform=node --format=esm --outfile=runtime/newsletter-signup.mjs && pnpm exec esbuild src/lib/contact-message.ts --bundle --platform=node --format=esm --outfile=runtime/contact-message.mjs
 RUN node --test deploy/server.test.mjs
 RUN pnpm prune --prod
 

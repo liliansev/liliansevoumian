@@ -9,7 +9,6 @@ import HomeContent from '../components/home-content.astro';
 import HomeVoices from '../components/home-voices.astro';
 import Questions from '../components/questions.astro';
 import FinDePage from '../components/fin-de-page.astro';
-import HomeInvite from '../components/home-invite.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
 import { homeFaqs } from '../data/home-faq';
@@ -45,7 +44,6 @@ const pageSchema = {
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
   pageSchema={pageSchema}
-  causerie={false}
   faqSchema={homeFaqs.map((item) => ({ question: item.q, answer: item.a }))}
 >
   <Navigation
@@ -56,11 +54,6 @@ const pageSchema = {
 
   <main id="main-content" tabindex="-1" class="outline-none">
     <HomeHero />
-    {/* La barre où l'on écrit à Lilian : sous le titre, puis en bas à droite.
-        Sans serveur : elle ouvre WhatsApp, la messagerie ou l'agenda avec le
-        message déjà rédigé. Rendue ici, juste après le hero, pour venir au
-        clavier là où on la voit (elle est positionnée hors du flux). */}
-    <HomeInvite />
     <div class="accueil__suite">
       <HomeStory />
       <HomeServices />

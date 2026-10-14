@@ -31,19 +31,19 @@ src/
 │   │   # — communs à toutes les pages —
 │   ├── Navigation.astro       # la barre, la même partout : nom, liens, un seul bouton « Parlons de votre projet », menu mobile
 │   ├── Footer.astro
-│   ├── BoutonReservation.astro # le bouton d'appel : ouvre la conversation (goal causerie_opened) ; `direct` pour l'agenda
-│   ├── home-invite.astro      # la barre d'écriture et sa conversation (WhatsApp, e-mail, agenda), rendue par Layout sur toutes les pages, sans serveur
+│   ├── BoutonReservation.astro # le bouton d'appel : mène au formulaire de contact (goal contact_opened) ; `direct` pour l'agenda
+│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian
 │   ├── tete-de-page.astro     # en-tête d'une page intérieure : retour, h1, chapô, bouton, preuves
 │   ├── partie.astro           # une partie d'une page de lecture : titre à gauche, texte à droite ; `clair` en fait une île claire
 │   ├── questions.astro        # la FAQ, la même partout : un accordéon classique, en `details`, sans script
-│   ├── fin-de-page.astro      # la fin de chaque page : une phrase, un champ, le bouton (prix en une ligne sur l'accueil)
+│   ├── fin-de-page.astro      # la fin de chaque page : une phrase, le formulaire de contact, le lien vers l'agenda (prix en une ligne sur l'accueil)
 │   ├── pourquoi-moi.astro     # île claire : portrait, notice à la troisième personne, puis « je »
 │   ├── retour.astro           # fil de retour d'une page intérieure
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   │   # — accueil —
-│   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
+│   ├── home-hero.astro        # titre centré, bouton d'appel, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
 │   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
@@ -73,9 +73,9 @@ src/
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
 ├── data/                      # faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, sites-web.ts, brands.ts
-├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (e-mail et WhatsApp), roi.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
+├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (adresse de contact), contact-message.ts (envoi du formulaire par Resend), roi.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
-│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, barre d'écriture, suivi DataFast
+│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire, suivi DataFast
 │   ├── PageExpertOutil.astro  # charpente des pages d'outil (/expert-make, /expert-n8n)
 │   └── PageReponse.astro      # charpente des pages-réponses (une question, sa réponse dans le chapô)
 ├── pages/
@@ -86,6 +86,7 @@ src/
 │   ├── expert-make.astro · expert-n8n.astro   # contenu seul, charpente partagée
 │   ├── make-ou-n8n.astro · combien-coute-une-automatisation.astro · agent-ia-pour-pme.astro   # pages-réponses
 │   ├── reprendre-une-automatisation-qui-casse.astro
+│   ├── contact.astro          # le formulaire seul, cible des boutons quand la page n'a pas le sien
 │   ├── principes.astro · mentions-legales.astro · 404.astro
 │   └── llms.txt.ts            # fiche générée au build pour les moteurs IA
 ├── content.config.ts          # schéma Zod de la collection
@@ -93,6 +94,7 @@ src/
     └── global.css             # jetons @theme, « La tenue commune », dispositif de la DA
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
+├── contact.ts                 # formulaire de contact (délègue à src/lib/contact-message)
 └── newsletter.ts              # inscription à la newsletter (délègue à src/lib/newsletter-signup)
 ```
 
@@ -121,7 +123,7 @@ see *La tenue commune* in `global.css` and `DESIGN.md`):
 - Motion: the underline is drawn once (`<mark>`), a page header enters once
   (`.entree`), media open with the scroll (`.media-ouvre`), pages cross-fade.
   On the home page a movement plays once and stops (8 October 2026): the four
-  service scenes rest on their final image, quotes and the writing bar stay
+  service scenes rest on their final image, quotes stay
   still. Two loops remain by choice, each with its pause control: the client
   logo marquee of the first screen (Lilian asked for it back the same day) and
   the story scene, whose mode follows the scroll on a desktop. The tool marquee of `/automatisations-ia`
@@ -143,13 +145,15 @@ scene per service (`src/components/metiers/`, engine in
 
 ## Key Implementation Notes
 
-- Un seul geste sur tout le site : « Parlons de votre projet » ouvre la
-  conversation de `home-invite` (WhatsApp, e-mail ou appel). Tout bouton d'appel
-  passe par `BoutonReservation` : sa prop `source` est requise, et c'est ce qui
-  garantit que le goal `causerie_opened` est posé avec sa provenance. Un `<a>`
-  écrit à la main vers cal.com ouvre bien l'agenda mais n'apparaît dans aucun
-  funnel. Le seul lien direct vers l'agenda est le moyen « Réserver un appel »
-  de la conversation (`direct`, goal `lead_call`). Hors composant (réponses de
+- Un seul geste sur tout le site : « Parlons de votre projet » mène au
+  formulaire de contact (14 octobre 2026 : la conversation `home-invite` est
+  retirée, jugée trop compliquée par Lilian). Tout bouton d'appel passe par
+  `BoutonReservation` : sa prop `source` est requise, et c'est ce qui garantit
+  que le goal `contact_opened` est posé avec sa provenance. Un `<a>` écrit à la
+  main vers cal.com ouvre bien l'agenda mais n'apparaît dans aucun funnel. Le
+  seul lien direct vers l'agenda est « Réservez un appel », sous le formulaire
+  (`direct`, goal `lead_call`). L'envoi demande `RESEND_API_KEY` dans
+  l'environnement du serveur (voir `deploy/README.md`). Hors composant (réponses de
   FAQ, llms.txt), l'URL vient de `lib/reservation.ts`. Voir `DATAFAST-FUNNEL.md`.
 - Un fait, une source : les prix se lisent dans `data/service-pricing.ts` et
   `data/maintenance.ts`, la réponse « Make ou n8n » dans `data/make-ou-n8n.ts`,

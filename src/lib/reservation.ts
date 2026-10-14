@@ -21,8 +21,8 @@ export const DUREE_RESERVATION_MINUTES = 45;
 
 /**
  * Le libellé du bouton d'appel, le même sur tout le site depuis le 3 octobre
- * 2026 : il ouvre la conversation, où l'on choisit WhatsApp, l'e-mail ou un
- * appel. Il a porté « Choisir un créneau · 45 min » tant que le bouton ouvrait
- * l'agenda ; la durée se lit maintenant dans la conversation.
+ * 2026 : il mène au formulaire de contact (depuis le 14 octobre 2026 ; avant,
+ * à la conversation de `home-invite`). Il a porté « Choisir un créneau · 45 min »
+ * tant que le bouton ouvrait l'agenda ; la durée se lit sous le formulaire.
  */
 export const LIBELLE_CONTACT_RESERVATION = 'Parlons de votre projet';

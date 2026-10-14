@@ -3,7 +3,6 @@ import '@fontsource-variable/geist';
 import '../styles/global.css';
 import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
-import HomeInvite from '../components/home-invite.astro';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { organisations, profils, resume } from '../data/parcours';
 
@@ -23,13 +22,6 @@ interface Props {
   noindex?: boolean;
   faqSchema?: Array<{ question: string; answer: string }>;
   directionContract?: string;
-  /**
-   * La barre d'écriture (`home-invite`) : le bouton « Parlons de votre projet »
-   * de chaque page ouvre sa conversation. Elle est rendue ici, pour tout le
-   * site. `false` pour la page qui la place elle-même (l'accueil, juste après
-   * son premier écran).
-   */
-  causerie?: boolean;
 }
 
 const {
@@ -47,8 +39,7 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   breadcrumbs,
   noindex = false,
   faqSchema,
-  directionContract,
-  causerie = true
+  directionContract
 } = Astro.props;
 
 /* Impeccable demande que le contrat d'une nouvelle surface survive dans le
@@ -503,10 +494,6 @@ const faqPageSchema = faqSchema ? {
             var t = ev.target && ev.target.closest ? ev.target.closest('a[href*="cal.com/lilian-sevoumian"]') : null;
             if (!t) return;
             if (t.hasAttribute('data-cal-direct')) return;
-            // Sur l'accueil, les boutons « Parlons de votre projet » ouvrent la
-            // conversation (home-invite), qui propose ensuite l'agenda. Si elle
-            // n'a pas démarré, ils ouvrent l'agenda comme les autres.
-            if (t.hasAttribute('data-causerie-ouvrir') && document.querySelector('[data-causerie][data-pret]')) return;
             ev.preventDefault();
             lastSource = t.getAttribute('data-fast-goal-source') || 'cal_embed';
             openOverlay(lireNote(t));
@@ -544,7 +531,6 @@ const faqPageSchema = faqSchema ? {
       Aller au contenu principal
     </a>
     <slot />
-    {causerie && <HomeInvite />}
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
     <!-- data-cal-link est réservé à Cal : le poser ici ouvre aussi sa popup au clic Fermer. -->
@@ -681,16 +667,30 @@ const faqPageSchema = faqSchema ? {
           if (!a) return;
           goal('case_opened', { href: a.getAttribute('href') });
         });
+
+        // « Parlons de votre projet » mène à /contact. Si la page porte déjà le
+        // formulaire (sa fin-de-page), on y descend sans changer de page, et
+        // le curseur se pose dans le premier champ.
+        document.addEventListener('click', function (ev) {
+          var a = ev.target && ev.target.closest ? ev.target.closest('a[data-contact-ouvrir]') : null;
+          var formulaire = document.querySelector('[data-formulaire-contact]');
+          if (!a || !formulaire || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button > 0) return;
+          ev.preventDefault();
+          var reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          formulaire.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'center' });
+          var champ = formulaire.querySelector('input:not([tabindex="-1"]), textarea');
+          if (champ) champ.focus({ preventScroll: true });
+        });
       })();
     </script>
 
     <!-- Suivi DataFast : inventaire des objectifs émis (détail dans
          DATAFAST-FUNNEL.md).
-         1) "causerie_opened" → clic sur un « Parlons de votre projet », posé par
+         1) "contact_opened"  → clic sur un « Parlons de votre projet », posé par
                                 BoutonReservation avec sa source (page et place).
-         2) "lead_message"    → dans la conversation, clic sur WhatsApp ou e-mail.
-         3) "lead_call"       → dans la conversation, clic sur « Réserver un
-                                appel » : le seul lien direct vers l'agenda.
+         2) "lead_message"    → message parti du formulaire de contact.
+         3) "lead_call"       → clic sur « Réservez un appel », sous le
+                                formulaire : le seul lien direct vers l'agenda.
          4) "call_booked"     → réservation confirmée, émis par l'écouteur de l'embed.
          5) "cal_abandoned"   → agenda refermé sans réservation.
          6) "roi_used"        → premier mouvement d'un curseur du simulateur.

@@ -1,8 +1,15 @@
 # Funnel de conversion DataFast — liliansevoumian.fr
 
 Objectif business : **être contacté pour une mission**. Un seul geste sur tout
-le site : « Parlons de votre projet » ouvre la conversation, où le visiteur
-choisit WhatsApp, l'e-mail ou un appel de 45 minutes réservé sur cal.com.
+le site : « Parlons de votre projet » mène au formulaire de contact (adresse,
+nom, message), qui part dans la boîte de Lilian ; un lien sous le formulaire
+réserve un appel de 45 minutes sur cal.com.
+
+**Depuis le 14 octobre 2026**, la conversation de `home-invite` (WhatsApp,
+e-mail ou agenda) est retirée. `causerie_opened` devient `contact_opened`, et
+`lead_message` est émis quand le formulaire part vraiment (prop `canal` =
+`formulaire`), plus au clic vers WhatsApp ou la messagerie. Les funnels du §0
+sont à refaire avec ces noms.
 
 Le tracking est posé en code : attributs `data-fast-goal` lus nativement par le
 script DataFast cookieless, plus quelques appels JS (conversation ouverte par la
@@ -68,9 +75,11 @@ Jusqu'au 2 octobre 2026 les blocs des métiers et les lignes de prix émettaient
 la même source, et le funnel ne pouvait pas dire lequel des deux avait servi.
 
 ### `lead_call` — clic « Réserver un appel » (cal.com)
-Émis sur le **seul lien direct vers l'agenda** : le moyen « Réserver un appel ·
-45 min » de la conversation (`home-invite.astro`), source `home_causerie`, sur
-toutes les pages. C'est une **intention de call** (le clic), pas la réservation
+Émis sur le **seul lien direct vers l'agenda** : « Réservez un appel de 45
+minutes », sous le formulaire de contact (`fin-de-page.astro`, avec la source
+de la page, et `/contact`, source `contact_page`). Jusqu'au 14 octobre 2026,
+c'était le moyen « Réserver un appel · 45 min » de la conversation
+(`home-invite.astro`), source `home_causerie`. C'est une **intention de call** (le clic), pas la réservation
 confirmée — celle-ci se passe sur cal.com (voir Limite plus bas).
 
 Jusqu'au 3 octobre 2026, chaque bouton du site ouvrait l'agenda et émettait
@@ -130,9 +139,15 @@ leur index sous les recommandations : les liens vers Humble+ (récit), Fraich
 Touch et M Partners (métiers) en sont sortis, et les `case_opened` venus de
 l'accueil baissent d'autant.
 
-### `causerie_opened` — ouverture de la conversation
+### `contact_opened` (ex `causerie_opened`) : clic vers le formulaire
+Depuis le 14 octobre 2026 : posé par `BoutonReservation` sur tous les « Parlons
+de votre projet », qui mènent au formulaire de contact (sur la page, ou
+`/contact`). Nouvelles sources : `home_hero` (bouton sous le titre de
+l'accueil) et `contact_nav`. Les sources `barre_hero` et `barre_coin` ont
+disparu avec la barre. Ce qui suit décrit l'ancien `causerie_opened`.
+
 Posé par `BoutonReservation` sur tous les « Parlons de votre projet » du site,
-qui ouvrent la conversation de `home-invite.astro` (WhatsApp, e-mail ou appel),
+qui ouvraient la conversation de `home-invite.astro` (WhatsApp, e-mail ou appel),
 et, depuis le 8 octobre 2026, émis en JS quand le visiteur ouvre la conversation
 par la barre d'écriture elle-même (une fois par page, et pas si un bouton l'a
 déjà ouverte). Avant cette date, écrire dans la barre du premier écran
@@ -155,7 +170,12 @@ La prop `source` dit d'où :
 Les sources `…_fin` sont celles du champ de fin de page (`fin-de-page.astro`) :
 le visiteur y a peut-être écrit une phrase avant de cliquer.
 
-### `lead_message` — message envoyé depuis la barre d'écriture
+### `lead_message` : message envoyé
+Depuis le 14 octobre 2026 : émis en JS par `formulaire-contact.astro` quand
+`/api/contact` confirme l'envoi, props `canal` = `formulaire` et `source` (celle
+de la fin de page). C'est un envoi réel, plus une intention. Ce qui suit décrit
+l'ancien comportement.
+
 Prop `canal` = `whatsapp` ou `email`. Posé sur les deux liens de la conversation
 (`home-invite.astro`), présente sur toutes les pages : le clic ouvre WhatsApp ou
 la messagerie du visiteur avec son message déjà rédigé. Il mesure l'ouverture,

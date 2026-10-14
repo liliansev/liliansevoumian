@@ -51,8 +51,9 @@ async function readBody(req, limit) {
   return Buffer.concat(chunks);
 }
 /** Only expose through Caddy; it must overwrite X-Real-IP with the client IP. */
-export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNewsletter, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
+export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNewsletter, sendContactMessage, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
   let newsletterPromise;
+  let contactPromise;
   /* Le flux est relu au plus toutes les demi-heures. Si YouTube ne répond pas,
      la dernière réponse connue sert encore et on réessaie une minute plus tard. */
   let video = null, videoCheckedAt = -Infinity, videoPending = null, thumbnail = null, thumbnailPending = null;
@@ -108,6 +109,14 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNews
         if (!signupNewsletter) newsletterPromise ??= import('../runtime/newsletter-signup.mjs');
         const signup = signupNewsletter ?? (await newsletterPromise).signupNewsletter;
         const response = await signup(new Request(url, { method: 'POST', headers, body: bytes }), process.env.LUMAIL_API_KEY, origin);
+        return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
+      }
+      if (url.pathname === '/api/contact') {
+        if (req.method !== 'POST') return send(405, '', { Allow: 'POST' });
+        const bytes = await readBody(req, 8192);
+        if (!sendContactMessage) contactPromise ??= import('../runtime/contact-message.mjs');
+        const envoyer = sendContactMessage ?? (await contactPromise).envoyerMessageContact;
+        const response = await envoyer(new Request(url, { method: 'POST', headers, body: bytes }), process.env, origin);
         return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
       }
       if (url.pathname === '/api/dfst-events') {

@@ -1,0 +1,214 @@
+---
+/*
+ * formulaire-contact : écrire à Lilian, sans rien ouvrir d'autre.
+ *
+ * Sa demande, le 14 octobre 2026 : « juste un formulaire simple, votre email et
+ * deux champs, et après ça part dans mes emails ». Il remplace la conversation
+ * de `home-invite` (WhatsApp, e-mail ou agenda), jugée trop compliquée.
+ *
+ * Trois champs : l'adresse (requise), le nom (facultatif) et le message
+ * (requis). L'envoi passe par `/api/contact` (`lib/contact-message.ts`), qui
+ * l'adresse par Resend à la boîte de Lilian, avec l'adresse du visiteur en
+ * `reply_to`. Le message reste dans le champ tant qu'il n'est pas parti.
+ *
+ * Il n'y en a qu'un par page : les boutons « Parlons de votre projet » le
+ * trouvent par `[data-formulaire-contact]` (voir Layout) et y mènent.
+ * Sans script, le formulaire ne peut pas partir (l'endpoint attend du JSON) :
+ * la ligne sous le bouton donne alors l'adresse à laquelle écrire.
+ */
+import { Icon } from 'astro-icon/components';
+import { EMAIL_CONTACT } from '../lib/contact';
+
+interface Props {
+  /** D'où vient le message, dans les statistiques et dans le mail reçu. */
+  source: string;
+}
+
+const { source } = Astro.props;
+---
+
+<form class="contact" action="/api/contact" method="post" novalidate data-formulaire-contact data-source={source}>
+  <div class="contact__ligne">
+    <div class="contact__champ">
+      <label for="contact-email">Votre e-mail</label>
+      <input id="contact-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" />
+    </div>
+    <div class="contact__champ">
+      <label for="contact-nom">Votre nom <span class="contact__facultatif">(facultatif)</span></label>
+      <input id="contact-nom" type="text" name="nom" maxlength="120" autocomplete="name" />
+    </div>
+  </div>
+  <div class="contact__champ">
+    <label for="contact-message">Votre message</label>
+    <textarea id="contact-message" name="message" required maxlength="5000" rows="5" placeholder="J’ai une société de… et j’aimerais…"></textarea>
+  </div>
+  <div hidden aria-hidden="true"><label for="contact-website">Votre site</label><input id="contact-website" name="website" tabindex="-1" autocomplete="off" /></div>
+  <div class="contact__pied">
+    <button type="submit" class="btn-primary contact__envoi">
+      Envoyer <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+    </button>
+    <p class="contact__statut" role="status" aria-live="polite" aria-atomic="true" data-contact-statut>
+      Le message arrive directement dans ma boîte mail. Vous pouvez aussi écrire à <a class="lien-prose" href={`mailto:${EMAIL_CONTACT}`}>{EMAIL_CONTACT}</a>.
+    </p>
+  </div>
+</form>
+
+<style>
+  .contact {
+    display: grid;
+    gap: 1rem;
+    width: min(100%, 42rem);
+    margin-top: 0.5rem;
+    text-align: left;
+  }
+
+  .contact__ligne {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .contact__champ {
+    display: grid;
+    gap: 0.375rem;
+  }
+
+  .contact__champ label {
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+  }
+
+  .contact__facultatif {
+    color: var(--color-ink-low);
+  }
+
+  /* 16 px au moins : en dessous, iOS zoome sur le champ. */
+  .contact input,
+  .contact textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.625rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-night-deep) 86%, var(--color-ink));
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-body);
+    line-height: 1.5;
+    transition:
+      border-color var(--duration-default) var(--ease-out-quint),
+      box-shadow var(--duration-default) var(--ease-out-quint);
+  }
+
+  .contact textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+
+  .contact input::placeholder,
+  .contact textarea::placeholder {
+    color: var(--color-ink-low);
+    opacity: 1;
+  }
+
+  .contact input:focus,
+  .contact textarea:focus {
+    outline: none;
+    border-color: var(--color-peche);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-peche) 26%, transparent);
+  }
+
+  .contact [aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+
+  .contact__pied {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .contact__envoi {
+    min-height: 44px;
+  }
+
+  .contact__envoi[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .contact__statut {
+    flex: 1 1 18rem;
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .contact__statut[data-etat='error'] {
+    color: var(--color-error);
+  }
+
+  .contact__statut[data-etat='sent'] {
+    color: var(--color-success);
+  }
+
+  @media (max-width: 40rem) {
+    .contact__ligne {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  const formulaire = document.querySelector<HTMLFormElement>('[data-formulaire-contact]');
+  const statut = formulaire?.querySelector<HTMLElement>('[data-contact-statut]');
+  const bouton = formulaire?.querySelector<HTMLButtonElement>('button[type="submit"]');
+  if (formulaire && statut && bouton) {
+    const dire = (texte: string, etat: 'sent' | 'error' | 'envoi') => {
+      statut.textContent = texte;
+      statut.dataset.etat = etat;
+    };
+    formulaire.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = formulaire.elements.namedItem('email') as HTMLInputElement;
+      const message = formulaire.elements.namedItem('message') as HTMLTextAreaElement;
+      email.removeAttribute('aria-invalid');
+      message.removeAttribute('aria-invalid');
+      if (!email.checkValidity()) {
+        email.setAttribute('aria-invalid', 'true');
+        email.focus();
+        return dire('Indiquez une adresse e-mail valide.', 'error');
+      }
+      if (!message.value.trim()) {
+        message.setAttribute('aria-invalid', 'true');
+        message.focus();
+        return dire('Écrivez votre message.', 'error');
+      }
+      const donnees = Object.fromEntries(new FormData(formulaire));
+      const source = formulaire.dataset.source ?? '';
+      bouton.disabled = true;
+      dire('Envoi en cours…', 'envoi');
+      try {
+        const reponse = await fetch(formulaire.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...donnees, source: `${source} (${location.pathname})` }),
+        });
+        const corps = await reponse.json().catch(() => null) as { status?: string; message?: string } | null;
+        if (reponse.ok && corps?.status === 'sent') {
+          formulaire.reset();
+          dire(corps.message ?? 'Votre message est bien parti.', 'sent');
+          const { datafast } = window as unknown as { datafast?: (nom: string, props?: Record<string, string>) => void };
+          if (typeof datafast === 'function') datafast('lead_message', { canal: 'formulaire', source });
+        } else {
+          dire(corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.', 'error');
+        }
+      } catch {
+        dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.', 'error');
+      } finally {
+        bouton.disabled = false;
+      }
+    });
+  }
+</script>
