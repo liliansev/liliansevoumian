@@ -4,7 +4,7 @@
  * (`data/projets.ts`, `enCours`).
  *
  * Une carte par projet, et chacune montre le projet : sa page d'accueil dans
- * un châssis de navigateur (trois points, l'adresse), puis l'état, le nom, une
+ * un châssis de navigateur (trois points, l'adresse), puis ce que c'est, le nom, une
  * phrase, ce qui le compose, et l'adresse en sortie. La première version, un
  * texte dans un cadre, était « trop basique » (Lilian, 14 octobre 2026).
  * Aucun mouvement, sinon la capture qui s'avance d'un rien au survol.
@@ -57,7 +57,7 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
               </div>
             )}
             <div class="carte__corps">
-              <p class="carte__etat"><span class="carte__point"></span>En cours · {p.etiquette}</p>
+              <p class="carte__etat">{p.etiquette}</p>
               <h3 class="carte__nom">{p.nom}</h3>
               <p class="carte__resume">{p.resume}</p>
               {p.tags && (
@@ -199,21 +199,11 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
   }
 
   .carte__etat {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     margin: 0;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
   }
 
-  .carte__point {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    background: var(--color-accent);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 18%, transparent);
-  }
 
   .carte__nom {
     margin: 0;
