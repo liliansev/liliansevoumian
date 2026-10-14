@@ -90,4 +90,23 @@ const casClients = defineCollection({
   }),
 });
 
-export const collections = { 'cas-clients': casClients };
+/*
+ * Collection « blog » : un article par fichier Markdown dans src/content/blog/.
+ * Le nom du fichier est l'adresse de l'article (/blog/<nom>). Les fichiers
+ * dont le nom commence par `_` sont ignorés : le mode d'emploi y vit.
+ */
+const blog = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    // Une ou deux phrases : le chapô de l'article, sa ligne dans la liste et
+    // sa description pour les moteurs.
+    description: z.string(),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    // draft: true → visible en dev pour relecture, absent du site publié.
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { 'cas-clients': casClients, blog };
