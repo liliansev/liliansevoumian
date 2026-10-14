@@ -49,7 +49,8 @@ src/
 │   │   ├── ouverture.astro    # « Salut, je m'appelle », le nom, le métier ; la barre d'écriture à droite ; le plan au bureau en cinémascope, qui s'ouvre une fois ; défilé des logos (id `hero`)
 │   │   ├── defile-clients.astro # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
 │   │   ├── plan-large.astro   # un plan en cinémascope sur toute la colonne : lumière, incrustation, sous-titre de Lilian, source
-│   │   ├── portrait.astro     # « À propos » : portrait et ce qu'il dit, le plan au micro, les faits sans date en carton, le plan en formation (data/parcours.ts, `faits`)
+│   │   ├── portrait.astro     # « À propos » : portrait et ce qu'il dit, le plan au micro, les faits sans date en carton, ses formations en champ et contrechamp (data/parcours.ts, `faits`)
+│   │   ├── contrechamp.astro  # deux plans côte à côte (le champ, le contrechamp), chacun son incrustation, un seul sous-titre
 │   │   ├── en-ce-moment.astro # les projets en cours, une affiche chacun : le texte, et le plan qui parcourt le site au survol (data/projets.ts, `enCours`)
 │   │   ├── expertises.astro   # les 4 scènes des métiers en une séquence : un grand plan, la liste des plans au-dessus, la phrase en sous-titre (data/metiers.ts)
 │   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)

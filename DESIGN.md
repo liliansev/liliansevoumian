@@ -639,7 +639,8 @@ Une image à coins arrondis qui jette sa lumière sur la nuit. Trois pièces :
 | Plan | Format | Où |
 |---|---|---|
 | Ouverture | 2,39:1, plus large que la colonne (1 376 px au plus, marges `cadre`), rayon `xl` ; 4:5 sous 768 px | `ouverture.astro` |
-| Plan large | 2,39:1 à partir de 768 px, 4:3 en dessous, sur toute la colonne, rayon `xl`, `.media-ouvre` ; cadrage par plan (`cadrage`, `cadrageEtroit`) | `plan-large.astro`, deux fois dans le portrait |
+| Plan large | 2,39:1 à partir de 768 px, 4:3 en dessous, sur toute la colonne, rayon `xl`, `.media-ouvre` ; cadrage par plan (`cadrage`, `cadrageEtroit`) | `plan-large.astro`, une fois dans le portrait |
+| Contrechamp | deux plans en 3:2 côte à côte à partir de 768 px, l'un sous l'autre en dessous, rayon `xl`, `.media-ouvre`, chacun sa lumière et son incrustation, un seul sous-titre | `contrechamp.astro`, les formations du portrait |
 | Portrait d'interview | 4:5, colonne `5fr` face à la parole `6fr` à partir de 1024 px | `portrait.astro` |
 | Affiche | 16:11, la page entière du site calée en haut, à peine étalonnée, filet d'encre à 10 %, rayon `xl`, lumière douce ; colonne `7fr` face au texte `5fr` à partir de 900 px | `en-ce-moment.astro` |
 | Vidéo | 16:9, la vignette et sa lumière douce, un disque de lecture | `publications.astro` |
@@ -668,9 +669,12 @@ un workflow à l'écran »).
 - **Sur téléphone, le rôle se raccourcit** (`roleCourt`, sous 600 px) : sur
   trois lignes il couvrait le sujet.
 - **Elle nomme des personnes et des lieux**, jamais une page : Lilian au
-  bureau, Lilian en portrait, La Capsule au micro de Radio Contournement, une
-  formation devant une classe. Une fois Lilian présenté, l'incrustation
+  bureau, Lilian en portrait, La Capsule au micro de Radio Contournement,
+  Maria Schools en formation, Rocket School après trois jours
+  d'automatisation. Une fois Lilian présenté, l'incrustation
   nomme le lieu ou la scène plutôt que de répéter son nom.
+- **Sur une photo de groupe, elle monte en haut** (`incrustation: 'haut'`
+  dans `contrechamp`) : en bas, elle couvrait Lilian, assis au premier rang.
 - **Pas d'incrustation sur une capture de site** : elle en couvrait le titre,
   et le nom est déjà dans le `h3` qui suit.
 
@@ -815,10 +819,15 @@ liste vit dans `src/data/clients.ts`, les fichiers dans
 L'interview, nommée « À propos » dans la barre. À gauche le portrait (4:5) et
 son incrustation ; à droite la parole (« Je pars de vos processus, pas d'une
 liste d'outils. ») et deux paragraphes en `--text-body-large`, `ink-mid`.
-Puis deux plans larges, chacun avec son sous-titre : La Capsule, « au micro
-de Radio Contournement » (« Radio Contournement » sur téléphone ; image
-prêtée, avec sa mention de source), et « En formation », « devant une
-classe ». Entre les deux, le carton des faits. Aucune date.
+Puis un plan large avec son sous-titre : La Capsule, « au micro de Radio
+Contournement » (« Radio Contournement » sur téléphone ; image prêtée, avec
+sa mention de source). Puis le carton des faits. Puis ses formations **en
+champ et contrechamp** (`contrechamp.astro`) : à gauche « Maria Schools »,
+« en formation, devant une classe », la classe vue de dos ; à droite
+« Rocket School », « trois jours d'automatisation », la promotion tournée vers
+nous, autour de lui (son incrustation en haut). Un seul sous-titre pour les
+deux. Lilian a donné le lieu de la première et demandé la seconde le 14
+octobre 2026. Aucune date.
 
 ### En ce moment (`#en-ce-moment`)
 

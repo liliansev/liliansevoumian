@@ -5,10 +5,11 @@
  *
  * À gauche son portrait, cadré comme un plan d'interview, avec son
  * incrustation. À droite ce qu'il dit de sa façon de travailler (PRODUCT.md,
- * « Sa façon de travailler »). Puis deux plans en cinémascope : au micro de
- * Radio Contournement, à La Capsule, et devant une classe en formation (voir
- * `src/assets/documentaire/README.md`). Entre les deux, un carton : les faits
- * qui le résument, en une phrase, sans date (« c'est pas un CV »).
+ * « Sa façon de travailler »). Puis un plan en cinémascope, au micro de
+ * Radio Contournement, à La Capsule ; un carton, les faits qui le résument
+ * en une phrase, sans date (« c'est pas un CV ») ; et ses formations en champ
+ * et contrechamp : devant une classe de Maria Schools, et une promotion de
+ * Rocket School autour de lui (voir `src/assets/documentaire/README.md`).
  */
 import { Image, getImage } from 'astro:assets';
 import Chapitre from './chapitre.astro';
@@ -16,6 +17,8 @@ import portraitImg from '../../assets/lilian-photo.jpg';
 import PlanLarge from './plan-large.astro';
 import studioImg from '../../assets/documentaire/studio-micro.jpg';
 import formationImg from '../../assets/documentaire/formation-salle.jpg';
+import rocketImg from '../../assets/documentaire/rocket-school-promo.jpg';
+import Contrechamp from './contrechamp.astro';
 import { faits } from '../../data/parcours';
 
 const lumiere = await getImage({ src: portraitImg, width: 64, format: 'webp', quality: 60 });
@@ -84,14 +87,27 @@ const personnes = faits.find((f) => f.titre.startsWith('Plus de 300'));
     et le <mark>premier Français certifié Make niveau&nbsp;5.</mark>
   </p>
 
-  <PlanLarge
-    image={formationImg}
-    alt="Lilian, en polo bordeaux, explique un écran à une classe ; les participants, vus de dos, suivent sur leurs ordinateurs."
-    nom="En formation"
-    role="devant une classe"
+  <Contrechamp
+    plans={[
+      {
+        image: formationImg,
+        alt: 'Lilian, en polo bordeaux, explique un écran à une classe de Maria Schools ; les participants, vus de dos, suivent sur leurs ordinateurs.',
+        nom: 'Maria Schools',
+        role: 'en formation, devant une classe',
+        roleCourt: 'en formation',
+        cadrage: '30% 45%',
+      },
+      {
+        image: rocketImg,
+        alt: 'Lilian, au premier rang, entouré d’une promotion de Rocket School qui sourit à l’objectif, après trois jours de formation à l’automatisation.',
+        nom: 'Rocket School',
+        role: 'trois jours d’automatisation',
+        roleCourt: 'avec la promo',
+        cadrage: '51% 50%',
+        incrustation: 'haut',
+      },
+    ]}
     sousTitre="J’accompagne la prise en main, jusqu’à ce que l’équipe s’en serve sans moi."
-    cadrage="30% 45%"
-    cadrageEtroit="22% 45%"
   />
 </Chapitre>
 
