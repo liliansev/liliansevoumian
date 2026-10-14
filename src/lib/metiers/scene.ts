@@ -659,6 +659,10 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
     plan.style.setProperty('--k', String(k));
     plan.style.setProperty('--x', `${(l - plan.offsetWidth * k) / 2}px`);
     plan.style.setProperty('--y', `${(h - plan.offsetHeight * k) / 2}px`);
+    /* Le panneau peint le quadrillage au pas du plan (voir le socle). */
+    racine.style.setProperty('--sm-k', String(k));
+    racine.style.setProperty('--sm-x', `${(l - plan.offsetWidth * k) / 2}px`);
+    racine.style.setProperty('--sm-y', `${(h - plan.offsetHeight * k) / 2}px`);
     /* Le plan a changé de dessin (large ou étroit) : les ports ont bougé, les
        fils sont à retracer et la scène rejoue son tour sur la nouvelle mise en
        page, sans vol calculé pour l'ancienne. */

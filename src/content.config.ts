@@ -17,6 +17,14 @@ const casClients = defineCollection({
     // cherche une phrase autonome, il trouvait un dump.
     seoTitle: z.string().optional(),
     description: z.string().optional(),
+    /* Le nom du client, seul : c'est le titre de sa ligne dans les projets
+       clients de l'accueil (`documentaire/filmographie.astro`). */
+    client: z.string().optional(),
+    /* Une phrase, à la première personne, pour cette même ligne : ce que
+       Lilian a construit, et le chiffre qui le dit. Elle ne dit rien que le
+       cas n'établisse ; sans elle, la ligne prend la `description`, écrite
+       pour les moteurs. */
+    accroche: z.string().optional(),
     category: z.enum(['automation', 'application']).default('automation'),
     scopeNote: z.string().optional(),
     secteur: z.string().optional(),
@@ -90,4 +98,23 @@ const casClients = defineCollection({
   }),
 });
 
-export const collections = { 'cas-clients': casClients };
+/*
+ * Collection « blog » : un article par fichier Markdown dans src/content/blog/.
+ * Le nom du fichier est l'adresse de l'article (/blog/<nom>). Les fichiers
+ * dont le nom commence par `_` sont ignorés : le mode d'emploi y vit.
+ */
+const blog = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    // Une ou deux phrases : le chapô de l'article, sa ligne dans la liste et
+    // sa description pour les moteurs.
+    description: z.string(),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    // draft: true → visible en dev pour relecture, absent du site publié.
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { 'cas-clients': casClients, blog };

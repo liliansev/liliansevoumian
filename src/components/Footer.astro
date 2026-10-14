@@ -9,9 +9,13 @@ const year = new Date().getFullYear();
 interface Props {
   /** Uniquement pour les pages sans bloc de contact final. */
   showContact?: boolean;
+  /** L'accueil ne porte aucune date (Lilian, 14 octobre 2026 : « c'est pas
+      un CV ») : la phrase de présentation y perd « depuis 2020 », et la
+      mention légale son année. */
+  sansDate?: boolean;
 }
 
-const { showContact = false } = Astro.props;
+const { showContact = false, sansDate = false } = Astro.props;
 
 interface Channel {
   label: string;
@@ -55,7 +59,7 @@ const navColumns: NavColumn[] = [
        barre parce qu'il n'est plus une destination, pas parce qu'il devrait
        cesser d'être atteignable. */
     links: [
-      { label: "Parcours", href: "/#parcours" },
+      { label: "À propos", href: "/#a-propos" },
       { label: "Cas clients", href: "/cas-clients" },
       { label: "Automatisation et agents IA", href: "/automatisations-ia" },
       { label: "Sites web et dashboards", href: "/sites-web-abonnement" },
@@ -105,7 +109,7 @@ const navColumns: NavColumn[] = [
           <span class="mono-label">Lilian Sevoumian</span>
         </div>
         <p class="text-[var(--color-ink-mid)] max-w-md">
-          Freelance depuis 2020, fondateur d’agenceafk et d’Augmentés. Je construis, je forme, je publie.
+          {sansDate ? 'Freelance' : 'Freelance depuis 2020'}, fondateur d’agenceafk et d’Augmentés. Je construis, je forme, je publie.
         </p>
         {showContact && (
           <BoutonReservation source="footer" class="btn-primary justify-center mt-6 w-full sm:w-auto">
@@ -183,7 +187,7 @@ const navColumns: NavColumn[] = [
     <!-- Bottom: legal -->
     <div class="pt-5 md:pt-8 border-t border-[var(--color-divider)]">
       <p class="mono-caption text-[var(--color-ink-low)]">
-        © {year} · Lilian Sevoumian · Tous droits réservés
+        © {sansDate ? '' : `${year} · `}Lilian Sevoumian · Tous droits réservés
       </p>
     </div>
   </div>

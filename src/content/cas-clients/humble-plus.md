@@ -2,6 +2,8 @@
 title: "Comment Humble+ a automatisé ses commandes Shopify et ses factures B2B"
 seoTitle: "Automatiser ses commandes Shopify et sa facturation B2B : cas client n8n"
 description: "Chez Humble+, un workflow n8n lit les bons de commande PDF et Excel et les transforme en commandes Shopify et en factures Pennylane, sans une seule ressaisie."
+client: "Humble+"
+accroche: "J’ai branché leurs bons de commande, PDF ou Excel, sur Shopify et Pennylane : plus une seule ressaisie."
 secteur: "Nutrition fonctionnelle · E-commerce B2B"
 date: 2026-07-23
 tags: ["Ops", "Finance", "IA"]

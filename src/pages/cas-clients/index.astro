@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import Retour from '../../components/retour.astro';
 import FinDePage from '../../components/fin-de-page.astro';
 import { Icon } from 'astro-icon/components';
+import { espaces } from '../../lib/espaces';
 import { getCollection } from 'astro:content';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
@@ -15,16 +16,8 @@ const entries = all
   .filter((entry) => showDrafts || !entry.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-/* Les textes des cas ne portent pas les espaces insécables du français : sans
-   elles, un deux-points ou une unité passait seul à la ligne. Elles sont
-   posées ici, à l'affichage : avant `: ; ? !` et le guillemet fermant, après le
-   guillemet ouvrant, entre un nombre et son unité. La page d'un cas fait de
-   même sur son corps (`[slug].astro`). */
-const espaces = (texte: string) =>
-  texte
-    .replace(/ ([:;?!»])/g, '\u00a0$1')
-    .replace(/« /g, '«\u00a0')
-    .replace(/(\d) (?=(?:h|min|%|€)(?![\p{L}\d]))/gu, '$1\u00a0');
+/* Les espaces insécables du français, posées à l'affichage (`lib/espaces.ts`) :
+   les textes des cas ne les portent pas. */
 
 // Le titre garde aussi sa forme d'origine : c'est elle que lit le balisage
 // de la collection.

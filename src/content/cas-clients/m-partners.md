@@ -2,6 +2,8 @@
 title: "Comment M Partners scrape et qualifie ses prospects avec un agent IA"
 seoTitle: "Scraping et qualification de prospects par agent IA : cas client Make"
 description: "M Partners qualifie 23 cibles en 7 minutes et scrape 300 entreprises par semaine, sourcing des signaux et notation des profils compris."
+client: "M Partners"
+accroche: "J’ai construit l’agent IA qui qualifie leurs prospects : 23 cibles en 7 minutes, et 300 entreprises analysées par semaine au lieu d’une cinquantaine."
 secteur: "Executive Search · Tech & VC"
 date: 2026-05-05
 tags: ["Sales", "Ops"]

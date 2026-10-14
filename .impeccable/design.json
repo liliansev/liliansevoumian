@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-08T00:00:00Z",
+  "generatedAt": "2026-10-14T00:00:00Z",
   "title": "Design System: Lilian Sevoumian",
   "extensions": {
     "colorMeta": {
@@ -246,7 +246,7 @@
       },
       "peche-clair": {
         "role": "primary",
-        "displayName": "Pêche claire",
+        "displayName": "Pêche claire (survol du bouton, sous-titre de Lilian)",
         "canonical": "#ffc4a3",
         "tonalRamp": [
           "oklch(15% 0.040 51)",
@@ -441,7 +441,7 @@
       },
       "feuille": {
         "role": "neutral",
-        "displayName": "Feuille de la scène d'accueil",
+        "displayName": "Feuille claire des scènes des métiers",
         "canonical": "#f7f8fa",
         "tonalRamp": [
           "oklch(15% 0.004 258)",
@@ -486,7 +486,7 @@
       },
       "lueur-froide": {
         "role": "tertiary",
-        "displayName": "Lueur froide (halo du travail à la main)",
+        "displayName": "Lueur froide (étalonnage froid, halo des scènes)",
         "canonical": "#6f7cff",
         "tonalRamp": [
           "oklch(15% 0.19 275)",
@@ -501,7 +501,7 @@
       },
       "braise": {
         "role": "tertiary",
-        "displayName": "Braise (halo du passage en automatique)",
+        "displayName": "Braise (étalonnage chaud, halo des scènes)",
         "canonical": "#ff8a65",
         "tonalRamp": [
           "oklch(15% 0.16 40)",
@@ -531,13 +531,21 @@
       }
     },
     "typographyMeta": {
+      "nom": {
+        "displayName": "Nom",
+        "purpose": "Le nom de Lilian dans le h1 de l’accueil, en très grand, sur une ligne à partir de 1024 px. Prend sa graisse une fois au chargement."
+      },
+      "carton": {
+        "displayName": "Carton",
+        "purpose": "Titre d’un chapitre de l’accueil, seul et centré comme un intertitre, 16ch au plus. Approche en littéral, plus serrée que le nom : écart relevé."
+      },
       "affiche": {
         "displayName": "Affiche",
-        "purpose": "h1 de l’accueil, seul et centré. Graisse 500, borné par la hauteur (11svh)."
+        "purpose": "Taille du carton de chapitre de l’accueil. Graisse 500, bornée par la hauteur (11svh)."
       },
       "story": {
         "displayName": "Énoncé",
-        "purpose": "Titres du récit de l’accueil et titre de fin de page. Graisse 500."
+        "purpose": "Titre de fin de page, et parole de l’interviewé dans le portrait de l’accueil. Graisse 500."
       },
       "display-hero": {
         "displayName": "Manifeste",
@@ -586,6 +594,14 @@
       "caption": {
         "displayName": "Légende de maquette",
         "purpose": "11 px, dans les maquettes des pages de cas uniquement."
+      },
+      "sous-titre": {
+        "displayName": "Sous-titre",
+        "purpose": "La voix de Lilian sur l’accueil : une phrase centrée sous un plan, en pêche claire, 34ch."
+      },
+      "credit": {
+        "displayName": "Mention de source",
+        "purpose": "Provenance d’une image prêtée, sous son sous-titre."
       }
     },
     "shadows": [
@@ -598,6 +614,26 @@
         "name": "fenetre-flottante",
         "value": "inset 0 1px 0 color-mix(in srgb, #fff 9%, transparent), 0 24px 48px -20px #0c121f, 0 10px 20px -12px #0c121f",
         "purpose": "La fenêtre de conversation, seule surface qui flotte au-dessus de la page."
+      },
+      {
+        "name": "lumiere-du-plan",
+        "value": ".plan__lumiere { position:absolute; inset:6% 4% 0; z-index:-1; background-image:<l’image à 64 ou 96 px>; background-size:cover; filter:blur(52px) saturate(1.5); opacity:.5; transform:translateY(7%); }",
+        "purpose": "La lumière d’un plan de l’accueil : l’image elle-même, floutée derrière le cadre. Une lumière, pas une ombre."
+      },
+      {
+        "name": "verre-incrustation",
+        "value": "background: color-mix(in srgb, #0c121f 74%, transparent); backdrop-filter: blur(14px) saturate(1.2)",
+        "purpose": "L’incrustation posée sur un plan."
+      },
+      {
+        "name": "verre-barre-chapitres",
+        "value": "background: color-mix(in srgb, #0c121f 84%, transparent); backdrop-filter: blur(16px) saturate(1.3); border: 1px solid color-mix(in srgb, #fff 12%, transparent)",
+        "purpose": "La barre des chapitres, qui flotte au-dessus de l’accueil."
+      },
+      {
+        "name": "etalonnage",
+        "value": "radial-gradient(64% 56% at 92% 0%, color-mix(in srgb, var(--lueur-haut) 24%, transparent), transparent 76%), radial-gradient(60% 52% at 0% 100%, color-mix(in srgb, var(--lueur-bas) 20%, transparent), transparent 76%)",
+        "purpose": "Les deux lueurs fixes derrière l’accueil ; teintes tirées de data-lueur (lueur-froide, peche, braise)."
       }
     ],
     "motion": [
@@ -678,13 +714,8 @@
       },
       {
         "name": "tour-scene-metier",
-        "value": "10 à 14 s · joué une fois à l’entrée à l’écran (jouerTour)",
+        "value": "10 à 14 s · joué une fois quand le plan de la séquence est vu (jouerTour)",
         "purpose": "Une scène de métier joue un tour puis reste sur son image finale ; la commande d’arrêt n’est montrée que le temps du tour."
-      },
-      {
-        "name": "cellules-hero",
-        "value": "opacity 1200ms cubic-bezier(0.22, 1, 0.36, 1) · retard 2s + 420ms par cellule · une fois",
-        "purpose": "Dix cellules de la grille du premier écran s’allument l’une après l’autre en un seul passage, puis restent éteintes."
       },
       {
         "name": "media-survol",
@@ -695,6 +726,51 @@
         "name": "reduced-motion",
         "value": "animation-duration et transition-duration à 0.01ms ; .reveal forcé visible ; --draw: 1 ; view transitions coupées",
         "purpose": "La couleur continue de répondre, le déplacement saute."
+      },
+      {
+        "name": "ouverture-nom",
+        "value": "font-weight 200 → 500, opacity .25 → 1 · 1.5s cubic-bezier(0.16, 1, 0.3, 1) · retard 0.1s · une fois",
+        "purpose": "Le nom prend sa graisse au chargement."
+      },
+      {
+        "name": "ouverture-plan",
+        "value": "clip-path inset(46% 0 46% 0 round var(--radius-xl)) → inset(0) · 1.6s ease-out-expo · retard 0.4s ; image scale(1.12) → 1 · 2.4s",
+        "purpose": "Le plan d’ouverture s’ouvre d’une fente à l’image entière, une seule fois. Ouvert d’emblée en mouvement réduit."
+      },
+      {
+        "name": "ouverture-suite",
+        "value": "lumière opacity 1.4s ease-out-quint à 1.1s ; incrustation translateX(-0.75rem) 0.9s ease-out-expo à 1.45s ; sous-titre translateY(0.375rem) 0.9s ease-out-quint à 1.75s",
+        "purpose": "Ce qui suit l’ouverture du plan, dans l’ordre."
+      },
+      {
+        "name": "etalonnage",
+        "value": "@property --lueur-haut / --lueur-bas (<color>) · transition 1.8s cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "La teinte de la page fond vers celle du chapitre en cours. Sans fondu en mouvement réduit."
+      },
+      {
+        "name": "barre-chapitres",
+        "value": "opacity 420ms ease-out-quint, transform translateY(1rem) → 0 600ms ease-out-expo ; piste 4px → 8px en 150ms au survol",
+        "purpose": "Apparition de la barre des chapitres quand l’ouverture s’en va ; le remplissage pêche suit la lecture (scaleX)."
+      },
+      {
+        "name": "changement-de-plan",
+        "value": "opacity 0 → 1 · 520ms ease-out-quint ; sous-titre translateY(0.375rem) 520ms, retard 160ms",
+        "purpose": "Un plan de la séquence des expertises remplace le précédent, au clic."
+      },
+      {
+        "name": "defile-logos",
+        "value": "translateX · 46s linear infinite · pause au survol et par bouton",
+        "purpose": "La seule boucle de l’accueil ; s’endort hors écran (data-motion-pause), devient une liste en mouvement réduit."
+      },
+      {
+        "name": "capture-etalonnee",
+        "value": "filter saturate(.35) brightness(.86) contrast(1.05) → none · 600ms ease-out-quint",
+        "purpose": "Une capture de site en cours retrouve ses couleurs au survol et au focus."
+      },
+      {
+        "name": "filmo-survol",
+        "value": "color → pêche 200ms, translateX(0.5rem) 600ms ease-out-expo · pointeur fin seulement",
+        "purpose": "Le titre d’une ligne de filmographie liée."
       }
     ],
     "focus": [
@@ -736,12 +812,16 @@
         "value": "1024px"
       },
       {
-        "name": "metier-deux-colonnes",
-        "value": "1200px"
-      },
-      {
         "name": "barre-nav (conteneur)",
         "value": "56em"
+      },
+      {
+        "name": "role-court",
+        "value": "600px"
+      },
+      {
+        "name": "expertises-cinemascope",
+        "value": "1280px"
       }
     ]
   },
@@ -779,28 +859,12 @@
       "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-titre { margin:0; font-size:clamp(2rem,3vw + .5rem,3rem); font-weight:500; line-height:1.1; letter-spacing:-.03em; } .ds-mark { background:linear-gradient(var(--color-peche,#ffb38a),var(--color-peche,#ffb38a)) no-repeat 0 100% / 100% max(2px,.075em); color:inherit; }"
     },
     {
-      "name": "Chip",
-      "kind": "chip",
-      "refersTo": "chip",
-      "description": "Étiquette ronde à filet fin, en bas de casse à 12 px : un nom d’outil dans la liste des cas. Une seule variante.",
-      "html": "<div class=\"ds-nuit ds-chips\"><span class=\"ds-chip\">Make</span><span class=\"ds-chip\">HubSpot</span><span class=\"ds-chip\">Pennylane</span></div>",
-      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-chips { display:flex; flex-wrap:wrap; gap:.5rem; } .ds-chip { display:inline-flex; align-items:center; padding:4px 10px; border:1px solid rgb(255 255 255 / .09); border-radius:9999px; color:var(--color-ink-mid,#c3c9d4); font-size:.75rem; font-weight:500; transition:color 200ms cubic-bezier(.22,1,.36,1),border-color 200ms cubic-bezier(.22,1,.36,1),background-color 200ms cubic-bezier(.22,1,.36,1); } .ds-chip:hover { color:#fff; border-color:var(--color-ink-faint,#7c8799); background:var(--color-surface-low,#1a2439); }"
-    },
-    {
       "name": "Barre de navigation",
       "kind": "nav",
       "refersTo": "nav-link",
       "description": "La même barre sur toutes les pages : fond plein, nom en bas de casse, liens à 14 px sous une pastille de survol, point pêche sous le lien en cours, un seul bouton.",
       "html": "<nav class=\"ds-barre\"><a class=\"ds-nom\" href=\"#\">Lilian Sevoumian</a><div class=\"ds-liens\"><a class=\"ds-nl est-la\" href=\"#\">Automatisation</a><a class=\"ds-nl\" href=\"#\">Agents IA</a><a class=\"ds-nl\" href=\"#\">Dashboards</a></div><a class=\"ds-nb\" href=\"#\">Parlons de votre projet</a></nav>",
       "css": ".ds-barre { display:flex; align-items:center; justify-content:space-between; gap:1rem; height:4rem; padding:0 1.5rem; background:var(--color-paper,#0c121f); border-bottom:1px solid rgb(255 255 255 / .09); font-family:var(--font-body,system-ui,sans-serif); } .ds-nom { color:#fff; font-size:1rem; font-weight:600; letter-spacing:-.02em; text-decoration:none; } .ds-liens { display:flex; gap:.25rem; } .ds-nl { position:relative; display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border-radius:9999px; color:var(--color-ink-mid,#c3c9d4); font-size:.875rem; font-weight:500; text-decoration:none; transition:color 200ms cubic-bezier(.22,1,.36,1),background-color 200ms cubic-bezier(.22,1,.36,1); } .ds-nl:hover,.ds-nl:focus-visible { color:#fff; background:rgb(255 255 255 / .09); } .ds-nl.est-la { color:#fff; font-weight:600; } .ds-nl.est-la::after { content:\"\"; position:absolute; bottom:3px; left:50%; width:4px; height:4px; margin-left:-2px; border-radius:9999px; background:var(--color-peche,#ffb38a); } .ds-nb { display:inline-flex; align-items:center; min-height:44px; padding:11px 18px; border-radius:9999px; background:var(--color-peche,#ffb38a); color:var(--color-night,#111827); font-size:.875rem; font-weight:500; text-decoration:none; transition:background-color 200ms cubic-bezier(.22,1,.36,1); } .ds-nb:hover,.ds-nb:focus-visible { background:var(--color-peche-clair,#ffc4a3); } .ds-nl:focus-visible,.ds-nb:focus-visible { outline:2px solid var(--color-peche,#ffb38a); outline-offset:2px; }"
-    },
-    {
-      "name": "Question",
-      "kind": "custom",
-      "refersTo": "question",
-      "description": "Les questions d’une page, en FAQ classique : des details qui portent le même name (en ouvrir une referme l’autre), la première ouverte, sans script. Une ligne par question entre deux filets, un « plus » qui devient « moins ».",
-      "html": "<div class=\"ds-nuit\"><div class=\"ds-faq\"><details class=\"ds-question\" name=\"ds-questions\" open><summary><h3>Pour qui travaillez-vous ?</h3><span class=\"ds-signe\" aria-hidden=\"true\"></span></summary><p>Pour des dirigeants de PME, des fondateurs de startup et des responsables des opérations, le plus souvent dans des entreprises de 5 à 50 personnes.</p></details><details class=\"ds-question\" name=\"ds-questions\"><summary><h3>Combien ça coûte ?</h3><span class=\"ds-signe\" aria-hidden=\"true\"></span></summary><p>La réponse de la page, lue dans data/home-faq.</p></details></div></div>",
-      "css": ".ds-nuit { background:var(--color-paper,#0c121f); padding:1.5rem; font-family:var(--font-body,system-ui,sans-serif); color:#fff; } .ds-faq { max-width:44rem; border-bottom:1px solid var(--color-divider,rgb(255 255 255 / .09)); } .ds-question { border-top:1px solid var(--color-divider,rgb(255 255 255 / .09)); } .ds-question summary { display:flex; align-items:center; justify-content:space-between; gap:1.5rem; min-height:44px; padding-block:1.25rem; list-style:none; cursor:pointer; } .ds-question summary::-webkit-details-marker { display:none; } .ds-question h3 { margin:0; font-size:clamp(1.0625rem,.5vw + .875rem,1.25rem); font-weight:500; line-height:1.35; } .ds-signe { position:relative; flex:none; width:.875rem; height:.875rem; color:var(--color-ink-low,#a3acbb); transition:color 160ms cubic-bezier(.22,1,.36,1); } .ds-signe::before,.ds-signe::after { content:\"\"; position:absolute; top:50%; left:0; width:100%; height:1.5px; margin-top:-.75px; background:currentColor; transition:transform 260ms cubic-bezier(.22,1,.36,1); } .ds-signe::after { transform:rotate(90deg); } .ds-question[open] .ds-signe::after { transform:rotate(0deg); } .ds-question summary:hover .ds-signe,.ds-question[open] .ds-signe { color:#fff; } .ds-question summary:focus-visible { outline:2px solid var(--color-peche,#ffb38a); outline-offset:2px; } .ds-question p { margin:0; padding:0 2.375rem 1.5rem 0; color:var(--color-ink-mid,#c3c9d4); line-height:1.55; }"
     },
     {
       "name": "Invite de fin de page",
@@ -819,17 +883,57 @@
       "css": ".ds-liseré { background:var(--color-paper,#0c121f); padding:clamp(.5rem,1.5vw,1.25rem); } .ds-ile { display:grid; gap:2rem; padding:2rem; border-radius:clamp(1.25rem,.6rem + 2vw,2rem); background:#f7f8fa; color:#111827; font-family:var(--font-body,system-ui,sans-serif); } .ds-ile h3 { margin:0; font-size:2rem; font-weight:500; line-height:1.1; letter-spacing:-.03em; } .ds-formule { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:2rem; align-items:baseline; } .ds-formule strong { font-size:1.25rem; font-weight:500; letter-spacing:-.02em; } .ds-prix { font-size:1.5rem; font-weight:500; font-variant-numeric:tabular-nums; white-space:nowrap; } .ds-prix small { color:#4b5565; font-size:.875rem; font-weight:400; } @media (max-width:700px) { .ds-formule { grid-template-columns:1fr; row-gap:.5rem; } }"
     },
     {
-      "name": "Logo client du défilé",
+      "name": "Plan, incrustation et sous-titre",
       "kind": "custom",
-      "refersTo": "logo-client",
-      "description": "Chaque logo du défilé « J'ai travaillé avec » (une ligne qui défile en 46 s, avec bouton de pause ; liste posée en mouvement réduit) est ramené à une silhouette claire (brightness(0) invert(1), opacité 0,78) et à une hauteur de 1,5em corrigée à l'œil par --echelle. Un nom sans logo reste composé en lettres dans la même liste.",
-      "html": "<div class=\"ds-deep ds-defile\"><img class=\"ds-logo\" src=\"/logos/clients/qonto.svg\" width=\"82\" height=\"24\" alt=\"Qonto\" style=\"--echelle:0.9\"><span class=\"ds-nom\">M Partners</span><img class=\"ds-logo\" src=\"/logos/clients/jellysmack.svg\" width=\"6769\" height=\"1024\" alt=\"Jellysmack\" style=\"--echelle:0.85\"></div>",
-      "css": ".ds-deep { background:#0c121f; padding:1.5rem; } .ds-defile { display:flex; flex-wrap:wrap; align-items:center; gap:1rem 1.5rem; font:500 1.25rem 'Geist Variable',system-ui,sans-serif; letter-spacing:-0.02em; color:#c3c9d4; } .ds-logo { display:block; width:auto; height:calc(1.5em * var(--echelle,1)); filter:brightness(0) invert(1); opacity:0.78; } .ds-nom { white-space:nowrap; }"
+      "refersTo": "plan-cadre",
+      "description": "Un plan de l’accueil : vraie photo de Lilian à coins arrondis, sa lumière derrière, l’incrustation en bas à gauche, le sous-titre en pêche claire dessous.",
+      "html": "<div class=\"ds-nuit\"><figure class=\"ds-plan\"><div class=\"ds-plan__lumiere\" aria-hidden=\"true\"></div><div class=\"ds-plan__cadre\"><div class=\"ds-plan__image\" role=\"img\" aria-label=\"Lilian à son bureau\"></div><p class=\"ds-incrustation\"><b>Lilian Sevoumian</b><span>à son bureau, un workflow à l’écran</span></p></div><figcaption class=\"ds-sous-titre\">J’automatise d’abord mon propre travail.</figcaption></figure></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); color:var(--color-ink,#fff); font-family:var(--font-body,\"Geist Variable\",system-ui,sans-serif); padding:2rem; } .ds-plan { position:relative; isolation:isolate; margin:0; display:grid; gap:1.5rem; } .ds-plan__lumiere { position:absolute; inset:8% 4% 14%; z-index:-1; background:linear-gradient(120deg,#6f7cff,#ff8a65); filter:blur(52px) saturate(1.5); opacity:.5; transform:translateY(7%); } .ds-plan__cadre { position:relative; overflow:clip; aspect-ratio:2.39; border-radius:var(--radius-xl,2rem); background:var(--color-surface-low,#1a2439); } .ds-plan__image { position:absolute; inset:0; background:linear-gradient(135deg,#263449,#3c3439 55%,#1a2439); } .ds-incrustation { position:absolute; left:1.5rem; bottom:1.5rem; display:grid; justify-items:start; gap:.125rem; margin:0; padding:.75rem 1rem .8rem; border-radius:var(--radius-sm,10px); background:color-mix(in srgb,#0c121f 74%,transparent); backdrop-filter:blur(14px) saturate(1.2); line-height:1.3; } .ds-incrustation::before { content:\"\"; width:1.75rem; height:2px; margin-bottom:.5rem; border-radius:9999px; background:var(--color-peche,#ffb38a); } .ds-incrustation b { font-weight:500; font-size:1rem; color:#fff; } .ds-incrustation span { font-size:.875rem; color:var(--color-ink-mid,#c3c9d4); } .ds-sous-titre { max-width:34ch; margin:0 auto; color:var(--color-peche-clair,#ffc4a3); font-size:clamp(1.125rem,.6vw + .95rem,1.5rem); font-weight:500; line-height:1.35; letter-spacing:-.01em; text-align:center; text-wrap:balance; }"
+    },
+    {
+      "name": "Carton de chapitre",
+      "kind": "custom",
+      "refersTo": "carton",
+      "description": "Le titre d’un chapitre, seul et centré comme un intertitre, avec au plus un fragment souligné et une phrase dessous.",
+      "html": "<div class=\"ds-nuit\"><header class=\"ds-carton\"><h2>Ce que je construis <mark>pour moi.</mark></h2><p>Des outils, et des sites pour les jeux auxquels je joue.</p></header></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); color:var(--color-ink,#fff); font-family:var(--font-body,\"Geist Variable\",system-ui,sans-serif); padding:2rem; } .ds-carton { display:grid; justify-items:center; gap:clamp(1.25rem,2vw,1.75rem); text-align:center; padding-block:3rem; } .ds-carton h2 { margin:0; max-width:16ch; font-size:clamp(2.125rem,min(4.6vw + .4rem,11svh),4.5rem); font-weight:500; line-height:1; letter-spacing:-.045em; text-wrap:balance; } .ds-carton mark { color:inherit; background:linear-gradient(var(--color-peche,#ffb38a),var(--color-peche,#ffb38a)) no-repeat 0 100% / 100% max(2px,.075em); } .ds-carton p { margin:0; max-width:40ch; color:var(--color-ink-mid,#c3c9d4); font-size:clamp(1.0625rem,.5vw + .875rem,1.25rem); }"
+    },
+    {
+      "name": "Barre des chapitres",
+      "kind": "nav",
+      "refersTo": "barre-chapitres",
+      "description": "La barre de lecture fixe de l’accueil : le chapitre en cours à gauche, un segment par chapitre que la pêche remplit à mesure qu’on lit, le nom en bulle au survol.",
+      "html": "<div class=\"ds-nuit\"><nav class=\"ds-chapitres\" aria-label=\"Chapitres de la page\"><p class=\"ds-chapitres__courant\">Expertises</p><ol class=\"ds-chapitres__piste\"><li style=\"flex-grow:3\"><a href=\"#\" style=\"--rempli:1\"><span class=\"ds-bulle\">Au bureau</span></a></li><li style=\"flex-grow:5\"><a href=\"#\" style=\"--rempli:1\"><span class=\"ds-bulle\">Portrait</span></a></li><li style=\"flex-grow:3\"><a href=\"#\" style=\"--rempli:1\"><span class=\"ds-bulle\">En ce moment</span></a></li><li style=\"flex-grow:4\"><a href=\"#\" aria-current=\"location\" style=\"--rempli:.4\"><span class=\"ds-bulle\">Expertises</span></a></li><li style=\"flex-grow:3\"><a href=\"#\"><span class=\"ds-bulle\">Vidéos</span></a></li><li style=\"flex-grow:3\"><a href=\"#\"><span class=\"ds-bulle\">Générique</span></a></li></ol></nav></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); color:var(--color-ink,#fff); font-family:var(--font-body,\"Geist Variable\",system-ui,sans-serif); padding:2rem; } .ds-nuit { padding-top:4rem; } .ds-chapitres { display:grid; grid-template-columns:7.5rem minmax(0,1fr); align-items:center; gap:.875rem; width:min(36rem,100%); min-height:3rem; padding-inline:1.25rem 1rem; border:1px solid color-mix(in srgb,#fff 12%,transparent); border-radius:9999px; background:color-mix(in srgb,#0c121f 84%,transparent); backdrop-filter:blur(16px) saturate(1.3); } .ds-chapitres__courant { margin:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:.875rem; font-weight:500; } .ds-chapitres__piste { display:flex; gap:3px; margin:0; padding:0; list-style:none; } .ds-chapitres__piste li { position:relative; flex:1 1 0; min-width:.5rem; } .ds-chapitres__piste a { position:relative; display:block; height:2.75rem; border-radius:6px; } .ds-chapitres__piste a::before, .ds-chapitres__piste a::after { content:\"\"; position:absolute; left:0; right:0; top:50%; height:4px; margin-top:-2px; border-radius:9999px; background:color-mix(in srgb,#fff 20%,transparent); transition:height 150ms cubic-bezier(.22,1,.36,1), margin-top 150ms cubic-bezier(.22,1,.36,1); } .ds-chapitres__piste a::after { background:var(--color-peche,#ffb38a); transform:scaleX(var(--rempli,0)); transform-origin:left; } .ds-chapitres__piste a:hover::before, .ds-chapitres__piste a:hover::after, .ds-chapitres__piste a:focus-visible::before, .ds-chapitres__piste a:focus-visible::after { height:8px; margin-top:-4px; } .ds-chapitres__piste a:focus-visible { outline:2px solid var(--color-focus,#ffb38a); outline-offset:2px; } .ds-bulle { position:absolute; left:50%; bottom:calc(100% + .25rem); padding:.375rem .625rem; border-radius:6px; background:#fff; color:#111827; font-size:.875rem; font-weight:500; white-space:nowrap; opacity:0; transform:translate(-50%,.25rem); pointer-events:none; transition:opacity 150ms cubic-bezier(.22,1,.36,1), transform 200ms cubic-bezier(.22,1,.36,1); } .ds-chapitres__piste a:hover .ds-bulle, .ds-chapitres__piste a:focus-visible .ds-bulle { opacity:1; transform:translate(-50%,0); }"
+    },
+    {
+      "name": "Liste des plans (séquence des expertises)",
+      "kind": "chip",
+      "refersTo": "onglet-plan",
+      "description": "Les noms des quatre plans au-dessus de la scène, comme les chapitres d’un lecteur : une piste de 3 px chacun, en pêche pour le plan qu’on regarde. 2 × 2 sous 640 px.",
+      "html": "<div class=\"ds-nuit\"><div class=\"ds-plans\" role=\"tablist\" aria-label=\"Mes expertises\"><button role=\"tab\" aria-selected=\"true\">Automatisation</button><button role=\"tab\" aria-selected=\"false\">Agents IA</button><button role=\"tab\" aria-selected=\"false\">Dashboards</button><button role=\"tab\" aria-selected=\"false\">Formations</button></div></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); color:var(--color-ink,#fff); font-family:var(--font-body,\"Geist Variable\",system-ui,sans-serif); padding:2rem; } .ds-plans { display:flex; justify-content:center; gap:.375rem; flex-wrap:wrap; } .ds-plans button { position:relative; min-width:7.5rem; min-height:44px; padding:0 .75rem .875rem; border:0; background:none; color:var(--color-ink-low,#a3acbb); font:inherit; font-size:.875rem; font-weight:500; white-space:nowrap; cursor:pointer; transition:color 200ms cubic-bezier(.22,1,.36,1); } .ds-plans button::after { content:\"\"; position:absolute; left:.25rem; right:.25rem; bottom:0; height:3px; border-radius:9999px; background:color-mix(in srgb,#fff 18%,transparent); transition:background-color 200ms cubic-bezier(.22,1,.36,1); } .ds-plans button:hover, .ds-plans button[aria-selected=\"true\"] { color:#fff; } .ds-plans button[aria-selected=\"true\"]::after { background:var(--color-peche,#ffb38a); } .ds-plans button:focus-visible { outline:2px solid var(--color-focus,#ffb38a); outline-offset:2px; border-radius:6px; }"
+    },
+    {
+      "name": "Ligne de filmographie",
+      "kind": "card",
+      "refersTo": "filmo-titre",
+      "description": "Un projet perso comme une ligne de filmographie : le titre en grand, le genre et la phrase, l’adresse. Filets d’encre à 10 % entre les lignes ; au survol le titre prend la pêche et glisse.",
+      "html": "<div class=\"ds-nuit\"><ul class=\"ds-filmo\"><li><a class=\"ds-filmo__ligne\" href=\"#\"><h3>meilleurs.tools</h3><p class=\"ds-filmo__genre\">Catalogue · outils · comparatifs</p><p class=\"ds-filmo__resume\">Un annuaire d’outils de productivité, avec avis, alternatives et comparatifs.</p><p class=\"ds-filmo__adresse\">meilleurs.tools ↗</p></a></li></ul></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); color:var(--color-ink,#fff); font-family:var(--font-body,\"Geist Variable\",system-ui,sans-serif); padding:2rem; } .ds-filmo { margin:0; padding:0; list-style:none; border-bottom:1px solid color-mix(in srgb,#fff 10%,transparent); } .ds-filmo li { border-top:1px solid color-mix(in srgb,#fff 10%,transparent); } .ds-filmo__ligne { display:grid; grid-template-columns:5fr 4fr 2fr; grid-template-rows:auto 1fr; column-gap:clamp(2rem,5vw,4.5rem); row-gap:.5rem; align-items:baseline; padding:clamp(1.5rem,3vw,2.25rem) 0; color:inherit; text-decoration:none; } .ds-filmo__ligne h3 { grid-area:1/1/span 2; margin:0; font-size:clamp(2rem,3vw + .5rem,3rem); font-weight:500; line-height:1; letter-spacing:-.04em; transition:color 200ms cubic-bezier(.22,1,.36,1), transform 600ms cubic-bezier(.16,1,.3,1); } .ds-filmo__genre { grid-area:1/2; margin:0; color:var(--color-ink-low,#a3acbb); font-size:.875rem; } .ds-filmo__resume { grid-area:2/2; margin:0; color:var(--color-ink-mid,#c3c9d4); } .ds-filmo__adresse { grid-area:1/3; justify-self:end; margin:0; color:var(--color-ink-low,#a3acbb); font-size:.875rem; transition:color 150ms cubic-bezier(.22,1,.36,1); } .ds-filmo__ligne:hover h3 { color:var(--color-peche,#ffb38a); transform:translateX(.5rem); } .ds-filmo__ligne:hover .ds-filmo__adresse, .ds-filmo__ligne:focus-visible .ds-filmo__adresse { color:var(--color-peche,#ffb38a); } .ds-filmo__ligne:focus-visible { outline:2px solid var(--color-focus,#ffb38a); outline-offset:4px; }"
+    },
+    {
+      "name": "Sous-titre d’un intervenant",
+      "kind": "custom",
+      "refersTo": "sous-titre-intervenant",
+      "description": "Les mots d’un autre : blancs, centrés, signés par une incrustation avec son portrait en rond, en noir et blanc.",
+      "html": "<div class=\"ds-nuit\"><figure class=\"ds-voix\"><blockquote>« Les projets qu’il prend en charge sont un succès. »</blockquote><figcaption class=\"ds-voix__inc\"><span class=\"ds-voix__rond\" aria-hidden=\"true\"></span><span class=\"ds-voix__qui\"><b>Benjamin Potet</b><span>Solution Architect Customer Experience, Make</span></span></figcaption></figure></div>",
+      "css": ".ds-nuit { background:var(--color-paper,#0c121f); color:var(--color-ink,#fff); font-family:var(--font-body,\"Geist Variable\",system-ui,sans-serif); padding:2rem; } .ds-voix { display:grid; justify-items:center; gap:clamp(2rem,3vw,2.5rem); margin:0; text-align:center; } .ds-voix blockquote { max-width:30ch; margin:0; color:#fff; font-size:clamp(1.5rem,1.5vw + .75rem,1.875rem); font-weight:500; line-height:1.3; letter-spacing:-.015em; text-wrap:balance; } .ds-voix__inc { position:relative; display:inline-flex; align-items:center; gap:.875rem; padding:.75rem 1rem .75rem .75rem; border-radius:10px; background:color-mix(in srgb,#0c121f 74%,transparent); text-align:left; } .ds-voix__inc::before { content:\"\"; position:absolute; top:0; left:.75rem; width:1.75rem; height:2px; border-radius:9999px; background:var(--color-peche,#ffb38a); } .ds-voix__rond { width:3rem; height:3rem; border-radius:9999px; background:linear-gradient(135deg,#7c8799,#263449); filter:grayscale(1); } .ds-voix__qui { display:grid; gap:.125rem; line-height:1.3; } .ds-voix__qui b { font-weight:500; } .ds-voix__qui span { color:var(--color-ink-mid,#c3c9d4); font-size:.875rem; }"
     }
   ],
   "narrative": {
     "northStar": "Nuit et pêche",
-    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait\naujourd'hui. L'accueil raconte, dans l'ordre fixé par lui : vous perdez du\ntemps, voilà pourquoi, voilà pourquoi automatiser, voilà pourquoi moi. Les deux\noffres chiffrées, **Automatisation & IA** et **Sites web**, gardent ensuite\nchacune leur page, à côté des pages d'outil, des pages de lecture, des cas\nclients et des principes. Le site doit tenir debout tout seul, sans ornement\npour rattraper une hiérarchie molle : le contraste vient de la taille, de\nl'espace et d'un accent unique.\n\n**Une seule tenue, sur toutes les pages.** La direction « tech moderne,\npropre », validée par Lilian sur l'accueil le 2 octobre 2026, a été étendue à\ntout le site le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est\nénoncée dans *La tenue commune* ; la section *L'accueil* ne décrit plus que ce\nqui est propre à cette page (sa grille, ses filets de cadre, ses scènes).\n\nLe site vit sur la nuit profonde `#0c121f`. Le texte est blanc, les gris sont\nteintés vers la nuit, et il n'y a qu'un accent : la pêche `#ffb38a`. En\naplat, elle est le bouton d'appel ; et, parce qu'elle tient 10,76:1 sur le\nfond, elle a aussi le droit d'être un trait (sous un fragment de titre, sous\nun lien), du texte d'accent et l'anneau de focus. Le clair est l'exception : il ne revient que dans l'île,\nun panneau `#f7f8fa` détaché et arrondi, où la pêche retombe à 1,64:1 et\nredevient une simple surface.\n\nPlus d'angle vif. Une surface s'arrondit selon sa taille, de 6 px pour un\ndétail de maquette à 32 px pour l'île, et ce qui se clique est rond : bouton,\nlien de la barre, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un\nsite « trop carré » : c'est le retour explicite du client.\n\nRien n'est encadré pour être rangé. Les sections se suivent sur le même fond,\nséparées par un filet d'un pixel ; à l'intérieur, les blocs de texte sont posés\nà plat et c'est l'espace qui les sépare. Listes à filets, grilles de cartes\nbordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ».\n\nLe mouvement porte trois gestes d'auteur : le soulignement qui se tire,\nl'entrée d'un en-tête de page, les médias qui s'ouvrent au défilement. Le reste\nest du retour d'interaction ou de l'accompagnement de lecture (voir\n*Components → Mouvement*). Sur l'accueil, une animation joue une fois puis se\ntait : Lilian a demandé le 8 octobre 2026, après relecture du site en ligne,\nde réduire les animations de la page.\n\nTrois choses restent retirées, et l'absence est le geste : le monospace, les\nsur-titres au-dessus des titres, et les capitales de style. `SectionHeader` n'a\nni prop `label` ni filet, et la numérotation `01 / 02 / 03` n'existe plus que\nlà où l'ordre est l'information (les étapes d'une méthode, les rangs d'un\nrelevé).\n\n**Les noms de jetons et de classes sont hérités, leurs valeurs ne le sont pas.**\n`--color-paper` vaut la nuit, `--color-ink` vaut le blanc, `.bloc-encre` est le\npanneau clair, `.mono-label` et `.mono-caption` sont des libellés en bas de\ncasse dans la police de texte, `--font-mono` vaut Geist, `SubscriptionGrid` est\nune liste de prix à plat. Les composants consomment les mêmes noms qu'avant :\nseule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.",
+    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait aujourd'hui. L'accueil le montre au travail, comme un court documentaire en chapitres. Les deux offres chiffrées, **Automatisation & IA** et **Sites web**, gardent chacune leur page, à côté des pages d'outil, des pages de lecture, des cas clients et des principes. Le site doit tenir debout tout seul, sans ornement pour rattraper une hiérarchie molle : le contraste vient de la taille, de l'espace et d'un accent unique. \n\n**Une seule tenue, sur toutes les pages.** La direction « tech moderne, propre », validée par Lilian le 2 octobre 2026, a été étendue à tout le site le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est énoncée dans *La tenue commune*. **L'accueil y ajoute un monde à lui, « Le documentaire »** (choisi par Lilian le 14 octobre 2026), qui prolonge la tenue sans la défaire : même nuit, même pêche, même Geist, mêmes rayons, même bouton. Il est décrit dans *L'accueil : le documentaire*, et ne s'exporte pas sur les autres pages. \n\nLe site vit sur la nuit profonde. Le texte est blanc, les gris sont teintés vers la nuit, et il n'y a qu'un accent : la pêche. En aplat, elle est le bouton d'appel ; et, parce qu'elle tient 10,76:1 sur le fond, elle a aussi le droit d'être un trait (sous un fragment de titre, sous un lien, au-dessus d'une incrustation), du texte d'accent et l'anneau de focus. Sa version claire est la voix de Lilian dans les sous-titres de l'accueil. Le clair est l'exception : il ne revient que dans l'île, un panneau détaché et arrondi, où la pêche retombe à 1,64:1 et redevient une simple surface. \n\nPlus d'angle vif. Une surface s'arrondit selon sa taille, de 6 px pour un détail de maquette à 32 px pour l'île et les plans de l'accueil, et ce qui se clique est rond : bouton, lien de la barre, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un site « trop carré » : c'est le retour explicite du client. \n\nRien n'est encadré pour être rangé. Les sections se suivent sur le même fond, séparées par un filet d'un pixel ; à l'intérieur, les blocs de texte sont posés à plat et c'est l'espace qui les sépare. Listes à filets, grilles de cartes bordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ». Sur l'accueil, la profondeur vient de la lumière : chaque plan éclaire la nuit derrière lui, et deux lueurs fixes donnent à la page la teinte du chapitre en cours. \n\nLe mouvement porte trois gestes d'auteur sur tout le site : le soulignement qui se tire, l'entrée d'un en-tête de page, les médias qui s'ouvrent au défilement. L'accueil y ajoute l'ouverture de son premier plan, d'une fente à l'image entière, une seule fois. Le reste est du retour d'interaction ou de l'accompagnement de lecture (voir *Components → Mouvement*). Sur l'accueil, une animation joue une fois puis se tait : une seule boucle y reste, le défilé des logos, avec son bouton pause. \n\nTrois choses restent retirées, et l'absence est le geste : le monospace, les sur-titres au-dessus des titres, et les capitales de style. `SectionHeader` n'a ni prop `label` ni filet, et la numérotation `01 / 02 / 03` n'existe plus que là où l'ordre est l'information (les étapes d'une méthode, les rangs d'un relevé). \n\n**Les noms de jetons et de classes sont hérités, leurs valeurs ne le sont pas.** `--color-paper` vaut la nuit, `--color-ink` vaut le blanc, `.bloc-encre` est le panneau clair, `.mono-label` et `.mono-caption` sont des libellés en bas de casse dans la police de texte, `--font-mono` vaut Geist, `SubscriptionGrid` est une liste de prix à plat. Les composants consomment les mêmes noms qu'avant : seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.",
     "keyCharacteristics": [
       "Nuit profonde en fond, partout ; aucune bande de fond ; le clair n'existe que dans une île arrondie.",
       "Un seul accent, la pêche. Texte posé dessus : toujours `--color-night`.",
@@ -842,13 +946,24 @@
       "Un seul geste de contact : « Parlons de votre projet » ouvre la conversation.",
       "Une seule famille, Geist Variable.",
       "Trois gestes d'auteur de mouvement, joués une fois, jamais bloquants.",
-      "Sur l'accueil, une animation joue une fois puis s'arrête ; seule la scène du récit continue de bouger.",
+      "L'accueil est un documentaire : des plans en cinémascope de vraies photos de Lilian, qui éclairent la nuit, des incrustations, ses sous-titres en pêche claire, des cartons de chapitre, une barre de lecture, un générique.",
+      "Sur l'accueil, une animation joue une fois puis s'arrête ; seul le défilé des logos boucle, avec son bouton pause.",
       "Les artefacts publics et les marques tierces gardent leur palette dans leurs visuels, jamais dans le chrome du site."
     ],
     "rules": [
       {
         "name": "La règle du texte sur pêche",
         "body": "Tout texte posé sur la pêche lit `--color-night`, valeur fixe qu'aucun bloc ne remappe, jamais `--color-ink`. `--color-ink` vaut le blanc sur la nuit, et le blanc sur la pêche tombe à 1,74:1. C'est vrai du libellé du bouton, du message du visiteur dans la conversation, de la sélection de texte, et de tout contrôle rond dont le survol pose la pêche derrière un glyphe : le glyphe change de couleur dans la même transition que le fond. Un fragment souligné n'est pas concerné : le trait passe sous lui, il garde l'encre du titre.",
+        "section": "colors"
+      },
+      {
+        "name": "La règle des lueurs",
+        "body": "`lueur-froide` et `braise`, avec la pêche, sont des lumières : des halos derrière les choses (l'étalonnage de l'accueil, le panneau des scènes), jamais du texte, un trait ou une surface. Une lueur passe toujours par `color-mix` vers le transparent (20 à 26 %), et le grain empêche ses dégradés de se découper en bandes.",
+        "section": "colors"
+      },
+      {
+        "name": "La règle de la pêche claire",
+        "body": "`peche-clair` a deux emplois, et deux seulement : le survol du bouton, et le sous-titre de Lilian sur l'accueil (12,1:1 sur la nuit). Il n'habille ni un lien, ni un titre, ni les mots d'un autre.",
         "section": "colors"
       },
       {
@@ -912,11 +1027,6 @@
         "section": "shapes"
       },
       {
-        "name": "La capture comme preuve",
-        "body": "Une capture n'est admissible que si la page est publique, l'URL source conservée et le fichier traçable. Sa palette reste enfermée dans l'image.",
-        "section": "components"
-      },
-      {
         "name": "La règle du mouvement fini sur les offres",
         "body": "Une scène intégrée parcourt ses deux états en 4,6 secondes puis s'arrête. Deux boutons affichent les extrémités ; la lecture peut être suspendue, reprise ou rejouée. Avec mouvement réduit, l'état final est statique. Ces scènes ne reçoivent pas l'enveloppe `.media-ouvre` : elles ont déjà leur propre mouvement.",
         "section": "components"
@@ -927,59 +1037,29 @@
         "section": "components"
       },
       {
-        "name": "La règle du cadre de page",
-        "body": "Sur l'accueil, les deux lignes verticales qui longent la colonne appartiennent à la page (`.accueil__suite`), pas aux sections. Une section qui redessine les siennes produit un escalier.",
-        "section": "layout"
+        "name": "La règle des vraies photos",
+        "body": "Sur l'accueil, une photo montre Lilian pour de vrai, et rien d'autre : son bureau, son portrait, des captures de Radio Contournement, une séance de formation. Chaque image du dossier `src/assets/documentaire/` a sa provenance dans son `README.md`. Les scènes de travail générées (`src/assets/work-scenes/`) ne vont jamais sur l'accueil.",
+        "section": "accueil"
       },
       {
-        "name": "La règle de la maille",
-        "body": "Dans le hero de l'accueil, tout élément décoratif se place en mailles de grille (`--x`, `--y`), jamais en pixels : c'est ce qui le garde aligné à toutes les largeurs.",
-        "section": "layout"
+        "name": "La règle des deux voix",
+        "body": "La pêche claire est la voix de Lilian, et seulement la sienne : ses sous-titres. Les mots des autres sont blancs, signés par une incrustation.",
+        "section": "accueil"
       },
       {
-        "name": "La règle de la silhouette",
-        "body": "Dans le défilé des clients, tout logo est ramené à une silhouette claire. Un logo que la silhouette abîme se corrige dans le fichier, pas dans le CSS ; sa hauteur se règle à l'œil par `--echelle`. Un logo n'entre que s'il vient du site officiel de l'entreprise, sinon le nom reste en lettres.",
-        "section": "components"
+        "name": "La règle sans date",
+        "body": "L'accueil ne porte aucune date : ni année, ni « depuis », ni date de publication visible (« c'est pas un CV »). Le pied de page y perd la sienne (`Footer sansDate` : « Freelance » au lieu de « Freelance depuis 2020 », et pas d'année dans la mention de droits), et les faits du portrait sont écrits sans leur date.",
+        "section": "accueil"
       },
       {
-        "name": "La règle de l'arrêt",
-        "body": "Sur l'accueil, une animation joue une fois puis reste sur son image finale (Lilian, le 8 octobre 2026) : cellules du premier écran, scènes des métiers. Rien n'y tourne en boucle sans action du visiteur, à une exception près : la scène du récit, qui garde une commande d'arrêt utilisable au clavier et au doigt et se suspend hors écran. Une scène de métier montre la sienne le temps de son tour seulement.",
-        "section": "components"
+        "name": "La règle de la seule boucle",
+        "body": "Sur l'accueil, une animation joue une fois et s'arrête sur une image fixe, la même que sans script. Seul le défilé des logos boucle, avec son bouton pause, et il s'endort hors de l'écran.",
+        "section": "accueil"
       },
       {
-        "name": "La règle du socle des scènes",
-        "body": "Une scène de métier compose les pièces du socle (`scene-metier.css`, `lib/metiers/scene.ts`) et n'ajoute en style scopé que ce qui lui est propre. Tout le temps passe par le moteur : ni `setTimeout` ni `requestAnimationFrame` dans une scène.",
-        "section": "components"
-      },
-      {
-        "name": "La règle de l'image finale",
-        "body": "Le balisage d'une scène est son image finale : sans script et en mouvement réduit, on voit une scène fixe, complète et parlante.",
-        "section": "components"
-      },
-      {
-        "name": "La règle de l'agent en conversation",
-        "body": "Un agent IA se montre par son intelligence : il répond à une question et va chercher lui-même l'information dans ses sources (base de connaissances, outils connectés, web). Pas un contrôle de document, pas un simple tri.",
-        "section": "components"
-      },
-      {
-        "name": "La règle du nom unique",
-        "body": "Une offre n'a qu'un nom sur la page d'accueil : Automatisation, Agents IA, Dashboards et outils métiers, Formations, dans cet ordre. La barre et les onglets disent « Dashboards », faute de place.",
-        "section": "components"
-      },
-      {
-        "name": "La règle de l'île",
-        "body": "Le clair n'existe que par `.bloc-encre`, sous une seule forme : la section entière, détachée par une marge fine et arrondie en `--radius-xl`, son contenu calé sur la colonne de 1 200 px. Elle porte ce que le lecteur est venu vérifier. Deux par page au plus, jamais deux de suite, jamais la première ni la dernière section.",
-        "section": "layout"
-      },
-      {
-        "name": "La règle du geste unique",
-        "body": "Tous les boutons disent « Parlons de votre projet » et ouvrent la conversation de `home-invite`, rendue par `Layout` sur toutes les pages. `BoutonReservation` : conversation par défaut, prop `direct` pour l'agenda.",
-        "section": "components"
-      },
-      {
-        "name": "La règle des cas discrets",
-        "body": "Aucun bloc de l'accueil ne cite un cas client ni n'y mène. Le seul lien vers les cas est celui de leur index, sous les recommandations.",
-        "section": "components"
+        "name": "La règle du chapitre déclaré",
+        "body": "Une section de l'accueil est un chapitre : elle porte son nom et sa lueur, et la barre des chapitres a un segment pour elle. Une section sans `data-chapitre` n'existe pas pour la barre ; deux listes qui divergent (les segments et les sections) éteignent la barre.",
+        "section": "accueil"
       }
     ],
     "dos": [
@@ -1003,17 +1083,20 @@
       "Do écrire une entrée de sorte que la page soit peinte dans son état final sans script : `@keyframes` en `backwards`, voile armé sous `.js-ready`.",
       "Do laisser une absence quand la matière manque. Sur ce site, ce qui n'est pas montré est aussi une affirmation.",
       "Do montrer un projet public par une capture réelle, légendée et traçable ; cantonner sa palette à l'image.",
-      "Do donner à chaque section de l'accueil un composant qui n'existe que là, dont la forme vient de ce qu'elle raconte."
+      "Do écrire un chapitre de l'accueil avec `chapitre.astro` : son nom (`data-chapitre`), sa lueur (`data-lueur`, deux jetons parmi `lueur-froide`, `peche`, `braise`), son carton, et son segment dans la barre.",
+      "Do poser une vraie photo de Lilian en plan, avec sa lumière, son incrustation (nom, puis rôle en bas de casse sous un trait pêche) et, quand il parle, son sous-titre en pêche claire.",
+      "Do signer une image prêtée par sa mention de source, et noter sa provenance dans `src/assets/documentaire/README.md`.",
+      "Do écrire les mots des autres en blanc, signés par une incrustation."
     ],
     "donts": [
       "Don't écrire à la main, sur une page intérieure, un en-tête, une FAQ, une section de contact ou un lien de retour : ce sont `tete-de-page`, `questions`, `fin-de-page`, `retour`.",
       "Don't poser une bande de fond bord à bord, ni changer de fond pour rythmer la page. Une surface ne monte que pour un panneau arrondi dans la colonne.",
-      "Don't étendre le panneau clair bord à bord, ni en faire une carte hors de l'accueil : c'est une île à marge, la section entière.",
+      "Don't étendre le panneau clair bord à bord, ni en faire une carte : c'est une île à marge, la section entière.",
       "Don't composer une section en grille de cartes bordées ou en liste à filets : c'est ce que Lilian a rejeté comme « IA slop ».",
       "Don't encadrer les questions ni les récrire en bulles de conversation : c'est une FAQ classique, des lignes séparées par un filet.",
       "Don't poser une pastille pêche derrière un mot, un résultat ou un rôle : elle est la forme du bouton d'appel.",
       "Don't souligner deux fragments dans un titre, ni poser un `mark` hors d'un titre ou dans une île claire.",
-      "Don't ajouter à l'accueil une animation qui tourne en boucle sans action du visiteur : ni texte qui se tape seul, ni minuterie, ni scène en boucle. Deux boucles restent, par choix de Lilian, chacune avec sa commande d'arrêt : le défilé des logos du premier écran et la scène du récit.",
+      "Don't ajouter à l'accueil une animation qui tourne en boucle sans action du visiteur : ni texte qui se tape seul, ni minuterie, ni scène qui recommence. Le défilé des logos est la seule boucle, avec son bouton pause.",
       "Don't écrire un libellé en capitales, que ce soit par une classe ou tapé tel quel dans le texte, ni lui donner une approche positive.",
       "Don't poser un sur-titre au-dessus d'un titre, ni une numérotation de section `01 / 02 / 03`. Un numéro ne reste que là où l'ordre est l'information.",
       "Don't remonter un titre en graisse 600 par un utilitaire : la règle commune l'emporte, et le balisage mentirait.",
@@ -1037,7 +1120,12 @@
       "Don't écrire un `clamp()`, une `cubic-bezier()` ou une durée couplée sur place dans un composant. L'échelle, les trois courbes et les durées vivent dans `@theme`.",
       "Don't commuter un rôle typographique entre deux jetons à un point de rupture.",
       "Don't poser un commentaire `{/* … */}` à l'intérieur d'une expression Astro (dans un `.map()`, un `&&`, ou entre les attributs d'un composant) : le compilateur rend `Expected \")\" but found \"$$render\"` et toutes les pages tombent en 500. Le commentaire va avant l'expression.",
-      "Don't mettre un cas client au premier plan de l'accueil, ni lier un de ses blocs à un cas précis ; ni y remettre une forme 3D, une scène collante sous 1024 px ou les prix en rangées.",
+      "Don't mettre un cas client au premier plan de l'accueil, ni lier un de ses chapitres à un cas précis ; ni y remettre une forme 3D, une FAQ ou des prix.",
+      "Don't poser sur l'accueil une image générée (les scènes de `src/assets/work-scenes/`) ni une photo qui ne montre pas Lilian pour de vrai.",
+      "Don't écrire une date sur l'accueil : ni année, ni « depuis », ni pied de page daté.",
+      "Don't prêter la pêche claire à d'autres mots que ceux de Lilian.",
+      "Don't composer l'accueil en titre centré au-dessus d'une rangée de cartes, ni répéter une même rangée texte plus panneau d'un chapitre à l'autre.",
+      "Don't exporter la grammaire du documentaire (plans, incrustations, sous-titres, étalonnage, barre des chapitres) sur une autre page.",
       "Don't présenter le vibe coding comme une troisième offre."
     ]
   }
