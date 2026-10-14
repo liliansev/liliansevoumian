@@ -3,11 +3,13 @@
  * en-ce-moment : ce que Lilian construit en ce moment, agenceafk et Augmentés
  * (`data/projets.ts`, `enCours`).
  *
- * Deux plans côte à côte, chacun avec son incrustation : la page d'accueil du
- * site, telle qu'elle est en ligne, sans fausse fenêtre de navigateur autour.
- * Les deux sites sont en crème et lime, la couleur que ce site a quittée : leurs
- * captures sont étalonnées vers la nuit, et retrouvent leurs couleurs quand on
- * les vise.
+ * Deux plans côte à côte : la page d'accueil du site, telle qu'elle est en
+ * ligne, sans fausse fenêtre de navigateur autour, et sa lumière sur la nuit.
+ * Pas d'incrustation : elle couvrait le titre du site, et l'incrustation
+ * nomme des personnes et des lieux, pas des pages. Les deux sites sont en
+ * crème et lime : leurs captures sont à peine étalonnées vers la nuit (elles
+ * paraissaient éteintes à 35 % de saturation), leur lumière est douce, et
+ * elles retrouvent toutes leurs couleurs quand on les vise.
  */
 import { Icon } from 'astro-icon/components';
 import Chapitre from './chapitre.astro';
@@ -24,7 +26,7 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
   id="en-ce-moment"
   nom="En ce moment"
   lueur="peche lueur-froide"
-  titre="Ce que je construis <mark>en ce moment.</mark>"
+  titre="Ce qui m’occupe en ce moment."
 >
   <ul class="maintenant" role="list">
     {enCours.map((p) => (
@@ -38,9 +40,9 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
           data-fast-goal-source={p.href && goals[p.href] ? 'home_en_cours' : undefined}
         >
           <figure class="plan">
+            {p.image && <div class="plan__lumiere plan__lumiere--douce" style={`background-image: url(${p.image})`} aria-hidden="true"></div>}
             <div class="maintenant__cadre plan__cadre media-ouvre">
               {p.image && <img src={p.image} alt="" width="1440" height="900" loading="lazy" decoding="async" />}
-              <p class="incrustation" aria-hidden="true"><b>{p.nom}</b><span>{p.etiquette?.toLowerCase()}</span></p>
             </div>
           </figure>
           <h3 class="maintenant__nom">
@@ -72,7 +74,7 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
     /* Le second plan descend d'un cran : deux plans d'un même montage, pas
        deux cartes d'une grille. */
     .maintenant__projet:nth-child(2) {
-      margin-top: clamp(3rem, 8vw, 7rem);
+      margin-top: clamp(1.5rem, 4vw, 3.5rem);
     }
   }
 
@@ -94,7 +96,7 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
 
   .maintenant__cadre img {
     object-position: top;
-    filter: saturate(0.35) brightness(0.86) contrast(1.05);
+    filter: saturate(0.8) brightness(0.94);
     transition: filter 600ms var(--ease-out-quint);
   }
 

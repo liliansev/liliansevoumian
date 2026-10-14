@@ -35,7 +35,7 @@ const scenes = {
 };
 ---
 
-<Chapitre id="services" nom="Expertises" lueur="lueur-froide lueur-froide" titre="Mes <mark>expertises.</mark>">
+<Chapitre id="services" nom="Expertises" lueur="lueur-froide lueur-froide" titre="Mes expertises.">
   <div class="expertises" data-expertises>
     <div class="expertises__plans" role="tablist" aria-label="Mes expertises" data-plans hidden>
       {metiers.map((metier, index) => (
@@ -98,9 +98,10 @@ const scenes = {
 
   /* ── Le plan ──
      La scène est dessinée sur un plan de 760 × 570, mis à l'échelle de son
-     cadre et centré : dans le cinémascope, ses deux marges prennent la lumière
-     du panneau. Plus étroit, le cadre se resserre pour que le texte des
-     fenêtres reste lisible. */
+     cadre et centré, le quadrillage du panneau prolongeant ses marges. Le cadre
+     s'arrête au 16:9 : en cinémascope, la scène ne prenait que la moitié de la
+     largeur et son texte tombait à 11 px. Plus étroit, le cadre se resserre
+     pour que le texte des fenêtres reste lisible. */
   .expertise__plan {
     width: 100%;
   }
@@ -117,10 +118,6 @@ const scenes = {
 
   @media (min-width: 1024px) {
     .expertise__cadre { aspect-ratio: 16 / 9; }
-  }
-
-  @media (min-width: 1280px) {
-    .expertise__cadre { aspect-ratio: 2.39; }
   }
 
   .expertise__phrase {
@@ -167,14 +164,14 @@ const scenes = {
   .expertises__plans button {
     position: relative;
     flex: 0 0 auto;
-    min-width: 7.5rem;
+    min-width: 9rem;
     min-height: 44px;
-    padding: 0 0.75rem 0.875rem;
+    padding: 0 1rem 0.875rem;
     border: 0;
     background: none;
-    color: var(--color-ink-low);
+    color: var(--color-ink-mid);
     font: inherit;
-    font-size: var(--text-body-sm);
+    font-size: var(--text-body);
     font-weight: 500;
     white-space: nowrap;
     cursor: pointer;

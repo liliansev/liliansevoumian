@@ -46,10 +46,10 @@ typography:
     letterSpacing: "-0.04em"
   carton:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
-    fontSize: "clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem)"
+    fontSize: "var(--text-headline)"
     fontWeight: 500
-    lineHeight: 1
-    letterSpacing: "-0.045em"
+    lineHeight: "var(--leading-display)"
+    letterSpacing: "var(--tracking-display)"
   affiche:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem)"
@@ -253,7 +253,7 @@ components:
     typography: "{typography.sous-titre}"
   sous-titre-intervenant:
     textColor: "{colors.ink}"
-    typography: "{typography.title-lg}"
+    typography: "{typography.phrase}"
   carton:
     textColor: "{colors.ink}"
     typography: "{typography.carton}"
@@ -567,12 +567,12 @@ pages d'offre.
 | Ancre | Nom dans la barre | Carton | Lueur (haut, bas) |
 |---|---|---|---|
 | `#hero` | Au bureau | le `h1` de l'ouverture | `lueur-froide`, `lueur-froide` |
-| `#a-propos` | Portrait | « Je pars de vos processus, pas d'une liste d'outils. » | `lueur-froide`, `peche` |
-| `#en-ce-moment` | En ce moment | « Ce que je construis en ce moment. » | `peche`, `lueur-froide` |
+| `#a-propos` | À propos | « Je pars de vos processus, pas d'une liste d'outils. » (la parole, pas un carton centré) | `lueur-froide`, `peche` |
+| `#en-ce-moment` | En ce moment | « Ce qui m'occupe en ce moment. » | `peche`, `lueur-froide` |
 | `#services` | Expertises | « Mes expertises. » | `lueur-froide`, `lueur-froide` |
 | `#contenus` | Vidéos | « Ce que j'apprends, je le montre. » | `peche`, `peche` |
 | `#projets-perso` | Projets perso | « Ce que je construis pour moi. » | `braise`, `peche` |
-| `#temoignages` | Ils en parlent | « On a travaillé ensemble. » | `peche`, `braise` |
+| `#temoignages` | Ils en parlent | « On a travaillé ensemble. » (souligné : « ensemble ») | `peche`, `braise` |
 | `#generique` | Générique | aucun : le générique se suffit | `braise`, `braise` |
 
 - **Un chapitre s'écrit avec `chapitre.astro`.** La section porte
@@ -592,22 +592,31 @@ pages d'offre.
 
 ### Le carton
 
-Le titre d'un chapitre, seul et centré comme un intertitre, avec la nuit
-autour : `h2` en `--text-affiche`, interligne 1, `16ch` au plus, équilibré
+Le titre d'un chapitre, seul et centré comme un intertitre : `h2` en
+`--text-headline`, interligne et approche `display`, `20ch` au plus, équilibré
 (`text-wrap: balance`) ; au besoin une phrase dessous en `--text-body-large`,
-`ink-mid`, `40ch`. Écart `lie` entre les deux, `section-y` sous le carton, et
-`clamp(1rem, 8svh, 5rem)` au-dessus. C'est le plus grand titre de la page
-après le nom. Il arrive par `.reveal`, et peut porter un fragment souligné
-(`mark`), un au plus.
+`ink-mid`, `40ch`. Écart `lie` entre les deux, `bloc` sous le carton, rien
+au-dessus : le rythme `section-y` du chapitre suffit. Il arrive par `.reveal`.
+
+- **Plus petit que les plans qu'il annonce** (14 octobre 2026, critique) : en
+  `--text-affiche` avec `section-y` dessous et `8svh` dessus, chaque carton
+  faisait un écran de nuit vide, et la page se lisait comme une suite
+  d'intertitres. Le grand reste au nom de l'ouverture et aux faits.
+- **Quatre traits pêche sur toute la page, pas un par titre** : le métier de
+  l'ouverture, les faits du portrait, « ensemble » chez les intervenants et
+  « question » à la fin. Neuf soulignés n'en soulignaient plus aucun ; les
+  autres cartons n'en portent pas.
 
 Deux variantes, dans le portrait :
 
 - **La parole** : à côté du portrait, le carton devient ce que dit
   l'interviewé. Il quitte le centre, s'aligne à gauche sur le texte qu'il
-  ouvre et descend à `--text-story`.
+  ouvre, en `--text-story`, écart `lie` avant le texte.
 - **Le carton des faits** : entre deux plans, une phrase seule au centre, en
-  `--text-headline`, graisse 500, `26ch`. Les faits viennent de
-  `data/parcours.ts` (`faits`), sans leur date.
+  `--text-story`, graisse 500, `24ch`, avec `section-y` au-dessus et
+  au-dessous. C'est le plus grand texte de la page après le nom, et il porte
+  son trait pêche (« premier Français certifié Make niveau 5 »). Les faits
+  viennent de `data/parcours.ts` (`faits`), sans leur date.
 
 Les approches de ces titres sont écrites en littéraux dans les composants
 (−0,045em au carton, −0,035em à la parole, −0,04em aux faits et à la
@@ -628,27 +637,31 @@ Une image à coins arrondis qui jette sa lumière sur la nuit. Trois pièces :
   saturate(1.5)`, opacité 0,5), descendue de 7 % : la lueur d'un écran sur un
   mur. Elle n'est pas une ombre : elle a la couleur de l'image, et c'est elle
   qui éclaire la nuit.
+- **`.plan__lumiere--douce`** : la même lumière, retenue (`blur(52px)
+  saturate(0.6)`, opacité 0,4), pour une image claire ou très saturée qui
+  éclairerait trop : les captures des sites en cours, la vignette de la
+  vidéo.
 
 | Plan | Format | Où |
 |---|---|---|
 | Ouverture | 2,39:1, plus large que la colonne (1 376 px au plus, marges `cadre`), rayon `xl` ; 4:5 sous 768 px | `ouverture.astro` |
 | Plan large | 2,39:1 à partir de 768 px, 4:3 en dessous, sur toute la colonne, rayon `xl`, `.media-ouvre` ; cadrage par plan (`cadrage`, `cadrageEtroit`) | `plan-large.astro`, deux fois dans le portrait |
 | Portrait d'interview | 4:5, colonne `5fr` face à la parole `6fr` à partir de 1024 px | `portrait.astro` |
-| Plan qui reste | 880:997, collant sous la barre à partir de 1024 px, 26rem au plus | `voix.astro` |
-| Capture | 16:10, calée en haut, étalonnée vers la nuit | `en-ce-moment.astro` |
-| Vidéo | 16:9, la vignette et sa lumière, un disque de lecture | `publications.astro` |
-| Scène de métier | 9:8, puis 4:3 (600 px), 16:9 (1 024 px), 2,39:1 (1 280 px), filet d'encre à 10 %, rayon `xl` | `expertises.astro` |
+| Capture | 16:10, calée en haut, à peine étalonnée, lumière douce | `en-ce-moment.astro` |
+| Vidéo | 16:9, la vignette et sa lumière douce, un disque de lecture | `publications.astro` |
+| Scène de métier | 9:8, puis 4:3 (600 px), 16:9 à partir de 1 024 px, filet d'encre à 10 %, rayon `xl` ; pas de cinémascope : la scène, dessinée en 4:3, y nageait dans son quadrillage | `expertises.astro` |
 
 **Le plan tient dans le premier écran**, incrustation comprise : celui de
 l'ouverture est borné en hauteur (`max(26rem, 100svh − 24rem)`, et
 `max(18rem, 100svh − 31rem)` sur téléphone) et s'étire en largeur plutôt que
 de passer sous le pli.
 
-**Les captures des sites en cours sont étalonnées.** agenceafk et Augmentés
-sont en crème et lime, la couleur que ce site a quittée : leur capture passe
-en `saturate(0.35) brightness(0.86) contrast(1.05)` et retrouve ses couleurs
-au survol et au focus (600 ms). Le second plan descend d'un cran à partir de
-900 px (`clamp(3rem, 8vw, 7rem)`) : deux plans d'un même montage, pas deux
+**Les captures des sites en cours sont à peine étalonnées.** agenceafk et
+Augmentés sont en crème et lime : leur capture passe en `saturate(0.8)
+brightness(0.94)` et retrouve toutes ses couleurs au survol et au focus
+(600 ms). À 35 % de saturation, comme d'abord, elles paraissaient éteintes.
+Leur lumière est douce. Le second plan descend d'un cran à partir de 900 px
+(`clamp(1.5rem, 4vw, 3.5rem)`) : deux plans d'un même montage, pas deux
 cartes d'une grille. Aucune fausse fenêtre de navigateur autour.
 
 ### L'incrustation
@@ -662,12 +675,12 @@ un workflow à l'écran »).
 
 - **Sur téléphone, le rôle se raccourcit** (`roleCourt`, sous 600 px) : sur
   trois lignes il couvrait le sujet.
-- **Pour un intervenant**, l'incrustation sort du plan et se pose sous sa
-  citation : le même fond, le trait pêche en haut à gauche, son portrait en
-  rond de 3rem, en noir et blanc pour que trois photos prises n'importe où se
-  ressemblent.
-- **Sur une capture, l'incrustation est décorative** (`aria-hidden`) : le nom
-  est redit dans le `h3` qui suit.
+- **Elle nomme des personnes et des lieux**, jamais une page : Lilian au
+  bureau, Lilian en portrait, La Capsule au micro de Radio Contournement, une
+  formation devant une classe. Une fois Lilian présenté, l'incrustation
+  nomme le lieu ou la scène plutôt que de répéter son nom.
+- **Pas d'incrustation sur une capture de site** : elle en couvrait le titre,
+  et le nom est déjà dans le `h3` qui suit.
 
 ### Le sous-titre
 
@@ -677,10 +690,10 @@ plan, prise dans ce que PRODUCT.md atteste, centrée sous le plan : graisse
 d'abord mon propre travail. » Dans la séquence des expertises, la phrase du
 métier est le sous-titre de son plan, et c'est elle le `h3`.
 
-**Les mots des autres sont blancs.** Un intervenant parle en
-`--text-title-lg`, graisse 500, interligne 1,3, `30ch`, centré, entre
-guillemets, signé par son incrustation. Rien d'autre ne distingue les deux
-voix : la teinte suffit, et elle ne se prête pas.
+**Les mots des autres sont blancs.** Un intervenant parle en grand
+(`--text-phrase`, graisse 500), entre guillemets, signé par son nom et son
+rôle (voir *Ils en parlent*). Rien d'autre ne distingue les deux voix : la
+teinte suffit, et elle ne se prête pas.
 
 ### La mention de source
 
@@ -728,7 +741,10 @@ verre dépoli (`blur(16px) saturate(1.3)`), 3rem de haut au moins.
   au-dessus du segment : fond blanc, texte nuit, rayon `xs`, `--text-body-sm`
   graisse 500. Hors survol, ce nom ne se lit qu'aux lecteurs d'écran : c'est
   le nom du lien. Le segment en cours porte `aria-current="location"`. Un
-  clic y mène.
+  clic y mène, au bureau seulement : sous 640 px, huit segments dans 200 px
+  feraient des cibles de 13 à 27 px collées les unes aux autres. Sur
+  téléphone la barre est un indicateur, et l'on change de chapitre par le
+  menu.
 - **Elle apparaît quand le plan d'ouverture s'en va**, et s'efface quand le
   pied de page arrive : opacité en 420 ms (`ease-out-quint`), montée de 1rem
   en 600 ms (`ease-out-expo`).
@@ -804,17 +820,18 @@ liste vit dans `src/data/clients.ts`, les fichiers dans
 
 ### Le portrait (`#a-propos`)
 
-L'interview. À gauche le portrait (4:5) et son incrustation ; à droite la
-parole (« Je pars de vos processus, pas d'une liste d'outils. ») et deux
-paragraphes en `--text-body-large`, `ink-mid`. Puis deux plans larges, chacun
-avec son sous-titre : Lilian au micro de Radio Contournement, à La Capsule
-(image prêtée, avec sa mention de source), et Lilian devant une classe en
-formation. Entre les deux, le carton des faits. Aucune date.
+L'interview, nommée « À propos » dans la barre. À gauche le portrait (4:5) et
+son incrustation ; à droite la parole (« Je pars de vos processus, pas d'une
+liste d'outils. ») et deux paragraphes en `--text-body-large`, `ink-mid`.
+Puis deux plans larges, chacun avec son sous-titre : La Capsule, « au micro
+de Radio Contournement » (« Radio Contournement » sur téléphone ; image
+prêtée, avec sa mention de source), et « En formation », « devant une
+classe ». Entre les deux, le carton des faits. Aucune date.
 
 ### En ce moment (`#en-ce-moment`)
 
 Les deux sites que Lilian construit (`data/projets.ts`, `enCours`), en deux
-plans de capture étalonnés, côte à côte à partir de 900 px. Sous chacun, le
+plans de capture, sans incrustation, côte à côte à partir de 900 px. Sous chacun, le
 nom en `h3` (`--text-title-lg`) suivi d'une flèche qui prend la pêche et part
 vers l'extérieur au survol, une phrase en `ink-mid` (`44ch`), le domaine en
 `--text-body-sm`. La figure entière est un lien qui s'ouvre dans un nouvel
@@ -830,10 +847,13 @@ Formations (`data/metiers.ts`).
 - **Au-dessus, la liste des plans**, comme les chapitres d'un lecteur vidéo :
   le nom de chaque métier (`--text-body-sm`, graisse 500, `ink-low`, blanc au
   survol et une fois choisi), chacun sur sa piste de 3 px en encre à 18 %,
-  celle du plan qu'on regarde en pêche. 7,5rem de large au moins, 44 px de
-  haut. Onglets ARIA (`tablist`, flèches, Début, Fin).
+  celle du plan qu'on regarde en pêche. En `--text-body`, `ink-mid`, 9rem de
+  large au moins, 44 px de haut : à la taille d'une note, la liste se perdait
+  au-dessus d'un si grand plan. Onglets ARIA (`tablist`, flèches, Début,
+  Fin).
 - **Sur téléphone, la liste passe en 2 × 2** (sous 640 px) : aucun nom n'est
-  coupé ni caché derrière le bord, chacun garde sa piste.
+  coupé ni caché derrière le bord, chacun garde sa piste. Plus de défilement
+  horizontal de la liste.
 - **Sous le plan**, la phrase du métier en sous-titre (le `h3`), une ligne de
   texte en `ink-mid` (`46ch`), dont les noms d'outils sont des liens soulignés,
   puis la sortie en lien fléché vers la page d'offre. Pas de prix (14 octobre
@@ -942,7 +962,8 @@ filmographie d'un générique : un titre par ligne, en grand
 (`ink-mid`, `46ch`), l'adresse (`--text-body-sm`, `ink-low`, flèche). À
 partir de 900 px, trois colonnes `5fr / 4fr / 2fr` : le titre à gauche, le
 genre et la phrase au milieu, l'adresse à droite, alignés sur le haut du
-titre.
+titre. Un projet sans adresse étend son genre et sa phrase sur les deux
+dernières colonnes, plutôt que de laisser un trou à droite.
 
 - **Des filets entre les titres**, encre à 10 %, un au-dessus de chaque ligne
   et un au pied de la liste : c'est l'objet lui-même qui en a, comme une
@@ -957,23 +978,36 @@ titre.
 
 ### Ils en parlent (`#temoignages`)
 
-Les intervenants d'un documentaire. À gauche, le plan reste (collant à partir
-de 1024 px) : Lilian qui sourit au micro, à La Capsule. À droite, trois
-recommandations passent l'une après l'autre au défilement, espacées de
-`section-y`, chacune en sous-titre blanc signé par son incrustation. Rien
-n'avance seul. Les citations et leurs coupes sont celles de
-`Testimonials.astro` : on ne retire que des phrases entières, on ne reformule
-rien. Aucune ne porte de chiffre ; le lien fléché du bas mène à l'index des
-cas clients, dont le nombre est lu dans la collection. C'est la seule sortie
-de l'accueil vers les cas.
+Une voix à la fois, la forme de l'ancien `home-voices` que Lilian préférait
+(14 octobre 2026 : « les avis clients c'était mieux sur l'ancien design »),
+qui a remplacé la pile de trois sous-titres à côté d'un plan de La Capsule.
+
+- **À gauche, une seule citation, en grand** (`--text-phrase`, graisse 500,
+  blanche, `24ch`), entre guillemets, signée dessous du nom et du rôle.
+- **À droite, le rail des trois personnes** (`1.4fr / 1fr` à partir de
+  900 px) : portrait rond en couleur, nom, rôle, sur une piste d'encre où un
+  trait pêche se pose contre celle qui parle. Onglets ARIA ; on change de
+  voix en choisissant un nom, rien n'avance seul. La citation change par un
+  fondu et un flou de 10 px (420 ms), sans flou en mouvement réduit.
+- **Sous le rail**, le lien fléché vers l'index des cas clients, dont le
+  nombre est lu dans la collection. C'est la seule sortie de l'accueil vers
+  les cas.
+- **Sous 900 px**, les trois personnes passent au-dessus de la citation, en
+  trois colonnes.
+- Les citations et leurs coupes sont celles de `Testimonials.astro` : on ne
+  retire que des phrases entières, on ne reformule rien. Aucune ne porte de
+  chiffre. Sans script, les trois se lisent à la suite, chacune signée.
 
 ### Le générique (`#generique`)
 
-La fin, comme au cinéma, sur la nuit seule et sans carton : une liste de
-définitions centrée, `40rem` au plus. Le rôle en petit (`--text-body-sm`,
+La fin, comme au cinéma, sur la nuit seule et sans carton. Sur téléphone,
+une liste de définitions centrée : le rôle en petit (`--text-body-sm`,
 `ink-low`), les noms dessous (`--text-body-large`, graisse 500, blancs), en
-ligne, séparés par l'espace (`0,375rem 1,75rem`). La première ligne,
-« Écrit et construit par », porte le nom de Lilian en `--text-title-lg`.
+ligne. À partir de 768 px, **deux colonnes de part et d'autre d'un axe
+central**, comme un générique qui défile : le rôle à droite de l'axe, les
+noms à gauche, un par ligne ; une liste de plus de six noms passe sur deux
+colonnes. La première ligne, « Écrit et construit par », porte le nom de
+Lilian en `--text-title-lg`.
 Suivent « Avec » (tous les clients, depuis `data/clients.ts`), « Recommandé
 par », « Outils », « Images ». Tout ce qui y figure est attesté ailleurs sur
 le site.
@@ -1040,9 +1074,10 @@ il répond déjà.
 - **Au doigt, seul le visiteur referme la conversation** (chevron). Le repli
   automatique quand le focus quitte la fenêtre ne vaut qu'au clavier, sur un
   écran étroit.
-- **Dans le coin, elle reste en barre six secondes puis se range en
-  pastille** : son portrait et « Écrire à Lilian » sur ordinateur, son
-  portrait seul (56 px, un point pêche) sur téléphone. Sur téléphone la
+- **Dans le coin, elle reste en barre six secondes (deux sur téléphone)
+  puis se range en pastille** : son portrait et « Écrire à Lilian » sur
+  ordinateur, son portrait seul (56 px, un point pêche) sur téléphone, où la
+  barre dépliée couvrait le bas de l'écran pendant qu'on lit. Sur téléphone la
   pastille s'efface quand on descend la page et revient quand on remonte.
   Tant qu'on y écrit, qu'elle a le focus ou que la conversation est ouverte,
   elle reste dépliée, et la barre des chapitres lui laisse la place.
@@ -1237,15 +1272,15 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
 | Rôle | Jeton | 402 → 1440 | Graisse, interligne, approche |
 |---|---|---|---|
 | Nom (le nom dans le `h1` de l'accueil) | littéral, `clamp(3.25rem, 7.2vw, 6rem)` | 52 → 96 | 500 · 0,98 · −0,04em |
-| Carton (titre d'un chapitre de l'accueil) | `--text-affiche` | 34 → 72 | 500 · 1 · −0,045em |
+| Carton (titre d'un chapitre de l'accueil) | `--text-headline` | 32 → 48 | 500 · 1,1 · −0,03em (jetons `display`) |
 | Manifeste (`h1` de `/automatisations-ia`) | `--text-display-hero` | 52 → 100 | 500 · 1,1 · −0,03em |
 | Titre de page (`h1` des pages intérieures) | `--text-display` | 36 → 84 | 500 · 1,1 · −0,03em |
-| Énoncé (titre de fin de page, parole du portrait) | `--text-story` | 32 → 60 | 500 · 1,1 · −0,03em |
+| Énoncé (titre de fin de page, parole et faits du portrait) | `--text-story` | 32 → 60 | 500 · 1,1 · −0,03em |
 | Titre de section (`h2`) | `--text-headline` | 32 → 48 | 500 · 1,1 · −0,03em |
-| Phrase (titre d'une `partie`, principe ; début et fin du `h1` de l'accueil) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
+| Phrase (titre d'une `partie`, principe ; début et fin du `h1` de l'accueil, citation d'un intervenant) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
 | Sous-titre (la voix de Lilian sur l'accueil) | littéral, `clamp(1.125rem, 0.6vw + 0.95rem, 1.5rem)` | 18 → 24 | 500 · 1,35 · −0,01em, pêche claire |
 | Lien du menu mobile | `--text-menu` | 32 → 48 | 500 · 1,15 · −0,03em |
-| Titre lg (prix d'une formule, titre d'un cas, citation d'un intervenant sur l'accueil) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,3 |
+| Titre lg (prix d'une formule, titre d'un cas, nom d'un site en cours) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,3 |
 | Titre (`h3`, fait de « Pourquoi moi », nom d'un site) | `--text-title` | 20 → 24 | 500 · 1,2 · −0,02em |
 | Chapô, texte d'une `partie`, usages ; l'intitulé d'une question, en 500 | `--text-body-large` | 17 → 20 | 400 · 1,35 à 1,65 |
 | Corps | `--text-body` | 16 | 400 · 1,55 à 1,6 · 0 |
@@ -1263,9 +1298,9 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
   et approche sont des jetons par rôle (`--leading-display`,
   `--tracking-display`, `--leading-phrase`, `--tracking-phrase`,
   `--leading-body`), pas des littéraux recopiés. Les titres du documentaire
-  (nom, carton, parole, faits, filmographie, sous-titre) écrivent encore les
-  leurs en littéraux, et le carton (−0,045em) est plus serré que le nom
-  (−0,04em) : écart relevé, à ramener aux jetons, pas un exemple.
+  (nom, parole, faits, filmographie, sous-titre) écrivent encore les leurs en
+  littéraux : écart relevé, à ramener aux jetons, pas un exemple. Le carton y
+  est revenu le 14 octobre 2026.
 - **Le corps n'a pas d'approche négative** (`body` à 0) : héritée en longueur
   absolue, elle serrait davantage les petits corps que le texte courant.
 - **Mesure : `46ch`**, soit environ 70 caractères : le `ch` de Geist (10,53 px à
@@ -1358,11 +1393,10 @@ de nuit et non une gouttière, et son contenu reste aligné sur la colonne.
 **Les seuils.** 1024 px est le seuil des deux colonnes titre/contenu, des
 titres collants, du nom en toutes lettres dans la barre et de
 `scrollbar-gutter: stable` ; sur l'accueil, de la barre d'écriture à droite
-du titre, du portrait face à sa parole et du plan qui reste à côté des voix.
-Les autres sont des empilements locaux, écrits avec leur composant : 1280 px
-(le plan des expertises passe en cinémascope), 900 px (liste de prix, offres,
+du titre, du portrait face à sa parole.
+Les autres sont des empilements locaux, écrits avec leur composant : 900 px (liste de prix, offres,
 témoignages, scènes de travail ; les deux plans d'« En ce moment », les trois
-colonnes de la filmographie), 768 px (blocs sur deux colonnes ; les plans
+colonnes de la filmographie, le rail des intervenants), 768 px (blocs sur deux colonnes ; les plans
 larges passent de 4:3 à 2,39:1), 720 px (tableau d'une `partie` replié en
 blocs), 640 px (rythme de téléphone, fin de page empilée, liste des plans en
 2 × 2, barre des chapitres resserrée). La barre ne suit pas un seuil en pixels mais une requête
@@ -1544,10 +1578,9 @@ forme du bouton d'appel, elle ne sert plus qu'à lui.
 - **Un seul par titre, et pas dans chaque titre.** Sur une page intérieure, il
   n'apparaît que dans le `h1` et dans le titre de fin de page. Posé sur chaque
   titre de section, il ne désignait plus rien. L'accueil documentaire en
-  compte neuf : le `h1`, six cartons de chapitre sur sept, le carton des faits
-  et le titre de fin. C'est revenir sur la décision du 8 octobre 2026
-  (« quatre traits, pas un par titre ») : écart relevé, non tranché, à ne pas
-  prendre pour une règle.
+  compte quatre depuis le 14 octobre 2026 (il en avait neuf) : le `h1`, les
+  faits du portrait, « ensemble » chez les intervenants et le titre de fin,
+  comme la décision du 8 octobre 2026 (« quatre traits, pas un par titre »).
 - **Jamais hors d'un titre, jamais dans une île claire** : la pêche n'y tient
   que 1,64:1. Le carton des faits de l'accueil est un paragraphe composé en
   titre, et il porte un `mark` : écart relevé. La colonne « Après » de la bascule d'un cas, qui portait un

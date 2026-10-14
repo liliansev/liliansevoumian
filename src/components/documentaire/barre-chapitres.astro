@@ -199,6 +199,14 @@ const { chapitres } = Astro.props;
       min-height: 3.5rem;
       padding-inline: 1rem 0.875rem;
     }
+
+    /* Sur un téléphone, huit segments tiennent dans 200 px : chacun ferait
+       une cible de 13 à 27 px de large, trop petite pour le doigt (et collée
+       à ses voisines). La barre y reste un indicateur ; on change de chapitre
+       par le menu. */
+    .chapitres__piste a {
+      pointer-events: none;
+    }
   }
 
   /* Sur téléphone, la barre d'écriture dépliée occupe le bas de l'écran : la

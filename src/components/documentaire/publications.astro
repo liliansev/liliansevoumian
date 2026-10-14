@@ -33,7 +33,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
   id="contenus"
   nom="Vidéos"
   lueur="peche peche"
-  titre="Ce que j’apprends, je le <mark>montre.</mark>"
+  titre="Ce que j’apprends, je le montre."
 >
   <div class="publications">
     <article class="publications__video reveal">
@@ -48,7 +48,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
         data-fast-goal-source="home_content"
       >
         <figure class="plan">
-          <div class="plan__lumiere" style={`background-image: url(${video.vignette})`} aria-hidden="true"></div>
+          <div class="plan__lumiere plan__lumiere--douce" style={`background-image: url(${video.vignette})`} aria-hidden="true"></div>
           <div class="video__cadre plan__cadre media-ouvre">
             <img src={video.vignette} alt="" width="1280" height="720" loading="lazy" decoding="async" />
             <span class="video__lecture" aria-hidden="true">
@@ -92,6 +92,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
 <style>
   .publications {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--spacing-bloc);
   }
 
@@ -99,7 +100,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
     .publications {
       grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
       column-gap: var(--spacing-gouttiere);
-      align-items: end;
+      align-items: start;
     }
   }
 
@@ -187,6 +188,7 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
 
   .courrier {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.75rem;
     margin-top: 0.5rem;
   }
@@ -207,8 +209,11 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
     border-color: var(--color-peche);
   }
 
+  /* `width: 0` : sans largeur, le champ garde ses 218 px intrinsèques, qui
+     élargissaient toute la colonne au-delà de l'écran sur un téléphone. */
   .courrier__champ input {
     flex: 1;
+    width: 0;
     min-width: 0;
     border: 0;
     background: transparent;

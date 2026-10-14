@@ -54,7 +54,7 @@ src/
 │   │   ├── expertises.astro   # les 4 scènes des métiers en une séquence : un grand plan, la liste des plans au-dessus, la phrase en sous-titre (data/metiers.ts)
 │   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
 │   │   ├── filmographie.astro # les projets perso en filmographie : un titre par ligne, genre, phrase, adresse (data/projets.ts, `persos`)
-│   │   ├── voix.astro         # le plan de La Capsule qui reste, les trois recommandations qui passent en sous-titres d'interview
+│   │   ├── voix.astro         # « Ils en parlent » : une citation en grand, le rail des trois personnes à côté (la forme de l'ancien home-voices)
 │   │   ├── generique.astro    # le générique de fin sur la nuit, puis `fin-de-page` (id `generique`)
 │   │   └── barre-chapitres.astro # la barre de lecture fixe, comme une vidéo à chapitres, et l'étalonnage de la page
 │   │   # — accueil d'avant, plus rendus sur `/` —
@@ -157,8 +157,8 @@ chapter bar like a YouTube progress bar, and a page grade (two fixed glows)
 whose hue follows the chapter. Grammar in
 `src/components/documentaire/documentaire.css`. Only real photos of Lilian
 appear there; the generated work scenes never do. Lilian's own subtitles are
-peach-light; other people's words (testimonials) are white subtitles with a
-lower-third. One animated 2D interface scene per service, played as shots of
+peach-light; other people's words (testimonials) are white, one quote at a
+time beside a rail of the three people. One animated 2D interface scene per service, played as shots of
 one sequence (`documentaire/expertises.astro`; scenes in
 `src/components/metiers/`, engine in
 `src/lib/metiers/scene.ts`; the glass 3D shapes only remain on

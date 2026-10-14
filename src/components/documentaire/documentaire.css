@@ -63,22 +63,26 @@
   margin-inline: auto;
 }
 
-/* Le carton : le titre du chapitre, seul et centré comme un intertitre, avec
-   la nuit autour. Plus grand que tout autre titre de la page après le nom. */
+/* Le carton : le titre du chapitre, centré comme un intertitre, et tout de
+   suite ce qu'il annonce. Un intertitre se lit et laisse place à l'image : il
+   reste un cran sous les faits du Portrait (`--text-story`), qui sont la
+   preuve de la page, et il ne s'entoure plus d'un écran de nuit vide (critique
+   du 14 octobre 2026 : cinq écrans ne portaient qu'un titre). Sans
+   soulignement : la page en garde quatre, le nom, les faits, les
+   recommandations et le contact. */
 .carton {
   display: grid;
   justify-items: center;
   gap: var(--spacing-lie);
-  margin-bottom: var(--spacing-section-y);
-  padding-top: clamp(1rem, 8svh, 5rem);
+  margin-bottom: var(--spacing-bloc);
   text-align: center;
 }
 
 .carton h2 {
-  max-width: 16ch;
-  font-size: var(--text-affiche);
-  line-height: 1;
-  letter-spacing: -0.045em;
+  max-width: 20ch;
+  font-size: var(--text-headline);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
   text-wrap: balance;
 }
 
@@ -122,6 +126,13 @@
   opacity: 0.5;
   transform: translateY(7%);
   pointer-events: none;
+}
+
+/* Une image aux couleurs vives (la lime d'un site, d'une vignette) jetterait
+   sa couleur sur la nuit : sa lumière garde la teinte, sans la pousser. */
+.plan__lumiere--douce {
+  filter: blur(52px) saturate(0.6);
+  opacity: 0.4;
 }
 
 /* ── L'incrustation ── */
