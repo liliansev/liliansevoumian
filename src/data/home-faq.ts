@@ -32,6 +32,6 @@ export const homeFaqs: FaqItem[] = [
   },
   {
     q: 'Comment se passe le premier échange\u00a0?',
-    a: `Vous m’écrivez en une phrase ce qui vous fait perdre du temps, par WhatsApp ou par e-mail, ou vous réservez un appel de ${DUREE_RESERVATION_MINUTES}\u00a0minutes en visio, sans engagement. On regarde ce qui est faisable, et pourquoi. Le devis vient ensuite.`,
+    a: `Vous m’écrivez en quelques lignes ce qui vous fait perdre du temps, depuis le formulaire en bas de page, ou vous réservez un appel de ${DUREE_RESERVATION_MINUTES}\u00a0minutes en visio, sans engagement. On regarde ce qui est faisable, et pourquoi. Le devis vient ensuite.`,
   },
 ];

@@ -2,16 +2,15 @@
 /*
  * BoutonReservation — le bouton d'appel du site, partout où il apparaît.
  *
- * Depuis le 3 octobre 2026 il n'y a qu'un geste sur tout le site : « Parlons de
- * votre projet » ouvre la conversation de `home-invite`, où le visiteur choisit
- * WhatsApp, l'e-mail ou un appel. Ce composant pose donc par défaut
- * `data-causerie-ouvrir` et le goal `causerie_opened`. C'est toujours un vrai
- * lien vers l'agenda : sans script, ou si la barre d'écriture n'a pas démarré,
- * il y mène (voir l'embed, dans Layout).
+ * Il n'y a qu'un geste sur tout le site : « Parlons de votre projet » mène au
+ * formulaire de contact (`formulaire-contact.astro`). Depuis le 14 octobre 2026
+ * c'est un lien vers `/contact`, avec `data-contact-ouvrir` et le goal
+ * `contact_opened` : quand la page porte déjà le formulaire (dans sa
+ * `fin-de-page`), Layout intercepte le clic et y fait défiler au lieu de
+ * changer de page. Sans script, le lien mène à `/contact`.
  *
- * `direct` garde l'ancien comportement : le lien ouvre l'agenda, goal
- * `lead_call`. Un seul endroit s'en sert, le moyen « Réserver un appel » de la
- * conversation elle-même.
+ * `direct` ouvre l'agenda (goal `lead_call`) : c'est le lien « Réservez un
+ * appel » sous le formulaire.
  *
  * `source` est requis par le typage : un bouton sans source ne compile pas, et
  * c'est ce qui tient l'inventaire du suivi. `class` remplace la classe par
@@ -25,10 +24,10 @@ interface Props {
   source: string;
   /** Remplace `btn-primary`. Passer la chaîne complète. */
   class?: string;
-  /** Le lien ouvre l'agenda sans passer par la conversation. */
+  /** Le lien ouvre l'agenda au lieu du formulaire. */
   direct?: boolean;
   /**
-   * L'objectif DataFast posé sur le lien : `causerie_opened` par défaut,
+   * L'objectif DataFast posé sur le lien : `contact_opened` par défaut,
    * `lead_call` quand `direct`. Une prop, et non un attribut passé en plus :
    * deux `data-fast-goal` sur une balise, c'est le premier qui compte.
    */
@@ -37,16 +36,15 @@ interface Props {
   [attribut: string]: unknown;
 }
 
-const { source, class: classe = 'btn-primary', direct = false, goal = direct ? 'lead_call' : 'causerie_opened', ...reste } = Astro.props;
-/* Un seul objet d'attributs : passé deux fois, `data-causerie-ouvrir` serait
-   écrit en double sur la balise. */
-const attributs = direct ? reste : { 'data-causerie-ouvrir': '', ...reste };
+const { source, class: classe = 'btn-primary', direct = false, goal = direct ? 'lead_call' : 'contact_opened', ...reste } = Astro.props;
+/* Un seul objet d'attributs : passé deux fois, un attribut serait écrit en
+   double sur la balise. */
+const attributs = direct
+  ? { href: URL_RESERVATION, target: '_blank', rel: 'noopener noreferrer', ...reste }
+  : { href: '/contact', 'data-contact-ouvrir': '', ...reste };
 ---
 
 <a
-  href={URL_RESERVATION}
-  target="_blank"
-  rel="noopener noreferrer"
   class={classe}
   data-fast-goal={goal}
   data-fast-goal-source={source}

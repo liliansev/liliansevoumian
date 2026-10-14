@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import HomeInvite from '../components/home-invite.astro';
 import Footer from '../components/Footer.astro';
 import Ouverture from '../components/documentaire/ouverture.astro';
 import Portrait from '../components/documentaire/portrait.astro';
@@ -74,7 +73,6 @@ const pageSchema = {
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA"
   pageSchema={pageSchema}
-  causerie={false}
 >
   <Navigation
     links={homeNavigation}
@@ -84,16 +82,13 @@ const pageSchema = {
 
   <main id="main-content" tabindex="-1" class="film outline-none">
     <Ouverture />
-    {/* La barre où l'on écrit à Lilian, posée sous le titre (voir l'ouverture). */}
-    <HomeInvite />
     <Portrait />
     <EnCeMoment />
     <Expertises />
     <Publications />
     <Filmographie />
     <Voix />
-    {/* Le contact : la fin de page commune. Le fil du formulaire de contact
-        simple la remplacera. */}
+    {/* Le contact : la fin de page commune, avec le formulaire de contact. */}
     <Fin />
   </main>
 

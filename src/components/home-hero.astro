@@ -6,10 +6,8 @@
  * Il l'a voulu ainsi : le titre, centré, et au bas de l'écran la liste des
  * entreprises avec lesquelles il a travaillé. Pas de portrait, pas de chapô,
  * et pas de sculpture non plus : il l'a essayée sous le titre et l'a jugée de
- * trop. Sous le titre, le premier écran porte la barre où l'on écrit à Lilian :
- * `home-invite`, rendu juste après cette section dans `index.astro`, la pose
- * sur l'emplacement réservé ici. Une ligne dit ce qu'elle fait, une flèche
- * annonce la suite. Le titre est la phrase qu'il a dictée : « Salut, je
+ * trop. Sous le titre, le bouton « Parlons de votre projet », qui mène au
+ * formulaire de contact de la fin de page ; une flèche annonce la suite. Le titre est la phrase qu'il a dictée : « Salut, je
  * m'appelle Lilian Sevoumian et je suis expert en Automatisations & Agents
  * IA ». L'esperluette est la sienne. Le récit qui suit (`home-story`) porte
  * le propos : vous perdez votre temps, voilà pourquoi.
@@ -41,6 +39,7 @@
  * bouge.
  *
  */
+import BoutonReservation from './BoutonReservation.astro';
 import { clients } from '../data/clients';
 
 /* Le nom ne se coupe pas : son espace est insécable, et le découpage en mots
@@ -92,16 +91,11 @@ const cellules = [
       </span>
       <mark class="affiche__reponse">{reponse}</mark>
     </h1>
-    {/* La place de la barre où l'on écrit à Lilian (`home-invite.astro`). La
-        barre elle-même est rendue juste après cette section (voir
-        `index.astro`), hors du flux : elle se pose ici tant qu'on est sur le
-        premier écran, puis glisse en bas à droite au défilement. Sans script,
-        cet emplacement est vide et ne prend aucune hauteur. */}
-    <div class="affiche__invite" data-causerie-place></div>
-    {/* Ce que fait la barre, en une ligne : une barre de prompt sous « expert
-        en agents IA » se lisait comme un robot. Elle n'en est pas un. */}
-    <p class="affiche__mode">
-      Écrivez votre besoin, puis choisissez comment me l’envoyer&nbsp;: WhatsApp, <span>e-mail</span> ou appel.
+    {/* Le bouton d'appel, sous le titre : il mène au formulaire de contact de
+        la fin de page. Il remplace, depuis le 14 octobre 2026, la barre
+        d'écriture de `home-invite`. */}
+    <p class="affiche__cta">
+      <BoutonReservation source="home_hero" />
     </p>
     {/* L'amorce de défilement : le premier écran ne donnait aucun indice qu'il
         y a une suite (critique du 2 octobre 2026). Une flèche, pas un mot de
@@ -295,34 +289,8 @@ const cellules = [
     padding-block: var(--spacing-home-hero-y);
   }
 
-  /* L'emplacement de la barre d'écriture, sous le titre. Sa hauteur est
-     donnée par le script, qui y pose la barre. */
-  .affiche__invite {
-    width: min(100%, 34rem);
-  }
-
-  .affiche__invite:empty:not([style]) {
-    display: none;
-  }
-
-  /* Collée à la barre : elle parle d'elle. Sans script il n'y a pas de barre,
-     donc pas de ligne non plus. */
-  .affiche__mode {
-    max-width: 34rem;
-    margin: calc(var(--spacing-colle) - var(--spacing-groupe)) 0 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
-    text-align: center;
-    text-wrap: balance;
-  }
-
-  .affiche__mode span {
-    white-space: nowrap;
-  }
-
-  .affiche__invite:empty:not([style]) + .affiche__mode {
-    display: none;
+  .affiche__cta {
+    margin: 0;
   }
 
   /* Au pied de la zone du titre, juste au-dessus du défilé des clients. */
@@ -435,7 +403,7 @@ const cellules = [
     }
 
     .affiche__suite,
-    .affiche__mode {
+    .affiche__cta {
       animation: entree-monte 900ms var(--ease-out-expo) backwards;
       animation-delay: 900ms;
     }

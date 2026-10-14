@@ -7,9 +7,7 @@
  * par chapitre, aussi long que le chapitre, qui se remplit de pêche à mesure
  * qu'on le lit. À gauche, le nom du chapitre en cours. Un clic sur un segment y
  * mène. Elle apparaît quand le plan d'ouverture s'en va, et s'efface au pied
- * de page. Sur un écran large elle se tient en bas à gauche, à côté de la barre
- * d'écriture ; sur téléphone, elle laisse la place à la barre d'écriture tant
- * que celle-ci est dépliée.
+ * de page. Elle se tient en bas à gauche.
  *
  * Le même script règle l'étalonnage : deux lueurs fixes derrière la page, dont
  * la teinte suit le chapitre en cours (`data-lueur` de chaque chapitre, voir
@@ -205,16 +203,6 @@ const { chapitres } = Astro.props;
        à ses voisines). La barre y reste un indicateur ; on change de chapitre
        par le menu. */
     .chapitres__piste a {
-      pointer-events: none;
-    }
-  }
-
-  /* Sur téléphone, la barre d'écriture dépliée occupe le bas de l'écran : la
-     barre des chapitres s'efface le temps qu'elle se replie en pastille. */
-  @media (max-width: 640px) {
-    :global(html:has(.causerie[data-lieu='coin'][data-apparue]:not([data-rangee]))) .chapitres {
-      opacity: 0;
-      visibility: hidden;
       pointer-events: none;
     }
   }

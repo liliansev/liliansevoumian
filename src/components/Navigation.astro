@@ -22,8 +22,8 @@ interface Props {
 
 /* La barre est la même sur toutes les pages : le nom, les liens en bas de
    casse, la pastille qui suit le pointeur, et un seul bouton, « Parlons de
-   votre projet », qui ouvre la conversation (`home-invite`, rendue par
-   `Layout`). Seule la liste des liens change : l'accueil nomme ses quatre
+   votre projet », qui mène au formulaire de contact (`formulaire-contact`,
+   dans la fin de page, ou `/contact`). Seule la liste des liens change : l'accueil nomme ses quatre
    métiers, une page d'offre ses ancres, les autres pages les liens du site.
    Avant le 3 octobre 2026, chaque page avait son libellé de bouton, et
    l'accueil était la seule à porter cette allure. */
@@ -185,8 +185,8 @@ const menuSuite = isHome ? liensAccueil : mobileNavLinks;
     </div>
 
     {/* Un seul bouton, le même au bureau et sur téléphone, sur toutes les
-        pages : il ouvre la conversation de `home-invite`, qui propose
-        WhatsApp, l'e-mail ou l'agenda. Sans script, il mène à l'agenda. Sur
+        pages : il mène au formulaire de contact de la fin de page, ou à
+        `/contact` quand la page n'en a pas (et sans script). Sur
         l'accueil il porte l'ancre `#contact` ; ailleurs, c'est la section de
         fin de page qui la porte. */}
     <div id={isHome ? 'contact' : undefined} class="nav-action">
@@ -195,7 +195,7 @@ const menuSuite = isHome ? liensAccueil : mobileNavLinks;
         <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
       </BoutonReservation>
     </div>
-    <p id="nav-action-aide" class="sr-only">Ouvre la conversation pour écrire à Lilian, par WhatsApp, par e-mail ou en réservant un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio.</p>
+    <p id="nav-action-aide" class="sr-only">Mène au formulaire pour écrire à Lilian, qui répond par e-mail. Un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes en visio se réserve sous le formulaire.</p>
 
     <!-- Déclencheur de menu (mobile) : grille de points ⇄ croix -->
     <button

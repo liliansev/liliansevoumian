@@ -6,15 +6,19 @@ import icon from 'astro-icon';
 import sitemap from '@astrojs/sitemap';
 
 /** @returns {import('vite').Plugin} */
-function newsletterDevApi() {
+function formulairesDevApi() {
   return {
-    name: 'newsletter-dev-api',
+    name: 'formulaires-dev-api',
     apply: 'serve',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        if (req.url?.split('?')[0] !== '/api/newsletter') return next();
+        const chemin = req.url?.split('?')[0];
+        if (chemin !== '/api/newsletter' && chemin !== '/api/contact') return next();
+        const limite = chemin === '/api/contact' ? 8192 : 4096;
         const run = async () => {
-          const { signupNewsletterFromDev } = await server.ssrLoadModule('/src/lib/newsletter-signup.ts');
+          const traiter = chemin === '/api/contact'
+            ? (await server.ssrLoadModule('/src/lib/contact-message.ts')).envoyerMessageContactDepuisDev
+            : (await server.ssrLoadModule('/src/lib/newsletter-signup.ts')).signupNewsletterFromDev;
           const headers = new Headers();
           for (const [key, value] of Object.entries(req.headers)) {
             if (value !== undefined) headers.set(key, Array.isArray(value) ? value.join(', ') : value);
@@ -23,7 +27,7 @@ function newsletterDevApi() {
           let length = 0;
           for await (const chunk of req) {
             length += chunk.length;
-            if (length > 4096) {
+            if (length > limite) {
               res.writeHead(413, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ status: 'error', message: 'La demande est trop volumineuse.' }));
               return;
@@ -36,7 +40,7 @@ function newsletterDevApi() {
             headers,
             ...(body.length ? { body } : {}),
           });
-          const response = await signupNewsletterFromDev(request);
+          const response = await traiter(request);
           res.writeHead(response.status, Object.fromEntries(response.headers));
           res.end(await response.text());
         };
@@ -107,7 +111,7 @@ export default defineConfig({
   },
   vite: {
     // @ts-expect-error -- type mismatch entre @tailwindcss/vite (Plugin<any>[]) et la version Vite embarquée par Astro (PluginOption). Compatible runtime.
-    plugins: [tailwindcss(), newsletterDevApi()],
+    plugins: [tailwindcss(), formulairesDevApi()],
     server: {
       watch: {
         usePolling: true,

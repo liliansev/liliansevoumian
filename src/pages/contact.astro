@@ -1,0 +1,58 @@
+---
+/*
+ * /contact : le formulaire de contact seul, pour les pages qui n'en portent pas
+ * (mentions légales, 404) et pour qui arrive sans script : c'est là que mène
+ * tout « Parlons de votre projet » quand la page n'a pas son formulaire.
+ */
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import TeteDePage from '../components/tete-de-page.astro';
+import FormulaireContact from '../components/formulaire-contact.astro';
+import BoutonReservation from '../components/BoutonReservation.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: 'Contact', url: '/contact' },
+];
+---
+
+<Layout
+  breadcrumbs={breadcrumbs}
+  title="Contact · Lilian Sevoumian"
+  description="Écrivez à Lilian Sevoumian : votre adresse, votre message, et il vous répond par e-mail."
+>
+  <Navigation ctaSource="contact_nav" />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <TeteDePage
+      titre="<mark>Écrivez-moi.</mark>"
+      chapo="Votre adresse, votre message&nbsp;: il arrive directement dans ma boîte mail, et je vous réponds moi-même."
+    />
+
+    <section data-section class="contact-page px-[var(--spacing-section-x)] pb-[var(--spacing-section-y)]">
+      <FormulaireContact source="contact_page" />
+      <p class="contact-page__appel">
+        Vous préférez en parler de vive voix&nbsp;? <BoutonReservation source="contact_page" class="lien-prose" direct>Réservez un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes</BoutonReservation> en visio, sans engagement.
+      </p>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .contact-page {
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+  }
+
+  .contact-page__appel {
+    max-width: 52ch;
+    margin: 0;
+    color: var(--color-ink-low);
+    text-align: center;
+  }
+</style>

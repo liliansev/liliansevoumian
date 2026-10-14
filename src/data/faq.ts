@@ -49,6 +49,6 @@ export const faqs: FaqItem[] = [
   },
   {
     q: "Comment vous contacter rapidement\u00a0?",
-    a: `Le bouton «\u00a0${LIBELLE_CONTACT_RESERVATION}\u00a0» ouvre une conversation\u00a0: vous écrivez une phrase, puis vous choisissez WhatsApp, l’e-mail ou un appel de ${DUREE_RESERVATION_MINUTES}\u00a0minutes, sans engagement. Nous examinons ce qui vous prend du temps et priorisons les workflows ou agents à construire. Je vous explique ce qui est faisable et pourquoi\u00a0; le devis vient ensuite.`,
+    a: `Le bouton «\u00a0${LIBELLE_CONTACT_RESERVATION}\u00a0» mène au formulaire de contact\u00a0: vous écrivez quelques lignes et je vous réponds par e-mail. Vous pouvez aussi réserver un appel de ${DUREE_RESERVATION_MINUTES}\u00a0minutes, sans engagement. Nous examinons ce qui vous prend du temps et priorisons les workflows ou agents à construire. Je vous explique ce qui est faisable et pourquoi\u00a0; le devis vient ensuite.`,
   },
 ];
