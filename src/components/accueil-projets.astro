@@ -3,14 +3,16 @@
  * accueil-projets : ce sur quoi Lilian travaille en ce moment
  * (`data/projets.ts`, `enCours`).
  *
- * Une carte par projet, et chacune montre le projet : sa page d'accueil dans
- * un châssis de navigateur (trois points, l'adresse), puis ce que c'est, le nom, une
- * phrase, ce qui le compose, et l'adresse en sortie. La première version, un
- * texte dans un cadre, était « trop basique » (Lilian, 14 octobre 2026).
- * Aucun mouvement, sinon la capture qui s'avance d'un rien au survol.
+ * Une rangée par projet, dans la DA des métiers (`rangee.astro`) : le texte
+ * d'un côté, la page d'accueil du projet de l'autre, posée dans une fenêtre
+ * de navigateur sur le panneau des scènes. Les côtés alternent.
+ *
+ * Deux versions ont été écartées le 14 octobre 2026 : un texte dans un cadre
+ * (« trop basique »), puis des cartes à capture (« le design d'avant on avait
+ * une vraie DA »).
  */
 import { Icon } from 'astro-icon/components';
-import SectionHeader from './SectionHeader.astro';
+import Rangee from './rangee.astro';
 import type { Projet } from '../data/projets';
 
 interface Props {
@@ -31,215 +33,118 @@ const goals: Record<string, string> = {
 const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
 ---
 
-<section id={id} data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
-  <div class="mx-auto max-w-[1200px]">
-    <SectionHeader title={titre} body={chapo} />
-    <ul class="encours">
-      {projets.map((p) => (
-        <li class="encours__item">
+<section id={id} data-section class="accueil-section px-[var(--spacing-section-x)]">
+  <div class="relative mx-auto max-w-[1200px]">
+    <header class="accueil-tete reveal">
+      <h2>{titre}</h2>
+      {chapo && <p>{chapo}</p>}
+    </header>
+
+    {projets.map((p, i) => (
+      <Rangee miroir={i % 2 === 1}>
+        <h3>{p.etiquette}</h3>
+        <p class="rangee-phrase">{p.nom}</p>
+        <p class="rangee-corps">{p.resume}</p>
+        {p.tags && (
+          <ul class="rangee-tags">
+            {p.tags.map((t) => <li>{t}</li>)}
+          </ul>
+        )}
+        {p.href && (
           <a
-            class="carte"
+            class="rangee-suite projet__lien"
             href={p.href}
             target="_blank"
             rel="noopener noreferrer"
-            data-fast-goal={p.href ? goals[p.href] : undefined}
-            data-fast-goal-source={p.href && goals[p.href] ? source : undefined}
+            data-fast-goal={goals[p.href]}
+            data-fast-goal-source={goals[p.href] ? source : undefined}
           >
-            {p.image && p.href && (
-              <div class="carte__fenetre" aria-hidden="true">
-                <div class="carte__barre">
-                  <span class="carte__points"><i></i><i></i><i></i></span>
-                  <span class="carte__adresse"><Icon name="lucide:lock" size={11} /> {domaine(p.href)}</span>
-                </div>
-                <div class="carte__ecran">
-                  <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" />
-                </div>
-              </div>
-            )}
-            <div class="carte__corps">
-              <p class="carte__etat">{p.etiquette}</p>
-              <h3 class="carte__nom">{p.nom}</h3>
-              <p class="carte__resume">{p.resume}</p>
-              {p.tags && (
-                <ul class="carte__tags">
-                  {p.tags.map((t) => <li>{t}</li>)}
-                </ul>
-              )}
-              {p.href && (
-                <p class="carte__sortie">
-                  {domaine(p.href)} <Icon name="lucide:arrow-up-right" size={16} aria-hidden="true" />
-                  <span class="sr-only"> (nouvel onglet)</span>
-                </p>
-              )}
-            </div>
+            {domaine(p.href)}
+            <Icon name="lucide:arrow-up-right" size={16} aria-hidden="true" />
+            <span class="sr-only"> (nouvel onglet)</span>
           </a>
-        </li>
-      ))}
-    </ul>
+        )}
+
+        {p.image && p.href && (
+          <div slot="visuel" class="projet__scene" aria-hidden="true">
+            <div class="projet__fenetre">
+              <div class="projet__barre">
+                <span class="projet__points"><i></i><i></i><i></i></span>
+                <span class="projet__adresse">{domaine(p.href)}</span>
+              </div>
+              <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        )}
+      </Rangee>
+    ))}
   </div>
 </section>
 
 <style>
-  .encours {
-    display: grid;
-    gap: var(--spacing-lie);
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .projet__lien {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-ink);
+    font-weight: 500;
+    text-decoration: none;
   }
 
-  @media (min-width: 768px) {
-    .encours {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .projet__lien:hover {
+    color: var(--color-accent-text);
   }
 
-  .encours__item {
-    max-width: none;
+  /* La fenêtre part du coin haut gauche du panneau et sort par le bas et par
+     la droite : on voit une page posée sur le plan, pas une vignette. */
+  .projet__scene {
+    position: absolute;
+    inset: 0;
+    padding: 9% 0 0 9%;
   }
 
-  .carte {
-    display: flex;
-    flex-direction: column;
+  .projet__fenetre {
     height: 100%;
     overflow: hidden;
-    border: 1px solid var(--color-service-border);
-    border-radius: var(--radius-xl);
-    background:
-      radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--color-accent) 9%, transparent), transparent 70%),
-      var(--color-surface-low);
-    color: inherit;
-    text-decoration: none;
-    transition: border-color 150ms ease;
-  }
-
-  .carte:hover {
-    border-color: var(--color-border-strong);
-  }
-
-  .carte:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-
-  /* La capture, posée dans un châssis de navigateur qui dépasse du bas : on
-     voit une page, pas une vignette. */
-  .carte__fenetre {
-    margin: var(--spacing-panneau) var(--spacing-panneau) 0;
-    overflow: hidden;
-    border: 1px solid var(--color-service-border);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-right: 0;
     border-bottom: 0;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    background: var(--color-paper);
+    border-radius: var(--radius-md) 0 0 0;
+    background: var(--color-night-deep);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.7);
   }
 
-  .carte__barre {
+  .projet__barre {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--color-service-border);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
   }
 
-  .carte__points {
+  .projet__points {
     display: flex;
     gap: 0.3rem;
   }
 
-  .carte__points i {
+  .projet__points i {
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 999px;
-    background: var(--color-service-border);
+    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
   }
 
-  .carte__adresse {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    margin-inline: auto;
-    padding: 0.15rem 0.75rem;
+  .projet__adresse {
+    padding: 0.1rem 0.75rem;
     border-radius: 999px;
-    background: var(--color-surface-low);
+    background: color-mix(in srgb, var(--color-ink) 7%, transparent);
     color: var(--color-ink-low);
     font-size: 0.7rem;
   }
 
-  .carte__ecran {
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-  }
-
-  .carte__ecran img {
+  .projet__fenetre img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-    transition: transform 400ms var(--ease-out-quint, ease);
-  }
-
-  .carte:hover .carte__ecran img {
-    transform: scale(1.025);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .carte__ecran img {
-      transition: none;
-    }
-  }
-
-  .carte__corps {
-    display: grid;
-    gap: 0.75rem;
-    padding: var(--spacing-panneau);
-    border-top: 1px solid var(--color-service-border);
-    flex: 1;
-    align-content: start;
-  }
-
-  .carte__etat {
-    margin: 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-  }
-
-
-  .carte__nom {
-    margin: 0;
-    font-size: var(--text-title-lg);
-    color: var(--color-ink);
-  }
-
-  .carte__resume {
-    margin: 0;
-    color: var(--color-ink-mid);
-  }
-
-  .carte__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .carte__tags li {
-    padding: 0.25rem 0.7rem;
-    border: 1px solid var(--color-service-border);
-    border-radius: 999px;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-  }
-
-  .carte__sortie {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin: 0.25rem 0 0;
-    color: var(--color-ink);
-    font-size: var(--text-body-sm);
-    font-weight: 500;
+    height: auto;
   }
 </style>

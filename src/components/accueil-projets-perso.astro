@@ -3,29 +3,33 @@
  * accueil-projets-perso : ce que Lilian construit pour lui
  * (`data/projets.ts`, `persos`).
  *
- * Refaite le 14 octobre 2026 : la première version, une grille de cartes de
- * texte, était « trop basique et nulle » (Lilian). Ici, une mosaïque : des
- * cartes larges et des cartes étroites qui alternent, chacune avec son image.
- * Un projet qui a une capture la montre ; les autres portent un emblème
- * dessiné (une flamme, une rune, un dragon) sur un halo de couleur propre à
- * chacun. Rien ne bouge.
+ * Dans la DA des métiers : chaque projet a son panneau (lueurs, quadrillage,
+ * repères d'angle), et son texte dessous. Un projet qui a une capture la
+ * montre dans une fenêtre de navigateur ; les autres portent un emblème
+ * dessiné (une flamme, une rune, un dragon), éclairé de la couleur du projet.
+ * Rien ne bouge.
+ *
+ * Écartées le 14 octobre 2026 : une grille de cartes de texte (« trop basique
+ * et nulle »), puis une mosaïque de cartes (« le design d'avant on avait une
+ * vraie DA »).
  */
 import { Icon } from 'astro-icon/components';
-import SectionHeader from './SectionHeader.astro';
 import { persos } from '../data/projets';
 
 const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
 ---
 
-<section id="projets-perso" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
-  <div class="mx-auto max-w-[1200px]">
-    <SectionHeader title="Mes projets perso." body="Ce que je construis pour moi : des outils, et des sites pour les jeux auxquels je joue." />
+<section id="projets-perso" data-section class="accueil-section px-[var(--spacing-section-x)] pb-[var(--spacing-section-y)]">
+  <div class="relative mx-auto max-w-[1200px]">
+    <header class="accueil-tete reveal">
+      <h2>Mes projets perso.</h2>
+      <p>Ce que je construis pour moi : des outils, et des sites pour les jeux auxquels je joue.</p>
+    </header>
     <ul class="mosaique">
       {persos.map((p, i) => {
         const Balise = p.href ? 'a' : 'div';
-        const large = i === 0 || i === 3;
         return (
-          <li class:list={['tuile', { 'tuile--large': large }, p.embleme && `tuile--${p.embleme}`]}>
+          <li class:list={['tuile reveal', p.embleme && `tuile--${p.embleme}`]}>
             <Balise
               class="tuile__carte"
               href={p.href}
@@ -33,8 +37,16 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
               rel={p.href ? 'noopener noreferrer' : undefined}
             >
               <div class="tuile__visuel" aria-hidden="true">
+                <span class="tuile__repere tuile__repere--hg"></span>
+                <span class="tuile__repere tuile__repere--hd"></span>
+                <span class="tuile__repere tuile__repere--bg"></span>
+                <span class="tuile__repere tuile__repere--bd"></span>
+                <div class="tuile__cadre panneau">
                 {p.image ? (
-                  <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" class="tuile__capture" />
+                  <div class="tuile__fenetre">
+                    <div class="tuile__barre"><i></i><i></i><i></i></div>
+                    <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" />
+                  </div>
                 ) : (
                   <svg class="tuile__embleme" viewBox="0 0 120 120" fill="none">
                     {p.embleme === 'flamme' && (
@@ -61,14 +73,15 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
                     )}
                   </svg>
                 )}
+                </div>
               </div>
               <div class="tuile__texte">
-                <p class="tuile__etiquette">{p.etiquette}</p>
-                <h3 class="tuile__nom">
+                <h3 class="tuile__etiquette">{p.etiquette}</h3>
+                <p class="tuile__nom">
                   {p.nom}
                   {p.href && <Icon name="lucide:arrow-up-right" size={18} aria-hidden="true" class="tuile__fleche" />}
                   {p.href && <span class="sr-only"> (nouvel onglet)</span>}
-                </h3>
+                </p>
                 <p class="tuile__resume">{p.resume}</p>
                 {p.tags && (
                   <ul class="tuile__tags">
@@ -88,19 +101,15 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
 <style>
   .mosaique {
     display: grid;
-    gap: var(--spacing-lie);
+    gap: var(--spacing-section-y) var(--spacing-gouttiere);
     margin: 0;
-    padding: 0;
+    padding: var(--spacing-lie) 0 0;
     list-style: none;
   }
 
   @media (min-width: 768px) {
     .mosaique {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .tuile--large {
-      grid-column: span 2;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
@@ -115,71 +124,94 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
 
   .tuile__carte {
     display: grid;
-    height: 100%;
-    overflow: hidden;
-    border: 1px solid var(--color-service-border);
-    border-radius: var(--radius-xl);
-    background: var(--color-surface-low);
+    gap: var(--spacing-panneau);
     color: inherit;
     text-decoration: none;
-    transition: border-color 150ms ease;
-  }
-
-  /* Une tuile large pose son image à côté du texte, au-delà de 768 px. */
-  @media (min-width: 768px) {
-    .tuile--large .tuile__carte {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    }
-  }
-
-  a.tuile__carte:hover {
-    border-color: var(--color-border-strong);
   }
 
   a.tuile__carte:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+    outline-offset: 10px;
+    border-radius: var(--radius-md);
   }
 
   .tuile__visuel {
     position: relative;
+  }
+
+  .tuile__cadre {
     display: grid;
     place-items: center;
-    min-height: 12rem;
+    aspect-ratio: 16 / 10;
     overflow: hidden;
-    background:
-      radial-gradient(60% 60% at 50% 55%, color-mix(in srgb, var(--teinte) 26%, transparent), transparent 75%),
-      linear-gradient(var(--color-paper), var(--color-paper));
-  }
-
-  /* Un quadrillage fin sous l'emblème, qui s'efface vers les bords. */
-  .tuile__visuel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1px);
-    background-size: 24px 24px;
-    -webkit-mask-image: radial-gradient(closest-side, #000, transparent);
-    mask-image: radial-gradient(closest-side, #000, transparent);
-  }
-
-  .tuile__capture {
-    position: relative;
-    width: 90%;
-    height: auto;
-    margin-block: var(--spacing-panneau);
-    border: 1px solid var(--color-service-border);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
     border-radius: var(--radius-md);
-    box-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.6);
+    transition: border-color 200ms var(--ease-out-quint, ease);
+  }
+
+  a.tuile__carte:hover .tuile__cadre {
+    border-color: color-mix(in srgb, var(--color-ink) 28%, transparent);
+  }
+
+  /* Le halo de la teinte du projet, sous l'emblème. */
+  .tuile--flamme .tuile__cadre,
+  .tuile--rune .tuile__cadre,
+  .tuile--dragon .tuile__cadre {
+    background:
+      radial-gradient(55% 60% at 50% 55%, color-mix(in srgb, var(--teinte) 24%, transparent), transparent 75%),
+      var(--color-night-deep);
+  }
+
+  .tuile__repere {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 0 solid var(--color-ink-low);
+    pointer-events: none;
+  }
+
+  .tuile__repere--hg { top: -7px; left: -7px; border-top-width: 1px; border-left-width: 1px; }
+  .tuile__repere--hd { top: -7px; right: -7px; border-top-width: 1px; border-right-width: 1px; }
+  .tuile__repere--bg { bottom: -7px; left: -7px; border-bottom-width: 1px; border-left-width: 1px; }
+  .tuile__repere--bd { right: -7px; bottom: -7px; border-right-width: 1px; border-bottom-width: 1px; }
+
+  .tuile__fenetre {
+    align-self: end;
+    justify-self: end;
+    width: 88%;
+    height: 86%;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+    border-right: 0;
+    border-bottom: 0;
+    border-radius: var(--radius-md) 0 0 0;
+    background: var(--color-night-deep);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.7);
+  }
+
+  .tuile__barre {
+    display: flex;
+    gap: 0.3rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  .tuile__barre i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+  }
+
+  .tuile__fenetre img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   .tuile__embleme {
-    position: relative;
-    width: 7.5rem;
+    width: clamp(6rem, 22%, 8.5rem);
     height: auto;
-    margin-block: var(--spacing-panneau);
   }
 
   .tuile__embleme .e-fond {
@@ -205,38 +237,35 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
 
   .tuile__texte {
     display: grid;
-    gap: 0.75rem;
-    align-content: start;
-    padding: var(--spacing-panneau);
-    border-top: 1px solid var(--color-service-border);
-  }
-
-  @media (min-width: 768px) {
-    .tuile--large .tuile__texte {
-      align-content: center;
-      border-top: 0;
-      border-left: 1px solid var(--color-service-border);
-    }
+    gap: 0.5rem;
+    justify-items: start;
   }
 
   .tuile__etiquette {
     margin: 0;
-    color: color-mix(in srgb, var(--teinte) 75%, var(--color-ink));
-    font-size: var(--text-body-sm);
+    color: var(--color-accent-text);
+    font-size: var(--text-body);
     font-weight: 500;
   }
 
   .tuile__nom {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.375rem;
     margin: 0;
-    font-size: var(--text-title-lg);
     color: var(--color-ink);
+    font-size: var(--text-title-lg);
+    font-weight: 500;
+    letter-spacing: var(--tracking-phrase);
   }
 
   .tuile__fleche {
     color: var(--color-ink-low);
+    transition: color 160ms ease;
+  }
+
+  a.tuile__carte:hover .tuile__fleche {
+    color: var(--color-accent-text);
   }
 
   .tuile__resume {
@@ -248,15 +277,15 @@ const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin: 0;
+    margin: 0.25rem 0 0;
     padding: 0;
     list-style: none;
   }
 
   .tuile__tags li {
-    padding: 0.25rem 0.7rem;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
     border-radius: 999px;
-    background: var(--color-paper);
     color: var(--color-ink-mid);
     font-size: var(--text-body-sm);
   }

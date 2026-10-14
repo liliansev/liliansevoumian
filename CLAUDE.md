@@ -43,13 +43,11 @@ src/
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   │   # — accueil (site personnel depuis le 14 octobre 2026) —
-│   ├── accueil-presentation.astro # nom, une phrase courte, faits sans date, liens ; portrait carré à droite ; défilé des logos au pied (id `hero`)
-│   ├── defile-clients.astro   # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
-│   ├── accueil-projets.astro  # « En ce moment » : une carte par projet, capture dans un châssis de navigateur (data/projets.ts, `enCours`)
-│   ├── accueil-expertises.astro # les 4 expertises en cartes, chacune avec son dessin SVG et son icône (data/expertises.ts)
-│   ├── accueil-projets-perso.astro # mosaïque des projets perso : capture ou emblème dessiné (data/projets.ts, `persos`)
-│   ├── accueil-a-propos.astro # « À propos » : deux paragraphes et des photos de travail (tableau `photos`)
-│   │   # — ancien accueil, plus rendu sur `/` (gardé pour mémoire) —
+│   ├── accueil-projets.astro  # « En ce moment » : une rangée par projet, sa page dans une fenêtre de navigateur (data/projets.ts, `enCours`)
+│   ├── accueil-projets-perso.astro # projets perso en 2 colonnes : panneau à repères, capture ou emblème dessiné (data/projets.ts, `persos`)
+│   ├── accueil-a-propos.astro # « À propos » : une rangée, texte et photo de travail (tableau `photos`)
+│   ├── rangee.astro           # une rangée dans la DA des métiers : texte, panneau à repères d'angle, filet et croix ; `miroir`
+│   │   # — accueil, gardés de la DA d'avant (home-story n'est plus rendu) —
 │   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
 │   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone

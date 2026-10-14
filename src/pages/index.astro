@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import AccueilPresentation from '../components/accueil-presentation.astro';
+import HomeHero from '../components/home-hero.astro';
+import HomeInvite from '../components/home-invite.astro';
 import AccueilProjets from '../components/accueil-projets.astro';
-import AccueilExpertises from '../components/accueil-expertises.astro';
+import HomeServices from '../components/home-services.astro';
 import AccueilAPropos from '../components/accueil-a-propos.astro';
 import AccueilProjetsPerso from '../components/accueil-projets-perso.astro';
 import HomeContent from '../components/home-content.astro';
@@ -16,14 +17,18 @@ import { enCours } from '../data/projets';
 /* L'accueil est un site personnel depuis le 14 octobre 2026 (« on n'est pas
    assez site personnel, il y a trop d'animations ») : qui est Lilian, ce
    sur quoi il travaille, ce qu'il sait faire, ce qu'il publie, ce qu'il a
-   construit pour lui, d'où il vient. Le récit animé (`home-story`), les
-   scènes des métiers (`home-services`), la FAQ et la ligne des prix en sont
-   sortis ; les fichiers restent.
+   construit pour lui. Le récit (`home-story`), la FAQ et la ligne des prix
+   en sont sortis ; les fichiers restent.
+
+   Le même jour, une première version en cartes sobres a été rejetée (« le
+   design d'avant on avait une vraie DA ») : la page garde la DA d'avant, le
+   premier écran sur sa grille, les scènes des métiers, et les autres
+   sections reprennent leur charpente (`rangee.astro`).
 
    La barre nomme les sections de la page, dans leur ordre. */
 const homeNavigation = [
   { href: '#en-ce-moment', label: 'En ce moment' },
-  { href: '#expertises', label: 'Expertises' },
+  { href: '#services', label: 'Expertises' },
   { href: '#contenus', label: 'Vidéos' },
   { href: '#projets-perso', label: 'Projets perso' },
   { href: '#a-propos', label: 'À propos' },
@@ -51,6 +56,7 @@ const pageSchema = {
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA"
   pageSchema={pageSchema}
+  causerie={false}
 >
   <Navigation
     links={homeNavigation}
@@ -59,16 +65,17 @@ const pageSchema = {
   />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <AccueilPresentation />
+    <HomeHero />
+    {/* La barre où l'on écrit à Lilian, posée sous le titre (voir home-hero). */}
+    <HomeInvite />
     <div class="accueil__suite">
       <AccueilProjets
         id="en-ce-moment"
         titre="En ce moment."
-        chapo="Ce qui m’occupe cette saison."
         projets={enCours}
         source="home_en_cours"
       />
-      <AccueilExpertises />
+      <HomeServices />
       <HomeContent />
       <AccueilProjetsPerso />
       <AccueilAPropos />
@@ -126,6 +133,103 @@ const pageSchema = {
 
   .accueil__suite::after {
     right: calc(max(var(--spacing-section-x), (100% - 1200px) / 2) - var(--marge));
+  }
+
+  /* Les titres de section et le texte des rangées (`rangee.astro`), sur le
+     modèle des métiers de `home-services`. */
+  .accueil-section {
+    position: relative;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+  }
+
+  .accueil-tete {
+    display: grid;
+    gap: var(--spacing-lie);
+    padding-block: var(--spacing-section-y) var(--spacing-groupe);
+  }
+
+  .accueil-tete h2 {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-story);
+    font-weight: 500;
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .accueil-tete p {
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+  }
+
+  .rangee__texte h3 {
+    margin: 0;
+    color: var(--color-accent-text);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .rangee-phrase {
+    max-width: 18ch;
+    margin: var(--spacing-colle) 0 0;
+    color: var(--color-ink);
+    font-size: var(--text-phrase);
+    font-weight: 500;
+    line-height: var(--leading-phrase);
+    letter-spacing: var(--tracking-phrase);
+    text-wrap: balance;
+  }
+
+  .rangee-corps {
+    max-width: 28.25rem;
+    margin: var(--spacing-lie) 0 0;
+    color: var(--color-ink-mid);
+    line-height: var(--leading-body);
+  }
+
+  .rangee-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: var(--spacing-lie) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rangee-tags li {
+    padding: 0.2rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: 999px;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+  }
+
+  .rangee-suite {
+    margin-top: 1.5rem;
+  }
+
+  /* Le panneau des rangées : celui des scènes (`scene-metier.css`), une
+     lueur braise en bas à gauche, une lueur froide en haut à droite, un
+     quadrillage fin. */
+  .panneau {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(85% 75% at 0% 100%, color-mix(in srgb, var(--color-braise) 22%, transparent), transparent 62%),
+      radial-gradient(75% 65% at 100% 0%, color-mix(in srgb, var(--color-lueur-froide) 20%, transparent), transparent 64%),
+      var(--color-night-deep);
+  }
+
+  .panneau::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px,
+      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px;
   }
 
   @media (max-width: 1023px) {
