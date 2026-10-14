@@ -3,14 +3,14 @@
  * Carnet : la charpente du blog.
  *
  * Le blog vit sur le site mais ne porte pas sa tenue « nuit et pêche » : il
- * est écrit comme un carnet. Du papier, une encre de graphite, une seule
- * colonne de texte, aucun ornement. Le Layout commun garde le SEO, le
+ * est écrit comme un carnet sur papier kraft. Un Garamond, une encre sépia,
+ * une seule colonne de texte, aucun ornement. Le Layout commun garde le SEO, le
  * balisage et le suivi ; tout le reste (barre, pied, couleurs, police) est
  * propre au blog et ne sort pas de cette charpente.
  */
 import type { ComponentProps } from 'astro/types';
-import '@fontsource-variable/newsreader/opsz.css';
-import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource-variable/eb-garamond';
+import '@fontsource-variable/eb-garamond/wght-italic.css';
 import Layout from './Layout.astro';
 
 type Props = ComponentProps<typeof Layout>;
@@ -52,32 +52,33 @@ const annee = new Date().getFullYear();
      au-delà du bas de page : le fond du site ne doit pas réapparaître. */
   html:has(.carnet),
   html:has(.carnet) body {
-    background-color: #f6f3ea;
+    background-color: #d8c3a0;
     /* Le grain du papier : un bruit très léger, à peine visible, pour que le
        fond ne soit pas un aplat d'écran. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .14 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .14 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
     color-scheme: light;
   }
 
   html:has(.carnet) ::selection {
-    background: #e4dfd0;
-    color: #23221f;
+    background: #b89d74;
+    color: #2e2215;
   }
 
   html:has(.carnet) .skip-link:focus-visible {
-    background: #23221f;
-    color: #f6f3ea;
+    background: #2e2215;
+    color: #d8c3a0;
   }
 
   .carnet {
-    /* Les teintes du carnet. Un papier chaud, jamais blanc pur ; une encre
-       de graphite, jamais noire ; un trait de crayon pour les filets. */
-    --carnet-papier: #f6f3ea;
-    --carnet-encre: #23221f;
-    --carnet-gris: #6a665d;
-    --carnet-trait: #b9b3a5;
+    /* Les teintes du carnet. Un papier kraft ; une encre sépia, jamais
+       noire ; un trait de crayon pour les filets. Le gris tient 5:1 sur le
+       kraft, l'encre plus de 10:1. */
+    --carnet-papier: #d8c3a0;
+    --carnet-encre: #2e2215;
+    --carnet-gris: #5a4630;
+    --carnet-trait: #9c8462;
     --carnet-colonne: 36rem;
-    --carnet-serif: 'Newsreader Variable', 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Charter, 'Bitstream Charter', Georgia, 'Times New Roman', serif;
+    --carnet-serif: 'EB Garamond Variable', Garamond, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
 
     position: relative;
     min-height: 100vh;
@@ -87,8 +88,8 @@ const annee = new Date().getFullYear();
     padding: 0 1.25rem;
     color: var(--carnet-encre);
     font-family: var(--carnet-serif);
-    font-size: 1.25rem;
-    line-height: 1.65;
+    font-size: 1.3125rem;
+    line-height: 1.6;
     font-kerning: normal;
     -webkit-font-smoothing: auto;
   }
@@ -98,7 +99,7 @@ const annee = new Date().getFullYear();
   html .carnet :is(h1, h2, h3, h4) {
     color: var(--carnet-encre);
     font-family: var(--carnet-serif);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: 0;
     line-height: 1.25;
   }
