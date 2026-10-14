@@ -52,7 +52,7 @@ const annee = new Date().getFullYear();
      au-delà du bas de page : le fond du site ne doit pas réapparaître. */
   html:has(.carnet),
   html:has(.carnet) body {
-    background-color: #d8c3a0;
+    background-color: #ece2ce;
     /* Le grain du papier : un bruit très léger, à peine visible, pour que le
        fond ne soit pas un aplat d'écran. */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .14 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -60,23 +60,24 @@ const annee = new Date().getFullYear();
   }
 
   html:has(.carnet) ::selection {
-    background: #b89d74;
+    background: #d2bf9c;
     color: #2e2215;
   }
 
   html:has(.carnet) .skip-link:focus-visible {
     background: #2e2215;
-    color: #d8c3a0;
+    color: #ece2ce;
   }
 
   .carnet {
-    /* Les teintes du carnet. Un papier kraft ; une encre sépia, jamais
-       noire ; un trait de crayon pour les filets. Le gris tient 5:1 sur le
-       kraft, l'encre plus de 10:1. */
-    --carnet-papier: #d8c3a0;
+    /* Les teintes du carnet. Un papier kraft éclairci vers le blanc
+       (14 octobre 2026, le kraft plein était trop jaune) ; une encre sépia,
+       jamais noire ; un trait de crayon pour les filets. Le gris tient 6,9:1
+       sur le papier, l'encre 12:1. */
+    --carnet-papier: #ece2ce;
     --carnet-encre: #2e2215;
     --carnet-gris: #5a4630;
-    --carnet-trait: #9c8462;
+    --carnet-trait: #a48c66;
     --carnet-colonne: 36rem;
     --carnet-serif: 'EB Garamond Variable', Garamond, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
 
