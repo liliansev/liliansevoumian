@@ -43,10 +43,12 @@ src/
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   │   # — accueil (site personnel depuis le 14 octobre 2026) —
-│   ├── accueil-presentation.astro # portrait, nom, une phrase, faits, liens (id `hero`)
-│   ├── accueil-projets.astro  # cartes de projets : « En ce moment » et « Mes projets perso » (data/projets.ts, provisoire)
-│   ├── accueil-expertises.astro # les 4 expertises en liste simple (data/expertises.ts)
-│   ├── accueil-parcours.astro # la frise 2020 → aujourd'hui, sans animation
+│   ├── accueil-presentation.astro # nom, une phrase courte, faits sans date, liens ; portrait carré à droite ; défilé des logos au pied (id `hero`)
+│   ├── defile-clients.astro   # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
+│   ├── accueil-projets.astro  # « En ce moment » : une carte par projet, capture dans un châssis de navigateur (data/projets.ts, `enCours`)
+│   ├── accueil-expertises.astro # les 4 expertises en cartes, chacune avec son dessin SVG et son icône (data/expertises.ts)
+│   ├── accueil-projets-perso.astro # mosaïque des projets perso : capture ou emblème dessiné (data/projets.ts, `persos`)
+│   ├── accueil-a-propos.astro # « À propos » : deux paragraphes et des photos de travail (tableau `photos`)
 │   │   # — ancien accueil, plus rendu sur `/` (gardé pour mémoire) —
 │   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues

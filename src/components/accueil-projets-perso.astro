@@ -1,0 +1,269 @@
+---
+/*
+ * accueil-projets-perso : ce que Lilian construit pour lui
+ * (`data/projets.ts`, `persos`).
+ *
+ * Refaite le 14 octobre 2026 : la première version, une grille de cartes de
+ * texte, était « trop basique et nulle » (Lilian). Ici, une mosaïque : des
+ * cartes larges et des cartes étroites qui alternent, chacune avec son image.
+ * Un projet qui a une capture la montre ; les autres portent un emblème
+ * dessiné (une flamme, une rune, un dragon) sur un halo de couleur propre à
+ * chacun. Rien ne bouge.
+ */
+import { Icon } from 'astro-icon/components';
+import SectionHeader from './SectionHeader.astro';
+import { persos } from '../data/projets';
+
+const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+
+<section id="projets-perso" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
+  <div class="mx-auto max-w-[1200px]">
+    <SectionHeader title="Mes projets perso." body="Ce que je construis pour moi : des outils, et des sites pour les jeux auxquels je joue." />
+    <ul class="mosaique">
+      {persos.map((p, i) => {
+        const Balise = p.href ? 'a' : 'div';
+        const large = i === 0 || i === 3;
+        return (
+          <li class:list={['tuile', { 'tuile--large': large }, p.embleme && `tuile--${p.embleme}`]}>
+            <Balise
+              class="tuile__carte"
+              href={p.href}
+              target={p.href ? '_blank' : undefined}
+              rel={p.href ? 'noopener noreferrer' : undefined}
+            >
+              <div class="tuile__visuel" aria-hidden="true">
+                {p.image ? (
+                  <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" class="tuile__capture" />
+                ) : (
+                  <svg class="tuile__embleme" viewBox="0 0 120 120" fill="none">
+                    {p.embleme === 'flamme' && (
+                      <>
+                        <path class="e-fond" d="M60 12c6 18 26 30 26 56a26 26 0 0 1-52 0c0-12 6-20 12-26 0 10 4 16 10 18-4-16 0-34 4-48z" />
+                        <path class="e-trait" d="M60 12c6 18 26 30 26 56a26 26 0 0 1-52 0c0-12 6-20 12-26 0 10 4 16 10 18-4-16 0-34 4-48z" />
+                        <path class="e-accent" d="M60 60c4 8 12 12 12 22a12 12 0 0 1-24 0c0-6 4-10 6-12 0 4 2 6 4 6-1-6 0-12 2-16z" />
+                      </>
+                    )}
+                    {p.embleme === 'rune' && (
+                      <>
+                        <path class="e-fond" d="M40 14h40l14 30-6 62H32l-6-62z" />
+                        <path class="e-trait" d="M40 14h40l14 30-6 62H32l-6-62z" />
+                        <path class="e-accent-trait" d="M60 34v52M60 46l14-10M60 58l-14-10M60 70l14 10" />
+                      </>
+                    )}
+                    {p.embleme === 'dragon' && (
+                      <>
+                        <path class="e-fond" d="M14 84c14-6 22-22 26-40 6 10 10 14 20 16 4-16 14-28 30-34-4 12-4 22 2 30 6-4 10-10 14-16 2 22-8 42-30 50-16 6-40 6-62-6z" />
+                        <path class="e-trait" d="M14 84c14-6 22-22 26-40 6 10 10 14 20 16 4-16 14-28 30-34-4 12-4 22 2 30 6-4 10-10 14-16 2 22-8 42-30 50-16 6-40 6-62-6z" />
+                        <circle class="e-accent" cx="84" cy="52" r="4" />
+                        <path class="e-accent-trait" d="M30 96c16 4 34 2 48-6" />
+                      </>
+                    )}
+                  </svg>
+                )}
+              </div>
+              <div class="tuile__texte">
+                <p class="tuile__etiquette">{p.etiquette}</p>
+                <h3 class="tuile__nom">
+                  {p.nom}
+                  {p.href && <Icon name="lucide:arrow-up-right" size={18} aria-hidden="true" class="tuile__fleche" />}
+                  {p.href && <span class="sr-only"> (nouvel onglet)</span>}
+                </h3>
+                <p class="tuile__resume">{p.resume}</p>
+                {p.tags && (
+                  <ul class="tuile__tags">
+                    {p.tags.map((t) => <li>{t}</li>)}
+                  </ul>
+                )}
+                {p.href && <p class="tuile__domaine">{domaine(p.href)}</p>}
+              </div>
+            </Balise>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .mosaique {
+    display: grid;
+    gap: var(--spacing-lie);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .mosaique {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .tuile--large {
+      grid-column: span 2;
+    }
+  }
+
+  .tuile {
+    --teinte: var(--color-accent);
+    max-width: none;
+  }
+
+  .tuile--flamme { --teinte: var(--color-braise); }
+  .tuile--rune { --teinte: var(--color-lueur-froide); }
+  .tuile--dragon { --teinte: var(--color-peche-clair); }
+
+  .tuile__carte {
+    display: grid;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-service-border);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-low);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+
+  /* Une tuile large pose son image à côté du texte, au-delà de 768 px. */
+  @media (min-width: 768px) {
+    .tuile--large .tuile__carte {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    }
+  }
+
+  a.tuile__carte:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  a.tuile__carte:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .tuile__visuel {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 12rem;
+    overflow: hidden;
+    background:
+      radial-gradient(60% 60% at 50% 55%, color-mix(in srgb, var(--teinte) 26%, transparent), transparent 75%),
+      linear-gradient(var(--color-paper), var(--color-paper));
+  }
+
+  /* Un quadrillage fin sous l'emblème, qui s'efface vers les bords. */
+  .tuile__visuel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(closest-side, #000, transparent);
+    mask-image: radial-gradient(closest-side, #000, transparent);
+  }
+
+  .tuile__capture {
+    position: relative;
+    width: 90%;
+    height: auto;
+    margin-block: var(--spacing-panneau);
+    border: 1px solid var(--color-service-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.6);
+  }
+
+  .tuile__embleme {
+    position: relative;
+    width: 7.5rem;
+    height: auto;
+    margin-block: var(--spacing-panneau);
+  }
+
+  .tuile__embleme .e-fond {
+    fill: color-mix(in srgb, var(--teinte) 14%, var(--color-surface-high));
+  }
+
+  .tuile__embleme .e-trait {
+    stroke: color-mix(in srgb, var(--teinte) 70%, var(--color-ink));
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+
+  .tuile__embleme .e-accent {
+    fill: var(--teinte);
+  }
+
+  .tuile__embleme .e-accent-trait {
+    stroke: var(--teinte);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .tuile__texte {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    padding: var(--spacing-panneau);
+    border-top: 1px solid var(--color-service-border);
+  }
+
+  @media (min-width: 768px) {
+    .tuile--large .tuile__texte {
+      align-content: center;
+      border-top: 0;
+      border-left: 1px solid var(--color-service-border);
+    }
+  }
+
+  .tuile__etiquette {
+    margin: 0;
+    color: color-mix(in srgb, var(--teinte) 75%, var(--color-ink));
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+  }
+
+  .tuile__nom {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0;
+    font-size: var(--text-title-lg);
+    color: var(--color-ink);
+  }
+
+  .tuile__fleche {
+    color: var(--color-ink-low);
+  }
+
+  .tuile__resume {
+    margin: 0;
+    color: var(--color-ink-mid);
+  }
+
+  .tuile__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tuile__tags li {
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    background: var(--color-paper);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+  }
+
+  .tuile__domaine {
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+</style>

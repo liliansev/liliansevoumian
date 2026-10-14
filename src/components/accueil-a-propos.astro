@@ -1,0 +1,96 @@
+---
+/*
+ * accueil-a-propos : qui est Lilian, en quelques lignes et en photos de
+ * travail.
+ *
+ * Remplace la frise du parcours le 14 octobre 2026 : « c'est pas un CV,
+ * retire les dates ; fais plutôt une section à propos de moi avec quelques
+ * photos en condition de travail » (Lilian). Il doit en envoyer d'autres :
+ * elles s'ajoutent à `photos`, la grille se recompose seule (une grande, les
+ * suivantes en dessous).
+ */
+import { Image } from 'astro:assets';
+import SectionHeader from './SectionHeader.astro';
+import auBureau from '../assets/lilian-au-bureau.jpg';
+
+const photos = [
+  { src: auBureau, alt: 'Lilian Sevoumian à son bureau, devant ses écrans, un workflow ouvert' },
+];
+---
+
+<section id="a-propos" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
+  <div class="apropos mx-auto max-w-[1200px]">
+    <div class="apropos__texte">
+      <SectionHeader title="À propos." spacing="none" />
+      <p>
+        J’automatise le travail des entreprises, et d’abord le mien&nbsp;: un studio de podcast, une activité de
+        formation, puis une agence. Les journées mangées par des tâches qui n’avancent rien, je les connais de
+        l’intérieur.
+      </p>
+      <p>
+        Je pars des processus réels, je construis avec les outils que l’équipe utilise déjà, et je laisse un
+        humain garder la main sur les cas douteux. Ce que j’apprends en chemin, je le montre en vidéo et je
+        l’écris chaque semaine.
+      </p>
+    </div>
+
+    <div class:list={['apropos__photos', { 'apropos__photos--seule': photos.length === 1 }]}>
+      {photos.map((photo, i) => (
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          widths={[480, 800, 1200]}
+          sizes={i === 0 ? '(min-width: 1024px) 640px, 100vw' : '(min-width: 1024px) 320px, 50vw'}
+          class:list={['apropos__photo', { 'apropos__photo--grande': i === 0 }]}
+          loading="lazy"
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .apropos {
+    display: grid;
+    gap: var(--spacing-groupe) var(--spacing-gouttiere);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .apropos {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    }
+  }
+
+  .apropos__texte {
+    display: grid;
+    gap: var(--spacing-lie);
+  }
+
+  .apropos__texte p {
+    margin: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.6;
+  }
+
+  .apropos__photos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-lie);
+  }
+
+  .apropos__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--color-service-border);
+    border-radius: var(--radius-xl);
+  }
+
+  .apropos__photo--grande {
+    grid-column: 1 / -1;
+  }
+</style>

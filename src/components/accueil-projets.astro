@@ -1,13 +1,13 @@
 ---
 /*
- * accueil-projets : une liste de projets : ce sur quoi Lilian travaille en ce
- * moment, ou ce qu'il a construit pour lui. Les deux sections de l'accueil
- * qui l'utilisent lisent `data/projets.ts`.
+ * accueil-projets : ce sur quoi Lilian travaille en ce moment
+ * (`data/projets.ts`, `enCours`).
  *
- * Des cartes sobres, sans mouvement : un nom, une étiquette, une phrase, et
- * la capture quand il y en a une. Une carte avec un lien est un lien entier.
- * En développement, une entrée `provisoire` porte un liseré pointillé : son
- * texte attend Lilian.
+ * Une carte par projet, et chacune montre le projet : sa page d'accueil dans
+ * un châssis de navigateur (trois points, l'adresse), puis l'état, le nom, une
+ * phrase, ce qui le compose, et l'adresse en sortie. La première version, un
+ * texte dans un cadre, était « trop basique » (Lilian, 14 octobre 2026).
+ * Aucun mouvement, sinon la capture qui s'avance d'un rien au survol.
  */
 import { Icon } from 'astro-icon/components';
 import SectionHeader from './SectionHeader.astro';
@@ -23,53 +23,64 @@ interface Props {
 }
 
 const { id, titre, chapo, projets, source } = Astro.props;
-const dev = import.meta.env.DEV;
 
 const goals: Record<string, string> = {
   'https://agenceafk.fr': 'outbound_agence',
   'https://augmentes.fr': 'outbound_formations',
 };
+const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
 ---
 
 <section id={id} data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
   <div class="mx-auto max-w-[1200px]">
     <SectionHeader title={titre} body={chapo} />
-    <ul class:list={['projets', { 'projets--pair': projets.length % 2 === 0 }]}>
-      {projets.map((p) => {
-        const Balise = p.href ? 'a' : 'div';
-        const externe = p.href?.startsWith('http');
-        return (
-          <li class:list={['projet', { 'projet--provisoire': dev && p.provisoire }]}>
-            <Balise
-              class="projet__carte"
-              href={p.href}
-              target={externe ? '_blank' : undefined}
-              rel={externe ? 'noopener noreferrer' : undefined}
-              data-fast-goal={p.href ? goals[p.href] : undefined}
-              data-fast-goal-source={p.href && goals[p.href] ? source : undefined}
-            >
-              {p.image && (
-                <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" class="projet__image" />
-              )}
-              <div class="projet__texte">
-                {p.etiquette && <p class="projet__etiquette">{p.etiquette}</p>}
-                <h3 class="projet__nom">
-                  {p.nom}
-                  {p.href && <Icon name="lucide:arrow-up-right" size={18} aria-hidden="true" class="projet__fleche" />}
-                  {externe && <span class="sr-only"> (nouvel onglet)</span>}
-                </h3>
-                <p class="projet__resume">{p.resume}</p>
+    <ul class="encours">
+      {projets.map((p) => (
+        <li class="encours__item">
+          <a
+            class="carte"
+            href={p.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-fast-goal={p.href ? goals[p.href] : undefined}
+            data-fast-goal-source={p.href && goals[p.href] ? source : undefined}
+          >
+            {p.image && p.href && (
+              <div class="carte__fenetre" aria-hidden="true">
+                <div class="carte__barre">
+                  <span class="carte__points"><i></i><i></i><i></i></span>
+                  <span class="carte__adresse"><Icon name="lucide:lock" size={11} /> {domaine(p.href)}</span>
+                </div>
+                <div class="carte__ecran">
+                  <img src={p.image} alt="" width="1280" height="800" loading="lazy" decoding="async" />
+                </div>
               </div>
-            </Balise>
-          </li>
-        );
-      })}
+            )}
+            <div class="carte__corps">
+              <p class="carte__etat"><span class="carte__point"></span>En cours · {p.etiquette}</p>
+              <h3 class="carte__nom">{p.nom}</h3>
+              <p class="carte__resume">{p.resume}</p>
+              {p.tags && (
+                <ul class="carte__tags">
+                  {p.tags.map((t) => <li>{t}</li>)}
+                </ul>
+              )}
+              {p.href && (
+                <p class="carte__sortie">
+                  {domaine(p.href)} <Icon name="lucide:arrow-up-right" size={16} aria-hidden="true" />
+                  <span class="sr-only"> (nouvel onglet)</span>
+                </p>
+              )}
+            </div>
+          </a>
+        </li>
+      ))}
     </ul>
   </div>
 </section>
 
 <style>
-  .projets {
+  .encours {
     display: grid;
     gap: var(--spacing-lie);
     margin: 0;
@@ -78,85 +89,167 @@ const goals: Record<string, string> = {
   }
 
   @media (min-width: 768px) {
-    .projets {
+    .encours {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  /* Quatre cartes tiennent en deux rangées de deux, sans orpheline. */
-  @media (min-width: 1024px) {
-    .projets:not(.projets--pair) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  .projet {
+  .encours__item {
     max-width: none;
   }
 
-  .projet__carte {
+  .carte {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
     border: 1px solid var(--color-service-border);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface-low);
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--color-accent) 9%, transparent), transparent 70%),
+      var(--color-surface-low);
     color: inherit;
     text-decoration: none;
     transition: border-color 150ms ease;
   }
 
-  a.projet__carte:hover {
+  .carte:hover {
     border-color: var(--color-border-strong);
   }
 
-  a.projet__carte:focus-visible {
+  .carte:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
-  .projet__image {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    object-position: top;
+  /* La capture, posée dans un châssis de navigateur qui dépasse du bas : on
+     voit une page, pas une vignette. */
+  .carte__fenetre {
+    margin: var(--spacing-panneau) var(--spacing-panneau) 0;
+    overflow: hidden;
+    border: 1px solid var(--color-service-border);
+    border-bottom: 0;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--color-paper);
+  }
+
+  .carte__barre {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
     border-bottom: 1px solid var(--color-service-border);
   }
 
-  .projet__texte {
-    display: grid;
-    gap: var(--spacing-colle);
-    padding: var(--spacing-panneau);
+  .carte__points {
+    display: flex;
+    gap: 0.3rem;
   }
 
-  .projet__etiquette {
+  .carte__points i {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-service-border);
+  }
+
+  .carte__adresse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-inline: auto;
+    padding: 0.15rem 0.75rem;
+    border-radius: 999px;
+    background: var(--color-surface-low);
+    color: var(--color-ink-low);
+    font-size: 0.7rem;
+  }
+
+  .carte__ecran {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .carte__ecran img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 400ms var(--ease-out-quint, ease);
+  }
+
+  .carte:hover .carte__ecran img {
+    transform: scale(1.025);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carte__ecran img {
+      transition: none;
+    }
+  }
+
+  .carte__corps {
+    display: grid;
+    gap: 0.75rem;
+    padding: var(--spacing-panneau);
+    border-top: 1px solid var(--color-service-border);
+    flex: 1;
+    align-content: start;
+  }
+
+  .carte__etat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
   }
 
-  .projet__nom {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
+  .carte__point {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  .carte__nom {
     margin: 0;
-    font-size: var(--text-title);
+    font-size: var(--text-title-lg);
     color: var(--color-ink);
   }
 
-  .projet__fleche {
-    color: var(--color-ink-low);
-  }
-
-  .projet__resume {
+  .carte__resume {
     margin: 0;
     color: var(--color-ink-mid);
   }
 
-  .projet--provisoire .projet__carte {
-    border-style: dashed;
+  .carte__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .carte__tags li {
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--color-service-border);
+    border-radius: 999px;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+  }
+
+  .carte__sortie {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.25rem 0 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
   }
 </style>

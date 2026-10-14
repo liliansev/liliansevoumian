@@ -4,13 +4,14 @@ import Navigation from '../components/Navigation.astro';
 import AccueilPresentation from '../components/accueil-presentation.astro';
 import AccueilProjets from '../components/accueil-projets.astro';
 import AccueilExpertises from '../components/accueil-expertises.astro';
-import AccueilParcours from '../components/accueil-parcours.astro';
+import AccueilAPropos from '../components/accueil-a-propos.astro';
+import AccueilProjetsPerso from '../components/accueil-projets-perso.astro';
 import HomeContent from '../components/home-content.astro';
 import HomeVoices from '../components/home-voices.astro';
 import FinDePage from '../components/fin-de-page.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
-import { enCours, persos } from '../data/projets';
+import { enCours } from '../data/projets';
 
 /* L'accueil est un site personnel depuis le 14 octobre 2026 (« on n'est pas
    assez site personnel, il y a trop d'animations ») : qui est Lilian, ce
@@ -25,7 +26,7 @@ const homeNavigation = [
   { href: '#expertises', label: 'Expertises' },
   { href: '#contenus', label: 'Vidéos' },
   { href: '#projets-perso', label: 'Projets perso' },
-  { href: '#parcours', label: 'Parcours' },
+  { href: '#a-propos', label: 'À propos' },
   // Emplacement du lien Blog : il arrive avec la page /blog (fil du blog).
   // { href: '/blog', label: 'Blog' },
 ];
@@ -63,20 +64,14 @@ const pageSchema = {
       <AccueilProjets
         id="en-ce-moment"
         titre="En ce moment."
-        chapo="Ce sur quoi je travaille cette saison."
+        chapo="Ce qui m’occupe cette saison."
         projets={enCours}
         source="home_en_cours"
       />
       <AccueilExpertises />
       <HomeContent />
-      <AccueilProjets
-        id="projets-perso"
-        titre="Mes projets perso."
-        chapo="Ce que je construis pour moi, sans client ni cahier des charges."
-        projets={persos}
-        source="home_projets_perso"
-      />
-      <AccueilParcours />
+      <AccueilProjetsPerso />
+      <AccueilAPropos />
       <HomeVoices />
       {/* Emplacement du contact : le fil du formulaire de contact le remplace
           par un formulaire simple (e-mail et message). En attendant, la fin

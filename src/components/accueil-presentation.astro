@@ -4,15 +4,17 @@
  * 2026 : Lilian se présente, simplement.
  *
  * Il a trouvé l'accueil d'avant trop vendeur et trop animé (« on n'est pas
- * assez site personnel ») : une grille qui s'allumait, un défilé de logos, une
- * barre d'écriture sous le titre, puis un récit animé. Ici, un portrait, son
- * nom, ce qu'il fait en une phrase, quatre faits et ses liens. Le seul
- * mouvement est l'entrée du bloc, une fois (`.entree`).
+ * assez site personnel »). Ici, deux colonnes : à gauche son nom, une phrase
+ * courte, trois faits (sans date : « c'est pas un CV ») et ses liens ; à droite son portrait, en carré (il l'a
+ * demandé ainsi après la première version, où le portrait était un petit rond
+ * au-dessus du nom). Au pied de l'écran, le défilé des logos de ses clients
+ * (`defile-clients`), qu'il a redemandé le même jour.
  *
  * L'id `hero` est observé par la barre de navigation (`trackHero`).
  */
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
+import DefileClients from './defile-clients.astro';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { faits, profils } from '../data/parcours';
 
@@ -23,54 +25,85 @@ const liens = [
 ];
 ---
 
-<section id="hero" class="presentation px-[var(--spacing-section-x)] pt-[calc(var(--spacing-barre)+var(--spacing-home-hero-y))] pb-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
-  <div class="presentation__corps entree mx-auto max-w-[1200px]">
-    <Image src={lilianPhoto} alt="Portrait de Lilian Sevoumian" width={176} class="presentation__portrait" loading="eager" />
+<section id="hero" class="presentation px-[var(--spacing-section-x)] pt-[calc(var(--spacing-barre)+var(--spacing-home-hero-y))] border-b border-[var(--color-divider)]">
+  <div class="presentation__corps mx-auto max-w-[1200px]">
+    <div class="presentation__texte entree">
+      <h1 class="presentation__nom font-display">Lilian Sevoumian</h1>
 
-    <h1 class="presentation__nom font-display">Lilian Sevoumian</h1>
+      <p class="presentation__phrase">
+        J’automatise le travail des entreprises avec <mark>l’IA</mark>, et je raconte ce que j’apprends.
+      </p>
 
-    <p class="presentation__phrase">
-      J’automatise le travail des entreprises depuis 2020. Je construis des automatisations et des agents IA,
-      j’enseigne ce que je construis, et je raconte ce que j’apprends en <mark>vidéo et par mail.</mark>
-    </p>
+      <ul class="presentation__faits">
+        {faits.filter((fait) => !fait.titre.startsWith('Depuis')).map((fait) => <li>{fait.titre}</li>)}
+      </ul>
 
-    <ul class="presentation__faits">
-      {faits.map((fait) => <li>{fait.titre}</li>)}
-    </ul>
+      <ul class="presentation__liens">
+        {liens.map((lien) => (
+          <li>
+            <a
+              href={lien.href}
+              target={lien.externe ? '_blank' : undefined}
+              rel={lien.externe ? 'noopener noreferrer me' : undefined}
+              data-fast-goal={lien.goal}
+              data-fast-goal-source={lien.goal ? 'home_presentation' : undefined}
+            >
+              <Icon name={lien.icon} size={18} aria-hidden="true" />
+              {lien.label}
+              {lien.externe && <span class="sr-only"> (nouvel onglet)</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
 
-    <ul class="presentation__liens">
-      {liens.map((lien) => (
-        <li>
-          <a
-            href={lien.href}
-            target={lien.externe ? '_blank' : undefined}
-            rel={lien.externe ? 'noopener noreferrer me' : undefined}
-            data-fast-goal={lien.goal}
-            data-fast-goal-source={lien.goal ? 'home_presentation' : undefined}
-          >
-            <Icon name={lien.icon} size={18} aria-hidden="true" />
-            {lien.label}
-            {lien.externe && <span class="sr-only"> (nouvel onglet)</span>}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div class="presentation__photo">
+      <Image src={lilianPhoto} alt="Portrait de Lilian Sevoumian" widths={[320, 480, 720]} sizes="(min-width: 1024px) 420px, 80vw" class="presentation__portrait" loading="eager" fetchpriority="high" />
+    </div>
   </div>
+
+  <DefileClients />
 </section>
 
 <style>
   .presentation__corps {
     display: grid;
+    gap: var(--spacing-groupe) var(--spacing-gouttiere);
+    align-items: center;
+    padding-bottom: var(--spacing-section-y);
+  }
+
+  @media (min-width: 1024px) {
+    .presentation__corps {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+    }
+  }
+
+  .presentation__texte {
+    display: grid;
     gap: var(--spacing-lie);
   }
 
+  .presentation__photo {
+    order: -1;
+    max-width: 16rem;
+  }
+
+  @media (min-width: 1024px) {
+    .presentation__photo {
+      order: 0;
+      max-width: none;
+    }
+  }
+
   .presentation__portrait {
-    justify-self: start;
-    width: clamp(6rem, 10vw, 9rem);
+    display: block;
+    width: 100%;
     height: auto;
     aspect-ratio: 1;
     object-fit: cover;
-    border-radius: 999px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-service-border);
   }
 
   .presentation__nom {
@@ -82,7 +115,7 @@ const liens = [
 
   .presentation__phrase {
     margin: 0;
-    max-width: 34ch;
+    max-width: 26ch;
     font-size: var(--text-title-lg);
     line-height: 1.4;
     color: var(--color-ink-mid);

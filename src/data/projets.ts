@@ -25,9 +25,13 @@ export interface Projet {
   image?: string;
   /** Texte en attente de Lilian. */
   provisoire?: true;
+  /** L'emblème dessiné de la carte, quand le projet n'a pas de capture. */
+  embleme?: 'flamme' | 'rune' | 'dragon';
+  /** Ce qui le compose, en deux ou trois mots chacun. */
+  tags?: string[];
 }
 
-/** Ce sur quoi Lilian travaille en ce moment. Trois au plus. */
+/** Ce sur quoi Lilian travaille en ce moment. Deux ou trois au plus. */
 export const enCours: Projet[] = [
   {
     id: 'agenceafk',
@@ -36,6 +40,8 @@ export const enCours: Projet[] = [
     resume:
       'Des agents IA, des automatisations Make et n8n et des outils métiers sur mesure, pour les entreprises de 5 à 50 personnes.',
     href: 'https://agenceafk.fr',
+    image: '/sites-web/projects/agenceafk-home.webp',
+    tags: ['Agents IA', 'Make et n8n', 'Outils métiers'],
   },
   {
     id: 'augmentes',
@@ -43,12 +49,8 @@ export const enCours: Projet[] = [
     etiquette: 'Mes formations',
     resume: 'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou directement avec les équipes.',
     href: 'https://augmentes.fr',
-  },
-  {
-    id: 'ce-site',
-    nom: 'Ce site',
-    etiquette: 'En cours',
-    resume: 'Je le transforme en vrai site personnel : mes projets, mes vidéos, et bientôt un blog.',
+    image: '/sites-web/projects/augmentes-home.webp',
+    tags: ['Make', 'n8n', 'IA'],
   },
 ];
 
@@ -61,18 +63,23 @@ export const persos: Projet[] = [
     resume: 'Un annuaire d’outils de productivité, avec avis, alternatives et comparatifs, pour choisir le bon logiciel.',
     href: 'https://meilleurs.tools',
     image: '/sites-web/projects/meilleurs-tools-home.webp',
+    tags: ['90 outils', 'Comparatifs', 'Top 5'],
   },
   {
     id: 'runescape',
     nom: 'RuneScape',
     etiquette: 'Jeu vidéo',
     resume: 'Un projet de fan autour de RuneScape, pour retrouver vite une information en pleine partie.',
+    embleme: 'rune',
+    tags: ['Projet de fan', 'Guides'],
   },
   {
     id: 'dragonwild',
     nom: 'Dragonwilds',
     etiquette: 'Jeu vidéo',
     resume: 'Un compagnon de jeu pour RuneScape : Dragonwilds, le jeu de survie de Jagex, dans l’esprit de Flameborn.',
+    embleme: 'dragon',
+    tags: ['Jeu de survie', 'Compagnon'],
   },
   {
     id: 'flameborn',
@@ -80,5 +87,7 @@ export const persos: Projet[] = [
     etiquette: 'Site de jeu vidéo',
     resume: 'La base de données française d’Enshrouded : recettes, calculateur de craft, carte, objets et quêtes.',
     href: 'https://flameborn.fr',
+    embleme: 'flamme',
+    tags: ['Enshrouded', 'Calculateur de craft', 'Carte'],
   },
 ];

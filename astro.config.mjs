@@ -115,7 +115,7 @@ export default defineConfig({
          restreint. La liste est complétée pour que la config décrive ce qui est
          réellement rendu. */
       include: {
-        lucide: ['arrow-down', 'arrow-left', 'arrow-right', 'arrow-up-right', 'bell', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'pause', 'receipt-text', 'rotate-ccw', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
+        lucide: ['arrow-down', 'arrow-left', 'arrow-right', 'arrow-up-right', 'bell', 'bot', 'graduation-cap', 'layout-dashboard', 'lock', 'building-2', 'calculator', 'clock', 'contact-round', 'files', 'git-fork', 'globe', 'linkedin', 'list-checks', 'list-ordered', 'mail', 'pause', 'receipt-text', 'rotate-ccw', 'square-dot', 'target', 'triangle-alert', 'users', 'workflow', 'x', 'youtube'],
         'simple-icons': ['n8n', 'make', 'zapier', 'notion', 'airtable', 'googlesheets', 'anthropic', 'claude', 'openai', 'mistralai', 'hubspot', 'slack', 'stripe', 'gmail', 'googledrive', 'googlecalendar', 'calendly', 'typeform', 'shopify', 'odoo', 'whatsapp', 'telegram', 'discord', 'brevo', 'trello'],
         /* Lovable ne figure pas dans simple-icons. La variante `-plain` de
            devicon est monochrome, donc elle prend currentColor comme tous les
