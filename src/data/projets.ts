@@ -6,11 +6,11 @@
  * moins vendeur ; on y voit ses derniers projets et ses projets perso
  * (RuneScape, DragonWild, ses sites de jeux vidéo, meilleurs.tools).
  *
- * Les phrases de « Ce site », RuneScape et Dragonwilds ont été écrites pour
- * lui le 14 octobre 2026, à sa demande (« invente pour les phrases ») : à
- * corriger dès qu'il donne les siennes et leurs liens. Une entrée sans
- * `href` s'affiche sans lien. Rien n'est affirmé ici qui ne soit dans
- * PRODUCT.md (« Evidence on Hand ») ou donné par lui.
+ * RuneScape et Dragonwilds en sont sortis le même jour : Lilian ne les a pas
+ * finis (« pour runescape j'ai pas fini donc mets-le pas »). Ils reviendront
+ * avec leur adresse. Une entrée sans `href` s'affiche sans lien. Rien n'est
+ * affirmé ici qui ne soit dans PRODUCT.md (« Evidence on Hand ») ou donné
+ * par lui.
  */
 
 export interface Projet {
@@ -66,26 +66,10 @@ export const persos: Projet[] = [
     tags: ['90 outils', 'Comparatifs', 'Top 5'],
   },
   {
-    id: 'runescape',
-    nom: 'RuneScape',
-    etiquette: 'Jeu vidéo',
-    resume: 'Un projet de fan autour de RuneScape, pour retrouver vite une information en pleine partie.',
-    embleme: 'rune',
-    tags: ['Projet de fan', 'Guides'],
-  },
-  {
-    id: 'dragonwild',
-    nom: 'Dragonwilds',
-    etiquette: 'Jeu vidéo',
-    resume: 'Un compagnon de jeu pour RuneScape : Dragonwilds, le jeu de survie de Jagex, dans l’esprit de Flameborn.',
-    embleme: 'dragon',
-    tags: ['Jeu de survie', 'Compagnon'],
-  },
-  {
     id: 'flameborn',
     nom: 'Flameborn',
     etiquette: 'Site de jeu vidéo',
-    resume: 'La base de données française d’Enshrouded : recettes, calculateur de craft, carte, objets et quêtes.',
+    resume: 'La base de données française d’Enshrouded\u00a0: recettes, calculateur de craft, carte, objets et quêtes.',
     href: 'https://flameborn.fr',
     embleme: 'flamme',
     tags: ['Enshrouded', 'Calculateur de craft', 'Carte'],

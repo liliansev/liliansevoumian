@@ -969,8 +969,8 @@ dernières colonnes, plutôt que de laisser un trou à droite.
   et un au pied de la liste : c'est l'objet lui-même qui en a, comme une
   filmographie ou les questions d'une FAQ. Ce n'est pas une licence pour
   ranger une autre liste derrière des filets.
-- **Pas de vignette** : deux des quatre projets n'ont pas encore de page à
-  montrer, et un dessin à leur place n'aurait été qu'un ornement.
+- **Pas de vignette** : un projet encore sans page doit pouvoir y entrer
+  sans qu'un dessin, qui ne serait qu'un ornement, tienne sa place.
 - Un projet en ligne est un lien vers son site : au survol (pointeur fin), son
   titre prend la pêche et glisse de 0,5rem (600 ms, `ease-out-expo`) ;
   l'adresse prend la pêche au survol et au focus. Un projet sans adresse n'est
