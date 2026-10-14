@@ -1,32 +1,37 @@
 ---
 /*
- * voix : ce que disent ceux qui ont travaillé avec Lilian, comme les
- * intervenants d'un documentaire.
+ * voix : ce que disent ceux qui ont travaillé avec Lilian, une voix à la fois.
  *
- * À gauche, le plan reste : Lilian au micro de La Capsule, qui sourit. À
- * droite, les trois intervenants passent l'un après l'autre, chacun avec son
- * sous-titre et son incrustation. Leurs mots sont en blanc ; la pêche claire
- * reste la voix de Lilian. Dans l'incrustation, le portrait est en rond et en
- * noir et blanc pour que les trois photos (prises n'importe où) se
- * ressemblent, le nom et le rôle sous le trait pêche. Les
- * citations et leurs coupes sont celles de `Testimonials.astro` et de l'ancien
- * `home-voices.astro` : on ne retire que des phrases entières, on ne reformule
- * rien. Aucune ne porte de chiffre : les chiffres sont dans les cas clients,
- * et le lien du bas y mène.
+ * Le chapitre « Ils en parlent » de l'accueil « Le documentaire ». Une seule
+ * citation occupe la scène, en grand ; les trois personnes sont à côté, sur un
+ * rail, chacune avec son portrait, son nom et son rôle, et un trait pêche
+ * contre celle qui parle. On change de voix en choisissant un nom ; rien
+ * n'avance seul. C'est la forme de l'ancien `home-voices.astro`, que Lilian
+ * préférait (14 octobre 2026 : « les avis clients c'était mieux sur l'ancien
+ * design ») à la pile de trois sous-titres à côté d'un plan de La Capsule.
+ *
+ * Leurs mots sont en blanc ; la pêche claire reste la voix de Lilian. Les
+ * citations et leurs coupes sont celles de `Testimonials.astro` : on ne retire
+ * que des phrases entières, on ne reformule rien. Aucune ne porte de chiffre :
+ * les chiffres sont dans les cas clients, et le lien sous le rail y mène.
+ *
+ * Sans script, les trois citations se lisent à la suite, chacune signée. En
+ * mouvement réduit, la citation change sans fondu.
  */
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import LinkCTA from '../LinkCTA.astro';
 import Chapitre from './chapitre.astro';
-import sourireImg from '../../assets/documentaire/capsule-sourire.jpg';
 import ismailImg from '../../assets/testimonials/ismail.jpeg';
 import alexisImg from '../../assets/testimonials/alexis.jpeg';
 import benjaminImg from '../../assets/testimonials/benjamin.png';
 
 const voix = [
+  /* La première voix dit ce pour quoi on vient : l'expertise en
+     automatisation. */
   {
     citation:
-      'J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.',
+      'J’ai la chance d’avoir collaboré à de nombreuses reprises avec\u00a0Lilian. Je peux témoigner de son expertise en automatisation.',
     nom: 'Alexis Kovalenko',
     role: 'Cofondateur, Contournement',
     image: alexisImg,
@@ -38,7 +43,7 @@ const voix = [
     image: ismailImg,
   },
   {
-    citation: 'Les projets qu’il prend en charge sont un succès.',
+    citation: 'Les projets qu’il prend en\u00a0charge sont un succès.',
     nom: 'Benjamin Potet',
     role: 'Solution Architect Customer Experience, Make',
     image: benjaminImg,
@@ -53,172 +58,364 @@ const nombreDeCas = nombres[cas] ?? String(cas);
 ---
 
 <Chapitre id="temoignages" nom="Ils en parlent" lueur="peche braise" titre="On a travaillé <mark>ensemble.</mark>">
-  <div class="voix">
-    <figure class="voix__plan plan reveal">
-      <div class="voix__cadre plan__cadre media-ouvre">
-        <Image
-          src={sourireImg}
-          alt="Lilian sourit au micro, pendant un enregistrement de podcast."
-          widths={[320, 640, 880]}
-          sizes="(min-width: 1024px) 26rem, 80vw"
-          loading="lazy"
-        />
-        <p class="incrustation"><b>Lilian Sevoumian</b><span>à La Capsule</span></p>
-      </div>
-    </figure>
-
-    <ul class="voix__intervenants" role="list">
-      {voix.map((v) => (
-        <li class="voix__intervenant reveal">
-          <figure>
-            <blockquote>«&nbsp;{v.citation}&nbsp;»</blockquote>
-            <figcaption class="voix__incrustation">
-              <span class="voix__rond">
-                <Image src={v.image} alt="" width={112} height={112} format="webp" quality={80} class="voix__portrait" loading="lazy" />
-              </span>
-              <span class="voix__qui">
-                <b>{v.nom}</b>
-                <span>{v.role}</span>
-              </span>
-            </figcaption>
-          </figure>
-        </li>
+  <div class="voix reveal" data-voix>
+    <div class="voix__rail" role="tablist" aria-label="Qui parle">
+      {voix.map((v, i) => (
+        <button
+          type="button"
+          class="voix__qui"
+          role="tab"
+          id={`voix-onglet-${i}`}
+          aria-controls={`voix-citation-${i}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+        >
+          <Image
+            src={v.image}
+            alt=""
+            width={88}
+            height={88}
+            format="webp"
+            quality={82}
+            class="voix__portrait"
+            loading="lazy"
+          />
+          <span class="voix__nom">{v.nom}</span>
+          <span class="voix__role">{v.role}</span>
+        </button>
       ))}
-    </ul>
+    </div>
+
+    {/* `tabindex="0"` : un panneau sans élément focalisable doit pouvoir
+        recevoir le focus, pour qu'on y arrive depuis son onglet. Avec le
+        script, seul le panneau montré le garde (voir `choisir`). */}
+    {voix.map((v, i) => (
+      <figure
+        class="voix__citation"
+        role="tabpanel"
+        id={`voix-citation-${i}`}
+        aria-labelledby={`voix-onglet-${i}`}
+        tabindex="0"
+        data-actif={i === 0 ? '' : undefined}
+      >
+        <blockquote>«&nbsp;{v.citation}&nbsp;»</blockquote>
+        <figcaption><b>{v.nom}</b>, {v.role}</figcaption>
+      </figure>
+    ))}
+
+    {/* La sortie vers les cas, discrète, dans la colonne du rail. */}
+    <p class="voix__suite">
+      <LinkCTA href="/cas-clients">Lire les {nombreDeCas} cas clients, avec leurs chiffres</LinkCTA>
+    </p>
   </div>
-  <p class="voix__suite reveal">
-    <LinkCTA href="/cas-clients">Lire les {nombreDeCas} cas clients, chiffres à l’appui</LinkCTA>
-  </p>
 </Chapitre>
 
 <style>
+  /* ── Sans script : trois citations à la suite, chacune signée. Le rail, qui
+        ne servirait à rien, n'est pas montré. ── */
   .voix {
     display: grid;
-    gap: var(--spacing-bloc) var(--spacing-gouttiere);
-  }
-
-  .voix__plan {
-    width: min(100%, 22rem);
-    margin-inline: auto;
-  }
-
-  .voix__cadre {
-    aspect-ratio: 880 / 997;
-  }
-
-  .voix__intervenants {
-    display: grid;
-    gap: var(--spacing-section-y);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  /* Sur un écran large, le plan reste pendant que les intervenants passent. */
-  @media (min-width: 1024px) {
-    .voix {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-      align-items: start;
-    }
-
-    .voix__plan {
-      position: sticky;
-      top: calc(var(--spacing-barre) + 2rem);
-      width: 100%;
-      max-width: 26rem;
-    }
-
-    .voix__intervenants {
-      padding-block: clamp(2rem, 10svh, 6rem);
-    }
-  }
-
-  .voix__intervenant {
-    max-width: none;
-  }
-
-  .voix__intervenant figure {
-    display: grid;
-    justify-items: center;
     gap: var(--spacing-groupe);
-    margin: 0;
-    text-align: center;
   }
 
-  /* Le sous-titre d'un intervenant : centré comme ceux de Lilian, en blanc. */
-  .voix blockquote {
-    max-width: 30ch;
+  .voix:not([data-pret]) .voix__rail {
+    display: none;
+  }
+
+  /* L'arrondi ne se voit qu'au focus clavier : il arrondit l'anneau. */
+  .voix__citation {
+    margin: 0;
+    border-radius: var(--radius-xs);
+  }
+
+  .voix__citation blockquote {
+    max-width: 24ch;
     margin: 0;
     color: var(--color-ink);
-    font-size: var(--text-title-lg);
+    font-family: var(--font-display);
+    font-size: var(--text-phrase);
     font-weight: 500;
-    line-height: 1.3;
-    letter-spacing: -0.015em;
+    line-height: var(--leading-phrase);
+    letter-spacing: var(--tracking-phrase);
     text-wrap: balance;
   }
 
-  .voix__incrustation {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.875rem;
-    padding: 0.75rem 1rem 0.75rem 0.75rem;
-    border-radius: var(--radius-sm);
-    background: color-mix(in srgb, var(--color-night-deep) 74%, transparent);
-    text-align: left;
-    position: relative;
+  .voix__citation figcaption {
+    margin-top: 0.75rem;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
   }
 
-  /* Le trait pêche de l'incrustation. */
-  .voix__incrustation::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0.75rem;
-    width: 1.75rem;
-    height: 2px;
-    border-radius: var(--radius-full);
-    background: var(--color-peche);
-  }
-
-  /* Le portrait en rond, un peu agrandi dans son cadre : une des photos
-     arrive déjà découpée en rond sur fond blanc, et son bord ne doit pas se
-     voir. */
-  .voix__rond {
-    flex: none;
-    width: 3rem;
-    height: 3rem;
-    overflow: clip;
-    border-radius: var(--radius-full);
-    background: var(--color-surface-low);
-  }
-
-  .voix__rond :global(.voix__portrait) {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.12);
-    filter: grayscale(1) contrast(1.05) brightness(0.92);
-  }
-
-  .voix__qui {
-    display: grid;
-    gap: 0.125rem;
-    line-height: 1.3;
-  }
-
-  .voix__qui b {
-    color: var(--color-ink);
+  .voix__citation figcaption b {
+    color: var(--color-ink-mid);
     font-weight: 500;
   }
 
-  .voix__qui span {
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
+  .voix__suite {
+    margin: 0;
   }
 
-  .voix__suite {
-    margin: var(--spacing-bloc) 0 0;
-    text-align: center;
+  /* ── Avec script : une scène à gauche, le rail et la sortie à droite. Les
+        trois citations occupent la même case, la scène a donc toujours la
+        hauteur de la plus longue et rien ne bouge autour quand la voix
+        change. ── */
+  .voix[data-pret] {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    column-gap: var(--spacing-gouttiere);
+    row-gap: var(--spacing-lie);
+    align-items: start;
+  }
+
+  .voix[data-pret] .voix__citation {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    visibility: hidden;
+    opacity: 0;
+    filter: blur(10px);
+    transition:
+      opacity 420ms var(--ease-out-quint),
+      filter 420ms var(--ease-out-quint),
+      visibility 0s linear 420ms;
+  }
+
+  .voix[data-pret] .voix__citation[data-actif] {
+    visibility: visible;
+    opacity: 1;
+    filter: none;
+    transition-delay: 120ms, 120ms, 0s;
+  }
+
+  /* Le rail dit déjà qui parle : la signature sous la citation ferait doublon. */
+  .voix[data-pret] .voix__citation figcaption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .voix__rail {
+    grid-column: 2;
+    grid-row: 1;
+    display: grid;
+  }
+
+  /* Sous le rail, alignée sur les noms : sous la citation, elle flottait à
+     150 ou 210 px d'elle quand la citation était courte. */
+  .voix[data-pret] .voix__suite {
+    grid-column: 2;
+    grid-row: 2;
+    padding-left: 1.5rem;
+  }
+
+  .voix__qui {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+    min-height: 76px;
+    padding: 0.75rem 0.75rem 0.75rem 1.5rem;
+    border: 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: transparent;
+    color: var(--color-ink-mid);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+
+  /* Le rail : un segment par voix. Celui de la voix qui parle est en pêche. */
+  .voix__qui::before,
+  .voix__qui::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    width: 2px;
+    border-radius: var(--radius-full);
+  }
+
+  .voix__qui::before {
+    background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+
+  .voix__qui::after {
+    background: var(--color-peche);
+    transform: scaleY(0);
+  }
+
+  .voix__qui[aria-selected='true'] {
+    color: var(--color-ink);
+  }
+
+  .voix__qui[aria-selected='true']::after {
+    transform: none;
+  }
+
+  .voix__qui :global(.voix__portrait) {
+    grid-row: 1 / span 2;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    opacity: 0.55;
+    transition: opacity var(--duration-default) var(--ease-out-quint);
+  }
+
+  .voix__qui[aria-selected='true'] :global(.voix__portrait) {
+    opacity: 1;
+  }
+
+  .voix__nom {
+    align-self: end;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .voix__role {
+    align-self: start;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    line-height: 1.35;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .voix__qui:hover {
+      color: var(--color-ink);
+    }
+
+    .voix__qui:hover :global(.voix__portrait) {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .voix[data-pret] .voix__citation {
+      filter: none;
+      transition: none;
+    }
+  }
+
+  /* ── Une colonne : le rail passe AU-DESSUS de la citation, en trois onglets
+        côte à côte (un portrait, un nom), leur segment couché dessous. Posé
+        après elle, il se retrouvait à 137 px d'une citation courte : les trois
+        partagent la hauteur de la plus longue. Le rôle, qui ne tient plus dans
+        l'onglet, revient sous la citation avec la signature. ── */
+  @media (max-width: 899px) {
+    .voix[data-pret] {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
+      row-gap: var(--spacing-groupe);
+    }
+
+    .voix__rail {
+      grid-column: 1;
+      grid-row: 1;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 0.75rem;
+    }
+
+    .voix[data-pret] .voix__citation {
+      grid-row: 2;
+    }
+
+    .voix[data-pret] .voix__suite {
+      grid-column: 1;
+      grid-row: 3;
+      padding-left: 0;
+    }
+
+    .voix[data-pret] .voix__citation figcaption {
+      position: static;
+      width: auto;
+      height: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+    }
+
+    .voix__qui {
+      grid-template-columns: minmax(0, 1fr);
+      align-content: start;
+      justify-items: start;
+      row-gap: 0.5rem;
+      min-height: 0;
+      padding: 0 0 0.75rem;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    }
+
+    .voix__qui::before,
+    .voix__qui::after {
+      top: auto;
+      right: 0;
+      bottom: 0;
+      width: auto;
+      height: 2px;
+    }
+
+    .voix__qui :global(.voix__portrait) {
+      grid-row: auto;
+    }
+
+    .voix__nom {
+      font-size: var(--text-body-sm);
+    }
+
+    .voix__role {
+      display: none;
+    }
   }
 </style>
+
+<script>
+  /* Les trois voix sont des onglets : flèches pour passer de l'une à l'autre,
+     une seule dans l'ordre de tabulation. La voix ne change que si le visiteur
+     en choisit une. */
+  const racine = document.querySelector<HTMLElement>('[data-voix]');
+  if (racine) {
+    const onglets = [...racine.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const citations = [...racine.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+
+    const choisir = (rang: number, parLaMain = false) => {
+      const actif = (rang + onglets.length) % onglets.length;
+      onglets.forEach((onglet, i) => {
+        onglet.setAttribute('aria-selected', String(i === actif));
+        onglet.tabIndex = i === actif ? 0 : -1;
+      });
+      citations.forEach((citation, i) => {
+        citation.toggleAttribute('data-actif', i === actif);
+        /* Seul le panneau montré se prend à la tabulation : celui qui s'efface
+           reste visible 420 ms, et y entrer faisait perdre le focus. */
+        citation.tabIndex = i === actif ? 0 : -1;
+      });
+      if (parLaMain) onglets[actif].focus({ preventScroll: true });
+    };
+
+    const TOUCHES: Record<string, (i: number) => number> = {
+      ArrowDown: (i) => i + 1,
+      ArrowRight: (i) => i + 1,
+      ArrowUp: (i) => i - 1,
+      ArrowLeft: (i) => i - 1,
+      Home: () => 0,
+      End: () => onglets.length - 1,
+    };
+
+    onglets.forEach((onglet, i) => {
+      onglet.addEventListener('click', () => choisir(i, true));
+      onglet.addEventListener('keydown', (e) => {
+        const vers = TOUCHES[e.key];
+        if (!vers) return;
+        e.preventDefault();
+        choisir(vers(i), true);
+      });
+    });
+
+    racine.dataset.pret = '';
+    choisir(0);
+  }
+</script>

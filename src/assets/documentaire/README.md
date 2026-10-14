@@ -3,14 +3,9 @@
 Provenance de chaque image de ce dossier. Toutes montrent Lilian pour de vrai ;
 aucune n'est générée ni retouchée.
 
-- `capsule-sourire.jpg` : capture d'écran envoyée par Lilian le 14 octobre
-  2026, tirée de l'épisode #125 de Radio Contournement (enregistré à La
+- `studio-micro.jpg` : épisode #125 de Radio Contournement (enregistré à La
   Capsule, le studio qu'il a cofondé, publié le 4 avril 2024 sur la chaîne
-  YouTube Contournement). La capture montrait l'écran partagé de l'émission ;
-  seule la moitié droite, où Lilian est assis (casquette, t-shirt blanc), est
-  gardée (recadrage ffmpeg `crop=880:997:892:0`). L'autre personne n'apparaît
-  pas.
-- `studio-micro.jpg` : même émission, capture 4K à 28 min 31 s
+  YouTube Contournement), capture 4K à 28 min 31 s
   (https://www.youtube.com/watch?v=FUUPMDzM-wk&t=1711s), plan individuel de
   Lilian au micro. Réduite à 2560 × 1440. Envoyée par Lilian le 14 octobre
   2026 (dossier « photos-site »).
