@@ -1,13 +1,10 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation.astro';
-import Footer from '../../components/Footer.astro';
-import TeteDePage from '../../components/tete-de-page.astro';
+import Carnet from '../../layouts/Carnet.astro';
 import Inscription from '../../components/blog/inscription.astro';
-import { articlesPublies, dateEnClair, espaces, iso, minutesDeLecture } from '../../lib/blog';
+import { articlesPublies, dateEnClair, espaces, iso } from '../../lib/blog';
 
-// Le blog : ce qui partait en newsletter, en public. Une liste, du plus
-// récent au plus ancien, puis l'inscription. Pas de bouton d'appel ici.
+// Le blog : ce qui partait en newsletter, en public. Une phrase, la liste du
+// plus récent au plus ancien, puis l'inscription. Rien d'autre.
 const articles = (await articlesPublies()).map((article) => ({
   slug: article.id,
   titre: espaces(article.data.title),
@@ -15,7 +12,6 @@ const articles = (await articlesPublies()).map((article) => ({
   description: espaces(article.data.description),
   date: article.data.date,
   brouillon: article.data.draft,
-  minutes: minutesDeLecture(article.body),
 }));
 
 const breadcrumbs = [
@@ -40,129 +36,77 @@ const collectionSchema = {
 };
 ---
 
-<Layout
+<Carnet
   title="Blog · Lilian Sevoumian"
   description="Des idées, des essais et ce que j’apprends en construisant. Ce qui partait en newsletter, publié en clair."
   breadcrumbs={breadcrumbs}
   articleSchema={collectionSchema}
 >
-  <Navigation ctaSource="blog_index_nav" />
+  <h1 class="blog__titre">Blog</h1>
+  <p class="blog__intro" set:html={espaces('Des idées, des essais, ce que j’apprends en construisant. Ce que j’aurais mis dans une newsletter, écrit ici pour tout le monde.')} />
 
-  <main id="main-content">
-    <TeteDePage
-      titre="Ce que je pense, <mark>en clair.</mark>"
-      chapo="Des idées, des essais, ce que j’apprends en construisant. Ce que j’aurais mis dans une newsletter, publié ici pour tout le monde."
-    />
+  {articles.length === 0 ? (
+    <p class="blog__vide">Le premier article arrive bientôt.</p>
+  ) : (
+    <ol class="blog__liste" role="list">
+      {articles.map((article) => (
+        <li class="blog__article">
+          <time datetime={iso(article.date)} class="blog__date">{dateEnClair(article.date)}</time>
+          {article.brouillon && <span class="blog__brouillon"> · brouillon</span>}
+          <h2 class="blog__nom"><a href={`/blog/${article.slug}`} set:html={article.titre} /></h2>
+          <p class="blog__resume" set:html={article.description} />
+        </li>
+      ))}
+    </ol>
+  )}
 
-    <section data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
-      <div class="mx-auto max-w-[1200px]">
-        {articles.length === 0 ? (
-          <p class="m-0 text-[length:var(--text-body-large)] text-[var(--color-ink-mid)]">
-            Le premier article arrive bientôt. Inscrivez-vous juste en dessous pour le recevoir.
-          </p>
-        ) : (
-          <ul class="articles" role="list">
-            {articles.map((article) => (
-              <li>
-                <article class="article">
-                  <p class="article__meta">
-                    <time datetime={iso(article.date)}>{dateEnClair(article.date)}</time>
-                    <span>{article.minutes}&nbsp;min de lecture</span>
-                    {article.brouillon && <span class="article__brouillon">Brouillon</span>}
-                  </p>
-                  <h2 class="article__titre">
-                    <a href={`/blog/${article.slug}`} class="article__lien">{article.titre}</a>
-                  </h2>
-                  <p class="article__resume">{article.description}</p>
-                </article>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </section>
-
-    <Inscription />
-  </main>
-
-  <Footer />
-</Layout>
+  <Inscription />
+</Carnet>
 
 <style>
-  .articles {
-    display: grid;
-    row-gap: var(--spacing-bloc);
+  .blog__titre {
     margin: 0;
+    font-size: 2.25rem;
+    line-height: 1.2;
+  }
+
+  .blog__intro {
+    margin: 1rem 0 0;
+    color: var(--carnet-gris);
+  }
+
+  .blog__vide {
+    margin: 3.5rem 0 0;
+    color: var(--carnet-gris);
+  }
+
+  .blog__liste {
+    display: grid;
+    gap: 2.75rem;
+    margin: 3.5rem 0 0;
     padding: 0;
     list-style: none;
   }
 
-  .articles > li {
-    max-width: none;
+  .blog__date,
+  .blog__brouillon {
+    color: var(--carnet-gris);
+    font-size: 0.9375rem;
+    font-variant-numeric: oldstyle-nums;
   }
 
-  .article {
-    position: relative;
-    max-width: 46rem;
+  .blog__brouillon {
+    font-style: italic;
   }
 
-  .article__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1.25rem;
-    margin: 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
+  .blog__nom {
+    margin: 0.2rem 0 0;
+    font-size: 1.375rem;
+    line-height: 1.35;
   }
 
-  .article__brouillon {
-    color: var(--color-accent-text);
-  }
-
-  .article__titre {
-    margin: var(--spacing-colle) 0 0;
-    font-size: var(--text-title-lg);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-  }
-
-  .article__lien {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  /* Toute la rangée se clique ; seul le titre est le nom du lien. */
-  .article__lien::after {
-    content: '';
-    position: absolute;
-    inset: -0.75rem;
-    border-radius: var(--radius-md);
-  }
-
-  .article__resume {
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink-mid);
-    line-height: var(--leading-body);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .article:hover .article__lien {
-      text-decoration: underline;
-      text-decoration-color: var(--color-accent-text);
-      text-underline-offset: 0.18em;
-    }
-  }
-
-  @media (any-hover: hover), (any-pointer: fine) {
-    .article__lien:focus-visible {
-      outline: none;
-    }
-
-    .article__lien:focus-visible::after {
-      outline: 2px solid var(--color-focus);
-      outline-offset: 2px;
-    }
+  .blog__resume {
+    margin: 0.4rem 0 0;
+    color: var(--carnet-gris);
   }
 </style>

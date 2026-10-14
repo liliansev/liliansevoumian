@@ -1,11 +1,8 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Navigation from '../../components/Navigation.astro';
-import Footer from '../../components/Footer.astro';
-import TeteDePage from '../../components/tete-de-page.astro';
+import Carnet from '../../layouts/Carnet.astro';
 import Inscription from '../../components/blog/inscription.astro';
 import { render } from 'astro:content';
-import { articlesPublies, espaces, iso, type Article } from '../../lib/blog';
+import { articlesPublies, dateEnClair, espaces, iso, minutesDeLecture, type Article } from '../../lib/blog';
 
 export async function getStaticPaths() {
   const articles = await articlesPublies();
@@ -23,6 +20,7 @@ const corps = espaces(HTML_RENDU);
 
 const publie = iso(a.date);
 const misAJour = a.updated ? iso(a.updated) : undefined;
+const minutes = minutesDeLecture(article.body);
 const url = `https://liliansevoumian.fr/blog/${article.id}`;
 
 const breadcrumbs = [
@@ -48,7 +46,7 @@ const articleSchema = {
 };
 ---
 
-<Layout
+<Carnet
   title={`${a.title} · Lilian Sevoumian`}
   description={a.description}
   ogType="article"
@@ -58,161 +56,143 @@ const articleSchema = {
   breadcrumbs={breadcrumbs}
   noindex={a.draft}
 >
-  <Navigation ctaSource="blog_article_nav" />
+  <article>
+    <header class="billet__tete">
+      <p class="billet__meta">
+        <time datetime={publie}>{dateEnClair(a.date)}</time>
+        <span aria-hidden="true"> · </span>{minutes}&nbsp;min de lecture
+        {misAJour && a.updated && <><span aria-hidden="true"> · </span>mis à jour le <time datetime={misAJour}>{dateEnClair(a.updated)}</time></>}
+      </p>
+      <h1 class="billet__titre" set:html={espaces(a.title)} />
+    </header>
 
-  <main id="main-content" tabindex="-1" class="outline-none">
-    <TeteDePage
-      titre={espaces(a.title)}
-      titreLargeur="22ch"
-      chapo={espaces(a.description)}
-      retour={{ href: '/blog', libelle: 'Tous les articles' }}
-      publie={publie}
-      misAJour={misAJour}
-    />
+    <div class="billet__corps" set:html={corps} />
+  </article>
 
-    <section data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
-      <div class="mx-auto max-w-[1200px]">
-        <div class="article-prose" set:html={corps} />
-      </div>
-    </section>
+  <p class="billet__retour"><a href="/blog">← Tous les articles</a></p>
 
-    <Inscription titre="Recevoir le prochain article par e-mail." />
-  </main>
-
-  <Footer />
-</Layout>
+  <Inscription titre="Recevoir le prochain article par e-mail." />
+</Carnet>
 
 <style>
-  /* ── La colonne de lecture : même mesure et mêmes tailles que le corps
-        d'un cas client. ── */
-  .article-prose {
-    max-width: 46rem;
+  .billet__meta {
+    margin: 0;
+    color: var(--carnet-gris);
+    font-size: 0.9375rem;
+    font-variant-numeric: oldstyle-nums;
   }
 
-  .article-prose :global(h2) {
-    margin: var(--spacing-bloc) 0 var(--spacing-lie);
-    font-size: var(--text-title);
+  .billet__titre {
+    margin: 0.5rem 0 0;
+    font-size: 2.25rem;
     line-height: 1.2;
+    text-wrap: balance;
   }
 
-  .article-prose :global(h3) {
-    margin: var(--spacing-groupe) 0 var(--spacing-colle);
+  .billet__corps {
+    margin-top: 2.5rem;
+    hanging-punctuation: first;
   }
 
-  .article-prose :global(:is(h2, h3):first-child) {
-    margin-top: 0;
+  .billet__corps :global(p) {
+    margin: 0 0 1.15em;
   }
 
-  .article-prose :global(p) {
-    margin: 0 0 1.1em;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-large);
-    line-height: var(--leading-body);
+  .billet__corps :global(h2) {
+    margin: 2.4em 0 0.6em;
+    font-size: 1.375rem;
+    line-height: 1.35;
   }
 
-  .article-prose :global(strong) {
-    color: var(--color-ink);
-    font-weight: 600;
+  .billet__corps :global(h3) {
+    margin: 2em 0 0.5em;
+    font-size: 1.1875rem;
+    font-style: italic;
+    font-weight: 400;
   }
 
-  .article-prose :global(:is(ul, ol)) {
-    display: grid;
-    gap: 0.6em;
-    margin: 0 0 1.3em;
-    padding: 0;
-    list-style: none;
-  }
-
-  .article-prose :global(li) {
-    position: relative;
+  .billet__corps :global(:is(ul, ol)) {
+    margin: 0 0 1.15em;
     padding-left: 1.4em;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-large);
-    line-height: var(--leading-body);
   }
 
-  .article-prose :global(ul > li::before) {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.7em;
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-full);
-    background: var(--color-accent-text);
+  .billet__corps :global(ul) {
+    list-style: disc;
   }
 
-  .article-prose :global(ol) {
-    counter-reset: rang;
+  .billet__corps :global(ol) {
+    list-style: decimal;
   }
 
-  .article-prose :global(ol > li) {
-    counter-increment: rang;
+  .billet__corps :global(li) {
+    margin: 0 0 0.35em;
+    padding-left: 0.2em;
   }
 
-  .article-prose :global(ol > li::before) {
-    content: counter(rang) '.';
-    position: absolute;
-    left: 0;
-    color: var(--color-ink-low);
-    font-variant-numeric: tabular-nums;
+  .billet__corps :global(li::marker) {
+    color: var(--carnet-gris);
   }
 
-  /* Une citation : un trait à gauche, le texte à l'encre. */
-  .article-prose :global(blockquote) {
-    margin: 0 0 var(--spacing-groupe);
-    padding: 0.25rem 0 0.25rem var(--spacing-lie);
-    border-left: 2px solid var(--color-accent-text);
+  .billet__corps :global(blockquote) {
+    margin: 1.6em 0;
+    padding: 0 0 0 1.2em;
+    border-left: 1px solid var(--carnet-trait);
+    color: var(--carnet-gris);
+    font-style: italic;
   }
 
-  .article-prose :global(blockquote p) {
-    color: var(--color-ink);
-  }
-
-  .article-prose :global(:is(p, ul, ol, blockquote):last-child) {
+  .billet__corps :global(blockquote p:last-child) {
     margin-bottom: 0;
   }
 
-  .article-prose :global(a) {
-    padding-bottom: 1px;
-    border-bottom: 2px solid var(--color-accent-text);
-    color: var(--color-ink);
-    text-decoration: none;
+  .billet__corps :global(strong) {
+    font-weight: 600;
   }
 
-  .article-prose :global(a:hover) {
-    border-bottom-color: var(--color-ink);
+  .billet__corps :global(code) {
+    padding: 0.05em 0.3em;
+    border-radius: 3px;
+    background: rgba(35, 34, 31, 0.06);
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.85em;
   }
 
-  .article-prose :global(code) {
-    padding: 0.1em 0.35em;
-    border-radius: var(--radius-xs);
-    background: var(--color-surface-low);
-    font-size: 0.9em;
-  }
-
-  .article-prose :global(pre) {
+  .billet__corps :global(pre) {
     overflow-x: auto;
-    margin: 0 0 1.3em;
-    padding: var(--spacing-lie);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-low) !important;
+    margin: 1.6em 0;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--carnet-trait);
+    border-radius: 3px;
+    background: rgba(35, 34, 31, 0.03) !important;
+    color: var(--carnet-encre) !important;
+    font-size: 0.85em;
+    line-height: 1.55;
   }
 
-  .article-prose :global(pre code) {
+  .billet__corps :global(pre code) {
     padding: 0;
     background: none;
+    font-size: inherit;
   }
 
-  .article-prose :global(img) {
+  .billet__corps :global(pre span) {
+    color: inherit !important;
+  }
+
+  .billet__corps :global(img) {
+    display: block;
     max-width: 100%;
     height: auto;
-    border-radius: var(--radius-md);
+    margin: 2em 0;
   }
 
-  .article-prose :global(hr) {
-    margin: var(--spacing-bloc) 0;
-    border: 0;
-    border-top: 1px solid var(--color-divider);
+  .billet__corps :global(hr) {
+    width: 4rem;
+    margin: 2.5em auto;
+  }
+
+  .billet__retour {
+    margin: 3rem 0 0;
+    font-size: 1rem;
   }
 </style>

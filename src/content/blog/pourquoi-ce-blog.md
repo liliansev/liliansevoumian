@@ -1,6 +1,6 @@
 ---
-title: "Pourquoi j'écris ici"
-description: "Ce que je mettais dans la newsletter, je le publie désormais ici, en clair. Des idées, des essais et ce que j'apprends en construisant."
+title: "Pourquoi j’écris ici"
+description: "Ce que je mettais dans la newsletter, je le publie désormais ici, en clair. Des idées, des essais et ce que j’apprends en construisant."
 date: 2026-10-14
 ---
 

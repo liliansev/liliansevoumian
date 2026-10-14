@@ -4,9 +4,9 @@
  *
  * Même liste et même route que la newsletter de l'accueil (`/api/newsletter`,
  * voir `lib/newsletter-signup.ts`) : le blog est la newsletter, en public.
- * Une phrase, un champ, un bouton. Rien à vendre.
+ * Écrit dans la tenue du carnet (voir `layouts/Carnet.astro`) : une phrase,
+ * une ligne où écrire son adresse, un mot pour envoyer. Rien à vendre.
  */
-import { Icon } from 'astro-icon/components';
 
 interface Props {
   /** Le titre du bloc. */
@@ -16,75 +16,90 @@ interface Props {
 const { titre = 'Recevoir les prochains articles par e-mail.' } = Astro.props;
 ---
 
-<section aria-labelledby="inscription-titre" data-section class="inscription px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
-  <div class="mx-auto max-w-[1200px]">
-    <div class="inscription__cadre">
-      <h2 id="inscription-titre" class="inscription__titre">{titre}</h2>
-      <p class="inscription__texte">Un mail quand un article sort. Pas de publicité, désinscription en&nbsp;un&nbsp;clic.</p>
-      <form data-inscription action="/api/newsletter" method="post" class="inscription__form">
-        <label for="inscription-email" class="sr-only">Votre adresse e-mail</label>
-        <input id="inscription-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@exemple.fr" aria-describedby="inscription-statut" class="inscription__champ" />
-        <div hidden aria-hidden="true"><label for="inscription-website">Votre site</label><input id="inscription-website" name="website" tabindex="-1" autocomplete="off" /></div>
-        {/* Désactivé dans le HTML : sans le script, un envoi natif afficherait
-            la réponse JSON brute du serveur. */}
-        <button type="submit" disabled class="btn-primary inscription__bouton">S’inscrire <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></button>
-      </form>
-      <p id="inscription-statut" role="status" aria-live="polite" aria-atomic="true" class="inscription__statut" hidden></p>
-      <noscript><p class="inscription__statut">Activez JavaScript pour vous inscrire.</p></noscript>
-    </div>
-  </div>
+<section id="inscription" aria-labelledby="inscription-titre" class="inscription">
+  <h2 id="inscription-titre" class="inscription__titre">{titre}</h2>
+  <p class="inscription__texte">Un mail quand un article sort. Pas de publicité, désinscription en&nbsp;un&nbsp;clic.</p>
+  <form data-inscription action="/api/newsletter" method="post" class="inscription__form">
+    <label for="inscription-email" class="sr-only">Votre adresse e-mail</label>
+    <input id="inscription-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="votre adresse e-mail" aria-describedby="inscription-statut" class="inscription__champ" />
+    <div hidden aria-hidden="true"><label for="inscription-website">Votre site</label><input id="inscription-website" name="website" tabindex="-1" autocomplete="off" /></div>
+    {/* Désactivé dans le HTML : sans le script, un envoi natif afficherait
+        la réponse JSON brute du serveur. */}
+    <button type="submit" disabled class="inscription__bouton">S’inscrire</button>
+  </form>
+  <p id="inscription-statut" role="status" aria-live="polite" aria-atomic="true" class="inscription__statut" hidden></p>
+  <noscript><p class="inscription__statut">Activez JavaScript pour vous inscrire.</p></noscript>
 </section>
 
 <style>
-  .inscription__cadre {
-    max-width: 40rem;
-    padding: var(--spacing-panneau);
-    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface-low);
+  .inscription {
+    margin-top: 4.5rem;
+    padding-top: 2.25rem;
+    border-top: 1px solid var(--carnet-trait);
+    scroll-margin-top: 2rem;
   }
 
   .inscription__titre {
     margin: 0;
-    font-size: var(--text-title);
-    line-height: 1.2;
-    text-wrap: balance;
+    font-size: 1.1875rem;
+    line-height: 1.45;
   }
 
   .inscription__texte {
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink-mid);
-    line-height: 1.5;
+    margin: 0.3rem 0 0;
+    color: var(--carnet-gris);
   }
 
   .inscription__form {
-    display: grid;
-    gap: 0.75rem;
-    margin-top: var(--spacing-lie);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.25rem;
   }
 
+  /* Une ligne de cahier où écrire son adresse, pas un champ d'interface. */
   .inscription__champ {
+    flex: 1 1 15rem;
     min-width: 0;
-    min-height: 48px;
-    padding: 0 1.25rem;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
-    border-radius: var(--radius-full);
-    background: var(--color-paper);
-    color: var(--color-ink);
+    min-height: 44px;
+    padding: 0.35rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--carnet-gris);
+    border-radius: 0;
+    background: transparent;
+    color: var(--carnet-encre);
     font: inherit;
   }
 
   .inscription__champ::placeholder {
-    color: var(--color-ink-faint);
+    color: var(--carnet-trait);
+    opacity: 1;
   }
 
   .inscription__champ:focus-visible {
-    outline: 2px solid var(--color-focus);
-    outline-offset: 2px;
+    outline: none;
+    border-bottom-color: var(--carnet-encre);
+    box-shadow: 0 1px 0 var(--carnet-encre);
   }
 
   .inscription__bouton {
-    min-height: 48px;
+    min-height: 44px;
+    padding: 0.35rem 0;
+    border: 0;
+    background: none;
+    color: var(--carnet-encre);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--carnet-trait);
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .inscription__bouton:hover {
+    text-decoration-color: var(--carnet-encre);
   }
 
   .inscription__bouton:disabled {
@@ -92,20 +107,13 @@ const { titre = 'Recevoir les prochains articles par e-mail.' } = Astro.props;
   }
 
   .inscription__statut {
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
+    margin: 0.75rem 0 0;
+    color: var(--carnet-gris);
+    font-size: 1rem;
   }
 
   .inscription__statut[data-state='error'] {
-    color: var(--color-error);
-  }
-
-  @media (min-width: 40rem) {
-    .inscription__form {
-      grid-template-columns: minmax(0, 1fr) auto;
-    }
+    color: #9b2c1f;
   }
 </style>
 
@@ -129,7 +137,7 @@ const { titre = 'Recevoir les prochains articles par e-mail.' } = Astro.props;
   const status = document.querySelector<HTMLParagraphElement>('#inscription-statut');
   if (form && email && button && status) {
     button.disabled = false;
-    const originalButton = button.innerHTML;
+    const originalButton = button.textContent ?? 'S’inscrire';
     let submitting = false;
     form.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -163,7 +171,7 @@ const { titre = 'Recevoir les prochains articles par e-mail.' } = Astro.props;
           window.clearTimeout(minuterie);
           submitting = false;
           button.disabled = false;
-          button.innerHTML = originalButton;
+          button.textContent = originalButton;
           form.removeAttribute('aria-busy');
         }
       };
