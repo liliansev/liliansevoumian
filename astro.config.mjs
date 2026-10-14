@@ -71,6 +71,17 @@ for (const fichier of readdirSync(CAS_CLIENTS_DIR)) {
   lastmodParCas.set(`/cas-clients/${fichier.slice(0, -'.md'.length)}`, date.toISOString());
 }
 
+/* Les articles du blog aussi : leur `updated`, à défaut leur `date`. Les
+   fichiers en `_` ne sont pas des articles (voir `content.config.ts`). */
+const BLOG_DIR = new URL('./src/content/blog/', import.meta.url);
+for (const fichier of readdirSync(BLOG_DIR)) {
+  if (!fichier.endsWith('.md') || fichier.startsWith('_')) continue;
+  const frontmatter = readFileSync(new URL(fichier, BLOG_DIR), 'utf8').split(/^---\s*$/m)[1] ?? '';
+  const brut = (frontmatter.match(/^updated:\s*(.+)$/m) ?? frontmatter.match(/^date:\s*(.+)$/m))?.[1]?.trim();
+  const date = brut ? new Date(brut) : null;
+  if (date && !Number.isNaN(date.getTime())) lastmodParCas.set(`/blog/${fichier.slice(0, -'.md'.length)}`, date.toISOString());
+}
+
 /* Les pages-réponses portent aussi une date réelle : la prop `publie` de leur
    fichier, la même que celle de leur balisage et de leur en-tête. */
 const PAGES_DIR = new URL('./src/pages/', import.meta.url);
