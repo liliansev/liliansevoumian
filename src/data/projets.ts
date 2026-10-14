@@ -71,6 +71,7 @@ export const persos: Projet[] = [
     etiquette: 'Site de jeu vidéo',
     resume: 'La base de données française d’Enshrouded\u00a0: recettes, calculateur de craft, carte, objets et quêtes.',
     href: 'https://flameborn.fr',
+    image: '/sites-web/projects/flameborn-home.webp',
     embleme: 'flamme',
     tags: ['Enshrouded', 'Calculateur de craft', 'Carte'],
   },

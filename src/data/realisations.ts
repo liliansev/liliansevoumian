@@ -62,7 +62,8 @@ export const projects = {
  * Flameborn en est sorti le 1er octobre 2026 : flameborn.fr ne répondait plus
  * (zone DNS vide), et une vignette qui mène à un lien mort dessert la page. Sa
  * capture a quitté `public/sites-web/projects/` le 2 octobre 2026 ; elle reste
- * dans l'historique git pour le jour où le site revient.
+ * dans l'historique git pour le jour où le site revient. Elle est revenue le
+ * 14 octobre 2026, pour la filmographie de l'accueil (`data/projets.ts`).
  */
 export const projectList = [
   projects.lilian,

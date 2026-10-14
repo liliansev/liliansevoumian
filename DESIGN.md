@@ -960,17 +960,21 @@ filmographie d'un générique : un titre par ligne, en grand
 (`--text-headline`, interligne 1), son genre et ses mots-clés à côté
 (`--text-body-sm`, `ink-low`, séparés par un point médian), une phrase
 (`ink-mid`, `46ch`), l'adresse (`--text-body-sm`, `ink-low`, flèche). À
-partir de 900 px, trois colonnes `5fr / 4fr / 2fr` : le titre à gauche, le
-genre et la phrase au milieu, l'adresse à droite, alignés sur le haut du
-titre. Un projet sans adresse étend son genre et sa phrase sur les deux
-dernières colonnes, plutôt que de laisser un trou à droite.
+partir de 900 px, le titre à gauche, le genre, la phrase et l'adresse au
+milieu, alignés sur le haut du titre, et le photogramme à droite.
 
 - **Des filets entre les titres**, encre à 10 %, un au-dessus de chaque ligne
   et un au pied de la liste : c'est l'objet lui-même qui en a, comme une
   filmographie ou les questions d'une FAQ. Ce n'est pas une licence pour
   ranger une autre liste derrière des filets.
-- **Pas de vignette** : un projet encore sans page doit pouvoir y entrer
-  sans qu'un dessin, qui ne serait qu'un ornement, tienne sa place.
+- **Un photogramme au bout de la ligne** (demandé par Lilian le 14 octobre
+  2026) : la page d'accueil du site en petit, 16:10, rayon `md`, filet
+  d'encre à 12 %, lumière douce, calée en haut et à peine étalonnée comme les
+  captures d'« En ce moment ». À partir de 900 px, les colonnes deviennent
+  `4fr / 5fr / 3fr` : le titre, puis le genre, la phrase et l'adresse, puis
+  le photogramme ; sur téléphone, il ouvre la ligne. Au survol, il retrouve
+  ses couleurs et avance de 3 %. Un projet sans capture n'en a pas, et sa
+  phrase prend la colonne ; on ne dessine rien à sa place.
 - Un projet en ligne est un lien vers son site : au survol (pointeur fin), son
   titre prend la pêche et glisse de 0,5rem (600 ms, `ease-out-expo`) ;
   l'adresse prend la pêche au survol et au focus. Un projet sans adresse n'est
