@@ -6,8 +6,9 @@
  * moins vendeur ; on y voit ses derniers projets et ses projets perso
  * (RuneScape, DragonWild, ses sites de jeux vidéo, meilleurs.tools).
  *
- * PROVISOIRE. Les entrées marquées `provisoire` attendent ses textes et ses
- * liens : le titre est le sien, la phrase est à remplacer. Une entrée sans
+ * Les phrases de « Ce site », RuneScape et Dragonwilds ont été écrites pour
+ * lui le 14 octobre 2026, à sa demande (« invente pour les phrases ») : à
+ * corriger dès qu'il donne les siennes et leurs liens. Une entrée sans
  * `href` s'affiche sans lien. Rien n'est affirmé ici qui ne soit dans
  * PRODUCT.md (« Evidence on Hand ») ou donné par lui.
  */
@@ -44,11 +45,10 @@ export const enCours: Projet[] = [
     href: 'https://augmentes.fr',
   },
   {
-    id: 'projet-en-cours',
-    nom: 'Projet en cours',
+    id: 'ce-site',
+    nom: 'Ce site',
     etiquette: 'En cours',
-    resume: 'Le projet sur lequel je travaille cette semaine, en une phrase.',
-    provisoire: true,
+    resume: 'Je le transforme en vrai site personnel : mes projets, mes vidéos, et bientôt un blog.',
   },
 ];
 
@@ -66,15 +66,13 @@ export const persos: Projet[] = [
     id: 'runescape',
     nom: 'RuneScape',
     etiquette: 'Jeu vidéo',
-    resume: 'Un projet autour de RuneScape, en une phrase.',
-    provisoire: true,
+    resume: 'Un projet de fan autour de RuneScape, pour retrouver vite une information en pleine partie.',
   },
   {
     id: 'dragonwild',
-    nom: 'DragonWild',
+    nom: 'Dragonwilds',
     etiquette: 'Jeu vidéo',
-    resume: 'Un projet autour de DragonWild, en une phrase.',
-    provisoire: true,
+    resume: 'Un compagnon de jeu pour RuneScape : Dragonwilds, le jeu de survie de Jagex, dans l’esprit de Flameborn.',
   },
   {
     id: 'flameborn',
