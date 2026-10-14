@@ -51,7 +51,7 @@ export const metiers = [
     id: 'dashboards',
     nom: 'Dashboards et outils métiers',
     onglet: 'Dashboards',
-    phrase: 'Un dashboard qui dit où vous en êtes, un outil fait pour votre métier.',
+    phrase: 'Vos chiffres d’un coup d’œil, et des outils taillés pour votre métier.',
     texte:
       'Dashboards, portails clients et applications internes, de la conception aux évolutions.',
     note: 'Sur devis',
@@ -63,7 +63,7 @@ export const metiers = [
     onglet: 'Formations',
     phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
     texte:
-      'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou avec vos équipes, sur vos propres cas.',
+      'Make, n8n et l’IA, appris sur vos propres cas, en ligne ou avec vos équipes.',
     lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
   },
 ] as const;

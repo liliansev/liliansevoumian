@@ -20,6 +20,11 @@ const casClients = defineCollection({
     /* Le nom du client, seul : c'est le titre de sa ligne dans les projets
        clients de l'accueil (`documentaire/filmographie.astro`). */
     client: z.string().optional(),
+    /* Une phrase, à la première personne, pour cette même ligne : ce que
+       Lilian a construit, et le chiffre qui le dit. Elle ne dit rien que le
+       cas n'établisse ; sans elle, la ligne prend la `description`, écrite
+       pour les moteurs. */
+    accroche: z.string().optional(),
     category: z.enum(['automation', 'application']).default('automation'),
     scopeNote: z.string().optional(),
     secteur: z.string().optional(),

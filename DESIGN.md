@@ -960,7 +960,7 @@ la page écrit celle de `src/data/derniere-video.ts`, puis la remplace par
 celle du flux (`/api/derniere-video`) si une plus récente est sortie. Un lien
 fléché mène à la chaîne.
 
-À côté, la newsletter réduite à un titre (« Un mail par semaine. »), une
+À côté, la newsletter réduite à un titre (« Un e-mail par semaine. »), une
 phrase, un champ et un bouton. Le champ est une gélule (3,5rem, filet d'encre
 à 18 %, nuit profonde à 70 %) dont le filet passe à la pêche au focus. Le
 bouton « S'abonner » est **un contour, pas un aplat** (filet d'encre à 28 %,
@@ -980,8 +980,9 @@ finissait le rail des voix est parti avec eux.
 La liste se lit comme la filmographie d'un générique : un client par ligne,
 son nom en grand (`client`, `--text-headline`, interligne 1), son secteur et
 ses trois premiers outils à côté (`--text-body-sm`, `ink-low`, séparés par un
-point médian), une phrase (la `description` du cas, qui porte ses chiffres ;
-`ink-mid`, `46ch`), puis « Lire le cas » en blanc, graisse 500, flèche vers la
+point médian), une phrase (l'`accroche` du cas, à la première personne :
+ce que Lilian a construit et le chiffre qui le dit ; à défaut sa
+`description`, écrite pour les moteurs ; `ink-mid`, `46ch`), pas de chapô, puis « Lire le cas » en blanc, graisse 500, flèche vers la
 droite. À partir de 900 px, le nom à gauche, le genre, la phrase et le lien au
 milieu, alignés sur le haut du nom, et le photogramme à droite.
 

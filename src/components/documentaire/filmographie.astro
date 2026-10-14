@@ -8,8 +8,9 @@
  * Flameborn) ont quitté l'accueil le même jour.
  *
  * La liste se lit comme la filmographie d'un générique : un client par ligne,
- * son nom en grand, son secteur et ses outils à côté, une phrase (la
- * description du cas, qui porte ses chiffres), le lien vers sa page, et au
+ * son nom en grand, son secteur et ses outils à côté, une phrase (l'`accroche`
+ * du cas, à la première personne, avec son chiffre ; à défaut sa
+ * description), le lien vers sa page, et au
  * bout de la ligne un photogramme : son workflow en miniature, les nœuds du
  * schéma que montre la page du cas (`flow`), chacun avec le logo de son outil.
  * Un cas sans schéma n'a pas de photogramme, et sa phrase prend la place : on
@@ -60,7 +61,7 @@ const cas = tries.slice(0, MAX).map((e) => {
     href: `/cas-clients/${e.id}`,
     nom: e.data.client ?? e.data.title,
     genre: [e.data.secteur, e.data.tools.slice(0, 3).join(', ')].filter(Boolean).join(' · '),
-    resume: e.data.description ? espaces(e.data.description) : undefined,
+    resume: (e.data.accroche ?? e.data.description) && espaces(e.data.accroche ?? e.data.description ?? ''),
     noeuds,
   };
 });
@@ -73,7 +74,6 @@ const reste = tries.length - cas.length;
   nom="Projets clients"
   lueur="braise peche"
   titre="Ce que j’ai construit pour mes clients."
-  chapo="Des automatisations et des applications métier, chacune racontée sur sa page."
 >
   <ul class="filmo" role="list">
     {cas.map((c) => (
