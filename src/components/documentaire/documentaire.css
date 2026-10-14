@@ -1,0 +1,177 @@
+/*
+ * Le documentaire : la grammaire commune des chapitres de l'accueil.
+ *
+ * Lilian a choisi le 14 octobre 2026 « Le documentaire » : des photos de lui
+ * au travail en grand, en chapitres, légendées comme un générique. La page se
+ * lit comme une de ses vidéos. Ces règles sont partagées par les chapitres
+ * (`src/components/documentaire/`) et ne servent que sur l'accueil.
+ *
+ *   le plan          une image à coins arrondis, qui jette sa lumière sur la
+ *                    nuit (une copie floutée, décalée vers le bas, derrière) ;
+ *   l'incrustation   le nom et le rôle, posés en bas à gauche du plan, sous
+ *                    un trait pêche, comme dans un reportage ;
+ *   le sous-titre    une phrase de Lilian, centrée sous le plan, en pêche
+ *                    claire ;
+ *   le carton        le titre d'un chapitre, seul, en grand ;
+ *   l'étalonnage     deux lueurs fixes derrière la page, dont la teinte suit
+ *                    le chapitre en cours (voir `barre-chapitres.astro`).
+ */
+
+@property --lueur-haut {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ff8a65;
+}
+
+@property --lueur-bas {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6f7cff;
+}
+
+/* ── L'étalonnage ── */
+.etalonnage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(52% 46% at 92% 0%, color-mix(in srgb, var(--lueur-haut) 15%, transparent), transparent 74%),
+    radial-gradient(48% 42% at 0% 100%, color-mix(in srgb, var(--lueur-bas) 12%, transparent), transparent 74%);
+  transition:
+    --lueur-haut 1.8s var(--ease-out-quint),
+    --lueur-bas 1.8s var(--ease-out-quint);
+}
+
+/* Les chapitres passent devant l'étalonnage, le pied de page aussi. */
+.film > section,
+.film > [data-chapitre],
+.film ~ footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Le chapitre ── */
+.chapitre {
+  padding: var(--spacing-section-y) var(--spacing-section-x);
+}
+
+.chapitre__colonne {
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.carton {
+  display: grid;
+  gap: var(--spacing-lie);
+  margin-bottom: var(--spacing-bloc);
+}
+
+.carton h2 {
+  max-width: 17ch;
+  font-size: var(--text-story);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.carton p {
+  max-width: 46ch;
+  color: var(--color-ink-mid);
+  font-size: var(--text-body-large);
+}
+
+/* ── Le plan ── */
+.plan {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+}
+
+.plan__cadre {
+  position: relative;
+  overflow: clip;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-low);
+}
+
+.plan__cadre > img,
+.plan__cadre > picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* La lumière du plan : l'image elle-même, en tout petit, agrandie et floutée
+   derrière le cadre, un peu plus bas, comme la lueur d'un écran sur un mur. */
+.plan__lumiere {
+  position: absolute;
+  inset: 6% 4% 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  filter: blur(52px) saturate(1.5);
+  opacity: 0.5;
+  transform: translateY(7%);
+  pointer-events: none;
+}
+
+/* ── L'incrustation ── */
+.incrustation {
+  position: absolute;
+  left: clamp(0.75rem, 1.8vw, 1.5rem);
+  bottom: clamp(0.75rem, 1.8vw, 1.5rem);
+  display: grid;
+  justify-items: start;
+  gap: 0.125rem;
+  max-width: calc(100% - 1.5rem);
+  margin: 0;
+  padding: 0.75rem 1rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-night-deep) 74%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  line-height: 1.3;
+}
+
+.incrustation::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  margin-bottom: 0.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-peche);
+}
+
+.incrustation b {
+  color: var(--color-ink);
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+
+.incrustation span {
+  color: var(--color-ink-mid);
+  font-size: var(--text-body-sm);
+}
+
+/* ── Le sous-titre ── */
+.sous-titre {
+  max-width: 34ch;
+  margin: 0 auto;
+  color: var(--color-peche-clair);
+  font-size: clamp(1.125rem, 0.6vw + 0.95rem, 1.5rem);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* ── La mention de source, sous une image prêtée ── */
+.credit {
+  margin: 0;
+  color: var(--color-ink-faint);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}

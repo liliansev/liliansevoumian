@@ -1,0 +1,162 @@
+---
+/*
+ * portrait : le chapitre où Lilian se présente, comme l'interview d'un
+ * documentaire.
+ *
+ * À gauche son portrait, cadré comme un plan d'interview, avec son
+ * incrustation. À droite ce qu'il dit de sa façon de travailler (PRODUCT.md,
+ * « Sa façon de travailler »), puis un plan pris au micro de Radio
+ * Contournement, à La Capsule, envoyé par Lilian le 14 octobre 2026 (voir
+ * `src/assets/documentaire/README.md`). Le chapitre se ferme sur un carton :
+ * les faits qui le résument, en une phrase, sans date (« c'est pas un CV »).
+ *
+ * Les photos de travail qu'il enverra ensuite s'ajoutent ici ou dans les
+ * autres chapitres.
+ */
+import { Image, getImage } from 'astro:assets';
+import Chapitre from './chapitre.astro';
+import portraitImg from '../../assets/lilian-photo.jpg';
+import capsuleImg from '../../assets/documentaire/capsule-ecoute.jpg';
+import { faits } from '../../data/parcours';
+
+const lumiere = await getImage({ src: portraitImg, width: 64, format: 'webp', quality: 60 });
+
+/* Les deux chiffres viennent de `parcours.ts`, la seule source des faits. La
+   certification y porte sa date ; Lilian ne veut pas de date sur l'accueil. */
+const entreprises = faits.find((f) => f.detail === 'accompagnées');
+const personnes = faits.find((f) => f.titre.startsWith('Plus de 300'));
+---
+
+<Chapitre
+  id="a-propos"
+  nom="Portrait"
+  lueur="lueur-froide peche"
+  class="portrait"
+>
+  <div class="portrait__scene">
+    <figure class="portrait__plan plan reveal">
+      <div class="plan__lumiere" style={`background-image: url(${lumiere.src})`} aria-hidden="true"></div>
+      <div class="portrait__cadre plan__cadre media-ouvre">
+        <Image
+          src={portraitImg}
+          alt="Portrait de Lilian Sevoumian, de trois quarts, sur fond sombre."
+          widths={[480, 800, 1024]}
+          sizes="(min-width: 1024px) 480px, 100vw"
+          loading="lazy"
+        />
+        <p class="incrustation"><b>Lilian Sevoumian</b><span>freelance en automatisation et agents&nbsp;IA</span></p>
+      </div>
+    </figure>
+
+    <div class="portrait__parole">
+      <header class="carton reveal">
+        <h2>Je pars de vos processus, pas d’une liste <mark>d’outils.</mark></h2>
+      </header>
+      <div class="portrait__texte reveal">
+        <p>
+          Un studio de podcast, une activité de formation, puis une agence&nbsp;: les journées mangées par des
+          tâches qui n’avancent rien, je les connais de l’intérieur.
+        </p>
+        <p>
+          Je construis avec les outils que l’équipe utilise déjà, et je laisse un humain garder la main sur les
+          cas douteux. Ce que j’apprends en chemin, je le montre en vidéo et je l’écris chaque semaine.
+        </p>
+      </div>
+
+      <figure class="portrait__rush plan reveal">
+        <div class="portrait__rush-cadre plan__cadre">
+          <Image
+            src={capsuleImg}
+            alt="Lilian au micro, casquette à l’envers, pendant un enregistrement de podcast."
+            widths={[320, 640]}
+            sizes="(min-width: 1024px) 280px, 60vw"
+            loading="lazy"
+          />
+        </div>
+        <figcaption class="credit">Au micro de Radio Contournement, enregistré à La&nbsp;Capsule, le studio que j’ai cofondé.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <p class="portrait__faits reveal">
+    {entreprises && <><strong>{entreprises.titre} {entreprises.detail}</strong>, </>}
+    {personnes && <><strong>{personnes.titre.toLowerCase()} {personnes.detail}</strong>, </>}
+    et le <strong>premier Français certifié Make niveau&nbsp;5</strong>.
+  </p>
+</Chapitre>
+
+<style>
+  .portrait__scene {
+    display: grid;
+    gap: var(--spacing-bloc);
+  }
+
+  .portrait__cadre {
+    aspect-ratio: 4 / 5;
+  }
+
+  .portrait__cadre :global(img) {
+    object-position: 50% 30%;
+  }
+
+  .portrait__parole {
+    display: grid;
+    align-content: start;
+  }
+
+  .portrait__parole .carton {
+    margin-bottom: var(--spacing-lie);
+  }
+
+  .portrait__texte {
+    display: grid;
+    gap: 1rem;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+  }
+
+  .portrait__rush {
+    display: grid;
+    gap: 0.75rem;
+    width: min(100%, 17.5rem);
+    margin-top: var(--spacing-groupe);
+  }
+
+  .portrait__rush-cadre {
+    aspect-ratio: 880 / 997;
+    border-radius: var(--radius-md);
+  }
+
+  .portrait__faits {
+    max-width: 30ch;
+    margin: var(--spacing-section-y) auto 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-phrase);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .portrait__faits strong {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  @media (min-width: 1024px) {
+    .portrait__scene {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .portrait__parole {
+      padding-top: clamp(1rem, 4vw, 4rem);
+    }
+
+    .portrait__rush {
+      justify-self: end;
+    }
+  }
+</style>

@@ -1,0 +1,264 @@
+---
+/*
+ * defile-clients : le défilé des logos des entreprises avec lesquelles Lilian
+ * a travaillé, au pied du plan d'ouverture de l'accueil.
+ *
+ * Lilian l'a redemandé deux fois (8 et 14 octobre 2026) : c'est la seule
+ * boucle de l'accueil. Elle s'arrête au survol et par son bouton, et se pose
+ * en liste en mouvement réduit. Les logos viennent de `data/clients.ts`.
+ */
+import { clients } from '../../data/clients';
+---
+
+  <div
+    class="defile"
+    role="group"
+    aria-label="Entreprises avec lesquelles j’ai travaillé"
+    data-defile
+  >
+    <p class="defile__titre">J’ai travaillé avec</p>
+    <div class="defile__fenetre">
+      <ul class="defile__piste">
+        {[0, 1].map((tour) =>
+          clients.map((client) => (
+            <li aria-hidden={tour === 1 ? 'true' : undefined}>
+              {client.logo ? (
+                <img
+                  src={client.logo.src}
+                  width={client.logo.largeur}
+                  height={client.logo.hauteur}
+                  alt={client.nom}
+                  loading="eager"
+                  decoding="async"
+                  style={client.logo.echelle ? `--echelle: ${client.logo.echelle}` : undefined}
+                />
+              ) : (
+                <span>{client.nom}</span>
+              )}
+            </li>
+          )),
+        )}
+      </ul>
+    </div>
+    {/* Un contenu qui défile sans fin doit pouvoir être arrêté, au clavier et
+        au doigt : le survol seul ne servait que la souris. */}
+    <button type="button" class="defile__pause" aria-pressed="false" data-defile-pause>
+      <span class="sr-only">Mettre le défilé des logos en pause</span>
+      <svg class="defile__icone defile__icone--pause" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <rect x="4" y="3" width="3" height="10" rx="1" />
+        <rect x="9" y="3" width="3" height="10" rx="1" />
+      </svg>
+      <svg class="defile__icone defile__icone--lecture" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path d="M5.5 3.2v9.6l7.6-4.8z" />
+      </svg>
+    </button>
+  </div>
+
+<style>
+  /* ── Le défilé ── */
+  .defile {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    /* Le défilé occupe la largeur de l'écran, mais son contenu tient dans la
+       colonne de 1200 px, comme le titre au-dessus du plan. Le pourcentage se
+       lit sur la largeur de la section. Le bouton de pause déborde de sa
+       marge intérieure, pour que son icône tombe sur le bord de la colonne. */
+    --bord: calc(var(--spacing-section-x) + max(0px, (100% - 1200px) / 2));
+    --haut: clamp(1.1rem, 2.4svh, 1.6rem);
+    gap: var(--spacing-lie);
+    padding: var(--haut) calc(var(--bord) - 0.875rem) var(--haut) var(--bord);
+  }
+
+  .defile__titre {
+    margin: 0;
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    white-space: nowrap;
+  }
+
+  .defile__fenetre {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, var(--color-night) 6%, var(--color-night) 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, var(--color-night) 6%, var(--color-night) 92%, transparent);
+  }
+
+  .defile__piste {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .defile__piste li {
+    display: flex;
+    align-items: center;
+    max-width: none;
+    padding-inline: clamp(1.25rem, 2.6vw, 2.25rem);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  /* Un logo est ramené à une silhouette claire et à la hauteur des lettres,
+     corrigée à l'œil par `--echelle` (voir `data/clients.ts`). Les attributs
+     `width` et `height` donnent le rapport : la piste a sa largeur finale
+     avant que les fichiers n'arrivent. */
+  .defile__piste img {
+    display: block;
+    width: auto;
+    max-width: none;
+    height: calc(1.5em * var(--echelle, 1));
+    filter: brightness(0) invert(1);
+    opacity: 0.78;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .defile__piste {
+      animation: defile 46s linear infinite;
+    }
+
+    .defile__fenetre:hover .defile__piste,
+    .defile[data-pause] .defile__piste {
+      animation-play-state: paused;
+    }
+  }
+
+  @keyframes defile {
+    to { transform: translateX(-50%); }
+  }
+
+  /* La commande d'arrêt : une cible de 44 px, discrète tant qu'on ne la vise
+     pas. Les deux dessins se relaient selon l'état. */
+  .defile__pause {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink-low);
+    cursor: pointer;
+    transition: color var(--duration-default) var(--ease-out-quint),
+                background-color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .defile__icone {
+    fill: currentColor;
+  }
+
+  .defile__icone--lecture,
+  .defile__pause[aria-pressed='true'] .defile__icone--pause {
+    display: none;
+  }
+
+  .defile__pause[aria-pressed='true'] .defile__icone--lecture {
+    display: block;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .defile__pause:hover {
+      background: var(--color-surface-low);
+      color: var(--color-ink);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .defile {
+      grid-template-columns: 1fr;
+      padding-right: var(--bord);
+    }
+
+    .defile__fenetre {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .defile__piste {
+      flex-wrap: wrap;
+      width: auto;
+      row-gap: 1rem;
+    }
+
+    .defile__piste li {
+      padding-inline: 0 1.5rem;
+    }
+
+    .defile__piste li[aria-hidden='true'] {
+      display: none;
+    }
+
+    /* Plus rien ne défile : la commande d'arrêt n'a plus d'objet. */
+    .defile__pause {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .defile {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.25rem 0.5rem;
+      padding-left: 0;
+    }
+
+    .defile__titre {
+      padding-left: var(--spacing-section-x);
+    }
+
+    .defile__fenetre {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+
+    .defile__pause {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  /* Sans défilement, sur un écran étroit, la liste reprend la marge du titre :
+     le bandeau y a perdu la sienne pour laisser la piste courir d'un bord à
+     l'autre. */
+  @media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+    .defile {
+      padding-right: 0;
+    }
+
+    .defile__fenetre {
+      padding-inline: var(--spacing-section-x);
+    }
+
+    /* La liste posée faisait sept lignes sur un téléphone, et le premier écran
+       ne tenait plus dans l'écran : plus petits et plus serrés, les logos en
+       font cinq. */
+    .defile__piste {
+      row-gap: 0.625rem;
+    }
+
+    .defile__piste li {
+      padding-inline: 0 1rem;
+      font-size: var(--text-body-sm);
+    }
+  }
+</style>
+
+<script>
+  /* Le défilé s'arrête et repart d'un bouton. `aria-pressed` porte l'état, le
+     libellé reste le même : c'est la convention d'un bouton à bascule. */
+  const defile = document.querySelector<HTMLElement>('[data-defile]');
+  const pause = defile?.querySelector<HTMLButtonElement>('[data-defile-pause]');
+  if (defile && pause) {
+    pause.addEventListener('click', () => {
+      const arrete = pause.getAttribute('aria-pressed') !== 'true';
+      pause.setAttribute('aria-pressed', String(arrete));
+      defile.toggleAttribute('data-pause', arrete);
+    });
+  }
+
+</script>

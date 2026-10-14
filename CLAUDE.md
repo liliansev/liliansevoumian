@@ -42,15 +42,23 @@ src/
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   │   # — accueil (site personnel depuis le 14 octobre 2026) —
-│   ├── accueil-projets.astro  # « En ce moment » : une rangée par projet, sa page dans une fenêtre de navigateur (data/projets.ts, `enCours`)
-│   ├── accueil-projets-perso.astro # projets perso en 2 colonnes : panneau à repères, capture ou emblème dessiné (data/projets.ts, `persos`)
-│   ├── accueil-a-propos.astro # « À propos » : une rangée, texte et photo de travail (tableau `photos`)
-│   ├── rangee.astro           # une rangée dans la DA des métiers : texte, panneau à repères d'angle, filet et croix ; `miroir`
-│   │   # — accueil, gardés de la DA d'avant (home-story n'est plus rendu) —
+│   │   # — accueil « Le documentaire » (choisi par Lilian le 14 octobre 2026) —
+│   ├── documentaire/          # les chapitres de l'accueil, lus comme un court documentaire sur Lilian au travail
+│   │   ├── documentaire.css   # la grammaire commune : plan et sa lumière, incrustation, sous-titre, carton, crédit, étalonnage
+│   │   ├── chapitre.astro     # un chapitre : `data-chapitre` (son nom dans la barre), `data-lueur` (sa teinte), carton et colonne
+│   │   ├── ouverture.astro    # « Salut, je m'appelle », le nom, le métier ; la barre d'écriture à droite ; le plan au bureau en cinémascope, qui s'ouvre une fois ; défilé des logos (id `hero`)
+│   │   ├── defile-clients.astro # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
+│   │   ├── portrait.astro     # « À propos » : portrait, deux paragraphes, un plan du podcast à La Capsule, les faits sans date (data/parcours.ts, `faits`)
+│   │   ├── en-ce-moment.astro # les projets en cours, captures étalonnées (data/projets.ts, `enCours`)
+│   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
+│   │   ├── affiches.astro     # les projets perso en affiches de film : capture ou emblème dessiné (data/projets.ts, `persos`)
+│   │   ├── voix.astro         # trois recommandations, chacune avec son incrustation
+│   │   ├── generique.astro    # le dernier plan, le générique de fin, puis `fin-de-page` (id `generique`)
+│   │   └── barre-chapitres.astro # la barre de lecture fixe, comme une vidéo à chapitres, et l'étalonnage de la page
+│   │   # — accueil d'avant, plus rendus sur `/` sauf home-services —
 │   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
-│   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone
+│   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone. Rendu dans le chapitre « Expertises » (`prix={false}`)
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
 │   ├── home-today-path.astro  # « Pourquoi moi » (panneau clair) + frise du parcours
 │   ├── home-content.astro     # la dernière vidéo YouTube (relevée par le serveur, voir `data/derniere-video.ts`) + newsletter écrite comme un mail
@@ -125,12 +133,11 @@ see *La tenue commune* in `global.css` and `DESIGN.md`):
   `46ch` is a 70-character line (base rule on `p, li`)
 - Motion: the underline is drawn once (`<mark>`), a page header enters once
   (`.entree`), media open with the scroll (`.media-ouvre`), pages cross-fade.
-  On the home page a movement plays once and stops (8 October 2026): the four
-  service scenes rest on their final image, quotes and the writing bar stay
-  still. Two loops remain by choice, each with its pause control: the client
-  logo marquee of the first screen (Lilian asked for it back the same day) and
-  the story scene, whose mode follows the scroll on a desktop. The tool marquee of `/automatisations-ia`
-  is the one loop left on the site
+  On the home page a movement plays once and stops: the opening shot opens
+  once from a slit, the four service scenes rest on their final image, quotes
+  and the writing bar stay still. One loop remains by choice, with its pause
+  control: the client logo marquee of the first screen. The tool marquee of
+  `/automatisations-ia` is the other loop on the site
 
 Typography:
 - One family: Geist (`--font-display`, `--font-body`); no monospace
@@ -140,8 +147,14 @@ Every page is built from the shared components: `Navigation`, `tete-de-page`
 `fin-de-page`, `Footer`. Reading pages use `partie`. A new inner page must not
 hand-roll a header, an FAQ, a contact section or a back link.
 
-Home page only: everything laid on a grid with two page-level frame lines
-(`.accueil__suite` in `src/pages/index.astro`), one animated 2D interface
+Home page only (« Le documentaire », 14 October 2026): the page reads as a
+short documentary about Lilian at work. Large rounded shots of real photos
+of him that cast their light on the night, lower-thirds (name and role under
+a peach line), centred peach-light subtitles, big chapter titles, a fixed
+chapter bar like a YouTube progress bar, and a page grade (two fixed glows)
+whose hue follows the chapter. Grammar in
+`src/components/documentaire/documentaire.css`. Only real photos of Lilian
+appear there; the generated work scenes never do. One animated 2D interface
 scene per service (`src/components/metiers/`, engine in
 `src/lib/metiers/scene.ts`; the glass 3D shapes only remain on
 `/explorations-blocs`).
@@ -160,8 +173,10 @@ scene per service (`src/components/metiers/`, engine in
   `data/maintenance.ts`, la réponse « Make ou n8n » dans `data/make-ou-n8n.ts`,
   le parcours dans `data/parcours.ts`. Rien ne s'écrit sur une page qui ne soit
   dans `PRODUCT.md` (« Evidence on Hand »).
-- L'accueil ne nomme aucun client dans son récit ni dans ses quatre métiers, et
-  aucun de ses blocs ne mène à un cas précis : un cas change, la page ne doit
+- L'accueil ne nomme aucun client dans son récit ni dans ses quatre métiers
+  (le défilé des logos et le générique les citent tous, depuis
+  `data/clients.ts`, sans en isoler aucun), et aucun de ses blocs ne mène à un
+  cas précis : un cas change, la page ne doit
   pas en dépendre. Les cas ont leur page ; la seule sortie de l'accueil vers
   eux est le lien vers leur index, sous les recommandations.
 - La dernière vidéo YouTube est relevée par le serveur de production

@@ -1,0 +1,36 @@
+---
+/*
+ * chapitre : un chapitre de l'accueil « Le documentaire ».
+ *
+ * Il porte son nom court (`nom`), lu par la barre des chapitres, et la teinte
+ * de l'étalonnage tant qu'on le lit (`lueur` : deux jetons de couleur, la
+ * lueur du haut puis celle du bas). Son carton est le titre du chapitre, seul
+ * et en grand, avec au besoin une phrase dessous.
+ */
+interface Props {
+  id: string;
+  /** Le nom du chapitre dans la barre de lecture, en deux ou trois mots. */
+  nom: string;
+  /** Deux jetons `--color-*` sans préfixe : la lueur du haut, celle du bas. */
+  lueur: string;
+  /** Le titre du chapitre, en HTML (un fragment peut être souligné par `mark`). */
+  titre?: string;
+  /** Une phrase sous le titre. */
+  chapo?: string;
+  class?: string;
+}
+
+const { id, nom, lueur, titre, chapo, class: classe } = Astro.props;
+---
+
+<section id={id} data-section data-chapitre={nom} data-lueur={lueur} class:list={['chapitre', classe]}>
+  <div class="chapitre__colonne">
+    {titre && (
+      <header class="carton reveal">
+        <h2 set:html={titre} />
+        {chapo && <p>{chapo}</p>}
+      </header>
+    )}
+    <slot />
+  </div>
+</section>

@@ -1,39 +1,54 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import HomeHero from '../components/home-hero.astro';
 import HomeInvite from '../components/home-invite.astro';
-import AccueilProjets from '../components/accueil-projets.astro';
 import HomeServices from '../components/home-services.astro';
-import AccueilAPropos from '../components/accueil-a-propos.astro';
-import AccueilProjetsPerso from '../components/accueil-projets-perso.astro';
-import HomeContent from '../components/home-content.astro';
-import HomeVoices from '../components/home-voices.astro';
-import FinDePage from '../components/fin-de-page.astro';
 import Footer from '../components/Footer.astro';
+import Ouverture from '../components/documentaire/ouverture.astro';
+import Portrait from '../components/documentaire/portrait.astro';
+import EnCeMoment from '../components/documentaire/en-ce-moment.astro';
+import Publications from '../components/documentaire/publications.astro';
+import Affiches from '../components/documentaire/affiches.astro';
+import Voix from '../components/documentaire/voix.astro';
+import Generique from '../components/documentaire/generique.astro';
+import BarreChapitres from '../components/documentaire/barre-chapitres.astro';
+import '../components/documentaire/documentaire.css';
 import { resume, resumeCourt } from '../data/parcours';
-import { enCours } from '../data/projets';
 
-/* L'accueil est un site personnel depuis le 14 octobre 2026 (« on n'est pas
-   assez site personnel, il y a trop d'animations ») : qui est Lilian, ce
-   sur quoi il travaille, ce qu'il sait faire, ce qu'il publie, ce qu'il a
-   construit pour lui. Le récit (`home-story`), la FAQ et la ligne des prix
-   en sont sortis ; les fichiers restent.
+/* L'accueil est un site personnel depuis le 14 octobre 2026. Le même jour,
+   Lilian a écarté deux versions (des cartes sobres, puis le retour à la DA
+   d'avant) et choisi « Le documentaire » : la page se lit comme un court
+   documentaire sur lui au travail, en chapitres, avec des photos en grand
+   légendées comme dans un reportage. La grammaire commune est dans
+   `components/documentaire/documentaire.css`.
 
-   Le même jour, une première version en cartes sobres a été rejetée (« le
-   design d'avant on avait une vraie DA ») : la page garde la DA d'avant, le
-   premier écran sur sa grille, les scènes des métiers, et les autres
-   sections reprennent leur charpente (`rangee.astro`).
+   Les chapitres, dans l'ordre : il se présente, ce qu'il construit, ce qu'il
+   sait faire, ce qu'il publie, ce qu'il fait pour lui, ce qu'en disent ceux
+   qui ont travaillé avec lui, et le générique, où on lui écrit. La barre des
+   chapitres (`barre-chapitres.astro`) reprend la même liste.
 
-   La barre nomme les sections de la page, dans leur ordre. */
+   La barre de navigation nomme les chapitres, dans leur ordre. */
 const homeNavigation = [
+  { href: '#a-propos', label: 'À propos' },
   { href: '#en-ce-moment', label: 'En ce moment' },
   { href: '#services', label: 'Expertises' },
   { href: '#contenus', label: 'Vidéos' },
   { href: '#projets-perso', label: 'Projets perso' },
-  { href: '#a-propos', label: 'À propos' },
   // Emplacement du lien Blog : il arrive avec la page /blog (fil du blog).
   // { href: '/blog', label: 'Blog' },
+];
+
+/* Les chapitres de la barre de lecture : l'ancre et le nom court de chacun.
+   Chaque section porte le même nom dans `data-chapitre`. */
+const chapitres = [
+  { id: 'hero', nom: 'Au bureau' },
+  { id: 'a-propos', nom: 'Portrait' },
+  { id: 'en-ce-moment', nom: 'En ce moment' },
+  { id: 'services', nom: 'Expertises' },
+  { id: 'contenus', nom: 'Vidéos' },
+  { id: 'projets-perso', nom: 'Projets perso' },
+  { id: 'temoignages', nom: 'Ils en parlent' },
+  { id: 'generique', nom: 'Générique' },
 ];
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
@@ -64,178 +79,21 @@ const pageSchema = {
     trackHero={true}
   />
 
-  <main id="main-content" tabindex="-1" class="outline-none">
-    <HomeHero />
-    {/* La barre où l'on écrit à Lilian, posée sous le titre (voir home-hero). */}
+  <main id="main-content" tabindex="-1" class="film outline-none">
+    <Ouverture />
+    {/* La barre où l'on écrit à Lilian, posée sous le titre (voir l'ouverture). */}
     <HomeInvite />
-    <div class="accueil__suite">
-      <AccueilProjets
-        id="en-ce-moment"
-        titre="En ce moment."
-        projets={enCours}
-        source="home_en_cours"
-      />
-      <HomeServices />
-      <HomeContent />
-      <AccueilProjetsPerso />
-      <AccueilAPropos />
-      <HomeVoices />
-      {/* Emplacement du contact : le fil du formulaire de contact le remplace
-          par un formulaire simple (e-mail et message). En attendant, la fin
-          de page habituelle, sans la ligne des prix. */}
-      <FinDePage id="contact" source="home_offres" titre="Un projet, une idée, une <mark>question&nbsp;?</mark>" />
-    </div>
+    <Portrait />
+    <EnCeMoment />
+    <HomeServices prix={false} chapitre="Expertises" lueur="lueur-froide lueur-froide" />
+    <Publications />
+    <Affiches />
+    <Voix />
+    {/* Le contact : la fin de page commune, après le générique. Le fil du
+        formulaire de contact simple la remplacera. */}
+    <Generique />
   </main>
 
+  <BarreChapitres chapitres={chapitres} />
   <Footer />
 </Layout>
-
-<style is:global>
-  /*
-   * La direction de l'accueil, validée par Lilian le 2 octobre 2026 : « tech
-   * moderne, propre », sur une grille. Ces règles la tiennent d'un bout à
-   * l'autre de la page, y compris dans les sections qui servent aussi à
-   * d'autres pages et gardent là-bas leur ancienne allure.
-   *
-   *   le fond     la nuit la plus profonde, partout ;
-   *   la grille   deux filets verticaux qui longent la colonne, du récit
-   *               jusqu'aux offres ;
-   *   les titres  une graisse moyenne : c'est la taille qui parle ;
-   *   le souligné un trait pêche sous un fragment de titre ; la pastille
-   *               pleine est le bouton d'appel.
-   */
-  /* Le fond, les titres, le soulignement, les boutons et les liens
-     en bas de casse étaient réglés ici, pour l'accueil seul : ils sont
-     maintenant la tenue de tout le site (voir « La tenue commune » dans
-     `global.css`). Il ne reste ici que ce qui est propre à cette page. */
-  .accueil__suite {
-    --marge: var(--spacing-cadre);
-    position: relative;
-  }
-
-  .accueil__suite::before,
-  .accueil__suite::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 1;
-    width: 1px;
-    background: color-mix(in srgb, var(--color-ink) 9%, transparent);
-    pointer-events: none;
-  }
-
-  /* Le bord de la colonne de 1200 px, ou de la marge de page quand l'écran
-     est plus étroit qu'elle. */
-  .accueil__suite::before {
-    left: calc(max(var(--spacing-section-x), (100% - 1200px) / 2) - var(--marge));
-  }
-
-  .accueil__suite::after {
-    right: calc(max(var(--spacing-section-x), (100% - 1200px) / 2) - var(--marge));
-  }
-
-  /* Les titres de section et le texte des rangées (`rangee.astro`), sur le
-     modèle des métiers de `home-services`. */
-  .accueil-section {
-    position: relative;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
-  }
-
-  .accueil-tete {
-    display: grid;
-    gap: var(--spacing-lie);
-    padding-block: var(--spacing-section-y) var(--spacing-groupe);
-  }
-
-  .accueil-tete h2 {
-    margin: 0;
-    color: var(--color-ink);
-    font-size: var(--text-story);
-    font-weight: 500;
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
-  }
-
-  .accueil-tete p {
-    margin: 0;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-large);
-  }
-
-  .rangee__texte h3 {
-    margin: 0;
-    color: var(--color-accent-text);
-    font-size: var(--text-body-large);
-    font-weight: 500;
-    line-height: 1.3;
-  }
-
-  .rangee-phrase {
-    max-width: 18ch;
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink);
-    font-size: var(--text-phrase);
-    font-weight: 500;
-    line-height: var(--leading-phrase);
-    letter-spacing: var(--tracking-phrase);
-    text-wrap: balance;
-  }
-
-  .rangee-corps {
-    max-width: 28.25rem;
-    margin: var(--spacing-lie) 0 0;
-    color: var(--color-ink-mid);
-    line-height: var(--leading-body);
-  }
-
-  .rangee-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: var(--spacing-lie) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .rangee-tags li {
-    padding: 0.2rem 0.7rem;
-    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
-    border-radius: 999px;
-    color: var(--color-ink-mid);
-    font-size: var(--text-body-sm);
-  }
-
-  .rangee-suite {
-    margin-top: 1.5rem;
-  }
-
-  /* Le panneau des rangées : celui des scènes (`scene-metier.css`), une
-     lueur braise en bas à gauche, une lueur froide en haut à droite, un
-     quadrillage fin. */
-  .panneau {
-    position: relative;
-    isolation: isolate;
-    background:
-      radial-gradient(85% 75% at 0% 100%, color-mix(in srgb, var(--color-braise) 22%, transparent), transparent 62%),
-      radial-gradient(75% 65% at 100% 0%, color-mix(in srgb, var(--color-lueur-froide) 20%, transparent), transparent 64%),
-      var(--color-night-deep);
-  }
-
-  .panneau::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      linear-gradient(color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px,
-      linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px;
-  }
-
-  @media (max-width: 1023px) {
-    .accueil__suite::before,
-    .accueil__suite::after {
-      display: none;
-    }
-  }
-</style>

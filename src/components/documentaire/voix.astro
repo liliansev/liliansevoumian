@@ -1,0 +1,173 @@
+---
+/*
+ * voix : ce que disent ceux qui ont travaillé avec Lilian, comme les
+ * intervenants d'un documentaire.
+ *
+ * Trois recommandations côte à côte, chacune avec son incrustation : le
+ * portrait, en rond et en noir et blanc pour que les trois photos (prises
+ * n'importe où) se ressemblent, le nom et le rôle sous le trait pêche. Les
+ * citations et leurs coupes sont celles de `Testimonials.astro` et de l'ancien
+ * `home-voices.astro` : on ne retire que des phrases entières, on ne reformule
+ * rien. Aucune ne porte de chiffre : les chiffres sont dans les cas clients,
+ * et le lien du bas y mène.
+ */
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import LinkCTA from '../LinkCTA.astro';
+import Chapitre from './chapitre.astro';
+import ismailImg from '../../assets/testimonials/ismail.jpeg';
+import alexisImg from '../../assets/testimonials/alexis.jpeg';
+import benjaminImg from '../../assets/testimonials/benjamin.png';
+
+const voix = [
+  {
+    citation:
+      'J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.',
+    nom: 'Alexis Kovalenko',
+    role: 'Cofondateur, Contournement',
+    image: alexisImg,
+  },
+  {
+    citation: 'Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.',
+    nom: 'Ismail Landoulsi',
+    role: 'Cofondateur & COO, CasanovaParis',
+    image: ismailImg,
+  },
+  {
+    citation: 'Les projets qu’il prend en charge sont un succès.',
+    nom: 'Benjamin Potet',
+    role: 'Solution Architect Customer Experience, Make',
+    image: benjaminImg,
+  },
+];
+
+/* Le nombre de cas publiés vient de la collection : le lien ne peut pas en
+   annoncer un de plus ou de moins que la page d'arrivée. */
+const nombres = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'];
+const cas = (await getCollection('cas-clients')).length;
+const nombreDeCas = nombres[cas] ?? String(cas);
+---
+
+<Chapitre id="temoignages" nom="Ils en parlent" lueur="peche braise" titre="On a travaillé <mark>ensemble.</mark>">
+  <ul class="voix" role="list">
+    {voix.map((v) => (
+      <li class="voix__intervenant reveal">
+        <figure>
+          <blockquote>«&nbsp;{v.citation}&nbsp;»</blockquote>
+          <figcaption class="voix__incrustation">
+            <span class="voix__rond">
+              <Image src={v.image} alt="" width={112} height={112} format="webp" quality={80} class="voix__portrait" loading="lazy" />
+            </span>
+            <span class="voix__qui">
+              <b>{v.nom}</b>
+              <span>{v.role}</span>
+            </span>
+          </figcaption>
+        </figure>
+      </li>
+    ))}
+  </ul>
+  <p class="voix__suite reveal">
+    <LinkCTA href="/cas-clients">Lire les {nombreDeCas} cas clients, chiffres à l’appui</LinkCTA>
+  </p>
+</Chapitre>
+
+<style>
+  .voix {
+    display: grid;
+    gap: var(--spacing-bloc) var(--spacing-gouttiere);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 900px) {
+    .voix {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .voix__intervenant {
+    max-width: none;
+  }
+
+  .voix figure {
+    display: grid;
+    gap: var(--spacing-lie);
+    height: 100%;
+    margin: 0;
+    grid-template-rows: 1fr auto;
+  }
+
+  .voix blockquote {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-title-lg);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+
+  .voix__incrustation {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding-top: 1rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+    position: relative;
+  }
+
+  /* Le trait pêche de l'incrustation, posé sur le filet. */
+  .voix__incrustation::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 1.75rem;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: var(--color-peche);
+  }
+
+  /* Le portrait en rond, un peu agrandi dans son cadre : une des photos
+     arrive déjà découpée en rond sur fond blanc, et son bord ne doit pas se
+     voir. */
+  .voix__rond {
+    flex: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    overflow: clip;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-low);
+  }
+
+  .voix__rond :global(.voix__portrait) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.12);
+    filter: grayscale(1) contrast(1.05) brightness(0.92);
+  }
+
+  .voix__qui {
+    display: grid;
+    gap: 0.125rem;
+    line-height: 1.3;
+  }
+
+  .voix__qui b {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  .voix__qui span {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .voix__suite {
+    margin: var(--spacing-bloc) 0 0;
+  }
+</style>

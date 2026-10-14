@@ -119,6 +119,20 @@ const metiers = [
   },
 ] as const;
 
+interface Props {
+  /** Le titre de la section. */
+  titre?: string;
+  /** Les prix sous chaque métier. L'accueil « Le documentaire » s'en passe :
+      les prix sont sur les pages d'offre (14 octobre 2026). */
+  prix?: boolean;
+  /** Le nom du chapitre et ses lueurs, quand la section est un chapitre de
+      l'accueil (voir `documentaire/chapitre.astro`). */
+  chapitre?: string;
+  lueur?: string;
+}
+
+const { titre = 'Mes expertises.', prix: avecPrix = true, chapitre, lueur } = Astro.props;
+
 const scenes = {
   automatisation: SceneAutomatisation,
   'agents-ia': SceneAgents,
@@ -127,14 +141,14 @@ const scenes = {
 };
 ---
 
-<section id="services" data-section class="metiers relative px-[var(--spacing-section-x)]">
+<section id="services" data-section data-chapitre={chapitre} data-lueur={lueur} class="metiers relative px-[var(--spacing-section-x)]">
   <div class="metiers__cadre relative mx-auto max-w-[1200px]">
     {/* Le titre seul : chaque bloc s'ouvre sur son nom. Il disait « Je fais
         quatre choses. » ; Lilian l'a jugé faible et a demandé un mot simple
         (« mes services, mes expertises »), le 3 octobre 2026. « Expertises »
         répond au titre du premier écran, « je suis expert en… ». */}
     <header class="metiers__tete reveal">
-      <h2>Mes expertises.</h2>
+      <h2 set:html={titre} />
     </header>
 
     {/* Téléphone seulement : les quatre noms, pour passer d'un métier à
@@ -174,7 +188,7 @@ const scenes = {
             >
               {metier.lien.label}
             </LinkCTA>
-            {'note' in metier &&
+            {avecPrix && 'note' in metier &&
               ('noteHref' in metier ? (
                 <a
                   class="metier__note"

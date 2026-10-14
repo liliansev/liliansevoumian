@@ -1,0 +1,128 @@
+---
+/*
+ * generique : la fin de l'accueil « Le documentaire ».
+ *
+ * Le dernier plan (Lilian qui sourit, au micro de La Capsule), puis le
+ * générique de fin, comme au cinéma : les rôles en petit, les noms dessous,
+ * centrés. Tout ce qui y figure est attesté ailleurs sur le site : les
+ * entreprises viennent de `data/clients.ts`, les recommandations de
+ * `voix.astro`, les outils de la page d'offre, la source des images de
+ * `src/assets/documentaire/README.md`. Après le générique, la fin de page
+ * commune (`fin-de-page`) : on écrit à Lilian.
+ */
+import { Image } from 'astro:assets';
+import FinDePage from '../fin-de-page.astro';
+import { clients } from '../../data/clients';
+import sourireImg from '../../assets/documentaire/capsule-sourire.jpg';
+
+const roles = [
+  { role: 'Avec', noms: clients.map((c) => c.nom) },
+  { role: 'Recommandé par', noms: ['Alexis Kovalenko', 'Ismail Landoulsi', 'Benjamin Potet'] },
+  { role: 'Outils', noms: ['Make', 'n8n', 'Airtable', 'Notion'] },
+  { role: 'Images du podcast', noms: ['Radio Contournement, à La Capsule'] },
+];
+---
+
+<div id="generique" data-chapitre="Générique" data-lueur="braise peche" class="generique">
+  <section class="generique__rideau chapitre" aria-label="Générique">
+    <div class="chapitre__colonne">
+      <figure class="generique__plan plan reveal">
+        <div class="generique__cadre plan__cadre media-ouvre">
+          <Image
+            src={sourireImg}
+            alt="Lilian sourit au micro, pendant un enregistrement de podcast."
+            widths={[320, 640]}
+            sizes="(min-width: 768px) 22rem, 70vw"
+            loading="lazy"
+          />
+          <p class="incrustation"><b>Lilian Sevoumian</b><span>à La Capsule</span></p>
+        </div>
+      </figure>
+
+      <dl class="generique__liste reveal">
+        <div class="generique__ligne generique__ligne--titre">
+          <dt>Écrit et construit par</dt>
+          <dd>Lilian Sevoumian</dd>
+        </div>
+        {roles.map((r) => (
+          <div class="generique__ligne">
+            <dt>{r.role}</dt>
+            <dd>
+              <ul role="list">
+                {r.noms.map((nom) => <li>{nom}</li>)}
+              </ul>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <FinDePage id="contact" source="home_offres" titre="Un projet, une idée, une <mark>question&nbsp;?</mark>" />
+</div>
+
+<style>
+  .generique__rideau {
+    padding-bottom: 0;
+  }
+
+  .generique__plan {
+    width: min(70vw, 22rem);
+    margin-inline: auto;
+  }
+
+  .generique__cadre {
+    aspect-ratio: 880 / 997;
+  }
+
+  .generique__liste {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    max-width: 40rem;
+    margin: var(--spacing-bloc) auto 0;
+    text-align: center;
+  }
+
+  .generique__ligne {
+    display: grid;
+    gap: 0.625rem;
+  }
+
+  .generique__ligne dt {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .generique__ligne dd {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-large);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .generique__ligne ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.375rem 1.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .generique__ligne li {
+    max-width: none;
+  }
+
+  .generique__ligne--titre dd {
+    font-size: var(--text-title-lg);
+    letter-spacing: -0.025em;
+  }
+
+  /* La fin de page commune, sans la maille qu'elle porte sur les autres
+     pages : ici la nuit et l'étalonnage suffisent. */
+  .generique :global(.fin__grille) {
+    display: none;
+  }
+</style>
