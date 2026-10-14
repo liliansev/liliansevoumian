@@ -58,10 +58,9 @@ export const persos: Projet[] = [
     id: 'meilleurs-tools',
     nom: 'meilleurs.tools',
     etiquette: 'Catalogue',
-    resume: 'Mon catalogue des outils que j’utilise et que je recommande.',
+    resume: 'Un annuaire d’outils de productivité, avec avis, alternatives et comparatifs, pour choisir le bon logiciel.',
     href: 'https://meilleurs.tools',
     image: '/sites-web/projects/meilleurs-tools-home.webp',
-    provisoire: true,
   },
   {
     id: 'runescape',
@@ -78,10 +77,10 @@ export const persos: Projet[] = [
     provisoire: true,
   },
   {
-    id: 'sites-jeux-video',
-    nom: 'Mes sites de jeux vidéo',
-    etiquette: 'Sites',
-    resume: 'Les sites que j’ai lancés autour des jeux vidéo, en une phrase.',
-    provisoire: true,
+    id: 'flameborn',
+    nom: 'Flameborn',
+    etiquette: 'Site de jeu vidéo',
+    resume: 'La base de données française d’Enshrouded : recettes, calculateur de craft, carte, objets et quêtes.',
+    href: 'https://flameborn.fr',
   },
 ];
