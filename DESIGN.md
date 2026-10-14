@@ -1,6 +1,6 @@
 ---
 name: Lilian Sevoumian
-description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, un trait pêche sous un fragment de titre, tout en bas de casse, un seul bouton qui ouvre la conversation, seul à porter la pastille pêche. L'accueil se lit comme un court documentaire : des plans en cinémascope de vraies photos de Lilian qui éclairent la nuit, des incrustations, ses sous-titres en pêche claire, des cartons de chapitre, une barre de lecture, un générique."
+description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, un trait pêche sous un fragment de titre, tout en bas de casse, un seul bouton qui ouvre la conversation, seul à porter la pastille pêche. L'accueil se lit comme un court documentaire : des plans en cinémascope de vraies photos de Lilian qui éclairent la nuit, des incrustations, ses sous-titres en pêche claire, des cartons de chapitre, une barre de lecture."
 colors:
   paper: "#0c121f"
   surface-low: "#1a2439"
@@ -286,12 +286,6 @@ components:
     textColor: "{colors.ink}"
     typography: "{typography.headline}"
     padding: "clamp(1.5rem, 3vw, 2.25rem) 0"
-  generique-role:
-    textColor: "{colors.ink-low}"
-    typography: "{typography.body-sm}"
-  generique-nom:
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
   champ-newsletter:
     backgroundColor: "rgb(12 18 31 / 0.7)"
     textColor: "{colors.ink}"
@@ -396,7 +390,7 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 - Trois gestes d'auteur de mouvement, joués une fois, jamais bloquants.
 - L'accueil est un documentaire : des plans en cinémascope de vraies photos de
   Lilian, qui éclairent la nuit, des incrustations, ses sous-titres en pêche
-  claire, des cartons de chapitre, une barre de lecture, un générique.
+  claire, des cartons de chapitre, une barre de lecture.
 - Sur l'accueil, une animation joue une fois puis s'arrête ; seul le défilé
   des logos boucle, avec son bouton pause.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
@@ -491,8 +485,8 @@ plusieurs pages écrivaient à la main, chacune à sa façon.
   `data/home-faq`.
 - **`fin-de-page`** : la fin de chaque page, une phrase centrée sur la maille,
   le champ et le bouton (voir *Components → La fin de page*). Une page ne
-  change que le titre et la phrase qui le suit. Sur l'accueil, elle suit le
-  générique, sans sa maille.
+  change que le titre et la phrase qui le suit. Sur l'accueil, elle ferme le
+  documentaire, sans sa maille.
 - **`pourquoi-moi`** : qui construit, dans une île claire. Le portrait rond
   (4rem) et le titre à gauche ; à droite deux voix qui ne se mélangent pas, la
   notice à la troisième personne (datée, citable) puis le texte à la première.
@@ -573,13 +567,13 @@ pages d'offre.
 | `#contenus` | Vidéos | « Ce que j'apprends, je le montre. » | `peche`, `peche` |
 | `#projets` | Projets clients | « Ce que j'ai construit pour mes clients. » | `braise`, `peche` |
 | `#temoignages` | Ils en parlent | « On a travaillé ensemble. » (souligné : « ensemble ») | `peche`, `braise` |
-| `#generique` | Générique | aucun : le générique se suffit | `braise`, `braise` |
+| `#fin` | Contact | aucun : la fin de page porte son titre | `braise`, `braise` |
 
 - **Un chapitre s'écrit avec `chapitre.astro`.** La section porte
   `data-section`, `data-chapitre` (son nom dans la barre, en deux ou trois
   mots) et `data-lueur` (deux noms de jetons de couleur sans préfixe : la
   lueur du haut, puis celle du bas). Marges `section-x`, rythme `section-y`,
-  colonne de 1 200 px (`.chapitre__colonne`). L'ouverture et le générique
+  colonne de 1 200 px (`.chapitre__colonne`). L'ouverture et la fin
   posent les deux attributs à la main ; la barre et l'étalonnage ne lisent
   rien d'autre.
 - **La barre de navigation nomme les chapitres**, dans leur ordre : À propos,
@@ -708,8 +702,8 @@ sous les chapitres et le pied de page, qui passent devant en `z-index: 1`) :
 une en haut à droite (`64% 56%` à `92% 0%`, la lueur du haut à 24 %), une en
 bas à gauche (`60% 52%` à `0% 100%`, la lueur du bas à 20 %), chacune fondue
 vers le transparent à 76 %. **Leur teinte suit le chapitre en cours** : froide
-au bureau et dans les expertises, elle se réchauffe jusqu'à la braise du
-générique.
+au bureau et dans les expertises, elle se réchauffe jusqu'à la braise de
+la fin.
 
 - Les deux teintes sont des propriétés enregistrées (`@property --lueur-haut`,
   `--lueur-bas`, syntaxe `<color>`, braise et lueur froide au départ) : c'est
@@ -1029,31 +1023,20 @@ qui a remplacé la pile de trois sous-titres à côté d'un plan de La Capsule.
   retire que des phrases entières, on ne reformule rien. Aucune ne porte de
   chiffre. Sans script, les trois se lisent à la suite, chacune signée.
 
-### Le générique (`#generique`)
+### La fin (`#fin`)
 
-La fin, comme au cinéma, sur la nuit seule et sans carton de chapitre. En
-tête, centré, « Écrit et construit par » en petit et le nom de Lilian à la
-taille d'un carton (`--text-headline`). Puis les crédits **sur un axe, à
-toutes les tailles d'écran**, comme un générique qui défile : le rôle à
-gauche de l'axe, aligné sur lui (`--text-body-sm`, `ink-low`), les noms à
-droite, un par ligne (graisse 500, blancs ; `--text-body` sur téléphone,
-`--text-body-large` à partir de 768 px), chaque rôle sur la ligne de son
-premier nom. Sur téléphone l'axe glisse d'un cran à gauche (colonnes 2 / 3)
-pour que les noms tiennent sur une ligne ; il revient au centre à 768 px, où
-une liste de plus de six noms passe sur deux colonnes.
-Suivent « Avec » (tous les clients, depuis `data/clients.ts`), « Recommandé
-par », « Outils », « Images ». Tout ce qui y figure est attesté ailleurs sur
-le site.
+La fin de page commune (`fin-de-page`, ancre `#contact`, source
+`home_offres`), sans sa maille et à la hauteur de ce qu'elle dit : ici la
+nuit et l'étalonnage suffisent. L'étalonnage y est à la braise ; son nom
+dans la barre est « Contact ».
 
-Le 14 octobre 2026, Lilian a rejeté la version téléphone d'avant, le rôle
-au-dessus de ses noms, centrés et à la suite (« horrible le layout ») : les
-lignes inégales faisaient un nuage de mots. Ne pas y revenir. Le rôle à
-côté du nom est le dispositif même d'un générique : ce n'est pas un
-sur-titre, et la règle des sur-titres ne le vise pas.
-
-Après le générique, la fin de page commune (`fin-de-page`, ancre `#contact`,
-source `home_offres`), sans sa maille : ici la nuit et l'étalonnage suffisent.
-L'étalonnage y est à la braise.
+Un générique de fin la précédait, sur un axe : « Écrit et construit par »,
+puis les clients, les recommandations, les outils et la source des images.
+Lilian l'a retiré le 14 octobre 2026 (« faudrait retirer ça sinon non ? ») :
+les clients sont déjà dans le défilé des logos, les recommandations dans
+« Ils en parlent », et seize noms en colonne faisaient sur téléphone une
+longue liste sans rien d'autre à lire. Ne pas le remettre sans qu'il le
+demande.
 
 ### Named Rules
 
@@ -1776,7 +1759,7 @@ radial.
 - Conversation ouverte, l'invite se met en retrait (inerte, à 35 %) : jamais
   deux champs où écrire à l'écran.
 
-Sur l'accueil, elle suit le générique et perd sa maille. La conversation
+Sur l'accueil, elle ferme le documentaire et perd sa maille. La conversation
 elle-même est décrite dans *L'accueil : le documentaire → La barre
 d'écriture* :
 c'est le même composant sur toutes les pages.
@@ -2121,8 +2104,9 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
   tombent en 500. Le commentaire va avant l'expression.
 - **Don't** écrire un cas client à la main dans l'accueil : les projets
   clients lisent la collection des cas, et rien d'autre n'y nomme un client
-  en dehors du défilé des logos et du générique. Ni y remettre une forme 3D,
-  une FAQ ou des prix.
+  en dehors du défilé des logos. Ni y remettre une forme 3D, une FAQ, des
+  prix, ou le générique de fin qui citait clients, recommandations et outils
+  (retiré le 14 octobre 2026 : tout y faisait doublon).
 - **Don't** poser sur l'accueil une image générée (les scènes de
   `src/assets/work-scenes/`) ni une photo qui ne montre pas Lilian pour de
   vrai.

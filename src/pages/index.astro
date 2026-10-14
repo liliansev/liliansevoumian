@@ -10,7 +10,7 @@ import Publications from '../components/documentaire/publications.astro';
 import Filmographie from '../components/documentaire/filmographie.astro';
 import Expertises from '../components/documentaire/expertises.astro';
 import Voix from '../components/documentaire/voix.astro';
-import Generique from '../components/documentaire/generique.astro';
+import Fin from '../components/documentaire/fin.astro';
 import BarreChapitres from '../components/documentaire/barre-chapitres.astro';
 import '../components/documentaire/documentaire.css';
 import { resume, resumeCourt } from '../data/parcours';
@@ -26,9 +26,10 @@ import { resume, resumeCourt } from '../data/parcours';
    sait faire (les quatre scènes des métiers, en une séquence), ce qu'il
    publie, ce qu'il a construit pour ses clients (sa filmographie, lue dans les
    cas clients ; ses projets perso en sont sortis le 14 octobre 2026, à sa
-   demande), ce qu'en disent ceux qui ont travaillé avec lui, et le
-   générique, où on lui écrit. La barre des chapitres (`barre-chapitres.astro`)
-   reprend la même liste. Le pied de page y perd sa date (`sansDate`).
+   demande), ce qu'en disent ceux qui ont travaillé avec lui, et la fin, où
+   on lui écrit (le générique de fin en est sorti le 14 octobre 2026, à sa
+   demande). La barre des chapitres (`barre-chapitres.astro`) reprend la même
+   liste. Le pied de page y perd sa date (`sansDate`).
 
    La barre de navigation nomme les chapitres, dans leur ordre. */
 const homeNavigation = [
@@ -51,7 +52,7 @@ const chapitres = [
   { id: 'contenus', nom: 'Vidéos' },
   { id: 'projets', nom: 'Projets clients' },
   { id: 'temoignages', nom: 'Ils en parlent' },
-  { id: 'generique', nom: 'Générique' },
+  { id: 'fin', nom: 'Contact' },
 ];
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
@@ -92,9 +93,9 @@ const pageSchema = {
     <Publications />
     <Filmographie />
     <Voix />
-    {/* Le contact : la fin de page commune, après le générique. Le fil du
-        formulaire de contact simple la remplacera. */}
-    <Generique />
+    {/* Le contact : la fin de page commune. Le fil du formulaire de contact
+        simple la remplacera. */}
+    <Fin />
   </main>
 
   <BarreChapitres chapitres={chapitres} />

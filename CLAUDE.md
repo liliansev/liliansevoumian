@@ -55,7 +55,7 @@ src/
 │   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
 │   │   ├── filmographie.astro # les projets clients en filmographie, lus dans les cas : un client par ligne, secteur et outils, phrase, lien, workflow en miniature
 │   │   ├── voix.astro         # « Ils en parlent » : une citation en grand, le rail des trois personnes à côté (la forme de l'ancien home-voices)
-│   │   ├── generique.astro    # le générique de fin sur la nuit, puis `fin-de-page` (id `generique`)
+│   │   ├── fin.astro          # la fin : `fin-de-page` sur la nuit, sans maille (id `fin`, chapitre « Contact » ; le générique de fin en est sorti le 14 octobre 2026)
 │   │   └── barre-chapitres.astro # la barre de lecture fixe, comme une vidéo à chapitres, et l'étalonnage de la page
 │   │   # — accueil d'avant, plus rendus sur `/` —
 │   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
@@ -178,8 +178,8 @@ one sequence (`documentaire/expertises.astro`; scenes in
   `data/maintenance.ts`, la réponse « Make ou n8n » dans `data/make-ou-n8n.ts`,
   le parcours dans `data/parcours.ts`. Rien ne s'écrit sur une page qui ne soit
   dans `PRODUCT.md` (« Evidence on Hand »).
-- L'accueil ne nomme aucun client à la main. Le défilé des logos et le
-  générique les citent tous, depuis `data/clients.ts` ; le chapitre « Projets
+- L'accueil ne nomme aucun client à la main. Le défilé des logos les cite
+  tous, depuis `data/clients.ts` ; le chapitre « Projets
   clients » (`documentaire/filmographie.astro`, demandé par Lilian le 14
   octobre 2026 à la place de ses projets perso) lit la collection des cas :
   un cas publié y entre de lui-même, la page ne dépend d'aucun en
