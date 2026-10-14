@@ -291,7 +291,7 @@ components:
     typography: "{typography.body-sm}"
   generique-nom:
     textColor: "{colors.ink}"
-    typography: "{typography.body-large}"
+    typography: "{typography.body}"
   champ-newsletter:
     backgroundColor: "rgb(12 18 31 / 0.7)"
     textColor: "{colors.ink}"
@@ -1031,21 +1031,25 @@ qui a remplacé la pile de trois sous-titres à côté d'un plan de La Capsule.
 
 ### Le générique (`#generique`)
 
-La fin, comme au cinéma, sur la nuit seule et sans carton. Sur téléphone,
-une liste de définitions centrée : le rôle en petit (`--text-body-sm`,
-`ink-low`), les noms dessous (`--text-body-large`, graisse 500, blancs), en
-ligne. À partir de 768 px, **deux colonnes de part et d'autre d'un axe
-central**, comme un générique qui défile : le rôle à droite de l'axe, les
-noms à gauche, un par ligne ; une liste de plus de six noms passe sur deux
-colonnes. La première ligne, « Écrit et construit par », porte le nom de
-Lilian en `--text-title-lg`.
+La fin, comme au cinéma, sur la nuit seule et sans carton de chapitre. En
+tête, centré, « Écrit et construit par » en petit et le nom de Lilian à la
+taille d'un carton (`--text-headline`). Puis les crédits **sur un axe, à
+toutes les tailles d'écran**, comme un générique qui défile : le rôle à
+gauche de l'axe, aligné sur lui (`--text-body-sm`, `ink-low`), les noms à
+droite, un par ligne (graisse 500, blancs ; `--text-body` sur téléphone,
+`--text-body-large` à partir de 768 px), chaque rôle sur la ligne de son
+premier nom. Sur téléphone l'axe glisse d'un cran à gauche (colonnes 2 / 3)
+pour que les noms tiennent sur une ligne ; il revient au centre à 768 px, où
+une liste de plus de six noms passe sur deux colonnes.
 Suivent « Avec » (tous les clients, depuis `data/clients.ts`), « Recommandé
 par », « Outils », « Images ». Tout ce qui y figure est attesté ailleurs sur
 le site.
 
-Le rôle posé au-dessus du nom est le dispositif même d'un générique : ce
-n'est pas un sur-titre, et la règle des sur-titres ne le vise pas. Il ne
-s'exporte pas pour autant au-dessus d'un titre de section.
+Le 14 octobre 2026, Lilian a rejeté la version téléphone d'avant, le rôle
+au-dessus de ses noms, centrés et à la suite (« horrible le layout ») : les
+lignes inégales faisaient un nuage de mots. Ne pas y revenir. Le rôle à
+côté du nom est le dispositif même d'un générique : ce n'est pas un
+sur-titre, et la règle des sur-titres ne le vise pas.
 
 Après le générique, la fin de page commune (`fin-de-page`, ancre `#contact`,
 source `home_offres`), sans sa maille : ici la nuit et l'étalonnage suffisent.

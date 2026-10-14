@@ -2,10 +2,13 @@
 /*
  * generique : la fin de l'accueil « Le documentaire ».
  *
- * Le générique de fin, comme au cinéma, sur la nuit seule : sur un écran
- * large, les rôles à gauche d'un axe central, alignés sur lui, et les noms à
- * droite, un par ligne ; sur un téléphone, le rôle en petit au-dessus de ses
- * noms, centrés. Tout ce qui y figure est attesté ailleurs
+ * Le générique de fin, comme au cinéma, sur la nuit seule : un carton
+ * centré (« Écrit et construit par », le nom en grand), puis les crédits sur
+ * un axe central, à toutes les tailles d'écran : le rôle à gauche de l'axe,
+ * aligné sur lui, les noms à droite, un par ligne. Sur un téléphone, les
+ * rôles au-dessus de leurs noms, centrés, faisaient un nuage de mots aux
+ * lignes inégales (Lilian, 14 octobre 2026 : « horrible le layout »).
+ * Tout ce qui y figure est attesté ailleurs
  * sur le site : les entreprises viennent de `data/clients.ts`, les recommandations de
  * `voix.astro`, les outils de la page d'offre, la source des images de
  * `src/assets/documentaire/README.md`. Après le générique, la fin de page
@@ -54,35 +57,40 @@ const roles = [
 
   .generique__liste {
     display: grid;
-    gap: clamp(2rem, 4vw, 3rem);
-    max-width: 40rem;
+    gap: clamp(1.75rem, 4vw, 3rem);
+    max-width: 48rem;
     margin: 0 auto;
-    text-align: center;
   }
 
+  /* L'axe du générique : le rôle s'appuie dessus à gauche, les noms partent
+     de lui à droite, un par ligne, et chaque rôle s'aligne sur son premier
+     nom. Sur un téléphone, l'axe glisse d'un cran à gauche pour laisser aux
+     noms la place de tenir sur une ligne ; il revient au centre à 768 px. */
   .generique__ligne {
     display: grid;
-    gap: 0.625rem;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: baseline;
   }
 
   .generique__ligne dt {
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
+    text-align: right;
   }
 
   .generique__ligne dd {
     margin: 0;
     color: var(--color-ink);
-    font-size: var(--text-body-large);
+    font-size: var(--text-body);
     font-weight: 500;
     letter-spacing: -0.01em;
+    text-align: left;
   }
 
   .generique__ligne ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.375rem 1.75rem;
+    display: grid;
+    gap: 0.375rem;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -90,45 +98,40 @@ const roles = [
 
   .generique__ligne li {
     max-width: none;
+    text-wrap: balance;
+  }
+
+  /* Le carton d'ouverture : centré, au-dessus de l'axe, le nom en grand,
+     à la taille d'un carton de chapitre. */
+  .generique__ligne--titre {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.5rem;
+    margin-bottom: clamp(0.5rem, 2vw, 1rem);
+    text-align: center;
+  }
+
+  .generique__ligne--titre :is(dt, dd) {
+    text-align: center;
   }
 
   .generique__ligne--titre dd {
-    font-size: var(--text-title-lg);
-    letter-spacing: -0.025em;
+    font-size: var(--text-headline);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
   }
 
-  /* L'axe du générique : le rôle s'appuie dessus à gauche, les noms partent
-     de lui à droite, et chaque rôle s'aligne sur son premier nom. */
   @media (min-width: 768px) {
-    .generique__liste {
-      max-width: 48rem;
-      gap: clamp(2.5rem, 4vw, 3.5rem);
-    }
-
-    .generique__ligne {
+    .generique__ligne:not(.generique__ligne--titre) {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      column-gap: clamp(1.5rem, 3vw, 2.5rem);
-      align-items: baseline;
     }
 
-    .generique__ligne dt {
-      text-align: right;
-    }
-
-    .generique__ligne dd {
-      text-align: left;
-    }
-
-    .generique__ligne ul {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.375rem;
+    .generique__ligne:not(.generique__ligne--titre) dd {
+      font-size: var(--text-body-large);
     }
 
     /* Une longue liste de noms se lit sur deux colonnes, comme les seconds
        rôles d'un générique. */
     .generique__ligne ul:has(> li:nth-child(7)) {
-      display: grid;
       grid-template-columns: repeat(2, max-content);
       column-gap: clamp(1.5rem, 3vw, 2.5rem);
       justify-content: start;
