@@ -11,14 +11,15 @@ aucune n'est générée ni retouchée.
   2026 (dossier « photos-site »).
 - `formation-salle.jpg` : photo d'une de ses formations, prise le 2 juin 2022
   (album Google Drive « Photos Maestro » de Lilian, fichier
-  `08-formation-vue-de-la-salle`). Lilian est le formateur en polo bordeaux,
-  devant l'écran ; les participants sont vus de dos. Recadrée en 2:1 et
+  `08-formation-vue-de-la-salle`). Lilian est le formateur en polo bordeaux
+  (confirmé par lui le 14 octobre 2026), devant l'écran ; les participants sont vus de dos. Recadrée en 2:1 et
   réduite à 2560 × 1280. Les autres photos du même album montrent la même
   séance : ne pas les présenter comme d'autres missions. Sur deux d'entre
   elles (01 et 03), le formateur en noir n'est pas Lilian.
 
-Les droits de réutilisation des captures et l'accord des personnes visibles
-n'ont pas été vérifiés au moment de l'envoi (note du dossier « photos-site »).
+Droits : Lilian a confirmé le 14 octobre 2026 qu'il peut réutiliser les
+captures de Radio Contournement. Les participants de la formation sont vus de
+dos.
 
 Les autres photos de Lilian viennent de `src/assets/` : `lilian-au-bureau.jpg`
 (son bureau) et `lilian-photo.jpg` (portrait). Les images de
