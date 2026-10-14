@@ -907,8 +907,11 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
           en pastille. Tant qu'on y écrit, qu'elle a le focus ou que la
           conversation est ouverte, elle reste dépliée. Jusqu'au 8 octobre
           2026 un exemple s'écrivait d'abord dans la barre, ce qui la tenait
-          ouverte cinq à six secondes : le délai garde cette durée. ── */
-    const REPLI = 6000;
+          ouverte cinq à six secondes : le délai garde cette durée. Sur un
+          téléphone, dépliée en bas d'écran, elle couvre le texte qu'on lit :
+          elle se range au bout de deux secondes (critique du 14 octobre
+          2026). ── */
+    const repli = () => (etroit.matches ? 2000 : 6000);
     let rangement = 0;
 
     const annulerRangement = () => {
@@ -950,7 +953,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
       });
       /* Arrivée dans le coin, elle se range si on n'y touche pas. Sous le
          titre, elle reste en barre. */
-      if (suivant === 'coin' && racine.dataset.etat === 'veille') prevoirRangement(REPLI);
+      if (suivant === 'coin' && racine.dataset.etat === 'veille') prevoirRangement(repli());
     };
 
     /* ── Ouvrir, réduire ── */
@@ -1179,7 +1182,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
         racine!.dataset.apparue = '';
         /* C'était la fin de l'exemple qui la rangeait ici : sans exemple, le
            délai part de son apparition. */
-        if (racine!.dataset.etat === 'veille') prevoirRangement(REPLI);
+        if (racine!.dataset.etat === 'veille') prevoirRangement(repli());
       } else if (racine!.dataset.etat === 'veille') {
         delete racine!.dataset.apparue;
         annulerRangement();
@@ -1229,7 +1232,7 @@ import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
       window.setTimeout(
         () => {
           racine.dataset.apparue = '';
-          if (lieu === 'coin') prevoirRangement(phrases.length ? 0 : REPLI);
+          if (lieu === 'coin') prevoirRangement(phrases.length ? 0 : repli());
         },
         reduit.matches || lieu === 'coin' ? 0 : 700,
       );

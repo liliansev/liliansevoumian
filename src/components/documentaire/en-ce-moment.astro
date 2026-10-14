@@ -1,0 +1,227 @@
+---
+/*
+ * en-ce-moment : ce que Lilian construit en ce moment, agenceafk et Augmentés
+ * (`data/projets.ts`, `enCours`).
+ *
+ * Un projet par ligne, comme une affiche : à gauche ce que c'est (son rôle
+ * pour Lilian, le nom en grand, une phrase, ce qu'il contient, l'adresse), à
+ * droite un grand plan de son site, sans fausse fenêtre de navigateur autour,
+ * avec sa lumière douce sur la nuit. Lilian n'aimait pas les deux captures
+ * côte à côte, la seconde décalée (14 octobre 2026) : elles se lisaient comme
+ * deux cartes d'une grille, le texte en petit dessous.
+ *
+ * Le plan montre la page entière du site (`longue`), calée en haut. Au
+ * survol ou au focus, il la parcourt lentement jusqu'en bas, comme on fait
+ * défiler un site pour le découvrir, puis remonte quand on le quitte. C'est
+ * le visiteur qui le déclenche : rien ne bouge seul. En mouvement réduit, le
+ * plan reste en haut de la page.
+ *
+ * Pas d'incrustation : elle couvrait le titre du site, et l'incrustation
+ * nomme des personnes et des lieux, pas des pages. Les deux sites sont en
+ * crème et lime : leurs captures sont à peine étalonnées vers la nuit, et
+ * retrouvent toutes leurs couleurs quand on les vise.
+ */
+import { Icon } from 'astro-icon/components';
+import Chapitre from './chapitre.astro';
+import { enCours } from '../../data/projets';
+
+const goals: Record<string, string> = {
+  'https://agenceafk.fr': 'outbound_agence',
+  'https://augmentes.fr': 'outbound_formations',
+};
+const domaine = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+---
+
+<Chapitre
+  id="en-ce-moment"
+  nom="En ce moment"
+  lueur="peche lueur-froide"
+  titre="Ce qui m’occupe en ce moment."
+>
+  <ul class="affiches" role="list">
+    {enCours.map((p) => (
+      <li class="affiche reveal">
+        <a
+          class="affiche__lien"
+          href={p.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-fast-goal={p.href ? goals[p.href] : undefined}
+          data-fast-goal-source={p.href && goals[p.href] ? 'home_en_cours' : undefined}
+        >
+          <div class="affiche__texte">
+            {p.etiquette && <p class="affiche__role">{p.etiquette}</p>}
+            <h3 class="affiche__nom">
+              {p.nom}<span class="sr-only">, {p.etiquette?.toLowerCase()} (nouvel onglet)</span>
+            </h3>
+            <p class="affiche__resume">{p.resume}</p>
+            {p.tags && <p class="affiche__tags">{p.tags.join(' · ')}</p>}
+            {p.href && (
+              <p class="affiche__adresse">
+                {domaine(p.href)}
+                <Icon name="lucide:arrow-up-right" size={18} aria-hidden="true" />
+              </p>
+            )}
+          </div>
+          <figure class="affiche__plan plan">
+            {p.image && <div class="plan__lumiere plan__lumiere--douce" style={`background-image: url(${p.image})`} aria-hidden="true"></div>}
+            <div class="affiche__cadre plan__cadre media-ouvre">
+              {(p.longue ?? p.image) && (
+                <img src={p.longue ?? p.image} alt="" width="960" height="3600" loading="lazy" decoding="async" />
+              )}
+            </div>
+          </figure>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Chapitre>
+
+<style>
+  .affiches {
+    display: grid;
+    gap: var(--spacing-section-y);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .affiche {
+    max-width: none;
+  }
+
+  .affiche__lien {
+    display: grid;
+    gap: var(--spacing-groupe);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ── Le texte ── */
+  .affiche__texte {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 1rem;
+  }
+
+  .affiche__role {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+  }
+
+  .affiche__nom {
+    margin: -0.5rem 0 0;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    transition: color var(--duration-default) var(--ease-out-quint);
+  }
+
+  .affiche__resume {
+    max-width: 34ch;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+  }
+
+  .affiche__tags {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .affiche__adresse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 24%, transparent);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    transition:
+      color var(--duration-quick) var(--ease-out-quint),
+      border-color var(--duration-quick) var(--ease-out-quint);
+  }
+
+  .affiche__adresse :global(svg) {
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  .affiche__lien:hover .affiche__nom,
+  .affiche__lien:focus-visible .affiche__nom {
+    color: var(--color-peche);
+  }
+
+  .affiche__lien:hover .affiche__adresse,
+  .affiche__lien:focus-visible .affiche__adresse {
+    border-color: var(--color-peche);
+    color: var(--color-peche);
+  }
+
+  .affiche__lien:hover .affiche__adresse :global(svg) {
+    transform: translate(2px, -2px);
+  }
+
+  .affiche__lien:focus-visible {
+    outline-offset: 8px;
+  }
+
+  /* ── Le plan ── */
+  .affiche__plan {
+    order: -1;
+    margin: 0;
+  }
+
+  .affiche__cadre {
+    aspect-ratio: 16 / 11;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+    border-radius: var(--radius-xl);
+  }
+
+  /* La page entière, à la largeur du plan, calée en haut. Au survol, elle
+     descend jusqu'en bas en 9 s, à la vitesse d'une lecture, et remonte plus
+     vite quand on la quitte. */
+  .affiche__cadre img {
+    object-position: 50% 0%;
+    filter: saturate(0.8) brightness(0.94);
+    transition:
+      filter 600ms var(--ease-out-quint),
+      object-position 1.6s var(--ease-out-quint);
+  }
+
+  .affiche__lien:hover .affiche__cadre img,
+  .affiche__lien:focus-visible .affiche__cadre img {
+    filter: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .affiche__lien:hover .affiche__cadre img {
+      object-position: 50% 100%;
+      transition:
+        filter 600ms var(--ease-out-quint),
+        object-position 9s cubic-bezier(0.45, 0, 0.55, 1) 0.2s;
+    }
+  }
+
+  /* Sur un écran large, l'affiche : le texte à gauche, calé sur le haut du
+     plan, le plan à droite sur sept colonnes. */
+  @media (min-width: 900px) {
+    .affiche__lien {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: var(--spacing-gouttiere);
+      align-items: start;
+    }
+
+    .affiche__plan {
+      order: 0;
+    }
+
+    .affiche__texte {
+      padding-top: clamp(0.5rem, 2vw, 2rem);
+    }
+  }
+</style>

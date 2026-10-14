@@ -1,0 +1,317 @@
+---
+/*
+ * barre-chapitres : la barre de lecture de l'accueil « Le documentaire », et
+ * l'étalonnage de la page.
+ *
+ * Comme la barre de progression d'une vidéo découpée en chapitres : un segment
+ * par chapitre, aussi long que le chapitre, qui se remplit de pêche à mesure
+ * qu'on le lit. À gauche, le nom du chapitre en cours. Un clic sur un segment y
+ * mène. Elle apparaît quand le plan d'ouverture s'en va, et s'efface au pied
+ * de page. Sur un écran large elle se tient en bas à gauche, à côté de la barre
+ * d'écriture ; sur téléphone, elle laisse la place à la barre d'écriture tant
+ * que celle-ci est dépliée.
+ *
+ * Le même script règle l'étalonnage : deux lueurs fixes derrière la page, dont
+ * la teinte suit le chapitre en cours (`data-lueur` de chaque chapitre, voir
+ * `chapitre.astro`). La teinte change en fondu, lentement.
+ *
+ * Sans script, la barre n'existe pas (elle naît `hidden`) et l'étalonnage
+ * garde ses teintes de départ. En mouvement réduit, la teinte change sans
+ * fondu et la barre apparaît sans glisser.
+ */
+interface Props {
+  chapitres: { id: string; nom: string }[];
+}
+
+const { chapitres } = Astro.props;
+---
+
+<div class="etalonnage" data-etalonnage aria-hidden="true"></div>
+
+<nav class="chapitres" aria-label="Chapitres de la page" data-chapitres hidden>
+  <p class="chapitres__courant" aria-hidden="true" data-chapitre-courant>{chapitres[0]?.nom}</p>
+  <ol class="chapitres__piste" role="list">
+    {chapitres.map((c) => (
+      <li data-segment-place>
+        <a href={`#${c.id}`} data-segment={c.id}>
+          <span class="chapitres__bulle">{c.nom}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .chapitres {
+    --bord: max(1rem, env(safe-area-inset-bottom));
+    position: fixed;
+    left: max(1rem, env(safe-area-inset-left));
+    bottom: var(--bord);
+    z-index: 30;
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.875rem;
+    width: min(36rem, calc(100vw - 24rem - 3rem));
+    min-height: 3rem;
+    padding-inline: 1.25rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-night-deep) 84%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    backdrop-filter: blur(16px) saturate(1.3);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(1rem);
+    transition:
+      opacity 420ms var(--ease-out-quint),
+      transform 600ms var(--ease-out-expo),
+      visibility 0s linear 600ms;
+  }
+
+  .chapitres[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .chapitres__courant {
+    overflow: hidden;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .chapitres__piste {
+    display: flex;
+    gap: 3px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chapitres__piste li {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0.5rem;
+    max-width: none;
+  }
+
+  .chapitres__piste a {
+    position: relative;
+    display: block;
+    height: 2.75rem;
+    border-radius: var(--radius-xs);
+  }
+
+  /* La piste du segment, et ce qui en est lu. */
+  .chapitres__piste a::before,
+  .chapitres__piste a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 20%, transparent);
+    transition:
+      height var(--duration-quick) var(--ease-out-quint),
+      margin-top var(--duration-quick) var(--ease-out-quint);
+  }
+
+  .chapitres__piste a::after {
+    background: var(--color-peche);
+    transform: scaleX(var(--rempli, 0));
+    transform-origin: left;
+  }
+
+  .chapitres__piste a:hover::before,
+  .chapitres__piste a:hover::after,
+  .chapitres__piste a:focus-visible::before,
+  .chapitres__piste a:focus-visible::after {
+    height: 8px;
+    margin-top: -4px;
+  }
+
+  /* Le nom du chapitre au-dessus du segment, au survol et au clavier, comme
+     sur la barre d'une vidéo. Pour les lecteurs d'écran, c'est le nom du lien. */
+  .chapitres__bulle {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.25rem);
+    padding: 0.375rem 0.625rem;
+    border-radius: var(--radius-xs);
+    background: var(--color-ink);
+    color: var(--color-night);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(-50%, 0.25rem);
+    pointer-events: none;
+    transition:
+      opacity var(--duration-quick) var(--ease-out-quint),
+      transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  .chapitres__piste li:first-child .chapitres__bulle {
+    left: 0;
+    transform: translate(0, 0.25rem);
+  }
+
+  .chapitres__piste li:last-child .chapitres__bulle {
+    left: auto;
+    right: 0;
+    transform: translate(0, 0.25rem);
+  }
+
+  .chapitres__piste a:hover .chapitres__bulle,
+  .chapitres__piste a:focus-visible .chapitres__bulle {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .chapitres__piste li:first-child a:hover .chapitres__bulle,
+  .chapitres__piste li:first-child a:focus-visible .chapitres__bulle,
+  .chapitres__piste li:last-child a:hover .chapitres__bulle,
+  .chapitres__piste li:last-child a:focus-visible .chapitres__bulle {
+    transform: none;
+  }
+
+  /* Hors de la bulle, le nom ne se lit qu'aux lecteurs d'écran. */
+  .chapitres__piste a:not(:hover):not(:focus-visible) .chapitres__bulle {
+    clip-path: inset(50%);
+  }
+
+  @media (max-width: 640px) {
+    .chapitres {
+      --bord: max(0.75rem, env(safe-area-inset-bottom));
+      left: max(0.75rem, env(safe-area-inset-left));
+      grid-template-columns: 6.25rem minmax(0, 1fr);
+      gap: 0.75rem;
+      width: calc(100vw - 1.5rem - 4rem);
+      min-height: 3.5rem;
+      padding-inline: 1rem 0.875rem;
+    }
+
+    /* Sur un téléphone, huit segments tiennent dans 200 px : chacun ferait
+       une cible de 13 à 27 px de large, trop petite pour le doigt (et collée
+       à ses voisines). La barre y reste un indicateur ; on change de chapitre
+       par le menu. */
+    .chapitres__piste a {
+      pointer-events: none;
+    }
+  }
+
+  /* Sur téléphone, la barre d'écriture dépliée occupe le bas de l'écran : la
+     barre des chapitres s'efface le temps qu'elle se replie en pastille. */
+  @media (max-width: 640px) {
+    :global(html:has(.causerie[data-lieu='coin'][data-apparue]:not([data-rangee]))) .chapitres {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chapitres {
+      transform: none;
+      transition: opacity 200ms linear, visibility 0s linear 200ms;
+    }
+
+    .etalonnage {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const barre = document.querySelector<HTMLElement>('[data-chapitres]');
+  const etalonnage = document.querySelector<HTMLElement>('[data-etalonnage]');
+  const libelle = barre?.querySelector<HTMLElement>('[data-chapitre-courant]');
+  const chapitres = Array.from(document.querySelectorAll<HTMLElement>('[data-chapitre]'));
+  const segments = Array.from(barre?.querySelectorAll<HTMLAnchorElement>('[data-segment]') ?? []);
+
+  /* Les deux lueurs d'un chapitre : « braise peche » devient les jetons
+     `--color-braise` et `--color-peche`. */
+  const teinter = (lueur: string | undefined) => {
+    if (!etalonnage || !lueur) return;
+    const [haut, bas = haut] = lueur.split(/\s+/);
+    etalonnage.style.setProperty('--lueur-haut', `var(--color-${haut})`);
+    etalonnage.style.setProperty('--lueur-bas', `var(--color-${bas})`);
+  };
+
+  if (barre && libelle && chapitres.length && segments.length === chapitres.length) {
+    barre.hidden = false;
+    const ouverture = document.getElementById('hero');
+    const pied = document.querySelector('footer');
+
+    let mesures: { haut: number; hauteur: number }[] = [];
+    let finOuverture = 0;
+    let piedVisible = false;
+    let courant = -1;
+    let prevu = false;
+
+    const mesurer = () => {
+      mesures = chapitres.map((chapitre) => {
+        const cadre = chapitre.getBoundingClientRect();
+        return { haut: cadre.top + window.scrollY, hauteur: Math.max(1, cadre.height) };
+      });
+      segments.forEach((segment, i) => {
+        segment.parentElement?.style.setProperty('flex-grow', String(mesures[i].hauteur));
+      });
+      finOuverture = ouverture ? ouverture.getBoundingClientRect().bottom + window.scrollY : 0;
+    };
+
+    const peindre = () => {
+      prevu = false;
+      const lecture = window.scrollY + window.innerHeight * 0.45;
+      let actif = 0;
+      mesures.forEach((m, i) => {
+        const lu = Math.min(1, Math.max(0, (lecture - m.haut) / m.hauteur));
+        segments[i].style.setProperty('--rempli', lu.toFixed(4));
+        if (lecture >= m.haut) actif = i;
+      });
+      if (actif !== courant) {
+        courant = actif;
+        libelle.textContent = chapitres[actif].dataset.chapitre ?? '';
+        segments.forEach((segment, i) => {
+          if (i === actif) segment.setAttribute('aria-current', 'location');
+          else segment.removeAttribute('aria-current');
+        });
+        teinter(chapitres[actif].dataset.lueur);
+      }
+      const passee = window.scrollY > finOuverture - window.innerHeight * 0.5;
+      barre.toggleAttribute('data-visible', passee && !piedVisible);
+    };
+
+    const demander = () => {
+      if (prevu) return;
+      prevu = true;
+      window.requestAnimationFrame(peindre);
+    };
+
+    mesurer();
+    peindre();
+    window.addEventListener('scroll', demander, { passive: true });
+    new ResizeObserver(() => {
+      mesurer();
+      demander();
+    }).observe(document.body);
+
+    if (pied) {
+      new IntersectionObserver(([vue]) => {
+        piedVisible = vue.isIntersecting;
+        demander();
+      }).observe(pied);
+    }
+  } else if (chapitres[0]) {
+    teinter(chapitres[0].dataset.lueur);
+  }
+</script>

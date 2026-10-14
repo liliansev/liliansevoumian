@@ -1,0 +1,34 @@
+---
+/*
+ * fin : la fin de l'accueil « Le documentaire ».
+ *
+ * La fin de page commune (`fin-de-page`), sur la nuit seule et sans sa
+ * maille : on écrit à Lilian. L'étalonnage y passe à la braise.
+ *
+ * Un générique de fin la précédait (les rôles et les noms : les clients, les
+ * recommandations, les outils, la source des images). Lilian l'a retiré le
+ * 14 octobre 2026 : tout y était déjà sur la page, les clients dans le défilé
+ * des logos, les recommandations dans « Ils en parlent ». Ne pas le remettre
+ * sans qu'il le demande.
+ */
+import FinDePage from '../fin-de-page.astro';
+---
+
+<div id="fin" data-chapitre="Contact" data-lueur="braise braise" class="fin-film">
+  <FinDePage id="contact" source="home_offres" titre="Un projet, une idée, une <mark>question&nbsp;?</mark>" />
+</div>
+
+<style>
+  /* La fin de page commune, sans la maille qu'elle porte sur les autres
+     pages : ici la nuit et l'étalonnage suffisent. */
+  .fin-film :global(.fin__grille) {
+    display: none;
+  }
+
+  /* Sans sa maille, la hauteur d'écran qu'elle remplit ailleurs ne laissait
+     ici qu'un grand vide sous les témoignages : la fin prend la hauteur de ce
+     qu'elle dit. */
+  .fin-film :global(.fin) {
+    min-height: 0;
+  }
+</style>

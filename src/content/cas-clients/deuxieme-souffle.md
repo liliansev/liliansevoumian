@@ -2,6 +2,8 @@
 title: "Deuxième Souffle : organiser les sessions des coachs"
 seoTitle: "Deuxième Souffle : application Glide et Make · Cas client"
 description: "Premier lot d’une application Glide et Make pour Deuxième Souffle : candidatures aux sessions, affectation par le client, pointage et estimation des paiements."
+client: "Deuxième Souffle"
+accroche: "J’ai monté le premier lot de leur application Glide pour une trentaine de coachs : sessions, candidatures, affectation et pointage."
 category: application
 scopeNote: "Premier lot réalisé avec Glide et Make. L’usage actuel de la solution reste à confirmer."
 date: 2026-09-05

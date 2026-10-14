@@ -1,6 +1,6 @@
 ---
 name: Lilian Sevoumian
-description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, un trait pêche sous un fragment de titre, tout en bas de casse, un seul bouton qui ouvre la conversation, seul à porter la pastille pêche. L'accueil y ajoute sa grille et une scène d'interface par métier, jouée une fois."
+description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, un trait pêche sous un fragment de titre, tout en bas de casse, un seul bouton qui ouvre la conversation, seul à porter la pastille pêche. L'accueil se lit comme un court documentaire : des plans en cinémascope de vraies photos de Lilian qui éclairent la nuit, des incrustations, ses sous-titres en pêche claire, des cartons de chapitre, une barre de lecture."
 colors:
   paper: "#0c121f"
   surface-low: "#1a2439"
@@ -38,6 +38,18 @@ colors:
   lueur-froide: "#6f7cff"
   braise: "#ff8a65"
 typography:
+  nom:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "clamp(3.25rem, 7.2vw, 6rem)"
+    fontWeight: 500
+    lineHeight: 0.98
+    letterSpacing: "-0.04em"
+  carton:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "var(--text-headline)"
+    fontWeight: 500
+    lineHeight: "var(--leading-display)"
+    letterSpacing: "var(--tracking-display)"
   affiche:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem)"
@@ -114,6 +126,17 @@ typography:
   caption:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
     fontSize: "0.6875rem"
+  sous-titre:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "clamp(1.125rem, 0.6vw + 0.95rem, 1.5rem)"
+    fontWeight: 500
+    lineHeight: 1.35
+    letterSpacing: "-0.01em"
+  credit:
+    fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 400
+    lineHeight: 1.4
 rounded:
   xs: "6px"
   sm: "10px"
@@ -215,7 +238,68 @@ components:
     height: "1.5em"
   scene-cadre:
     backgroundColor: "{colors.night-deep}"
-    rounded: "{rounded.md}"
+    rounded: "{rounded.xl}"
+  plan-cadre:
+    backgroundColor: "{colors.surface-low}"
+    rounded: "{rounded.xl}"
+  incrustation:
+    backgroundColor: "rgb(12 18 31 / 0.74)"
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.sm}"
+    padding: "0.75rem 1rem 0.8rem"
+  sous-titre:
+    textColor: "{colors.peche-clair}"
+    typography: "{typography.sous-titre}"
+  sous-titre-intervenant:
+    textColor: "{colors.ink}"
+    typography: "{typography.phrase}"
+  carton:
+    textColor: "{colors.ink}"
+    typography: "{typography.carton}"
+  credit:
+    typography: "{typography.credit}"
+  barre-chapitres:
+    backgroundColor: "rgb(12 18 31 / 0.84)"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.full}"
+    padding: "0 1rem 0 1.25rem"
+    height: "3rem"
+  segment-chapitre:
+    backgroundColor: "rgb(255 255 255 / 0.2)"
+    rounded: "{rounded.full}"
+    height: "4px"
+  segment-chapitre-lu:
+    backgroundColor: "{colors.peche}"
+    rounded: "{rounded.full}"
+    height: "4px"
+  onglet-plan:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-low}"
+    typography: "{typography.button}"
+    padding: "0 0.75rem 0.875rem"
+    height: "44px"
+  onglet-plan-actif:
+    textColor: "{colors.ink}"
+  filmo-titre:
+    textColor: "{colors.ink}"
+    typography: "{typography.headline}"
+    padding: "clamp(1.5rem, 3vw, 2.25rem) 0"
+  champ-newsletter:
+    backgroundColor: "rgb(12 18 31 / 0.7)"
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.full}"
+    padding: "0.375rem 0.375rem 0.375rem 1.25rem"
+    height: "3.5rem"
+  bouton-contour:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.full}"
+    padding: "0 1.125rem"
+    height: "2.75rem"
   footer:
     backgroundColor: "{colors.night-deep}"
     textColor: "{colors.ink-mid}"
@@ -228,44 +312,52 @@ components:
 **Creative North Star : « Nuit et pêche »**
 
 Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait
-aujourd'hui. L'accueil raconte, dans l'ordre fixé par lui : vous perdez du
-temps, voilà pourquoi, voilà pourquoi automatiser, voilà pourquoi moi. Les deux
-offres chiffrées, **Automatisation & IA** et **Sites web**, gardent ensuite
-chacune leur page, à côté des pages d'outil, des pages de lecture, des cas
-clients et des principes. Le site doit tenir debout tout seul, sans ornement
-pour rattraper une hiérarchie molle : le contraste vient de la taille, de
-l'espace et d'un accent unique.
+aujourd'hui. L'accueil le montre au travail, comme un court documentaire en
+chapitres. Les deux offres chiffrées, **Automatisation & IA** et **Sites
+web**, gardent chacune leur page, à côté des pages d'outil, des pages de
+lecture, des cas clients et des principes. Le site doit tenir debout tout
+seul, sans ornement pour rattraper une hiérarchie molle : le contraste vient
+de la taille, de l'espace et d'un accent unique.
 
 **Une seule tenue, sur toutes les pages.** La direction « tech moderne,
-propre », validée par Lilian sur l'accueil le 2 octobre 2026, a été étendue à
-tout le site le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est
-énoncée dans *La tenue commune* ; la section *L'accueil* ne décrit plus que ce
-qui est propre à cette page (sa grille, ses filets de cadre, ses scènes).
+propre », validée par Lilian le 2 octobre 2026, a été étendue à tout le site
+le 3 octobre 2026 : il a demandé que tout soit homogène. Elle est énoncée dans
+*La tenue commune*. **L'accueil y ajoute un monde à lui, « Le documentaire »**
+(choisi par Lilian le 14 octobre 2026), qui prolonge la tenue sans la
+défaire : même nuit, même pêche, même Geist, mêmes rayons, même bouton. Il
+est décrit dans *L'accueil : le documentaire*, et ne s'exporte pas sur les
+autres pages.
 
-Le site vit sur la nuit profonde `#0c121f`. Le texte est blanc, les gris sont
-teintés vers la nuit, et il n'y a qu'un accent : la pêche `#ffb38a`. En
-aplat, elle est le bouton d'appel ; et, parce qu'elle tient 10,76:1 sur le
-fond, elle a aussi le droit d'être un trait (sous un fragment de titre, sous
-un lien), du texte d'accent et l'anneau de focus. Le clair est l'exception : il ne revient que dans l'île,
-un panneau `#f7f8fa` détaché et arrondi, où la pêche retombe à 1,64:1 et
-redevient une simple surface.
+Le site vit sur la nuit profonde. Le texte est blanc, les gris sont teintés
+vers la nuit, et il n'y a qu'un accent : la pêche. En aplat, elle est le
+bouton d'appel ; et, parce qu'elle tient 10,76:1 sur le fond, elle a aussi le
+droit d'être un trait (sous un fragment de titre, sous un lien, au-dessus d'une
+incrustation), du texte d'accent et l'anneau de focus. Sa version claire est
+la voix de Lilian dans les sous-titres de l'accueil. Le clair est
+l'exception : il ne revient que dans l'île, un panneau détaché et arrondi, où
+la pêche retombe à 1,64:1 et redevient une simple surface.
 
 Plus d'angle vif. Une surface s'arrondit selon sa taille, de 6 px pour un
-détail de maquette à 32 px pour l'île, et ce qui se clique est rond : bouton,
-lien de la barre, étiquette. Les deux rayons d'origine, 0 et 9999, donnaient un
-site « trop carré » : c'est le retour explicite du client.
+détail de maquette à 32 px pour l'île et les plans de l'accueil, et ce qui se
+clique est rond : bouton, lien de la barre, étiquette. Les deux rayons
+d'origine, 0 et 9999, donnaient un site « trop carré » : c'est le retour
+explicite du client.
 
 Rien n'est encadré pour être rangé. Les sections se suivent sur le même fond,
 séparées par un filet d'un pixel ; à l'intérieur, les blocs de texte sont posés
 à plat et c'est l'espace qui les sépare. Listes à filets, grilles de cartes
-bordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ».
+bordées et bandes de fond sont ce que Lilian a refusé comme « IA slop ». Sur
+l'accueil, la profondeur vient de la lumière : chaque plan éclaire la nuit
+derrière lui, et deux lueurs fixes donnent à la page la teinte du chapitre
+en cours.
 
-Le mouvement porte trois gestes d'auteur : le soulignement qui se tire,
-l'entrée d'un en-tête de page, les médias qui s'ouvrent au défilement. Le reste
-est du retour d'interaction ou de l'accompagnement de lecture (voir
-*Components → Mouvement*). Sur l'accueil, une animation joue une fois puis se
-tait : Lilian a demandé le 8 octobre 2026, après relecture du site en ligne,
-de réduire les animations de la page.
+Le mouvement porte trois gestes d'auteur sur tout le site : le soulignement
+qui se tire, l'entrée d'un en-tête de page, les médias qui s'ouvrent au
+défilement. L'accueil y ajoute l'ouverture de son premier plan, d'une fente à
+l'image entière, une seule fois. Le reste est du retour d'interaction ou de
+l'accompagnement de lecture (voir *Components → Mouvement*). Sur l'accueil,
+une animation joue une fois puis se tait : une seule boucle y reste, le
+défilé des logos, avec son bouton pause.
 
 Trois choses restent retirées, et l'absence est le geste : le monospace, les
 sur-titres au-dessus des titres, et les capitales de style. `SectionHeader` n'a
@@ -296,8 +388,11 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 - Un seul geste de contact : « Parlons de votre projet » ouvre la conversation.
 - Une seule famille, Geist Variable.
 - Trois gestes d'auteur de mouvement, joués une fois, jamais bloquants.
-- Sur l'accueil, une animation joue une fois puis s'arrête ; seule la scène du
-  récit continue de bouger.
+- L'accueil est un documentaire : des plans en cinémascope de vraies photos de
+  Lilian, qui éclairent la nuit, des incrustations, ses sous-titres en pêche
+  claire, des cartons de chapitre, une barre de lecture.
+- Sur l'accueil, une animation joue une fois puis s'arrête ; seul le défilé
+  des logos boucle, avec son bouton pause.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
   visuels, jamais dans le chrome du site.
 
@@ -327,9 +422,8 @@ réécrit pas : elle les compose.
    moi ». **Deux par page au plus, jamais deux de suite, jamais la première ni
    la dernière section.** La section qui précède une île ne trace pas son filet
    de pied (`section:has(+ .bloc-encre)`) : l'île se détache déjà de la nuit.
-   Seule exception de forme : sur l'accueil, le panneau « Pourquoi moi » est
-   une carte dans une colonne (`home-today-path`), parce qu'il n'occupe pas
-   toute la largeur.
+   L'accueil n'en a aucune : le documentaire se tient tout entier sur la
+   nuit, et sa lumière vient des plans.
 4. **Les titres sont en graisse 500**, de `h1` à `h4`. `h1` et `h2` prennent
    `--leading-display` (1,1) et `--tracking-display` (−0,03em). La règle est
    écrite une fois, avec `:root :is(…)` : ce poids de classe l'emporte sur un
@@ -352,7 +446,7 @@ réécrit pas : elle les compose.
 8. **Un seul geste de contact.** Tous les boutons disent « Parlons de votre
    projet » (`LIBELLE_CONTACT_RESERVATION`, dans `lib/reservation.ts`) et
    ouvrent la conversation de `home-invite`, que `Layout` rend sur toutes les
-   pages (l'accueil la place lui-même, après son premier écran).
+   pages (l'accueil la pose lui-même, dans son plan d'ouverture).
    `BoutonReservation` ouvre la conversation par défaut ; sa prop `direct` mène
    à l'agenda, et seul le moyen « Réserver un appel » de la conversation s'en
    sert. Sans script, le bouton reste un lien vers l'agenda.
@@ -391,8 +485,8 @@ plusieurs pages écrivaient à la main, chacune à sa façon.
   `data/home-faq`.
 - **`fin-de-page`** : la fin de chaque page, une phrase centrée sur la maille,
   le champ et le bouton (voir *Components → La fin de page*). Une page ne
-  change que le titre et la phrase qui le suit ; l'accueil ajoute la ligne des
-  prix (prop `prix`).
+  change que le titre et la phrase qui le suit. Sur l'accueil, elle ferme le
+  documentaire, sans sa maille.
 - **`pourquoi-moi`** : qui construit, dans une île claire. Le portrait rond
   (4rem) et le titre à gauche ; à droite deux voix qui ne se mélangent pas, la
   notice à la troisième personne (datée, citable) puis le texte à la première.
@@ -442,305 +536,363 @@ un seul `mark` au plus.
 | `/expert-make`, `/expert-n8n` | `pourquoi-moi` |
 | pages de lecture et page de reprise | une `partie clair` : le comparatif, le prix du suivi, la première tâche à confier |
 | `/cas-clients/[slug]` | la pièce « Les résultats » |
-| accueil | la carte « Pourquoi moi » |
+| accueil | aucune : le documentaire reste sur la nuit |
 | `/cas-clients`, `/principes`, mentions légales, 404 | aucune |
 
-## L'accueil : ce qui lui est propre
+## L'accueil : le documentaire
 
-Direction validée par Lilian le 2 octobre 2026, après le rejet de quatre pistes
-dessinées et d'une première version jugée « IA slop ». Les références qu'il a
-choisies lui-même sur un mur de vrais sites : Novu, Vimcal, Juan Mora, Qdrant.
-Sa consigne tient en une ligne : « tech moderne, clean, privilégie les grilles ».
-Le fond, la graisse des titres, le bas de casse et le bouton unique sont
-devenus *La tenue commune* ; il reste ici ce que seule cette page porte.
+Choisi par Lilian le 14 octobre 2026, le même jour où il a écarté deux autres
+versions (des cartes sobres, puis le retour à la direction d'avant).
+L'accueil se lit comme un court documentaire sur lui au travail : des plans en
+grand de vraies photos de lui, légendés comme un reportage, sous-titrés à sa
+voix, découpés en chapitres qu'une barre de lecture fait parcourir, comme une
+de ses vidéos. Il refuse le titre centré au-dessus d'une rangée de cartes, et
+la répétition d'une même rangée texte plus panneau.
 
-**Le 8 octobre 2026, après relecture du site en ligne, Lilian a demandé deux
-choses pour cette page : moins d'animations et moins de texte.** Plus rien n'y
-joue en boucle de soi-même, à une exception près, la scène du récit (voir
-*Components → Mouvement*). Les phrases du récit sont courtes, un bloc de métier
-tient en quatre lignes, et aucun bloc ne mène à un cas client précis.
+La grammaire commune est dans `src/components/documentaire/documentaire.css` ;
+chaque chapitre est un composant du même dossier. Elle ne sert que sur `/` :
+les autres pages gardent *La tenue commune* seule. Le documentaire en reprend
+tout (nuit, pêche, Geist, rayons, bouton unique, bas de casse, graisse 500) et
+n'y ajoute que ce qui suit. Ni FAQ ni prix sur l'accueil : ils vivent sur les
+pages d'offre.
 
-**Ce qu'il a refusé, et qui ne revient pas :** les listes séparées par des
-filets, les grilles de cartes, un fragment accentué dans le titre de chaque
-section comme seul geste, un hero décoratif sans rapport avec le métier. Une
-section de l'accueil porte **un composant qui n'existe que là**, dont la forme
-vient de ce qu'elle raconte.
+### Les chapitres
 
-### Le cadre
+| Ancre | Nom dans la barre | Carton | Lueur (haut, bas) |
+|---|---|---|---|
+| `#hero` | Au bureau | le `h1` de l'ouverture | `lueur-froide`, `lueur-froide` |
+| `#a-propos` | À propos | « Je pars de vos processus, pas d'une liste d'outils. » (la parole, pas un carton centré) | `lueur-froide`, `peche` |
+| `#en-ce-moment` | En ce moment | « Ce qui m'occupe en ce moment. » | `peche`, `lueur-froide` |
+| `#services` | Expertises | « Mes expertises. » | `lueur-froide`, `lueur-froide` |
+| `#contenus` | Vidéos | « Ce que j'apprends, je le montre. » | `peche`, `peche` |
+| `#projets` | Projets clients | « Ce que j'ai construit pour mes clients. » | `braise`, `peche` |
+| `#temoignages` | Ils en parlent | « On a travaillé ensemble. » (souligné : « ensemble ») | `peche`, `braise` |
+| `#fin` | Contact | aucun : la fin de page porte son titre | `braise`, `braise` |
 
-- **Deux lignes verticales de 1 px** courent de la fin du hero au pied de page
-  (`.accueil__suite::before/::after`, dans `src/pages/index.astro`), à
-  `--spacing-cadre` (16 à 32 px) à l'extérieur de la colonne de 1 200 px, en
-  encre à 9 %. Elles appartiennent à la page, pas aux sections : une section
-  qui redessine les siennes produit un escalier. Absentes sous 1024 px, où la
-  marge ne les contient pas.
-- **Les repères d'angle** (`.repere`, quatre équerres de 1 px) cadrent ce qui
-  est une scène : la scène du récit, la scène de chaque métier, la vidéo.
-  Jamais autour d'un texte.
-- **Une offre n'a qu'un nom sur la page** : « Automatisation », « Agents IA »,
-  « Dashboards et outils métiers », « Formations », dans cet ordre (donné par
-  Lilian le 3 octobre 2026), dans les blocs des métiers et la ligne de prix.
-  La barre et les onglets disent « Dashboards », faute de place. **Les sites
-  web ont quitté la page d'accueil ce jour-là** : plus de bloc, plus de
-  vitrine, plus de prix. Leur page d'offre reste en ligne et le pied de page y
-  mène toujours.
-- **On dit « dashboard », jamais « tableau de bord »** dans le texte visible :
-  choix de Lilian le 2 octobre 2026, pour n'avoir qu'un mot. Les commentaires
-  du code gardent le français.
-- **Chaque offre qui a un prix l'affiche en « À partir de »** : 900 € HT sur
-  les blocs Automatisation et Agents IA (c'est la même offre, au même prix
-  d'entrée). Dashboards et outils métiers : « Sur devis ». Les formations n'en
-  affichent pas : Lilian ne le veut pas.
-- **Sur téléphone, les quatre métiers tiennent dans un seul bloc**
-  (`home-services`, sous 720 px) : quatre onglets sous le titre, sur une
-  ligne, en vrais onglets (le nom, un trait pêche sous celui qui est ouvert, un
-  filet sous la rangée) ; un bloc à la fois ; au pied de chaque bloc,
-  « Suivant : … ». Ils ne reprennent pas la piste à pastille des boutons de
-  mode du récit, qui les précèdent d'un écran avec presque les mêmes noms :
-  deux commandes voisines, deux dessins (demande de Lilian). Sur un petit
-  téléphone la rangée défile. Des onglets et non un carrousel à glisser : les
-  quatre noms restent visibles, rien n'est caché derrière un geste. Les liens
-  de la barre et du menu ouvrent le bon onglet. Sans script, les blocs se
-  suivent.
-- **La barre de l'accueil nomme les quatre métiers**, et rien d'autre. Son menu
-  mobile les liste en grand, puis mène à ce que la barre ne nomme pas
-  (« Pourquoi moi », « Vidéos et newsletter », « Cas clients »).
+- **Un chapitre s'écrit avec `chapitre.astro`.** La section porte
+  `data-section`, `data-chapitre` (son nom dans la barre, en deux ou trois
+  mots) et `data-lueur` (deux noms de jetons de couleur sans préfixe : la
+  lueur du haut, puis celle du bas). Marges `section-x`, rythme `section-y`,
+  colonne de 1 200 px (`.chapitre__colonne`). L'ouverture et la fin
+  posent les deux attributs à la main ; la barre et l'étalonnage ne lisent
+  rien d'autre.
+- **La barre de navigation nomme les chapitres**, dans leur ordre : À propos,
+  En ce moment, Expertises, Vidéos, Projets clients. La barre des chapitres en
+  donne la liste complète.
+- **Un seul appel à l'action.** Le bouton de la barre de navigation et la fin
+  de page ouvrent la conversation ; la barre d'écriture est posée dans
+  l'ouverture (`Layout` reçoit `causerie={false}`, et la page rend
+  `home-invite` juste après son premier plan).
 
-### Le hero
+### Le carton
 
-Le titre centré, la barre d'écriture dessous, et le défilé des clients en bas.
-Longtemps le titre seul, sans forme 3D (« pas nécessaire ») ; Lilian y a
-ajouté la barre le 2 octobre 2026 (voir *La barre d'écriture*). Le titre est
-une phrase, pas un slogan : « Salut, je m'appelle Lilian Sevoumian et je suis
-expert en », puis la réponse, soulignée du trait pêche (`mark`) :
-« Automatisations & Agents IA ». Elle était dans une pastille pêche jusqu'au
-8 octobre 2026. À partir de 900 px elle tient sur une ligne ; en dessous elle
-passe sur deux, et le trait la suit. Taille `--text-affiche`, bornée par la
-hauteur (`11svh`) pour ne jamais pousser les logos hors de l'écran. Interligne
-1,12 et approche −0,028em, réglés à la demande de Lilian (« titre trop
-resserré ») : ce sont les valeurs les plus serrées de la page, aucun titre plus
-petit ne l'est davantage. Le nom ne se coupe jamais entre le prénom et le nom
-(espace insécable). L'entrée tient en une seconde et demie : les mots de la
-phrase se posent un par un, puis le métier arrive, avant la fin de la première
-seconde. C'est le seul titre du site qui entre mot à mot : il est l'entrée de
-la page.
+Le titre d'un chapitre, seul et centré comme un intertitre : `h2` en
+`--text-headline`, interligne et approche `display`, `20ch` au plus, équilibré
+(`text-wrap: balance`) ; au besoin une phrase dessous en `--text-body-large`,
+`ink-mid`, `40ch`. Écart `lie` entre les deux, `bloc` sous le carton, rien
+au-dessus : le rythme `section-y` du chapitre suffit. Il arrive par `.reveal`.
 
-Au pied de la zone du titre, **une flèche ronde de 44 px** mène au récit : le
-premier écran ne donnait aucun indice qu'il y a une suite. Une flèche, pas un
-mot de plus : le titre reste seul. Elle est masquée sur un écran de moins de
-820 px de haut (720 px avant le 8 octobre 2026 : la liste des logos, devenue
-fixe, prend deux à trois lignes).
+- **Plus petit que les plans qu'il annonce** (14 octobre 2026, critique) : en
+  `--text-affiche` avec `section-y` dessous et `8svh` dessus, chaque carton
+  faisait un écran de nuit vide, et la page se lisait comme une suite
+  d'intertitres. Le grand reste au nom de l'ouverture et aux faits.
+- **Quatre traits pêche sur toute la page, pas un par titre** : le métier de
+  l'ouverture, les faits du portrait, « ensemble » chez les intervenants et
+  « question » à la fin. Neuf soulignés n'en soulignaient plus aucun ; les
+  autres cartons n'en portent pas.
 
-Derrière, une **grille de maille `--spacing-maille`**, traits à
-10 % de blanc, comptée depuis le centre de l'écran. Elle s'allume en pêche
-sous le pointeur (`--px`, `--py`), la case survolée s'éclaire et laisse une
-traînée. Au chargement, deux secondes après l'arrivée du titre, dix cellules
-s'allument l'une après l'autre **en un seul passage**, puis restent éteintes :
-elles repassaient toutes les neuf secondes jusqu'au 8 octobre 2026. Rien
-d'autre n'y bouge : des faisceaux de lumière la parcouraient, Lilian les a fait
-retirer le 2 octobre 2026 (« il y a déjà assez d'animation avec les carrés qui
-s'illuminent »). Tout élément décoratif se place en mailles (`--x`,
-`--y`), jamais en pixels : c'est ce qui le garde aligné à toutes les largeurs.
-Le premier écran ne porte plus aucune boucle : son entrée se joue au
-chargement, puis il ne bouge que sous le pointeur.
+Deux variantes, dans le portrait :
+
+- **La parole** : à côté du portrait, le carton devient ce que dit
+  l'interviewé. Il quitte le centre, s'aligne à gauche sur le texte qu'il
+  ouvre, en `--text-story`, écart `lie` avant le texte.
+- **Le carton des faits** : entre deux plans, une phrase seule au centre, en
+  `--text-story`, graisse 500, `24ch`, avec `section-y` au-dessus et
+  au-dessous. C'est le plus grand texte de la page après le nom, et il porte
+  son trait pêche (« premier Français certifié Make niveau 5 »). Les faits
+  viennent de `data/parcours.ts` (`faits`), sans leur date.
+
+Les approches de ces titres sont écrites en littéraux dans les composants
+(−0,045em au carton, −0,035em à la parole, −0,04em aux faits et à la
+filmographie), hors des jetons `--tracking-*` : le carton, plus petit que le
+nom, est plus serré que lui. Écart relevé, pas une règle à reprendre (voir
+*Typography → Hierarchy*).
+
+### Le plan
+
+Une image à coins arrondis qui jette sa lumière sur la nuit. Trois pièces :
+
+- **`.plan`** : la figure, qui isole son empilement (`isolation: isolate`).
+- **`.plan__cadre`** : l'image en `object-fit: cover`, rognée en
+  `overflow: clip` (règle du rognage), fond `surface-low` le temps qu'elle
+  arrive, rayon `lg` par défaut, `xl` pour un plan en grand.
+- **`.plan__lumiere`** : l'image elle-même, tirée à 64 ou 96 px de large en
+  WebP, posée derrière le cadre, agrandie par le flou (`blur(52px)
+  saturate(1.5)`, opacité 0,5), descendue de 7 % : la lueur d'un écran sur un
+  mur. Elle n'est pas une ombre : elle a la couleur de l'image, et c'est elle
+  qui éclaire la nuit.
+- **`.plan__lumiere--douce`** : la même lumière, retenue (`blur(52px)
+  saturate(0.6)`, opacité 0,4), pour une image claire ou très saturée qui
+  éclairerait trop : les captures des sites en cours, la vignette de la
+  vidéo.
+
+| Plan | Format | Où |
+|---|---|---|
+| Ouverture | 2,39:1, plus large que la colonne (1 376 px au plus, marges `cadre`), rayon `xl` ; 4:5 sous 768 px | `ouverture.astro` |
+| Plan large | 2,39:1 à partir de 768 px, 4:3 en dessous, sur toute la colonne, rayon `xl`, `.media-ouvre` ; cadrage par plan (`cadrage`, `cadrageEtroit`) | `plan-large.astro`, une fois dans le portrait |
+| Contrechamp | deux plans en 3:2 côte à côte à partir de 768 px, l'un sous l'autre en dessous, rayon `xl`, `.media-ouvre`, chacun sa lumière et son incrustation, un seul sous-titre | `contrechamp.astro`, les formations du portrait |
+| Portrait d'interview | 4:5, colonne `5fr` face à la parole `6fr` à partir de 1024 px | `portrait.astro` |
+| Affiche | 16:11, la page entière du site calée en haut, à peine étalonnée, filet d'encre à 10 %, rayon `xl`, lumière douce ; colonne `7fr` face au texte `5fr` à partir de 900 px | `en-ce-moment.astro` |
+| Vidéo | 16:9, la vignette et sa lumière douce, un disque de lecture | `publications.astro` |
+| Scène de métier | 9:8, puis 4:3 (600 px), 16:9 à partir de 1 024 px, filet d'encre à 10 %, rayon `xl` ; pas de cinémascope : la scène, dessinée en 4:3, y nageait dans son quadrillage | `expertises.astro` |
+
+**Le plan tient dans le premier écran**, incrustation comprise : celui de
+l'ouverture est borné en hauteur (`max(26rem, 100svh − 24rem)`, et
+`max(18rem, 100svh − 31rem)` sur téléphone) et s'étire en largeur plutôt que
+de passer sous le pli.
+
+**Les captures des sites en cours sont à peine étalonnées.** agenceafk et
+Augmentés sont en crème et lime : leur capture passe en `saturate(0.8)
+brightness(0.94)` et retrouve toutes ses couleurs au survol et au focus
+(600 ms). À 35 % de saturation, comme d'abord, elles paraissaient éteintes.
+Leur lumière est douce. Aucune fausse fenêtre de navigateur autour.
+
+### L'incrustation
+
+Le nom et le rôle, posés en bas à gauche du plan comme dans un reportage :
+à `clamp(0.75rem, 1.8vw, 1.5rem)` des bords, rayon `sm`, nuit profonde à 74 %
+sous un verre dépoli (`blur(14px) saturate(1.2)`). Au-dessus du nom, un trait
+pêche de 1,75rem sur 2 px. Le nom en `--text-body`, graisse 500, blanc ; le
+rôle dessous en `--text-body-sm`, `ink-mid`, en bas de casse (« à son bureau,
+un workflow à l'écran »).
+
+- **Sur téléphone, le rôle se raccourcit** (`roleCourt`, sous 600 px) : sur
+  trois lignes il couvrait le sujet.
+- **Elle nomme des personnes et des lieux**, jamais une page : Lilian au
+  bureau, Lilian en portrait, La Capsule au micro de Radio Contournement,
+  Maria Schools en formation, Rocket School après trois jours
+  d'automatisation. Une fois Lilian présenté, l'incrustation
+  nomme le lieu ou la scène plutôt que de répéter son nom.
+- **Sur une photo de groupe, elle monte en haut** (`incrustation: 'haut'`
+  dans `contrechamp`) : en bas, elle couvrait Lilian, assis au premier rang.
+- **Pas d'incrustation sur une capture de site** : elle en couvrait le titre,
+  et le nom est déjà dans le `h3` qui suit.
+
+### Le sous-titre
+
+**La voix de Lilian, en pêche claire.** Une phrase qu'il pourrait dire sur ce
+plan, prise dans ce que PRODUCT.md atteste, centrée sous le plan : graisse
+500, interligne 1,35, approche −0,01em, `34ch`, équilibrée. « J'automatise
+d'abord mon propre travail. » Dans la séquence des expertises, la phrase du
+métier est le sous-titre de son plan, et c'est elle le `h3`.
+
+**Les mots des autres sont blancs.** Un intervenant parle en grand
+(`--text-phrase`, graisse 500), entre guillemets, signé par son nom et son
+rôle (voir *Ils en parlent*). Rien d'autre ne distingue les deux voix : la
+teinte suffit, et elle ne se prête pas.
+
+### La mention de source
+
+Sous le sous-titre d'une image prêtée, sa provenance, en petit
+(`.credit`, 0,75rem, interligne 1,4) : « Image : Radio Contournement, épisode
+125. » Toute image prêtée la porte ; une image de Lilian n'en a pas besoin.
+Elle est écrite aujourd'hui en `ink-faint`, qui ne devrait pas porter de
+texte (voir *Colors → Neutral*) : écart relevé, non repris.
+
+### L'étalonnage
+
+Deux lueurs fixes derrière toute la page (`.etalonnage`, `position: fixed`,
+sous les chapitres et le pied de page, qui passent devant en `z-index: 1`) :
+une en haut à droite (`64% 56%` à `92% 0%`, la lueur du haut à 24 %), une en
+bas à gauche (`60% 52%` à `0% 100%`, la lueur du bas à 20 %), chacune fondue
+vers le transparent à 76 %. **Leur teinte suit le chapitre en cours** : froide
+au bureau et dans les expertises, elle se réchauffe jusqu'à la braise de
+la fin.
+
+- Les deux teintes sont des propriétés enregistrées (`@property --lueur-haut`,
+  `--lueur-bas`, syntaxe `<color>`, braise et lueur froide au départ) : c'est
+  ce qui permet de les faire fondre l'une dans l'autre, en 1,8 s
+  (`ease-out-quint`). Une variable non enregistrée sauterait.
+- Le script de la barre des chapitres pose `var(--color-…)` lu dans
+  `data-lueur`, quand la ligne de lecture (45 % de la hauteur de l'écran)
+  entre dans le chapitre.
+- **Trois teintes seulement** : `lueur-froide`, `peche`, `braise`. Ce sont des
+  lumières, jamais du texte ni une surface.
+- Sans script, l'étalonnage garde ses teintes de départ ; en mouvement réduit,
+  la teinte change sans fondu.
+
+### La barre des chapitres
+
+Comme la barre de progression d'une vidéo découpée en chapitres
+(`barre-chapitres.astro`). Fixe en bas à gauche (marges de sécurité
+comprises), une gélule à filet d'encre à 12 %, nuit profonde à 84 % sous un
+verre dépoli (`blur(16px) saturate(1.3)`), 3rem de haut au moins.
+
+- **À gauche, le nom du chapitre en cours** (`--text-body-sm`, graisse 500,
+  blanc, coupé d'une ellipse), sur une colonne de 7,5rem.
+- **À droite, un segment par chapitre, aussi long que le chapitre** (sa
+  hauteur devient son `flex-grow`), 3 px entre deux. Une piste de 4 px en
+  encre à 20 %, que la pêche remplit à mesure qu'on lit (`scaleX`). Au survol
+  et au focus la piste passe à 8 px, et une bulle donne le nom du chapitre
+  au-dessus du segment : fond blanc, texte nuit, rayon `xs`, `--text-body-sm`
+  graisse 500. Hors survol, ce nom ne se lit qu'aux lecteurs d'écran : c'est
+  le nom du lien. Le segment en cours porte `aria-current="location"`. Un
+  clic y mène, au bureau seulement : sous 640 px, huit segments dans 200 px
+  feraient des cibles de 13 à 27 px collées les unes aux autres. Sur
+  téléphone la barre est un indicateur, et l'on change de chapitre par le
+  menu.
+- **Elle apparaît quand le plan d'ouverture s'en va**, et s'efface quand le
+  pied de page arrive : opacité en 420 ms (`ease-out-quint`), montée de 1rem
+  en 600 ms (`ease-out-expo`).
+- **Elle laisse la place à la barre d'écriture.** Au bureau, sa largeur
+  (`min(36rem, 100vw − 27rem)`) la tient à côté de la barre d'écriture rangée
+  dans le coin. Sur téléphone, elle prend la largeur moins la pastille
+  (`100vw − 5,5rem`, 3,5rem de haut), et s'efface tant que la barre
+  d'écriture est dépliée.
+- **Elle naît `hidden`** : sans script, elle n'existe pas. En mouvement
+  réduit, elle apparaît sans glisser.
+
+Le remplissage pêche est une ligne de progression, pas une pastille : la
+règle de la pastille n'est pas en cause.
+
+### L'ouverture (`#hero`)
+
+Le premier plan. Lilian se présente avec la phrase qu'il a dictée, mise en
+scène comme un titre de film. Le `h1` tient en trois lignes : « Salut, je
+m'appelle » en `--text-phrase`, `ink-mid` ; le nom en très grand
+(`clamp(3.25rem, 7.2vw, 6rem)`, interligne 0,98, approche −0,04em, sur une
+ligne à partir de 1024 px) ; puis « et je suis expert en » et la réponse
+soulignée, « Automatisations & Agents IA », en `--text-phrase`, `24ch`.
+« Salut, je m'appelle » est le début de la phrase du titre, pas un sur-titre.
+
+- **À partir de 1024 px, la barre d'écriture est à droite du titre**, calée
+  sur son pied (grille `1fr / 24rem`, écart `gouttiere`), suivie d'une ligne
+  en `--text-body-sm`, `ink-low`, qui dit ce qu'elle fait. En dessous, elle
+  passe sous le titre.
+- **Dessous, le plan au bureau**, en cinémascope, plus large que la colonne,
+  avec son incrustation et son sous-titre ; puis le défilé des logos.
+- **Il s'ouvre une fois, au chargement**, et tout est posé en moins de trois
+  secondes : le nom prend sa graisse (de 200 à 500, 1,5 s) ; le cadre s'ouvre
+  d'une fente horizontale à l'image entière (`clip-path: inset(46% 0 46% 0)`
+  vers `inset(0)`, 1,6 s, après 0,4 s) pendant que l'image recule
+  (`scale(1.12)` vers 1, 2,4 s) ; la lumière ne s'allume qu'une fois le plan
+  ouvert (1,1 s), puis l'incrustation glisse de la gauche (1,45 s) et le
+  sous-titre arrive (1,75 s). Toutes ces entrées sont en `ease-out-expo` ou
+  `ease-out-quint`. En mouvement réduit, le plan est ouvert d'emblée.
 
 ### Le défilé des clients
 
-Une seule ligne au bas du premier écran, précédée de « J'ai travaillé avec »,
-qui défile en 46 s. Le bandeau va d'un bord à l'autre de l'écran mais son
-contenu tient dans la colonne de 1 200 px, comme la barre : le titre est sur
-le bord gauche de la colonne, l'icône de pause sur son bord droit. Elle s'arrête au survol et, pour le clavier et le doigt,
-par un bouton de pause de 44 px au bout du bandeau (`aria-pressed`). La liste
-vit dans `src/data/clients.ts`, les fichiers dans `public/logos/clients/`.
-Les animations du hero (cellules, défilé) sont suspendues dès qu'il
-sort de l'écran (`data-motion-pause`). C'est la seule boucle du premier écran : le 8 octobre
-2026 la liste avait été posée, fixe, sur plusieurs lignes, et Lilian a préféré
-le défilé le jour même (« c'était mieux quand ça déroulait »).
+Une seule ligne au pied du plan d'ouverture (`defile-clients.astro`), précédée
+de « J'ai travaillé avec », qui défile en 46 s. Le bandeau va d'un bord à
+l'autre de l'écran mais son contenu tient dans la colonne de 1 200 px : le
+titre sur le bord gauche de la colonne, l'icône de pause sur son bord droit.
+Il s'arrête au survol et, pour le clavier et le doigt, par un bouton de pause
+de 44 px au bout du bandeau (`aria-pressed`). C'est **la seule boucle de
+l'accueil** : Lilian l'a redemandée deux fois, le 8 et le 14 octobre 2026. La
+section porte `data-motion-pause` : hors de l'écran, le défilé s'endort. La
+liste vit dans `src/data/clients.ts`, les fichiers dans
+`public/logos/clients/`.
 
 - **Tous les logos sont ramenés à une silhouette claire** : `filter:
   brightness(0) invert(1)`, opacité 0,78. Aucune couleur de marque dans le
-  bandeau, c'est l'exception assumée à *la règle de la marque relevée* : autant
-  de palettes côte à côte sous le titre feraient un deuxième sujet. Il faut donc un
-  fichier à fond transparent, SVG ou WebP sans perte.
+  bandeau, c'est l'exception assumée à *la règle de la marque relevée* :
+  autant de palettes côte à côte sous le titre feraient un deuxième sujet. Il
+  faut donc un fichier à fond transparent, SVG ou WebP sans perte.
 - **Un logo que la silhouette abîme se corrige dans le fichier, pas dans le
   CSS.** Une forme pleine posée derrière des lettres devient une tache : on
   retire la forme (Edumiam), on ne change pas le filtre pour tout le monde.
 - **La hauteur se règle à l'œil, logo par logo.** Base `1,5em`, multipliée par
   `--echelle` (champ `echelle` de la donnée) : de 0,85 pour un mot-symbole
-  étiré (Jellysmack) à 1,9 pour un logo empilé (Fraich Touch). À hauteur
-  égale, un logo sur deux lignes paraît deux fois plus petit qu'un mot seul.
+  étiré à 1,9 pour un logo empilé.
 - **`largeur` et `hauteur` sont obligatoires** et passent en attributs `width`
   et `height` : la piste a sa largeur finale avant l'arrivée des fichiers,
   sinon le défilé saute au chargement.
-- **Un nom sans logo reste composé en lettres**, dans la même ligne : c'est un
-  état propre, pas un trou. Un logo n'entre que s'il vient du site officiel de
-  l'entreprise, provenance notée dans `clients.ts`. Dans le doute sur
-  l'entreprise (deux « Reborn » en France), le nom reste en lettres.
-- `prefers-reduced-motion` : plus de défilement, la liste passe à la ligne et
-  n'affiche qu'un exemplaire de chaque logo. Sous 640 px elle se resserre
-  (`--text-body-sm`, 1rem entre deux logos, 0,625rem entre deux lignes) pour
-  tenir en cinq lignes au lieu de sept.
+- **Un nom sans logo reste composé en lettres**, dans la même ligne
+  (`--text-body-large`, graisse 500, `ink-mid`) : c'est un état propre, pas un
+  trou. Un logo n'entre que s'il vient du site officiel de l'entreprise,
+  provenance notée dans `clients.ts`.
+- **Mouvement réduit** : plus de défilement, la liste passe à la ligne et
+  n'affiche qu'un exemplaire de chaque logo.
 
-### Quatre traits, pas un par titre
+### Le portrait (`#a-propos`)
 
-L'accueil est la seule page à souligner ailleurs que dans son `h1` et son titre
-de fin : la réponse du hero, la première et la troisième phrase du récit, et le
-titre de fin. Onze titres portaient un fragment accentué, trois dans un seul
-écran de téléphone : c'était devenu « un titre surligné posé au-dessus de
-chaque section », ce que Lilian a refusé, et l'accent unique n'y désignait plus
-rien. Les titres de section sont nus. Le hero et les titres du récit montent
-en taille (`--text-affiche`, `--text-story`), pas en graisse.
+L'interview, nommée « À propos » dans la barre. À gauche le portrait (4:5) et
+son incrustation ; à droite la parole (« Je pars de vos processus, pas d'une
+liste d'outils. ») et deux paragraphes en `--text-body-large`, `ink-mid`.
+Puis un plan large avec son sous-titre : La Capsule, « au micro de Radio
+Contournement » (« Radio Contournement » sur téléphone ; image prêtée, avec
+sa mention de source). Puis le carton des faits. Puis ses formations **en
+champ et contrechamp** (`contrechamp.astro`) : à gauche « Maria Schools »,
+« en formation, devant une classe », la classe vue de dos ; à droite
+« Rocket School », « trois jours d'automatisation », la promotion tournée vers
+nous, autour de lui (son incrustation en haut). Un seul sous-titre pour les
+deux. Lilian a donné le lieu de la première et demandé la seconde le 14
+octobre 2026. Aucune date.
 
-### Le récit (`home-story`)
+### En ce moment (`#en-ce-moment`)
 
-Trois phrases courtes en vis-à-vis d'une scène unique, reprises avec Lilian
-le 8 octobre 2026 : « Vous perdez du temps. Regardez où. », « Vos outils ne se
-parlent pas. », « Ce qui se répète s'automatise. » La première était trop
-longue, la deuxième parlait de copier-coller alors que la cause est ailleurs
-(des outils qui ne sont pas synchronisés), la troisième n'était pas claire.
-Sous chacune, une ou deux phrases de texte, pas plus.
+Les deux sites que Lilian construit (`data/projets.ts`, `enCours`), **une
+affiche par projet**, l'une sous l'autre (`--spacing-section-y` entre elles).
+Lilian n'aimait pas les deux captures côte à côte, la seconde décalée (14
+octobre 2026) : elles se lisaient comme deux cartes d'une grille, le texte en
+petit dessous.
 
-- **Aucun client n'est nommé, aucun lien ne mène à un cas.** La scène rejoue un
-  cas réel sans le nommer ; le texte ne dépend d'aucun client (« pas une
-  phrase à reprendre le jour où le client change »). Le lien « Lire le cas »
-  qui fermait la troisième phrase a disparu.
-- **Les titres arrivent d'un bloc**, avec leur texte (le `.reveal` du site),
-  puis le trait se tire sous le fragment souligné. Leurs mots arrivaient un
-  par un, flous, comme ceux du premier écran : trois entrées de plus sur une
-  page qui bougeait déjà trop. Le mot à mot reste au seul titre du premier
-  écran.
-- **Les coupes se règlent par des espaces insécables** : « du temps. » et
-  « Regardez où. » restent chacun d'un bloc.
+- **À partir de 900 px, le texte à gauche (`5fr`), le plan à droite (`7fr`)**,
+  séparés par la gouttière, le texte calé sur le haut du plan. Sur téléphone
+  et tablette étroite, le plan ouvre l'affiche et le texte suit.
+- **Le texte** : le rôle du projet pour Lilian (`etiquette`, `--text-body-sm`,
+  `ink-low`), le nom en `h3` à `--text-headline` (interlignage 1, −0,04em),
+  une phrase en `--text-body-large`, `ink-mid` (`34ch`), ce qu'il contient en
+  `--text-body-sm`, `ink-low`, puis l'adresse en blanc, graisse 500, soulignée
+  d'un filet d'encre à 24 %, suivie d'une flèche. Au survol et au focus, le
+  nom et l'adresse prennent la pêche, la flèche part vers l'extérieur.
+- **Le plan** : 16:11, sans incrustation (elle nomme des personnes et des
+  lieux, pas des pages). Il montre **la page entière du site** (`longue`, 960
+  px de large), calée en haut. Au survol (pointeur fin), il la parcourt
+  jusqu'en bas en 9 s, à la vitesse d'une lecture, et remonte en 1,6 s quand
+  on le quitte : c'est le visiteur qui le déclenche, rien ne bouge seul. En
+  mouvement réduit, il reste en haut de la page.
+- L'affiche entière est un lien qui s'ouvre dans un nouvel onglet.
 
-La scène est une vraie situation de travail, pas une illustration : un bon de commande en PDF à gauche, une
-facture à droite, une horloge qui tourne. À la main, un curseur recopie ligne
-après ligne pendant que les heures passent ; en automatique, les lignes
-traversent seules et le total se calcule.
+### Les expertises : une séquence (`#services`)
 
-**À la troisième phrase, la scène enchaîne trois réponses**, en boucle, chacune
-sur son propre sujet : *Automatisation* (le bon de commande devient sa facture
-tout seul), *Agent IA* (un agent de support répond à un client en pleine nuit,
-consulte sa base de connaissances puis un outil connecté, et cite sa source),
-*Dashboard* (le suivi de projets d'une équipe : des indicateurs, et des cartes
-qui avancent de « à faire » à « livré »). C'est la vue d'ensemble de ce que
-fait Lilian, demandée par lui le 3 octobre 2026 : « une transition entre tout
-ce qui est possible de faire ». D'une réponse à l'autre le plan change
-d'inclinaison, les fenêtres reculent dans un flou et les suivantes arrivent
-décalées ; pour l'agent, l'horloge de la scène file jusqu'à un dimanche soir
-puis jusqu'en pleine nuit, et c'est elle qui dit « 24 h/24 ».
-Sous la scène, des boutons disent où elle en est et permettent de choisir :
-quatre sur ordinateur (« À la main », « Automatisation », « Agent IA »,
-« Dashboard »), trois sur téléphone (les trois réponses).
+Les quatre scènes des métiers ne sont plus quatre rangées : ce sont **les
+plans d'une même séquence, sur une seule scène**. Un seul grand plan, où
+passent l'un après l'autre Automatisation, Agents IA, Dashboards et
+Formations (`data/metiers.ts`).
 
-**Sur ordinateur, le défilement joue les quatre modes, sans clic.** Demande de
-Lilian le 2 octobre 2026 : « cette animation est géniale, il faudrait qu'elle
-fasse les 4 pendant mon scroll, là elle s'arrête aux 2 premières et oblige
-l'utilisateur à cliquer ». Cinq paliers : les actes 1 et 2 (à la main), puis
-Automatisation, Agent IA, Dashboard. Le texte de l'acte 3 reste collé à gauche
-pendant que les trois réponses passent à droite, et dans sa phrase la
-proposition du mode en cours passe en encre pleine, les deux autres restant en
-retrait. En remontant, l'ordre s'inverse. Rien ne change sans défilement : il
-n'y a plus de ronde automatique sur ordinateur.
-
-- La scène est dessinée sur un **plan fixe de 680 × 560** mis à l'échelle par
-  `--k` : ses mesures sont des unités de plan, pas des tailles de texte. C'est
-  la seule exception aux jetons de taille et de rayon, et elle est déclarée
-  dans `.impeccable/config.json`, limitée à ce fichier.
-- Elle est claire sur fond sombre : les feuilles utilisent `--color-feuille`,
-  `--color-feuille-trait`, `--color-feuille-barre`. Deux lueurs seulement,
-  `--color-lueur-froide` (le travail à la main) et `--color-braise` (le passage
-  en automatique), plus le grain `--grain`. Aucune de ces teintes ne sort de la
-  scène.
-- **Ordinateur :** scène collante, pilotée par le défilement. **Sous
-  1024 px, deux vues, aucune collante** : sous l'acte 1, la scène reste sur
-  « à la main », sans boutons ; sous l'acte 3, une seconde vue boucle les
-  trois réponses, avec leurs trois boutons. Une seule scène posée sous
-  l'acte 1 enchaînait les quatre modes pendant qu'on lisait autre chose : on
-  lisait « une commande recopiée à la main » à côté d'un dashboard (critique du
-  2 octobre 2026). Une scène collante pilotée au doigt, sur téléphone, se
-  dispute le défilement avec la page : retour direct de Lilian. Le moteur est
-  instanciable (`monter(racine, scene, role)`) ; la vue des réponses est
-  masquée et à l'arrêt sur ordinateur.
-- **Le bouton a le dernier mot, dans son palier.** Sur ordinateur, un clic
-  tient tant qu'on reste dans le palier de défilement en cours ; le défilement
-  reprend la main au palier voisin, ou quand la scène sort de l'écran. Sur
-  téléphone, un clic arrête la boucle tant que la vue reste à l'écran.
-- **Les compteurs ne s'affichent que là où ils comptent** : « En attente » et
-  « Ressaisies » sortent en Agent IA et Dashboard. « Ressaisies » reprend le
-  mot du texte (« ressaisi dans l'autre », deuxième phrase) ; il disait
-  « Gestes refaits ».
-- **C'est la seule scène de la page qui continue de bouger**, et elle garde
-  donc sa commande d'arrêt, une par vue, au dessin de celle des scènes de
-  métiers (`.sm-pause`, coin bas droit du cadre). Le moteur n'a plus aucune
-  minuterie : chaque attente est une animation sans effet, et l'arrêt les
-  suspend toutes d'un coup. Arrêtée, la scène suit encore le défilement, en
-  image fixe ; sa boucle repart à la reprise.
-- **Le mode Agent IA s'ouvre sur une question déjà posée** : la fenêtre de
-  conversation restait un rectangle vide deux à trois secondes.
-- **Les boutons de mode restent à 14 px** à toutes les largeurs, comme tout ce
-  qui se clique sur la page.
-- **Le texte de la scène a quatre tailles**, les mêmes noms que le socle des
-  scènes de métiers (`--sm-note`, `--sm-texte`, `--sm-fort`, `--sm-titre`).
-  Rien sous 9 px à l'écran, de 320 à 1440 px (6,8 px avant). Ce qui ne tient
-  pas à la taille de la note est devenu un trait ou a quitté la scène.
-- **La scène est `aria-hidden`, le bouton l'annonce** : un paragraphe
-  `aria-live` dit en une phrase ce que montre le mode choisi. Seulement au
-  clic, jamais quand le récit avance seul.
-- **Mouvement réduit :** des images fixes qui suivent le défilement, une par
-  palier ; les boutons passent d'une image à l'autre. Sans script, la scène est une image fixe,
-  sans ses boutons.
-- **Un agent IA se montre en conversation.** Lilian a refusé l'agent qui
-  « contrôle un bon de commande » : un visiteur reconnaît un agent à un
-  chatbot qui répond jour et nuit et va chercher l'information dans une base
-  de connaissances ou des outils connectés.
-- **Pas de redite avec les métiers.** Le bon de commande, le support et le
-  suivi de projets appartiennent à cette scène ; aucune scène de métier ne les
-  rejoue.
-
-### Les scènes sur téléphone
-
-Décidé avec Lilian le 3 octobre 2026, après son test sur iPhone :
-
-- **Elles débordent dans les marges de la page** : 8 px de chaque côté de
-  l'écran au lieu des 24 px de la colonne (récit et métiers). Dessinées à
-  taille fixe puis mises à l'échelle, elles y gagnent 10 % à 402 px.
-- **Le plan étroit du récit est plus haut que large** (340 × 420) : le bon de
-  commande et la facture se suivent sans se recouvrir, la conversation et les
-  piles du suivi ont plus de hauteur. Les boutons de mode restent juste
-  dessous, calés sur la colonne du texte.
-- **Aucun texte au pixel près dans sa case.** Une référence (« A-2041 »)
-  tenait dans 44 px pour 44 px de texte sous Chrome ; sur iPhone, rendue un peu
-  plus large, elle se coupait au trait d'union. Les valeurs d'une rangée ne
-  passent jamais à la ligne (`white-space: nowrap`) et leurs cases gardent de
-  la marge. Chrome ne suffit pas à valider un rendu iPhone.
-
-### Les quatre métiers (`home-services`)
-
-**Un bloc tient en quatre choses** : le nom du métier (`h3`), une phrase
-(`--text-phrase`), une ligne de précision, la sortie avec son prix. Lilian a
-jugé le bloc trop chargé le 8 octobre 2026 : il portait en plus un chiffre en
-grand, le nom d'un client et un lien vers son cas. Ils sont sortis.
-
-- **Aucun bloc de l'accueil ne mène à un cas client précis.** Un cas change,
-  la page ne doit pas en dépendre. Le seul lien vers les cas est celui de leur
-  index, sous les recommandations (`home-voices`). Les faits du parcours sont
-  dans « Pourquoi moi », les cas dans leur page.
-- **La ligne de précision est une phrase, pas un paragraphe** : « Commandes,
-  factures, relances, rapports : je les automatise avec Make et n8n. » Les
-  noms d'outils y sont des liens soulignés vers leur page.
-- La sortie est un lien fléché vers la page d'offre, le prix à côté (« À
-  partir de… », « Sur devis », rien pour les formations).
+- **Au-dessus, la liste des plans**, comme les chapitres d'un lecteur vidéo :
+  le nom de chaque métier (`--text-body-sm`, graisse 500, `ink-low`, blanc au
+  survol et une fois choisi), chacun sur sa piste de 3 px en encre à 18 %,
+  celle du plan qu'on regarde en pêche. En `--text-body`, `ink-mid`, 9rem de
+  large au moins, 44 px de haut : à la taille d'une note, la liste se perdait
+  au-dessus d'un si grand plan. Onglets ARIA (`tablist`, flèches, Début,
+  Fin).
+- **Sur téléphone, la liste passe en 2 × 2** (sous 640 px) : aucun nom n'est
+  coupé ni caché derrière le bord, chacun garde sa piste. Plus de défilement
+  horizontal de la liste.
+- **Sous le plan**, la phrase du métier en sous-titre (le `h3`), une ligne de
+  texte en `ink-mid` (`46ch`), dont les noms d'outils sont des liens soulignés,
+  puis la sortie en lien fléché vers la page d'offre. Pas de prix (14 octobre
+  2026) : ils sont sur les pages d'offre.
+- **Le changement de plan** : un fondu depuis la nuit (520 ms), puis le
+  sous-titre qui monte de 0,375rem, 160 ms plus tard. Le plan qu'on choisit
+  joue son tour à ce moment-là, une fois.
+- **Sur téléphone, le plan déborde dans les marges** : 8 px du bord de
+  l'écran au lieu des marges de la colonne. Dessinée à taille fixe puis mise à
+  l'échelle, la scène y gagne de la lisibilité.
+- Sans script, les quatre plans se suivent, chacun avec son sous-titre. Une
+  adresse vers un métier (`#agents-ia`…) ouvre son plan.
 
 ### Les scènes des métiers (`src/components/metiers/`)
 
 Chaque métier a sa scène : de petites fenêtres d'interface en 2D, reliées par
-des fils, dans un cadre à repères d'angle (4:3 sur le grand plan, 9:8 sur le
-plan étroit). On y voit le métier se faire.
-C'est la direction que Lilian a retenue le 3 octobre 2026 parmi cinq essais
-(`/explorations-metiers` : une maquette à figurines, un plateau de touches,
-cette interface, un terminal en caractères, un plan d'ingénieur au trait). Les
-sculptures de verre qu'elle remplace étaient belles, mais il fallait lire leur
-légende pour comprendre ; elles restent visibles sur `/explorations-blocs`.
+des fils, sur un panneau quadrillé. On y voit le métier se faire. C'est la
+direction que Lilian a retenue le 3 octobre 2026 parmi cinq essais
+(`/explorations-metiers`). Les sculptures de verre qu'elle remplace restent
+visibles sur `/explorations-blocs`. Ce sont des dessins d'interface, pas des
+photos : ils ne font pas semblant d'en être, et ils sont les seules images
+non photographiques de la page.
 
 | Métier | Sujet | Silhouette, sur ordinateur puis sur téléphone |
 |---|---|---|
@@ -749,207 +901,178 @@ légende pour comprendre ; elles restent visibles sur `/explorations-blocs`.
 | Formations | le formateur monte un scénario, l'équipe le refait en hésitant une fois, puis le lance seule | **deux fenêtres jumelles**, des blocs et des curseurs |
 | Dashboards et outils métiers | un outil métier se monte bloc par bloc et passe en service, l'équipe s'en sert, le dashboard compte | un **écran clair** (l'outil) à côté d'un dashboard sombre ; sur téléphone, l'écran clair en haut sur toute la largeur et le dashboard en bande dessous |
 
-**Un sujet par scène, et une silhouette par scène.** C'est la règle née du
-retour de Lilian sur son téléphone : « les animations sont toutes un peu
-similaires et sur les mêmes sujets ; quand on scrolle, il faut qu'à chaque
-fois ce soit une animation différente, et qu'on comprenne que c'est un sujet
-différent ». Des fenêtres en rang reliées par un fil, avec deux pastilles en
-haut, c'est une seule silhouette, quel que soit le sujet. Avant d'écrire une
-scène, on vérifie son sujet ET sa silhouette contre toutes les autres de la
-page, sur le grand plan comme sur le plan étroit : c'est sur téléphone que
-les scènes se ressemblent le plus vite.
+**Un sujet par scène, et une silhouette par scène.** Avant d'écrire une
+scène, on vérifie son sujet ET sa silhouette contre toutes les autres, sur le
+grand plan comme sur le plan étroit : c'est sur téléphone que les scènes se
+ressemblent le plus vite.
 
-- Noms d'outils génériques et chiffres d'illustration : aucune marque, aucun
-  nom de client dans une scène. La scène Automatisation ne parle ni de facture
-  ni de montant : ce sujet appartient à la scène du récit.
-- **Un socle commun** : `scene-metier.css` (classes `.sm-…` : cadre, plan,
+- **Le panneau** : la nuit profonde, une lueur braise en bas à gauche (22 %),
+  une lueur froide en haut à droite (20 %), du grain par-dessus (opacité 0,1
+  en `overlay` ; 0,06 en simple voile sous 1024 px, où le mélange coûte cher
+  au défilement). Quand la scène arrive à son résultat (`est-abouti`), une
+  lumière pêche à 26 % se lève en 900 ms.
+- **Le quadrillage est peint au pas du plan.** Des traits d'encre à 5 % tous
+  les 38 px du plan (`--sm-pas: calc(38px * var(--sm-k))`), calés sur lui par
+  `--sm-x` et `--sm-y`, que le moteur pose avec l'échelle. Il couvre tout le
+  panneau : dans un cadre plus large que le plan, comme le cinémascope, les
+  marges prolongent la scène au lieu de l'encadrer de nuit vide.
+- **Le plan** : 760 × 570 mis à l'échelle et centré ; sous 520 px de large,
+  un plan simplifié de 360 × 320, redessiné et non rétréci. Ses mesures sont
+  des unités de plan : exceptions déclarées par fichier dans
+  `.impeccable/config.json`.
+- **Un socle commun** : `scene-metier.css` (classes `.sm-…` : panneau, plan,
   fenêtre, feuille claire, rangées, fils, ports, nœuds, grains, bandes,
   pastilles) et `lib/metiers/scene.ts` (échelle du plan, pause hors écran et
-  onglet masqué, mouvement réduit, tour joué une fois, aides d'animation). Une scène ne
-  réécrit pas ces pièces : elle les compose, et n'ajoute en style scopé que ce
-  qui lui est propre. Le guide d'écriture est en tête de `scene.ts`.
-- **Le plan** : 760 × 570 mis à l'échelle ; sous 520 px de large, un plan
-  simplifié de 360 × 320, redessiné et non rétréci, plus haut que le grand
-  (9:8) : un pixel du plan y vaut à peu près un pixel d'un téléphone, et c'est
-  la hauteur qui paie le texte lisible. Le cadre suit ce rapport
-  (`@container scene` dans `home-services.astro`).
+  onglet masqué, mouvement réduit, tour joué une fois, aides d'animation). Une
+  scène ne réécrit pas ces pièces : elle les compose. Le guide d'écriture est
+  en tête de `scene.ts`.
 - **Quatre tailles de texte, pas une de plus**, déclarées par le socle :
   `--sm-note` (11,5 px sur le grand plan, 11 sur l'étroit), `--sm-texte`
   (12,5 / 12), `--sm-fort` (14 / 13,5), `--sm-titre` (16 / 15), plus
-  `--sm-chiffre` pour un nombre qui se lit de loin. Aucune scène n'écrit de
-  `font-size` en pixels, aucune graisse au-delà de 600. Les scènes comptaient
-  dix-neuf tailles, par pas d'un demi-pixel, et un quart de leur texte passait
-  sous 8 px à l'écran (22 % à 1440, 95 % à 320). Ce qui ne tient pas à la
-  taille de la note devient un trait (`sm-barre`) ou sort de la scène :
-  en-têtes de colonnes, numéros, graduations, sur-titres. Les trois ou quatre
-  mots qui portent l'action sont en `--sm-fort`. Résultat mesuré sur l'accueil :
-  au moins 9,7 px de 1280 à 1440, 10,8 px à 402, 8,25 px à 320 (la note seule).
-- **Deux colonnes à partir de 1200 px seulement.** En dessous, la scène prend
-  toute la largeur et son texte passe dessous (en deux colonnes de 720 à
-  1199 px) : en colonne, à 1024, elle faisait 520 px et les deux tiers de son
-  texte passaient sous 8 px.
-- **Un seul compteur d'état sur le plan étroit**, celui qui porte la promesse
-  du métier.
-- **Aucun texte sous 4,5:1**, au repos comme à l'image finale : plus de
-  `--color-ink-faint` pour du texte sur une fenêtre, `--color-feuille-note`
-  sur une feuille claire, et un texte « pas encore actif » est absent plutôt
-  que fantomatique.
-- **Un dashboard ne se montre jamais à zéro** : celui de la scène Dashboards
-  affiche ses « Dossiers » et son « Objectif » avec des nombres cohérents à
-  chaque instant, jamais un zéro ni un tiret.
-- **Une scène joue UNE fois, puis reste sur son image finale** (Lilian, le
-  8 octobre 2026). Le tour part quand la scène entre à l'écran, dure 10 à
-  14 s, un seul mouvement principal à la fois, et finit exactement sur l'image
-  fixe : il ne range rien et ne recommence pas (`jouerTour`, dans `scene.ts`).
-  Les scènes tournaient en boucle, sur trois exemples chacune ; il en reste un
-  par scène. Une animation sans fin lancée pendant le tour est arrêtée avant
-  qu'il rende la main. Tout le temps passe par le moteur (ni `setTimeout` ni
-  `requestAnimationFrame` dans une scène), sinon la pause hors écran ne tient
-  plus.
+  `--sm-chiffre` (22 px) pour un nombre qui se lit de loin. Aucune scène
+  n'écrit de `font-size` en pixels, aucune graisse au-delà de 600. Ce qui ne
+  tient pas à la taille de la note devient un trait (`sm-barre`) ou sort de la
+  scène.
+- Noms d'outils génériques et chiffres d'illustration : aucune marque, aucun
+  nom de client dans une scène.
+- **Aucun texte sous 4,5:1**, au repos comme à l'image finale :
+  `--color-feuille-note` sur une feuille claire, jamais `ink-faint` sur une
+  fenêtre, et un texte « pas encore actif » est absent plutôt que
+  fantomatique.
+- **Un dashboard ne se montre jamais à zéro.**
+- **Une scène joue UNE fois, puis reste sur son image finale.** Le tour part
+  quand la scène est vue, dure 10 à 14 s, un seul mouvement principal à la
+  fois, et finit exactement sur l'image fixe (`jouerTour`). Tout le temps
+  passe par le moteur (ni `setTimeout` ni `requestAnimationFrame` dans une
+  scène), sinon la pause hors écran ne tient plus.
 - **Le balisage est l'image finale.** Sans script et en mouvement réduit, on
-  voit une scène fixe, complète et parlante : la même image que celle où le
-  tour s'arrête.
+  voit une scène fixe, complète et parlante.
 - **La commande d'arrêt ne vit que le temps du tour** : un bouton de pause de
-  28 px (cible de 44) dans le coin bas droit du cadre, posé par le moteur
-  après la racine (qui est une image, `role="img"`). Visible au survol du
-  cadre, au focus et une fois la scène arrêtée ; visible sans survol au doigt.
-  Une scène qui joue plus de dix secondes à côté d'un texte doit pouvoir être
-  arrêtée ; sur l'image fixe, à la fin du tour comme en mouvement réduit, il
-  n'y a rien à arrêter et le bouton porte `hidden`.
+  28 px (cible de 44) dans le coin bas droit du cadre, posé par le moteur.
+  Sur l'image fixe il n'y a rien à arrêter, et il porte `hidden`.
 - **Le moteur tient lui-même ses animations.** `getAnimations()` ne rend plus
   une animation suspendue sur sa dernière image ; s'y fier laissait une scène
   figée après un aller-retour hors écran.
-- **Sur une colonne, la scène passe avant son texte** : posée après, elle se
-  lisait comme l'illustration du métier suivant.
-- Les mesures d'une scène sont des unités de plan, comme celles de la scène
-  du récit : exceptions déclarées par fichier dans `.impeccable/config.json`.
 
-### Pourquoi moi
+### Les vidéos (`#contenus`)
 
-Le seul panneau clair de la page, à gauche, reste en place pendant que la
-frise défile à droite. C'est une carte dans sa colonne, et non une île : la
-seule exception de forme à la règle 3 de *La tenue commune*. Les pages
-d'outil reprennent la même question dans `pourquoi-moi`, en île.
+La dernière vidéo en grand plan, avec la lumière de sa vignette sur la nuit :
+c'est le premier endroit de la page où l'on voit le visage de Lilian de face.
+Son titre est le vrai titre de la vidéo, et **c'est toujours la dernière** :
+la page écrit celle de `src/data/derniere-video.ts`, puis la remplace par
+celle du flux (`/api/derniere-video`) si une plus récente est sortie. Un lien
+fléché mène à la chaîne.
 
-- **Les quatre faits ouvrent le panneau**, un par ligne : ce qu'on retient en
-  `--text-title`, ce qui le précise dessous en petit. Ils étaient le plus
-  petit texte de la section, enchaînés en une ligne de 14 px sous le
-  paragraphe. Ni grille 2 × 2 ni filets : une colonne de quatre lignes.
-- **La frise distingue les jalons des missions.** Un jalon (un lancement, un
-  poste, une fondation) garde son titre, son mois à la suite en bas de casse,
-  et sa phrase ; une mission tient en une ligne, sans détail (champ `mineur`
-  de `src/data/parcours.ts`). À douze entrées de même poids, la frise faisait
-  plus de deux écrans et mettait un stage au rang d'une fondation.
-- L'année est un repère (`--text-title-lg`, graisse 500), pas un titre : elle
-  ne doit pas peser plus que « D'où je viens. ».
-- **Un appel à mi-page**, à la fin du panneau : « Parlons de votre projet », en
-  lien fléché (`BoutonReservation`, source `home_pourquoi_moi`). Sur un
-  téléphone, le bouton de fin est à treize écrans du premier. Un lien, pas un
-  second bouton plein : l'action pleine reste celle de la barre et de la fin.
+À côté, la newsletter réduite à un titre (« Un e-mail par semaine. »), une
+phrase, un champ et un bouton. Le champ est une gélule (3,5rem, filet d'encre
+à 18 %, nuit profonde à 70 %) dont le filet passe à la pêche au focus. Le
+bouton « S'abonner » est **un contour, pas un aplat** (filet d'encre à 28 %,
+texte blanc ; filet et texte pêche au survol et au focus) : la pastille
+pêche reste au bouton d'appel. Un lien fléché mène à LinkedIn.
 
-### Les trois sites (`home-sites`) : hors accueil
+### La filmographie : les projets clients (`#projets`)
 
-La vitrine des trois sites (fenêtres de navigateur où la page défile par
-crans) vivait sous le bloc « Sites web et dashboards ». Elle a quitté la page
-d'accueil le 3 octobre 2026, avec les sites web. Le composant existe toujours
-et se voit sur `/explorations-metiers/vitrine`.
+Ce que Lilian a construit pour ses clients, lu dans la collection des cas
+(`src/content/cas-clients/`) : les cas chiffrés d'abord, puis du plus récent
+au plus ancien, quatre au plus (au-delà, un lien fléché vers tous les cas
+sous la liste). Un cas publié y entre de lui-même. Ses projets perso en sont
+sortis le 14 octobre 2026, à sa demande (« les projets, ce doit être les
+projets clients, pas mes projets persos ») ; le lien vers les cas qui
+finissait le rail des voix est parti avec eux.
 
-### Ce que je publie (`home-content`)
+La liste se lit comme la filmographie d'un générique : un client par ligne,
+son nom en grand (`client`, `--text-headline`, interligne 1), son secteur et
+ses trois premiers outils à côté (`--text-body-sm`, `ink-low`, séparés par un
+point médian), une phrase (l'`accroche` du cas, à la première personne :
+ce que Lilian a construit et le chiffre qui le dit ; à défaut sa
+`description`, écrite pour les moteurs ; `ink-mid`, `46ch`), pas de chapô, puis « Lire le cas » en blanc, graisse 500, flèche vers la
+droite. À partir de 900 px, le nom à gauche, le genre, la phrase et le lien au
+milieu, alignés sur le haut du nom, et le photogramme à droite.
 
-Deux objets, pas deux cartes.
+- **Des filets entre les titres**, encre à 10 %, un au-dessus de chaque ligne
+  et un au pied de la liste : c'est l'objet lui-même qui en a, comme une
+  filmographie ou les questions d'une FAQ. Ce n'est pas une licence pour
+  ranger une autre liste derrière des filets.
+- **Un photogramme au bout de la ligne** (demandé par Lilian le 14 octobre
+  2026 : « une mini capture d'écran ») : le workflow du cas en miniature, la
+  géométrie du schéma de sa page (un déclencheur, un agent, trois actions en
+  éventail) lue dans son `flow`. 16:10, rayon `md`, filet d'encre à 12 %,
+  `surface-low` quadrillé au pas de 1,5rem comme les scènes des métiers. Les
+  nœuds sont des carrés `surface-high`, rayon `sm`, qui suivent la largeur du
+  cadre (`14cqi`, l'agent `18cqi`), avec le logo de l'outil dans sa teinte de
+  marque relevée de près de moitié de blanc, et un filet de la même teinte ;
+  un outil sans couleur reste en encre. Les fils sont en encre à 28 % et
+  prennent la pêche au survol et au focus : rien ne bouge. À partir de
+  900 px, les colonnes deviennent `4fr / 5fr / 3fr` ; sur téléphone, le
+  photogramme ouvre la ligne. Un cas sans `flow` n'en a pas, et sa phrase
+  prend la colonne : on ne dessine pas de schéma faux.
+- Chaque ligne est un lien vers la page du cas : au survol (pointeur fin), le
+  nom prend la pêche et glisse de 0,5rem (600 ms, `ease-out-expo`) ; « Lire
+  le cas » prend la pêche au survol et au focus, et sa flèche avance.
 
-- **Le titre : « Ma dernière vidéo YouTube. »** (8 octobre 2026). Il disait
-  « Je montre comment je fais. » : il dit maintenant ce qu'on regarde.
-- **La vidéo** est cadrée comme une scène, avec les repères d'angle. Son titre
-  est le vrai titre de la vidéo (`--text-title-lg`), et rien d'autre : la
-  phrase de résumé qui le suivait a disparu. **C'est toujours la dernière de
-  la chaîne** : la page écrit dans son HTML celle de `src/data/derniere-video.ts`
-  (vignette copiée dans `public/videos/<id>.webp`), puis demande au serveur
-  celle du flux (`/api/derniere-video`) et remplace le lien, le titre et la
-  vignette si une plus récente est sortie, une fois la nouvelle vignette
-  chargée pour que titre et image changent ensemble. Sans réponse, la page
-  reste telle quelle. Sous la vidéo, un lien fléché mène à la chaîne : chaque
-  activité a sa sortie, et celle-ci n'était liée que depuis le pied de page.
-  Sous le mail, le même lien fléché mène à LinkedIn, le troisième endroit où
-  il publie.
-- **La newsletter est écrite comme le mail qu'on va recevoir** : une ligne
-  « De », une ligne « Objet » (un exemple, inventé à la demande de Lilian, pas
-  le titre d'un numéro paru), et la ligne « À » qui est le champ du
-  formulaire. Pas de champ encadré dans une carte : le focus teinte la ligne
-  entière. Des filets y séparent des lignes parce que c'est l'objet lui-même
-  qui en a ; l'accueil n'en trace ailleurs que dans les questions, pour la
-  même raison.
+### Ils en parlent (`#temoignages`)
 
-### Les voix (`home-voices`)
+Une voix à la fois, la forme de l'ancien `home-voices` que Lilian préférait
+(14 octobre 2026 : « les avis clients c'était mieux sur l'ancien design »),
+qui a remplacé la pile de trois sous-titres à côté d'un plan de La Capsule.
 
-Trois recommandations, **une à la fois**, et les trois personnes à côté sur un
-rail vertical. La première est celle qui dit ce pour quoi on vient
-(« son expertise en automatisation »), pas la plus générale. **Rien n'avance
-seul : on choisit une voix.** Jusqu'au 8 octobre 2026 le segment de la voix qui
-parlait se remplissait de pêche en 7 s, puis la parole passait d'elle-même ; il
-n'y a plus ni minuterie ni segment qui se remplit. Le segment de la voix
-choisie est en pêche, les autres en encre à 12 %, et la citation change en un
-fondu de 420 ms.
+- **À gauche, une seule citation, en grand** (`--text-phrase`, graisse 500,
+  blanche, `24ch`), entre guillemets, signée dessous du nom et du rôle.
+- **À droite, le rail des trois personnes** (`1.4fr / 1fr` à partir de
+  900 px) : portrait rond en couleur, nom, rôle, sur une piste d'encre où un
+  trait pêche se pose contre celle qui parle. Onglets ARIA ; on change de
+  voix en choisissant un nom, rien n'avance seul. La citation change par un
+  fondu et un flou de 10 px (420 ms), sans flou en mouvement réduit.
+- **Rien sous le rail** depuis le 14 octobre 2026 : le lien vers l'index des
+  cas en est sorti, les cas sont listés juste au-dessus, dans les projets
+  clients.
+- **Sous 900 px**, les trois personnes passent au-dessus de la citation, en
+  trois colonnes.
+- Les citations et leurs coupes sont celles de `Testimonials.astro` : on ne
+  retire que des phrases entières, on ne reformule rien. Aucune ne porte de
+  chiffre. Sans script, les trois se lisent à la suite, chacune signée.
 
-- **Le titre : « On a travaillé ensemble. »** (8 octobre 2026). Il remplace
-  « Ils m'ont vu travailler. », lui-même choisi le 2 octobre à la place de
-  « Ce qu'ils en disent. ».
-- **La citation est un rang sous le titre** (`--text-phrase`, graisse 500).
-  Elle prenait `--text-headline`, la taille exacte du titre, et se lisait
-  comme sa suite.
-- **Les cas clients ne passent pas au premier plan.** La critique du 2 octobre
-  2026 proposait de remplacer les citations par les résultats chiffrés des
-  cas, en grand. Lilian a refusé : « je ne veux pas que les cas soient trop
-  voyants, car si le client n'est pas dans ces cas il pourrait ne pas se sentir
-  concerné ». La règle vaut pour toute la page, et elle s'est durcie le
-  8 octobre 2026 : aucun bloc ne cite un cas ni n'y mène. Le seul chemin vers
-  les cas est le lien fléché de cette section, qui mène à leur index.
-- Les trois citations occupent la même case de grille : la scène a toujours la
-  hauteur de la plus longue, rien ne bouge autour. Le lien vers les cas est
-  dans la colonne du rail, sous lui : sous la citation, il flottait à 150 ou
-  210 px d'elle quand elle était courte.
-- **Sur une colonne, le rail passe au-dessus de la citation**, en trois onglets
-  côte à côte (un portrait, un nom), leur segment couché dessous ; le rôle
-  revient sous la citation, avec la signature. Posé après elle, le rail se
-  retrouvait à 137 px d'une citation courte.
-- Onglets ARIA (`tablist`, flèches, une seule voix dans l'ordre de
-  tabulation). Sans script, les trois citations se lisent à la suite, signées.
-- Ce sont des recommandations, sans chiffre : le lien du bas (« Lire les cinq
-  cas clients, avec leurs chiffres ») mène à l'index des cas, dont le nombre
-  est lu dans la collection.
-- `/automatisations-ia` garde `Testimonials.astro` : les mêmes citations, lues
-  à la suite, la citation à gauche et qui la signe à droite.
+### La fin (`#fin`)
 
-### Les questions (`questions`)
+La fin de page commune (`fin-de-page`, ancre `#contact`, source
+`home_offres`), sans sa maille et à la hauteur de ce qu'elle dit : ici la
+nuit et l'étalonnage suffisent. L'étalonnage y est à la braise ; son nom
+dans la barre est « Contact ».
 
-Quatre questions, juste avant la fin : pour qui, combien, seul ou non, comment
-se passe le premier échange. Le composant est celui de toutes les pages (voir
-*Components → Questions*) ; ici il garde son titre par défaut, « Vos
-questions. », et lit `data/home-faq.ts`, qui alimente aussi le `FAQPage` de la
-page : une seule écriture par réponse. Rien n'y est affirmé qui ne soit dans
-PRODUCT.md ou `/llms.txt`.
+Un générique de fin la précédait, sur un axe : « Écrit et construit par »,
+puis les clients, les recommandations, les outils et la source des images.
+Lilian l'a retiré le 14 octobre 2026 (« faudrait retirer ça sinon non ? ») :
+les clients sont déjà dans le défilé des logos, les recommandations dans
+« Ils en parlent », et seize noms en colonne faisaient sur téléphone une
+longue liste sans rien d'autre à lire. Ne pas le remettre sans qu'il le
+demande.
 
-### La fin (`fin-de-page`)
+### Named Rules
 
-La page se ferme comme elle s'ouvre : une phrase seule, centrée, sur la maille
-du premier écran, cette fois immobile et effacée vers les bords. C'est le
-composant de toutes les pages (voir *Components → La fin de page*), avec ce qui
-est propre à l'accueil :
+**La règle des vraies photos.** Sur l'accueil, une photo montre Lilian pour de
+vrai, et rien d'autre : son bureau, son portrait, des captures de Radio
+Contournement, une séance de formation. Chaque image du dossier
+`src/assets/documentaire/` a sa provenance dans son `README.md`. Les scènes de
+travail générées (`src/assets/work-scenes/`) ne vont jamais sur l'accueil.
 
-- **Le titre par défaut** : « Dites-moi ce qui vous fait perdre du temps. »,
-  suivi de « Écrivez-moi. ». Il répond au titre qui ouvre le récit (« Vous
-  perdez du temps. ») : la page se ferme sur la même idée, rendue cette fois
-  au visiteur.
-- **Les deux prix tiennent en une ligne** sous l'invite (prop `prix`), chacun
-  lié à sa page d'offre : « Automatisation et agents IA, à partir de… » et
-  « Dashboards et outils métiers, sur devis ». Sous 640 px, une offre par
-  ligne. Les pages d'offre ne l'affichent pas : elles portent déjà leurs prix.
-- L'ancre de la section reste `#offres` ; partout ailleurs c'est `#contact`.
+**La règle des deux voix.** La pêche claire est la voix de Lilian, et
+seulement la sienne : ses sous-titres. Les mots des autres sont blancs, signés
+par une incrustation.
 
-**Un seul appel à l'action sur la page.** Tous les « Parlons de votre projet »
-(barre de navigation, menu mobile, lien de « Pourquoi moi », bouton de fin)
-ouvrent la conversation (`data-causerie-ouvrir`), décision de Lilian du
-2 octobre 2026, devenue la règle de tout le site.
+**La règle sans date.** L'accueil ne porte aucune date : ni année, ni
+« depuis », ni date de publication visible (« c'est pas un CV »). Le pied de
+page y perd la sienne (`Footer sansDate` : « Freelance » au lieu de
+« Freelance depuis 2020 », et pas d'année dans la mention de droits), et les
+faits du portrait sont écrits sans leur date.
+
+**La règle de la seule boucle.** Sur l'accueil, une animation joue une fois et
+s'arrête sur une image fixe, la même que sans script. Seul le défilé des
+logos boucle, avec son bouton pause, et il s'endort hors de l'écran.
+
+**La règle du chapitre déclaré.** Une section de l'accueil est un chapitre :
+elle porte son nom et sa lueur, et la barre des chapitres a un segment pour
+elle. Une section sans `data-chapitre` n'existe pas pour la barre ; deux
+listes qui divergent (les segments et les sections) éteignent la barre.
 
 ### La barre d'écriture (`home-invite`)
 
@@ -963,48 +1086,32 @@ direct, ni IA, ni message stocké ailleurs que dans le navigateur du visiteur.
 Il choisit son moyen et c'est lui qui envoie ; Lilian reçoit le message là où
 il répond déjà.
 
-- **La fenêtre ne fait pas semblant.** Sa première version affichait « je vous
-  réponds moi-même », trois points de frappe, puis « Merci, c'est clair. »
-  quel que soit le texte : un visiteur pouvait fermer en croyant avoir écrit à
-  Lilian (critique du 2 octobre 2026). Donc : un sous-titre qui dit le
-  mécanisme (« Vous choisissez comment l'envoyer »), et chaque réponse dit où
-  en est le message (« pas encore parti », « il reste à l'envoyer »).
-  **Les trois points de frappe sont revenus le 3 octobre 2026, à la demande de
-  Lilian** : sans eux la réponse tombait d'un coup et la fenêtre semblait se
-  rafraîchir. Ils précèdent chaque réponse, 0,9 à 1,5 s selon sa longueur,
-  cachés aux lecteurs d'écran et absents en mouvement réduit. Ils donnent un
-  rythme, ils ne changent pas ce qui est dit : le message n'est toujours pas
-  parti tant que le visiteur n'a pas choisi son moyen. Sous la barre du hero, une ligne dit ce qu'elle fait : une
-  barre de prompt sous « expert en agents IA » se lisait comme un robot.
-- **Deux places, un seul élément.** Sous le titre du premier écran, puis, dès
-  qu'on a défilé d'un tiers d'écran, en bas à droite : elle s'y envole, et
-  revient sous le titre si on remonte tout en haut. Elle s'efface quand le
-  champ de fin de page est visible : jamais deux champs à la fois. À
-  l'inverse, conversation ouverte, c'est le champ de fin de page qui se met en
-  retrait (inerte, à 35 %) ; le toucher mène au champ de la conversation.
-  Constaté par Lilian sur son téléphone le 3 octobre 2026 : la fenêtre
-  s'ouvrait juste sous ce champ resté actif, il y écrivait, et la conversation
-  se refermait. Le hero n'est donc plus « le titre seul » : le titre, la barre,
-  et les logos.
+- **La fenêtre ne fait pas semblant.** Un sous-titre dit le mécanisme
+  (« Vous choisissez comment l'envoyer »), et chaque réponse dit où en est le
+  message (« pas encore parti », « il reste à l'envoyer »). Trois points de
+  frappe précèdent chaque réponse, 0,9 à 1,5 s selon sa longueur, cachés aux
+  lecteurs d'écran et absents en mouvement réduit : ils donnent un rythme, ils
+  ne changent pas ce qui est dit.
+- **Deux places, un seul élément.** Sur l'accueil, à droite du titre de
+  l'ouverture (sous lui en dessous de 1024 px), puis, dès qu'on a défilé d'un
+  tiers d'écran, en bas à droite : elle s'y envole, et revient à sa place si
+  on remonte tout en haut. Elle s'efface quand le champ de fin de page est
+  visible : jamais deux champs à la fois. À l'inverse, conversation ouverte,
+  c'est le champ de fin de page qui se met en retrait (inerte, à 35 %).
 - **Au doigt, seul le visiteur referme la conversation** (chevron). Le repli
   automatique quand le focus quitte la fenêtre ne vaut qu'au clavier, sur un
-  écran étroit, où le focus passerait derrière elle.
-- **Dans le coin, elle reste en barre six secondes puis se range en
-  pastille** : son portrait et « Écrire à Lilian » sur ordinateur, son
-  portrait seul (56 px, un point pêche) sur téléphone. Restée en barre, elle
-  recouvrait des titres, des prix et le bouton de la newsletter. Sur
-  téléphone la pastille s'efface quand on descend la page et revient quand on
-  remonte : elle rognait la fin des lignes. Tant qu'on y écrit, qu'elle a le
-  focus ou que la conversation est ouverte, elle reste dépliée.
-- **Elle n'écrit plus rien toute seule.** Jusqu'au 8 octobre 2026 des exemples
-  s'y tapaient lettre à lettre, quatre en boucle sous le titre puis un dernier
-  dans le coin. L'invite est fixe, « Écrivez-moi… » : celle que voyait déjà le
-  mouvement réduit. Les trois points de la conversation restent : ils
-  répondent à un geste du visiteur.
+  écran étroit.
+- **Dans le coin, elle reste en barre six secondes (deux sur téléphone)
+  puis se range en pastille** : son portrait et « Écrire à Lilian » sur
+  ordinateur, son portrait seul (56 px, un point pêche) sur téléphone, où la
+  barre dépliée couvrait le bas de l'écran pendant qu'on lit. Sur téléphone la
+  pastille s'efface quand on descend la page et revient quand on remonte.
+  Tant qu'on y écrit, qu'elle a le focus ou que la conversation est ouverte,
+  elle reste dépliée, et la barre des chapitres lui laisse la place.
+- **Elle n'écrit rien toute seule.** L'invite est fixe, « Écrivez-moi… ».
 - **Entrée ouvre la conversation dans le coin** : le message du visiteur sur
-  pêche, à droite ; une réponse à gauche (« Bien noté. Votre message n'est pas
-  encore parti : choisissez comment me l'envoyer. »), puis trois moyens, dont
-  le libellé dit ce qu'il fait :
+  pêche, à droite ; une réponse à gauche, puis trois moyens, dont le libellé
+  dit ce qu'il fait :
   - **« M'écrire sur WhatsApp »** ouvre la discussion vers son WhatsApp
     Business, le message déjà écrit (`wa.me`, numéro dans `lib/contact.ts`).
   - **« M'écrire par e-mail »** ouvre la messagerie du visiteur, le message
@@ -1012,34 +1119,33 @@ il répond déjà.
     fenêtre, pour qui n'a pas de messagerie configurée.
   - **« Réserver un appel · 45 min »** ouvre l'agenda dans la page
     (`BoutonReservation`, source `home_causerie`), le message joint à la
-    réservation (`data-cal-note-from`, lu par l'embed dans Layout).
+    réservation.
 - **Ce que le visiteur ajoute complète son message**, et les trois moyens se
   mettent à jour. « Recommencer » efface tout. Le message est gardé le temps
-  de l'onglet (`sessionStorage`) : un rechargement ou un retour de WhatsApp ne
-  le perd pas, et la pastille dit alors « Message prêt, pas encore envoyé ».
+  de l'onglet (`sessionStorage`), et la pastille dit alors « Message prêt, pas
+  encore envoyé ».
 - **Valider un champ vide ouvre la fenêtre**, avec les trois moyens proposés
   d'emblée : la flèche ne reste jamais sans effet.
-- **Sur l'accueil, elle est rendue juste après le hero**, pour venir au
-  clavier là où on la voit (elle était 55ᵉ sur 57 arrêts, rendue après le pied
-  de page). **Sur les autres pages, c'est `Layout` qui la rend** (prop
-  `causerie`, vraie par défaut) : sans premier écran pour l'accueillir, elle
-  vit dans le coin, et tous les boutons de la page l'ouvrent.
-- **Pas d'outil de chat tiers** (Lilian ne veut pas payer Crisp), pas de bulle
-  flottante générique : la fenêtre est dans la tenue de la page (nuit, filet,
-  pêche, Geist), avec son portrait. Un vrai agent, branché sur une base de
-  connaissances, est une suite possible ; la fenêtre est faite pour
-  l'accueillir.
+- **Sur l'accueil, elle est rendue juste après l'ouverture**, pour venir au
+  clavier là où on la voit. **Sur les autres pages, c'est `Layout` qui la
+  rend** (prop `causerie`, vraie par défaut) : sans premier écran pour
+  l'accueillir, elle vit dans le coin, et tous les boutons de la page
+  l'ouvrent.
+- **Pas d'outil de chat tiers**, pas de bulle flottante générique : la
+  fenêtre est dans la tenue de la page (nuit, filet, pêche, Geist), avec son
+  portrait.
 - Suivi : `causerie_opened` sur les boutons qui l'ouvrent et sur la barre
   elle-même (sources `barre_hero` et `barre_coin`, une fois par page),
-  `lead_message`
-  (prop `canal`) sur WhatsApp et l'e-mail, `lead_call` sur l'appel. Ils
-  mesurent l'ouverture, pas l'envoi.
+  `lead_message` (prop `canal`) sur WhatsApp et l'e-mail, `lead_call` sur
+  l'appel. Ils mesurent l'ouverture, pas l'envoi.
 
 ### Ce qui se refait à la main
 
-`public/og-home.png` et la vignette du site dans les réalisations se refont à
-chaque changement du hero. Les images de `public/formes/`, qui servaient de
-repli aux sculptures de verre, ont été supprimées le 2 octobre 2026.
+`public/og-home.png` se refait à chaque changement de l'ouverture. Les
+composants de l'accueil d'avant (`home-hero`, `home-story`, `home-services`,
+`home-today-path`, `home-content`, `home-voices`) existent encore dans
+`src/components/` mais ne sont plus rendus sur `/` : ils ne sont pas une
+référence pour la page.
 
 ## Colors
 
@@ -1065,7 +1171,7 @@ le fond général `#0c121f`.
 
 | Rôle | Usage | Contraste |
 |---|---|---|
-| `paper` / `night-deep` | Fond général, barre, menu mobile, agenda, pied de page | — |
+| `paper` / `night-deep` | Fond général, barre, menu mobile, agenda, pied de page ; à 74 ou 84 % sous verre dépoli, l'incrustation et la barre des chapitres | sans objet |
 | `night` | Texte posé sur la pêche, valeur fixe ; fond du bouton sur l'île | 10,19:1 sur la pêche |
 | `surface-low` | Panneau arrondi relevé d'un cran : média, fenêtre du simulateur, repères de prix, relevé d'un cas | 1,21:1 contre le fond : un palier, pas un contraste |
 | `surface-high` | Nœuds de schéma, fenêtres de maquette, flèches du carrousel | blanc dessus : 14,30:1 |
@@ -1094,8 +1200,9 @@ Les jetons `--color-text-on-dark*`, `--color-divider-dark` et
 `--color-surface-on-dark` portent les mêmes valeurs que les encres du fond
 général. Ils servent aux éléments qui restent sombres quel que soit leur parent
 (légende d'une vignette de projet, scènes 3D) et ne sont remappés par aucun
-bloc. Les teintes `feuille*`, `lueur-froide` et `braise` n'existent que dans
-les scènes de l'accueil.
+bloc. Les teintes `feuille*` n'existent que dans les scènes des métiers ;
+`lueur-froide` et `braise` n'existent que dans ces scènes et dans
+l'étalonnage de l'accueil (voir *La règle des lueurs*).
 
 ### Le panneau clair (`.bloc-encre`)
 
@@ -1112,8 +1219,8 @@ dans l'île tels quels.
 | `ink-low` → `panel-ink-low` | `#5d6777` | 5,38:1 |
 | `ink-faint` → `panel-ink-faint` | `#8b94a3` | 2,88:1 : trait uniquement |
 | `divider`, `service-border` → `panel-divider` | `#dce1e8` | 1,24:1 : filet |
-| `surface-low` → `panel-surface-low` | `#eef0f4` | — |
-| `surface-high` → `panel-surface-high` | `#ffffff` | — |
+| `surface-low` → `panel-surface-low` | `#eef0f4` | sans objet |
+| `surface-high` → `panel-surface-high` | `#ffffff` | sans objet |
 | `accent-soft` → `panel-accent-soft` | `#ffe9dd` | nuit dessus : 15,16:1 |
 | `error` → `panel-error` | `#b3261e` | 6,15:1 |
 
@@ -1130,6 +1237,17 @@ conversation, de la sélection de texte, et de tout contrôle rond dont le
 survol pose la pêche derrière un glyphe : le glyphe change de couleur dans la
 même transition que le fond. Un fragment souligné n'est pas concerné : le
 trait passe sous lui, il garde l'encre du titre.
+
+**La règle des lueurs.** `lueur-froide` et `braise`, avec la pêche, sont des
+lumières : des halos derrière les choses (l'étalonnage de l'accueil, le
+panneau des scènes), jamais du texte, un trait ou une surface. Une lueur passe
+toujours par `color-mix` vers le transparent (20 à 26 %), et le grain
+empêche ses dégradés de se découper en bandes.
+
+**La règle de la pêche claire.** `peche-clair` a deux emplois, et deux
+seulement : le survol du bouton, et le sous-titre de Lilian sur l'accueil
+(12,1:1 sur la nuit). Il n'habille ni un lien, ni un titre, ni les mots d'un
+autre.
 
 **La règle de la pastille.** La pastille pêche pleine est la forme du bouton
 d'appel, et elle ne sert qu'à lui (Lilian, le 8 octobre 2026). Ce qu'on veut
@@ -1180,19 +1298,22 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
 
 | Rôle | Jeton | 402 → 1440 | Graisse, interligne, approche |
 |---|---|---|---|
-| Affiche (`h1` de l'accueil) | `--text-affiche` | 34 → 72 | 500 · 1,12 · −0,028em |
+| Nom (le nom dans le `h1` de l'accueil) | littéral, `clamp(3.25rem, 7.2vw, 6rem)` | 52 → 96 | 500 · 0,98 · −0,04em |
+| Carton (titre d'un chapitre de l'accueil) | `--text-headline` | 32 → 48 | 500 · 1,1 · −0,03em (jetons `display`) |
 | Manifeste (`h1` de `/automatisations-ia`) | `--text-display-hero` | 52 → 100 | 500 · 1,1 · −0,03em |
 | Titre de page (`h1` des pages intérieures) | `--text-display` | 36 → 84 | 500 · 1,1 · −0,03em |
-| Énoncé (titres du récit, titre de fin de page) | `--text-story` | 32 → 60 | 500 · 1,1 · −0,03em |
+| Énoncé (titre de fin de page, parole et faits du portrait) | `--text-story` | 32 → 60 | 500 · 1,1 · −0,03em |
 | Titre de section (`h2`) | `--text-headline` | 32 → 48 | 500 · 1,1 · −0,03em |
-| Phrase (titre d'une `partie`, principe, phrase d'un métier, citation) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
+| Phrase (titre d'une `partie`, principe ; début et fin du `h1` de l'accueil, citation d'un intervenant) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
+| Sous-titre (la voix de Lilian sur l'accueil) | littéral, `clamp(1.125rem, 0.6vw + 0.95rem, 1.5rem)` | 18 → 24 | 500 · 1,35 · −0,01em, pêche claire |
 | Lien du menu mobile | `--text-menu` | 32 → 48 | 500 · 1,15 · −0,03em |
-| Titre lg (prix d'une formule, titre d'un cas dans la liste) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,2 |
+| Titre lg (prix d'une formule, titre d'un cas) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,3 |
 | Titre (`h3`, fait de « Pourquoi moi », nom d'un site) | `--text-title` | 20 → 24 | 500 · 1,2 · −0,02em |
 | Chapô, texte d'une `partie`, usages ; l'intitulé d'une question, en 500 | `--text-body-large` | 17 → 20 | 400 · 1,35 à 1,65 |
 | Corps | `--text-body` | 16 | 400 · 1,55 à 1,6 · 0 |
 | Petit corps, et tout ce qui se clique | `--text-body-sm` | 14 | 400, 500 pour un contrôle |
 | Libellé (`.mono-label`, `.mono-caption`, `.chip`) | `--text-mono-label` | 12 | 500 · 1,4 · 0 |
+| Mention de source (`.credit`, sur l'accueil) | littéral, `0.75rem` | 12 | 400 · 1,4 · 0 |
 
 - **Tout ce qui se clique est à 14 px, en bas de casse, graisse 500** : le
   bouton, le lien fléché, les liens de la barre. Une action n'a qu'un seul
@@ -1203,7 +1324,10 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
 - **Un titre plus petit n'est jamais plus serré qu'un plus grand.** Interligne
   et approche sont des jetons par rôle (`--leading-display`,
   `--tracking-display`, `--leading-phrase`, `--tracking-phrase`,
-  `--leading-body`), pas des littéraux recopiés.
+  `--leading-body`), pas des littéraux recopiés. Les titres du documentaire
+  (nom, parole, faits, filmographie, sous-titre) écrivent encore les leurs en
+  littéraux : écart relevé, à ramener aux jetons, pas un exemple. Le carton y
+  est revenu le 14 octobre 2026.
 - **Le corps n'a pas d'approche négative** (`body` à 0) : héritée en longueur
   absolue, elle serrait davantage les petits corps que le texte courant.
 - **Mesure : `46ch`**, soit environ 70 caractères : le `ch` de Geist (10,53 px à
@@ -1211,8 +1335,8 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
   (6,87 px).
 - **Le français se compose** : espace insécable avant `: ; ? !`, dans les
   unités (« 45 minutes », « 24 h/24 », « 60 % ») et avant « € HT ».
-- **Les scènes de l'accueil ont leur propre échelle**, de quatre tailles (voir
-  *L'accueil*). `--text-mono-caption` (11 px) ne sert plus qu'aux maquettes des
+- **Les scènes des métiers ont leur propre échelle**, de quatre tailles (voir
+  *L'accueil : le documentaire*). `--text-mono-caption` (11 px) ne sert plus qu'aux maquettes des
   pages de cas.
 
 L'échelle est **fluide en haut, fixe en bas**, et la coupure est délibérée. Du
@@ -1270,8 +1394,8 @@ qui va avec qui.
 
 Sous 640 px, `section-y` tombe à 56 px et `bloc` à 40 px (ils vaudraient 80 et
 48) : sur un téléphone l'écart entre deux sections ne doit pas coûter un demi-
-écran. Hors rythme : `--spacing-cadre` (marge des filets de cadre de
-l'accueil), `--spacing-maille` (la grille du premier écran de l'accueil et de
+écran. Hors rythme : `--spacing-cadre` (marge du plan d'ouverture de
+l'accueil, plus large que la colonne), `--spacing-maille` (la grille du premier écran de l'accueil et de
 la fin de page), `--spacing-panneau` (marge intérieure d'un panneau),
 `--spacing-barre` (hauteur de la barre : éléments collants, et
 `scroll-padding-top` posé sur la racine pour toutes les ancres).
@@ -1294,22 +1418,32 @@ de la page. Elle garde une marge de `clamp(0,5rem, 1,5vw, 1,25rem)`, un liseré
 de nuit et non une gouttière, et son contenu reste aligné sur la colonne.
 
 **Les seuils.** 1024 px est le seuil des deux colonnes titre/contenu, des
-titres collants, du nom en toutes lettres dans la barre, des filets de cadre de
-l'accueil et de `scrollbar-gutter: stable`. Les autres sont des empilements
-locaux, écrits avec leur composant : 1200 px (texte d'un métier à côté de sa
-scène), 900 px (liste de prix, offres, témoignages, scènes de travail), 768 px
-(blocs sur deux colonnes), 720 px (tableau d'une
-`partie` replié en blocs, onglets des métiers), 640 px (rythme de téléphone,
-fin de page empilée). La barre ne suit pas un seuil en pixels mais une requête
+titres collants, du nom en toutes lettres dans la barre et de
+`scrollbar-gutter: stable` ; sur l'accueil, de la barre d'écriture à droite
+du titre, du portrait face à sa parole.
+Les autres sont des empilements locaux, écrits avec leur composant : 900 px (liste de prix, offres,
+témoignages, scènes de travail ; les deux affiches d'« En ce moment », les trois
+colonnes de la filmographie, le rail des intervenants), 768 px (blocs sur deux colonnes ; les plans
+larges passent de 4:3 à 2,39:1), 720 px (tableau d'une `partie` replié en
+blocs), 640 px (rythme de téléphone, fin de page empilée, liste des plans en
+2 × 2, barre des chapitres resserrée). La barre ne suit pas un seuil en pixels mais une requête
 de conteneur en em (voir *Components → Navigation*).
 
 **Deux blocs qui se lisent ensemble partent de la même ligne** : le nom, la
 phrase et le prix d'une formule (`subgrid`, même ligne de base), les prix d'une
 liste (une colonne commune, pour qu'ils tombent les uns sous les autres), le
-texte d'un métier et sa scène.
+genre, la phrase et le lien d'une ligne de la filmographie, alignés sur le
+haut de son nom.
 
 **Un composant ne dépasse jamais la hauteur de l'écran** : une scène empilée
-borne sa largeur sur `100svh` moins la barre.
+borne sa largeur sur `100svh` moins la barre, et le plan d'ouverture de
+l'accueil borne sa hauteur pour tenir avec son incrustation dans le premier
+écran.
+
+**Sur l'accueil, les plans débordent la colonne quand ils le peuvent** : celui
+de l'ouverture va jusqu'à 1 376 px, le plan des expertises s'approche à 8 px
+du bord d'un téléphone. Le texte, lui, reste dans la colonne de 1 200 px ; un
+sous-titre et un carton sont centrés sur elle.
 
 Les cibles tactiles font 44 px au moins ; la barre de navigation fait 64 px
 (4rem : elle grandit avec le texte).
@@ -1332,9 +1466,18 @@ comme un blanc qu'on comblerait un jour au jugé.
 **Ce qui flotte au-dessus de la page fait exception, et seulement cela.** La
 fenêtre de conversation (`home-invite`), fixe dans le coin, porte une ombre
 teintée `night-deep` et un liseré intérieur d'encre à 9 % ; les fenêtres des
-scènes de l'accueil, qui sont des dessins d'interface, ont leurs ombres et
-leur verre dépoli à elles. Ni l'un ni l'autre ne passe à une section, à un bloc
-ou à un bouton. La barre de navigation est opaque : aucun flou dans le chrome.
+scènes des métiers, qui sont des dessins d'interface, ont leurs ombres et
+leur verre dépoli à elles. Sur l'accueil, deux pièces flottent aussi et
+prennent un verre dépoli, sans ombre : la barre des chapitres (nuit profonde à
+84 %, `blur(16px)`) et l'incrustation posée sur un plan (74 %, `blur(14px)`).
+Rien de cela ne passe à une section, à un bloc ou à un bouton. La barre de
+navigation est opaque : aucun flou dans le chrome du site.
+
+**Sur l'accueil, la profondeur est une lumière.** Chaque plan photographique
+porte sa lumière (l'image floutée derrière lui, voir *L'accueil → Le plan*),
+et l'étalonnage teinte la nuit derrière la page. Ni l'une ni l'autre n'est une
+ombre : elles ont la couleur de ce qu'elles éclairent, et ne s'assombrissent
+jamais.
 
 ### Named Rules
 
@@ -1362,12 +1505,12 @@ est rond.
 | Jeton | Valeur | Usage observé |
 |---|---|---|
 | `xs` | 6 px | Détail de maquette, piste du curseur, l'angle « queue » d'une bulle |
-| `sm` | 10 px | Bouton de fermeture de l'agenda, nœud de schéma animé |
-| `md` | 16 px | Bulle de la conversation, relevé d'un cas, cadre d'une scène |
+| `sm` | 10 px | Bouton de fermeture de l'agenda, nœud de schéma animé, incrustation d'un plan |
+| `md` | 16 px | Bulle de la conversation, relevé d'un cas |
 | `diagram` | 16 px | Nœuds des schémas de cas |
-| `lg` | 16 → 24 px, fluide | Média, vignette de projet, invite de fin de page, fenêtre de conversation, repères de prix |
-| `xl` | 20 → 32 px, fluide | Île claire `.bloc-encre` |
-| `cta` / `full` | 9999 px | Bouton, lien de la barre et sa pastille de survol, chip, pouce de curseur, portrait |
+| `lg` | 16 → 24 px, fluide | Média, vignette de projet, invite de fin de page, fenêtre de conversation, repères de prix ; plan de l'accueil par défaut (capture, portrait, vidéo) |
+| `xl` | 20 → 32 px, fluide | Île claire `.bloc-encre` ; plan d'ouverture, plan large et plan des expertises sur l'accueil |
+| `cta` / `full` | 9999 px | Bouton, lien de la barre et sa pastille de survol, chip, pouce de curseur, portrait ; barre des chapitres, ses pistes, champ et bouton de la newsletter, trait d'une incrustation |
 
 `lg` et `xl` sont fluides : 24 et 32 px sur un panneau de 343 px de large le
 transformeraient en gélule.
@@ -1460,10 +1603,14 @@ forme du bouton d'appel, elle ne sert plus qu'à lui.
   fragment d'un bloc par des espaces insécables, par goût et non par
   nécessité.
 - **Un seul par titre, et pas dans chaque titre.** Sur une page intérieure, il
-  n'apparaît que dans le `h1` et dans le titre de fin de page ; l'accueil en
-  compte quatre. Posé sur chaque titre de section, il ne désignait plus rien.
+  n'apparaît que dans le `h1` et dans le titre de fin de page. Posé sur chaque
+  titre de section, il ne désignait plus rien. L'accueil documentaire en
+  compte quatre depuis le 14 octobre 2026 (il en avait neuf) : le `h1`, les
+  faits du portrait, « ensemble » chez les intervenants et le titre de fin,
+  comme la décision du 8 octobre 2026 (« quatre traits, pas un par titre »).
 - **Jamais hors d'un titre, jamais dans une île claire** : la pêche n'y tient
-  que 1,64:1. La colonne « Après » de la bascule d'un cas, qui portait un
+  que 1,64:1. Le carton des faits de l'accueil est un paragraphe composé en
+  titre, et il porte un `mark` : écart relevé. La colonne « Après » de la bascule d'un cas, qui portait un
   `mark` dans l'île des résultats, se lit maintenant à l'encre, en graisse
   500.
 - La sélection de texte reste un aplat : pêche, texte nuit.
@@ -1541,7 +1688,7 @@ flou.
   glisse d'un lien à l'autre sous le pointeur : une seule forme qui se déplace,
   pas un fond par lien. Le lien de la section en cours passe en 600 et garde un
   point pêche de 4 px dessous.
-- **La liste change, pas la barre** : l'accueil nomme ses quatre métiers, une
+- **La liste change, pas la barre** : l'accueil nomme ses chapitres, une
   page d'offre ses ancres, les autres pages les liens du site (les deux offres,
   les cas clients, la méthode, le parcours).
 - **Un seul bouton**, le même au bureau et sur téléphone : au centre de la
@@ -1550,7 +1697,7 @@ flou.
 **Le menu mobile** est un dialogue natif plein écran sur fond nuit : en-tête et
 pied fixes, seule la liste défile, dans la hauteur dynamique du viewport et
 avec les zones de sécurité du téléphone. Même composition partout : une liste
-en grand, en haut (`--text-menu`, 32 à 48 px, graisse 500 : les quatre métiers
+en grand, en haut (`--text-menu`, 32 à 48 px, graisse 500 : les chapitres
 sur l'accueil, les deux offres ailleurs), une suite plus discrète en bas
 (`--text-body-large`, `ink-mid`), puis le bouton, sous le pouce. L'écran est
 tenu par ses deux bouts et l'espace qui reste est entre les deux groupes
@@ -1621,7 +1768,9 @@ radial.
 - Conversation ouverte, l'invite se met en retrait (inerte, à 35 %) : jamais
   deux champs où écrire à l'écran.
 
-La conversation elle-même est décrite dans *L'accueil → La barre d'écriture* :
+Sur l'accueil, elle ferme le documentaire et perd sa maille. La conversation
+elle-même est décrite dans *L'accueil : le documentaire → La barre
+d'écriture* :
 c'est le même composant sur toutes les pages.
 
 ### Pied de page
@@ -1633,7 +1782,9 @@ deux structures de Lilian s'intitule « Mes activités » (« Ailleurs » avant 
 prennent la couleur de leur plateforme au survol et au focus. Le bouton n'y
 figure que sur la page légale (`showContact`), seule page sans fin de page.
 Quand la barre d'écriture est rendue, le pied garde 5,5rem sous ses derniers
-liens pour qu'ils ne restent pas dessous.
+liens pour qu'ils ne restent pas dessous. Sur l'accueil il est rendu
+`sansDate` : « Freelance » au lieu de « Freelance depuis 2020 », et pas
+d'année dans la mention de droits. Il passe devant l'étalonnage.
 
 ### Mouvement
 
@@ -1693,35 +1844,27 @@ transitions de page sont coupées. La couleur continue de répondre : c'est un
 retour d'information, pas du mouvement.
 
 **Sur l'accueil, une animation joue une fois, puis se tait.** Demande de
-Lilian, le 8 octobre 2026 : réduire les animations de la page. Ce qui tournait
-en boucle sans action du visiteur a été arrêté, dispositif par dispositif :
+Lilian, le 8 octobre 2026, reprise par le documentaire le 14 octobre :
 
-| Dispositif | Avant | Depuis le 8 octobre 2026 |
-|---|---|---|
-| Cellules de la grille du premier écran | un passage toutes les neuf secondes | un seul passage, deux secondes après le chargement |
-| Barre d'écriture | des exemples qui se tapaient seuls | une invite fixe, « Écrivez-moi… » |
-| Titres du récit | les mots un par un | le titre d'un bloc, puis son trait |
-| Scènes des métiers | une boucle de 10 à 14 s | un tour, puis l'image finale |
-| Recommandations | la parole passait seule toutes les 7 s | on choisit une voix |
+| Dispositif | Ce qui joue |
+|---|---|
+| Ouverture | le nom prend sa graisse, le plan s'ouvre d'une fente, sa lumière s'allume, l'incrustation et le sous-titre arrivent : une fois, au chargement, moins de trois secondes |
+| Cartons, plans, voix, filmographie | `.reveal` et `.media-ouvre`, une fois, au défilement |
+| Étalonnage | la teinte fond en 1,8 s quand le chapitre change : elle répond à la lecture, elle ne tourne pas seule |
+| Barre des chapitres | apparaît, se remplit à mesure qu'on lit ; rien ne bouge sans défilement |
+| Scènes des métiers | un tour de 10 à 14 s quand le plan est vu, puis l'image finale |
+| Changement de plan des expertises | un fondu de 520 ms, au clic |
+| Barre d'écriture | une invite fixe, « Écrivez-moi… » |
+| Recommandations | aucune minuterie : elles passent au défilement |
 
-Deux boucles restent, par choix : le défilé des logos du premier écran (Lilian
-l'a redemandé le jour même) et la scène du récit. Chacune a sa commande
-d'arrêt et s'endort hors de l'écran.
-
-**La scène du récit est la seule qui continue de bouger.** Sur ordinateur le
-défilement choisit ce qu'elle montre ; le mode en cours s'y joue tant qu'il
-est à l'écran. Sous 1024 px, sa seconde vue enchaîne encore seule les trois
-réponses. Elle garde donc sa commande d'arrêt, et s'endort hors écran. Ce qui
-répond à un geste du visiteur (l'éclairage de la grille sous le pointeur, les
-trois points de la conversation, un survol) n'est pas concerné.
+**Une seule boucle reste, par choix : le défilé des logos** de l'ouverture,
+avec son bouton pause. Ce qui répond à un geste du visiteur (un survol, les
+trois points de la conversation) n'est pas concerné.
 
 **Ce qui boucle encore ne tourne que si on le regarde.** Les conteneurs
-marqués `data-motion-pause` (la scène du récit, le bandeau d'outils
-`LogoMarquee` de `/automatisations-ia`) reçoivent `data-motion-idle` hors
-écran, qui met leurs animations en pause : mesuré, cinquante-deux animations
-infinies tournaient pour des maquettes situées six mille pixels plus bas. Le
-premier écran de l'accueil ne porte plus cet attribut : il n'a plus de boucle
-à suspendre.
+marqués `data-motion-pause` (l'ouverture de l'accueil et son défilé, le
+bandeau d'outils `LogoMarquee` de `/automatisations-ia`) reçoivent
+`data-motion-idle` hors écran, qui met leurs animations en pause.
 
 **Une animation liée au défilement ne porte que des propriétés compositables**,
 `transform`, `opacity`, et `clip-path` pour l'ouverture des médias.
@@ -1889,8 +2032,15 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
   pas montré est aussi une affirmation.
 - **Do** montrer un projet public par une capture réelle, légendée et
   traçable ; cantonner sa palette à l'image.
-- **Do** donner à chaque section de l'accueil un composant qui n'existe que là,
-  dont la forme vient de ce qu'elle raconte.
+- **Do** écrire un chapitre de l'accueil avec `chapitre.astro` : son nom
+  (`data-chapitre`), sa lueur (`data-lueur`, deux jetons parmi `lueur-froide`,
+  `peche`, `braise`), son carton, et son segment dans la barre.
+- **Do** poser une vraie photo de Lilian en plan, avec sa lumière, son
+  incrustation (nom, puis rôle en bas de casse sous un trait pêche) et, quand
+  il parle, son sous-titre en pêche claire.
+- **Do** signer une image prêtée par sa mention de source, et noter sa
+  provenance dans `src/assets/documentaire/README.md`.
+- **Do** écrire les mots des autres en blanc, signés par une incrustation.
 
 ### Don't:
 
@@ -1900,8 +2050,8 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
 - **Don't** poser une bande de fond bord à bord, ni changer de fond pour
   rythmer la page. Une surface ne monte que pour un panneau arrondi dans la
   colonne.
-- **Don't** étendre le panneau clair bord à bord, ni en faire une carte hors de
-  l'accueil : c'est une île à marge, la section entière.
+- **Don't** étendre le panneau clair bord à bord, ni en faire une carte : c'est
+  une île à marge, la section entière.
 - **Don't** composer une section en grille de cartes bordées ou en liste à
   filets : c'est ce que Lilian a rejeté comme « IA slop ».
 - **Don't** encadrer les questions ni les récrire en bulles de conversation :
@@ -1911,8 +2061,8 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
 - **Don't** souligner deux fragments dans un titre, ni poser un `mark` hors
   d'un titre ou dans une île claire.
 - **Don't** ajouter à l'accueil une animation qui tourne en boucle sans action
-  du visiteur : ni défilé, ni texte qui se tape seul, ni minuterie. La scène
-  du récit est la seule à continuer, avec sa commande d'arrêt.
+  du visiteur : ni texte qui se tape seul, ni minuterie, ni scène qui
+  recommence. Le défilé des logos est la seule boucle, avec son bouton pause.
 - **Don't** écrire un libellé en capitales, que ce soit par une classe ou tapé
   tel quel dans le texte, ni lui donner une approche positive.
 - **Don't** poser un sur-titre au-dessus d'un titre, ni une numérotation de
@@ -1961,7 +2111,20 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
   Astro (dans un `.map()`, un `&&`, ou entre les attributs d'un composant) : le
   compilateur rend `Expected ")" but found "$$render"` et toutes les pages
   tombent en 500. Le commentaire va avant l'expression.
-- **Don't** mettre un cas client au premier plan de l'accueil, ni lier un de
-  ses blocs à un cas précis ; ni y remettre une forme 3D, une scène collante
-  sous 1024 px ou les prix en rangées.
+- **Don't** écrire un cas client à la main dans l'accueil : les projets
+  clients lisent la collection des cas, et rien d'autre n'y nomme un client
+  en dehors du défilé des logos. Ni y remettre une forme 3D, une FAQ, des
+  prix, ou le générique de fin qui citait clients, recommandations et outils
+  (retiré le 14 octobre 2026 : tout y faisait doublon).
+- **Don't** poser sur l'accueil une image générée (les scènes de
+  `src/assets/work-scenes/`) ni une photo qui ne montre pas Lilian pour de
+  vrai.
+- **Don't** écrire une date sur l'accueil : ni année, ni « depuis », ni pied
+  de page daté.
+- **Don't** prêter la pêche claire à d'autres mots que ceux de Lilian.
+- **Don't** composer l'accueil en titre centré au-dessus d'une rangée de
+  cartes, ni répéter une même rangée texte plus panneau d'un chapitre à
+  l'autre.
+- **Don't** exporter la grammaire du documentaire (plans, incrustations,
+  sous-titres, étalonnage, barre des chapitres) sur une autre page.
 - **Don't** présenter le vibe coding comme une troisième offre.

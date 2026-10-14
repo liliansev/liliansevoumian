@@ -1,0 +1,137 @@
+---
+/*
+ * contrechamp : deux plans côte à côte, le champ et le contrechamp, avec un
+ * seul sous-titre.
+ *
+ * Né pour les formations (14 octobre 2026) : à gauche Lilian devant une
+ * classe, vue de dos ; à droite, une promotion tournée vers nous, autour de
+ * lui. Chaque plan a sa lumière et son incrustation, comme `plan-large` ; le
+ * sous-titre de Lilian vaut pour les deux. Sur téléphone, les plans se
+ * suivent.
+ *
+ * Une photo de groupe est pleine de visages : son incrustation peut passer en
+ * haut (`incrustation: 'haut'`) pour ne cacher personne.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+
+interface Plan {
+  image: ImageMetadata;
+  alt: string;
+  nom: string;
+  role: string;
+  /** Le rôle sur téléphone, où le cadre est petit. */
+  roleCourt?: string;
+  /** Le cadrage dans le cadre (`object-position`). */
+  cadrage?: string;
+  incrustation?: 'bas' | 'haut';
+}
+
+interface Props {
+  plans: [Plan, Plan];
+  /** La phrase de Lilian sous les deux plans. */
+  sousTitre?: string;
+  class?: string;
+}
+
+const { plans, sousTitre, class: classe } = Astro.props;
+
+const lumieres = await Promise.all(
+  plans.map((p) => getImage({ src: p.image, width: 96, format: 'webp', quality: 60 })),
+);
+---
+
+<figure class:list={['contrechamp reveal', classe]}>
+  <div class="contrechamp__plans">
+    {plans.map((p, i) => (
+      <div class="plan contrechamp__plan" style={`--cadrage: ${p.cadrage ?? '50% 50%'}`}>
+        <div class="plan__lumiere" style={`background-image: url(${lumieres[i].src})`} aria-hidden="true"></div>
+        <div class="contrechamp__cadre plan__cadre media-ouvre">
+          <Image
+            src={p.image}
+            alt={p.alt}
+            widths={[480, 720, 1024, 1280]}
+            sizes="(min-width: 1248px) 590px, (min-width: 768px) 50vw, 100vw"
+            loading="lazy"
+          />
+          <p class:list={['incrustation', { 'contrechamp__incrustation--haut': p.incrustation === 'haut' }]}>
+            <b>{p.nom}</b>
+            {p.roleCourt ? (
+              <>
+                <span class="contrechamp__role">{p.role}</span>
+                <span class="contrechamp__role contrechamp__role--court">{p.roleCourt}</span>
+              </>
+            ) : (
+              <span>{p.role}</span>
+            )}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+  {sousTitre && (
+    <figcaption class="contrechamp__legende">
+      <span class="sous-titre">{sousTitre}</span>
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .contrechamp {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    margin: 0;
+  }
+
+  .contrechamp__plans {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .contrechamp .plan__lumiere {
+    inset: 8% 4% 14%;
+  }
+
+  .contrechamp__cadre {
+    aspect-ratio: 3 / 2;
+    border-radius: var(--radius-xl);
+  }
+
+  .contrechamp__cadre :global(img) {
+    object-position: var(--cadrage);
+  }
+
+  .contrechamp__incrustation--haut {
+    top: clamp(0.75rem, 1.8vw, 1.5rem);
+    bottom: auto;
+  }
+
+  .contrechamp__role--court {
+    display: none;
+  }
+
+  @media (max-width: 599.98px) {
+    .contrechamp__role:not(.contrechamp__role--court) {
+      display: none;
+    }
+
+    .contrechamp__role--court {
+      display: inline;
+    }
+  }
+
+  .contrechamp__legende {
+    display: grid;
+    justify-items: center;
+  }
+
+  .contrechamp__legende .sous-titre {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    .contrechamp__plans {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

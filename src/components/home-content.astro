@@ -66,20 +66,12 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
         <SectionHeader title="Un mail par semaine." titleMaxWidth="none" spacing="none" class="h-full" />
         <div class="min-w-0">
         <form id="newsletter-form" action="/api/newsletter" method="post" class="courrier">
-          {/* L'objet est un exemple, inventé à la demande de Lilian : il donne le
-              ton d'un numéro, ce n'est pas le titre d'un numéro paru. */}
-          <dl class="courrier__entete">
-            <div class="courrier__ligne">
-              <dt>De</dt>
-              <dd>Lilian Sevoumian</dd>
-            </div>
-            <div class="courrier__ligne">
-              <dt>Objet</dt>
-              <dd>L’automatisation de la semaine, et comment la refaire</dd>
-            </div>
-          </dl>
+          {/* Simplifiée le 14 octobre 2026 à la demande de Lilian : l'en-tête
+              « De / Objet / À » d'un mail laisse place à une phrase et un
+              champ. */}
+          <p class="courrier__intro">Ce que je construis et ce que je teste, chaque semaine dans votre boîte.</p>
           <div class="courrier__ligne courrier__ligne--champ">
-            <label for="newsletter-email">À<span class="sr-only">&nbsp;: votre adresse e-mail</span></label>
+            <label for="newsletter-email" class="sr-only">Votre adresse e-mail</label>
             <input id="newsletter-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@entreprise.fr" aria-describedby="newsletter-note newsletter-status" />
           </div>
           <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
@@ -161,8 +153,10 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
     color: var(--color-ink);
   }
 
-  .courrier__entete {
+  .courrier__intro {
     margin: 0;
+    padding: var(--spacing-panneau) var(--spacing-panneau) 0;
+    color: var(--color-ink-mid);
   }
 
   .courrier__ligne {
@@ -189,6 +183,12 @@ const linkedin = 'https://www.linkedin.com/in/liliansevoumian/';
   /* Le champ occupe sa ligne sans cadre : c'est la ligne « À » du mail, pas un
      champ posé dans une carte. Le focus se lit sur toute la ligne. */
   .courrier__ligne--champ {
+    grid-template-columns: minmax(0, 1fr);
+    margin: var(--spacing-lie) var(--spacing-panneau) 0;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-service-border);
+    border-radius: 999px;
+    background: var(--color-paper);
     transition: background-color var(--duration-default) var(--ease-out-quint);
   }
 

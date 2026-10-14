@@ -1,0 +1,318 @@
+---
+/*
+ * filmographie : ce que Lilian a construit pour ses clients, lu dans la
+ * collection des cas (`src/content/cas-clients/`).
+ *
+ * Demande de Lilian, 14 octobre 2026 : « les projets, ce doit être les projets
+ * clients, pas mes projets persos ». Ses projets perso (meilleurs.tools,
+ * Flameborn) ont quitté l'accueil le même jour.
+ *
+ * La liste se lit comme la filmographie d'un générique : un client par ligne,
+ * son nom en grand, son secteur et ses outils à côté, une phrase (l'`accroche`
+ * du cas, à la première personne, avec son chiffre ; à défaut sa
+ * description), le lien vers sa page, et au
+ * bout de la ligne un photogramme : son workflow en miniature, les nœuds du
+ * schéma que montre la page du cas (`flow`), chacun avec le logo de son outil.
+ * Un cas sans schéma n'a pas de photogramme, et sa phrase prend la place : on
+ * ne dessine pas de schéma faux.
+ *
+ * La liste vient de la collection : un cas publié y entre de lui-même, sans
+ * toucher à la page. Les cas chiffrés passent en premier, puis du plus récent
+ * au plus ancien ; quatre au plus, et au-delà, un lien vers tous les cas.
+ */
+import { Icon } from 'astro-icon/components';
+import { getCollection } from 'astro:content';
+import Chapitre from './chapitre.astro';
+import LinkCTA from '../LinkCTA.astro';
+import { brandColorFor } from '../../data/brands';
+import { espaces } from '../../lib/espaces';
+
+const MAX = 4;
+
+const publies = await getCollection('cas-clients', (e) => import.meta.env.DEV || !e.data.draft);
+const tries = publies.sort(
+  (a, b) =>
+    Number(b.data.kpis.length > 0) - Number(a.data.kpis.length > 0) ||
+    b.data.date.getTime() - a.data.date.getTime(),
+);
+
+/* Le photogramme reprend la géométrie du schéma de la page du cas : un
+   déclencheur, un agent, trois actions en éventail. Positions en pourcentage
+   du cadre. */
+const places = [
+  { x: 18, y: 50 },
+  { x: 50, y: 50 },
+  { x: 82, y: 22 },
+  { x: 82, y: 50 },
+  { x: 82, y: 78 },
+];
+
+const cas = tries.slice(0, MAX).map((e) => {
+  const { flow } = e.data;
+  const noeuds = flow
+    ? [flow.trigger, flow.agent, ...flow.actions].map((n, i) => ({
+        icon: n.icon,
+        couleur: brandColorFor(n.icon),
+        agent: i === 1,
+        ...places[i],
+      }))
+    : [];
+  return {
+    href: `/cas-clients/${e.id}`,
+    nom: e.data.client ?? e.data.title,
+    genre: [e.data.secteur, e.data.tools.slice(0, 3).join(', ')].filter(Boolean).join(' · '),
+    resume: (e.data.accroche ?? e.data.description) && espaces(e.data.accroche ?? e.data.description ?? ''),
+    noeuds,
+  };
+});
+
+const reste = tries.length - cas.length;
+---
+
+<Chapitre
+  id="projets"
+  nom="Projets clients"
+  lueur="braise peche"
+  titre="Ce que j’ai construit pour mes clients."
+>
+  <ul class="filmo" role="list">
+    {cas.map((c) => (
+      <li class="filmo__titre reveal">
+        <a class="filmo__ligne" href={c.href}>
+          <h3 class="filmo__nom">{c.nom}</h3>
+          {c.genre && <p class="filmo__genre">{c.genre}</p>}
+          {c.resume && <p class="filmo__resume">{c.resume}</p>}
+          <p class="filmo__adresse">
+            Lire le cas
+            <Icon name="lucide:arrow-right" size={16} aria-hidden="true" />
+          </p>
+          {c.noeuds.length > 0 && (
+            <figure class="filmo__photogramme" aria-hidden="true">
+              <div class="filmo__cadre">
+                <svg class="filmo__fils" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path d="M18 50 L50 50" />
+                  <path d="M50 50 C66 50 66 22 82 22" />
+                  <path d="M50 50 L82 50" />
+                  <path d="M50 50 C66 50 66 78 82 78" />
+                </svg>
+                {c.noeuds.map((n) => (
+                  <span
+                    class:list={['filmo__noeud', { 'filmo__noeud--agent': n.agent }]}
+                    style={`left: ${n.x}%; top: ${n.y}%;${n.couleur ? ` --marque: ${n.couleur};` : ''}`}
+                  >
+                    <Icon name={n.icon} />
+                  </span>
+                ))}
+              </div>
+            </figure>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {reste > 0 && (
+    <p class="filmo__suite">
+      <LinkCTA href="/cas-clients">Voir tous les cas clients</LinkCTA>
+    </p>
+  )}
+</Chapitre>
+
+<style>
+  .filmo {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+  }
+
+  .filmo__titre {
+    max-width: none;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+  }
+
+  .filmo__ligne {
+    display: grid;
+    gap: 0.5rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .filmo__nom {
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    transition:
+      color var(--duration-default) var(--ease-out-quint),
+      transform 600ms var(--ease-out-expo);
+  }
+
+  .filmo__genre {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .filmo__resume {
+    max-width: 46ch;
+    color: var(--color-ink-mid);
+  }
+
+  .filmo__adresse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    justify-self: start;
+    margin-top: 0.25rem;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    transition: color var(--duration-quick) var(--ease-out-quint);
+  }
+
+  .filmo__adresse :global(svg) {
+    transition: transform var(--duration-default) var(--ease-out-quint);
+  }
+
+  .filmo__suite {
+    margin: var(--spacing-groupe) 0 0;
+  }
+
+  /* ── Le photogramme : le workflow du cas en miniature ──
+     Sur la nuit, un cadre plus clair d'un cran, quadrillé comme les scènes des
+     métiers, où les nœuds du schéma portent le logo de leur outil. La teinte
+     de marque est relevée de près de moitié de blanc (un tiers sur la page
+     du cas, où les nœuds sont plus grands) : en petit, l'aubergine de Slack
+     ne tenait pas sur la nuit. Les nœuds suivent la largeur du cadre. Un outil sans couleur de marque (Notion, une icône d'action) reste
+     en encre. Sur téléphone, le photogramme ouvre la ligne. */
+  .filmo__photogramme {
+    order: -1;
+    margin: 0 0 0.75rem;
+  }
+
+  .filmo__cadre {
+    position: relative;
+    overflow: hidden;
+    container-type: inline-size;
+    aspect-ratio: 16 / 10;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-low);
+    background-image:
+      linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
+    background-position: center;
+    background-size: 1.5rem 1.5rem;
+  }
+
+  .filmo__fils {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .filmo__fils path {
+    fill: none;
+    stroke: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    stroke-width: 1.25;
+    vector-effect: non-scaling-stroke;
+    transition: stroke 600ms var(--ease-out-quint);
+  }
+
+  .filmo__noeud {
+    --teinte: color-mix(in oklab, var(--marque, var(--color-ink-mid)) 55%, white);
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: clamp(2.25rem, 14cqi, 3.25rem);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border: 1px solid color-mix(in oklab, var(--teinte) 45%, var(--color-divider));
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-high);
+    color: var(--teinte);
+    transition: border-color 600ms var(--ease-out-quint);
+  }
+
+  .filmo__noeud :global(svg) {
+    width: 46%;
+    height: 46%;
+  }
+
+  /* L'agent, au centre, est le nœud qui décide : un cran plus grand, son
+     filet plus franc. */
+  .filmo__noeud--agent {
+    width: clamp(2.75rem, 18cqi, 4rem);
+    border-color: color-mix(in oklab, var(--teinte) 70%, var(--color-border-strong));
+  }
+
+  /* Au survol, le courant passe : les fils prennent la pêche. */
+  a.filmo__ligne:hover .filmo__fils path,
+  a.filmo__ligne:focus-visible .filmo__fils path {
+    stroke: var(--color-peche);
+  }
+
+  /* Sur un écran large, la ligne d'un générique : le nom à gauche, le genre,
+     la phrase et le lien au milieu, alignés sur le haut du nom, et le
+     photogramme au bout de la ligne. */
+  @media (min-width: 900px) {
+    .filmo__ligne {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr);
+      grid-template-rows: auto auto 1fr;
+      column-gap: var(--spacing-gouttiere);
+      row-gap: 0.75rem;
+      align-items: start;
+    }
+
+    .filmo__nom { grid-area: 1 / 1 / span 3; }
+    .filmo__genre { grid-area: 1 / 2; padding-top: 0.5rem; }
+    .filmo__resume { grid-area: 2 / 2; }
+    .filmo__adresse { grid-area: 3 / 2; align-self: end; }
+
+    .filmo__photogramme {
+      grid-area: 1 / 3 / span 3;
+      order: 0;
+      margin: 0;
+    }
+
+    /* Sans photogramme, la phrase prend la place de la colonne vide. */
+    .filmo__ligne:not(:has(.filmo__photogramme)) :is(.filmo__genre, .filmo__resume, .filmo__adresse) {
+      grid-column: 2 / span 2;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a.filmo__ligne:hover .filmo__nom {
+      color: var(--color-peche);
+      transform: translateX(0.5rem);
+    }
+
+    a.filmo__ligne:hover .filmo__adresse :global(svg) {
+      transform: translateX(3px);
+    }
+  }
+
+  a.filmo__ligne:hover .filmo__adresse,
+  a.filmo__ligne:focus-visible .filmo__adresse {
+    color: var(--color-peche);
+  }
+
+  a.filmo__ligne:focus-visible {
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filmo__nom {
+      transition: color var(--duration-default) linear;
+    }
+
+    a.filmo__ligne:hover .filmo__nom,
+    a.filmo__ligne:hover .filmo__adresse :global(svg) {
+      transform: none;
+    }
+  }
+</style>

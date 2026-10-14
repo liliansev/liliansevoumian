@@ -41,7 +41,14 @@
   overflow: hidden;
   container: sm / inline-size;
   isolation: isolate;
+  /* Le quadrillage couvre tout le panneau, au pas du plan et calé sur lui
+     (`--sm-k`, `--sm-x`, `--sm-y`, posés par le moteur) : dans un cadre plus
+     large que le plan, comme le cinémascope de l'accueil, les marges
+     prolongent la scène au lieu de l'encadrer de nuit vide. */
+  --sm-pas: calc(38px * var(--sm-k, 1));
   background:
+    linear-gradient(color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) var(--sm-x, 0px) var(--sm-y, 0px) / var(--sm-pas) var(--sm-pas),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) var(--sm-x, 0px) var(--sm-y, 0px) / var(--sm-pas) var(--sm-pas),
     radial-gradient(85% 75% at 0% 100%, color-mix(in srgb, var(--color-braise) 22%, transparent), transparent 62%),
     radial-gradient(75% 65% at 100% 0%, color-mix(in srgb, var(--color-lueur-froide) 20%, transparent), transparent 64%),
     var(--color-night-deep);
@@ -113,8 +120,8 @@
    Dessiné à 760 × 570 puis mis à l'échelle par `--k`. Le moteur pose la
    valeur exacte et centre le plan ; avant lui (ou sans lui), le rapport se
    déduit de la largeur du conteneur : `atan2` de deux longueurs rend un angle,
-   `tan` en refait un nombre sans unité. Le quadrillage est dans le plan, pas
-   dans le panneau : il grandit avec les fenêtres. */
+   `tan` en refait un nombre sans unité. Le quadrillage est peint par le
+   panneau, au pas du plan : il grandit avec les fenêtres. */
 .sm-plan {
   --k: tan(atan2(100cqw, 760px));
   --sm-filet: color-mix(in srgb, var(--color-ink) 9%, transparent);
@@ -125,9 +132,6 @@
   height: 570px;
   transform: scale(var(--k));
   transform-origin: 0 0;
-  background:
-    linear-gradient(color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px,
-    linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 38px 38px;
 }
 
 .sm-plan em,
