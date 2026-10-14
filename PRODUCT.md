@@ -47,6 +47,8 @@ Précision du 8 octobre 2026, après relecture de la page en ligne par Lilian :
 - **La dernière vidéo YouTube** s'affiche toujours d'elle-même.
 - Titres donnés par lui : « Ma dernière vidéo YouTube. », « Vos questions. », « Mes activités » (pied de page), « Écrivez-moi. » sous le titre de fin. Pour les recommandations il a dicté « On a collaboré ensemble » ; la page dit « On a travaillé ensemble. » (même sens, sans le pléonasme), à lui de trancher.
 
+Précision du 14 octobre 2026 : Lilian trouve l'accueil trop vendeur et trop animé (« on n'est pas assez site personnel »). L'accueil devient un site personnel de branding, dans cet ordre : une présentation calme (portrait, nom, une phrase, ses liens) ; « En ce moment » (ses projets en cours) ; ses expertises en liste simple ; sa dernière vidéo et la newsletter ; ses projets perso (RuneScape, DragonWild, ses sites de jeux vidéo, meilleurs.tools) ; son parcours ; les recommandations ; le contact. Le récit animé, les scènes des métiers, la FAQ et la ligne des prix sortent de l'accueil ; les pages d'offre restent. Un blog et un formulaire de contact simple sont en cours, à part. Les textes des projets (`src/data/projets.ts`) attendent les siens.
+
 Ce que la page doit mettre en avant, sans ordre imposé : construire des automatisations et des agents IA personnalisés ; créer des landing pages qui convertissent ; créer des vidéos en motion design ; ses formations ou son agence ; sa newsletter (Lumail) ; sa chaîne YouTube.
 
 Pour « qui je suis » : il fait ça depuis six ans, il l'a appliqué dans ses propres activités, et il connaît de l'intérieur la contrainte d'avoir une équipe et des clients, de devoir livrer tout en perdant du temps ou sans avoir les bons outils métier.

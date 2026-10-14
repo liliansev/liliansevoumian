@@ -1,28 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
-import HomeHero from '../components/home-hero.astro';
-import HomeStory from '../components/home-story.astro';
-import HomeTodayPath from '../components/home-today-path.astro';
-import HomeServices from '../components/home-services.astro';
+import AccueilPresentation from '../components/accueil-presentation.astro';
+import AccueilProjets from '../components/accueil-projets.astro';
+import AccueilExpertises from '../components/accueil-expertises.astro';
+import AccueilParcours from '../components/accueil-parcours.astro';
 import HomeContent from '../components/home-content.astro';
 import HomeVoices from '../components/home-voices.astro';
-import Questions from '../components/questions.astro';
 import FinDePage from '../components/fin-de-page.astro';
-import HomeInvite from '../components/home-invite.astro';
 import Footer from '../components/Footer.astro';
 import { resume, resumeCourt } from '../data/parcours';
-import { homeFaqs } from '../data/home-faq';
+import { enCours, persos } from '../data/projets';
 
-/* La barre nomme les quatre métiers, dans l'ordre de la page : avant même de
-   défiler, on lit ce que fait Lilian. Chaque lien mène au bloc du métier, dans
-   `home-services` (sur téléphone, il ouvre son onglet). Le troisième s'appelle
-   « Dashboards et outils métiers » ; la barre garde le mot court. */
+/* L'accueil est un site personnel depuis le 14 octobre 2026 (« on n'est pas
+   assez site personnel, il y a trop d'animations ») : qui est Lilian, ce
+   sur quoi il travaille, ce qu'il sait faire, ce qu'il publie, ce qu'il a
+   construit pour lui, d'où il vient. Le récit animé (`home-story`), les
+   scènes des métiers (`home-services`), la FAQ et la ligne des prix en sont
+   sortis ; les fichiers restent.
+
+   La barre nomme les sections de la page, dans leur ordre. */
 const homeNavigation = [
-  { href: '#automatisation', label: 'Automatisation' },
-  { href: '#agents-ia', label: 'Agents IA' },
-  { href: '#dashboards', label: 'Dashboards' },
-  { href: '#formations', label: 'Formations' },
+  { href: '#en-ce-moment', label: 'En ce moment' },
+  { href: '#expertises', label: 'Expertises' },
+  { href: '#contenus', label: 'Vidéos' },
+  { href: '#projets-perso', label: 'Projets perso' },
+  { href: '#parcours', label: 'Parcours' },
+  // Emplacement du lien Blog : il arrive avec la page /blog (fil du blog).
+  // { href: '/blog', label: 'Blog' },
 ];
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
@@ -40,13 +45,11 @@ const pageSchema = {
 ---
 
 <Layout
-  title="Lilian Sevoumian · Freelance automatisation, agents IA, Make et n8n"
+  title="Lilian Sevoumian · Automatisation, agents IA, Make et n8n"
   description={resumeCourt}
   ogImage="/og-home.png"
-  ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA : le titre de sa page d’accueil et les logos de ses clients"
+  ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA"
   pageSchema={pageSchema}
-  causerie={false}
-  faqSchema={homeFaqs.map((item) => ({ question: item.q, answer: item.a }))}
 >
   <Navigation
     links={homeNavigation}
@@ -55,20 +58,30 @@ const pageSchema = {
   />
 
   <main id="main-content" tabindex="-1" class="outline-none">
-    <HomeHero />
-    {/* La barre où l'on écrit à Lilian : sous le titre, puis en bas à droite.
-        Sans serveur : elle ouvre WhatsApp, la messagerie ou l'agenda avec le
-        message déjà rédigé. Rendue ici, juste après le hero, pour venir au
-        clavier là où on la voit (elle est positionnée hors du flux). */}
-    <HomeInvite />
+    <AccueilPresentation />
     <div class="accueil__suite">
-      <HomeStory />
-      <HomeServices />
-      <HomeTodayPath />
+      <AccueilProjets
+        id="en-ce-moment"
+        titre="En ce moment."
+        chapo="Ce sur quoi je travaille cette saison."
+        projets={enCours}
+        source="home_en_cours"
+      />
+      <AccueilExpertises />
       <HomeContent />
+      <AccueilProjets
+        id="projets-perso"
+        titre="Mes projets perso."
+        chapo="Ce que je construis pour moi, sans client ni cahier des charges."
+        projets={persos}
+        source="home_projets_perso"
+      />
+      <AccueilParcours />
       <HomeVoices />
-      <Questions />
-      <FinDePage id="offres" source="home_offres" prix />
+      {/* Emplacement du contact : le fil du formulaire de contact le remplace
+          par un formulaire simple (e-mail et message). En attendant, la fin
+          de page habituelle, sans la ligne des prix. */}
+      <FinDePage id="contact" source="home_offres" titre="Un projet, une idée, une <mark>question&nbsp;?</mark>" />
     </div>
   </main>
 

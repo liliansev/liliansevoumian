@@ -42,7 +42,12 @@ src/
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   │   # — accueil —
+│   │   # — accueil (site personnel depuis le 14 octobre 2026) —
+│   ├── accueil-presentation.astro # portrait, nom, une phrase, faits, liens (id `hero`)
+│   ├── accueil-projets.astro  # cartes de projets : « En ce moment » et « Mes projets perso » (data/projets.ts, provisoire)
+│   ├── accueil-expertises.astro # les 4 expertises en liste simple (data/expertises.ts)
+│   ├── accueil-parcours.astro # la frise 2020 → aujourd'hui, sans animation
+│   │   # — ancien accueil, plus rendu sur `/` (gardé pour mémoire) —
 │   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
 │   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone

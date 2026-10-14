@@ -1,0 +1,67 @@
+---
+/*
+ * accueil-expertises : les quatre expertises, en liste simple.
+ *
+ * Elles avaient chacune une scène animée (`home-services.astro`, toujours là
+ * pour mémoire) ; depuis le 14 octobre 2026, l'accueil les donne comme un CV
+ * les donnerait : un nom, une phrase, une sortie. Les données sont dans
+ * `data/expertises.ts`.
+ */
+import LinkCTA from './LinkCTA.astro';
+import SectionHeader from './SectionHeader.astro';
+import { expertises } from '../data/expertises';
+---
+
+<section id="expertises" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
+  <div class="mx-auto max-w-[1200px]">
+    <SectionHeader title="Mes expertises." />
+    <ul class="expertises">
+      {expertises.map((e) => (
+        <li id={e.id} class="expertise">
+          <h3 class="expertise__nom">{e.nom}</h3>
+          <p class="expertise__phrase">{e.phrase}</p>
+          <LinkCTA href={e.lien.href} external={e.lien.externe} goal={e.lien.goal} goalSource={e.lien.source}>
+            {e.lien.label}
+          </LinkCTA>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .expertises {
+    display: grid;
+    gap: var(--spacing-groupe) var(--spacing-gouttiere);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) {
+    .expertises {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .expertise {
+    display: grid;
+    align-content: start;
+    gap: 0.75rem;
+    padding-top: var(--spacing-lie);
+    border-top: 1px solid var(--color-divider);
+    max-width: none;
+    scroll-margin-top: calc(var(--spacing-barre) + 1rem);
+  }
+
+  .expertise__nom {
+    margin: 0;
+    font-size: var(--text-title);
+    color: var(--color-ink);
+  }
+
+  .expertise__phrase {
+    margin: 0;
+    color: var(--color-ink-mid);
+  }
+</style>

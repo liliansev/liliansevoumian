@@ -1,0 +1,100 @@
+---
+/*
+ * accueil-parcours : d'où vient Lilian, de 2020 à aujourd'hui.
+ *
+ * La frise de `home-today-path.astro`, sans son panneau « Pourquoi moi » (le
+ * portrait et les faits sont désormais dans le premier écran) et sans son
+ * rail animé : une liste d'années, posée. Les jalons ont leur détail, les
+ * missions tiennent en une ligne. Données : `data/parcours.ts`.
+ */
+import SectionHeader from './SectionHeader.astro';
+import { parcours } from '../data/parcours';
+---
+
+<section id="parcours" data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
+  <div class="mx-auto max-w-[1200px]">
+    <SectionHeader title="D’où je viens." />
+    <ol class="annees">
+      {parcours.map((periode) => (
+        <li class="annee">
+          <h3 class="annee__an">{periode.annee}</h3>
+          <ul class="annee__etapes">
+            {periode.etapes.map((etape) =>
+              etape.mineur ? (
+                <li class="etape etape--mission">{etape.titre}</li>
+              ) : (
+                <li class="etape">
+                  <p class="etape__titre">
+                    <strong>{etape.titre}</strong>
+                    {etape.quand && <span class="etape__quand">{etape.quand}</span>}
+                  </p>
+                  {etape.detail && <p class="etape__detail">{etape.detail}</p>}
+                </li>
+              ),
+            )}
+          </ul>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .annees {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .annee {
+    display: grid;
+    gap: var(--spacing-colle) var(--spacing-gouttiere);
+    padding: var(--spacing-lie) 0;
+    border-top: 1px solid var(--color-divider);
+    max-width: none;
+  }
+
+  @media (min-width: 768px) {
+    .annee {
+      grid-template-columns: 8rem minmax(0, 1fr);
+    }
+  }
+
+  .annee__an {
+    margin: 0;
+    font-size: var(--text-title);
+    color: var(--color-ink);
+  }
+
+  .annee__etapes {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .etape__titre {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .etape__titre strong {
+    font-weight: 500;
+  }
+
+  .etape__quand,
+  .etape--mission {
+    color: var(--color-ink-low);
+    font-size: var(--text-body-sm);
+  }
+
+  .etape__detail {
+    margin: 0.25rem 0 0;
+    color: var(--color-ink-mid);
+  }
+</style>
