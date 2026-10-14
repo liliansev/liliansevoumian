@@ -17,6 +17,9 @@ const casClients = defineCollection({
     // cherche une phrase autonome, il trouvait un dump.
     seoTitle: z.string().optional(),
     description: z.string().optional(),
+    /* Le nom du client, seul : c'est le titre de sa ligne dans les projets
+       clients de l'accueil (`documentaire/filmographie.astro`). */
+    client: z.string().optional(),
     category: z.enum(['automation', 'application']).default('automation'),
     scopeNote: z.string().optional(),
     secteur: z.string().optional(),

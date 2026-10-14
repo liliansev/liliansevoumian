@@ -13,14 +13,14 @@
  * Leurs mots sont en blanc ; la pêche claire reste la voix de Lilian. Les
  * citations et leurs coupes sont celles de `Testimonials.astro` : on ne retire
  * que des phrases entières, on ne reformule rien. Aucune ne porte de chiffre :
- * les chiffres sont dans les cas clients, et le lien sous le rail y mène.
+ * les chiffres sont dans les projets clients, le chapitre d'avant. Le lien
+ * vers les cas qui finissait le rail en est sorti le 14 octobre 2026 : les
+ * cas sont désormais juste au-dessus.
  *
  * Sans script, les trois citations se lisent à la suite, chacune signée. En
  * mouvement réduit, la citation change sans fondu.
  */
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import LinkCTA from '../LinkCTA.astro';
 import Chapitre from './chapitre.astro';
 import ismailImg from '../../assets/testimonials/ismail.jpeg';
 import alexisImg from '../../assets/testimonials/alexis.jpeg';
@@ -50,11 +50,6 @@ const voix = [
   },
 ];
 
-/* Le nombre de cas publiés vient de la collection : le lien ne peut pas en
-   annoncer un de plus ou de moins que la page d'arrivée. */
-const nombres = ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'];
-const cas = (await getCollection('cas-clients')).length;
-const nombreDeCas = nombres[cas] ?? String(cas);
 ---
 
 <Chapitre id="temoignages" nom="Ils en parlent" lueur="peche braise" titre="On a travaillé <mark>ensemble.</mark>">
@@ -101,11 +96,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
         <figcaption><b>{v.nom}</b>, {v.role}</figcaption>
       </figure>
     ))}
-
-    {/* La sortie vers les cas, discrète, dans la colonne du rail. */}
-    <p class="voix__suite">
-      <LinkCTA href="/cas-clients">Lire les {nombreDeCas} cas clients, avec leurs chiffres</LinkCTA>
-    </p>
   </div>
 </Chapitre>
 
@@ -151,11 +141,7 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     font-weight: 500;
   }
 
-  .voix__suite {
-    margin: 0;
-  }
-
-  /* ── Avec script : une scène à gauche, le rail et la sortie à droite. Les
+  /* ── Avec script : une scène à gauche, le rail à droite. Les
         trois citations occupent la même case, la scène a donc toujours la
         hauteur de la plus longue et rien ne bouge autour quand la voix
         change. ── */
@@ -200,14 +186,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
     grid-column: 2;
     grid-row: 1;
     display: grid;
-  }
-
-  /* Sous le rail, alignée sur les noms : sous la citation, elle flottait à
-     150 ou 210 px d'elle quand la citation était courte. */
-  .voix[data-pret] .voix__suite {
-    grid-column: 2;
-    grid-row: 2;
-    padding-left: 1.5rem;
   }
 
   .voix__qui {
@@ -322,12 +300,6 @@ const nombreDeCas = nombres[cas] ?? String(cas);
 
     .voix[data-pret] .voix__citation {
       grid-row: 2;
-    }
-
-    .voix[data-pret] .voix__suite {
-      grid-column: 1;
-      grid-row: 3;
-      padding-left: 0;
     }
 
     .voix[data-pret] .voix__citation figcaption {

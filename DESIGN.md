@@ -571,7 +571,7 @@ pages d'offre.
 | `#en-ce-moment` | En ce moment | « Ce qui m'occupe en ce moment. » | `peche`, `lueur-froide` |
 | `#services` | Expertises | « Mes expertises. » | `lueur-froide`, `lueur-froide` |
 | `#contenus` | Vidéos | « Ce que j'apprends, je le montre. » | `peche`, `peche` |
-| `#projets-perso` | Projets perso | « Ce que je construis pour moi. » | `braise`, `peche` |
+| `#projets` | Projets clients | « Ce que j'ai construit pour mes clients. » | `braise`, `peche` |
 | `#temoignages` | Ils en parlent | « On a travaillé ensemble. » (souligné : « ensemble ») | `peche`, `braise` |
 | `#generique` | Générique | aucun : le générique se suffit | `braise`, `braise` |
 
@@ -583,7 +583,7 @@ pages d'offre.
   posent les deux attributs à la main ; la barre et l'étalonnage ne lisent
   rien d'autre.
 - **La barre de navigation nomme les chapitres**, dans leur ordre : À propos,
-  En ce moment, Expertises, Vidéos, Projets perso. La barre des chapitres en
+  En ce moment, Expertises, Vidéos, Projets clients. La barre des chapitres en
   donne la liste complète.
 - **Un seul appel à l'action.** Le bouton de la barre de navigation et la fin
   de page ouvrent la conversation ; la barre d'écriture est posée dans
@@ -967,32 +967,44 @@ bouton « S'abonner » est **un contour, pas un aplat** (filet d'encre à 28 %,
 texte blanc ; filet et texte pêche au survol et au focus) : la pastille
 pêche reste au bouton d'appel. Un lien fléché mène à LinkedIn.
 
-### La filmographie (`#projets-perso`)
+### La filmographie : les projets clients (`#projets`)
 
-Ce que Lilian construit pour lui (`data/projets.ts`, `persos`), lu comme la
-filmographie d'un générique : un titre par ligne, en grand
-(`--text-headline`, interligne 1), son genre et ses mots-clés à côté
-(`--text-body-sm`, `ink-low`, séparés par un point médian), une phrase
-(`ink-mid`, `46ch`), l'adresse (`--text-body-sm`, `ink-low`, flèche). À
-partir de 900 px, le titre à gauche, le genre, la phrase et l'adresse au
-milieu, alignés sur le haut du titre, et le photogramme à droite.
+Ce que Lilian a construit pour ses clients, lu dans la collection des cas
+(`src/content/cas-clients/`) : les cas chiffrés d'abord, puis du plus récent
+au plus ancien, quatre au plus (au-delà, un lien fléché vers tous les cas
+sous la liste). Un cas publié y entre de lui-même. Ses projets perso en sont
+sortis le 14 octobre 2026, à sa demande (« les projets, ce doit être les
+projets clients, pas mes projets persos ») ; le lien vers les cas qui
+finissait le rail des voix est parti avec eux.
+
+La liste se lit comme la filmographie d'un générique : un client par ligne,
+son nom en grand (`client`, `--text-headline`, interligne 1), son secteur et
+ses trois premiers outils à côté (`--text-body-sm`, `ink-low`, séparés par un
+point médian), une phrase (la `description` du cas, qui porte ses chiffres ;
+`ink-mid`, `46ch`), puis « Lire le cas » en blanc, graisse 500, flèche vers la
+droite. À partir de 900 px, le nom à gauche, le genre, la phrase et le lien au
+milieu, alignés sur le haut du nom, et le photogramme à droite.
 
 - **Des filets entre les titres**, encre à 10 %, un au-dessus de chaque ligne
   et un au pied de la liste : c'est l'objet lui-même qui en a, comme une
   filmographie ou les questions d'une FAQ. Ce n'est pas une licence pour
   ranger une autre liste derrière des filets.
 - **Un photogramme au bout de la ligne** (demandé par Lilian le 14 octobre
-  2026) : la page d'accueil du site en petit, 16:10, rayon `md`, filet
-  d'encre à 12 %, lumière douce, calée en haut et à peine étalonnée comme les
-  captures d'« En ce moment ». À partir de 900 px, les colonnes deviennent
-  `4fr / 5fr / 3fr` : le titre, puis le genre, la phrase et l'adresse, puis
-  le photogramme ; sur téléphone, il ouvre la ligne. Au survol, il retrouve
-  ses couleurs et avance de 3 %. Un projet sans capture n'en a pas, et sa
-  phrase prend la colonne ; on ne dessine rien à sa place.
-- Un projet en ligne est un lien vers son site : au survol (pointeur fin), son
-  titre prend la pêche et glisse de 0,5rem (600 ms, `ease-out-expo`) ;
-  l'adresse prend la pêche au survol et au focus. Un projet sans adresse n'est
-  pas un lien.
+  2026 : « une mini capture d'écran ») : le workflow du cas en miniature, la
+  géométrie du schéma de sa page (un déclencheur, un agent, trois actions en
+  éventail) lue dans son `flow`. 16:10, rayon `md`, filet d'encre à 12 %,
+  `surface-low` quadrillé au pas de 1,5rem comme les scènes des métiers. Les
+  nœuds sont des carrés `surface-high`, rayon `sm`, qui suivent la largeur du
+  cadre (`14cqi`, l'agent `18cqi`), avec le logo de l'outil dans sa teinte de
+  marque relevée de près de moitié de blanc, et un filet de la même teinte ;
+  un outil sans couleur reste en encre. Les fils sont en encre à 28 % et
+  prennent la pêche au survol et au focus : rien ne bouge. À partir de
+  900 px, les colonnes deviennent `4fr / 5fr / 3fr` ; sur téléphone, le
+  photogramme ouvre la ligne. Un cas sans `flow` n'en a pas, et sa phrase
+  prend la colonne : on ne dessine pas de schéma faux.
+- Chaque ligne est un lien vers la page du cas : au survol (pointeur fin), le
+  nom prend la pêche et glisse de 0,5rem (600 ms, `ease-out-expo`) ; « Lire
+  le cas » prend la pêche au survol et au focus, et sa flèche avance.
 
 ### Ils en parlent (`#temoignages`)
 
@@ -1007,9 +1019,9 @@ qui a remplacé la pile de trois sous-titres à côté d'un plan de La Capsule.
   trait pêche se pose contre celle qui parle. Onglets ARIA ; on change de
   voix en choisissant un nom, rien n'avance seul. La citation change par un
   fondu et un flou de 10 px (420 ms), sans flou en mouvement réduit.
-- **Sous le rail**, le lien fléché vers l'index des cas clients, dont le
-  nombre est lu dans la collection. C'est la seule sortie de l'accueil vers
-  les cas.
+- **Rien sous le rail** depuis le 14 octobre 2026 : le lien vers l'index des
+  cas en est sorti, les cas sont listés juste au-dessus, dans les projets
+  clients.
 - **Sous 900 px**, les trois personnes passent au-dessus de la citation, en
   trois colonnes.
 - Les citations et leurs coupes sont celles de `Testimonials.astro` : on ne
@@ -1423,8 +1435,8 @@ de conteneur en em (voir *Components → Navigation*).
 **Deux blocs qui se lisent ensemble partent de la même ligne** : le nom, la
 phrase et le prix d'une formule (`subgrid`, même ligne de base), les prix d'une
 liste (une colonne commune, pour qu'ils tombent les uns sous les autres), le
-genre, la phrase et l'adresse d'une ligne de la filmographie, alignés sur le
-haut de son titre.
+genre, la phrase et le lien d'une ligne de la filmographie, alignés sur le
+haut de son nom.
 
 **Un composant ne dépasse jamais la hauteur de l'écran** : une scène empilée
 borne sa largeur sur `100svh` moins la barre, et le plan d'ouverture de
@@ -2102,9 +2114,10 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
   Astro (dans un `.map()`, un `&&`, ou entre les attributs d'un composant) : le
   compilateur rend `Expected ")" but found "$$render"` et toutes les pages
   tombent en 500. Le commentaire va avant l'expression.
-- **Don't** mettre un cas client au premier plan de l'accueil, ni lier un de
-  ses chapitres à un cas précis ; ni y remettre une forme 3D, une FAQ ou des
-  prix.
+- **Don't** écrire un cas client à la main dans l'accueil : les projets
+  clients lisent la collection des cas, et rien d'autre n'y nomme un client
+  en dehors du défilé des logos et du générique. Ni y remettre une forme 3D,
+  une FAQ ou des prix.
 - **Don't** poser sur l'accueil une image générée (les scènes de
   `src/assets/work-scenes/`) ni une photo qui ne montre pas Lilian pour de
   vrai.

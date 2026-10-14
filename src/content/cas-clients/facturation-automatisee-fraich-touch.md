@@ -2,6 +2,7 @@
 title: "Comment Fraich Touch a automatisé sa facturation HubSpot et Pennylane"
 seoTitle: "Automatiser sa facturation HubSpot et Pennylane : cas client Make"
 description: "Fraich Touch est passée de 33 à 4 scénarios Make et de 16 factures en erreur à 0, en récupérant environ 4 h par semaine."
+client: "Fraich Touch"
 secteur: "Agence de gestion de talents"
 date: 2026-01-30
 tags: ["Finances", "Ops"]

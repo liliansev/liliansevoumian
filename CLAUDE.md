@@ -53,7 +53,7 @@ src/
 │   │   ├── en-ce-moment.astro # les projets en cours, une affiche chacun : le texte, et le plan qui parcourt le site au survol (data/projets.ts, `enCours`)
 │   │   ├── expertises.astro   # les 4 scènes des métiers en une séquence : un grand plan, la liste des plans au-dessus, la phrase en sous-titre (data/metiers.ts)
 │   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
-│   │   ├── filmographie.astro # les projets perso en filmographie : un titre par ligne, genre, phrase, adresse (data/projets.ts, `persos`)
+│   │   ├── filmographie.astro # les projets clients en filmographie, lus dans les cas : un client par ligne, secteur et outils, phrase, lien, workflow en miniature
 │   │   ├── voix.astro         # « Ils en parlent » : une citation en grand, le rail des trois personnes à côté (la forme de l'ancien home-voices)
 │   │   ├── generique.astro    # le générique de fin sur la nuit, puis `fin-de-page` (id `generique`)
 │   │   └── barre-chapitres.astro # la barre de lecture fixe, comme une vidéo à chapitres, et l'étalonnage de la page
@@ -178,12 +178,12 @@ one sequence (`documentaire/expertises.astro`; scenes in
   `data/maintenance.ts`, la réponse « Make ou n8n » dans `data/make-ou-n8n.ts`,
   le parcours dans `data/parcours.ts`. Rien ne s'écrit sur une page qui ne soit
   dans `PRODUCT.md` (« Evidence on Hand »).
-- L'accueil ne nomme aucun client dans son récit ni dans ses quatre métiers
-  (le défilé des logos et le générique les citent tous, depuis
-  `data/clients.ts`, sans en isoler aucun), et aucun de ses blocs ne mène à un
-  cas précis : un cas change, la page ne doit
-  pas en dépendre. Les cas ont leur page ; la seule sortie de l'accueil vers
-  eux est le lien vers leur index, sous les recommandations.
+- L'accueil ne nomme aucun client à la main. Le défilé des logos et le
+  générique les citent tous, depuis `data/clients.ts` ; le chapitre « Projets
+  clients » (`documentaire/filmographie.astro`, demandé par Lilian le 14
+  octobre 2026 à la place de ses projets perso) lit la collection des cas :
+  un cas publié y entre de lui-même, la page ne dépend d'aucun en
+  particulier. Chaque ligne mène à la page de son cas.
 - La dernière vidéo YouTube est relevée par le serveur de production
   (`deploy/server.mjs`, `/api/derniere-video`, flux des vidéos longues) et la
   page la remplace d'elle-même : rien à faire à chaque publication.

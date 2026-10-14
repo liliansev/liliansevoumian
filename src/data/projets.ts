@@ -1,16 +1,13 @@
 /*
- * Les projets de l'accueil : ceux sur lesquels Lilian travaille en ce moment,
- * et ceux qu'il a faits pour lui.
+ * Les projets sur lesquels Lilian travaille en ce moment, pour le chapitre
+ * « En ce moment » de l'accueil.
  *
- * Demande de Lilian, 14 octobre 2026 : le site doit être un site personnel,
- * moins vendeur ; on y voit ses derniers projets et ses projets perso
- * (RuneScape, DragonWild, ses sites de jeux vidéo, meilleurs.tools).
- *
- * RuneScape et Dragonwilds en sont sortis le même jour : Lilian ne les a pas
- * finis (« pour runescape j'ai pas fini donc mets-le pas »). Ils reviendront
- * avec leur adresse. Une entrée sans `href` s'affiche sans lien. Rien n'est
- * affirmé ici qui ne soit dans PRODUCT.md (« Evidence on Hand ») ou donné
- * par lui.
+ * Ses projets perso (meilleurs.tools, Flameborn ; RuneScape et Dragonwilds,
+ * pas finis) ont quitté l'accueil le 14 octobre 2026 : « les projets, ce doit
+ * être les projets clients, pas mes projets persos ». Le chapitre des projets
+ * lit désormais les cas clients (`documentaire/filmographie.astro`). Leurs
+ * textes restent dans l'historique git. Rien n'est affirmé ici qui ne soit
+ * dans PRODUCT.md (« Evidence on Hand ») ou donné par Lilian.
  */
 
 export interface Projet {
@@ -28,8 +25,6 @@ export interface Projet {
   longue?: string;
   /** Texte en attente de Lilian. */
   provisoire?: true;
-  /** L'emblème dessiné de la carte, quand le projet n'a pas de capture. */
-  embleme?: 'flamme' | 'rune' | 'dragon';
   /** Ce qui le compose, en deux ou trois mots chacun. */
   tags?: string[];
 }
@@ -56,28 +51,5 @@ export const enCours: Projet[] = [
     image: '/sites-web/projects/augmentes-home.webp',
     longue: '/sites-web/projects/augmentes-long.webp',
     tags: ['Make', 'n8n', 'IA'],
-  },
-];
-
-/** Ce que Lilian a construit pour lui, hors missions. */
-export const persos: Projet[] = [
-  {
-    id: 'meilleurs-tools',
-    nom: 'meilleurs.tools',
-    etiquette: 'Catalogue',
-    resume: 'Un annuaire d’outils de productivité, avec avis, alternatives et comparatifs, pour choisir le bon logiciel.',
-    href: 'https://meilleurs.tools',
-    image: '/sites-web/projects/meilleurs-tools-home.webp',
-    tags: ['90 outils', 'Comparatifs', 'Top 5'],
-  },
-  {
-    id: 'flameborn',
-    nom: 'Flameborn',
-    etiquette: 'Site de jeu vidéo',
-    resume: 'La base de données française d’Enshrouded\u00a0: recettes, calculateur de craft, carte, objets et quêtes.',
-    href: 'https://flameborn.fr',
-    image: '/sites-web/projects/flameborn-home.webp',
-    embleme: 'flamme',
-    tags: ['Enshrouded', 'Calculateur de craft', 'Carte'],
   },
 ];

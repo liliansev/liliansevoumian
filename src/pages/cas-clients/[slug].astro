@@ -4,6 +4,7 @@ import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
 import Retour from '../../components/retour.astro';
 import FinDePage from '../../components/fin-de-page.astro';
+import { espaces } from '../../lib/espaces';
 import { getCollection, render } from 'astro:content';
 import { Icon } from 'astro-icon/components';
 import MockupWindow from '../../components/mockups/MockupWindow.astro';
@@ -65,15 +66,8 @@ function decouper(html: string): Piece[] {
   return pieces;
 }
 
-/* Le Markdown ne pose pas les espaces insécables du français : sans elles, un
-   deux-points ou un « € » passait seul à la ligne. Elles sont posées ici, sur
-   le texte rendu : avant `: ; ? !` et le guillemet fermant, après le guillemet
-   ouvrant, entre un nombre et son unité. Aucune balise ne contient ces suites. */
-const espaces = (texte: string) =>
-  texte
-    .replace(/ ([:;?!»])/g, '\u00a0$1')
-    .replace(/« /g, '«\u00a0')
-    .replace(/(\d) (?=(?:h|min|%|€)(?![\p{L}\d]))/gu, '$1\u00a0');
+/* Les espaces insécables du français, posées à l'affichage (`lib/espaces.ts`) :
+   les textes des cas ne les portent pas. */
 
 const pieces = decouper(espaces(HTML_RENDU));
 
