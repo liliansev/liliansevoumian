@@ -110,6 +110,10 @@ const blog = defineCollection({
     // Une ou deux phrases : le chapô de l'article, sa ligne dans la liste et
     // sa description pour les moteurs.
     description: z.string(),
+    // Le titre pour Google, quand celui de la page dépasse 60 caractères.
+    seoTitle: z.string().optional(),
+    // Les requêtes que l'article vise, reprises dans le balisage BlogPosting.
+    keywords: z.array(z.string()).default([]),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     // draft: true → visible en dev pour relecture, absent du site publié.

@@ -1,11 +1,14 @@
 ---
 title: "Consultant IA : comment je le suis devenu depuis 2020"
 description: "Livreur de pizzas, logos à 10 €, puis freelance en automatisation en 2020, premier Français certifié Make niveau 5 et une agence en 2026. Mon parcours, et ce que je referais."
+seoTitle: "Devenir consultant IA : mon parcours depuis 2020"
+keywords: ["consultant IA", "devenir consultant IA", "développeur no code", "freelance automatisation"]
 date: 2026-10-14
-draft: true
 ---
 
 On me demande souvent comment on devient consultant en automatisation et en IA. Je n’ai pas suivi de parcours type, alors je vais raconter le mien, avec ce que je referais et ce que je ferais autrement.
+
+**En bref :** j’ai commencé sans diplôme technique, par des missions d’automatisation en freelance en 2020. Les certifications Make, la formation de centaines de personnes et un poste de No-Code Engineer m’ont mené aux agents IA, puis à ma propre agence en 2026.
 
 ## Avant : des logos et des pizzas
 
@@ -23,7 +26,7 @@ Les missions s’enchaînent : Familytrip en 2021, puis Qonto et KlaK fin 2021. 
 
 Fin 2021, je passe trois jours avec une promotion de Rocket School pour leur apprendre l’automatisation. Expliquer l’automatisation à une salle entière m’oblige à mieux comprendre ce que je fais.
 
-En 2022, je deviens le premier Français certifié Make niveau 5. Je passe aussi la certification Airtable. Ces titres m’ont ouvert des portes, et le niveau qu’ils demandent m’a forcé à combler mes lacunes.
+En 2022, je deviens le [premier Français certifié Make niveau 5](/expert-make). Je passe aussi la certification Airtable. Ces titres m’ont ouvert des portes, et le niveau qu’ils demandent m’a forcé à combler mes lacunes.
 
 ## 2022 et 2023 : passer de l’autre côté
 
@@ -33,13 +36,13 @@ En 2023, je fais un stage de développeur back-end avec l’école O’clock. Je
 
 ## 2023 à 2026 : entreprendre
 
-En novembre 2023, je lance Augmentés, mes formations pratiques à Make, à n8n et à l’IA. La même année, je cofonde La Capsule, un studio de podcast à Vanves, dont je suis le COO jusqu’en février 2026. J’y automatise tout le back-office : réservations, paiements, livraison des fichiers, support client et comptabilité.
+En novembre 2023, je lance [Augmentés](https://augmentes.fr), mes formations pratiques à Make, à n8n et à l’IA. La même année, je cofonde La Capsule, un studio de podcast à Vanves, dont je suis le COO jusqu’en février 2026. J’y automatise tout le back-office : réservations, paiements, livraison des fichiers, support client et comptabilité.
 
 C’est là que j’ai compris ce que vivent mes clients : une équipe, des clients à livrer, et jamais assez de temps pour mettre en place les bons outils.
 
-En janvier 2026, je fonde agenceafk, mon agence d’agents IA et d’automatisations pour les entreprises de 5 à 50 personnes.
+En janvier 2026, je fonde [agenceafk](https://agenceafk.fr), mon agence d’agents IA et d’automatisations pour les entreprises de 5 à 50 personnes.
 
-Aujourd’hui, ça fait plus de 100 entreprises accompagnées et plus de 300 personnes formées.
+Aujourd’hui, ça fait plus de 100 entreprises accompagnées et plus de 300 personnes formées. Ce que j’ai vu chez ces stagiaires, je le raconte dans [Métiers menacés par l’IA](/blog/metiers-menaces-par-l-ia).
 
 ## Ce que je referais
 
