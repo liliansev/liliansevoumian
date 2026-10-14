@@ -41,13 +41,15 @@ const articleSchema = {
   datePublished: publie,
   dateModified: misAJour ?? publie,
   inLanguage: 'fr-FR',
+  wordCount: (article.body ?? '').split(/\s+/).filter(Boolean).length,
+  ...(a.keywords.length ? { keywords: a.keywords.join(', ') } : {}),
   isPartOf: { '@id': 'https://liliansevoumian.fr/blog#blog' },
   mainEntityOfPage: { '@type': 'WebPage', '@id': url },
 };
 ---
 
 <Carnet
-  title={`${a.title} · Lilian Sevoumian`}
+  title={a.seoTitle ?? `${a.title} · Lilian Sevoumian`}
   description={a.description}
   ogType="article"
   publishedDate={publie}

@@ -24,6 +24,9 @@ export const GET: APIRoute = async () => {
   const cas = (await getCollection('cas-clients', (e) => !e.data.draft)).sort(
     (a, b) => b.data.date.getTime() - a.data.date.getTime()
   );
+  const articles = (await getCollection('blog', (e) => !e.data.draft)).sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  );
 
   /* Une ligne par cas, en phrases : ce qui a été fait, avec quoi, et le
      premier résultat publié. Un moteur doit pouvoir la citer telle quelle. */
@@ -102,11 +105,18 @@ ${parcours.map(ligneAnnee).join('\n')}
 
 ${cas.map(ligneCas).join('\n')}
 
+## Articles du blog
+
+Écrits par Lilian à la première personne, sur son travail avec l'IA et l'automatisation.
+
+${articles.map((b) => `- [${b.data.title}](https://liliansevoumian.fr/blog/${b.id}) : ${phrase(b.data.description)}`).join('\n')}
+
 ## Pages
 
 - [Accueil](https://liliansevoumian.fr/) : parcours, activités actuelles, réalisations, vidéos et newsletter
 - [Automatisation et IA](https://liliansevoumian.fr/automatisations-ia) : services, cas clients, méthode, calculateur et FAQ
 - [Tous les cas clients](https://liliansevoumian.fr/cas-clients)
+- [Blog](https://liliansevoumian.fr/blog) : articles personnels sur l'IA, l'automatisation et le métier
 - [Expert Make](https://liliansevoumian.fr/expert-make)
 - [Expert n8n](https://liliansevoumian.fr/expert-n8n)
 - [Reprendre une automatisation qui casse](https://liliansevoumian.fr/reprendre-une-automatisation-qui-casse)
