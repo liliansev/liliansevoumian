@@ -1,0 +1,130 @@
+---
+/*
+ * plan-large : un plan en cinémascope, sur toute la colonne, avec sa
+ * lumière, son incrustation, son sous-titre et, pour une image prêtée, sa
+ * source.
+ *
+ * Le sous-titre est la voix de Lilian, en pêche claire : une phrase qu'il
+ * pourrait dire sur ce plan, prise dans ce que PRODUCT.md atteste. Le plan
+ * s'ouvre au défilement (`.media-ouvre`), comme les autres médias du site.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  /** Le nom et le rôle de l'incrustation. */
+  nom: string;
+  role: string;
+  /** Le rôle sur téléphone, quand le long tiendrait sur trois lignes et
+      couvrirait le sujet. */
+  roleCourt?: string;
+  /** La phrase de Lilian sous le plan. */
+  sousTitre?: string;
+  /** La source d'une image prêtée. */
+  credit?: string;
+  /** Le cadrage dans le cinémascope (`object-position`). */
+  cadrage?: string;
+  /** Le cadrage sur téléphone, où le plan est en 4:3. */
+  cadrageEtroit?: string;
+  class?: string;
+}
+
+const {
+  image,
+  alt,
+  nom,
+  role,
+  roleCourt,
+  sousTitre,
+  credit,
+  cadrage = '50% 50%',
+  cadrageEtroit = cadrage,
+  class: classe,
+} = Astro.props;
+
+const lumiere = await getImage({ src: image, width: 96, format: 'webp', quality: 60 });
+---
+
+<figure
+  class:list={['plan plan-large reveal', classe]}
+  style={`--cadrage: ${cadrage}; --cadrage-etroit: ${cadrageEtroit}`}
+>
+  <div class="plan__lumiere" style={`background-image: url(${lumiere.src})`} aria-hidden="true"></div>
+  <div class="plan-large__cadre plan__cadre media-ouvre">
+    <Image src={image} alt={alt} widths={[640, 1024, 1600, 2400]} sizes="(min-width: 1248px) 1200px, 100vw" loading="lazy" />
+    <p class="incrustation">
+      <b>{nom}</b>
+      {roleCourt ? (
+        <>
+          <span class="plan-large__role">{role}</span>
+          <span class="plan-large__role plan-large__role--court">{roleCourt}</span>
+        </>
+      ) : (
+        <span>{role}</span>
+      )}
+    </p>
+  </div>
+  {(sousTitre || credit) && (
+    <figcaption class="plan-large__legende">
+      {sousTitre && <span class="sous-titre">{sousTitre}</span>}
+      {credit && <span class="credit">{credit}</span>}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .plan-large {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .plan-large .plan__lumiere {
+    inset: 8% 4% 14%;
+  }
+
+  .plan-large__cadre {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-xl);
+  }
+
+  .plan-large__cadre :global(img) {
+    object-position: var(--cadrage-etroit);
+  }
+
+  @media (min-width: 768px) {
+    .plan-large__cadre {
+      aspect-ratio: 2.39;
+    }
+
+    .plan-large__cadre :global(img) {
+      object-position: var(--cadrage);
+    }
+  }
+
+  .plan-large__role--court {
+    display: none;
+  }
+
+  @media (max-width: 599.98px) {
+    .plan-large__role:not(.plan-large__role--court) {
+      display: none;
+    }
+
+    .plan-large__role--court {
+      display: inline;
+    }
+  }
+
+  .plan-large__legende {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .plan-large__legende .sous-titre {
+    display: block;
+  }
+</style>

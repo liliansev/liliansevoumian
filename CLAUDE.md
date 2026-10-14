@@ -48,17 +48,19 @@ src/
 │   │   ├── chapitre.astro     # un chapitre : `data-chapitre` (son nom dans la barre), `data-lueur` (sa teinte), carton et colonne
 │   │   ├── ouverture.astro    # « Salut, je m'appelle », le nom, le métier ; la barre d'écriture à droite ; le plan au bureau en cinémascope, qui s'ouvre une fois ; défilé des logos (id `hero`)
 │   │   ├── defile-clients.astro # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
-│   │   ├── portrait.astro     # « À propos » : portrait, deux paragraphes, un plan du podcast à La Capsule, les faits sans date (data/parcours.ts, `faits`)
+│   │   ├── plan-large.astro   # un plan en cinémascope sur toute la colonne : lumière, incrustation, sous-titre de Lilian, source
+│   │   ├── portrait.astro     # « À propos » : portrait et ce qu'il dit, le plan au micro, les faits sans date en carton, le plan en formation (data/parcours.ts, `faits`)
 │   │   ├── en-ce-moment.astro # les projets en cours, captures étalonnées (data/projets.ts, `enCours`)
+│   │   ├── expertises.astro   # les 4 scènes des métiers en une séquence : un grand plan, la liste des plans au-dessus, la phrase en sous-titre (data/metiers.ts)
 │   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
-│   │   ├── affiches.astro     # les projets perso en affiches de film : capture ou emblème dessiné (data/projets.ts, `persos`)
-│   │   ├── voix.astro         # trois recommandations, chacune avec son incrustation
-│   │   ├── generique.astro    # le dernier plan, le générique de fin, puis `fin-de-page` (id `generique`)
+│   │   ├── filmographie.astro # les projets perso en filmographie : un titre par ligne, genre, phrase, adresse (data/projets.ts, `persos`)
+│   │   ├── voix.astro         # le plan de La Capsule qui reste, les trois recommandations qui passent en sous-titres d'interview
+│   │   ├── generique.astro    # le générique de fin sur la nuit, puis `fin-de-page` (id `generique`)
 │   │   └── barre-chapitres.astro # la barre de lecture fixe, comme une vidéo à chapitres, et l'étalonnage de la page
-│   │   # — accueil d'avant, plus rendus sur `/` sauf home-services —
+│   │   # — accueil d'avant, plus rendus sur `/` —
 │   ├── home-hero.astro        # titre centré, emplacement de la barre d'écriture, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
-│   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone. Rendu dans le chapitre « Expertises » (`prix={false}`)
+│   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone. Ses métiers sont dans `data/metiers.ts`
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
 │   ├── home-today-path.astro  # « Pourquoi moi » (panneau clair) + frise du parcours
 │   ├── home-content.astro     # la dernière vidéo YouTube (relevée par le serveur, voir `data/derniere-video.ts`) + newsletter écrite comme un mail
@@ -85,7 +87,7 @@ src/
 │   └── explorations/          # essais non retenus, page /explorations-metiers
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
-├── data/                      # faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, sites-web.ts, brands.ts
+├── data/                      # metiers.ts (les 4 métiers), projets.ts, faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, sites-web.ts, brands.ts
 ├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (e-mail et WhatsApp), roi.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, barre d'écriture, suivi DataFast
@@ -154,8 +156,11 @@ a peach line), centred peach-light subtitles, big chapter titles, a fixed
 chapter bar like a YouTube progress bar, and a page grade (two fixed glows)
 whose hue follows the chapter. Grammar in
 `src/components/documentaire/documentaire.css`. Only real photos of Lilian
-appear there; the generated work scenes never do. One animated 2D interface
-scene per service (`src/components/metiers/`, engine in
+appear there; the generated work scenes never do. Lilian's own subtitles are
+peach-light; other people's words (testimonials) are white subtitles with a
+lower-third. One animated 2D interface scene per service, played as shots of
+one sequence (`documentaire/expertises.astro`; scenes in
+`src/components/metiers/`, engine in
 `src/lib/metiers/scene.ts`; the glass 3D shapes only remain on
 `/explorations-blocs`).
 

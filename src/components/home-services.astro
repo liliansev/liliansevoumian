@@ -59,65 +59,9 @@ import SceneAutomatisation from './metiers/scene-automatisation.astro';
 import SceneAgents from './metiers/scene-agents.astro';
 import SceneFormations from './metiers/scene-formations.astro';
 import SceneSites from './metiers/scene-sites.astro';
-import { automationStartingPrice } from '../data/service-pricing';
+import { metiers } from '../data/metiers';
 
-const prix = (montant: number) => `À partir de ${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 
-const metiers = [
-  {
-    id: 'automatisation',
-    nom: 'Automatisation',
-    onglet: 'Automatisation',
-    phrase: 'Je relie vos outils, et les ressaisies disparaissent.',
-    /* Seul texte de la liste qui porte du balisage : Make et n8n mènent à leur
-       page. Il est rendu par `set:html`, comme les trois autres ; tous sont
-       écrits ici, aucun ne vient d'une saisie. */
-    texte:
-      'Commandes, factures, relances, rapports\u00a0: je les automatise avec <a href="/expert-make">Make</a> et <a href="/expert-n8n">n8n</a>.',
-    note: prix(automationStartingPrice),
-    lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_metier_automation' },
-  },
-  {
-    id: 'agents-ia',
-    nom: 'Agents IA',
-    onglet: 'Agents IA',
-    phrase: 'Un agent qui va chercher la réponse à votre place.',
-    texte:
-      'Il lit vos documents et vos outils, répond sources à l’appui, et un humain garde la main.',
-    /* L'offre « Automatisation et agents IA » n'a qu'un prix d'entrée : il
-       s'affiche sur ses deux blocs, comme sur la ligne de fin de page. */
-    note: prix(automationStartingPrice),
-    /* Le bouton sort vers l'agence ; le prix, lui, mène à l'offre du site,
-       qui couvre automatisation et agents IA. */
-    noteHref: '/automatisations-ia',
-    lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
-  },
-  {
-    /* Le troisième métier, depuis le 3 octobre 2026 : plus de sites web sur
-       l'accueil. Ce qui est affirmé vient de /llms.txt (« dashboards, portails
-       clients et applications métiers, sur un périmètre chiffré
-       séparément ») ; le prix est donc « sur devis », choix de Lilian. Le lien
-       mène à la partie « Applications » de la page d'offre, qui reste en
-       ligne. La phrase est de moi : à lui de la valider. */
-    id: 'dashboards',
-    nom: 'Dashboards et outils métiers',
-    onglet: 'Dashboards',
-    phrase: 'Un dashboard qui dit où vous en êtes, un outil fait pour votre métier.',
-    texte:
-      'Dashboards, portails clients et applications internes, de la conception aux évolutions.',
-    note: 'Sur devis',
-    lien: { href: '/sites-web-abonnement#applications', label: 'Voir les applications métier', goal: 'service_path_opened', source: 'home_metier_web' },
-  },
-  {
-    id: 'formations',
-    nom: 'Formations',
-    onglet: 'Formations',
-    phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
-    texte:
-      'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou avec vos équipes, sur vos propres cas.',
-    lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
-  },
-] as const;
 
 interface Props {
   /** Le titre de la section. */

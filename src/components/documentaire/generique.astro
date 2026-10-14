@@ -2,43 +2,27 @@
 /*
  * generique : la fin de l'accueil « Le documentaire ».
  *
- * Le dernier plan (Lilian qui sourit, au micro de La Capsule), puis le
- * générique de fin, comme au cinéma : les rôles en petit, les noms dessous,
- * centrés. Tout ce qui y figure est attesté ailleurs sur le site : les
- * entreprises viennent de `data/clients.ts`, les recommandations de
+ * Le générique de fin, comme au cinéma, sur la nuit seule : les rôles en
+ * petit, les noms dessous, centrés. Tout ce qui y figure est attesté ailleurs
+ * sur le site : les entreprises viennent de `data/clients.ts`, les recommandations de
  * `voix.astro`, les outils de la page d'offre, la source des images de
  * `src/assets/documentaire/README.md`. Après le générique, la fin de page
  * commune (`fin-de-page`) : on écrit à Lilian.
  */
-import { Image } from 'astro:assets';
 import FinDePage from '../fin-de-page.astro';
 import { clients } from '../../data/clients';
-import sourireImg from '../../assets/documentaire/capsule-sourire.jpg';
 
 const roles = [
   { role: 'Avec', noms: clients.map((c) => c.nom) },
   { role: 'Recommandé par', noms: ['Alexis Kovalenko', 'Ismail Landoulsi', 'Benjamin Potet'] },
   { role: 'Outils', noms: ['Make', 'n8n', 'Airtable', 'Notion'] },
-  { role: 'Images du podcast', noms: ['Radio Contournement, à La Capsule'] },
+  { role: 'Images', noms: ['Radio Contournement, à La Capsule', 'les archives de Lilian'] },
 ];
 ---
 
-<div id="generique" data-chapitre="Générique" data-lueur="braise peche" class="generique">
+<div id="generique" data-chapitre="Générique" data-lueur="braise braise" class="generique">
   <section class="generique__rideau chapitre" aria-label="Générique">
     <div class="chapitre__colonne">
-      <figure class="generique__plan plan reveal">
-        <div class="generique__cadre plan__cadre media-ouvre">
-          <Image
-            src={sourireImg}
-            alt="Lilian sourit au micro, pendant un enregistrement de podcast."
-            widths={[320, 640]}
-            sizes="(min-width: 768px) 22rem, 70vw"
-            loading="lazy"
-          />
-          <p class="incrustation"><b>Lilian Sevoumian</b><span>à La Capsule</span></p>
-        </div>
-      </figure>
-
       <dl class="generique__liste reveal">
         <div class="generique__ligne generique__ligne--titre">
           <dt>Écrit et construit par</dt>
@@ -66,20 +50,11 @@ const roles = [
     padding-bottom: 0;
   }
 
-  .generique__plan {
-    width: min(70vw, 22rem);
-    margin-inline: auto;
-  }
-
-  .generique__cadre {
-    aspect-ratio: 880 / 997;
-  }
-
   .generique__liste {
     display: grid;
     gap: clamp(2rem, 4vw, 3rem);
     max-width: 40rem;
-    margin: var(--spacing-bloc) auto 0;
+    margin: 0 auto;
     text-align: center;
   }
 

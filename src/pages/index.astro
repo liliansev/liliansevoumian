@@ -2,13 +2,13 @@
 import Layout from '../layouts/Layout.astro';
 import Navigation from '../components/Navigation.astro';
 import HomeInvite from '../components/home-invite.astro';
-import HomeServices from '../components/home-services.astro';
 import Footer from '../components/Footer.astro';
 import Ouverture from '../components/documentaire/ouverture.astro';
 import Portrait from '../components/documentaire/portrait.astro';
 import EnCeMoment from '../components/documentaire/en-ce-moment.astro';
 import Publications from '../components/documentaire/publications.astro';
-import Affiches from '../components/documentaire/affiches.astro';
+import Filmographie from '../components/documentaire/filmographie.astro';
+import Expertises from '../components/documentaire/expertises.astro';
 import Voix from '../components/documentaire/voix.astro';
 import Generique from '../components/documentaire/generique.astro';
 import BarreChapitres from '../components/documentaire/barre-chapitres.astro';
@@ -23,9 +23,11 @@ import { resume, resumeCourt } from '../data/parcours';
    `components/documentaire/documentaire.css`.
 
    Les chapitres, dans l'ordre : il se présente, ce qu'il construit, ce qu'il
-   sait faire, ce qu'il publie, ce qu'il fait pour lui, ce qu'en disent ceux
-   qui ont travaillé avec lui, et le générique, où on lui écrit. La barre des
-   chapitres (`barre-chapitres.astro`) reprend la même liste.
+   sait faire (les quatre scènes des métiers, en une séquence), ce qu'il
+   publie, ce qu'il fait pour lui (sa filmographie), ce qu'en disent ceux qui
+   ont travaillé avec lui, et le générique, où on lui écrit. La barre des
+   chapitres (`barre-chapitres.astro`) reprend la même liste. Le pied de page
+   y perd sa date (`sansDate`).
 
    La barre de navigation nomme les chapitres, dans leur ordre. */
 const homeNavigation = [
@@ -85,9 +87,9 @@ const pageSchema = {
     <HomeInvite />
     <Portrait />
     <EnCeMoment />
-    <HomeServices prix={false} chapitre="Expertises" lueur="lueur-froide lueur-froide" />
+    <Expertises />
     <Publications />
-    <Affiches />
+    <Filmographie />
     <Voix />
     {/* Le contact : la fin de page commune, après le générique. Le fil du
         formulaire de contact simple la remplacera. */}
@@ -95,5 +97,5 @@ const pageSchema = {
   </main>
 
   <BarreChapitres chapitres={chapitres} />
-  <Footer />
+  <Footer sansDate />
 </Layout>

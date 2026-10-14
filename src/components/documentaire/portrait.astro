@@ -5,18 +5,17 @@
  *
  * À gauche son portrait, cadré comme un plan d'interview, avec son
  * incrustation. À droite ce qu'il dit de sa façon de travailler (PRODUCT.md,
- * « Sa façon de travailler »), puis un plan pris au micro de Radio
- * Contournement, à La Capsule, envoyé par Lilian le 14 octobre 2026 (voir
- * `src/assets/documentaire/README.md`). Le chapitre se ferme sur un carton :
- * les faits qui le résument, en une phrase, sans date (« c'est pas un CV »).
- *
- * Les photos de travail qu'il enverra ensuite s'ajoutent ici ou dans les
- * autres chapitres.
+ * « Sa façon de travailler »). Puis deux plans en cinémascope : au micro de
+ * Radio Contournement, à La Capsule, et devant une classe en formation (voir
+ * `src/assets/documentaire/README.md`). Entre les deux, un carton : les faits
+ * qui le résument, en une phrase, sans date (« c'est pas un CV »).
  */
 import { Image, getImage } from 'astro:assets';
 import Chapitre from './chapitre.astro';
 import portraitImg from '../../assets/lilian-photo.jpg';
-import capsuleImg from '../../assets/documentaire/capsule-ecoute.jpg';
+import PlanLarge from './plan-large.astro';
+import studioImg from '../../assets/documentaire/studio-micro.jpg';
+import formationImg from '../../assets/documentaire/formation-salle.jpg';
 import { faits } from '../../data/parcours';
 
 const lumiere = await getImage({ src: portraitImg, width: 64, format: 'webp', quality: 60 });
@@ -63,26 +62,38 @@ const personnes = faits.find((f) => f.titre.startsWith('Plus de 300'));
         </p>
       </div>
 
-      <figure class="portrait__rush plan reveal">
-        <div class="portrait__rush-cadre plan__cadre">
-          <Image
-            src={capsuleImg}
-            alt="Lilian au micro, casquette à l’envers, pendant un enregistrement de podcast."
-            widths={[320, 640]}
-            sizes="(min-width: 1024px) 280px, 60vw"
-            loading="lazy"
-          />
-        </div>
-        <figcaption class="credit">Au micro de Radio Contournement, enregistré à La&nbsp;Capsule, le studio que j’ai cofondé.</figcaption>
-      </figure>
     </div>
   </div>
 
+  <PlanLarge
+    class="portrait__plan-large"
+    image={studioImg}
+    alt="Lilian au micro d’un studio de podcast, casquette à l’envers, en train d’expliquer de la main."
+    nom="Lilian Sevoumian"
+    role="au micro de Radio Contournement, à La Capsule"
+    roleCourt="à La Capsule"
+    sousTitre="J’ai automatisé le back-office de La Capsule, le studio de podcast que j’ai cofondé."
+    credit="Image : Radio Contournement, épisode 125."
+    cadrage="50% 30%"
+    cadrageEtroit="58% 40%"
+  />
+
   <p class="portrait__faits reveal">
-    {entreprises && <><strong>{entreprises.titre} {entreprises.detail}</strong>, </>}
-    {personnes && <><strong>{personnes.titre.toLowerCase()} {personnes.detail}</strong>, </>}
-    et le <strong>premier Français certifié Make niveau&nbsp;5</strong>.
+    {entreprises && `${entreprises.titre} ${entreprises.detail}, `}
+    {personnes && `${personnes.titre.toLowerCase()} ${personnes.detail}, `}
+    et le <mark>premier Français certifié Make niveau&nbsp;5.</mark>
   </p>
+
+  <PlanLarge
+    image={formationImg}
+    alt="Lilian, en polo bordeaux, explique un écran à une classe ; les participants, vus de dos, suivent sur leurs ordinateurs."
+    nom="Lilian Sevoumian"
+    role="en formation, devant une classe"
+    roleCourt="devant une classe"
+    sousTitre="J’accompagne la prise en main, jusqu’à ce que l’équipe s’en serve sans moi."
+    cadrage="30% 45%"
+    cadrageEtroit="22% 45%"
+  />
 </Chapitre>
 
 <style>
@@ -104,8 +115,18 @@ const personnes = faits.find((f) => f.titre.startsWith('Plus de 300'));
     align-content: start;
   }
 
+  /* Ici le titre est ce que dit l'interviewé, à côté de son portrait : il
+     garde la colonne et l'alignement du texte qu'il ouvre. */
   .portrait__parole .carton {
+    justify-items: start;
     margin-bottom: var(--spacing-lie);
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .portrait__parole .carton h2 {
+    font-size: var(--text-story);
+    letter-spacing: -0.035em;
   }
 
   .portrait__texte {
@@ -115,33 +136,22 @@ const personnes = faits.find((f) => f.titre.startsWith('Plus de 300'));
     font-size: var(--text-body-large);
   }
 
-  .portrait__rush {
-    display: grid;
-    gap: 0.75rem;
-    width: min(100%, 17.5rem);
-    margin-top: var(--spacing-groupe);
+  .portrait__plan-large {
+    margin-top: var(--spacing-section-y);
   }
 
-  .portrait__rush-cadre {
-    aspect-ratio: 880 / 997;
-    border-radius: var(--radius-md);
-  }
-
+  /* Le carton des faits, entre les deux plans : une phrase seule, en grand,
+     au centre. */
   .portrait__faits {
-    max-width: 30ch;
-    margin: var(--spacing-section-y) auto 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-phrase);
+    max-width: 26ch;
+    margin: var(--spacing-section-y) auto;
+    color: var(--color-ink);
+    font-size: var(--text-headline);
     font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.025em;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
     text-align: center;
     text-wrap: balance;
-  }
-
-  .portrait__faits strong {
-    color: var(--color-ink);
-    font-weight: 500;
   }
 
   @media (min-width: 1024px) {
@@ -153,10 +163,6 @@ const personnes = faits.find((f) => f.titre.startsWith('Plus de 300'));
 
     .portrait__parole {
       padding-top: clamp(1rem, 4vw, 4rem);
-    }
-
-    .portrait__rush {
-      justify-self: end;
     }
   }
 </style>

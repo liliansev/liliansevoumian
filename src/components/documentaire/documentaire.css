@@ -14,7 +14,9 @@
  *                    claire ;
  *   le carton        le titre d'un chapitre, seul, en grand ;
  *   l'étalonnage     deux lueurs fixes derrière la page, dont la teinte suit
- *                    le chapitre en cours (voir `barre-chapitres.astro`).
+ *                    le chapitre en cours (voir `barre-chapitres.astro`) :
+ *                    froide au bureau et dans les expertises, elle se
+ *                    réchauffe jusqu'à la braise du générique.
  */
 
 @property --lueur-haut {
@@ -36,8 +38,8 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(52% 46% at 92% 0%, color-mix(in srgb, var(--lueur-haut) 15%, transparent), transparent 74%),
-    radial-gradient(48% 42% at 0% 100%, color-mix(in srgb, var(--lueur-bas) 12%, transparent), transparent 74%);
+    radial-gradient(64% 56% at 92% 0%, color-mix(in srgb, var(--lueur-haut) 24%, transparent), transparent 76%),
+    radial-gradient(60% 52% at 0% 100%, color-mix(in srgb, var(--lueur-bas) 20%, transparent), transparent 76%);
   transition:
     --lueur-haut 1.8s var(--ease-out-quint),
     --lueur-bas 1.8s var(--ease-out-quint);
@@ -61,22 +63,27 @@
   margin-inline: auto;
 }
 
+/* Le carton : le titre du chapitre, seul et centré comme un intertitre, avec
+   la nuit autour. Plus grand que tout autre titre de la page après le nom. */
 .carton {
   display: grid;
+  justify-items: center;
   gap: var(--spacing-lie);
-  margin-bottom: var(--spacing-bloc);
+  margin-bottom: var(--spacing-section-y);
+  padding-top: clamp(1rem, 8svh, 5rem);
+  text-align: center;
 }
 
 .carton h2 {
-  max-width: 17ch;
-  font-size: var(--text-story);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  max-width: 16ch;
+  font-size: var(--text-affiche);
+  line-height: 1;
+  letter-spacing: -0.045em;
   text-wrap: balance;
 }
 
 .carton p {
-  max-width: 46ch;
+  max-width: 40ch;
   color: var(--color-ink-mid);
   font-size: var(--text-body-large);
 }
