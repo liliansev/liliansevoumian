@@ -23,6 +23,9 @@ export interface Projet {
   href?: string;
   /** Capture dans `public/`, au format 16:10. */
   image?: string;
+  /** La page entière, à 960 px de large, que le plan d'« En ce moment »
+   *  parcourt au survol. */
+  longue?: string;
   /** Texte en attente de Lilian. */
   provisoire?: true;
   /** L'emblème dessiné de la carte, quand le projet n'a pas de capture. */
@@ -41,6 +44,7 @@ export const enCours: Projet[] = [
       'Des agents IA, des automatisations Make et n8n et des outils métiers sur mesure, pour les entreprises de 5 à 50 personnes.',
     href: 'https://agenceafk.fr',
     image: '/sites-web/projects/agenceafk-home.webp',
+    longue: '/sites-web/projects/agenceafk-long.webp',
     tags: ['Agents IA', 'Make et n8n', 'Outils métiers'],
   },
   {
@@ -50,6 +54,7 @@ export const enCours: Projet[] = [
     resume: 'Des formations pratiques à Make, à n8n et à l’IA, en ligne ou directement avec les équipes.',
     href: 'https://augmentes.fr',
     image: '/sites-web/projects/augmentes-home.webp',
+    longue: '/sites-web/projects/augmentes-long.webp',
     tags: ['Make', 'n8n', 'IA'],
   },
 ];

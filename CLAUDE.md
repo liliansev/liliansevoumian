@@ -50,7 +50,7 @@ src/
 │   │   ├── defile-clients.astro # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
 │   │   ├── plan-large.astro   # un plan en cinémascope sur toute la colonne : lumière, incrustation, sous-titre de Lilian, source
 │   │   ├── portrait.astro     # « À propos » : portrait et ce qu'il dit, le plan au micro, les faits sans date en carton, le plan en formation (data/parcours.ts, `faits`)
-│   │   ├── en-ce-moment.astro # les projets en cours, captures étalonnées (data/projets.ts, `enCours`)
+│   │   ├── en-ce-moment.astro # les projets en cours, une affiche chacun : le texte, et le plan qui parcourt le site au survol (data/projets.ts, `enCours`)
 │   │   ├── expertises.astro   # les 4 scènes des métiers en une séquence : un grand plan, la liste des plans au-dessus, la phrase en sous-titre (data/metiers.ts)
 │   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
 │   │   ├── filmographie.astro # les projets perso en filmographie : un titre par ligne, genre, phrase, adresse (data/projets.ts, `persos`)

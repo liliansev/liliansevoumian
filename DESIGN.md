@@ -647,7 +647,7 @@ Une image à coins arrondis qui jette sa lumière sur la nuit. Trois pièces :
 | Ouverture | 2,39:1, plus large que la colonne (1 376 px au plus, marges `cadre`), rayon `xl` ; 4:5 sous 768 px | `ouverture.astro` |
 | Plan large | 2,39:1 à partir de 768 px, 4:3 en dessous, sur toute la colonne, rayon `xl`, `.media-ouvre` ; cadrage par plan (`cadrage`, `cadrageEtroit`) | `plan-large.astro`, deux fois dans le portrait |
 | Portrait d'interview | 4:5, colonne `5fr` face à la parole `6fr` à partir de 1024 px | `portrait.astro` |
-| Capture | 16:10, calée en haut, à peine étalonnée, lumière douce | `en-ce-moment.astro` |
+| Affiche | 16:11, la page entière du site calée en haut, à peine étalonnée, filet d'encre à 10 %, rayon `xl`, lumière douce ; colonne `7fr` face au texte `5fr` à partir de 900 px | `en-ce-moment.astro` |
 | Vidéo | 16:9, la vignette et sa lumière douce, un disque de lecture | `publications.astro` |
 | Scène de métier | 9:8, puis 4:3 (600 px), 16:9 à partir de 1 024 px, filet d'encre à 10 %, rayon `xl` ; pas de cinémascope : la scène, dessinée en 4:3, y nageait dans son quadrillage | `expertises.astro` |
 
@@ -660,9 +660,7 @@ de passer sous le pli.
 Augmentés sont en crème et lime : leur capture passe en `saturate(0.8)
 brightness(0.94)` et retrouve toutes ses couleurs au survol et au focus
 (600 ms). À 35 % de saturation, comme d'abord, elles paraissaient éteintes.
-Leur lumière est douce. Le second plan descend d'un cran à partir de 900 px
-(`clamp(1.5rem, 4vw, 3.5rem)`) : deux plans d'un même montage, pas deux
-cartes d'une grille. Aucune fausse fenêtre de navigateur autour.
+Leur lumière est douce. Aucune fausse fenêtre de navigateur autour.
 
 ### L'incrustation
 
@@ -830,12 +828,28 @@ classe ». Entre les deux, le carton des faits. Aucune date.
 
 ### En ce moment (`#en-ce-moment`)
 
-Les deux sites que Lilian construit (`data/projets.ts`, `enCours`), en deux
-plans de capture, sans incrustation, côte à côte à partir de 900 px. Sous chacun, le
-nom en `h3` (`--text-title-lg`) suivi d'une flèche qui prend la pêche et part
-vers l'extérieur au survol, une phrase en `ink-mid` (`44ch`), le domaine en
-`--text-body-sm`. La figure entière est un lien qui s'ouvre dans un nouvel
-onglet.
+Les deux sites que Lilian construit (`data/projets.ts`, `enCours`), **une
+affiche par projet**, l'une sous l'autre (`--spacing-section-y` entre elles).
+Lilian n'aimait pas les deux captures côte à côte, la seconde décalée (14
+octobre 2026) : elles se lisaient comme deux cartes d'une grille, le texte en
+petit dessous.
+
+- **À partir de 900 px, le texte à gauche (`5fr`), le plan à droite (`7fr`)**,
+  séparés par la gouttière, le texte calé sur le haut du plan. Sur téléphone
+  et tablette étroite, le plan ouvre l'affiche et le texte suit.
+- **Le texte** : le rôle du projet pour Lilian (`etiquette`, `--text-body-sm`,
+  `ink-low`), le nom en `h3` à `--text-headline` (interlignage 1, −0,04em),
+  une phrase en `--text-body-large`, `ink-mid` (`34ch`), ce qu'il contient en
+  `--text-body-sm`, `ink-low`, puis l'adresse en blanc, graisse 500, soulignée
+  d'un filet d'encre à 24 %, suivie d'une flèche. Au survol et au focus, le
+  nom et l'adresse prennent la pêche, la flèche part vers l'extérieur.
+- **Le plan** : 16:11, sans incrustation (elle nomme des personnes et des
+  lieux, pas des pages). Il montre **la page entière du site** (`longue`, 960
+  px de large), calée en haut. Au survol (pointeur fin), il la parcourt
+  jusqu'en bas en 9 s, à la vitesse d'une lecture, et remonte en 1,6 s quand
+  on le quitte : c'est le visiteur qui le déclenche, rien ne bouge seul. En
+  mouvement réduit, il reste en haut de la page.
+- L'affiche entière est un lien qui s'ouvre dans un nouvel onglet.
 
 ### Les expertises : une séquence (`#services`)
 
@@ -1284,7 +1298,7 @@ Douze rôles, chacun avec sa taille (mesurées à 402 et 1440 px) :
 | Phrase (titre d'une `partie`, principe ; début et fin du `h1` de l'accueil, citation d'un intervenant) | `--text-phrase` | 26 → 39 | 500 · 1,14 · −0,025em |
 | Sous-titre (la voix de Lilian sur l'accueil) | littéral, `clamp(1.125rem, 0.6vw + 0.95rem, 1.5rem)` | 18 → 24 | 500 · 1,35 · −0,01em, pêche claire |
 | Lien du menu mobile | `--text-menu` | 32 → 48 | 500 · 1,15 · −0,03em |
-| Titre lg (prix d'une formule, titre d'un cas, nom d'un site en cours) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,3 |
+| Titre lg (prix d'une formule, titre d'un cas) | `--text-title-lg` | 24 → 30 | 500 · 1,15 à 1,3 |
 | Titre (`h3`, fait de « Pourquoi moi », nom d'un site) | `--text-title` | 20 → 24 | 500 · 1,2 · −0,02em |
 | Chapô, texte d'une `partie`, usages ; l'intitulé d'une question, en 500 | `--text-body-large` | 17 → 20 | 400 · 1,35 à 1,65 |
 | Corps | `--text-body` | 16 | 400 · 1,55 à 1,6 · 0 |
@@ -1399,7 +1413,7 @@ titres collants, du nom en toutes lettres dans la barre et de
 `scrollbar-gutter: stable` ; sur l'accueil, de la barre d'écriture à droite
 du titre, du portrait face à sa parole.
 Les autres sont des empilements locaux, écrits avec leur composant : 900 px (liste de prix, offres,
-témoignages, scènes de travail ; les deux plans d'« En ce moment », les trois
+témoignages, scènes de travail ; les deux affiches d'« En ce moment », les trois
 colonnes de la filmographie, le rail des intervenants), 768 px (blocs sur deux colonnes ; les plans
 larges passent de 4:3 à 2,39:1), 720 px (tableau d'une `partie` replié en
 blocs), 640 px (rythme de téléphone, fin de page empilée, liste des plans en
