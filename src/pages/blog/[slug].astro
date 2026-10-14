@@ -1,0 +1,218 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navigation from '../../components/Navigation.astro';
+import Footer from '../../components/Footer.astro';
+import TeteDePage from '../../components/tete-de-page.astro';
+import Inscription from '../../components/blog/inscription.astro';
+import { render } from 'astro:content';
+import { articlesPublies, espaces, iso, type Article } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const articles = await articlesPublies();
+  return articles.map((article) => ({ params: { slug: article.id }, props: { article } }));
+}
+
+const { article } = Astro.props as { article: Article };
+await render(article);
+const a = article.data;
+
+/* Le corps est lu tel qu'Astro l'a rendu, puis reçoit les espaces insécables
+   du français, comme les cas clients. */
+const HTML_RENDU: string = (article as unknown as { rendered?: { html?: string } }).rendered?.html ?? '';
+const corps = espaces(HTML_RENDU);
+
+const publie = iso(a.date);
+const misAJour = a.updated ? iso(a.updated) : undefined;
+const url = `https://liliansevoumian.fr/blog/${article.id}`;
+
+const breadcrumbs = [
+  { name: 'Accueil', url: '/' },
+  { name: 'Blog', url: '/blog' },
+  { name: a.title, url: `/blog/${article.id}` },
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  '@id': `${url}#article`,
+  headline: a.title,
+  description: a.description,
+  author: { '@id': 'https://liliansevoumian.fr/#person' },
+  publisher: { '@id': 'https://liliansevoumian.fr/#person' },
+  image: 'https://liliansevoumian.fr/og-image.png',
+  datePublished: publie,
+  dateModified: misAJour ?? publie,
+  inLanguage: 'fr-FR',
+  isPartOf: { '@id': 'https://liliansevoumian.fr/blog#blog' },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+};
+---
+
+<Layout
+  title={`${a.title} · Lilian Sevoumian`}
+  description={a.description}
+  ogType="article"
+  publishedDate={publie}
+  modifiedDate={misAJour}
+  articleSchema={articleSchema}
+  breadcrumbs={breadcrumbs}
+  noindex={a.draft}
+>
+  <Navigation ctaSource="blog_article_nav" />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <TeteDePage
+      titre={espaces(a.title)}
+      titreLargeur="22ch"
+      chapo={espaces(a.description)}
+      retour={{ href: '/blog', libelle: 'Tous les articles' }}
+      publie={publie}
+      misAJour={misAJour}
+    />
+
+    <section data-section class="px-[var(--spacing-section-x)] py-[var(--spacing-section-y)] border-b border-[var(--color-divider)]">
+      <div class="mx-auto max-w-[1200px]">
+        <div class="article-prose" set:html={corps} />
+      </div>
+    </section>
+
+    <Inscription titre="Recevoir le prochain article par e-mail." />
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* ── La colonne de lecture : même mesure et mêmes tailles que le corps
+        d'un cas client. ── */
+  .article-prose {
+    max-width: 46rem;
+  }
+
+  .article-prose :global(h2) {
+    margin: var(--spacing-bloc) 0 var(--spacing-lie);
+    font-size: var(--text-title);
+    line-height: 1.2;
+  }
+
+  .article-prose :global(h3) {
+    margin: var(--spacing-groupe) 0 var(--spacing-colle);
+  }
+
+  .article-prose :global(:is(h2, h3):first-child) {
+    margin-top: 0;
+  }
+
+  .article-prose :global(p) {
+    margin: 0 0 1.1em;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: var(--leading-body);
+  }
+
+  .article-prose :global(strong) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .article-prose :global(:is(ul, ol)) {
+    display: grid;
+    gap: 0.6em;
+    margin: 0 0 1.3em;
+    padding: 0;
+    list-style: none;
+  }
+
+  .article-prose :global(li) {
+    position: relative;
+    padding-left: 1.4em;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: var(--leading-body);
+  }
+
+  .article-prose :global(ul > li::before) {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent-text);
+  }
+
+  .article-prose :global(ol) {
+    counter-reset: rang;
+  }
+
+  .article-prose :global(ol > li) {
+    counter-increment: rang;
+  }
+
+  .article-prose :global(ol > li::before) {
+    content: counter(rang) '.';
+    position: absolute;
+    left: 0;
+    color: var(--color-ink-low);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Une citation : un trait à gauche, le texte à l'encre. */
+  .article-prose :global(blockquote) {
+    margin: 0 0 var(--spacing-groupe);
+    padding: 0.25rem 0 0.25rem var(--spacing-lie);
+    border-left: 2px solid var(--color-accent-text);
+  }
+
+  .article-prose :global(blockquote p) {
+    color: var(--color-ink);
+  }
+
+  .article-prose :global(:is(p, ul, ol, blockquote):last-child) {
+    margin-bottom: 0;
+  }
+
+  .article-prose :global(a) {
+    padding-bottom: 1px;
+    border-bottom: 2px solid var(--color-accent-text);
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .article-prose :global(a:hover) {
+    border-bottom-color: var(--color-ink);
+  }
+
+  .article-prose :global(code) {
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-xs);
+    background: var(--color-surface-low);
+    font-size: 0.9em;
+  }
+
+  .article-prose :global(pre) {
+    overflow-x: auto;
+    margin: 0 0 1.3em;
+    padding: var(--spacing-lie);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-low) !important;
+  }
+
+  .article-prose :global(pre code) {
+    padding: 0;
+    background: none;
+  }
+
+  .article-prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .article-prose :global(hr) {
+    margin: var(--spacing-bloc) 0;
+    border: 0;
+    border-top: 1px solid var(--color-divider);
+  }
+</style>

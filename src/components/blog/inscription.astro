@@ -1,0 +1,183 @@
+---
+/*
+ * inscription : recevoir les articles du blog par e-mail.
+ *
+ * Même liste et même route que la newsletter de l'accueil (`/api/newsletter`,
+ * voir `lib/newsletter-signup.ts`) : le blog est la newsletter, en public.
+ * Une phrase, un champ, un bouton. Rien à vendre.
+ */
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** Le titre du bloc. */
+  titre?: string;
+}
+
+const { titre = 'Recevoir les prochains articles par e-mail.' } = Astro.props;
+---
+
+<section aria-labelledby="inscription-titre" data-section class="inscription px-[var(--spacing-section-x)] py-[var(--spacing-section-y)]">
+  <div class="mx-auto max-w-[1200px]">
+    <div class="inscription__cadre">
+      <h2 id="inscription-titre" class="inscription__titre">{titre}</h2>
+      <p class="inscription__texte">Un mail quand un article sort. Pas de publicité, désinscription en&nbsp;un&nbsp;clic.</p>
+      <form data-inscription action="/api/newsletter" method="post" class="inscription__form">
+        <label for="inscription-email" class="sr-only">Votre adresse e-mail</label>
+        <input id="inscription-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="vous@exemple.fr" aria-describedby="inscription-statut" class="inscription__champ" />
+        <div hidden aria-hidden="true"><label for="inscription-website">Votre site</label><input id="inscription-website" name="website" tabindex="-1" autocomplete="off" /></div>
+        {/* Désactivé dans le HTML : sans le script, un envoi natif afficherait
+            la réponse JSON brute du serveur. */}
+        <button type="submit" disabled class="btn-primary inscription__bouton">S’inscrire <Icon name="lucide:arrow-right" size={18} aria-hidden="true" /></button>
+      </form>
+      <p id="inscription-statut" role="status" aria-live="polite" aria-atomic="true" class="inscription__statut" hidden></p>
+      <noscript><p class="inscription__statut">Activez JavaScript pour vous inscrire.</p></noscript>
+    </div>
+  </div>
+</section>
+
+<style>
+  .inscription__cadre {
+    max-width: 40rem;
+    padding: var(--spacing-panneau);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-low);
+  }
+
+  .inscription__titre {
+    margin: 0;
+    font-size: var(--text-title);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .inscription__texte {
+    margin: var(--spacing-colle) 0 0;
+    color: var(--color-ink-mid);
+    line-height: 1.5;
+  }
+
+  .inscription__form {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: var(--spacing-lie);
+  }
+
+  .inscription__champ {
+    min-width: 0;
+    min-height: 48px;
+    padding: 0 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    border-radius: var(--radius-full);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font: inherit;
+  }
+
+  .inscription__champ::placeholder {
+    color: var(--color-ink-faint);
+  }
+
+  .inscription__champ:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .inscription__bouton {
+    min-height: 48px;
+  }
+
+  .inscription__bouton:disabled {
+    cursor: wait;
+  }
+
+  .inscription__statut {
+    margin: var(--spacing-colle) 0 0;
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-sm);
+    line-height: 1.5;
+  }
+
+  .inscription__statut[data-state='error'] {
+    color: var(--color-error);
+  }
+
+  @media (min-width: 40rem) {
+    .inscription__form {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+</style>
+
+<script>
+  // Même échange que le formulaire de l'accueil (`home-content`) : la réponse
+  // tient en deux champs, vérifiés ici à la main ; la validation qui compte
+  // reste côté serveur.
+  type Resultat = { status: 'pending' | 'subscribed' | 'error'; message: string };
+  const STATUTS: readonly string[] = ['pending', 'subscribed', 'error'];
+  const lireResultat = (brut: unknown): Resultat | null => {
+    if (typeof brut !== 'object' || brut === null) return null;
+    const { status, message } = brut as Record<string, unknown>;
+    if (typeof status !== 'string' || !STATUTS.includes(status)) return null;
+    if (typeof message !== 'string' || message.length === 0) return null;
+    return { status: status as Resultat['status'], message };
+  };
+
+  const form = document.querySelector<HTMLFormElement>('form[data-inscription]');
+  const email = form?.querySelector<HTMLInputElement>('input[type="email"]');
+  const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const status = document.querySelector<HTMLParagraphElement>('#inscription-statut');
+  if (form && email && button && status) {
+    button.disabled = false;
+    const originalButton = button.innerHTML;
+    let submitting = false;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (submitting || !form.reportValidity()) return;
+      submitting = true;
+      button.disabled = true;
+      button.textContent = 'Inscription en cours…';
+      form.setAttribute('aria-busy', 'true');
+      status.hidden = false;
+      status.dataset.state = 'loading';
+      status.textContent = 'Votre demande est en cours d’envoi.';
+      email.removeAttribute('aria-invalid');
+
+      const submit = async () => {
+        const controleur = new AbortController();
+        const minuterie = window.setTimeout(() => controleur.abort(), 25_000);
+        try {
+          const data = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: data.get('email'), website: data.get('website') }),
+            signal: controleur.signal,
+          });
+          const result = lireResultat(await response.json().catch(() => null));
+          if (!result) throw new Error(`Réponse d’inscription illisible (HTTP ${response.status})`);
+          status.dataset.state = result.status;
+          status.textContent = result.message;
+          if (response.status === 422) email.setAttribute('aria-invalid', 'true');
+          if (response.ok && result.status !== 'error') form.reset();
+        } finally {
+          window.clearTimeout(minuterie);
+          submitting = false;
+          button.disabled = false;
+          button.innerHTML = originalButton;
+          form.removeAttribute('aria-busy');
+        }
+      };
+      submit().catch((erreur: unknown) => {
+        console.error('[blog] inscription en échec', erreur);
+        const nom = erreur instanceof Error ? erreur.name : '';
+        status.dataset.state = 'error';
+        status.textContent =
+          nom === 'AbortError' || nom === 'TimeoutError'
+            ? 'Le serveur met trop de temps à répondre. Réessayez dans une minute.'
+            : erreur instanceof TypeError && !navigator.onLine
+              ? 'Vous semblez hors ligne. Vérifiez votre connexion puis réessayez.'
+              : 'L’inscription n’a pas abouti de mon côté. Réessayez dans quelques instants.';
+      });
+    });
+  }
+</script>
