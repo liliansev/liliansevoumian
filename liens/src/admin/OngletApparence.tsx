@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { FormeBouton, Reglages, Reseau, StyleBouton } from '../lib/types.ts';
-import { RESEAUX } from '../lib/types.ts';
+import { ANIMATIONS, RESEAUX } from '../lib/types.ts';
 import { FAMILLES, THEMES, themeParId, variablesTheme } from '../lib/themes.ts';
 import type { Famille } from '../lib/themes.ts';
 import { Icone, NOMS_RESEAUX } from '../components/Icone.tsx';
-import { Carte, Champ, Interrupteur, Segments, classeSaisie, preparerImage } from './ui.tsx';
+import { Carte, Champ, Interrupteur, NOMS_ANIMATIONS, Segments, classeSaisie, preparerImage, vibrer } from './ui.tsx';
 
 const STYLES: { id: StyleBouton; nom: string }[] = [
   { id: 'plein', nom: 'Plein' }, { id: 'contour', nom: 'Contour' }, { id: 'doux', nom: 'Doux' }, { id: 'relief', nom: 'Relief' }, { id: 'verre', nom: 'Verre' },
@@ -68,7 +68,7 @@ export function OngletApparence({ reglages, onChange, envoyerImage }: { reglages
                 <span className="relative flex aspect-[4/5] w-full flex-col items-center gap-[6%] overflow-hidden rounded-xl pt-[12%] shadow-inner ring-1 ring-white/10" style={{ background: t.fond }}>
                   <span className="h-[18%] w-[26%] rounded-full" style={{ background: t.doux, opacity: 0.6 }} />
                   <span className="h-[5%] w-[44%] rounded-full" style={{ background: t.texte }} />
-                  <span className="mt-[4%] h-[11%] w-[76%] rounded-full" style={{ background: t.surface }} />
+                  <span className="mt-[4%] h-[11%] w-[76%] rounded-full" style={{ background: t.vedette }} />
                   <span className="h-[11%] w-[76%] rounded-full" style={{ background: t.surface }} />
                   <span className="h-[11%] w-[76%] rounded-full" style={{ background: t.surface, opacity: 0.85 }} />
                 </span>
@@ -77,6 +77,28 @@ export function OngletApparence({ reglages, onChange, envoyerImage }: { reglages
             </li>
           ))}
         </ul>
+      </Carte>
+
+      <Carte titre="Liens mis en avant" action={<span className="text-[13px] text-white/50">{NOMS_ANIMATIONS[reglages.animation].nom}</span>}>
+        <p className="-mt-1 mb-3 text-[13px] leading-snug text-white/55">Le mouvement qui attire l’œil sur tes liens en avant. Un lien peut aussi choisir le sien.</p>
+        <div className="lp lp-mini rounded-2xl p-2.5" style={variablesTheme(theme) as CSSProperties} data-bouton={reglages.bouton.style} data-forme={reglages.bouton.forme} data-police={theme.police}>
+          <ul role="radiogroup" aria-label="Animation des liens mis en avant" className="grid grid-cols-2 gap-2">
+            {ANIMATIONS.map(a => {
+              const choisi = reglages.animation === a;
+              return (
+                <li key={a}>
+                  <button type="button" role="radio" aria-checked={choisi} onClick={() => { vibrer(5); maj({ animation: a }); }}
+                    className={`flex w-full flex-col gap-2 rounded-[18px] p-2 pb-2.5 text-left transition duration-200 ${choisi ? 'bg-white/[0.12] ring-2 ring-peche' : 'hover:bg-white/[0.06]'}`}>
+                    <span className={`lp-carte ${a !== 'aucune' ? `lp-anim-${a}` : ''}`} style={{ minHeight: 52, justifyContent: 'center', alignItems: 'center', fontWeight: 600, fontSize: 15 }}>
+                      {NOMS_ANIMATIONS[a].nom}
+                    </span>
+                    <span className="px-1 text-[12px] leading-snug" style={{ color: 'var(--doux)' }}>{NOMS_ANIMATIONS[a].aide}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </Carte>
 
       <Carte titre="Boutons">

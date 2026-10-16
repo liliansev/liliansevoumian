@@ -1,4 +1,4 @@
-import { ANIMATIONS, FORMES_BOUTON, RESEAUX, STYLES_BOUTON, TYPES_BLOC } from './types.ts';
+import { ANIMATIONS, ANIMATIONS_BLOC, FORMES_BOUTON, RESEAUX, STYLES_BOUTON, TYPES_BLOC } from './types.ts';
 import type { Bloc, Reglages } from './types.ts';
 import { THEMES, THEME_DEFAUT } from './themes.ts';
 
@@ -35,6 +35,9 @@ export function image(v: unknown): string {
 
 const date = (v: unknown) => { const s = texte(v, 40); return s && !Number.isNaN(Date.parse(s)) ? new Date(s).toISOString() : ''; };
 
+/** Les noms d'avant le 16 octobre 2026, gardés pour les blocs déjà enregistrés. */
+const ANCIENNES: Record<string, string> = { brille: 'reflet', pulse: 'respiration', secoue: 'secousse' };
+
 export function validerBloc(v: unknown, id: string): Bloc {
   const o = (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;
   const type = parmi(o.type, TYPES_BLOC, 'lien');
@@ -49,7 +52,7 @@ export function validerBloc(v: unknown, id: string): Bloc {
     public: bool(o.public, true),
     indexable: bool(o.indexable, true),
     vedette: bool(o.vedette, false),
-    animation: parmi(o.animation, ANIMATIONS, 'aucune'),
+    animation: parmi(ANCIENNES[o.animation as string] ?? o.animation, ANIMATIONS_BLOC, 'auto'),
     debut: date(o.debut),
     fin: date(o.fin),
   };
@@ -72,5 +75,6 @@ export function validerReglages(v: unknown, base: Reglages): Reglages {
     bouton: { style: parmi(bouton.style, STYLES_BOUTON, 'plein'), forme: parmi(bouton.forme, FORMES_BOUTON, 'pilule') },
     seo: { titre: texte(seo.titre, 80), description: texte(seo.description, 200), indexable: bool(seo.indexable, true) },
     partage: bool(o.partage, base.partage),
+    animation: parmi(o.animation, ANIMATIONS, base.animation),
   };
 }

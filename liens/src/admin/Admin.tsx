@@ -8,6 +8,8 @@ import { EditeurBloc } from './EditeurBloc.tsx';
 import { OngletApparence } from './OngletApparence.tsx';
 import { OngletStats } from './OngletStats.tsx';
 import { OngletReglages, URL_PUBLIQUE } from './OngletReglages.tsx';
+import { Icone } from '../components/Icone.tsx';
+import { vibrer } from './ui.tsx';
 
 /*
  * Le back office. Tout s'enregistre tout seul : un bloc quand on valide sa
@@ -132,8 +134,8 @@ export function Admin({ api, initial, demo = false }: { api: Api; initial: EtatA
                 className={`min-h-9 rounded-full px-4 text-[14px] font-medium transition ${onglet === o.id ? 'bg-white text-nuit' : 'text-white/65 hover:text-white'}`}>{o.nom}</button>
             ))}
           </nav>
-          <button type="button" onClick={() => setApercu(true)} className="min-h-10 rounded-full bg-white/[0.08] px-4 text-[14px] font-medium lg:hidden">Aperçu</button>
-          <a href={demo ? '#page' : URL_PUBLIQUE.replace('https://liliansevoumian.fr', '')} target={demo ? undefined : '_blank'} rel="noopener" className="hidden min-h-10 items-center rounded-full bg-peche px-4 text-[14px] font-semibold text-nuit sm:inline-flex">Voir ma page ↗</a>
+          <button type="button" onClick={() => setApercu(true)} className="flex min-h-10 items-center gap-1.5 rounded-full bg-white/[0.08] px-4 text-[14px] font-medium transition active:scale-95 lg:hidden">Aperçu</button>
+          <a href={demo ? '#page' : URL_PUBLIQUE.replace('https://liliansevoumian.fr', '')} target={demo ? undefined : '_blank'} rel="noopener" className="hidden min-h-10 items-center gap-1.5 rounded-full bg-peche px-4 text-[14px] font-semibold text-nuit transition hover:brightness-105 sm:inline-flex">Voir ma page <Icone nom="ui-fleche" taille={16} /></a>
         </div>
       </header>
 
@@ -143,11 +145,13 @@ export function Admin({ api, initial, demo = false }: { api: Api; initial: EtatA
 
       <div className="mx-auto max-w-6xl px-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
         <main className="mx-auto w-full max-w-xl pt-5 pb-32 lg:pb-12">
-          <h1 className="mb-4 text-[26px] font-semibold tracking-tight lg:hidden">{ONGLETS.find(o => o.id === onglet)!.nom}</h1>
+          <div key={onglet} className="adm-onglet">
+          <h1 className="mb-4 text-[28px] font-semibold tracking-[-0.025em] lg:hidden">{ONGLETS.find(o => o.id === onglet)!.nom}</h1>
           {onglet === 'liens' && <OngletLiens blocs={blocs} clics={clics} onOrdonner={ordonner} onModifier={b => { setBlocs(l => l.map(x => (x.id === b.id ? b : x))); ecrire(() => api.enregistrerBloc(b)); }} onOuvrir={b => setEdition({ bloc: b, nouveau: false })} onAjouter={b => setEdition({ bloc: b, nouveau: true })} />}
           {onglet === 'apparence' && <OngletApparence reglages={reglages} onChange={changerReglages} envoyerImage={d => api.envoyerImage(d)} />}
           {onglet === 'stats' && <OngletStats charger={chargerStats} />}
           {onglet === 'reglages' && <OngletReglages reglages={reglages} onChange={changerReglages} onDeconnexion={deconnexion} />}
+          </div>
         </main>
 
         <aside className="sticky top-16 hidden h-[calc(100dvh-4rem)] items-center justify-center lg:flex" aria-label="Aperçu de ta page">
@@ -155,13 +159,13 @@ export function Admin({ api, initial, demo = false }: { api: Api; initial: EtatA
         </aside>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-[#0e1524]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden" aria-label="Sections">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/[0.07] bg-[#0e1524]/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden" aria-label="Sections">
         <ul className="mx-auto grid max-w-md grid-cols-4">
           {ONGLETS.map(o => (
             <li key={o.id}>
-              <button type="button" onClick={() => { setOnglet(o.id); scrollTo({ top: 0 }); }} aria-current={onglet === o.id ? 'page' : undefined}
-                className={`flex h-16 w-full flex-col items-center justify-center gap-1 text-[11.5px] font-medium transition ${onglet === o.id ? 'text-peche' : 'text-white/50'}`}>
-                <Picto>{o.icone}</Picto>{o.nom}
+              <button type="button" onClick={() => { if (o.id !== onglet) { vibrer(5); setOnglet(o.id); scrollTo({ top: 0 }); } }} aria-current={onglet === o.id ? 'page' : undefined}
+                className={`flex h-16 w-full flex-col items-center justify-center gap-1 text-[11.5px] font-medium transition-colors duration-200 active:scale-95 ${onglet === o.id ? 'text-peche' : 'text-white/50'}`}>
+                <span className={`adm-nav-pastille grid h-8 place-items-center rounded-full ${onglet === o.id ? 'w-14 bg-peche/15' : 'w-10 bg-transparent'}`}><Picto>{o.icone}</Picto></span>{o.nom}
               </button>
             </li>
           ))}
@@ -169,21 +173,21 @@ export function Admin({ api, initial, demo = false }: { api: Api; initial: EtatA
       </nav>
 
       {apercu && (
-        <div className="fixed inset-0 z-40 flex flex-col bg-black/80 backdrop-blur-sm lg:hidden" role="dialog" aria-modal="true" aria-label="Aperçu de ta page">
+        <div className="adm-fondu fixed inset-0 z-40 flex flex-col bg-black/80 backdrop-blur-sm lg:hidden" role="dialog" aria-modal="true" aria-label="Aperçu de ta page">
           <div className="adm-apercu relative min-h-0 flex-1 overflow-y-auto"><PageLiens page={page} apercu /></div>
           <button type="button" onClick={() => setApercu(false)} className="absolute bottom-[max(20px,env(safe-area-inset-bottom))] left-1/2 min-h-12 -translate-x-1/2 rounded-full bg-white px-6 text-[15px] font-semibold text-nuit shadow-2xl">Fermer l’aperçu</button>
         </div>
       )}
 
       {edition && (
-        <EditeurBloc bloc={edition.bloc} nouveau={edition.nouveau} clics={clics[edition.bloc.id] ?? 0} onFermer={() => setEdition(null)}
+        <EditeurBloc bloc={edition.bloc} reglages={reglages} nouveau={edition.nouveau} clics={clics[edition.bloc.id] ?? 0} onFermer={() => setEdition(null)}
           onEnregistrer={enregistrerBloc} onSupprimer={supprimer} onDupliquer={dupliquer} envoyerImage={d => api.envoyerImage(d)} />
       )}
 
       {toast && (
         <div role="status" className="adm-toast fixed inset-x-4 bottom-[calc(76px+env(safe-area-inset-bottom))] z-[60] mx-auto flex max-w-sm items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 text-[14.5px] font-medium text-nuit shadow-2xl lg:bottom-6">
-          <span>{toast.texte}</span>
-          {toast.annuler && <button type="button" onClick={toast.annuler} className="font-semibold text-[#b4532a]">Annuler</button>}
+          <span className="flex items-center gap-2">{!toast.annuler && sauvegarde !== 'erreur' && <span className="grid h-5 w-5 place-items-center rounded-full bg-emerald-500 text-white"><Icone nom="ui-ok" taille={13} /></span>}{toast.texte}</span>
+          {toast.annuler && <button type="button" onClick={toast.annuler} className="-my-1 min-h-9 rounded-full px-3 font-semibold text-[#a3461d] hover:bg-black/5">Annuler</button>}
         </div>
       )}
     </div>

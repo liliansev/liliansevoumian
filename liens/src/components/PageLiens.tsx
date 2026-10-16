@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties, FormEvent, ReactNode } from 'react';
 import type { Bloc, PagePublique } from '../lib/types.ts';
-import { idYoutube } from '../lib/types.ts';
+import { animationDe, idYoutube } from '../lib/types.ts';
+import type { Reglages } from '../lib/types.ts';
 import { themeParId, variablesTheme } from '../lib/themes.ts';
 import { ICONES } from '../lib/icones.ts';
 import { Icone, NOMS_RESEAUX } from './Icone.tsx';
@@ -71,7 +72,11 @@ export function PageLiens({ page, apercu = false }: { page: PagePublique; apercu
         </header>
 
         <main className="lp-blocs">
-          {blocs.map(bloc => <BlocPublic key={bloc.id} bloc={bloc} clic={() => clic(bloc)} cible={cible} apercu={apercu} />)}
+          {blocs.map((bloc, i) => (
+            <div key={bloc.id} className="lp-bloc" style={{ '--i': i } as CSSProperties}>
+              <BlocPublic bloc={bloc} reglages={reglages} clic={() => clic(bloc)} cible={cible} apercu={apercu} />
+            </div>
+          ))}
           {blocs.length === 0 && <p className="lp-texte">Rien ici pour l’instant.</p>}
         </main>
 
@@ -86,14 +91,16 @@ export function PageLiens({ page, apercu = false }: { page: PagePublique; apercu
 function Pictogramme({ bloc }: { bloc: Bloc }) {
   if (bloc.image) return <img className="lp-vignette" src={bloc.image} alt="" width={40} height={40} loading="lazy" />;
   if (bloc.icone && ICONES[bloc.icone]) return <span className="lp-picto"><Icone nom={bloc.icone} taille={22} /></span>;
+  // Un emoji enregistré avant les pictos dessinés reste lisible.
   if (bloc.icone) return <span className="lp-picto lp-emoji" aria-hidden="true">{bloc.icone}</span>;
   return null;
 }
 
-function BlocPublic({ bloc, clic, cible, apercu }: { bloc: Bloc; clic: () => void; cible: object; apercu: boolean }) {
+export function BlocPublic({ bloc, reglages, clic, cible, apercu }: { bloc: Bloc; reglages: Reglages; clic: () => void; cible: object; apercu: boolean }) {
   const rel = bloc.indexable ? 'noopener' : 'nofollow noopener';
   const nosnippet = bloc.indexable ? {} : { 'data-nosnippet': true };
-  const anim = bloc.animation !== 'aucune' ? `lp-anim-${bloc.animation}` : '';
+  const mouvement = animationDe(bloc, reglages);
+  const anim = mouvement !== 'aucune' ? `lp-anim-${mouvement}` : '';
   switch (bloc.type) {
     case 'titre':
       return <h2 className="lp-section">{bloc.titre}</h2>;
@@ -116,7 +123,7 @@ function BlocPublic({ bloc, clic, cible, apercu }: { bloc: Bloc; clic: () => voi
               <span className="lp-carte-titre">{bloc.titre || bloc.url}</span>
               {bloc.sousTitre && <span className="lp-sous">{bloc.sousTitre}</span>}
             </span>
-            <span className="lp-carte-fleche" aria-hidden="true">→</span>
+            <span className="lp-carte-fleche" aria-hidden="true"><Icone nom="ui-fleche" taille={20} /></span>
           </a>
         );
       }

@@ -18,7 +18,7 @@ function Demo() {
     return (
       <>
         <PageLiens page={{ reglages: p.reglages, blocs: p.blocs.filter(b => estEnLigne(b)) }} apercu />
-        <a href="#" className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-5 py-3 font-sans text-[14px] font-semibold text-[#0c121f] shadow-2xl">← Retour au back office</a>
+        <a href="#" className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-5 py-3 font-sans text-[14px] font-semibold text-[#0c121f] shadow-2xl">← Retour au back office</a>
       </>
     );
   }

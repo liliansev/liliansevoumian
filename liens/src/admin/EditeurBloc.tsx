@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Animation, Bloc } from '../lib/types.ts';
-import { idYoutube } from '../lib/types.ts';
+import type { CSSProperties } from 'react';
+import type { Bloc, Reglages } from '../lib/types.ts';
+import { ANIMATIONS_BLOC, idYoutube } from '../lib/types.ts';
 import { RESEAUX } from '../lib/types.ts';
 import { adresse } from '../lib/valider.ts';
-import { Icone, NOMS_RESEAUX } from '../components/Icone.tsx';
-import { BoutonPrincipal, Champ, Feuille, Interrupteur, Segments, classeSaisie, preparerImage } from './ui.tsx';
+import { themeParId, variablesTheme } from '../lib/themes.ts';
+import { ICONES } from '../lib/icones.ts';
+import { Icone, NOMS_RESEAUX, PICTOS } from '../components/Icone.tsx';
+import { BlocPublic } from '../components/PageLiens.tsx';
+import { BoutonPrincipal, Champ, Feuille, Interrupteur, NOMS_ANIMATIONS, classeSaisie, preparerImage, vibrer } from './ui.tsx';
 import { TYPES } from './OngletLiens.tsx';
-
-const EMOJIS = ['🔗', '💬', '📅', '🎥', '🎙️', '✍️', '📚', '🎓', '⚙️', '🤖', '💡', '🚀', '🔥', '⭐', '💌', '🛒', '🎁', '📈', '🧠', '👋'];
-const ANIMATIONS: { id: Animation; nom: string }[] = [{ id: 'aucune', nom: 'Aucune' }, { id: 'brille', nom: 'Reflet' }, { id: 'pulse', nom: 'Pulsation' }, { id: 'secoue', nom: 'Secousse' }];
 
 /** Une date ISO vers la valeur d'un `<input type="datetime-local">`, en heure locale. */
 const versLocal = (iso: string) => {
@@ -18,8 +19,9 @@ const versLocal = (iso: string) => {
 };
 const depuisLocal = (v: string) => (v ? new Date(v).toISOString() : '');
 
-export function EditeurBloc({ bloc, nouveau, onFermer, onEnregistrer, onSupprimer, onDupliquer, envoyerImage, clics }: {
+export function EditeurBloc({ bloc, reglages, nouveau, onFermer, onEnregistrer, onSupprimer, onDupliquer, envoyerImage, clics }: {
   bloc: Bloc | null;
+  reglages: Reglages;
   nouveau: boolean;
   onFermer: () => void;
   onEnregistrer: (bloc: Bloc) => void;
@@ -39,14 +41,17 @@ export function EditeurBloc({ bloc, nouveau, onFermer, onEnregistrer, onSupprime
   const type = TYPES.find(t => t.type === b.type)!;
   const avecUrl = b.type === 'lien' || b.type === 'video';
 
-  function valider() {
-    if (!b) return;
+  /** Vérifie le bloc ; renvoie la version à enregistrer, ou rien si un champ manque. */
+  function valider(): Bloc | null {
+    if (!b) return null;
     const url = adresse(b.url);
-    if (b.type === 'lien' && !url) { setErreur('Indique l’adresse du lien.'); return; }
-    if (b.type === 'video' && !idYoutube(url)) { setErreur('Colle l’adresse d’une vidéo YouTube.'); return; }
-    if ((b.type === 'titre' || b.type === 'texte') && !b.titre.trim()) { setErreur('Écris le texte du bloc.'); return; }
-    onEnregistrer({ ...b, url });
+    if (b.type === 'lien' && !url) { setErreur('Indique l’adresse du lien.'); return null; }
+    if (b.type === 'video' && !idYoutube(url)) { setErreur('Colle l’adresse d’une vidéo YouTube.'); return null; }
+    if ((b.type === 'titre' || b.type === 'texte') && !b.titre.trim()) { setErreur('Écris le texte du bloc.'); return null; }
+    return { ...b, url };
   }
+  const theme = themeParId(reglages.theme);
+  const nomAuto = 'Par défaut';
 
   async function choisirImage(f: File | undefined) {
     if (!f) return;
@@ -58,22 +63,32 @@ export function EditeurBloc({ bloc, nouveau, onFermer, onEnregistrer, onSupprime
 
   return (
     <Feuille ouverte onFermer={onFermer} titre={nouveau ? `Nouveau : ${type.nom.toLowerCase()}` : type.nom}
-      pied={
+      pied={fermer => (
         <div className="flex items-center gap-2">
           {!nouveau && (
             <>
-              <button type="button" onClick={() => onSupprimer(b)} className="grid h-12 w-12 place-items-center rounded-full text-red-300 hover:bg-red-500/10" aria-label="Supprimer">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14" /></svg>
+              <button type="button" onClick={() => fermer(() => onSupprimer(b))} className="grid h-12 w-12 place-items-center rounded-full bg-red-500/[0.08] text-red-300 transition hover:bg-red-500/15 active:scale-90" aria-label="Supprimer">
+                <Icone nom="ui-corbeille" taille={20} />
               </button>
-              <button type="button" onClick={() => onDupliquer(b)} className="grid h-12 w-12 place-items-center rounded-full text-white/60 hover:bg-white/10" aria-label="Dupliquer">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="3" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></svg>
+              <button type="button" onClick={() => onDupliquer(b)} className="grid h-12 w-12 place-items-center rounded-full bg-white/[0.06] text-white/70 transition hover:bg-white/10 active:scale-90" aria-label="Dupliquer">
+                <Icone nom="ui-copier" taille={20} />
               </button>
             </>
           )}
-          <BoutonPrincipal className="flex-1" onClick={valider} disabled={envoi}>{nouveau ? 'Ajouter à ma page' : 'Enregistrer'}</BoutonPrincipal>
+          <BoutonPrincipal className="flex-1" disabled={envoi} onClick={() => { const v = valider(); if (v) { vibrer(12); fermer(() => onEnregistrer(v)); } }}>
+            {nouveau ? 'Ajouter à ma page' : 'Enregistrer'}
+          </BoutonPrincipal>
         </div>
-      }>
+      )}>
       <div className="flex flex-col gap-4 pt-1">
+        {b.type === 'lien' && (
+          <div className="lp lp-mini -mx-1 rounded-[20px] p-4 ring-1 ring-white/[0.06]" style={variablesTheme(theme) as CSSProperties}
+            data-bouton={reglages.bouton.style} data-forme={reglages.bouton.forme} data-police={theme.police} aria-label="Aperçu du bouton">
+            <div className="pointer-events-none" inert>
+              <BlocPublic bloc={{ ...b, url: b.url || '#', titre: b.titre || 'Texte du bouton', public: true }} reglages={reglages} clic={() => {}} cible={{}} apercu />
+            </div>
+          </div>
+        )}
         {erreur && <p role="alert" className="rounded-xl bg-red-500/15 px-3.5 py-2.5 text-[14px] text-red-200">{erreur}</p>}
 
         {avecUrl && (
@@ -105,19 +120,24 @@ export function EditeurBloc({ bloc, nouveau, onFermer, onEnregistrer, onSupprime
         {b.type === 'lien' && (
           <>
             <div>
-              <span className="mb-1.5 block text-[13px] font-medium text-white/70">Icône</span>
-              <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
-                <button type="button" onClick={() => maj({ icone: '' })} className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-[12px] ${!b.icone ? 'bg-white text-nuit' : 'bg-white/[0.07] text-white/60'}`}>Sans</button>
-                {RESEAUX.map(r => (
-                  <button key={r} type="button" onClick={() => maj({ icone: r })} aria-label={NOMS_RESEAUX[r]} className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${b.icone === r ? 'bg-white text-nuit' : 'bg-white/[0.07] text-white'}`}><Icone nom={r} taille={20} /></button>
-                ))}
-                {EMOJIS.map(e => (
-                  <button key={e} type="button" onClick={() => maj({ icone: e })} className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl ${b.icone === e ? 'bg-white' : 'bg-white/[0.07]'}`}>{e}</button>
-                ))}
+              <span className="mb-1.5 flex items-baseline justify-between text-[13px] font-medium text-white/70">
+                Icône{b.icone && <span className="font-normal text-white/45">{NOMS_RESEAUX[b.icone] ?? PICTOS.find(p => p.nom === b.icone)?.libelle ?? ''}</span>}
+              </span>
+              <div role="radiogroup" aria-label="Icône" className="grid max-h-[176px] grid-cols-[repeat(auto-fill,minmax(44px,1fr))] gap-1.5 overflow-y-auto rounded-2xl bg-white/[0.035] p-2 [scrollbar-width:thin]">
+                {[{ nom: '', libelle: 'Sans icône' }, ...RESEAUX.map(r => ({ nom: r as string, libelle: NOMS_RESEAUX[r] })), ...PICTOS].map(p => {
+                  const choisi = b.icone === p.nom;
+                  return (
+                    <button key={p.nom || 'sans'} type="button" role="radio" aria-checked={choisi} aria-label={p.libelle} title={p.libelle} onClick={() => { vibrer(4); maj({ icone: p.nom }); }}
+                      className={`grid aspect-square place-items-center rounded-xl transition duration-150 active:scale-90 ${choisi ? 'bg-peche text-nuit' : 'text-white/80 hover:bg-white/[0.08]'}`}>
+                      <Icone nom={p.nom || 'ui-aucun'} taille={20} />
+                    </button>
+                  );
+                })}
+                {b.icone && !ICONES[b.icone] && <span className="grid aspect-square place-items-center rounded-xl bg-peche text-xl" aria-label="Emoji actuel">{b.icone}</span>}
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {b.image ? <img src={b.image} alt="" className="h-14 w-14 rounded-xl object-cover" /> : <span className="grid h-14 w-14 place-items-center rounded-xl border border-dashed border-white/20 text-white/30">🖼️</span>}
+              {b.image ? <img src={b.image} alt="" className="h-14 w-14 rounded-xl object-cover" /> : <span className="grid h-14 w-14 place-items-center rounded-xl border border-dashed border-white/20 text-white/35"><Icone nom="ui-image" taille={22} /></span>}
               <div className="flex flex-1 flex-wrap gap-2">
                 <button type="button" onClick={() => fichier.current?.click()} disabled={envoi} className="min-h-10 rounded-full bg-white/[0.08] px-4 text-[14px] font-medium text-white hover:bg-white/[0.13]">{envoi ? 'Envoi…' : b.image ? 'Changer l’image' : 'Ajouter une image'}</button>
                 {b.image && <button type="button" onClick={() => maj({ image: '' })} className="min-h-10 rounded-full px-3 text-[14px] text-white/55 hover:text-white">Retirer</button>}
@@ -140,12 +160,23 @@ export function EditeurBloc({ bloc, nouveau, onFermer, onEnregistrer, onSupprime
         {b.type === 'lien' && (
           <div>
             <span className="mb-1.5 block text-[13px] font-medium text-white/70">Animation pour attirer l’œil</span>
-            <Segments label="Animation" valeur={b.animation} options={ANIMATIONS} onChange={v => maj({ animation: v })} />
+            <div role="radiogroup" aria-label="Animation" className="-mx-5 flex gap-1.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none]">
+              {ANIMATIONS_BLOC.map(a => (
+                <button key={a} type="button" role="radio" aria-checked={b.animation === a} onClick={() => { vibrer(4); maj({ animation: a }); }}
+                  className={`min-h-10 shrink-0 rounded-full px-4 text-[14px] font-medium transition duration-150 active:scale-95 ${b.animation === a ? 'bg-white text-nuit' : 'bg-white/[0.07] text-white/70 hover:text-white'}`}>
+                  {a === 'auto' ? nomAuto : NOMS_ANIMATIONS[a].nom}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1.5 text-[12.5px] leading-snug text-white/45">
+              {b.animation === 'auto' ? (b.vedette ? `Comme tous les liens mis en avant : ${NOMS_ANIMATIONS[reglages.animation].nom.toLowerCase()} (à changer dans Apparence).` : 'Immobile, sauf si tu mets ce lien en avant.') : NOMS_ANIMATIONS[b.animation].aide}
+            </p>
           </div>
         )}
 
-        <button type="button" onClick={() => setPlus(!plus)} className="flex min-h-11 items-center justify-between rounded-xl px-1 text-[14px] font-medium text-white/70">
-          <span>⏱ Programmer l’affichage</span><span className={`transition-transform ${plus ? 'rotate-180' : ''}`}>⌄</span>
+        <button type="button" onClick={() => setPlus(!plus)} aria-expanded={plus} className="flex min-h-11 items-center justify-between rounded-xl px-1 text-[14px] font-medium text-white/70">
+          <span className="flex items-center gap-2"><Icone nom="ui-horloge" taille={17} />Programmer l’affichage</span>
+          <Icone nom="ui-chevron" taille={18} className={`transition-transform duration-300 ${plus ? 'rotate-180' : ''}`} />
         </button>
         {plus && (
           <div className="grid gap-3 sm:grid-cols-2">

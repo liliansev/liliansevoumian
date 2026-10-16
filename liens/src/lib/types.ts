@@ -7,8 +7,12 @@
 export const TYPES_BLOC = ['lien', 'titre', 'texte', 'video', 'derniere-video', 'newsletter'] as const;
 export type TypeBloc = (typeof TYPES_BLOC)[number];
 
-export const ANIMATIONS = ['aucune', 'brille', 'pulse', 'secoue'] as const;
+/** Les mouvements qui attirent l'œil sur un bouton. */
+export const ANIMATIONS = ['aucune', 'reflet', 'orbite', 'lueur', 'onde', 'respiration', 'rebond', 'secousse'] as const;
 export type Animation = (typeof ANIMATIONS)[number];
+/** Ce qu'un bloc peut choisir : un mouvement, ou `auto` (celui des réglages s'il est mis en avant, aucun sinon). */
+export const ANIMATIONS_BLOC = ['auto', ...ANIMATIONS] as const;
+export type AnimationBloc = (typeof ANIMATIONS_BLOC)[number];
 
 export interface Bloc {
   id: string;
@@ -17,7 +21,7 @@ export interface Bloc {
   titre: string;
   url: string;
   sousTitre: string;
-  /** Un emoji, ou le nom d'un réseau (`youtube`, `linkedin`...) pour son logo. */
+  /** Le nom d'un picto ou d'un réseau (`fusee`, `youtube`...), voir `icones.ts`. */
   icone: string;
   /** Vignette : une URL `/liens/media/...` ou https. */
   image: string;
@@ -27,7 +31,7 @@ export interface Bloc {
   indexable: boolean;
   /** Mis en avant : grande carte en tête de sa section. */
   vedette: boolean;
-  animation: Animation;
+  animation: AnimationBloc;
   /** Programmation (ISO), vide = pas de borne. */
   debut: string;
   fin: string;
@@ -51,6 +55,8 @@ export interface Reglages {
   seo: { titre: string; description: string; indexable: boolean };
   /** Le bouton « Partager » en haut de la page publique. */
   partage: boolean;
+  /** Le mouvement des liens mis en avant (un bloc peut choisir le sien). */
+  animation: Animation;
 }
 
 /** Ce que la page publique reçoit : jamais un bloc privé ni hors programmation. */
@@ -100,8 +106,14 @@ export function nouveauBloc(type: TypeBloc, id: string): Bloc {
   };
   return {
     id, type, titre: titres[type], url: '', sousTitre: type === 'newsletter' ? 'Un e-mail de temps en temps, rien de plus.' : '', icone: '', image: '',
-    public: true, indexable: true, vedette: false, animation: 'aucune', debut: '', fin: '',
+    public: true, indexable: true, vedette: false, animation: 'auto', debut: '', fin: '',
   };
+}
+
+/** Le mouvement que joue un bloc, une fois appliqués les réglages de la page. */
+export function animationDe(bloc: Bloc, reglages: Reglages): Animation {
+  if (bloc.animation !== 'auto') return bloc.animation;
+  return bloc.vedette ? reglages.animation : 'aucune';
 }
 
 /** Un bloc est-il affiché maintenant ? Public, et dans sa programmation. */

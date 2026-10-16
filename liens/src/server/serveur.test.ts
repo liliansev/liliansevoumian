@@ -34,7 +34,9 @@ test('les adresses dangereuses sont refusées, les raccourcis complétés', () =
   assert.equal(adresse('/blog'), '/blog');
   assert.equal(adresse('//evil.com'), 'https://evil.com/');
   const b = validerBloc({ type: 'rien', titre: 'x'.repeat(500), public: 'oui', image: 'data:image/png;base64,AAA', animation: 'feu' }, 'id');
-  assert.equal(b.type, 'lien'); assert.equal(b.titre.length, 160); assert.equal(b.public, true); assert.equal(b.image, ''); assert.equal(b.animation, 'aucune');
+  assert.equal(b.type, 'lien'); assert.equal(b.titre.length, 160); assert.equal(b.public, true); assert.equal(b.image, ''); assert.equal(b.animation, 'auto');
+  // Les noms d'avant gardent leur mouvement.
+  assert.equal(validerBloc({ animation: 'brille' }, 'id').animation, 'reflet');
   const r = validerReglages({ theme: 'inconnu', bouton: { style: 'rien' }, reseaux: [{ reseau: 'youtube', url: '' }, { reseau: 'x', url: 'x.com/moi' }] }, REGLAGES_DEFAUT);
   assert.equal(r.theme, 'nuit-peche'); assert.equal(r.bouton.style, 'plein'); assert.deepEqual(r.reseaux, [{ reseau: 'x', url: 'https://x.com/moi' }]);
 });

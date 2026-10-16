@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Stats } from '../lib/types.ts';
 import { Carte, Segments } from './ui.tsx';
+import { Icone } from '../components/Icone.tsx';
 
 const PERIODES = [{ id: '7', nom: '7 j' }, { id: '30', nom: '30 j' }, { id: '90', nom: '90 j' }, { id: '365', nom: '1 an' }];
 const nombre = (n: number) => n.toLocaleString('fr-FR');
@@ -9,7 +10,11 @@ function Tendance({ actuel, avant }: { actuel: number; avant: number }) {
   if (!avant) return actuel ? <span className="text-[12px] text-white/40">nouveau</span> : null;
   const ecart = Math.round(((actuel - avant) / avant) * 100);
   if (ecart === 0) return <span className="text-[12px] text-white/40">stable</span>;
-  return <span className={`text-[12px] font-semibold ${ecart > 0 ? 'text-emerald-300' : 'text-red-300'}`}>{ecart > 0 ? '▲' : '▼'} {Math.abs(ecart)} %</span>;
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-[12px] font-semibold tabular-nums ${ecart > 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+      <Icone nom={ecart > 0 ? 'ui-fleche' : 'ui-baisse'} taille={13} />{Math.abs(ecart)} %
+    </span>
+  );
 }
 
 function Kpi({ nom, valeur, avant, suffixe = '' }: { nom: string; valeur: number; avant?: number; suffixe?: string }) {
@@ -64,7 +69,7 @@ function Barres({ lignes, total, unite }: { lignes: { nom: string; valeur: numbe
     <ul className="flex flex-col gap-2">
       {lignes.map(l => (
         <li key={l.nom} className="relative overflow-hidden rounded-xl bg-white/[0.035] px-3 py-2.5">
-          <span className="absolute inset-y-0 left-0 bg-peche/15" style={{ width: `${(l.valeur / max) * 100}%` }} />
+          <span className="adm-barre absolute inset-y-0 left-0 origin-left bg-peche/15" style={{ width: `${(l.valeur / max) * 100}%` }} />
           <span className="relative flex items-center justify-between gap-3 text-[14px]">
             <span className="truncate text-white">{l.nom}</span>
             <span className="shrink-0 tabular-nums text-white/70">{nombre(l.valeur)} {unite}{total ? <span className="ml-1.5 text-white/40">{Math.round((l.valeur / total) * 100)} %</span> : null}</span>

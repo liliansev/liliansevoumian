@@ -8,7 +8,7 @@ import avatar from '../public/avatar.webp?inline';
  * plausibles. Rien de tout ça n'est dans l'application réelle.
  */
 
-const CLE = 'liens-demo-v1';
+const CLE = 'liens-demo-v2';
 let n = 0;
 const id = () => `d${Date.now().toString(36)}${n++}`;
 

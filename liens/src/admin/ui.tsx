@@ -1,4 +1,6 @@
-import { useEffect, useId, useRef } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { Icone } from '../components/Icone.tsx';
+import type { Animation } from '../lib/types.ts';
 import type { ReactNode } from 'react';
 
 /* Les petites pièces du back office, pensées pour le pouce : 44 px au moins. */
@@ -11,9 +13,9 @@ export function Interrupteur({ actif, onChange, label, aide, disabled }: { actif
         <span className="block text-[15px] font-medium text-white">{label}</span>
         {aide && <span className="mt-0.5 block text-[13px] leading-snug text-white/55">{aide}</span>}
       </label>
-      <button id={id} type="button" role="switch" aria-checked={actif} disabled={disabled} onClick={() => onChange(!actif)}
-        className={`relative h-8 w-[52px] shrink-0 rounded-full transition-colors disabled:opacity-40 ${actif ? 'bg-peche' : 'bg-white/15'}`}>
-        <span className={`absolute top-1 left-1 h-6 w-6 rounded-full shadow transition-transform ${actif ? 'translate-x-5 bg-nuit' : 'bg-white'}`} />
+      <button id={id} type="button" role="switch" aria-checked={actif} disabled={disabled} onClick={() => { vibrer(); onChange(!actif); }}
+        className={`adm-interrupteur relative h-8 w-[52px] shrink-0 rounded-full disabled:opacity-40 ${actif ? 'bg-peche' : 'bg-white/15'}`}>
+        <span className={`absolute top-1 left-1 h-6 w-6 rounded-full shadow-[0_2px_6px_rgba(0,0,0,0.3)] ${actif ? 'translate-x-5 bg-nuit' : 'bg-white'}`} />
       </button>
     </div>
   );
@@ -45,30 +47,91 @@ export function Carte({ titre, action, children, className = '' }: { titre?: str
   );
 }
 
-/** Une feuille qui monte du bas sur téléphone, une fenêtre centrée sur ordinateur. */
-export function Feuille({ ouverte, onFermer, titre, children, pied }: { ouverte: boolean; onFermer: () => void; titre: string; children: ReactNode; pied?: ReactNode }) {
+/** Le nom et la description de chaque mouvement, pour les sélecteurs. */
+export const NOMS_ANIMATIONS: Record<Animation, { nom: string; aide: string }> = {
+  aucune: { nom: 'Aucune', aide: 'Le bouton reste immobile.' },
+  reflet: { nom: 'Reflet', aide: 'Une lumière traverse le bouton.' },
+  orbite: { nom: 'Orbite', aide: 'Un trait de lumière en fait le tour.' },
+  lueur: { nom: 'Lueur', aide: 'Il s’éclaire et respire sa lumière.' },
+  onde: { nom: 'Onde', aide: 'Un cercle part de lui, comme une alerte.' },
+  respiration: { nom: 'Respiration', aide: 'Il gonfle à peine, lentement.' },
+  rebond: { nom: 'Rebond', aide: 'Deux petits sauts, puis le repos.' },
+  secousse: { nom: 'Secousse', aide: 'Il fait non de la tête, puis attend.' },
+};
+
+type Fermer = (apres?: () => void) => void;
+type Contenu = ReactNode | ((fermer: Fermer) => ReactNode);
+
+/** Un petit retour tactile sur Android (iOS l'ignore). */
+export function vibrer(ms = 8) {
+  try { navigator.vibrate?.(ms); } catch { /* sans vibreur */ }
+}
+
+/**
+ * Une feuille qui monte du bas sur téléphone, une fenêtre centrée sur
+ * ordinateur. On la ferme en la tirant vers le bas, en touchant le fond, avec
+ * Échap ou la croix ; elle redescend avant de disparaître. `children` et `pied`
+ * peuvent être des fonctions qui reçoivent `fermer(apres)`, pour qu'une action
+ * (enregistrer) laisse la feuille sortir avant d'agir.
+ */
+export function Feuille({ ouverte, onFermer, titre, children, pied }: { ouverte: boolean; onFermer: () => void; titre: string; children: Contenu; pied?: Contenu }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [sortie, setSortie] = useState(false);
+  const [tire, setTire] = useState(0);
+  const geste = useRef<{ y: number; t: number } | null>(null);
+  const fermer = useCallback<Fermer>(apres => {
+    setSortie(true);
+    const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(() => { setSortie(false); setTire(0); (apres ?? onFermer)(); }, reduit ? 0 : 190);
+  }, [onFermer]);
+
   useEffect(() => {
     if (!ouverte) return;
-    const touche = (e: KeyboardEvent) => { if (e.key === 'Escape') onFermer(); };
+    const touche = (e: KeyboardEvent) => { if (e.key === 'Escape') fermer(); };
     document.addEventListener('keydown', touche);
     const avant = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     ref.current?.focus();
     return () => { document.removeEventListener('keydown', touche); document.body.style.overflow = avant; };
-  }, [ouverte, onFermer]);
+  }, [ouverte, fermer]);
   if (!ouverte) return null;
+
+  const tirer = {
+    onPointerDown: (e: React.PointerEvent) => { if (e.pointerType !== 'mouse') geste.current = { y: e.clientY, t: performance.now() }; },
+    onPointerMove: (e: React.PointerEvent) => {
+      if (!geste.current) return;
+      const dy = e.clientY - geste.current.y;
+      // La capture n'arrive qu'une fois le geste engagé : un simple toucher sur la croix reste un clic.
+      if (dy > 4 && !e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.setPointerCapture(e.pointerId);
+      setTire(Math.max(0, dy));
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      if (!geste.current) return;
+      const dy = e.clientY - geste.current.y, vitesse = dy / (performance.now() - geste.current.t);
+      geste.current = null;
+      if (dy > 110 || (dy > 30 && vitesse > 0.6)) fermer(); else setTire(0);
+    },
+    onPointerCancel: () => { geste.current = null; setTire(0); },
+  };
+  const rendre = (c: Contenu) => (typeof c === 'function' ? c(fermer) : c);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-label={titre}>
-      <button type="button" aria-label="Fermer" className="adm-fondu absolute inset-0 bg-black/60 backdrop-blur-[2px]" onClick={onFermer} />
-      <div ref={ref} tabIndex={-1} className="adm-feuille relative flex max-h-[92dvh] w-full flex-col rounded-t-3xl border border-white/10 bg-[#121a2b] shadow-2xl outline-none sm:max-w-lg sm:rounded-3xl">
-        <div className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-white/20 sm:hidden" />
-        <header className="flex shrink-0 items-center justify-between gap-3 px-5 pt-3 pb-2 sm:pt-5">
-          <h2 className="text-[17px] font-semibold text-white">{titre}</h2>
-          <button type="button" onClick={onFermer} className="grid h-10 w-10 place-items-center rounded-full text-white/60 hover:bg-white/10 hover:text-white" aria-label="Fermer">✕</button>
-        </header>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4">{children}</div>
-        {pied && <footer className="shrink-0 border-t border-white/[0.07] px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]">{pied}</footer>}
+    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-label={titre} data-sortie={sortie || undefined}>
+      <button type="button" aria-label="Fermer" className="adm-fondu absolute inset-0 bg-black/60 backdrop-blur-[2px]" onClick={() => fermer()} />
+      <div ref={ref} tabIndex={-1}
+        style={tire ? { transform: `translateY(${tire}px)`, transition: 'none' } : undefined}
+        className="adm-feuille relative flex max-h-[92dvh] w-full flex-col rounded-t-[28px] border border-b-0 border-white/10 bg-[#121a2b] shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.7)] outline-none sm:max-w-lg sm:rounded-[28px] sm:border-b">
+        <div {...tirer} className="shrink-0 touch-none select-none">
+          <div className="mx-auto mt-2.5 h-1.5 w-10 rounded-full bg-white/25 sm:hidden" />
+          <header className="flex items-center justify-between gap-3 px-5 pt-3 pb-2 sm:pt-5">
+            <h2 className="text-[18px] font-semibold tracking-[-0.01em] text-white">{titre}</h2>
+            <button type="button" onClick={() => fermer()} className="-mr-2 grid h-10 w-10 place-items-center rounded-full text-white/55 transition hover:bg-white/10 hover:text-white active:scale-90" aria-label="Fermer">
+              <Icone nom="ui-fermer" taille={20} />
+            </button>
+          </header>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4">{rendre(children)}</div>
+        {pied && <footer className="shrink-0 border-t border-white/[0.07] px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]">{rendre(pied)}</footer>}
       </div>
     </div>
   );
@@ -87,8 +150,8 @@ export function Segments<T extends string>({ valeur, options, onChange, label }:
   return (
     <div role="radiogroup" aria-label={label} className="flex gap-1 rounded-full bg-white/[0.06] p-1">
       {options.map(o => (
-        <button key={o.id} type="button" role="radio" aria-checked={valeur === o.id} onClick={() => onChange(o.id)}
-          className={`min-h-10 flex-1 rounded-full px-3 text-[14px] font-medium transition ${valeur === o.id ? 'bg-white text-nuit shadow' : 'text-white/65 hover:text-white'}`}>
+        <button key={o.id} type="button" role="radio" aria-checked={valeur === o.id} onClick={() => { vibrer(5); onChange(o.id); }}
+          className={`min-h-10 flex-1 rounded-full px-3 text-[14px] font-medium transition duration-200 ${valeur === o.id ? 'bg-white text-nuit shadow-[0_2px_8px_rgba(0,0,0,0.25)]' : 'text-white/65 hover:text-white'}`}>
           {o.nom}
         </button>
       ))}

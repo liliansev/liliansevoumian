@@ -21,14 +21,17 @@ export interface Theme {
   /** Le fond des boutons pleins et sa couleur de texte. */
   surface: string;
   surfaceTexte: string;
+  /** La carte mise en avant, en style plein. Par défaut, la couleur des boutons. */
+  vedette: string;
+  vedetteTexte: string;
   police: Police;
 }
 
-const t = (id: string, nom: string, famille: Famille, fond: string, texte: string, doux: string, surface: string, surfaceTexte: string, police: Police = 'geist', fondUni = fond): Theme =>
-  ({ id, nom, famille, fond, fondUni, texte, doux, surface, surfaceTexte, police });
+const t = (id: string, nom: string, famille: Famille, fond: string, texte: string, doux: string, surface: string, surfaceTexte: string, police: Police = 'geist', fondUni = fond, vedette?: [string, string]): Theme =>
+  ({ id, nom, famille, fond, fondUni, texte, doux, surface, surfaceTexte, vedette: vedette?.[0] ?? surface, vedetteTexte: vedette?.[1] ?? surfaceTexte, police });
 
 export const THEMES: Theme[] = [
-  t('nuit-peche', 'Nuit et pêche', 'sombre', '#0c121f', '#f4f1ec', '#a9b1c3', '#ffb38a', '#111827'),
+  t('nuit-peche', 'Nuit et pêche', 'sombre', '#0c121f', '#f4f1ec', '#a9b1c3', '#1c2639', '#f4f1ec', 'geist', '#0c121f', ['#ffb38a', '#111827']),
   t('minuit', 'Minuit', 'sombre', '#0a0a0b', '#fafafa', '#a1a1aa', '#fafafa', '#0a0a0b'),
   t('encre', 'Encre bleue', 'sombre', '#0b1d3a', '#eef3ff', '#a7badf', '#6ea8ff', '#04122a'),
   t('foret', 'Forêt', 'sombre', '#0f1f17', '#ecf5ee', '#9fbca9', '#7bd389', '#0b1a12'),
@@ -59,7 +62,7 @@ export const THEMES: Theme[] = [
   t('aurore', 'Aurore', 'degrade', 'linear-gradient(165deg, #1a1033 0%, #4b1d6b 50%, #a8445e 100%)', '#ffffff', '#f0dcf6', '#ffffff', '#2a0f3d', 'geist', '#3a1758'),
   t('ocean', 'Océan', 'degrade', 'linear-gradient(180deg, #02203a 0%, #03516b 60%, #087f86 100%)', '#f0fbff', '#bfe3ec', '#f0fbff', '#02203a', 'geist', '#03415c'),
   t('coucher', 'Coucher de soleil', 'degrade', 'linear-gradient(170deg, #ffc49e 0%, #ff8fa6 55%, #c7a2f0 100%)', '#1c0b1f', '#4a2b45', '#1c0b1f', '#ffffff', 'rond', '#ff9fa8'),
-  t('peche-nuit', 'Lueur de pêche', 'degrade', 'radial-gradient(120% 70% at 50% 0%, #4a2f3a 0%, #0c121f 65%)', '#f4f1ec', '#b3b8c6', '#ffb38a', '#111827', 'geist', '#0c121f'),
+  t('peche-nuit', 'Lueur de pêche', 'degrade', 'radial-gradient(120% 70% at 50% 0%, #4a2f3a 0%, #0c121f 65%)', '#f4f1ec', '#b3b8c6', '#2a2531', '#f4f1ec', 'geist', '#0c121f', ['#ffb38a', '#111827']),
   t('holo', 'Holographique', 'degrade', 'linear-gradient(135deg, #dff6ff 0%, #f1e4ff 50%, #ffe7ef 100%)', '#1d1630', '#554c6e', '#1d1630', '#ffffff', 'geist', '#f1e4ff'),
 ];
 
@@ -81,6 +84,7 @@ export const POLICES: Record<Police, string> = {
 export function variablesTheme(theme: Theme): Record<string, string> {
   return {
     '--fond': theme.fond, '--fond-uni': theme.fondUni, '--texte': theme.texte, '--doux': theme.doux,
-    '--surface': theme.surface, '--surface-texte': theme.surfaceTexte, '--police': POLICES[theme.police],
+    '--surface': theme.surface, '--surface-texte': theme.surfaceTexte, '--vedette': theme.vedette, '--vedette-texte': theme.vedetteTexte,
+    '--police': POLICES[theme.police],
   };
 }
