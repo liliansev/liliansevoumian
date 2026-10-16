@@ -8,7 +8,7 @@ COPY . .
 RUN pnpm --filter liens test && pnpm --filter liens build
 RUN pnpm build && pnpm exec esbuild src/lib/newsletter-signup.ts --bundle --platform=node --format=esm --outfile=runtime/newsletter-signup.mjs && pnpm exec esbuild src/lib/contact-message.ts --bundle --platform=node --format=esm --outfile=runtime/contact-message.mjs
 RUN node --test deploy/server.test.mjs
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 
 FROM node:24-alpine
 ENV NODE_ENV=production PORT=3000
