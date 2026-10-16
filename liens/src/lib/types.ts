@@ -21,6 +21,8 @@ export interface Bloc {
   titre: string;
   url: string;
   sousTitre: string;
+  /** Un texte plus long, sous le titre d'un bandeau ou d'une carte. */
+  description: string;
   /** Le nom d'un picto ou d'un réseau (`fusee`, `youtube`...), voir `icones.ts`. */
   icone: string;
   /** Vignette : une URL `/liens/media/...` ou https. */
@@ -105,6 +107,8 @@ export interface Api {
   ordonner(ids: string[]): Promise<void>;
   enregistrerReglages(reglages: Reglages): Promise<Reglages>;
   envoyerImage(dataUrl: string): Promise<string>;
+  /** Le titre, la description et l'image (en data URL) d'un site, lus par le serveur. */
+  apercuSite(url: string): Promise<{ titre: string; description: string; image: string | null }>;
   stats(jours: number): Promise<Stats>;
   deconnexion(): Promise<void>;
 }
@@ -114,7 +118,7 @@ export function nouveauBloc(type: TypeBloc, id: string): Bloc {
     lien: '', titre: 'Nouvelle section', texte: '', video: 'Ma vidéo', 'derniere-video': 'Ma dernière vidéo', newsletter: 'Ma newsletter',
   };
   return {
-    id, type, titre: titres[type], url: '', sousTitre: type === 'newsletter' ? 'Un e-mail de temps en temps, rien de plus.' : '', icone: '', image: '',
+    id, type, titre: titres[type], url: '', sousTitre: type === 'newsletter' ? 'Un e-mail de temps en temps, rien de plus.' : '', description: '', icone: '', image: '',
     public: true, indexable: true, vedette: false, format: 'bandeau', teinte: 'accent', animation: 'auto', debut: '', fin: '',
   };
 }

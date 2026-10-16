@@ -47,6 +47,7 @@ export function validerBloc(v: unknown, id: string): Bloc {
     titre: texte(o.titre, type === 'texte' ? 1000 : 160),
     url: adresse(o.url),
     sousTitre: texte(o.sousTitre, 240),
+    description: texte(o.description, 400),
     icone: texte(o.icone, 24),
     image: image(o.image),
     public: bool(o.public, true),
