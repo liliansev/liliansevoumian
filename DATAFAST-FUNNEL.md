@@ -205,7 +205,21 @@ Sources : `home_services`, `footer`. Depuis octobre 2026 l'accueil présente ce 
 fait aujourd'hui, et l'agence est une de ses sorties : comme pour les
 formations, un clic ici est une orientation réussie, pas une fuite.
 
-> Dix goals. La taxonomie `contact_lead` / `cta_contact_click` des anciennes
+### La page de liens `/liens/` (depuis le 16 octobre 2026)
+Jusque-là, `/liens/` n'avait pas le script DataFast : ses visiteurs humains
+n'apparaissaient pas dans le tableau de bord (seuls les robots d'IA y passaient,
+par `trackAICrawlerResponse`). La route publique charge maintenant le même script
+cookieless que le reste du site (`liens/src/routes/index.tsx`) ; le back office
+`/liens/admin` ne le charge pas. Deux goals :
+- `liens_click` : un lien, une vidéo ou une icône de réseau cliqué. Props `lien`
+  (le titre du lien, ou le nom du réseau), `type` (`lien`, `video`,
+  `derniere-video`, `reseau`) et `vedette` (`oui` / `non`).
+- `liens_newsletter` : une inscription à la newsletter réussie depuis la page.
+
+Les statistiques internes du back office (vues, clics par lien, provenance)
+continuent en parallèle, dans la base de `/liens/`.
+
+> Dix goals sur le site, plus les deux de `/liens/`. La taxonomie `contact_lead` / `cta_contact_click` des anciennes
 > versions n'existe plus.
 >
 > **Ce qui reste volontairement absent : le scroll-depth et les goals
