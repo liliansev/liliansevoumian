@@ -115,15 +115,33 @@ export function BlocPublic({ bloc, reglages, clic, cible, apercu }: { bloc: Bloc
     default:
       if (!bloc.url) return null;
       if (bloc.vedette) {
+        const teinte = bloc.teinte === 'accent' ? 'lp-accent' : '';
+        if (bloc.format === 'bouton') {
+          return (
+            <a className={`lp-btn lp-btn-vedette ${teinte} ${anim}`} href={bloc.url} rel={rel} onClick={clic} {...cible} {...nosnippet}>
+              <Pictogramme bloc={bloc} />
+              <span className="lp-btn-texte">
+                <span className="lp-btn-titre">{bloc.titre || bloc.url}</span>
+                {bloc.sousTitre && <span className="lp-sous">{bloc.sousTitre}</span>}
+              </span>
+            </a>
+          );
+        }
+        const visuel = bloc.format === 'carte' && bloc.image
+          ? <img className="lp-carte-image" src={bloc.image} alt="" loading="lazy" />
+          : bloc.image
+            ? <img className="lp-carte-tuile" src={bloc.image} alt="" loading="lazy" />
+            : bloc.icone ? <span className="lp-carte-tuile" aria-hidden="true">{ICONES[bloc.icone] ? <Icone nom={bloc.icone} taille={bloc.format === 'carte' ? 26 : 22} /> : bloc.icone}</span> : null;
         return (
-          <a className={`lp-carte ${anim}`} href={bloc.url} rel={rel} onClick={clic} {...cible} {...nosnippet}>
-            {bloc.image && <img className="lp-carte-image" src={bloc.image} alt="" loading="lazy" />}
+          <a className={`lp-carte ${teinte} ${anim}`} data-format={bloc.format} href={bloc.url} rel={rel} onClick={clic} {...cible} {...nosnippet}>
+            {visuel}
             <span className="lp-carte-corps">
-              {!bloc.image && <Pictogramme bloc={bloc} />}
-              <span className="lp-carte-titre">{bloc.titre || bloc.url}</span>
-              {bloc.sousTitre && <span className="lp-sous">{bloc.sousTitre}</span>}
+              <span className="lp-carte-texte">
+                <span className="lp-carte-titre">{bloc.titre || bloc.url}</span>
+                {bloc.sousTitre && <span className="lp-sous">{bloc.sousTitre}</span>}
+              </span>
+              <span className="lp-carte-fleche" aria-hidden="true"><Icone nom="ui-fleche" taille={18} /></span>
             </span>
-            <span className="lp-carte-fleche" aria-hidden="true"><Icone nom="ui-fleche" taille={20} /></span>
           </a>
         );
       }

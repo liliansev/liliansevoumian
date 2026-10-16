@@ -1,4 +1,4 @@
-import { ANIMATIONS, ANIMATIONS_BLOC, FORMES_BOUTON, RESEAUX, STYLES_BOUTON, TYPES_BLOC } from './types.ts';
+import { ANIMATIONS, ANIMATIONS_BLOC, FORMATS_VEDETTE, FORMES_BOUTON, RESEAUX, STYLES_BOUTON, TEINTES_VEDETTE, TYPES_BLOC } from './types.ts';
 import type { Bloc, Reglages } from './types.ts';
 import { THEMES, THEME_DEFAUT } from './themes.ts';
 
@@ -52,6 +52,8 @@ export function validerBloc(v: unknown, id: string): Bloc {
     public: bool(o.public, true),
     indexable: bool(o.indexable, true),
     vedette: bool(o.vedette, false),
+    format: parmi(o.format, FORMATS_VEDETTE, 'bandeau'),
+    teinte: parmi(o.teinte, TEINTES_VEDETTE, 'accent'),
     animation: parmi(ANCIENNES[o.animation as string] ?? o.animation, ANIMATIONS_BLOC, 'auto'),
     debut: date(o.debut),
     fin: date(o.fin),

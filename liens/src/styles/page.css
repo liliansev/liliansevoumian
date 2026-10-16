@@ -92,7 +92,12 @@
 .lp[data-forme='pilule'] .lp-vignette { border-radius: 999px; }
 
 [data-bouton]:not([data-bouton='plein']) :is(.lp-btn, .lp-carte) { --lp-encre: var(--texte); --lp-halo: var(--texte); --lp-trait: var(--texte); }
-.lp-carte { --lp-fond: var(--vedette); --lp-encre: var(--vedette-texte); }
+.lp-accent { --lp-fond: var(--vedette); --lp-encre: var(--vedette-texte); }
+/* Hors du style plein, l'accent devient un liseré et un halo de la couleur de vedette. */
+[data-bouton]:not([data-bouton='plein']) .lp-accent { --lp-halo: var(--vedette); }
+.lp[data-bouton='contour'] .lp-accent { box-shadow: inset 0 0 0 2px var(--vedette); }
+.lp:is([data-bouton='doux'], [data-bouton='verre']) .lp-accent { background: color-mix(in srgb, var(--vedette) 22%, transparent); }
+.lp[data-bouton='relief'] .lp-accent { background: color-mix(in srgb, var(--vedette) 16%, var(--fond-uni)); }
 
 [data-bouton='contour'] :is(.lp-btn, .lp-carte) { background: transparent; color: var(--texte); box-shadow: inset 0 0 0 2px var(--texte); }
 [data-bouton='contour'] :is(.lp-btn, .lp-carte):hover { background: color-mix(in srgb, var(--texte) 8%, transparent); }
@@ -118,17 +123,47 @@
 }
 [data-bouton='verre'] :is(.lp-btn, .lp-carte):hover { background: color-mix(in srgb, var(--texte) 17%, transparent); }
 
-/* ---- Carte mise en avant ---- */
+/* ---- Liens mis en avant ----
+ * Trois formats. Le bouton : un bouton comme les autres, à la couleur
+ * d'accent. Le bandeau : un peu plus haut, picto en tuile à gauche, texte
+ * aligné à gauche, flèche dans une pastille à droite. La carte : un grand
+ * visuel au-dessus (l'image du lien, ou son picto en grand) et la même ligne
+ * de texte dessous.
+ */
 
-.lp-carte { display: flex; flex-direction: column; border-radius: var(--rc); padding: 6px; }
-[data-bouton='relief'] .lp-carte, [data-bouton='contour'] .lp-carte { padding: 8px; }
-.lp-carte:hover { transform: translateY(-3px); }
-.lp-carte-image { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: calc(var(--rc) - 4px); display: block; }
-.lp-carte-corps { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 18px 44px 16px; text-align: center; }
-.lp-carte-corps .lp-picto { position: static; translate: none; width: 48px; height: 48px; margin-bottom: 6px; border-radius: 999px; background: color-mix(in srgb, var(--lp-encre) 12%, transparent); }
-.lp-carte-titre { font-size: 1.15rem; font-weight: 640; letter-spacing: -0.01em; }
-.lp-carte-fleche { position: absolute; right: 18px; bottom: 18px; display: grid; opacity: 0.75; transition: translate 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
-.lp-carte:hover .lp-carte-fleche { translate: 3px -3px; }
+.lp-btn-vedette { font-weight: 620; }
+
+.lp-carte { display: flex; border-radius: var(--r); }
+.lp-carte:hover { transform: translateY(-2px); }
+.lp-carte-corps { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; text-align: left; }
+.lp-carte-texte { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.lp-carte-titre { font-size: 1.04rem; font-weight: 640; letter-spacing: -0.012em; line-height: 1.25; }
+.lp-carte-fleche {
+  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 999px;
+  background: color-mix(in srgb, var(--lp-encre) 12%, transparent);
+  transition: translate 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+.lp-carte:hover .lp-carte-fleche { translate: 3px 0; background: color-mix(in srgb, var(--lp-encre) 18%, transparent); }
+.lp-carte-tuile {
+  flex: none; display: grid; place-items: center; width: 48px; height: 48px; object-fit: cover;
+  border-radius: calc(min(var(--r), 22px) - 6px);
+  background: color-mix(in srgb, var(--lp-encre) 12%, transparent);
+  font-size: 1.4rem;
+}
+.lp[data-forme='pilule'] .lp-carte-tuile { border-radius: 999px; }
+
+/* Bandeau */
+.lp-carte[data-format='bandeau'] { align-items: center; gap: 14px; min-height: 76px; padding: 12px 14px 12px 12px; }
+.lp[data-forme='pilule'] .lp-carte[data-format='bandeau'] { padding-left: 14px; padding-right: 16px; }
+
+/* Carte */
+.lp-carte[data-format='carte'] { flex-direction: column; gap: 0; padding: 6px; border-radius: var(--rc); }
+.lp-carte[data-format='carte'] .lp-carte-image { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-radius: calc(var(--rc) - 4px); }
+.lp-carte[data-format='carte'] .lp-carte-tuile { width: 56px; height: 56px; margin: 16px 0 0 14px; border-radius: 16px; }
+.lp-carte[data-format='carte'] .lp-carte-corps { padding: 14px 10px 12px 14px; }
+.lp-carte[data-format='carte'] .lp-carte-titre { font-size: 1.22rem; letter-spacing: -0.018em; }
+.lp-carte[data-format='carte'] .lp-carte-fleche { width: 40px; height: 40px; }
+[data-bouton='relief'] .lp-carte[data-format='carte'], [data-bouton='contour'] .lp-carte[data-format='carte'] { padding: 8px; }
 
 /* ---- Animations d'attention ----
  * Sept mouvements, au choix dans les réglages (pour les liens mis en avant) ou

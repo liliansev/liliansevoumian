@@ -8,7 +8,7 @@ import { themeParId, variablesTheme } from '../lib/themes.ts';
 import { ICONES } from '../lib/icones.ts';
 import { Icone, NOMS_RESEAUX, PICTOS } from '../components/Icone.tsx';
 import { BlocPublic } from '../components/PageLiens.tsx';
-import { BoutonPrincipal, Champ, Feuille, Interrupteur, NOMS_ANIMATIONS, classeSaisie, preparerImage, vibrer } from './ui.tsx';
+import { BoutonPrincipal, Champ, Feuille, Interrupteur, NOMS_ANIMATIONS, Segments, classeSaisie, preparerImage, vibrer } from './ui.tsx';
 import { TYPES } from './OngletLiens.tsx';
 
 /** Une date ISO vers la valeur d'un `<input type="datetime-local">`, en heure locale. */
@@ -18,6 +18,12 @@ const versLocal = (iso: string) => {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 };
 const depuisLocal = (v: string) => (v ? new Date(v).toISOString() : '');
+
+const AIDE_FORMATS = {
+  bouton: 'La taille des autres boutons, à la couleur choisie.',
+  bandeau: 'Un peu plus grand : picto à gauche, flèche à droite.',
+  carte: 'Un grand visuel au-dessus : l’image du lien, ou son picto en grand.',
+} as const;
 
 export function EditeurBloc({ bloc, reglages, nouveau, onFermer, onEnregistrer, onSupprimer, onDupliquer, envoyerImage, clics }: {
   bloc: Bloc | null;
@@ -56,7 +62,7 @@ export function EditeurBloc({ bloc, reglages, nouveau, onFermer, onEnregistrer, 
   async function choisirImage(f: File | undefined) {
     if (!f) return;
     setEnvoi(true); setErreur('');
-    try { maj({ image: await envoyerImage(await preparerImage(f, b!.vedette ? 'large' : 'carre')) }); }
+    try { maj({ image: await envoyerImage(await preparerImage(f, b!.vedette && b!.format === 'carte' ? 'large' : 'carre')) }); }
     catch { setErreur('L’image n’est pas passée. Essaie une autre photo.'); }
     finally { setEnvoi(false); if (fichier.current) fichier.current.value = ''; }
   }
@@ -150,12 +156,28 @@ export function EditeurBloc({ bloc, reglages, nouveau, onFermer, onEnregistrer, 
         <div className="divide-y divide-white/[0.06] rounded-2xl bg-white/[0.035] px-4">
           <Interrupteur label="Public" aide={b.public ? 'Visible sur ta page.' : 'Privé : gardé ici, invisible sur ta page.'} actif={b.public} onChange={v => maj({ public: v })} />
           {b.type !== 'titre' && b.type !== 'texte' && b.type !== 'newsletter' && (
-            <Interrupteur label="Mis en avant" aide="Une grande carte, plus visible que les autres." actif={b.vedette} onChange={v => maj({ vedette: v })} />
+            <Interrupteur label="Mis en avant" aide="Plus visible que les autres liens : choisis sa forme et sa couleur juste dessous." actif={b.vedette} onChange={v => maj({ vedette: v })} />
           )}
           {b.type === 'lien' && (
             <Interrupteur label="Visible par Google" aide={b.indexable ? 'Lien suivi par les moteurs de recherche.' : 'Lien en nofollow, exclu des extraits et des données structurées.'} actif={b.indexable} onChange={v => maj({ indexable: v })} />
           )}
         </div>
+
+        {b.type === 'lien' && b.vedette && (
+          <div className="grid gap-3">
+            <div>
+              <span className="mb-1.5 block text-[13px] font-medium text-white/70">Forme</span>
+              <Segments label="Forme du lien mis en avant" valeur={b.format} onChange={v => maj({ format: v })}
+                options={[{ id: 'bouton', nom: 'Bouton' }, { id: 'bandeau', nom: 'Bandeau' }, { id: 'carte', nom: 'Carte' }]} />
+              <p className="mt-1.5 text-[12.5px] leading-snug text-white/45">{AIDE_FORMATS[b.format]}</p>
+            </div>
+            <div>
+              <span className="mb-1.5 block text-[13px] font-medium text-white/70">Couleur</span>
+              <Segments label="Couleur du lien mis en avant" valeur={b.teinte} onChange={v => maj({ teinte: v })}
+                options={[{ id: 'accent', nom: 'Accent' }, { id: 'theme', nom: 'Comme les autres' }]} />
+            </div>
+          </div>
+        )}
 
         {b.type === 'lien' && (
           <div>
