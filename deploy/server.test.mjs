@@ -126,3 +126,17 @@ test('contact delegates original body, environment and canonical origin to share
   assert.equal((await fetch(`${url}/api/contact`, { method: 'POST', body: 'a'.repeat(8193) })).status, 413);
   assert.equal((await fetch(`${url}/api/contact`)).status, 405);
 });
+test('la page de liens : /liens mène à /liens/, ses fichiers et son app sont servis', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'liens-'));
+  await mkdir(join(dir, 'client/assets'), { recursive: true }); await mkdir(join(dir, 'server'));
+  await writeFile(join(dir, 'client/assets/a.js'), 'js');
+  await writeFile(join(dir, 'server/server.js'), "export default { fetch: async r => new Response('app ' + new URL(r.url).pathname + ' ' + (r.headers.get('x-real-ip') ?? '-'), { headers: { 'content-type': 'text/html', 'set-cookie': 'a=1; Path=/liens' } }) };");
+  const { url } = await fixture(t, { liensDir: dir });
+  const redirect = await fetch(`${url}/liens?s=qr`, { redirect: 'manual' });
+  assert.equal(redirect.status, 308); assert.equal(redirect.headers.get('location'), '/liens/?s=qr');
+  const page = await fetch(`${url}/liens/`, { headers: { 'X-Real-IP': '9.9.9.9' } });
+  assert.equal(await page.text(), 'app /liens/ 9.9.9.9'); assert.equal(page.headers.get('set-cookie'), 'a=1; Path=/liens'); assert.equal(page.headers.get('cache-control'), 'no-store');
+  const asset = await fetch(`${url}/liens/assets/a.js`); assert.equal(await asset.text(), 'js'); assert.match(asset.headers.get('cache-control'), /immutable/);
+  assert.equal((await fetch(`${url}/liens/assets/absent.js`)).status, 404);
+  t.after(() => rm(dir, { recursive: true, force: true }));
+});
