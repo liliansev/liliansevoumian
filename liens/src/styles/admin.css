@@ -1,0 +1,9 @@
+/* Le back office : quelques mouvements que Tailwind n'écrit pas seul. */
+.adm-feuille { animation: adm-monte 0.28s cubic-bezier(0.2, 0.9, 0.3, 1); }
+.adm-fondu { animation: adm-fondu 0.2s ease-out; }
+.adm-toast { animation: adm-monte 0.22s ease-out; }
+@keyframes adm-monte { from { transform: translateY(24px); opacity: 0; } }
+@keyframes adm-fondu { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .adm-feuille, .adm-fondu, .adm-toast { animation: none; } }
+.adm input[type='datetime-local'] { color-scheme: dark; }
+.adm ::selection { background: #ffb38a; color: #0c121f; }

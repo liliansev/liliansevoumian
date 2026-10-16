@@ -1,9 +1,11 @@
 FROM node:24-alpine AS build
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY liens/package.json ./liens/
 RUN pnpm install --frozen-lockfile
 COPY . .
+RUN pnpm --filter liens test && pnpm --filter liens build
 RUN pnpm build && pnpm exec esbuild src/lib/newsletter-signup.ts --bundle --platform=node --format=esm --outfile=runtime/newsletter-signup.mjs && pnpm exec esbuild src/lib/contact-message.ts --bundle --platform=node --format=esm --outfile=runtime/contact-message.mjs
 RUN node --test deploy/server.test.mjs
 RUN pnpm prune --prod
@@ -14,8 +16,11 @@ WORKDIR /app
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --from=build --chown=node:node /app/runtime ./runtime
+COPY --from=build --chown=node:node /app/liens/dist ./liens/dist
+# La base de la page de liens : un volume nommé monté ici (voir deploy/compose.yaml).
+RUN mkdir -p /data && chown node:node /data
 COPY --chown=node:node deploy/server.mjs ./deploy/server.mjs
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=15s --retries=3 CMD node -e "fetch('http://127.0.0.1:3000/healthz').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
-CMD ["node", "deploy/server.mjs"]
+CMD ["node", "--disable-warning=ExperimentalWarning", "deploy/server.mjs"]

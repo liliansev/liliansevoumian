@@ -12,6 +12,9 @@ services:
     environment:
       NODE_ENV: production
       PORT: '3000'
+    # La base SQLite de la page de liens (/liens) : seul endroit inscriptible.
+    volumes:
+      - liens-data:/data
     networks:
       - ingress
     ports:
@@ -25,6 +28,8 @@ services:
       options:
         max-size: 5m
         max-file: '3'
+volumes:
+  liens-data:
 networks:
   ingress:
     external: true
