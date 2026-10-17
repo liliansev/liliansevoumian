@@ -111,6 +111,8 @@ src/
 liens/                         # la page de liens (/liens/) et son back office (/liens/admin), TanStack Start + SQLite (node:sqlite)
 │                              # servie par deploy/server.mjs ; base sur le volume /data ; connexion par lien e-mail (Resend)
 │                              # src/lib (modèle, 30 thèmes, validation), src/server (base, auth, stats), src/admin (back office), demo/ (aperçu Artifact)
+│                              # plusieurs comptes (bêta, sur invitation) : la page de Lilian sur /liens/, les autres sur /liens/<pseudo> ;
+│                              # tout est rattaché à un `compte`, l'onglet Comptes du back office n'existe que pour le compte principal
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
 ├── contact.ts                 # formulaire de contact (délègue à src/lib/contact-message)
