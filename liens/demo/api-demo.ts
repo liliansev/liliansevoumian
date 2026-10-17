@@ -1,4 +1,4 @@
-import type { Api, Bloc, CompteResume, EtatAdmin, Reglages, Stats } from '../src/lib/types.ts';
+import type { Api, Bloc, CompteResume, EtatAdmin, Reglages, SignalementResume, Stats } from '../src/lib/types.ts';
 import { REGLAGES_DEFAUT, blocsDefaut } from '../src/lib/defauts.ts';
 import avatar from '../public/avatar.webp?inline';
 
@@ -51,7 +51,8 @@ function statsFictives(jours: number): Stats {
 export const apiDemo: Api = {
   async charger(): Promise<EtatAdmin> {
     const s = statsFictives(30);
-    return { ...etat, clics: Object.fromEntries(s.blocs.map(b => [b.id, b.clics])), stockageEphemere: false, compte: { pseudo: 'lilian', principal: true, email: '' } };
+    return { ...etat, clics: Object.fromEntries(s.blocs.map(b => [b.id, b.clics])), stockageEphemere: false, cguAJour: true, compte: { pseudo: 'lilian', principal: true, email: '', pro: true },
+      abonnement: { plan: 'pro', statut: '', finPeriode: null, portail: false }, paiement: false };
   },
   async enregistrerBloc(bloc) {
     await pause();
@@ -68,27 +69,45 @@ export const apiDemo: Api = {
   async apercuSite(url) { await pause(); return { titre: '', description: 'Un aperçu de démonstration : en ligne, le serveur lit la vraie description du site.', image: vignetteDemo(url) }; },
   async stats(jours) { await pause(); return statsFictives(jours); },
   async deconnexion() { localStorage.removeItem(CLE); etat = lire(); },
+  async accepterCgu() { await pause(); },
+  async supprimerMonCompte() { await pause(); return { ok: false, message: 'Le compte principal ne se supprime pas.' }; },
+  urlExport: null,
+  // Le compte principal n'a pas d'abonnement : l'aperçu n'ouvre jamais de paiement.
+  async ouvrirPaiement() { throw new Error('Pas de paiement dans l’aperçu.'); },
+  async ouvrirPortail() { throw new Error('Pas de paiement dans l’aperçu.'); },
   comptes: {
     async lister() { await pause(); return comptesDemo; },
     async inviter(email, pseudo) {
       await pause();
       if (comptesDemo.some(c => c.pseudo === pseudo)) return { ok: false, message: 'Ce pseudo est déjà pris.' };
-      comptesDemo.splice(1, 0, { id: id(), email, pseudo, statut: 'actif', cree: Date.now(), connexion: null, blocs: 0, vues: 0, principal: false });
+      comptesDemo.splice(1, 0, { id: id(), email, pseudo, statut: 'actif', cree: Date.now(), connexion: null, blocs: 0, vues: 0, principal: false, pro: false });
       return { ok: true, message: `Invitation envoyée à ${email} (dans l’aperçu, rien ne part vraiment).` };
     },
     async renvoyer() { await pause(); return { ok: true, message: '' }; },
     async changerStatut(i, statut) { await pause(); const c = comptesDemo.find(x => x.id === i); if (c) c.statut = statut; },
     async supprimer(i) { await pause(); const k = comptesDemo.findIndex(x => x.id === i); if (k > 0) comptesDemo.splice(k, 1); },
+    async signalements() { await pause(); return signalementsDemo; },
+    async traiterSignalement(i, statut, decision) {
+      await pause();
+      const s = signalementsDemo.find(x => x.id === i);
+      if (s) { s.statut = statut; s.decision = decision; }
+      if (s && statut === 'suspendu') { const c = comptesDemo.find(x => x.id === s.compte); if (c) c.statut = 'suspendu'; }
+    },
   },
 };
 
 /** Des comptes inventés, pour voir l'onglet Comptes dans l'aperçu. */
 const jour = 86_400_000;
 const comptesDemo: CompteResume[] = [
-  { id: 'principal', email: '', pseudo: 'lilian', statut: 'actif', cree: Date.now() - 40 * jour, connexion: Date.now(), blocs: 8, vues: 2140, principal: true },
-  { id: 'demo1', email: 'camille@exemple.fr', pseudo: 'camille-studio', statut: 'actif', cree: Date.now() - 6 * jour, connexion: Date.now() - jour, blocs: 7, vues: 312, principal: false },
-  { id: 'demo2', email: 'hugo@exemple.fr', pseudo: 'hugo-podcast', statut: 'actif', cree: Date.now() - 4 * jour, connexion: null, blocs: 0, vues: 0, principal: false },
-  { id: 'demo3', email: 'sarah@exemple.fr', pseudo: 'sarah-coach', statut: 'suspendu', cree: Date.now() - 12 * jour, connexion: Date.now() - 9 * jour, blocs: 4, vues: 58, principal: false },
+  { id: 'principal', email: '', pseudo: 'lilian', statut: 'actif', cree: Date.now() - 40 * jour, connexion: Date.now(), blocs: 8, vues: 2140, principal: true, pro: true },
+  { id: 'demo1', email: 'camille@exemple.fr', pseudo: 'camille-studio', statut: 'actif', cree: Date.now() - 6 * jour, connexion: Date.now() - jour, blocs: 7, vues: 312, principal: false, pro: true },
+  { id: 'demo2', email: 'hugo@exemple.fr', pseudo: 'hugo-podcast', statut: 'actif', cree: Date.now() - 4 * jour, connexion: null, blocs: 0, vues: 0, principal: false, pro: false },
+  { id: 'demo3', email: 'sarah@exemple.fr', pseudo: 'sarah-coach', statut: 'suspendu', cree: Date.now() - 12 * jour, connexion: Date.now() - 9 * jour, blocs: 4, vues: 58, principal: false, pro: false },
+];
+
+const signalementsDemo: SignalementResume[] = [
+  { id: 's1', compte: 'demo2', pseudo: 'hugo-podcast', motif: 'arnaque', details: 'Le lien « Gagne un iPhone » mène à une fausse page de connexion Instagram.', contact: true, ts: Date.now() - 3 * 3_600_000, statut: 'ouvert', decision: '' },
+  { id: 's2', compte: 'demo1', pseudo: 'camille-studio', motif: 'droits', details: 'Une photo de mon portfolio est utilisée sans autorisation en tête de page.', contact: true, ts: Date.now() - 5 * jour, statut: 'sans-suite', decision: 'La photo a été retirée par la personne.' },
 ];
 
 function vignetteDemo(url: string): string {
@@ -104,4 +123,4 @@ function vignetteDemo(url: string): string {
 }
 
 export const etatDemo = () => apiDemo.charger();
-export const pageDemo = () => ({ reglages: etat.reglages, blocs: etat.blocs, compte: { pseudo: 'lilian', principal: true } });
+export const pageDemo = () => ({ reglages: etat.reglages, blocs: etat.blocs, compte: { pseudo: 'lilian', principal: true, pro: true } });

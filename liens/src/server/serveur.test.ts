@@ -205,3 +205,167 @@ test('une base d’avant les comptes est reprise telle quelle par le compte prin
     assert.deepEqual(db.lireBlocs(P).map(b => b.id), ['vieux'], 'une seconde ouverture ne change rien');
   } finally { db.fermer(); process.env.LIENS_DB = ':memory:'; }
 });
+
+test('conservation : les statistiques de plus de treize mois et les jetons expirés partent à la purge', () => {
+  const maintenant = Date.parse('2026-10-17T12:00:00Z');
+  db.ajouterEvenement({ compte: P, type: 'vue', bloc: null, visiteur: 'a', source: 'Direct', appareil: 'Mobile', ts: maintenant - 400 * 86_400_000 });
+  db.ajouterEvenement({ compte: P, type: 'vue', bloc: null, visiteur: 'b', source: 'Direct', appareil: 'Mobile', ts: maintenant - 300 * 86_400_000 });
+  db.purger(maintenant);
+  const restes = db.exporter(P).statistiques;
+  assert.equal(restes.length, 1);
+  assert.equal(restes[0].ts, new Date(maintenant - 300 * 86_400_000).toISOString());
+});
+
+test('export : tout le compte, sans l’empreinte des visiteurs', () => {
+  const zoe = db.creerCompte('zoe@exemple.fr', 'zoe');
+  db.enregistrerBloc(zoe.id, validerBloc({ type: 'lien', titre: 'Portfolio', url: 'zoe.fr' }, 'z1'));
+  db.ajouterMedia(zoe.id, new Uint8Array([1, 2, 3]), 'webp');
+  db.ajouterEvenement({ compte: zoe.id, type: 'clic', bloc: 'z1', visiteur: 'secret', source: 'Instagram', appareil: 'Mobile' });
+  db.accepterCgu(zoe.id, '2026-10-17', 1_000);
+  const e = db.exporter(zoe.id);
+  assert.equal(e.compte.pseudo, 'zoe');
+  assert.equal(e.compte.email, 'zoe@exemple.fr');
+  assert.deepEqual(e.compte.conditionsAcceptees, { version: '2026-10-17', le: new Date(1_000).toISOString() });
+  assert.deepEqual(e.blocs.map(b => b.id), ['z1']);
+  assert.equal(e.images.length, 1);
+  assert.match(e.images[0].donnees, /^data:image\/webp;base64,AQID$/);
+  assert.equal(e.statistiques.length, 1);
+  assert.ok(!JSON.stringify(e).includes('secret'));
+  assert.equal(db.exporter(P).blocs.some(b => b.id === 'z1'), false, 'l’export d’un compte ne contient que lui');
+});
+
+test('signalements : formulaire, accusé de réception, suspension motivée, décision à qui a signalé', async () => {
+  const { signaler, traiter, supprimerMotive, changerStatutMotive } = await import('./moderation.ts');
+  const envois: any[] = [];
+  const fetchFaux = (async (_: string, init: RequestInit) => { envois.push(JSON.parse(String(init.body))); return new Response('{}'); }) as typeof fetch;
+  const env = { RESEND_API_KEY: 'cle', NODE_ENV: 'production', CONTACT_TO: 'lilian@exemple.fr' };
+  const o = 'https://liliansevoumian.fr';
+  const hugo = db.creerCompte('hugo@exemple.fr', 'hugo');
+  const base = { page: 'hugo', motif: 'arnaque', details: 'Le lien mène à une fausse page Instagram.', email: 'Temoin@Exemple.fr', bonneFoi: true };
+
+  assert.equal((await signaler(env, fetchFaux, { ...base, page: '' }, '5.5.5.1', o)).ok, false, 'pas de signalement sur la page de Lilian');
+  assert.equal((await signaler(env, fetchFaux, { ...base, motif: 'rien' }, '5.5.5.1', o)).ok, false);
+  assert.equal((await signaler(env, fetchFaux, { ...base, details: 'court' }, '5.5.5.1', o)).ok, false);
+  assert.equal((await signaler(env, fetchFaux, { ...base, bonneFoi: false }, '5.5.5.1', o)).ok, false);
+  assert.equal(envois.length, 0);
+
+  const r = await signaler(env, fetchFaux, base, '5.5.5.2', o);
+  assert.equal(r.ok, true);
+  assert.deepEqual(envois.map(e => e.to[0]), ['lilian@exemple.fr', 'temoin@exemple.fr'], 'Lilian est prévenu, la personne reçoit un accusé');
+  assert.equal(envois[0].reply_to, 'temoin@exemple.fr');
+  const [s] = db.listerSignalements();
+  assert.equal(s.pseudo, 'hugo'); assert.equal(s.statut, 'ouvert');
+
+  // Cinq signalements par heure et par IP.
+  for (let i = 0; i < 5; i++) await signaler(env, fetchFaux, { ...base, email: '' }, '5.5.5.9', o);
+  assert.equal((await signaler(env, fetchFaux, { ...base, email: '' }, '5.5.5.9', o)).ok, false);
+
+  envois.length = 0;
+  await assert.rejects(() => changerStatutMotive(env, fetchFaux, hugo.id, 'suspendu', '  '), /motif/);
+  await traiter(env, fetchFaux, s.id, 'suspendu', 'Lien de hameçonnage (CGU, « Ce que tu publies »).', o);
+  assert.equal(db.compteParId(hugo.id)!.statut, 'suspendu');
+  assert.deepEqual(envois.map(e => e.to[0]), ['hugo@exemple.fr', 'temoin@exemple.fr']);
+  assert.match(envois[0].text, /hameçonnage/);
+  assert.match(envois[0].text, /contester/);
+  assert.match(envois[1].text, /suspendue/);
+  assert.equal(db.signalementParId(s.id)!.statut, 'suspendu');
+  await assert.rejects(() => traiter(env, fetchFaux, s.id, 'sans-suite', '', o), /déjà traité/);
+
+  // Une suppression à la demande de la personne part sans e-mail ; une suppression motivée, avec.
+  envois.length = 0;
+  await supprimerMotive(env, fetchFaux, hugo.id, '');
+  assert.equal(envois.length, 0);
+  assert.equal(db.compteParId(hugo.id), undefined);
+  assert.equal(db.listerSignalements().some(x => x.compte === hugo.id), false, 'les signalements du compte partent avec lui');
+  const lea = db.creerCompte('lea@exemple.fr', 'lea');
+  await supprimerMotive(env, fetchFaux, lea.id, 'Usurpation d’identité.');
+  assert.deepEqual(envois.map(e => e.to[0]), ['lea@exemple.fr']);
+});
+
+test('offre Pro : estPro lit le statut, la fin de période et la grâce', async () => {
+  const { estPro, GRACE_JOURS } = await import('../lib/abonnement.ts');
+  const t = Date.parse('2026-10-17T12:00:00Z'), jour = 86_400_000;
+  assert.equal(estPro({ statut: '', finPeriode: null }, t), false);
+  assert.equal(estPro({ statut: 'active', finPeriode: t + 10 * jour }, t), true);
+  assert.equal(estPro({ statut: 'active', finPeriode: t - (GRACE_JOURS - 1) * jour }, t), true, 'un renouvellement sans nouvelles garde quelques jours');
+  assert.equal(estPro({ statut: 'active', finPeriode: t - (GRACE_JOURS + 1) * jour }, t), false);
+  assert.equal(estPro({ statut: 'scheduled_cancel', finPeriode: t + jour }, t), true);
+  assert.equal(estPro({ statut: 'scheduled_cancel', finPeriode: t - 1 }, t), false, 'une résiliation s’arrête net à la fin de la période');
+  assert.equal(estPro({ statut: 'past_due', finPeriode: t + jour }, t), true);
+  for (const statut of ['canceled', 'expired', 'unpaid', 'paused']) assert.equal(estPro({ statut, finPeriode: t + jour }, t), false, statut);
+});
+
+test('offre Pro : webhooks Creem signés, idempotents, dans le désordre', async () => {
+  const { createHmac } = await import('node:crypto');
+  const creem = await import('./creem.ts');
+  const env = { CREEM_API_KEY: 'creem_test_x', CREEM_WEBHOOK_SECRET: 'whsec_test', CREEM_PRODUIT_MOIS: 'prod_mois', CREEM_PRODUIT_AN: 'prod_an' };
+  const t = Date.parse('2026-10-17T12:00:00Z'), jour = 86_400_000;
+  const signe = (corps: string, secret = env.CREEM_WEBHOOK_SECRET) => createHmac('sha256', secret).update(corps).digest('hex');
+  const envoyer = (e: object, secret?: string) => { const corps = JSON.stringify(e); return creem.traiterWebhook(env, corps, signe(corps, secret), t); };
+  const lea = db.creerCompte('lea@exemple.fr', 'lea');
+  assert.equal(db.compteEstPro(lea.id, t), false);
+  assert.equal(db.compteEstPro(P, t), true, 'le compte principal est toujours Pro');
+
+  // Sans configuration, mauvaise signature, JSON cassé : rien ne s'applique.
+  assert.equal(creem.traiterWebhook({}, '{}', 'x', t).status, 503);
+  const achat = { id: 'evt_1', eventType: 'checkout.completed', created_at: t, object: { id: 'ch_1', metadata: { compte: lea.id }, customer: { id: 'cust_1' }, subscription: { id: 'sub_1', status: 'active', current_period_end_date: new Date(t + 30 * jour).toISOString() } } };
+  assert.equal(envoyer(achat, 'autre secret').status, 401);
+  assert.equal(creem.traiterWebhook(env, '{', signe('{'), t).status, 400);
+  assert.equal(creem.traiterWebhook(env, JSON.stringify(achat), null, t).status, 401);
+  assert.equal(db.compteEstPro(lea.id, t), false);
+
+  // Le paiement : le compte voyage dans les métadonnées.
+  assert.equal(envoyer(achat).status, 200);
+  assert.equal(db.compteEstPro(lea.id, t), true);
+  const c = db.compteParId(lea.id)!;
+  assert.equal(c.creem_client, 'cust_1');
+  assert.equal(c.creem_abonnement, 'sub_1');
+  assert.equal(db.abonnement(c, t).portail, true);
+  assert.equal(envoyer(achat).message, 'déjà traité', 'un même événement ne s’applique qu’une fois');
+
+  // La résiliation, retrouvée par l'abonnement seul ; un événement plus ancien arrivé après est ignoré.
+  envoyer({ id: 'evt_2', eventType: 'subscription.scheduled_cancel', created_at: t + 2 * jour, object: { id: 'sub_1', status: 'scheduled_cancel', customer: 'cust_1', current_period_end_date: new Date(t + 30 * jour).toISOString() } });
+  envoyer({ id: 'evt_0', eventType: 'subscription.active', created_at: t + jour, object: { id: 'sub_1', status: 'active', customer: 'cust_1' } });
+  assert.equal(db.compteParId(lea.id)!.abonnement_statut, 'scheduled_cancel');
+  assert.equal(db.compteEstPro(lea.id, t + 29 * jour), true);
+  assert.equal(db.compteEstPro(lea.id, t + 31 * jour), false, 'en gratuit dès la fin de la période payée');
+
+  // Un nouvel abonnement remplace l'ancien ; la fin tardive de l'ancien ne l'éteint pas.
+  envoyer({ id: 'evt_3', eventType: 'subscription.active', created_at: t + 40 * jour, object: { id: 'sub_2', status: 'active', customer: 'cust_1', metadata: { compte: lea.id }, current_period_end_date: new Date(t + 405 * jour).toISOString() } });
+  assert.equal(envoyer({ id: 'evt_4', eventType: 'subscription.expired', created_at: t + 41 * jour, object: { id: 'sub_1', status: 'expired', customer: 'cust_1' } }).message, 'ancien abonnement');
+  assert.equal(db.compteEstPro(lea.id, t + 41 * jour), true);
+
+  // Des métadonnées qui visent le compte principal ou un compte inconnu n'accordent rien.
+  assert.equal(envoyer({ id: 'evt_5', eventType: 'subscription.active', created_at: t, object: { id: 'sub_x', status: 'active', customer: 'cust_x', metadata: { compte: P } } }).message, 'aucun compte');
+  assert.equal(envoyer({ id: 'evt_6', eventType: 'refund.created', created_at: t, object: {} }).message, 'ignoré : refund.created');
+
+  // Le Pro débloque la place pour les images ; la liste du back office le montre.
+  const gros = new Uint8Array(30 * 1024 * 1024);
+  const max = db.creerCompte('max@exemple.fr', 'max');
+  assert.throws(() => db.ajouterMedia(max.id, gros, 'webp'), /Plus de place/);
+  assert.ok(db.ajouterMedia(lea.id, gros, 'webp'));
+  assert.equal(db.listerComptes().find(x => x.id === lea.id)?.pro, true);
+  assert.equal(db.listerComptes().find(x => x.id === max.id)?.pro, false);
+  assert.equal(db.exporter(lea.id).compte.abonnement?.creemAbonnement, 'sub_2');
+});
+
+test('offre Pro : la page de paiement et le portail passent par l’API Creem', async () => {
+  const creem = await import('./creem.ts');
+  const env = { CREEM_API_KEY: 'creem_test_x', CREEM_WEBHOOK_SECRET: 'whsec_test', CREEM_PRODUIT_MOIS: 'prod_mois', CREEM_PRODUIT_AN: 'prod_an', CREEM_TEST: '1' };
+  const appels: { url: string; cle: string | null; corps: any }[] = [];
+  const fetchFaux = (async (url: string, init: RequestInit) => {
+    appels.push({ url, cle: new Headers(init.headers).get('x-api-key'), corps: JSON.parse(String(init.body)) });
+    return Response.json(url.endsWith('/checkouts') ? { checkout_url: 'https://checkout.creem.io/ch_1' } : { customer_portal_link: 'https://creem.io/portal/x' });
+  }) as typeof fetch;
+  const noa = db.creerCompte('noa@exemple.fr', 'noa');
+  assert.equal(await creem.ouvrirPaiement(env, fetchFaux, noa, 'an', 'https://liliansevoumian.fr', 5), 'https://checkout.creem.io/ch_1');
+  assert.equal(appels[0].url, 'https://test-api.creem.io/v1/checkouts');
+  assert.equal(appels[0].cle, 'creem_test_x');
+  assert.deepEqual(appels[0].corps, { product_id: 'prod_an', request_id: `${noa.id}-5`, success_url: 'https://liliansevoumian.fr/liens/admin?paiement=ok', customer: { email: 'noa@exemple.fr' }, metadata: { compte: noa.id } });
+  await assert.rejects(creem.ouvrirPortail(env, fetchFaux, noa), /Aucun abonnement/);
+  await assert.rejects(creem.ouvrirPaiement({}, fetchFaux, noa, 'mois', 'https://x.fr'), /pas encore branché/);
+  await assert.rejects(creem.ouvrirPaiement(env, fetchFaux, db.compteParId(P)!, 'mois', 'https://x.fr'), /principal/);
+  db.appliquerAbonnement(noa.id, { client: 'cust_9', abonnement: 'sub_9', statut: 'active', finPeriode: null, maj: 1 });
+  assert.equal(await creem.ouvrirPortail(env, fetchFaux, db.compteParId(noa.id)!), 'https://creem.io/portal/x');
+  assert.deepEqual(appels.at(-1)!.corps, { customer_id: 'cust_9' });
+});

@@ -6,6 +6,8 @@ import type { Bloc, CompteResume, Reglages, Stats } from '../lib/types.ts';
 import { PRINCIPAL } from '../lib/types.ts';
 import { REGLAGES_DEFAUT, blocsDefaut, reglagesNouveauCompte } from '../lib/defauts.ts';
 import { validerBloc, validerReglages } from '../lib/valider.ts';
+import type { Abonnement } from '../lib/abonnement.ts';
+import { QUOTA_GRATUIT, QUOTA_PRO, estPro } from '../lib/abonnement.ts';
 
 /*
  * Toutes les pages tiennent dans un fichier SQLite (`node:sqlite`, rien à
@@ -25,8 +27,8 @@ let ephemere = false;
 
 export const nouvelId = () => randomUUID().replace(/-/g, '').slice(0, 12);
 
-/** Ce qu'un compte invité peut stocker en images ; le compte principal n'a pas de plafond. */
-export const QUOTA_MEDIAS = 25 * 1024 * 1024;
+/** Ce qu'un compte invité gratuit peut stocker en images ; le compte principal n'a pas de plafond. */
+export const QUOTA_MEDIAS = QUOTA_GRATUIT;
 const MAX_BLOCS = 200;
 
 function chemin() {
@@ -67,15 +69,31 @@ export function base(): DatabaseSync {
       visiteur TEXT NOT NULL, source TEXT NOT NULL, appareil TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS jetons (hash TEXT PRIMARY KEY, type TEXT NOT NULL, expire INTEGER NOT NULL, cree INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS webhooks (id TEXT PRIMARY KEY, recu INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS signalements (
+      id TEXT PRIMARY KEY, compte TEXT NOT NULL, motif TEXT NOT NULL, details TEXT NOT NULL, email TEXT NOT NULL DEFAULT '',
+      ts INTEGER NOT NULL, statut TEXT NOT NULL DEFAULT 'ouvert', decision TEXT NOT NULL DEFAULT '', traite INTEGER
+    );
   `);
   // Les tables d'avant les comptes : tout ce qu'elles contiennent est à Lilian.
   for (const table of ['blocs', 'medias', 'evenements', 'jetons']) colonne(db, table, 'compte', `TEXT NOT NULL DEFAULT '${PRINCIPAL}'`);
+  // Les conditions acceptées : leur version (une date) et le moment.
+  colonne(db, 'comptes', 'cgu', "TEXT NOT NULL DEFAULT ''");
+  colonne(db, 'comptes', 'cgu_le', 'INTEGER');
+  // L'abonnement Pro, tel que Creem le décrit dans ses webhooks.
+  colonne(db, 'comptes', 'creem_client', "TEXT NOT NULL DEFAULT ''");
+  colonne(db, 'comptes', 'creem_abonnement', "TEXT NOT NULL DEFAULT ''");
+  colonne(db, 'comptes', 'abonnement_statut', "TEXT NOT NULL DEFAULT ''");
+  colonne(db, 'comptes', 'fin_periode', 'INTEGER');
+  colonne(db, 'comptes', 'abonnement_maj', 'INTEGER NOT NULL DEFAULT 0');
   db.exec(`
     CREATE UNIQUE INDEX IF NOT EXISTS comptes_email ON comptes (email);
     CREATE INDEX IF NOT EXISTS blocs_compte ON blocs (compte, position);
     CREATE INDEX IF NOT EXISTS medias_compte ON medias (compte);
     DROP INDEX IF EXISTS evenements_jour;
     CREATE INDEX IF NOT EXISTS evenements_compte ON evenements (compte, jour, type);
+    CREATE INDEX IF NOT EXISTS evenements_ts ON evenements (ts);
+    CREATE INDEX IF NOT EXISTS signalements_statut ON signalements (statut, ts);
   `);
   if (!db.prepare('SELECT 1 FROM comptes WHERE id = ?').get(PRINCIPAL)) {
     // L'adresse du compte principal vient de l'environnement (voir auth.ts) : on n'en garde qu'un repère.
@@ -91,10 +109,25 @@ export function base(): DatabaseSync {
     const inserer = db.prepare('INSERT INTO blocs (id, position, donnees, compte) VALUES (?, ?, ?, ?)');
     blocsDefaut(nouvelId).forEach((bloc, i) => inserer.run(bloc.id, i, JSON.stringify(bloc), PRINCIPAL));
   }
-  // On garde treize mois de statistiques.
-  db.prepare('DELETE FROM evenements WHERE ts < ?').run(Date.now() - 400 * 86_400_000);
-  db.prepare('DELETE FROM jetons WHERE expire < ?').run(Date.now());
+  purger(Date.now(), db);
   return db;
+}
+
+/** Ce qu'on garde, annoncé dans la politique de confidentialité (`lib/legal.ts`). */
+export const CONSERVATION = { statistiquesJours: 395, signalementsJours: 365 };
+let derniere = 0;
+
+/**
+ * Efface ce qui a passé sa durée de conservation : les statistiques de plus de
+ * treize mois, les jetons expirés, les signalements traités depuis un an. Au
+ * démarrage, puis au plus une fois toutes les six heures (voir `ajouterEvenement`).
+ */
+export function purger(maintenant = Date.now(), d = base()) {
+  derniere = maintenant;
+  d.prepare('DELETE FROM evenements WHERE ts < ?').run(maintenant - CONSERVATION.statistiquesJours * 86_400_000);
+  d.prepare('DELETE FROM jetons WHERE expire < ?').run(maintenant);
+  d.prepare("DELETE FROM signalements WHERE statut != 'ouvert' AND traite < ?").run(maintenant - CONSERVATION.signalementsJours * 86_400_000);
+  d.prepare('DELETE FROM webhooks WHERE recu < ?').run(maintenant - 30 * 86_400_000);
 }
 
 export const stockageEphemere = () => (base(), ephemere);
@@ -110,9 +143,12 @@ export function secret(): string {
 
 /* ---- Comptes ---- */
 
-export interface Compte { id: string; email: string; pseudo: string; statut: 'actif' | 'suspendu'; cree: number; connexion: number | null }
+export interface Compte {
+  id: string; email: string; pseudo: string; statut: 'actif' | 'suspendu'; cree: number; connexion: number | null; cgu: string; cgu_le: number | null;
+  creem_client: string; creem_abonnement: string; abonnement_statut: string; fin_periode: number | null; abonnement_maj: number;
+}
 
-const LIRE_COMPTE = 'SELECT id, email, pseudo, statut, cree, connexion FROM comptes';
+const LIRE_COMPTE = 'SELECT id, email, pseudo, statut, cree, connexion, cgu, cgu_le, creem_client, creem_abonnement, abonnement_statut, fin_periode, abonnement_maj FROM comptes';
 export const compteParId = (id: string) => base().prepare(`${LIRE_COMPTE} WHERE id = ?`).get(id) as Compte | undefined;
 export const compteParPseudo = (pseudo: string) => base().prepare(`${LIRE_COMPTE} WHERE pseudo = ?`).get(pseudo.toLowerCase()) as Compte | undefined;
 /** Jamais le compte principal : son adresse se lit dans l'environnement. */
@@ -146,23 +182,68 @@ export function supprimerCompte(id: string) {
   const d = base();
   d.exec('BEGIN');
   try {
-    for (const table of ['blocs', 'medias', 'evenements', 'jetons']) d.prepare(`DELETE FROM ${table} WHERE compte = ?`).run(id);
+    for (const table of ['blocs', 'medias', 'evenements', 'jetons', 'signalements']) d.prepare(`DELETE FROM ${table} WHERE compte = ?`).run(id);
     d.prepare('DELETE FROM pages WHERE compte = ?').run(id);
     d.prepare('DELETE FROM comptes WHERE id = ?').run(id);
     d.exec('COMMIT');
   } catch (error) { d.exec('ROLLBACK'); throw error; }
 }
 
+/* ---- Abonnement Pro ---- */
+
+/** Où en est l'abonnement d'un compte. Le compte principal est Pro sans abonnement. */
+export function abonnement(c: Compte, maintenant = Date.now()): Abonnement {
+  if (c.id === PRINCIPAL) return { plan: 'pro', statut: '', finPeriode: null, portail: false };
+  const lu = { statut: c.abonnement_statut, finPeriode: c.fin_periode };
+  return { plan: estPro(lu, maintenant) ? 'pro' : 'gratuit', statut: c.abonnement_statut, finPeriode: c.fin_periode, portail: !!c.creem_client };
+}
+
+export const compteEstPro = (id: string, maintenant = Date.now()) => {
+  const c = compteParId(id);
+  return !!c && abonnement(c, maintenant).plan === 'pro';
+};
+
+export const compteParAbonnement = (id: string) => (id ? base().prepare(`${LIRE_COMPTE} WHERE creem_abonnement = ?`).get(id) as Compte | undefined : undefined);
+export const compteParClientCreem = (id: string) => (id ? base().prepare(`${LIRE_COMPTE} WHERE creem_client = ? AND id != ?`).get(id, PRINCIPAL) as Compte | undefined : undefined);
+
+/**
+ * Inscrit ce que Creem dit de l'abonnement. Les webhooks peuvent arriver dans
+ * le désordre : un événement plus ancien que le dernier appliqué est ignoré.
+ * Un nouvel abonnement repart de sa propre fin de période, jamais de celle de
+ * l'ancien. Vrai si l'état a changé.
+ */
+export function appliquerAbonnement(id: string, a: { client: string; abonnement: string; statut: string; finPeriode: number | null; maj: number }): boolean {
+  if (id === PRINCIPAL) return false;
+  const r = base().prepare(`UPDATE comptes SET
+      creem_client = CASE WHEN $client != '' THEN $client ELSE creem_client END,
+      fin_periode = CASE WHEN $abonnement != '' AND $abonnement != creem_abonnement THEN $fin ELSE COALESCE($fin, fin_periode) END,
+      creem_abonnement = CASE WHEN $abonnement != '' THEN $abonnement ELSE creem_abonnement END,
+      abonnement_statut = $statut, abonnement_maj = $maj
+    WHERE id = $id AND abonnement_maj <= $maj`).run({ client: a.client, abonnement: a.abonnement, fin: a.finPeriode, statut: a.statut, maj: a.maj, id });
+  return Number(r.changes) > 0;
+}
+
+/** Un webhook déjà traité (Creem peut l'envoyer plusieurs fois) ; sinon il est noté. */
+export function webhookDejaRecu(idEvenement: string, maintenant = Date.now()): boolean {
+  const r = base().prepare('INSERT OR IGNORE INTO webhooks (id, recu) VALUES (?, ?)').run(idEvenement, maintenant);
+  return Number(r.changes) === 0;
+}
+export const oublierWebhook = (idEvenement: string) => base().prepare('DELETE FROM webhooks WHERE id = ?').run(idEvenement);
+
+export const accepterCgu = (id: string, version: string, maintenant = Date.now()) => base().prepare('UPDATE comptes SET cgu = ?, cgu_le = ? WHERE id = ?').run(version, maintenant, id);
+
 export const noterConnexion = (id: string, maintenant = Date.now()) => base().prepare('UPDATE comptes SET connexion = ? WHERE id = ?').run(maintenant, id);
 
 /** La liste du back office de Lilian, avec de quoi juger l'activité de chaque page. */
 export function listerComptes(maintenant = Date.now()): CompteResume[] {
   const lignes = base().prepare(`
-    SELECT c.id, c.email, c.pseudo, c.statut, c.cree, c.connexion,
+    SELECT c.id, c.email, c.pseudo, c.statut, c.cree, c.connexion, c.abonnement_statut, c.fin_periode,
       (SELECT COUNT(*) FROM blocs b WHERE b.compte = c.id) AS blocs,
       (SELECT COUNT(*) FROM evenements e WHERE e.compte = c.id AND e.type = 'vue' AND e.ts > ?) AS vues
-    FROM comptes c ORDER BY c.id = ? DESC, c.cree DESC`).all(maintenant - 30 * 86_400_000, PRINCIPAL) as (Omit<CompteResume, 'principal'>)[];
-  return lignes.map(l => ({ ...l, principal: l.id === PRINCIPAL }));
+    FROM comptes c ORDER BY c.id = ? DESC, c.cree DESC`).all(maintenant - 30 * 86_400_000, PRINCIPAL) as (Omit<CompteResume, 'principal' | 'pro'> & { abonnement_statut: string; fin_periode: number | null })[];
+  return lignes.map(({ abonnement_statut, fin_periode, ...l }) => ({
+    ...l, principal: l.id === PRINCIPAL, pro: l.id !== PRINCIPAL && estPro({ statut: abonnement_statut, finPeriode: fin_periode }, maintenant),
+  }));
 }
 
 /* ---- Pages et blocs ---- */
@@ -212,8 +293,9 @@ export function ordonner(compte: string, ids: string[]) {
 export function ajouterMedia(compte: string, octets: Uint8Array, extension: 'webp' | 'jpg'): string {
   const d = base();
   if (compte !== PRINCIPAL) {
+    const quota = compteEstPro(compte) ? QUOTA_PRO : QUOTA_MEDIAS;
     const { total } = d.prepare('SELECT COALESCE(SUM(LENGTH(octets)), 0) AS total FROM medias WHERE compte = ?').get(compte) as { total: number };
-    if (total + octets.length > QUOTA_MEDIAS) throw new Error('Plus de place pour les images : supprime-en ou réutilise une image déjà envoyée.');
+    if (total + octets.length > quota) throw new Error('Plus de place pour les images : supprime-en ou réutilise une image déjà envoyée.');
   }
   const id = nouvelId();
   d.prepare('INSERT INTO medias (id, extension, octets, cree, compte) VALUES (?, ?, ?, ?, ?)').run(id, extension, octets, Date.now(), compte);
@@ -266,6 +348,7 @@ export function evenementsDuJour(maintenant = Date.now(), compte?: string): numb
 
 export function ajouterEvenement(e: { compte: string; type: 'vue' | 'clic'; bloc: string | null; visiteur: string; source: string; appareil: string; ts?: number }) {
   const ts = e.ts ?? Date.now();
+  if (Date.now() - derniere > 6 * 3_600_000) purger();
   base().prepare('INSERT INTO evenements (compte, type, bloc, jour, ts, visiteur, source, appareil) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
     .run(e.compte, e.type, e.bloc, jourDe(ts), ts, e.visiteur, e.source, e.appareil);
 }
@@ -301,5 +384,58 @@ export function stats(compte: string, jours: number, maintenant = Date.now()): S
   };
 }
 
+/* ---- Export (droit d'accès et de portabilité) ---- */
+
+/**
+ * Tout ce que le serveur garde d'un compte, lisible par un humain et par une
+ * machine. Les événements sortent sans l'empreinte du visiteur, qui ne dit
+ * rien à personne.
+ */
+export function exporter(compte: string) {
+  const d = base();
+  const c = compteParId(compte);
+  if (!c) throw new Error('Compte inconnu.');
+  const medias = (d.prepare('SELECT id, extension, octets, cree FROM medias WHERE compte = ? ORDER BY cree').all(compte) as { id: string; extension: string; octets: Uint8Array; cree: number }[])
+    .map(m => ({ fichier: `${m.id}.${m.extension}`, cree: new Date(m.cree).toISOString(), donnees: `data:image/${m.extension === 'jpg' ? 'jpeg' : 'webp'};base64,${Buffer.from(m.octets).toString('base64')}` }));
+  const evenements = d.prepare('SELECT ts, type, bloc, source, appareil FROM evenements WHERE compte = ? ORDER BY ts').all(compte) as { ts: number; type: string; bloc: string | null; source: string; appareil: string }[];
+  return {
+    exporte: new Date().toISOString(),
+    compte: {
+      pseudo: c.pseudo, email: c.email || null, statut: c.statut, cree: new Date(c.cree).toISOString(),
+      derniereConnexion: c.connexion ? new Date(c.connexion).toISOString() : null,
+      conditionsAcceptees: c.cgu ? { version: c.cgu, le: c.cgu_le ? new Date(c.cgu_le).toISOString() : null } : null,
+      abonnement: c.creem_abonnement ? { statut: c.abonnement_statut, finPeriode: c.fin_periode ? new Date(c.fin_periode).toISOString() : null, creemClient: c.creem_client, creemAbonnement: c.creem_abonnement } : null,
+    },
+    reglages: lireReglages(compte),
+    blocs: lireBlocs(compte),
+    images: medias,
+    statistiques: evenements.map(e => ({ ...e, ts: new Date(e.ts).toISOString() })),
+  };
+}
+
+/* ---- Signalements (DSA, article 16) ---- */
+
+export interface Signalement { id: string; compte: string; pseudo: string; motif: string; details: string; email: string; ts: number; statut: 'ouvert' | 'sans-suite' | 'suspendu'; decision: string; traite: number | null }
+
+export function ajouterSignalement(s: { compte: string; motif: string; details: string; email: string }, maintenant = Date.now()): string {
+  const id = nouvelId();
+  base().prepare('INSERT INTO signalements (id, compte, motif, details, email, ts) VALUES (?, ?, ?, ?, ?, ?)').run(id, s.compte, s.motif, s.details, s.email, maintenant);
+  return id;
+}
+
+export const signalementsDepuis = (depuis: number) => (base().prepare('SELECT COUNT(*) AS n FROM signalements WHERE ts > ?').get(depuis) as { n: number }).n;
+
+/** Les signalements ouverts d'abord, puis les derniers traités. */
+export function listerSignalements(): Signalement[] {
+  return base().prepare(`SELECT s.id, s.compte, COALESCE(c.pseudo, '') AS pseudo, s.motif, s.details, s.email, s.ts, s.statut, s.decision, s.traite
+    FROM signalements s LEFT JOIN comptes c ON c.id = s.compte ORDER BY s.statut = 'ouvert' DESC, s.ts DESC LIMIT 100`).all() as unknown as Signalement[];
+}
+
+export const signalementParId = (id: string) => base().prepare(`SELECT s.*, COALESCE(c.pseudo, '') AS pseudo FROM signalements s LEFT JOIN comptes c ON c.id = s.compte WHERE s.id = ?`).get(id) as Signalement | undefined;
+
+export function traiterSignalement(id: string, statut: 'sans-suite' | 'suspendu', decision: string, maintenant = Date.now()) {
+  base().prepare("UPDATE signalements SET statut = ?, decision = ?, traite = ? WHERE id = ? AND statut = 'ouvert'").run(statut, decision, maintenant, id);
+}
+
 /** Pour les tests : repartir d'une base neuve. */
-export function fermer() { db?.close(); db = null; ephemere = false; }
+export function fermer() { db?.close(); db = null; ephemere = false; derniere = 0; }

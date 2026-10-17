@@ -4,6 +4,8 @@
  * liste ordonnée de blocs.
  */
 
+import type { Abonnement, Periode } from './abonnement.ts';
+
 export const TYPES_BLOC = ['lien', 'titre', 'texte', 'video', 'derniere-video', 'newsletter'] as const;
 export type TypeBloc = (typeof TYPES_BLOC)[number];
 
@@ -100,23 +102,31 @@ export interface CompteResume {
   /** Vues des 30 derniers jours. */
   vues: number;
   principal: boolean;
+  /** Abonné Pro en ce moment (jamais vrai pour le compte principal, qui n'a pas d'abonnement). */
+  pro: boolean;
 }
 
 /** Ce que la page publique reçoit : jamais un bloc privé ni hors programmation. */
 export interface PagePublique {
   reglages: Reglages;
   blocs: Bloc[];
-  compte: ComptePage;
+  /** `pro` retire la mention « Une page faite avec Mes liens ». */
+  compte: ComptePage & { pro: boolean };
 }
 
 export interface EtatAdmin {
   reglages: Reglages;
   blocs: Bloc[];
-  compte: ComptePage & { email: string };
+  compte: ComptePage & { email: string; pro: boolean };
+  abonnement: Abonnement;
+  /** Vrai quand le paiement est branché sur le serveur (Creem configuré) et que le compte peut s'abonner. */
+  paiement: boolean;
   /** Clics des 30 derniers jours, par bloc. */
   clics: Record<string, number>;
   /** Vrai quand la base vit en mémoire : rien ne survivra au redémarrage. */
   stockageEphemere: boolean;
+  /** Faux tant que le compte n'a pas accepté la version en vigueur des CGU (toujours vrai pour le compte principal). */
+  cguAJour: boolean;
 }
 
 export interface Stats {
@@ -145,6 +155,16 @@ export interface Api {
   apercuSite(url: string): Promise<{ titre: string; description: string; image: string | null }>;
   stats(jours: number): Promise<Stats>;
   deconnexion(): Promise<void>;
+  /** Enregistre l'acceptation des CGU et de l'accord de traitement en vigueur. */
+  accepterCgu(): Promise<void>;
+  /** Supprime son propre compte ; `confirmation` est le pseudo retapé. Jamais le compte principal. */
+  supprimerMonCompte(confirmation: string): Promise<{ ok: boolean; message: string }>;
+  /** L'adresse de l'export complet (JSON), ou null dans l'aperçu. */
+  urlExport: string | null;
+  /** L'adresse de la page de paiement Creem pour passer en Pro. */
+  ouvrirPaiement(periode: Periode): Promise<string>;
+  /** L'adresse du portail client Creem : carte, factures, résiliation. */
+  ouvrirPortail(): Promise<string>;
   /** Seulement pour le compte principal : gérer les autres comptes. */
   comptes?: ApiComptes;
 }
@@ -154,8 +174,25 @@ export interface ApiComptes {
   /** Crée le compte et envoie l'invitation ; renvoie le message à afficher. */
   inviter(email: string, pseudo: string): Promise<{ ok: boolean; message: string; lienDev?: string }>;
   renvoyer(id: string): Promise<{ ok: boolean; message: string; lienDev?: string }>;
-  changerStatut(id: string, statut: CompteResume['statut']): Promise<void>;
-  supprimer(id: string): Promise<void>;
+  /** `motif` part par e-mail à la personne (DSA, article 17) quand on suspend ou supprime. */
+  changerStatut(id: string, statut: CompteResume['statut'], motif: string): Promise<void>;
+  supprimer(id: string, motif: string): Promise<void>;
+  signalements(): Promise<SignalementResume[]>;
+  /** Classe un signalement, ou suspend la page avec `decision` pour motif. */
+  traiterSignalement(id: string, statut: 'sans-suite' | 'suspendu', decision: string): Promise<void>;
+}
+
+export interface SignalementResume {
+  id: string;
+  compte: string;
+  pseudo: string;
+  motif: string;
+  details: string;
+  /** Vrai si la personne a laissé son adresse (elle reçoit la décision). */
+  contact: boolean;
+  ts: number;
+  statut: 'ouvert' | 'sans-suite' | 'suspendu';
+  decision: string;
 }
 
 export function nouveauBloc(type: TypeBloc, id: string): Bloc {

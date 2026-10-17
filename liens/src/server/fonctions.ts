@@ -1,11 +1,16 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start';
 import { deleteCookie, getCookie, getRequestHeader, getRequestUrl, setCookie } from '@tanstack/react-start/server';
-import type { Bloc, CompteResume, EtatAdmin, PagePublique, Reglages, Stats } from '../lib/types.ts';
+import type { Bloc, CompteResume, EtatAdmin, PagePublique, Reglages, SignalementResume, Stats } from '../lib/types.ts';
+import { VERSION_CGU } from '../lib/legal.ts';
 import { PRINCIPAL, TYPES_PRINCIPAL, estEnLigne } from '../lib/types.ts';
 import { adresse, email, pseudo, validerBloc, validerReglages } from '../lib/valider.ts';
 import { apercuSite as lireApercu } from './apercu.ts';
 import * as db from './db.ts';
 import { COOKIE_SESSION, DUREE_SESSION, adresseAdmin, compteDeSession, demanderConnexion, fermerSession, inviter, ouvrirSession } from './auth.ts';
+import { changerStatutMotive, signaler, supprimerMotive, traiter } from './moderation.ts';
+import * as creem from './creem.ts';
+import { JOURS_GRATUIT } from '../lib/abonnement.ts';
+import type { Periode } from '../lib/abonnement.ts';
 
 /*
  * Les fonctions serveur : les pages publiques en lecture libre, tout le reste
@@ -25,11 +30,20 @@ function memeOrigine() {
   if (recue && recue !== origine() && recue !== getRequestUrl().origin) throw new Error('Origine refusée');
 }
 
-const session = createMiddleware({ type: 'function' }).server(async ({ next }) => {
+/** Une session ouverte, conditions acceptées ou non : de quoi les accepter, exporter ses données ou partir. */
+const sessionBrute = createMiddleware({ type: 'function' }).server(async ({ next }) => {
   const compte = compteDeSession(getCookie(COOKIE_SESSION));
   if (!compte) throw new Error('Session expirée : reconnecte-toi.');
   memeOrigine();
   return next({ context: { compte } });
+});
+
+const cguAJour = (compte: string) => compte === PRINCIPAL || db.compteParId(compte)?.cgu === VERSION_CGU;
+
+/** Tout le reste demande aussi d'avoir accepté la version en vigueur des CGU. */
+const session = createMiddleware({ type: 'function' }).middleware([sessionBrute]).server(async ({ next, context }) => {
+  if (!cguAJour(context.compte)) throw new Error('Accepte les conditions d’utilisation pour continuer.');
+  return next();
 });
 
 const proprietaire = createMiddleware({ type: 'function' }).middleware([session]).server(async ({ next, context }) => {
@@ -55,15 +69,17 @@ export const lirePagePublique = createServerFn({ method: 'GET' })
     return {
       reglages: reglagesPourCompte(compte.id, db.lireReglages(compte.id)),
       blocs: pourCompte(compte.id, db.lireBlocs(compte.id)).filter(bloc => estEnLigne(bloc, maintenant)),
-      compte: { pseudo: compte.pseudo, principal: compte.id === PRINCIPAL },
+      compte: { pseudo: compte.pseudo, principal: compte.id === PRINCIPAL, pro: db.abonnement(compte, maintenant).plan === 'pro' },
     };
   });
 
 function etat(compte: string): EtatAdmin {
   const c = db.compteParId(compte)!;
+  const abonnement = db.abonnement(c);
   return {
     reglages: db.lireReglages(compte), blocs: db.lireBlocs(compte), clics: db.clicsParBloc(compte, 30), stockageEphemere: db.stockageEphemere(),
-    compte: { pseudo: c.pseudo, principal: compte === PRINCIPAL, email: c.email },
+    compte: { pseudo: c.pseudo, principal: compte === PRINCIPAL, email: c.email, pro: abonnement.plan === 'pro' }, cguAJour: cguAJour(compte),
+    abonnement, paiement: compte !== PRINCIPAL && !!creem.config(process.env),
   };
 }
 
@@ -74,7 +90,7 @@ export const lireAdmin = createServerFn({ method: 'GET' }).handler(async (): Pro
   return compte ? { connecte: true, etat: etat(compte) } : { connecte: false };
 });
 
-export const chargerEtat = createServerFn({ method: 'GET' }).middleware([session]).handler(async ({ context }) => etat(context.compte));
+export const chargerEtat = createServerFn({ method: 'GET' }).middleware([sessionBrute]).handler(async ({ context }) => etat(context.compte));
 
 export const demanderLien = createServerFn({ method: 'POST' })
   .validator((data: unknown) => String(data ?? '').slice(0, 200))
@@ -99,6 +115,24 @@ export const deconnecter = createServerFn({ method: 'POST' }).handler(async () =
   deleteCookie(COOKIE_SESSION, cookieSession());
   return { ok: true };
 });
+
+export const accepterCgu = createServerFn({ method: 'POST' }).middleware([sessionBrute]).handler(async ({ context }) => {
+  db.accepterCgu(context.compte, VERSION_CGU);
+  return { ok: true };
+});
+
+/** Le droit à l'effacement, en libre-service : il faut retaper son pseudo. */
+export const supprimerMonCompte = createServerFn({ method: 'POST' })
+  .middleware([sessionBrute])
+  .validator((data: unknown) => String(data ?? '').trim().toLowerCase().slice(0, 40))
+  .handler(async ({ data, context }) => {
+    if (context.compte === PRINCIPAL) return { ok: false, message: 'Le compte principal ne se supprime pas.' };
+    const compte = db.compteParId(context.compte);
+    if (!compte || data !== compte.pseudo) return { ok: false, message: 'Retape ton pseudo exactement pour confirmer.' };
+    db.supprimerCompte(compte.id);
+    deleteCookie(COOKIE_SESSION, cookieSession());
+    return { ok: true, message: 'Ton compte est supprimé.' };
+  });
 
 export const enregistrerBloc = createServerFn({ method: 'POST' })
   .middleware([session])
@@ -160,7 +194,27 @@ export const apercuSite = createServerFn({ method: 'POST' })
 export const lireStats = createServerFn({ method: 'GET' })
   .middleware([session])
   .validator((data: unknown) => ([7, 30, 90, 365].includes(Number(data)) ? Number(data) : 30))
-  .handler(async ({ data, context }): Promise<Stats> => db.stats(context.compte, data));
+  // En gratuit, l'historique visible s'arrête à sept jours (tout est gardé : passer en Pro le rend visible).
+  // Tant que le paiement n'est pas branché, il n'y a pas de Pro à proposer : rien n'est limité.
+  .handler(async ({ data, context }): Promise<Stats> => {
+    const limite = !db.compteEstPro(context.compte) && !!creem.config(process.env);
+    return db.stats(context.compte, limite ? JOURS_GRATUIT : data);
+  });
+
+/* ---- Abonnement Pro (Creem) ---- */
+
+export const ouvrirPaiement = createServerFn({ method: 'POST' })
+  .middleware([session])
+  .validator((data: unknown): Periode => (data === 'an' ? 'an' : 'mois'))
+  .handler(async ({ data, context }) => {
+    const compte = db.compteParId(context.compte)!;
+    if (db.abonnement(compte).plan === 'pro') throw new Error('Tu es déjà en Pro : gère ton abonnement depuis le portail.');
+    return creem.ouvrirPaiement(process.env, fetch, compte, data, origine());
+  });
+
+export const ouvrirPortail = createServerFn({ method: 'POST' })
+  .middleware([session])
+  .handler(async ({ context }) => creem.ouvrirPortail(process.env, fetch, db.compteParId(context.compte)!));
 
 /* ---- Les comptes, depuis le back office de Lilian ---- */
 
@@ -194,15 +248,42 @@ export const renvoyerInvitation = createServerFn({ method: 'POST' })
     return inviter(origine(), process.env, compte);
   });
 
+const motif = (v: unknown) => String(v ?? '').slice(0, 2000);
+
 export const changerStatutCompte = createServerFn({ method: 'POST' })
   .middleware([proprietaire])
   .validator((data: unknown) => {
-    const o = (data ?? {}) as { id?: unknown; statut?: unknown };
-    return { id: String(o.id ?? '').slice(0, 40), statut: o.statut === 'suspendu' ? 'suspendu' as const : 'actif' as const };
+    const o = (data ?? {}) as { id?: unknown; statut?: unknown; motif?: unknown };
+    return { id: String(o.id ?? '').slice(0, 40), statut: o.statut === 'suspendu' ? 'suspendu' as const : 'actif' as const, motif: motif(o.motif) };
   })
-  .handler(async ({ data }) => { db.changerStatut(data.id, data.statut); return { ok: true }; });
+  .handler(async ({ data }) => { await changerStatutMotive(process.env, fetch, data.id, data.statut, data.motif); return { ok: true }; });
 
 export const supprimerCompte = createServerFn({ method: 'POST' })
   .middleware([proprietaire])
-  .validator((data: unknown) => String(data ?? '').slice(0, 40))
-  .handler(async ({ data }) => { db.supprimerCompte(data); return { ok: true }; });
+  .validator((data: unknown) => {
+    const o = (data ?? {}) as { id?: unknown; motif?: unknown };
+    return { id: String(o.id ?? '').slice(0, 40), motif: motif(o.motif) };
+  })
+  .handler(async ({ data }) => { await supprimerMotive(process.env, fetch, data.id, data.motif); return { ok: true }; });
+
+/* ---- Signalements ---- */
+
+/** Le formulaire « Signaler cette page », ouvert à tous. */
+export const envoyerSignalement = createServerFn({ method: 'POST' })
+  .validator((data: unknown) => (data ?? {}) as Record<string, unknown>)
+  .handler(async ({ data }) => {
+    memeOrigine();
+    return signaler(process.env, fetch, { page: data.page, motif: data.motif, details: data.details, email: data.email, bonneFoi: data.bonneFoi }, getRequestHeader('x-real-ip') ?? '', origine());
+  });
+
+export const listerSignalements = createServerFn({ method: 'GET' })
+  .middleware([proprietaire])
+  .handler(async (): Promise<SignalementResume[]> => db.listerSignalements().map(({ email: e, traite: _, ...s }) => ({ ...s, contact: !!e })));
+
+export const traiterSignalement = createServerFn({ method: 'POST' })
+  .middleware([proprietaire])
+  .validator((data: unknown) => {
+    const o = (data ?? {}) as { id?: unknown; statut?: unknown; decision?: unknown };
+    return { id: String(o.id ?? '').slice(0, 40), statut: o.statut === 'suspendu' ? 'suspendu' as const : 'sans-suite' as const, decision: motif(o.decision) };
+  })
+  .handler(async ({ data }) => { await traiter(process.env, fetch, data.id, data.statut, data.decision, origine()); return { ok: true }; });
