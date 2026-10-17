@@ -87,6 +87,10 @@ export function createSiteServer({ distDir = root, liensDir = liensRoot, fetchIm
     const cookies = response.headers.getSetCookie();
     if (cookies.length) out['Set-Cookie'] = cookies;
     out['Cache-Control'] ??= 'no-store';
+    // La page et le back office ne s'affichent jamais dans le cadre d'un autre site.
+    out['Content-Security-Policy'] ??= "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'";
+    out['X-Frame-Options'] ??= 'DENY';
+    out['Referrer-Policy'] ??= local.startsWith('/admin') ? 'no-referrer' : 'strict-origin-when-cross-origin';
     return send(response.status, Buffer.from(await response.arrayBuffer()), out);
   }
   /* Le flux est relu au plus toutes les demi-heures. Si YouTube ne répond pas,
