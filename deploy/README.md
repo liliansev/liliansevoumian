@@ -24,6 +24,13 @@ overwrites X-Real-IP and proxies to liliansevoumian-app:3000 on the external
 `edge` network. The app only publishes localhost:3100. Never join agenceafk_default:
 the AFK API trusts forwarded headers from any neighbour on that network.
 
+Pro plan of the link page (paid by Creem, merchant of record): set CREEM_API_KEY,
+CREEM_WEBHOOK_SECRET, CREEM_PRODUIT_MOIS and CREEM_PRODUIT_AN (product ids,
+prod_…) in runtime.env, plus CREEM_TEST=1 to use test-api.creem.io with a test
+key. The Creem webhook points to https://liliansevoumian.fr/liens/api/creem
+(events checkout.completed and subscription.*). Without these variables nothing
+is sold, the stats history is not limited and the back office hides the Pro card.
+
 Deployment scripts and Compose are operator-provisioned files. Updating files in
 this folder alone does not update the installed scripts or Compose: review and
 copy those explicitly before the next deployment. This prevents uploaded commits

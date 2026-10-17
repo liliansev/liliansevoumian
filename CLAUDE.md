@@ -116,6 +116,8 @@ liens/                         # la page de liens (/liens/) et son back office (
 │                              # conformité UE : textes légaux dans src/lib/legal.ts (/liens/legal/*), changer VERSION_CGU fait réaccepter les CGU ;
 │                              # signalements (/liens/signaler) et motivation des suspensions dans src/server/moderation.ts (DSA) ;
 │                              # export JSON (/liens/api/export) et suppression du compte en libre-service ; purge des stats à 13 mois (db.purger)
+│                              # offre Pro payée par Creem (revendeur officiel) : prix et avantages dans src/lib/abonnement.ts, webhooks signés
+│                              # sur /liens/api/creem (src/server/creem.ts) ; le retour du paiement n'accorde rien, seul le webhook le fait
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
 ├── contact.ts                 # formulaire de contact (délègue à src/lib/contact-message)
