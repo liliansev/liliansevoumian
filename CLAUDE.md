@@ -108,11 +108,8 @@ src/
 ├── content.config.ts          # schéma Zod de la collection
 └── styles/
     └── global.css             # jetons @theme, « La tenue commune », dispositif de la DA
-liens/                         # la page de liens (/liens/) et son back office (/liens/admin), TanStack Start + SQLite (node:sqlite)
-│                              # servie par deploy/server.mjs ; base sur le volume /data ; connexion par lien e-mail (Resend)
-│                              # src/lib (modèle, 30 thèmes, validation), src/server (base, auth, stats), src/admin (back office), demo/ (aperçu Artifact)
-│                              # plusieurs comptes (bêta, sur invitation) : la page de Lilian sur /liens/, les autres sur /liens/<pseudo> ;
-│                              # tout est rattaché à un `compte`, l'onglet Comptes du back office n'existe que pour le compte principal
+(liens/)                       # sorti le 17 octobre 2026 dans le dépôt liliansev/linkinbio : /liens/ est servi
+                               # par son propre conteneur (linkinbio-app), Caddy y envoie /liens* avant le site
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
 ├── contact.ts                 # formulaire de contact (délègue à src/lib/contact-message)

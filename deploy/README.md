@@ -13,13 +13,12 @@ CONTACT_FROM (default formulaire@liliansevoumian.fr, a domain verified in Resend
 to CONTACT_TO (default bonjour@liliansevoumian.fr); both are optional.
 Never put secrets in the image or archive.
 
-Link page (/liens, app in liens/): its SQLite database lives in the named volume
-`liens-data`, mounted at /data (the only writable path of the read-only container).
-The volume must be created from an image that already has /data (owned by node),
-so add it to the installed Compose after the first deployment carrying liens/.
-Without the volume the app runs on an in-memory database and the back office says
-so. The back office login link goes to LIENS_ADMIN_EMAIL, else CONTACT_TO, else
-bonjour@liliansevoumian.fr, sent with RESEND_API_KEY. The shared Caddy proxy (/opt/edge)
+Link page (/liens): since 18 October 2026 it lives in the liliansev/linkinbio
+repository and runs in its own container, linkinbio-app. The shared Caddy
+proxy sends /liens* there before the site route. Its SQLite database stays in
+the named volume `liens-data` (liliansevoumian_liens-data), still declared and
+mounted at /data here: never remove it, linkinbio mounts it as external.
+The shared Caddy proxy (/opt/edge)
 overwrites X-Real-IP and proxies to liliansevoumian-app:3000 on the external
 `edge` network. The app only publishes localhost:3100. Never join agenceafk_default:
 the AFK API trusts forwarded headers from any neighbour on that network.
