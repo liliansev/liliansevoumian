@@ -209,7 +209,7 @@ formations, un clic ici est une orientation réussie, pas une fuite.
 Jusque-là, `/liens/` n'avait pas le script DataFast : ses visiteurs humains
 n'apparaissaient pas dans le tableau de bord (seuls les robots d'IA y passaient,
 par `trackAICrawlerResponse`). La route publique charge maintenant le même script
-cookieless que le reste du site (`liens/src/routes/index.tsx`) ; le back office
+cookieless que le reste du site (`src/routes/index.tsx` du dépôt linkinbio) ; le back office
 `/liens/admin` ne le charge pas. Deux goals :
 - `liens_click` : un lien, une vidéo ou une icône de réseau cliqué. Props `lien`
   (le titre du lien, ou le nom du réseau), `type` (`lien`, `video`,

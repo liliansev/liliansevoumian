@@ -7,9 +7,6 @@ import { createHash } from 'node:crypto';
 import { classifyAICrawlerUserAgent, trackAICrawlerResponse } from '@datafast/ai-crawl';
 const origin = 'https://liliansevoumian.fr';
 const root = fileURLToPath(new URL('../dist', import.meta.url));
-/* La page de liens et son back office (liens/, TanStack Start) : son serveur
-   est un simple `fetch(Request)`, chargé à la première visite de /liens/. */
-const liensRoot = fileURLToPath(new URL('../liens/dist', import.meta.url));
 const mime = { html: 'text/html; charset=utf-8', css: 'text/css', js: 'text/javascript', mjs: 'text/javascript', json: 'application/json', xml: 'application/xml', txt: 'text/plain; charset=utf-8', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', avif: 'image/avif', gif: 'image/gif', ico: 'image/x-icon', woff: 'font/woff', woff2: 'font/woff2', ttf: 'font/ttf', otf: 'font/otf', pdf: 'application/pdf', mp4: 'video/mp4', webm: 'video/webm' };
 /* Images, polices et vidéos de public/ : leurs noms ne sont pas hachés, donc pas
    de cache définitif. Un jour, puis l'ETag les fait revalider en 304 au lieu de
@@ -54,45 +51,9 @@ async function readBody(req, limit) {
   return Buffer.concat(chunks);
 }
 /** Only expose through Caddy; it must overwrite X-Real-IP with the client IP. */
-export function createSiteServer({ distDir = root, liensDir = liensRoot, fetchImpl = fetch, signupNewsletter, sendContactMessage, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
+export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNewsletter, sendContactMessage, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
   let newsletterPromise;
   let contactPromise;
-  let liensPromise;
-  /* Les fichiers de liens/dist/client (scripts, styles, avatar) se servent
-     directement ; tout le reste de /liens/ passe par le serveur de l'app. */
-  async function liens(req, url, ip, send) {
-    const local = url.pathname.slice('/liens'.length);
-    if (/^\/(assets\/[\w.-]+|[\w-]+\.(webp|png|svg|ico))$/.test(local)) {
-      const base = await realpath(resolve(liensDir, 'client'));
-      try {
-        const filename = await realpath(resolve(base, `.${local}`));
-        if (filename.startsWith(base + sep) && (await stat(filename)).isFile()) {
-          const bytes = await readFile(filename); const ext = extname(filename).slice(1).toLowerCase();
-          const immutable = local.startsWith('/assets/');
-          return send(200, bytes, { 'Content-Type': mime[ext] ?? 'application/octet-stream', 'Cache-Control': immutable ? 'public, max-age=31536000, immutable' : 'public, max-age=86400', ETag: etagOf(bytes) });
-        }
-      } catch (error) { if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error; }
-      if (local.startsWith('/assets/')) return send(404, 'Not found', { 'Cache-Control': 'no-store' });
-    }
-    liensPromise ??= import(pathToFileURL(resolve(liensDir, 'server/server.js')).href);
-    const app = (await liensPromise).default;
-    const headers = new Headers();
-    for (const [key, value] of Object.entries(req.headers)) if (typeof value === 'string' && !key.startsWith(':')) headers.set(key, value);
-    if (ip) headers.set('x-real-ip', ip); else headers.delete('x-real-ip');
-    const host = /^[\w.-]+(:\d+)?$/.test(req.headers.host ?? '') ? req.headers.host : new URL(origin).host;
-    const body = ['GET', 'HEAD'].includes(req.method) ? undefined : await readBody(req, 3_000_000);
-    const response = await app.fetch(new Request(`${process.env.NODE_ENV === 'production' ? 'https' : 'http'}://${host}${req.url}`, { method: req.method, headers, body }));
-    const out = {};
-    response.headers.forEach((value, key) => { if (key !== 'set-cookie' && key !== 'content-length') out[key.replace(/(^|-)\w/g, c => c.toUpperCase())] = value; });
-    const cookies = response.headers.getSetCookie();
-    if (cookies.length) out['Set-Cookie'] = cookies;
-    out['Cache-Control'] ??= 'no-store';
-    // La page et le back office ne s'affichent jamais dans le cadre d'un autre site.
-    out['Content-Security-Policy'] ??= "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'";
-    out['X-Frame-Options'] ??= 'DENY';
-    out['Referrer-Policy'] ??= local.startsWith('/admin') ? 'no-referrer' : 'strict-origin-when-cross-origin';
-    return send(response.status, Buffer.from(await response.arrayBuffer()), out);
-  }
   /* Le flux est relu au plus toutes les demi-heures. Si YouTube ne répond pas,
      la dernière réponse connue sert encore et on réessaie une minute plus tard. */
   let video = null, videoCheckedAt = -Infinity, videoPending = null, thumbnail = null, thumbnailPending = null;
@@ -134,12 +95,10 @@ export function createSiteServer({ distDir = root, liensDir = liensRoot, fetchIm
              jusqu'ici : DataFast ne garde que ceux qu'il vérifie par IP. */
           const crawler = classifyAICrawlerUserAgent(headers.get('user-agent') ?? '');
           if (crawler) log(JSON.stringify({ crawler: crawler.agent, category: crawler.category, path: url.pathname, status: res.statusCode }));
-          try { track(request, { statusCode: res.statusCode }, { websiteId: 'dfid_Mq8wt9KvIisuofpYWZouo', publicOrigin: origin, getIp: () => ip, additionalIgnoredPathPrefixes: ['/api', '/healthz', '/liens/api', '/liens/_serverFn', '/liens/admin', '/liens/media'] }); }
+          try { track(request, { statusCode: res.statusCode }, { websiteId: 'dfid_Mq8wt9KvIisuofpYWZouo', publicOrigin: origin, getIp: () => ip, additionalIgnoredPathPrefixes: ['/api', '/healthz'] }); }
           catch (error) { console.error('Crawler tracking failed', error.message); }
         });
       }
-      if (url.pathname === '/liens') return send(308, '', { Location: `/liens/${url.search}` });
-      if (url.pathname.startsWith('/liens/')) return liens(req, url, ip, send);
       if (req.headers.host?.split(':')[0] === 'formations.liliansevoumian.fr') return send(308, '', { Location: `https://lab.augmentes.fr${url.pathname}${url.search}` });
       if (url.pathname.endsWith('/') && url.pathname !== '/') return send(308, '', { Location: `${url.pathname.replace(/\/+$/, '')}${url.search}` });
       if (moved.has(url.pathname)) return send(308, '', { Location: `${moved.get(url.pathname)}${url.search}` });
