@@ -7,5 +7,5 @@ export function POST(request: Request): Promise<Response> {
   // and restore the public protocol; never trust Origin or forwarded-host here.
   const publicUrl = new URL(request.url);
   publicUrl.protocol = 'https:';
-  return signupNewsletter(request, process.env.LUMAIL_API_KEY, publicUrl.origin);
+  return signupNewsletter(request, process.env.MAILCHEAP_API_KEY, publicUrl.origin, request.headers.get('x-real-ip') ?? undefined);
 }

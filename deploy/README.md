@@ -7,7 +7,7 @@ The receiver accepts a commit archive, builds and tests a Docker image, checks a
 candidate container, then updates the app. A failed cutover restores the previous
 image. /docker/liliansevoumian/.env.previous preserves the last rollback image.
 
-Runtime secrets: /opt/liliansevoumian/secrets/runtime.env (LUMAIL_API_KEY for
+Runtime secrets: /opt/liliansevoumian/secrets/runtime.env (MAILCHEAP_API_KEY for
 the newsletter, RESEND_API_KEY for the contact form). The contact form sends from
 CONTACT_FROM (default formulaire@liliansevoumian.fr, a domain verified in Resend)
 to CONTACT_TO (default bonjour@liliansevoumian.fr); both are optional.

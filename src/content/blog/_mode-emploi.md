@@ -22,5 +22,5 @@ draft: true
 5. Après une correction importante, ajouter `updated: 2026-10-20` sous `date`.
 
 Les abonnés ne reçoivent pas l'article tout seul : l'envoi se fait depuis
-Lumail, comme la newsletter. Le flux `/blog/rss.xml` liste les articles
+Mailcheap, comme la newsletter. Le flux `/blog/rss.xml` liste les articles
 publiés, si un outil doit les relever.

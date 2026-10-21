@@ -108,7 +108,7 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNews
         const bytes = await readBody(req, 4096);
         if (!signupNewsletter) newsletterPromise ??= import('../runtime/newsletter-signup.mjs');
         const signup = signupNewsletter ?? (await newsletterPromise).signupNewsletter;
-        const response = await signup(new Request(url, { method: 'POST', headers, body: bytes }), process.env.LUMAIL_API_KEY, origin);
+        const response = await signup(new Request(url, { method: 'POST', headers, body: bytes }), process.env.MAILCHEAP_API_KEY, origin, ip);
         return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
       }
       if (url.pathname === '/api/contact') {
