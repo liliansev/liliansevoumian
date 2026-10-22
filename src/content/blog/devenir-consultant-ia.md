@@ -14,13 +14,13 @@ On me demande souvent comment on devient consultant en automatisation et en IA. 
 
 J’ai arrêté mes études à bac -1. J’ai livré des pizzas. J’ai vendu des logos à 10 € sur 5euros.com, qui me prenaient parfois trois ou quatre heures chacun.
 
-Ces années m’ont appris une chose utile pour la suite : vendre un service à l’heure, quand on débute, rapporte très peu.
+Ces années m’ont appris une chose utile pour la suite : **vendre un service à l’heure, quand on débute, rapporte très peu.**
 
 ## 2020 : je deviens freelance en automatisation
 
 En septembre 2020, je me lance en freelance sur l’automatisation. Le principe de mes missions n’a pas changé depuis : relier entre eux les outils d’une entreprise pour lui éviter des heures de copier-coller.
 
-Les missions s’enchaînent : Familytrip en 2021, puis Qonto et KlaK fin 2021. Chaque mission m’apprend un nouvel outil et un nouveau métier, et c’est en résolvant des problèmes réels que j’ai le plus progressé.
+Les missions s’enchaînent : Familytrip en 2021, puis Qonto et KlaK fin 2021. Chaque mission m’apprend un nouvel outil et un nouveau métier, et **c’est en résolvant des problèmes réels que j’ai le plus progressé.**
 
 ## 2021 et 2022 : la formation et les certifications
 
@@ -42,7 +42,7 @@ C’est là que j’ai compris ce que vivent mes clients : une équipe, des clie
 
 En janvier 2026, je fonde [agenceafk](https://agenceafk.fr), mon agence d’agents IA et d’automatisations pour les entreprises de 5 à 50 personnes.
 
-Aujourd’hui, ça fait plus de 100 entreprises accompagnées et plus de 300 personnes formées. Ce que j’ai vu chez ces stagiaires, je le raconte dans [Métiers menacés par l’IA](/blog/metiers-menaces-par-l-ia).
+Aujourd’hui, ça fait **plus de 100 entreprises accompagnées et plus de 300 personnes formées**. Ce que j’ai vu chez ces stagiaires, je le raconte dans [Métiers menacés par l’IA](/blog/metiers-menaces-par-l-ia).
 
 ## Ce que je referais
 
@@ -55,4 +55,4 @@ Aujourd’hui, ça fait plus de 100 entreprises accompagnées et plus de 300 per
 - **Arrêter plus tôt de facturer à l’heure.** Une automatisation qui fait gagner dix heures par semaine à un client vaut plus que le temps que j’ai passé à la construire.
 - **Apprendre les bases du code plus tôt.** Le no-code m’a permis de démarrer vite. Comprendre ce qu’il y a dessous m’a permis d’aller plus loin, surtout avec l’IA.
 
-Si vous voulez suivre le même chemin, mon conseil tient en une phrase : trouvez une entreprise qui perd du temps sur une tâche répétitive, et automatisez-la. C’est comme ça que j’ai appris, mission après mission.
+Si vous voulez suivre le même chemin, mon conseil tient en une phrase : **trouvez une entreprise qui perd du temps sur une tâche répétitive, et automatisez-la.** C’est comme ça que j’ai appris, mission après mission.

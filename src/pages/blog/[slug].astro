@@ -158,8 +158,23 @@ const articleSchema = {
     margin-bottom: 0;
   }
 
+  /* Le gras porte les phrases clés : un cran plus noir que le texte. */
   .billet__corps :global(strong) {
-    font-weight: 600;
+    font-weight: 650;
+  }
+
+  /* Un lien qui sort du site se voit : en gras et en orange foncé, le seul
+     texte en couleur de la colonne. Les liens internes restent à l'encre. */
+  .billet__corps :global(a[href^='http']) {
+    color: var(--carnet-accent-texte);
+    font-weight: 650;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+  }
+
+  .billet__corps :global(a[href^='http']:hover) {
+    color: var(--carnet-encre);
+    text-decoration-color: var(--carnet-accent);
   }
 
   .billet__corps :global(code) {

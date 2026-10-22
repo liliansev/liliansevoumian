@@ -6,7 +6,7 @@ date: 2026-10-14
 
 Depuis plusieurs années, j'automatise des opérations pour des entreprises, je construis des agents IA et je forme des équipes à ces outils. J'apprends quelque chose à chaque projet, et la plupart de ces leçons restaient dans ma tête ou dans un mail envoyé à mes abonnés.
 
-Ce blog change ça. Ce que j'aurais mis dans la newsletter, je le publie ici, pour tout le monde.
+Ce blog change ça. **Ce que j'aurais mis dans la newsletter, je le publie ici, pour tout le monde.**
 
 ## Ce que vous trouverez ici
 
@@ -18,10 +18,10 @@ Des notes sur ce que je construis, ce que je teste et ce que j'en retiens. Souve
 
 ## Ce que vous n'y trouverez pas
 
-Des offres ou des arguments de vente. Mes services ont leurs pages sur ce site. Ici, j'écris pour partager ce que j'apprends.
+**Des offres ou des arguments de vente.** Mes services ont leurs pages sur ce site. Ici, j'écris pour partager ce que j'apprends.
 
 ## Pourquoi en public
 
-Écrire pour quelqu'un oblige à finir sa pensée. Une idée qui tient en trois lignes dans un carnet doit tenir debout quand un lecteur la lit sans moi pour l'expliquer.
+**Écrire pour quelqu'un oblige à finir sa pensée.** Une idée qui tient en trois lignes dans un carnet doit tenir debout quand un lecteur la lit sans moi pour l'expliquer.
 
 Si un article vous parle, vous pouvez recevoir les suivants par e-mail, juste en dessous. Un mail quand un article sort, rien d'autre.

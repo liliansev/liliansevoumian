@@ -16,19 +16,19 @@ Un mail arrive, je le lis dans les transports, et je me rends compte qu’il con
 
 J’ai donc construit un agent sur [n8n](/expert-n8n). Je déplace le mail vers un libellé « Agent ». L’agent le détecte, résume son contenu en une phrase, le priorise et crée la tâche dans Todoist avec le lien vers le mail d’origine.
 
-Ce workflow me fait gagner au moins une heure par semaine. Le plus gros gain, c’est de ne plus garder ces tâches en tête.
+Ce workflow me fait gagner **au moins une heure par semaine**. Le plus gros gain, c’est de **ne plus garder ces tâches en tête**.
 
 ## Ma comptabilité passe par Claude
 
 Mon comptable me relançait régulièrement pour catégoriser mes transactions dans Pennylane. J’avais la flemme, honnêtement.
 
-J’ai passé une heure à construire un serveur MCP qui relie Pennylane à Claude, avec n8n. Depuis, c’est Claude qui fait ce travail. Je garde un œil sur le résultat, et le comptable a ce qu’il lui faut.
+J’ai passé une heure à construire un serveur MCP qui relie Pennylane à Claude, avec n8n. **Depuis, c’est Claude qui fait ce travail.** Je garde un œil sur le résultat, et le comptable a ce qu’il lui faut.
 
 ## Je construis mes propres outils avec Claude Code
 
 Quand un logiciel ne me convient pas, je le construis. Pour mon CRM personnel par exemple, j’ai fait le tour du marché (Notion, Attio, Folk, Pipedrive, HubSpot, Twenty) : chacun était trop cher, trop lourd ou trop limité pour un indépendant.
 
-Avec Claude Code, je construis ce genre d’outil interne moi-même, exactement à ma mesure. J’utilise la même méthode pour mes clients, avec [agenceafk](https://agenceafk.fr) : des dashboards et des outils métiers sur mesure, branchés sur les logiciels qu’ils utilisent déjà.
+Avec Claude Code, je construis ce genre d’outil interne moi-même, **exactement à ma mesure**. J’utilise la même méthode pour mes clients, avec [agenceafk](https://agenceafk.fr) : des dashboards et des outils métiers sur mesure, branchés sur les logiciels qu’ils utilisent déjà.
 
 ## Mon agent personnel demande de la configuration
 
@@ -45,6 +45,6 @@ Voici la liste qui compte le plus, parce que c’est celle que je recommande aus
 
 ## La règle que j’applique partout
 
-Une tâche répétitive, avec des règles claires et un résultat facile à vérifier, je la confie à une machine. Une tâche où une erreur coûte une relation, de l’argent ou ma réputation, je la garde, ou je garde au moins la dernière validation.
+**Une tâche répétitive, avec des règles claires et un résultat facile à vérifier, je la confie à une machine.** Une tâche où une erreur coûte une relation, de l’argent ou ma réputation, je la garde, ou je garde au moins la dernière validation.
 
 Et vous, qu’est-ce que vous seriez prêt à confier à un agent IA dès la semaine prochaine ?
