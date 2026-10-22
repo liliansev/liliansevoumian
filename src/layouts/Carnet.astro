@@ -2,15 +2,14 @@
 /*
  * Carnet : la charpente du blog.
  *
- * Le blog vit sur le site mais ne porte pas sa tenue « nuit et pêche » : il
- * est écrit comme un carnet sur papier kraft. Un Garamond, une encre sépia,
- * une seule colonne de texte, aucun ornement. Le Layout commun garde le SEO, le
- * balisage et le suivi ; tout le reste (barre, pied, couleurs, police) est
- * propre au blog et ne sort pas de cette charpente.
+ * Le blog vit sur le site mais ne porte pas sa nuit : il se lit sur fond
+ * blanc, en Geist, avec la pêche du site pour seul accent (22 octobre 2026 :
+ * le carnet kraft en Garamond était « trop beige, trop italique », Lilian veut
+ * un blog personnel qui reste tech). Une seule colonne, aucun ornement. Le
+ * Layout commun garde le SEO, le balisage et le suivi ; tout le reste (barre,
+ * pied, couleurs) est propre au blog et ne sort pas de cette charpente.
  */
 import type { ComponentProps } from 'astro/types';
-import '@fontsource-variable/eb-garamond';
-import '@fontsource-variable/eb-garamond/wght-italic.css';
 import Layout from './Layout.astro';
 
 type Props = ComponentProps<typeof Layout>;
@@ -48,38 +47,35 @@ const annee = new Date().getFullYear();
 </Layout>
 
 <style is:global>
-  /* La page entière passe au papier, y compris sous la barre de défilement et
-     au-delà du bas de page : le fond du site ne doit pas réapparaître. */
+  /* La page entière passe au blanc, y compris sous la barre de défilement et
+     au-delà du bas de page : la nuit du site ne doit pas réapparaître. */
   html:has(.carnet),
   html:has(.carnet) body {
-    background-color: #ece2ce;
-    /* Le grain du papier : un bruit très léger, à peine visible, pour que le
-       fond ne soit pas un aplat d'écran. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .14 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-color: #ffffff;
     color-scheme: light;
   }
 
   html:has(.carnet) ::selection {
-    background: #d2bf9c;
-    color: #2e2215;
+    background: #ffd9c4;
+    color: #111827;
   }
 
   html:has(.carnet) .skip-link:focus-visible {
-    background: #2e2215;
-    color: #ece2ce;
+    background: #111827;
+    color: #ffffff;
   }
 
   .carnet {
-    /* Les teintes du carnet. Un papier kraft éclairci vers le blanc
-       (14 octobre 2026, le kraft plein était trop jaune) ; une encre sépia,
-       jamais noire ; un trait de crayon pour les filets. Le gris tient 6,9:1
-       sur le papier, l'encre 12:1. */
-    --carnet-papier: #ece2ce;
-    --carnet-encre: #2e2215;
-    --carnet-gris: #5a4630;
-    --carnet-trait: #a48c66;
-    --carnet-colonne: 36rem;
-    --carnet-serif: 'EB Garamond Variable', Garamond, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    /* Les teintes du blog. L'encre est la nuit du site (17,7:1 sur le blanc),
+       le gris tient 7,6:1, le trait ne sert qu'aux filets. La pêche du site
+       souligne et marque ; elle ne porte jamais de texte sur le blanc, où
+       elle ne tient pas 2:1. */
+    --carnet-papier: #ffffff;
+    --carnet-encre: #111827;
+    --carnet-gris: #4b5563;
+    --carnet-trait: #e5e7eb;
+    --carnet-peche: #ffb38a;
+    --carnet-colonne: 40rem;
 
     position: relative;
     min-height: 100vh;
@@ -88,35 +84,34 @@ const annee = new Date().getFullYear();
     flex-direction: column;
     padding: 0 1.25rem;
     color: var(--carnet-encre);
-    font-family: var(--carnet-serif);
-    font-size: 1.3125rem;
-    line-height: 1.6;
-    font-kerning: normal;
-    -webkit-font-smoothing: auto;
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    font-feature-settings: 'ss01';
   }
 
   /* `html` en tête : la tenue commune pose sa graisse et son interlettrage
      sur `:root :is(h1, h2…)`, il faut la dépasser d'un cran. */
   html .carnet :is(h1, h2, h3, h4) {
     color: var(--carnet-encre);
-    font-family: var(--carnet-serif);
-    font-weight: 400;
-    letter-spacing: 0;
-    line-height: 1.25;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
   }
 
   .carnet :where(p, li, blockquote) {
     max-width: none;
   }
 
-  /* Un lien se souligne au crayon : un trait fin, un peu clair, qui fonce
-     quand on le survole. */
+  /* Un lien se souligne en pêche : un trait épais, qui passe à l'encre quand
+     on le survole. */
   .carnet a {
     color: inherit;
     text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-decoration-color: var(--carnet-trait);
-    text-underline-offset: 0.2em;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--carnet-peche);
+    text-underline-offset: 0.22em;
     transition: text-decoration-color 150ms ease;
   }
 
@@ -127,7 +122,7 @@ const annee = new Date().getFullYear();
   .carnet :focus-visible {
     outline: 2px solid var(--carnet-encre);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: var(--radius-xs, 4px);
   }
 
   .carnet__barre,
@@ -144,8 +139,9 @@ const annee = new Date().getFullYear();
     align-items: baseline;
     justify-content: space-between;
     gap: 0.25rem 1.5rem;
-    padding: 2.5rem 0 0;
-    font-size: 1rem;
+    padding: 1.5rem 0 1.25rem;
+    border-bottom: 1px solid var(--carnet-trait);
+    font-size: 0.9375rem;
   }
 
   .carnet__nom {
@@ -159,7 +155,7 @@ const annee = new Date().getFullYear();
 
   .carnet .carnet__nom:hover,
   .carnet .carnet__liens a:hover {
-    text-decoration-color: var(--carnet-encre);
+    text-decoration-color: var(--carnet-peche);
   }
 
   .carnet__liens {
@@ -170,14 +166,14 @@ const annee = new Date().getFullYear();
 
   .carnet__page {
     flex: 1;
-    padding: 4.5rem 0 3rem;
+    padding: 4rem 0 3rem;
     outline: none;
   }
 
   .carnet__pied {
     padding: 2rem 0 3rem;
     color: var(--carnet-gris);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
   .carnet__pied p {
@@ -188,7 +184,6 @@ const annee = new Date().getFullYear();
     margin: 0 0.4em;
   }
 
-  /* Un filet, comme un trait tiré à la règle au crayon. */
   .carnet hr,
   .carnet__pied::before {
     display: block;
@@ -205,15 +200,11 @@ const annee = new Date().getFullYear();
 
   @media (max-width: 30rem) {
     .carnet {
-      font-size: 1.1875rem;
-    }
-
-    .carnet__barre {
-      padding-top: 1.5rem;
+      font-size: 1.0625rem;
     }
 
     .carnet__page {
-      padding-top: 3rem;
+      padding-top: 2.75rem;
     }
   }
 </style>
