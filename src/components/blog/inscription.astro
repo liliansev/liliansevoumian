@@ -1,11 +1,12 @@
 ---
 /*
- * inscription : recevoir les articles du blog par e-mail.
+ * inscription : s'abonner à la newsletter hebdomadaire depuis le blog.
  *
  * Même liste et même route que la newsletter de l'accueil (`/api/newsletter`,
- * voir `lib/newsletter-signup.ts`) : le blog est la newsletter, en public.
- * Écrit dans la tenue du carnet (voir `layouts/Carnet.astro`) : une phrase,
- * une ligne où écrire son adresse, un mot pour envoyer. Rien à vendre.
+ * voir `lib/newsletter-signup.ts`). Aucun mail ne part tout seul quand un
+ * article sort : le bloc promet donc la newsletter de la semaine, pas un
+ * envoi par article (22 octobre 2026). Une phrase, un champ, un bouton.
+ * Rien à vendre.
  */
 
 interface Props {
@@ -13,12 +14,12 @@ interface Props {
   titre?: string;
 }
 
-const { titre = 'Recevoir les prochains articles par e-mail.' } = Astro.props;
+const { titre = 'Ma newsletter, chaque semaine.' } = Astro.props;
 ---
 
 <section id="inscription" aria-labelledby="inscription-titre" class="inscription">
   <h2 id="inscription-titre" class="inscription__titre">{titre}</h2>
-  <p class="inscription__texte">Un mail quand un article sort. Pas de publicité, désinscription en&nbsp;un&nbsp;clic.</p>
+  <p class="inscription__texte">Un sujet par semaine : comment utiliser l’IA pour soi, son business et son quotidien. Pas de publicité, désinscription en&nbsp;un&nbsp;clic.</p>
   <form data-inscription action="/api/newsletter" method="post" class="inscription__form">
     <label for="inscription-email" class="sr-only">Votre adresse e-mail</label>
     <input id="inscription-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="votre adresse e-mail" aria-describedby="inscription-statut" class="inscription__champ" />
