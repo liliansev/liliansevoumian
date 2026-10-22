@@ -3,7 +3,8 @@
  * Carnet : la charpente du blog.
  *
  * Le blog vit sur le site mais ne porte pas sa nuit : il se lit sur fond
- * blanc, en Geist, avec la pêche du site pour seul accent (22 octobre 2026 :
+ * blanc, en Geist, avec un orange tiré de la pêche du site pour seul accent,
+ * posé sur quelques repères et jamais sur le texte courant (22 octobre 2026 :
  * le carnet kraft en Garamond était « trop beige, trop italique », Lilian veut
  * un blog personnel qui reste tech). Une seule colonne, aucun ornement. Le
  * Layout commun garde le SEO, le balisage et le suivi ; tout le reste (barre,
@@ -56,7 +57,7 @@ const annee = new Date().getFullYear();
   }
 
   html:has(.carnet) ::selection {
-    background: #ffd9c4;
+    background: #fed7aa;
     color: #111827;
   }
 
@@ -67,14 +68,16 @@ const annee = new Date().getFullYear();
 
   .carnet {
     /* Les teintes du blog. L'encre est la nuit du site (17,7:1 sur le blanc),
-       le gris tient 7,6:1, le trait ne sert qu'aux filets. La pêche du site
-       souligne et marque ; elle ne porte jamais de texte sur le blanc, où
-       elle ne tient pas 2:1. */
+       le gris tient 7,6:1, le trait ne sert qu'aux filets. L'orange est la
+       pêche du site poussée pour tenir sur le blanc : vif pour les traits et
+       les puces (3,6:1, au-delà du 3:1 des éléments graphiques), foncé quand
+       il porte du texte (5,2:1). Il marque quelques repères, pas plus. */
     --carnet-papier: #ffffff;
     --carnet-encre: #111827;
     --carnet-gris: #4b5563;
     --carnet-trait: #e5e7eb;
-    --carnet-peche: #ffb38a;
+    --carnet-accent: #ea580c;
+    --carnet-accent-texte: #c2410c;
     --carnet-colonne: 40rem;
 
     position: relative;
@@ -104,19 +107,20 @@ const annee = new Date().getFullYear();
     max-width: none;
   }
 
-  /* Un lien se souligne en pêche : un trait épais, qui passe à l'encre quand
-     on le survole. */
+  /* Un lien se souligne en orange ; au survol, le texte prend l'orange
+     foncé. */
   .carnet a {
     color: inherit;
     text-decoration: underline;
     text-decoration-thickness: 2px;
-    text-decoration-color: var(--carnet-peche);
+    text-decoration-color: var(--carnet-accent);
     text-underline-offset: 0.22em;
     transition: text-decoration-color 150ms ease;
   }
 
   .carnet a:hover {
-    text-decoration-color: var(--carnet-encre);
+    color: var(--carnet-accent-texte);
+    text-decoration-color: currentColor;
   }
 
   .carnet :focus-visible {
@@ -155,7 +159,7 @@ const annee = new Date().getFullYear();
 
   .carnet .carnet__nom:hover,
   .carnet .carnet__liens a:hover {
-    text-decoration-color: var(--carnet-peche);
+    text-decoration-color: var(--carnet-accent);
   }
 
   .carnet__liens {

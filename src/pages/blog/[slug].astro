@@ -77,9 +77,11 @@ const articleSchema = {
 </Carnet>
 
 <style>
+  /* La date en orange : le premier repère de la page. */
   .billet__meta {
     margin: 0;
-    color: var(--carnet-gris);
+    color: var(--carnet-accent-texte);
+    font-weight: 500;
     font-size: 0.875rem;
     font-variant-numeric: tabular-nums;
   }
@@ -99,8 +101,7 @@ const articleSchema = {
     margin: 0 0 1.15em;
   }
 
-  /* Un intertitre porte un court trait pêche au-dessus : le seul repère de
-     couleur dans la colonne. */
+  /* Un intertitre porte un court trait orange au-dessus. */
   .billet__corps :global(h2) {
     margin: 2.6em 0 0.7em;
     font-size: 1.5rem;
@@ -114,7 +115,7 @@ const articleSchema = {
     height: 3px;
     margin-bottom: 0.9rem;
     border-radius: 2px;
-    background: var(--carnet-peche);
+    background: var(--carnet-accent);
   }
 
   .billet__corps :global(h3) {
@@ -141,14 +142,15 @@ const articleSchema = {
   }
 
   .billet__corps :global(li::marker) {
-    color: var(--carnet-gris);
+    color: var(--carnet-accent);
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
 
   .billet__corps :global(blockquote) {
     margin: 1.6em 0;
     padding: 0.1em 0 0.1em 1.2em;
-    border-left: 3px solid var(--carnet-peche);
+    border-left: 3px solid var(--carnet-accent);
     color: var(--carnet-gris);
   }
 
