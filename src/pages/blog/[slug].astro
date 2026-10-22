@@ -77,44 +77,50 @@ const articleSchema = {
 </Carnet>
 
 <style>
+  /* La date en orange : le premier repère de la page. */
   .billet__meta {
     margin: 0;
-    color: var(--carnet-gris);
-    font-size: 0.9375rem;
-    font-variant-numeric: oldstyle-nums;
+    color: var(--carnet-accent-texte);
+    font-weight: 500;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
   }
 
   .billet__titre {
-    margin: 0.5rem 0 0;
-    font-size: 2.75rem;
-    font-style: italic;
-    line-height: 1.2;
+    margin: 0.75rem 0 0;
+    font-size: 2.5rem;
+    line-height: 1.15;
     text-wrap: balance;
   }
 
   .billet__corps {
     margin-top: 2.5rem;
-    hanging-punctuation: first;
   }
 
   .billet__corps :global(p) {
     margin: 0 0 1.15em;
   }
 
-  /* Les intertitres en petites capitales, comme dans un livre. */
+  /* Un intertitre porte un court trait orange au-dessus. */
   .billet__corps :global(h2) {
-    margin: 2.4em 0 0.6em;
+    margin: 2.6em 0 0.7em;
     font-size: 1.5rem;
-    font-variant-caps: all-small-caps;
-    letter-spacing: 0.05em;
-    line-height: 1.35;
+    line-height: 1.3;
+  }
+
+  .billet__corps :global(h2)::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 3px;
+    margin-bottom: 0.9rem;
+    border-radius: 2px;
+    background: var(--carnet-accent);
   }
 
   .billet__corps :global(h3) {
     margin: 2em 0 0.5em;
     font-size: 1.1875rem;
-    font-style: italic;
-    font-weight: 400;
   }
 
   .billet__corps :global(:is(ul, ol)) {
@@ -136,29 +142,45 @@ const articleSchema = {
   }
 
   .billet__corps :global(li::marker) {
-    color: var(--carnet-gris);
+    color: var(--carnet-accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
   }
 
   .billet__corps :global(blockquote) {
     margin: 1.6em 0;
-    padding: 0 0 0 1.2em;
-    border-left: 1px solid var(--carnet-trait);
+    padding: 0.1em 0 0.1em 1.2em;
+    border-left: 3px solid var(--carnet-accent);
     color: var(--carnet-gris);
-    font-style: italic;
   }
 
   .billet__corps :global(blockquote p:last-child) {
     margin-bottom: 0;
   }
 
+  /* Le gras porte les phrases clés : un cran plus noir que le texte. */
   .billet__corps :global(strong) {
-    font-weight: 600;
+    font-weight: 650;
+  }
+
+  /* Un lien qui sort du site se voit : en gras et en orange foncé, le seul
+     texte en couleur de la colonne. Les liens internes restent à l'encre. */
+  .billet__corps :global(a[href^='http']) {
+    color: var(--carnet-accent-texte);
+    font-weight: 650;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+  }
+
+  .billet__corps :global(a[href^='http']:hover) {
+    color: var(--carnet-encre);
+    text-decoration-color: var(--carnet-accent);
   }
 
   .billet__corps :global(code) {
-    padding: 0.05em 0.3em;
-    border-radius: 3px;
-    background: rgba(46, 34, 21, 0.08);
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-xs, 4px);
+    background: #f3f4f6;
     font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
     font-size: 0.85em;
   }
@@ -167,12 +189,11 @@ const articleSchema = {
     overflow-x: auto;
     margin: 1.6em 0;
     padding: 1rem 1.1rem;
-    border: 1px solid var(--carnet-trait);
-    border-radius: 3px;
-    background: rgba(46, 34, 21, 0.05) !important;
-    color: var(--carnet-encre) !important;
+    border-radius: var(--radius-md, 10px);
+    background: #111827 !important;
+    color: #f9fafb !important;
     font-size: 0.85em;
-    line-height: 1.55;
+    line-height: 1.6;
   }
 
   .billet__corps :global(pre code) {
@@ -190,6 +211,7 @@ const articleSchema = {
     max-width: 100%;
     height: auto;
     margin: 2em 0;
+    border-radius: var(--radius-md, 10px);
   }
 
   .billet__corps :global(hr) {
@@ -199,6 +221,12 @@ const articleSchema = {
 
   .billet__retour {
     margin: 3rem 0 0;
-    font-size: 1rem;
+    font-size: 0.9375rem;
+  }
+
+  @media (max-width: 30rem) {
+    .billet__titre {
+      font-size: 2rem;
+    }
   }
 </style>

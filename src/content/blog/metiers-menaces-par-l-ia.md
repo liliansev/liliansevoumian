@@ -26,15 +26,15 @@ Ce qui m’a sorti de là, c’est d’avoir appris à construire les outils plu
 
 Prenez un métier et découpez-le en tâches. Une partie consiste à lire un document, à en extraire des informations et à les recopier dans un autre outil. Une autre consiste à décider quoi faire quand le document sort de l’ordinaire, à parler au client, à arbitrer.
 
-La première partie, l’IA la fait déjà bien. Chez [Humble+](/cas-clients/humble-plus), une marque de compléments alimentaires, les bons de commande des pharmacies arrivent en PDF et ceux des salles de sport en Excel. Un modèle de Mistral les lit, puis un workflow n8n crée la commande dans Shopify et la facture dans Pennylane. Il n’y a plus de ressaisie entre le bon de commande et la facture.
+La première partie, l’IA la fait déjà bien. Chez [Humble+](/cas-clients/humble-plus), une marque de compléments alimentaires, les bons de commande des pharmacies arrivent en PDF et ceux des salles de sport en Excel. Un modèle de Mistral les lit, puis un workflow n8n crée la commande dans Shopify et la facture dans Pennylane. **Il n’y a plus de ressaisie entre le bon de commande et la facture.**
 
 La deuxième partie reste humaine. Dans ce même workflow, les cas sensibles, comme un arrondi au carton ou une facture à valider avant envoi, remontent dans Slack, et une personne tranche.
 
-Un poste qui se résume à la première partie est menacé, et c’est plus honnête de le dire. Un poste qui mélange les deux se transforme : moins de saisie, plus de contrôle et de relation client.
+**Un poste qui se résume à la première partie est menacé**, et c’est plus honnête de le dire. Un poste qui mélange les deux se transforme : moins de saisie, plus de contrôle et de relation client.
 
 ## Ce que je vois chez les gens que je forme
 
-Les profils qui avancent le plus vite en formation sont rarement les plus techniques. Ce sont ceux qui connaissent leur process par cœur : ils savent d’où vient chaque information, où elle doit aller, et ce qui coince quand elle arrive mal.
+**Les profils qui avancent le plus vite en formation sont rarement les plus techniques.** Ce sont ceux qui connaissent leur process par cœur : ils savent d’où vient chaque information, où elle doit aller, et ce qui coince quand elle arrive mal.
 
 Ces personnes repartent avec un premier workflow qui leur retire une tâche qu’elles faisaient chaque semaine. À partir de là, elles regardent leur poste autrement : en tâches qu’elles peuvent confier à une machine, et en décisions qu’elles gardent.
 
@@ -46,4 +46,4 @@ Ces personnes repartent avec un premier workflow qui leur retire une tâche qu�
 2. **Apprenez à automatiser au moins une de ces tâches vous-même.** [Make](/expert-make) ou [n8n](/expert-n8n) suffisent pour commencer, sans écrire de code. La personne qui sait construire l’automatisation de son service a une place bien différente de celle qui la reçoit.
 3. **Gardez la main sur les décisions.** Dans tous les systèmes que je livre, un humain valide les cas douteux. J’explique comment je l’applique à mon propre travail dans [Comment j’utilise l’IA au quotidien](/blog/comment-j-utilise-l-ia-au-quotidien). C’est là que se trouve la valeur de votre poste, et c’est la partie à mettre en avant.
 
-Mon avis : le poste le plus exposé est celui dont personne ne sait décrire les tâches. Dès qu’on sait les décrire, on sait lesquelles confier à l’IA, et c’est souvent la personne qui fait ce travail qui les décrit le mieux.
+Mon avis : **le poste le plus exposé est celui dont personne ne sait décrire les tâches.** Dès qu’on sait les décrire, on sait lesquelles confier à l’IA, et c’est souvent la personne qui fait ce travail qui les décrit le mieux.

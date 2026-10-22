@@ -15,7 +15,8 @@ draft: true
 ---
 ```
 
-3. Écrire le texte en Markdown en dessous : `## Intertitre`, `**gras**`,
+3. Écrire le texte en Markdown en dessous : `## Intertitre`, `**gras**` (sur
+   les phrases clés, trois à six par article : c'est ce qu'un lecteur pressé lit),
    `[un lien](https://...)`, listes avec `-`, citations avec `>`.
 4. Avec `draft: true`, l'article se voit en local (`pnpm dev`) mais pas sur le
    site. Passer à `draft: false` (ou supprimer la ligne) pour le publier.

@@ -66,9 +66,8 @@ const collectionSchema = {
 <style>
   .blog__titre {
     margin: 0;
-    font-size: 2.75rem;
-    font-style: italic;
-    line-height: 1.2;
+    font-size: 2.5rem;
+    line-height: 1.15;
   }
 
   .blog__intro {
@@ -81,33 +80,51 @@ const collectionSchema = {
     color: var(--carnet-gris);
   }
 
+  /* Une ligne par article, séparée par un filet. */
   .blog__liste {
     display: grid;
-    gap: 2.75rem;
-    margin: 3.5rem 0 0;
+    margin: 3rem 0 0;
     padding: 0;
     list-style: none;
+    border-top: 1px solid var(--carnet-trait);
+  }
+
+  .blog__article {
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--carnet-trait);
   }
 
   .blog__date,
   .blog__brouillon {
-    color: var(--carnet-gris);
-    font-size: 0.9375rem;
-    font-variant-numeric: oldstyle-nums;
-  }
-
-  .blog__brouillon {
-    font-style: italic;
+    color: var(--carnet-accent-texte);
+    font-weight: 500;
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
   }
 
   .blog__nom {
-    margin: 0.2rem 0 0;
-    font-size: 1.6rem;
+    margin: 0.3rem 0 0;
+    font-size: 1.375rem;
     line-height: 1.3;
+  }
+
+  .blog__nom a {
+    text-decoration-color: transparent;
+  }
+
+  .blog__nom a:hover {
+    color: var(--carnet-encre);
+    text-decoration-color: var(--carnet-accent);
   }
 
   .blog__resume {
     margin: 0.4rem 0 0;
     color: var(--carnet-gris);
+  }
+
+  @media (max-width: 30rem) {
+    .blog__titre {
+      font-size: 2rem;
+    }
   }
 </style>

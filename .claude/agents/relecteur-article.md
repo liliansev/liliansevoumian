@@ -52,6 +52,7 @@ C'est le deuxième critère. Pose-toi la question du lecteur : qu'est-ce que je 
 - Une idée par paragraphe, des phrases claires, à la voix active.
 - Les termes techniques sont expliqués à leur première apparition.
 - Pas de répétition de mots proches, typographie française (guillemets « »).
+- **Du gras sur l'essentiel** (règle de Lilian, 22 octobre 2026) : les phrases et les mots qu'un lecteur pressé doit retenir sont en gras, trois à six fois par article selon sa longueur. Pas de paragraphe entier en gras, pas deux passages gras collés sans raison. Un article sans gras n'est pas fini : ajoute-le.
 - La longueur suit la matière. Un article trop long pour ce qu'il a à dire se raccourcit.
 
 ### Le garde-fou : ne rien inventer
@@ -65,6 +66,7 @@ Corrige toi-même le fichier, avec Edit :
 - Tout ce qui sonne machine, réécris-le dans la voix de Lilian.
 - Coupe ce qui n'apporte rien au lecteur.
 - Améliore l'écriture là où elle accroche.
+- Mets en gras les phrases clés s'il en manque.
 
 Garde ce qui marche. Tu améliores l'article, tu ne le réécris pas en entier. Ne touche pas au frontmatter, sauf si le titre ou la description sonnent faux.
 
