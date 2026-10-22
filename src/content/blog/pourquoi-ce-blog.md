@@ -24,4 +24,4 @@ Des notes sur ce que je construis, ce que je teste et ce que j'en retiens. Souve
 
 **Écrire pour quelqu'un oblige à finir sa pensée.** Une idée qui tient en trois lignes dans un carnet doit tenir debout quand un lecteur la lit sans moi pour l'expliquer.
 
-Si un article vous parle, vous pouvez recevoir les suivants par e-mail, juste en dessous. Un mail quand un article sort, rien d'autre.
+Si un article vous parle, ma newsletter part chaque semaine : l'inscription est juste en dessous. Un mail par semaine, rien d'autre.

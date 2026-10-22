@@ -34,15 +34,12 @@ const annee = new Date().getFullYear();
     </main>
 
     <footer class="carnet__pied">
-      <p>
-        © {annee} Lilian Sevoumian
-        <span aria-hidden="true">·</span>
-        <a href="/">Le site</a>
-        <span aria-hidden="true">·</span>
-        <a href="/blog/rss.xml">RSS</a>
-        <span aria-hidden="true">·</span>
-        <a href="/mentions-legales">Mentions légales</a>
-      </p>
+      <ul class="carnet__pied-liste" role="list">
+        <li>© {annee} Lilian Sevoumian</li>
+        <li><a href="/">Le site</a></li>
+        <li><a href="/blog/rss.xml">RSS</a></li>
+        <li><a href="/mentions-legales">Mentions légales</a></li>
+      </ul>
     </footer>
   </div>
 </Layout>
@@ -180,12 +177,27 @@ const annee = new Date().getFullYear();
     font-size: 0.875rem;
   }
 
-  .carnet__pied p {
+  /* Chaque élément porte le point qui le suit : à la coupure de ligne, le
+     point finit la ligne et n'en commence jamais une. */
+  .carnet__pied-liste {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0;
     margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .carnet__pied span {
-    margin: 0 0.4em;
+  .carnet__pied-liste li {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .carnet__pied-liste li:not(:last-child)::after {
+    content: '·';
+    margin: 0 0.6em;
+    color: var(--carnet-gris);
   }
 
   .carnet hr,
