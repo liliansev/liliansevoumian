@@ -25,7 +25,8 @@ Les abonnés ne reçoivent pas l'article tout seul : l'envoi se fait depuis
 Mailcheap, comme la newsletter. Le flux `/blog/rss.xml` liste les articles
 publiés, si un outil doit les relever.
 
-Avant publication, chaque article est relu par un agent indépendant
-(`.claude/agents/relecteur-article.md`). S'il dit PUBLIER, l'article part
-sans autre validation ; la procédure est dans
+Avant publication, chaque article est relu une fois par un agent indépendant
+(`.claude/agents/relecteur-article.md`) : il juge si le texte sonne écrit par
+un humain et s'il apporte de la valeur au lecteur, puis il le corrige.
+L'article part ensuite sans autre validation ; la procédure est dans
 `.claude/skills/publier-article/SKILL.md`.
