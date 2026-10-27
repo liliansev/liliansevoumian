@@ -1,12 +1,11 @@
 ---
 /*
- * Le pied du carnet : le grand symbole et le nom, la signature, puis deux
+ * Le pied du carnet : le nom en très grand, la signature, puis deux
  * lignes de liens, ce que Lilian publie et fonde, et les pages du site (les
  * cas clients, les offres, les pages d'outil et les pages-réponses, qu'il
  * faut pouvoir atteindre depuis l'accueil). Pas d'année : l'accueil ne porte
  * aucune date (Lilian, 14 octobre 2026), hors celle des chiffres d'audience.
  */
-import Symbole from './symbole.astro';
 import { organisations, profils } from '../../data/parcours';
 
 const dehors: { label: string; href: string; goal?: string }[] = [
@@ -34,10 +33,7 @@ const pages = [
 
 <footer class="pied">
   <div class="carnet-enveloppe">
-    <div class="pied__marque">
-      <Symbole fin />
-      <p class="caps">Lilian Sevoumian</p>
-    </div>
+    <p class="caps pied__nom">Lilian Sevoumian</p>
     <p class="main pied__signature">l’indé super augmenté</p>
     <div class="pied__liens">
       <nav aria-label="Ailleurs">
@@ -74,26 +70,14 @@ const pages = [
     overflow-x: clip;
   }
 
-  .pied__marque {
-    display: flex;
-    align-items: center;
-    gap: clamp(14px, 2vw, 28px);
-  }
-
-  .pied__marque :global(.symbole) {
-    flex: none;
-    width: clamp(64px, 10vw, 140px);
-    height: clamp(64px, 10vw, 140px);
-  }
-
-  .pied__marque .caps {
+  .pied__nom {
     max-width: none;
-    font-size: clamp(2.6rem, 9.4vw, 8.8rem);
+    font-size: clamp(2.6rem, 11vw, 10.5rem);
     line-height: 0.82;
   }
 
   .pied__signature {
-    margin: 14px 0 0 calc(clamp(64px, 10vw, 140px) + clamp(14px, 2vw, 28px));
+    margin: 14px 0 0;
     color: var(--violet);
   }
 
@@ -156,9 +140,6 @@ const pages = [
   }
 
   @media (max-width: 560px) {
-    .pied__signature {
-      margin-left: 0;
-    }
     .pied__liens nav {
       flex-direction: column;
       gap: 4px;

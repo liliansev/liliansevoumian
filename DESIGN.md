@@ -570,7 +570,7 @@ Sevoumian » (type Design System) ; la maquette, l'artefact « Le carnet ».
 | texte, traits, ombres | `--encre`, `--encre-doux` | `#1d1a22`, `#4f4a56` |
 | liens, intitulés en code, signature | `--violet` | `#6a3df5` |
 | agent IA | `--rose` | `#ff8fc8` |
-| automatisation, symbole | `--lilas` | `#b59cff` |
+| automatisation | `--lilas` | `#b59cff` |
 | outil métier | `--bleu` | `#6ab7ff` |
 | formation, post-it, surlignage | `--jaune` | `#ffd23f` |
 | contact | `--menthe` | `#4fe0a0` |

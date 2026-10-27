@@ -9,7 +9,6 @@
  * ils mènent au formulaire du bas de page avec le goal `contact_opened`.
  */
 import BoutonReservation from '../BoutonReservation.astro';
-import Symbole from './symbole.astro';
 
 const sections = [
   { href: '#suivre', label: 'Me suivre' },
@@ -28,8 +27,7 @@ const sections = [
 <header class="barre">
   <div class="carnet-enveloppe barre__ligne">
     <a class="marque" href="#main-content" aria-label="Lilian Sevoumian, haut de page">
-      <Symbole />
-      <span>Lilian Sevoumian</span>
+      <span>Lilian</span> <span>Sevoumian</span>
     </a>
     <nav class="barre__sections" aria-label="Sections">
       {sections.map((s) => <a href={s.href} data-barre-section>{s.label}</a>)}
@@ -44,7 +42,7 @@ const sections = [
 <dialog class="menu" id="menu-carnet" aria-label="Menu">
   <div class="menu__cadre" tabindex="-1">
     <div class="menu__haut">
-      <span class="marque"><Symbole />Menu</span>
+      <span class="marque">Menu</span>
       <button class="pilule" type="button" data-menu-fermer>Fermer</button>
     </div>
     {sections.map((s) => <a class="menu__entree" href={s.href}>{s.label}</a>)}
@@ -103,9 +101,9 @@ const sections = [
 
   .marque {
     display: inline-flex;
+    flex: none;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
+    gap: 0.25em;
     min-width: 44px;
     min-height: 44px;
     font-family: var(--carnet-titre);
@@ -116,12 +114,6 @@ const sections = [
     white-space: nowrap;
     color: var(--encre);
     text-decoration: none;
-  }
-
-  .marque :global(.symbole) {
-    flex: none;
-    width: 40px;
-    height: 40px;
   }
 
   .barre__sections {
@@ -172,9 +164,24 @@ const sections = [
     }
   }
 
-  @media (max-width: 420px) {
-    .barre .marque span {
-      display: none;
+  /* Sur un téléphone, le nom passe sur deux lignes : « Écrire » et « Menu »
+     gardent leur place à côté. */
+  @media (max-width: 560px) {
+    .barre .marque {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      font-size: 19px;
+      line-height: 0.9;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .barre__ligne {
+      gap: 10px;
+    }
+    .barre :global(.pilule) {
+      padding: 0 14px;
     }
   }
 

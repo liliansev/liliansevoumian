@@ -93,7 +93,7 @@ Le site ne présente donc pas « un freelance et ses offres » mais **un pratici
   - papier quadrillé `#f6f2e8`, encre `#1d1a22`, quatre couleurs vives qui codent les types de travail (rose agent IA, lilas automatisation, bleu outil métier, jaune formation), menthe pour le contact, violet `#6a3df5` pour sa signature ;
   - Bricolage Grotesque condensée en capitales, Gochi Hand pour les notes manuscrites, JetBrains Mono pour les clins d'œil de code ;
   - traits d'encre de 2,5 px, ombres décalées pleines, objets légèrement penchés (polaroïd, post-it, autocollants, kanban) ;
-  - chaque section est un module de scénario coloré, comme dans Make, relié au suivant par un chemin de pointillés qui serpente dans les marges ; son symbole est une pastille lilas traversée de trois nœuds reliés ;
+  - chaque section est un module de scénario coloré, comme dans Make, relié au suivant par un chemin de pointillés qui serpente dans les marges ; pas de logo (Lilian, 27 octobre 2026 : « pas la peine du logo ») : la marque est son nom, et l'icône du site son visage ;
   - le premier écran a un seul geste principal, « S’abonner sur YouTube » ; le contact passe en lien secondaire (« ou parlons de votre projet ») et reste en pilule dans la barre ;
   - les chiffres d’audience datés sont la preuve sociale du premier écran (choix de Lilian, 27 octobre 2026, qui lève celui de `data/parcours.ts` de ne pas afficher YouTube) : plus de 11 000 abonnés LinkedIn, plus de 1 800 abonnés YouTube, plus de 100 000 vues sur 96 vidéos, relevés le 1er octobre 2026. Toujours avec leur date de relevé ; jamais le nombre d’abonnés à la newsletter ; aucun chiffre de prestation ;
   - la photo d'ouverture est celle du NoCode Summit (casquette), en noir et blanc.

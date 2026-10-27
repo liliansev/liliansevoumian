@@ -46,7 +46,6 @@ src/
 │   ├── carnet/                # l'accueil en carnet d'ingénieur, lu comme un scénario Make : un module coloré par section, un chemin de pointillés entre eux
 │   │   ├── carnet.css         # la grammaire, rangée sous `.accueil-carnet` : jetons, trois voix, pilules, polaroïds, scotch, modules, chemin, cartes
 │   │   ├── griffe.astro       # un griffonnage (cœur, vague, icônes) tracé au build par `lib/carnet/griffonnages.ts`
-│   │   ├── symbole.astro      # le symbole : trois points d'un scénario dans un rond lilas
 │   │   ├── tete.astro         # l'en-tête d'une section : module (couleur, griffonnage, numéro), intitulé en code, titre, chapô
 │   │   ├── barre.astro        # bandeau newsletter, barre collante (sections, « Écrire »), menu plein écran en `dialog`
 │   │   ├── ouverture.astro    # le nom, la signature, « S'abonner sur YouTube », l'audience datée (data/parcours.ts, `audience`), le polaroïd du NoCode Summit
@@ -57,7 +56,7 @@ src/
 │   │   ├── coulisses.astro    # module 4 : quatre polaroïds
 │   │   ├── avis.astro         # module 5 : trois citations (celles de documentaire/voix.astro)
 │   │   ├── contact.astro      # module 6 (`#ecrire`) : formulaire-contact en habit `carnet`, lien vers l'agenda
-│   │   ├── pied.astro         # le pied de l'accueil : grand symbole, liens dehors et pages du site, sans année
+│   │   ├── pied.astro         # le pied de l'accueil : le nom en très grand, liens dehors et pages du site, sans année
 │   │   └── chemin.astro       # le chemin de pointillés d'un module à l'autre, tracé en SVG à partir de 700 px
 │   │   # — accueil « Le documentaire » (14 au 27 octobre 2026), plus rendu sur `/` —
 │   ├── documentaire/          # les chapitres de l'accueil, lus comme un court documentaire sur Lilian au travail

@@ -9,7 +9,6 @@
  * Le post-it porte la conviction de Lilian ; au-dessus de 1200 px il est collé
  * sur le coin du tableau, en dessous il passe dans le fil.
  */
-import Symbole from './symbole.astro';
 import Tete from './tete.astro';
 
 type Qui = 'moi' | 'vous';
@@ -81,7 +80,6 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
       </div>
       <div class="fenetre">
         <div class="fenetre__barre">
-          <Symbole />
           <span>projet-exemple</span>
           <span class="fenetre__aide" id="aide-kanban">glissez une carte, ou flèches ← → pour la changer de colonne</span>
         </div>
@@ -134,12 +132,6 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
     background: var(--encre);
     color: #ece8f4;
     font: 600 13.5px / 1 var(--carnet-code);
-  }
-
-  .fenetre__barre :global(.symbole) {
-    flex: none;
-    width: 28px;
-    height: 28px;
   }
 
   .fenetre__aide {
