@@ -1,7 +1,8 @@
 ---
 /*
  * L'en-tête d'une section du carnet : un module du scénario (rond coloré,
- * griffonnage, numéro), l'intitulé en code, le titre, le chapô.
+ * griffonnage, numéro), le titre, le chapô. Pas de sur-titre : le titre
+ * parle seul.
  *
  * La couleur du module est celle de la section ; le chemin de pointillés
  * (`chemin.astro`) va d'un module au suivant. Le titre peut être remplacé par
@@ -15,8 +16,6 @@ interface Props {
   couleur: 'rose' | 'lilas' | 'jaune' | 'bleu' | 'blanc' | 'menthe';
   forme: Forme;
   graine: number;
-  /** L'intitulé en code, au-dessus du titre. */
-  code?: string;
   titre?: string;
   /** L'id du titre, que la section cite dans `aria-labelledby`. */
   idTitre?: string;
@@ -24,7 +23,7 @@ interface Props {
   class?: string;
 }
 
-const { numero, couleur, forme, graine, code, titre, idTitre, chapo, class: classe } = Astro.props;
+const { numero, couleur, forme, graine, titre, idTitre, chapo, class: classe } = Astro.props;
 ---
 
 <div class:list={['tete', classe]}>
@@ -32,7 +31,6 @@ const { numero, couleur, forme, graine, code, titre, idTitre, chapo, class: clas
     <Griffe forme={forme} graine={graine} />
     <b>{numero}</b>
   </span>
-  {code && <p class="code">{code}</p>}
   <slot name="titre">{titre && <h2 class="caps caps--section" id={idTitre}>{titre}</h2>}</slot>
   {chapo && <p class="chapo">{chapo}</p>}
   <slot />

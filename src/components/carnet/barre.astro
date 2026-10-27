@@ -1,7 +1,9 @@
 ---
 /*
- * La barre du carnet : le bandeau de la newsletter, puis la barre collante
- * (le nom, les sections, « Écrire »). Sous 920 px, les sections passent dans
+ * La barre du carnet, collante : le nom, les sections, « Écrire ». Le
+ * bandeau de la newsletter qui la précédait est retiré (critique du 27
+ * octobre 2026) : il disputait au premier écran son seul geste, « S'abonner
+ * sur YouTube » ; la newsletter garde sa carte dans « Où me suivre ». Sous 920 px, les sections passent dans
  * un menu plein écran : une boîte de dialogue native, fermée par Échap, par
  * « Fermer » ou par un lien, qui rend ensuite le focus à la section visée.
  *
@@ -17,12 +19,6 @@ const sections = [
   { href: '#coulisses', label: 'Coulisses' },
 ];
 ---
-
-<div class="bandeau">
-  <span class="bandeau__long">Chaque semaine, ma newsletter « Lilian l’indé super augmenté ». </span>
-  <span class="bandeau__court">Ma newsletter, chaque semaine. </span>
-  <a href="#newsletter">S’inscrire</a>
-</div>
 
 <header class="barre">
   <div class="carnet-enveloppe barre__ligne">
@@ -42,7 +38,7 @@ const sections = [
 <dialog class="menu" id="menu-carnet" aria-label="Menu">
   <div class="menu__cadre" tabindex="-1">
     <div class="menu__haut">
-      <span class="marque">Menu</span>
+      <span class="marque">Lilian Sevoumian</span>
       <button class="pilule" type="button" data-menu-fermer>Fermer</button>
     </div>
     {sections.map((s) => <a class="menu__entree" href={s.href}>{s.label}</a>)}
@@ -53,43 +49,11 @@ const sections = [
 </dialog>
 
 <style>
-  .bandeau {
-    background: var(--encre);
-    color: var(--blanc);
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    padding-inline: var(--gauche) var(--droite);
-  }
-
-  .bandeau a {
-    display: inline-block;
-    padding: 12px 4px;
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .bandeau__court {
-    display: none;
-  }
-
-  @media (max-width: 620px) {
-    .bandeau__long {
-      display: none;
-    }
-    .bandeau__court {
-      display: inline;
-    }
-  }
-
   .barre {
     position: sticky;
     top: env(safe-area-inset-top, 0px);
     z-index: 50;
-    background: rgb(246 242 232 / 0.94);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--papier) 96%, transparent);
   }
 
   .barre__ligne {
@@ -109,7 +73,7 @@ const sections = [
     font-family: var(--carnet-titre);
     font-weight: 800;
     font-stretch: 75%;
-    font-size: 24px;
+    font-size: 1.5rem;
     text-transform: uppercase;
     white-space: nowrap;
     color: var(--encre);
@@ -121,7 +85,7 @@ const sections = [
     gap: 6px;
     margin-left: auto;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .barre__sections a {
@@ -129,7 +93,7 @@ const sections = [
     align-items: center;
     min-height: 44px;
     padding: 0 10px;
-    border-radius: 999px;
+    border-radius: var(--r-pilule);
     color: var(--encre);
     text-decoration: none;
   }
@@ -145,7 +109,7 @@ const sections = [
   .barre :global(.pilule) {
     min-height: 46px;
     padding: 0 18px;
-    font-size: 15px;
+    font-size: var(--t-petit);
   }
 
   .barre__menu {
@@ -171,7 +135,7 @@ const sections = [
       flex-direction: column;
       align-items: flex-start;
       gap: 0;
-      font-size: 19px;
+      font-size: var(--t-citation);
       line-height: 0.9;
     }
   }
@@ -194,12 +158,16 @@ const sections = [
     margin: 0;
     padding: 0;
     border: 0;
-    background: var(--papier);
+    background-color: var(--papier);
+    background-image:
+      linear-gradient(var(--quadrillage) 1px, transparent 1px),
+      linear-gradient(90deg, var(--quadrillage) 1px, transparent 1px);
+    background-size: 28px 28px;
     color: var(--encre);
   }
 
   .menu::backdrop {
-    background: rgb(29 26 34 / 0.4);
+    background: color-mix(in srgb, var(--encre) 40%, transparent);
   }
 
   .menu__cadre {
@@ -220,12 +188,17 @@ const sections = [
 
   .menu__entree {
     padding: 12px 0;
-    border-bottom: 2.5px dashed rgb(29 26 34 / 0.25);
+    border-bottom: var(--trait) dashed var(--encre-filet);
     color: var(--encre);
     font: 800 clamp(2.2rem, 11vw, 3.2rem) / 1 var(--carnet-titre);
     font-stretch: 75%;
     text-transform: uppercase;
     text-decoration: none;
+  }
+
+  .menu .marque {
+    white-space: normal;
+    line-height: 0.95;
   }
 
   .menu :global(.menu__appel) {

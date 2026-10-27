@@ -3,29 +3,24 @@
  *
  * Un carnet d'ingénieur un peu bricolé : papier quadrillé, traits d'encre de
  * 2,5 px, ombres décalées pleines, quatre couleurs vives qui codent les types
- * de travail, notes à la main et intitulés en code. La page se lit comme un
+ * de travail, notes à la main et étiquettes en code. La page se lit comme un
  * scénario Make : chaque section s'ouvre sur un module rond et coloré, et un
  * chemin de pointillés serpente de l'un à l'autre (`chemin.astro`).
  *
  * Ce fichier n'est importé que par `pages/index.astro` : les autres pages
  * gardent la tenue « nuit et pêche » de `styles/global.css` tant qu'elles
- * n'ont pas été passées au carnet. Tout ce qui suit est donc rangé sous
- * `.accueil-carnet` (sauf le fond du document), pour ne rien imposer au reste.
- * Le détail des choix, contrastes compris, est dans le design system de la
- * maquette (artefact « Lilian Sevoumian ») et dans PRODUCT.md.
+ * n'ont pas été passées au carnet. Les jetons sont posés sur la racine quand
+ * elle contient `.accueil-carnet` (et sur `.accueil-carnet` pour les
+ * navigateurs sans `:has`, grâce à `:is()` qui ignore l'argument qu'il ne
+ * comprend pas au lieu d'invalider la règle) : ce qui vit hors de la page
+ * mais s'y affiche (le
+ * lien d'évitement, la fenêtre de l'agenda, la barre de défilement) les lit
+ * aussi. Le reste est rangé sous `.accueil-carnet`.
  */
 
-/* Le fond du document : sous la barre de défilement élastique d'iOS comme
-   sous la page, c'est le papier. */
-html,
-body {
-  background-color: #f6f2e8;
-}
-
-.accueil-carnet {
+:is(:root:has(.accueil-carnet), .accueil-carnet) {
   /* Les couleurs */
   --papier: #f6f2e8;
-  --quadrillage: rgb(29 26 34 / 0.07);
   --blanc: #fffdf8;
   --encre: #1d1a22;
   --encre-doux: #4f4a56;
@@ -40,17 +35,87 @@ body {
   --vert-point: #14a554;
   --rouge: #c9302c;
   --coeur: #e0368a;
+  /* L'encre éclaircie : le quadrillage, les traits secondaires, le chemin. */
+  --quadrillage: color-mix(in srgb, var(--encre) 7%, transparent);
+  --encre-filet: color-mix(in srgb, var(--encre) 25%, transparent);
+  --encre-pointille: color-mix(in srgb, var(--encre) 50%, transparent);
 
   /* Les trois voix */
   --carnet-titre: 'Bricolage Grotesque Variable', 'Arial Narrow', Arial, sans-serif;
   --carnet-main: 'Gochi Hand', 'Comic Sans MS', cursive;
   --carnet-code: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
+  /* Les tailles : une échelle courte, en rem pour suivre le réglage du
+     visiteur. Les titres de section et les notes à la main sont fluides. */
+  --t-etiquette: 0.75rem;   /* 12 px : étiquettes, numéros des modules */
+  --t-code: 0.8125rem;      /* 13 px : lignes en code, barre du kanban */
+  --t-petit: 0.9375rem;     /* 15 px : légendes, pied, lignes d'état */
+  --t-corps: 1.0625rem;     /* 17 px : le texte courant */
+  --t-note: 1.3125rem;      /* 21 px : notes à la main, légendes des polaroïds */
+  --t-carte: 1.625rem;      /* 26 px : titres des cartes */
+  --t-chiffre: 1.875rem;    /* 30 px : chiffres d'audience */
+  --t-citation: 1.1875rem;  /* 19 px : citations, nom sur deux lignes */
+  --t-chapo: clamp(1.12rem, 1.45vw, 1.32rem);
+  --t-main: clamp(1.35rem, 1.9vw, 1.7rem);
+  --t-section: clamp(2.5rem, 5.4vw, 4.8rem);
+  /* Les quatre moments d'affichage, chacun à sa place unique. */
+  --t-signature: clamp(1.8rem, 3vw, 2.6rem);
+  --t-adore: clamp(3.6rem, 9vw, 8rem);
+  --t-nom: clamp(4.2rem, 10.4vw, 9.6rem);
+  --t-pied: clamp(2.6rem, 11vw, 10.5rem);
+
+  /* Les arrondis et les ombres pleines */
+  --r-xs: 6px;
+  --r-s: 12px;
+  --r-m: 16px;
+  --r-l: 22px;
+  --r-xl: 28px;
+  --r-pilule: 999px;
+  --trait: 2.5px;
+  --trait-fin: 2px;
+  --ombre-s: 3px 3px 0 var(--encre);
+  --ombre-m: 4px 4px 0 var(--encre);
+  --ombre-l: 6px 6px 0 var(--encre);
+  --ombre-xl: 8px 8px 0 var(--encre);
+  --ombre-survol: 9px 9px 0 var(--encre);
+
   /* La gouttière, et la largeur de la colonne */
   --gauche: max(16px, env(safe-area-inset-left, 0px));
   --droite: max(16px, env(safe-area-inset-right, 0px));
   --colonne: 1304px;
+}
 
+@media (min-width: 768px) {
+  :is(:root:has(.accueil-carnet), .accueil-carnet) {
+    --gauche: max(32px, env(safe-area-inset-left, 0px));
+    --droite: max(32px, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Le fond du document : sous la barre de défilement élastique d'iOS comme
+   sous la page, c'est le papier. Les ancres s'arrêtent sous la barre (78 px). */
+:root:has(.accueil-carnet) {
+  background-color: var(--papier);
+  scroll-padding-top: 96px;
+  scrollbar-color: var(--encre-pointille) transparent;
+}
+
+:root:has(.accueil-carnet) body {
+  background-color: var(--papier);
+  /* Ce qui vit hors de la page (la fenêtre de l'agenda, cachée) hérite du
+     corps : en Bricolage, Geist n'est plus téléchargé sur l'accueil. */
+  font-family: var(--carnet-titre);
+}
+
+.accueil-carnet * {
+  scrollbar-color: var(--encre-pointille) transparent;
+}
+
+:root:has(.accueil-carnet) ::-webkit-scrollbar-thumb {
+  background: var(--encre-pointille);
+}
+
+.accueil-carnet {
   position: relative;
   isolation: isolate;
   min-height: 100vh;
@@ -62,21 +127,18 @@ body {
   background-position: -1px -1px;
   color: var(--encre);
   font-family: var(--carnet-titre);
-  font-size: 17px;
+  font-size: var(--t-corps);
   line-height: 1.5;
   overflow-x: clip;
-}
-
-@media (min-width: 768px) {
-  .accueil-carnet {
-    --gauche: max(32px, env(safe-area-inset-left, 0px));
-    --droite: max(32px, env(safe-area-inset-right, 0px));
-  }
 }
 
 .accueil-carnet ::selection {
   background: var(--jaune);
   color: var(--encre);
+}
+
+.accueil-carnet :is(input, textarea) {
+  caret-color: var(--violet);
 }
 
 .accueil-carnet :is(h1, h2, h3, h4) {
@@ -95,7 +157,8 @@ body {
 }
 
 /* Focus : un anneau d'encre au clavier, sous la même condition que l'anneau
-   pêche de `global.css` (pas de cadre noir au toucher sur iPhone). */
+   pêche de `global.css` (pas de cadre noir au toucher sur iPhone). Les
+   champs gardent le leur au toucher : un champ focalisé ouvre un clavier. */
 .accueil-carnet :focus {
   outline: none;
 }
@@ -104,8 +167,41 @@ body {
   .accueil-carnet :focus-visible {
     outline: 3px solid var(--encre);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: var(--r-xs);
   }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .accueil-carnet :is(input, textarea):focus-visible {
+    outline: 3px solid var(--encre);
+    outline-offset: 2px;
+  }
+}
+
+/* Une section qui reçoit le focus par un lien du menu ne s'encadre pas :
+   le focus y est posé pour le lecteur d'écran, pas pour l'œil. */
+.accueil-carnet [tabindex='-1']:focus-visible {
+  outline: none;
+}
+
+/* Le lien d'évitement et la fenêtre de l'agenda vivent hors de la page :
+   ils prennent ici les couleurs du carnet au lieu de celles de la nuit. */
+:root:has(.accueil-carnet) .skip-link:is(:focus, :focus-visible) {
+  background: var(--encre);
+  color: var(--blanc);
+  font-family: var(--carnet-titre);
+  font-weight: 700;
+  outline: 3px solid var(--violet);
+}
+
+:root:has(.accueil-carnet) .cal-overlay {
+  --color-paper: var(--papier);
+  --color-ink: var(--encre);
+  --color-ink-mid: var(--encre-doux);
+  --color-ink-low: var(--encre-doux);
+  --color-divider: var(--encre-filet);
+  --color-focus: var(--encre);
+  --font-mono: var(--carnet-code);
 }
 
 .carnet-enveloppe {
@@ -129,12 +225,12 @@ body {
 }
 
 .accueil-carnet .caps--section {
-  font-size: clamp(2.5rem, 5.4vw, 4.8rem);
+  font-size: var(--t-section);
 }
 
 .accueil-carnet .main {
   font-family: var(--carnet-main);
-  font-size: clamp(1.35rem, 1.9vw, 1.7rem);
+  font-size: var(--t-main);
   font-weight: 400;
   line-height: 1.3;
   color: var(--encre);
@@ -142,34 +238,29 @@ body {
 }
 
 .accueil-carnet .chapo {
-  font-size: clamp(1.12rem, 1.45vw, 1.32rem);
+  font-size: var(--t-chapo);
   line-height: 1.5;
   color: var(--encre-doux);
 }
 
-.accueil-carnet .code {
-  font: 600 15px/1.2 var(--carnet-code);
-  color: var(--violet);
-  margin: 0;
-  max-width: none;
-}
-
-.accueil-carnet .surtitre {
+/* Une ligne en code sous un titre de carte : son contexte, jamais un
+   sur-titre. */
+.accueil-carnet .meta {
   display: block;
-  font: 700 12.5px/1.3 var(--carnet-code);
-  color: var(--encre-doux);
-  margin: 0;
+  margin: 6px 0 0;
   max-width: none;
+  font: 700 var(--t-code) / 1.3 var(--carnet-code);
+  color: var(--encre-doux);
 }
 
 .accueil-carnet .tag {
   flex: none;
   display: inline-block;
-  font: 700 12px/1 var(--carnet-code);
-  background: var(--blanc);
-  border: 2px solid var(--encre);
-  border-radius: 999px;
   padding: 6px 9px;
+  border: var(--trait-fin) solid var(--encre);
+  border-radius: var(--r-pilule);
+  background: var(--blanc);
+  font: 700 var(--t-etiquette) / 1 var(--carnet-code);
 }
 
 /* Les couleurs vives, en fond : un type de travail sur un autocollant ou une
@@ -181,7 +272,7 @@ body {
 .accueil-carnet .c-bleu { background: var(--bleu); }
 .accueil-carnet .c-blanc { background: var(--blanc); }
 
-/* ── Griffonnages ───────────────────────────────────────────────────── */
+/* ── Griffonnages et icônes ─────────────────────────────────────────── */
 
 .accueil-carnet .griffe {
   overflow: visible;
@@ -197,11 +288,19 @@ body {
   vector-effect: non-scaling-stroke;
 }
 
+/* Les flèches et les coches de Lucide, au trait du texte. */
+.accueil-carnet .icone {
+  flex: none;
+  width: 1.05em;
+  height: 1.05em;
+}
+
 /* ── Liens et pilules ───────────────────────────────────────────────── */
 
 .accueil-carnet .lien {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   min-height: 44px;
   font-weight: 700;
   color: var(--encre);
@@ -214,29 +313,37 @@ body {
   text-decoration-color: var(--violet);
 }
 
+.accueil-carnet .lien .icone {
+  transition: transform 0.15s ease;
+}
+
+.accueil-carnet .lien:hover .icone {
+  transform: translateX(3px);
+}
+
 .accueil-carnet .pilule {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   min-height: 52px;
   padding: 0 24px;
-  border: 2.5px solid var(--encre);
-  border-radius: 999px;
+  border: var(--trait) solid var(--encre);
+  border-radius: var(--r-pilule);
   background: var(--blanc);
   color: var(--encre);
-  font: 800 16px/1 var(--carnet-titre);
+  font: 800 1rem / 1 var(--carnet-titre);
   font-stretch: 85%;
   text-transform: uppercase;
   letter-spacing: 0.01em;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 4px 4px 0 var(--encre);
+  box-shadow: var(--ombre-m);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .accueil-carnet .pilule:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--encre);
+  box-shadow: var(--ombre-l);
 }
 
 .accueil-carnet .pilule:active {
@@ -265,11 +372,11 @@ body {
   height: 10px;
   border-radius: 50%;
   background: var(--vert-point);
-  box-shadow: 0 0 0 3px rgb(20 165 84 / 0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vert-point) 20%, transparent);
 }
 
 .accueil-carnet .pilule-encre .point {
-  background: #7be3a4;
+  background: var(--menthe);
 }
 
 /* Le triangle de lecture, en petit, devant ce qui mène à YouTube. */
@@ -289,19 +396,19 @@ body {
 
 .accueil-carnet .polaroid {
   position: relative;
-  background: var(--blanc);
-  border: 2.5px solid var(--encre);
-  border-radius: 14px;
-  padding: 12px 12px 0;
-  box-shadow: 7px 7px 0 var(--encre);
   margin: 0;
+  padding: 12px 12px 0;
+  border: var(--trait) solid var(--encre);
+  border-radius: var(--r-m);
+  background: var(--blanc);
+  box-shadow: var(--ombre-xl);
 }
 
 .accueil-carnet .polaroid .cadre {
   display: block;
   overflow: hidden;
-  border-radius: 6px;
-  border: 2px solid var(--encre);
+  border: var(--trait-fin) solid var(--encre);
+  border-radius: var(--r-xs);
   aspect-ratio: var(--r, 4 / 4.4);
 }
 
@@ -312,11 +419,11 @@ body {
 }
 
 .accueil-carnet .polaroid figcaption {
+  padding: 11px 6px 13px;
   font-family: var(--carnet-main);
-  font-size: 22px;
+  font-size: var(--t-note);
   line-height: 1.3;
   text-align: center;
-  padding: 11px 6px 13px;
 }
 
 .accueil-carnet .scotch {
@@ -325,8 +432,8 @@ body {
   z-index: 2;
   width: 92px;
   height: 28px;
-  background: rgb(255 210 63 / 0.78);
-  border: 1px solid rgb(29 26 34 / 0.12);
+  border: 1px solid color-mix(in srgb, var(--encre) 12%, transparent);
+  background: color-mix(in srgb, var(--jaune) 78%, transparent);
 }
 
 .accueil-carnet .scotch--g {
@@ -337,14 +444,10 @@ body {
 .accueil-carnet .scotch--d {
   right: 16px;
   transform: rotate(9deg);
-  background: rgb(181 156 255 / 0.85);
+  background: color-mix(in srgb, var(--lilas) 85%, transparent);
 }
 
 /* ── En-tête de section : un module du scénario ─────────────────────── */
-
-.accueil-carnet section {
-  scroll-margin-top: 90px;
-}
 
 .accueil-carnet .etape {
   padding-top: clamp(80px, 10vw, 130px);
@@ -358,34 +461,34 @@ body {
   margin-bottom: clamp(36px, 5vw, 56px);
 }
 
-/* Sous 700 px, ou tant que le chemin n'est pas tracé, une courte ligne de
+/* Sous 768 px, ou tant que le chemin n'est pas tracé, une courte ligne de
    pointillés relie chaque module à ce qui précède. */
 .accueil-carnet .tete::before {
   content: '';
   width: 4px;
   height: clamp(44px, 6vw, 72px);
   margin-bottom: 12px;
-  background: radial-gradient(circle, rgb(29 26 34 / 0.55) 1.8px, transparent 2.1px) 0 0 / 4px 11px repeat-y;
+  background: radial-gradient(circle, var(--encre-pointille) 1.8px, transparent 2.1px) 0 0 / 4px 11px repeat-y;
 }
 
-/* Une fois le chemin tracé, il remplace ces lignes, sauf la toute première
-   (de la photo au premier module), qu'il ne dessine pas. */
+/* Une fois le chemin tracé, il remplace ces lignes et leur place, sauf la
+   toute première (de la photo au premier module), qu'il ne dessine pas. */
 .chemin-actif .accueil-carnet .etape:not(#suivre) .tete::before {
-  visibility: hidden;
+  display: none;
 }
 
 .accueil-carnet .module {
   position: relative;
   z-index: 1;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--c, var(--encre));
-  border: 2.5px solid var(--encre);
-  box-shadow: 4px 4px 0 var(--encre), 0 0 0 7px var(--papier);
   display: grid;
   place-items: center;
-  margin-bottom: 14px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  border: var(--trait) solid var(--encre);
+  border-radius: 50%;
+  background: var(--c, var(--encre));
+  box-shadow: var(--ombre-m), 0 0 0 7px var(--papier);
 }
 
 .accueil-carnet .module .griffe {
@@ -393,6 +496,8 @@ body {
   height: 32px;
 }
 
+/* La pastille du module : son rang dans le scénario. Elle passe au vert
+   quand le chemin l'atteint, comme un module exécuté (`chemin.astro`). */
 .accueil-carnet .module b {
   position: absolute;
   top: -6px;
@@ -400,15 +505,24 @@ body {
   min-width: 24px;
   height: 24px;
   padding: 0 6px;
-  border-radius: 999px;
+  border: var(--trait-fin) solid var(--encre);
+  border-radius: var(--r-pilule);
   background: var(--blanc);
-  border: 2px solid var(--encre);
-  font: 700 12px/20px var(--carnet-code);
+  font: 700 var(--t-etiquette) / 20px var(--carnet-code);
   text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.accueil-carnet .tete .code {
-  margin: 0 0 14px;
+.accueil-carnet .module[data-execute] b {
+  background: var(--vert);
+  color: var(--blanc);
+  animation: module-execute 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes module-execute {
+  0% { transform: scale(0.6); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 .accueil-carnet .tete .chapo {
@@ -416,7 +530,8 @@ body {
   max-width: 36em;
 }
 
-/* Le chemin du scénario, tracé par `chemin.astro` derrière le contenu. */
+/* Le chemin du scénario, tracé par `chemin.astro` derrière le contenu : en
+   pointillés d'encre, et en violet sur la partie déjà parcourue. */
 .accueil-carnet .chemin {
   position: absolute;
   left: 0;
@@ -428,21 +543,33 @@ body {
 
 .accueil-carnet .chemin path {
   fill: none;
-  stroke: rgb(29 26 34 / 0.5);
+  stroke: var(--encre-pointille);
   stroke-width: 3.4;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 0 11;
 }
 
+.accueil-carnet .chemin .chemin__parcouru {
+  stroke: var(--violet);
+  stroke-width: 4.2;
+}
+
+.accueil-carnet .chemin mask path {
+  stroke: #fff;
+  stroke-width: 14;
+  stroke-linecap: butt;
+  stroke-dasharray: none;
+}
+
 /* ── Cartes ─────────────────────────────────────────────────────────── */
 
 .accueil-carnet .carte {
   display: block;
+  border: var(--trait) solid var(--encre);
+  border-radius: var(--r-l);
   background: var(--blanc);
-  border: 2.5px solid var(--encre);
-  border-radius: 22px;
-  box-shadow: 6px 6px 0 var(--encre);
+  box-shadow: var(--ombre-l);
   color: var(--encre);
   text-decoration: none;
 }
@@ -453,21 +580,23 @@ body {
 
 .accueil-carnet a.carte:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0 var(--encre);
+  box-shadow: var(--ombre-survol);
 }
 
 .accueil-carnet .carte h3 {
-  font: 800 26px/1 var(--carnet-titre);
+  margin: 0;
+  font: 800 var(--t-carte) / 1 var(--carnet-titre);
   font-stretch: 75%;
   text-transform: uppercase;
-  margin: 6px 0 0;
 }
 
 .accueil-carnet .carte p {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   color: var(--encre-doux);
 }
 
+/* Mouvement réduit : plus de déplacement ni d'animation ; les changements
+   d'état restent, sans transition. */
 @media (prefers-reduced-motion: reduce) {
   .accueil-carnet *,
   .accueil-carnet *::before,

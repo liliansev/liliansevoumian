@@ -14,7 +14,10 @@
  * Il n'y en a qu'un par page : les boutons « Parlons de votre projet » le
  * trouvent par `[data-formulaire-contact]` (voir Layout) et y mènent.
  * Sans script, le formulaire ne peut pas partir (l'endpoint attend du JSON) :
- * la ligne sous le bouton donne alors l'adresse à laquelle écrire.
+ * la ligne sous le bouton donne alors l'adresse à laquelle écrire. Cette
+ * ligne reste toujours là ; l'état de l'envoi (erreur, envoi, envoyé) s'écrit
+ * dans une ligne à part, reliée au champ en erreur (`aria-describedby`), pour qu'une
+ * erreur n'efface jamais l'adresse de secours (audit du 27 octobre 2026).
  *
  * `variante="carnet"` l'habille pour l'accueil « Le carnet » (27 octobre
  * 2026) : champs bordés d'encre, bouton en pilule, ligne d'état à pastille.
@@ -60,9 +63,10 @@ const carnet = variante === 'carnet';
       </button>
     )}
     <slot name="pied" />
-    <p class="contact__statut" role="status" aria-live="polite" aria-atomic="true" data-contact-statut>
+    <p class="contact__note">
       Le message arrive directement dans ma boîte mail. Vous pouvez aussi écrire à <a class="lien-prose" href={`mailto:${EMAIL_CONTACT}`}>{EMAIL_CONTACT}</a>.
     </p>
+    <p class="contact__statut" id="contact-statut" role="status" aria-live="polite" aria-atomic="true" data-contact-statut></p>
   </div>
 </form>
 
@@ -131,7 +135,8 @@ const carnet = variante === 'carnet';
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-peche) 26%, transparent);
   }
 
-  .contact [aria-invalid='true'] {
+  .contact [aria-invalid='true'],
+  .contact [aria-invalid='true']:focus {
     border-color: var(--color-error);
   }
 
@@ -151,11 +156,29 @@ const carnet = variante === 'carnet';
     cursor: progress;
   }
 
-  .contact__statut {
+  .contact__note {
     flex: 1 1 18rem;
     margin: 0;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);
+  }
+
+  .contact__statut {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+  }
+
+  /* Vide, la ligne d'état reste dans l'arbre d'accessibilité (sans quoi
+     une région `status` qui apparaît avec son texte n'est pas toujours
+     annoncée), mais ne prend aucune place. */
+  .contact__statut:empty {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
   }
 
   .contact__statut[data-etat='error'] {
@@ -198,7 +221,7 @@ const carnet = variante === 'carnet';
   .contact--carnet textarea {
     padding: 13px 14px;
     border: 2.5px solid var(--encre);
-    border-radius: 14px;
+    border-radius: var(--r-m);
     background: var(--blanc);
     color: var(--encre);
     font: 16px / 1.4 var(--carnet-titre);
@@ -212,12 +235,23 @@ const carnet = variante === 'carnet';
   .contact--carnet input:focus,
   .contact--carnet textarea:focus {
     border-color: var(--encre);
-    box-shadow: 3px 3px 0 var(--encre);
+    box-shadow: var(--ombre-s);
   }
 
-  .contact--carnet [aria-invalid='true'] {
+  .contact--carnet input:focus-visible,
+  .contact--carnet textarea:focus-visible {
+    outline: 3px solid var(--encre);
+    outline-offset: 2px;
+  }
+
+  .contact--carnet [aria-invalid='true'],
+  .contact--carnet [aria-invalid='true']:focus {
     border-color: var(--rouge);
     box-shadow: 3px 3px 0 var(--rouge);
+  }
+
+  .contact--carnet [aria-invalid='true']:focus-visible {
+    outline-color: var(--rouge);
   }
 
   .contact--carnet .contact__pied {
@@ -229,7 +263,7 @@ const carnet = variante === 'carnet';
     flex-basis: 100%;
     max-width: none;
     color: var(--encre);
-    font-size: 15px;
+    font-size: var(--t-petit);
   }
 
   .contact--carnet .contact__statut[data-etat='error'],
@@ -238,30 +272,41 @@ const carnet = variante === 'carnet';
     font-weight: 700;
   }
 
+  /* Une pastille devant l'erreur ou la confirmation : le tracé vient de
+     Lucide (alerte, coche), au trait blanc sur rouge ou vert. */
   .contact--carnet .contact__statut[data-etat='error']::before,
   .contact--carnet .contact__statut[data-etat='sent']::before {
-    display: inline-grid;
-    place-items: center;
+    content: '';
+    display: inline-block;
     width: 22px;
     height: 22px;
     margin-right: 8px;
     border-radius: 50%;
-    color: #fff;
-    font: 800 13px / 1 var(--carnet-titre);
-    vertical-align: -5px;
+    vertical-align: -6px;
+    background-color: var(--vert);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf8' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px;
   }
 
   .contact--carnet .contact__statut[data-etat='error']::before {
-    content: '!';
-    background: var(--rouge);
+    background-color: var(--rouge);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf8' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v7M12 18h.01'/%3E%3C/svg%3E");
   }
 
-  .contact--carnet .contact__statut[data-etat='sent']::before {
-    content: '✓';
-    background: var(--vert);
+  .contact--carnet .contact__statut[data-etat='error'] {
+    color: var(--encre);
+    font-weight: 700;
   }
 
-  .contact--carnet .contact__statut .lien-prose {
+  .contact--carnet .contact__note {
+    flex-basis: 100%;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+  }
+
+  .contact--carnet .contact__note .lien-prose {
     border-bottom-color: var(--encre);
   }
 </style>
@@ -275,21 +320,43 @@ const carnet = variante === 'carnet';
       statut.textContent = texte;
       statut.dataset.etat = etat;
     };
+    // Dès qu'on corrige un champ signalé, il cesse d'être en erreur.
+    formulaire.addEventListener('input', (e) => {
+      const champ = e.target as HTMLElement;
+      if (champ.getAttribute('aria-invalid') !== 'true') return;
+      champ.removeAttribute('aria-invalid');
+      champ.removeAttribute('aria-describedby');
+      if (statut.dataset.etat === 'error') {
+        statut.textContent = '';
+        delete statut.dataset.etat;
+      }
+    });
     formulaire.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = formulaire.elements.namedItem('email') as HTMLInputElement;
       const message = formulaire.elements.namedItem('message') as HTMLTextAreaElement;
-      email.removeAttribute('aria-invalid');
-      message.removeAttribute('aria-invalid');
+      for (const champ of [email, message]) {
+        champ.removeAttribute('aria-invalid');
+        champ.removeAttribute('aria-describedby');
+      }
+      // Le champ en erreur, et lui seul, est décrit par la ligne d'état.
+      const signaler = (champ: HTMLElement) => {
+        champ.setAttribute('aria-invalid', 'true');
+        champ.setAttribute('aria-describedby', statut.id);
+        champ.focus();
+      };
       if (!email.checkValidity()) {
-        email.setAttribute('aria-invalid', 'true');
-        email.focus();
-        return dire('Indiquez une adresse e-mail valide.', 'error');
+        signaler(email);
+        return dire(
+          email.value.trim()
+            ? 'Cette adresse semble incomplète : il manque peut-être le @ ou le domaine.'
+            : 'Indiquez votre adresse e-mail, pour que je puisse vous répondre.',
+          'error',
+        );
       }
       if (!message.value.trim()) {
-        message.setAttribute('aria-invalid', 'true');
-        message.focus();
-        return dire('Écrivez votre message.', 'error');
+        signaler(message);
+        return dire('Écrivez votre message, même en une phrase.', 'error');
       }
       const donnees = Object.fromEntries(new FormData(formulaire));
       const source = formulaire.dataset.source ?? '';

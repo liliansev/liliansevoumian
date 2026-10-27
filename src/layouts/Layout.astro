@@ -447,7 +447,8 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                var config = { layout: "month_view", theme: "dark" };
+                // L'agenda prend le thème de la page : clair sur l'accueil « Le carnet ».
+                var config = { layout: "month_view", theme: document.querySelector('.accueil-carnet') ? "light" : "dark" };
                 if (note) config.notes = note;
                 window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: config });
                 inited = true;

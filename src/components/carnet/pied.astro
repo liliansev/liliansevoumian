@@ -37,7 +37,7 @@ const pages = [
     <p class="main pied__signature">l’indé super augmenté</p>
     <div class="pied__liens">
       <nav aria-label="Ailleurs">
-        <span class="surtitre">ailleurs</span>
+        <span class="meta">ailleurs</span>
         <ul>
           {dehors.map((l) => (
             <li>
@@ -53,7 +53,7 @@ const pages = [
         </ul>
       </nav>
       <nav aria-label="Sur le site">
-        <span class="surtitre">sur le site</span>
+        <span class="meta">sur le site</span>
         <ul>
           {pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
         </ul>
@@ -66,13 +66,13 @@ const pages = [
 <style>
   .pied {
     padding-block: clamp(40px, 6vw, 72px) max(28px, env(safe-area-inset-bottom, 0px));
-    border-top: 2.5px solid var(--encre);
+    border-top: var(--trait) solid var(--encre);
     overflow-x: clip;
   }
 
   .pied__nom {
     max-width: none;
-    font-size: clamp(2.6rem, 11vw, 10.5rem);
+    font-size: var(--t-pied);
     line-height: 0.82;
   }
 
@@ -94,8 +94,9 @@ const pages = [
     gap: 0 18px;
   }
 
-  .pied__liens .surtitre {
+  .pied__liens .meta {
     flex: none;
+    margin: 0;
     width: 92px;
   }
 
@@ -121,7 +122,7 @@ const pages = [
     min-height: 44px;
     padding: 0 8px;
     color: var(--encre);
-    font-size: 15px;
+    font-size: var(--t-petit);
     font-weight: 600;
     text-decoration: none;
   }
@@ -136,7 +137,7 @@ const pages = [
   .pied__droits {
     margin: 18px 0 0;
     color: var(--encre-doux);
-    font-size: 15px;
+    font-size: var(--t-petit);
   }
 
   @media (max-width: 560px) {

@@ -46,18 +46,18 @@ src/
 │   ├── carnet/                # l'accueil en carnet d'ingénieur, lu comme un scénario Make : un module coloré par section, un chemin de pointillés entre eux
 │   │   ├── carnet.css         # la grammaire, rangée sous `.accueil-carnet` : jetons, trois voix, pilules, polaroïds, scotch, modules, chemin, cartes
 │   │   ├── griffe.astro       # un griffonnage (cœur, vague, icônes) tracé au build par `lib/carnet/griffonnages.ts`
-│   │   ├── tete.astro         # l'en-tête d'une section : module (couleur, griffonnage, numéro), intitulé en code, titre, chapô
-│   │   ├── barre.astro        # bandeau newsletter, barre collante (sections, « Écrire »), menu plein écran en `dialog`
+│   │   ├── tete.astro         # l'en-tête d'une section : module (couleur, griffonnage, numéro), titre, chapô ; pas de sur-titre
+│   │   ├── barre.astro        # barre collante (nom, sections, « Écrire »), menu plein écran en `dialog`
 │   │   ├── ouverture.astro    # le nom, la signature, « S'abonner sur YouTube », l'audience datée (data/parcours.ts, `audience`), le polaroïd du NoCode Summit
 │   │   ├── defile.astro       # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
-│   │   ├── suivre.astro       # module 1 : dernière vidéo, newsletter (dernier numéro dans data/derniere-newsletter.ts, inscription /api/newsletter), LinkedIn, Augmentés, agenceafk
+│   │   ├── suivre.astro       # module 1 : dernière vidéo et newsletter en cartes (dernier numéro dans data/derniere-newsletter.ts, inscription /api/newsletter), puis LinkedIn, Augmentés, agenceafk en liens
 │   │   ├── adore.astro        # module 2 : « J'adore… », huit autocollants, une couleur par type de travail
-│   │   ├── methode.astro      # module 3 : le kanban d'exemple, déplaçable à la souris et au clavier
+│   │   ├── methode.astro      # module 3 : le kanban d'exemple ; un toucher fait avancer une carte, glisser, Entrée et flèches, remise à zéro
 │   │   ├── coulisses.astro    # module 4 : quatre polaroïds
 │   │   ├── avis.astro         # module 5 : trois citations (celles de documentaire/voix.astro)
 │   │   ├── contact.astro      # module 6 (`#ecrire`) : formulaire-contact en habit `carnet`, lien vers l'agenda
 │   │   ├── pied.astro         # le pied de l'accueil : le nom en très grand, liens dehors et pages du site, sans année
-│   │   └── chemin.astro       # le chemin de pointillés d'un module à l'autre, tracé en SVG à partir de 700 px
+│   │   └── chemin.astro       # le chemin de pointillés d'un module à l'autre (SVG, à partir de 700 px), qui se colore en violet à la lecture ; les pastilles des modules atteints passent au vert
 │   │   # — accueil « Le documentaire » (14 au 27 octobre 2026), plus rendu sur `/` —
 │   ├── documentaire/          # les chapitres de l'accueil, lus comme un court documentaire sur Lilian au travail
 │   │   ├── documentaire.css   # la grammaire commune : plan et sa lumière, incrustation, sous-titre, carton, crédit, étalonnage

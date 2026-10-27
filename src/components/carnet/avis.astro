@@ -41,7 +41,6 @@ const avis = [
       couleur="blanc"
       forme="bulle"
       graine={81}
-      code="ils en parlent"
       titre="Mieux que moi, forcément"
       idTitre="titre-avis"
       chapo="Ce qu’en disent des personnes avec qui j’ai travaillé."
@@ -71,10 +70,10 @@ const avis = [
   .avis {
     margin: 0;
     padding: 26px;
-    border: 2.5px solid var(--encre);
-    border-radius: 20px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-l);
     background: var(--blanc);
-    box-shadow: 6px 6px 0 var(--encre);
+    box-shadow: var(--ombre-l);
   }
 
   .avis:nth-child(1) { transform: rotate(-1.2deg); }
@@ -83,7 +82,7 @@ const avis = [
 
   .avis blockquote {
     margin: 0;
-    font-size: 19px;
+    font-size: var(--t-citation);
     line-height: 1.45;
   }
 
@@ -97,7 +96,7 @@ const avis = [
     align-items: center;
     gap: 12px;
     margin-top: 22px;
-    font-size: 14.5px;
+    font-size: var(--t-petit);
     line-height: 1.3;
   }
 
@@ -113,7 +112,7 @@ const avis = [
     flex: none;
     width: 52px;
     height: 52px;
-    border: 2.5px solid var(--encre);
+    border: var(--trait) solid var(--encre);
     border-radius: 50%;
     background: var(--blanc);
     object-fit: cover;

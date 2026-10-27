@@ -1,9 +1,14 @@
 ---
 /*
- * Module 1, « Où me suivre » : la dernière vidéo YouTube en grand, le bouton
- * rose pour s'abonner à la chaîne, la newsletter (son dernier numéro et
- * l'inscription), LinkedIn, puis les deux portes vers ce que Lilian a fondé :
- * Augmentés pour apprendre avec lui, agenceafk pour lui confier un projet.
+ * Module 1, « Où me suivre » : la dernière vidéo YouTube en grand et la
+ * newsletter (son dernier numéro et l'inscription), puis une ligne de liens
+ * plus discrets : LinkedIn, Augmentés pour apprendre avec Lilian, agenceafk
+ * pour lui confier un projet.
+ *
+ * Distillé le 27 octobre 2026 (critique) : cinq cartes de même poids et deux
+ * boutons « S'abonner » faisaient de la section une page de liens ; le
+ * bouton d'abonnement reste au premier écran, LinkedIn et les deux maisons
+ * de Lilian passent en liens, l'encadré du dernier numéro devient une ligne.
  *
  * Les deux scripts sont ceux de l'accueil d'avant (`documentaire/
  * publications.astro`) : la vidéo écrite dans la page est remplacée par une
@@ -12,6 +17,7 @@
  * Le dernier numéro de la newsletter est relevé à la main, dans
  * `data/derniere-newsletter.ts`.
  */
+import { Icon } from 'astro-icon/components';
 import Griffe from './griffe.astro';
 import Tete from './tete.astro';
 import { derniereVideo, urlVideo } from '../../data/derniere-video';
@@ -26,11 +32,12 @@ const video = {
   vignette: `/videos/${derniereVideo.id}.webp`,
 };
 
-/* Les deux portes, dans l'ordre de la page : apprendre, puis confier. */
+/* Les autres endroits où suivre Lilian, du plus proche au plus engageant. */
 const organisation = (nom: string) => organisations.find((o) => o.nom === nom);
-const portes = [
-  { surtitre: 'apprendre avec moi', lien: 'Voir les formations', texte: 'Mes formations à Make, n8n et à l’IA, en ligne ou dans vos équipes.', ...organisation('Augmentés') },
-  { surtitre: 'me confier le projet', lien: 'Découvrir l’agence', texte: 'Mon agence construit vos agents IA, vos automatisations et vos outils sur mesure.', ...organisation('agenceafk') },
+const ailleurs: { nom: string; texte: string; url?: string; goal?: string }[] = [
+  { nom: 'LinkedIn', texte: 'mes réalisations et mes coulisses d’indépendant', url: profils.linkedin },
+  { nom: 'Augmentés', texte: 'mes formations à Make, n8n et à l’IA', url: organisation('Augmentés')?.url, goal: organisation('Augmentés')?.goal },
+  { nom: 'agenceafk', texte: 'mon agence : vos agents IA, automatisations et outils sur mesure', url: organisation('agenceafk')?.url, goal: organisation('agenceafk')?.goal },
 ];
 ---
 
@@ -41,110 +48,82 @@ const portes = [
       couleur="rose"
       forme="lecture"
       graine={51}
-      code="youtube, newsletter, linkedin"
       titre="Où me suivre"
       idTitre="titre-suivre"
       chapo="Je montre mon travail sur YouTube, et je raconte les coulisses chaque semaine dans ma newsletter."
     />
 
     <div class="suivre">
-      <div class="suivre__video">
-        <a
-          class="carte video"
-          href={video.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-derniere-video={video.id}
-          data-video-publiee={video.publiee}
-          data-fast-goal="youtube_opened"
-          data-fast-goal-source="home_suivre_video"
-        >
-          <span class="video__image">
-            <img src={video.vignette} alt="" width="1280" height="720" loading="lazy" decoding="async" />
-            <span class="video__lecture" aria-hidden="true"></span>
-          </span>
-          <span class="video__texte">
-            <span class="surtitre">dernière vidéo sur YouTube</span>
-            <h3 data-video-titre>{video.titre}</h3>
-            <p>Des tutos, des tests et des cas concrets sur Make, n8n et l’IA.<span class="sr-only"> (s’ouvre dans un nouvel onglet)</span></p>
-          </span>
-        </a>
-        <a
-          class="pilule suivre__abonner"
-          href={profils.youtube}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-fast-goal="youtube_opened"
-          data-fast-goal-source="home_suivre_abonner"
-        ><span class="lecture-mini" aria-hidden="true"></span>S’abonner à la chaîne<span class="sr-only"> (nouvel onglet)</span></a>
-      </div>
-
-      <div class="suivre__pile">
-        <div class="carte bloc" id="newsletter">
-          <div class="bloc__ligne">
-            <span class="bloc__icone" aria-hidden="true"><Griffe forme="enveloppe" graine={52} /></span>
-            <div>
-              <span class="surtitre">la newsletter, chaque semaine</span>
-              <h3>Lilian l’indé super augmenté</h3>
-            </div>
-          </div>
-          <div class="numero">
-            <span class="surtitre">dernier numéro</span>
-            <p class="numero__titre">{derniereNewsletter.titre}</p>
-            <a class="lien" href={derniereNewsletter.url} target="_blank" rel="noopener noreferrer">Le lire en ligne<span class="sr-only"> (nouvel onglet)</span></a>
-          </div>
-          <form id="newsletter-form" class="inscription" action="/api/newsletter" method="post">
-            <div class="inscription__champ">
-              <label for="newsletter-email" class="sr-only">Votre adresse e-mail</label>
-              <input
-                id="newsletter-email"
-                type="email"
-                name="email"
-                required
-                maxlength="254"
-                autocomplete="email"
-                placeholder="vous@entreprise.fr"
-                aria-describedby="newsletter-status"
-              />
-            </div>
-            <button class="pilule" type="submit" disabled>S’inscrire</button>
-            <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
-            <p id="newsletter-status" class="statut" role="status" aria-live="polite" aria-atomic="true" hidden></p>
-            <noscript><p class="statut">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
-          </form>
+      <a
+        class="carte video"
+        href={video.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-derniere-video={video.id}
+        data-video-publiee={video.publiee}
+        data-fast-goal="youtube_opened"
+        data-fast-goal-source="home_suivre_video"
+      >
+        <span class="video__image">
+          <img src={video.vignette} alt="" width="1280" height="720" loading="lazy" decoding="async" />
+          <span class="video__lecture" aria-hidden="true"></span>
+        </span>
+        <div class="video__texte">
+          <h3 data-video-titre>{video.titre}</h3>
+          <span class="meta">ma dernière vidéo sur YouTube</span>
+          <p>Des tutos, des tests et des cas concrets sur Make, n8n et l’IA.<span class="sr-only"> (s’ouvre dans un nouvel onglet)</span></p>
         </div>
+      </a>
 
-        <a class="carte bloc" href={profils.linkedin} target="_blank" rel="noopener noreferrer">
-          <div class="bloc__ligne">
-            <span class="bloc__icone" aria-hidden="true"><Griffe forme="bulle" graine={55} /></span>
-            <div>
-              <span class="surtitre">au fil de l’eau sur</span>
-              <h3>LinkedIn</h3>
-            </div>
+      <div class="carte bloc" id="newsletter">
+        <div class="bloc__ligne">
+          <span class="bloc__icone" aria-hidden="true"><Griffe forme="enveloppe" graine={52} /></span>
+          <div>
+            <h3>Lilian l’indé super augmenté</h3>
+            <span class="meta">ma newsletter, chaque semaine</span>
           </div>
-          <p>Mes réalisations et mes coulisses d’indépendant.</p>
-          <span class="lien">Me suivre sur LinkedIn<span class="sr-only"> (nouvel onglet)</span></span>
-        </a>
+        </div>
+        <p class="numero">
+          <span class="numero__label">Dernier numéro :</span>
+          <a class="lien" href={derniereNewsletter.url} target="_blank" rel="noopener noreferrer">{derniereNewsletter.titre}<span class="sr-only"> (nouvel onglet)</span></a>
+        </p>
+        <form id="newsletter-form" class="inscription" action="/api/newsletter" method="post">
+          <div class="inscription__champ">
+            <label for="newsletter-email" class="sr-only">Votre adresse e-mail</label>
+            <input
+              id="newsletter-email"
+              type="email"
+              name="email"
+              required
+              maxlength="254"
+              autocomplete="email"
+              placeholder="vous@entreprise.fr"
+              aria-describedby="newsletter-status"
+            />
+          </div>
+          <button class="pilule" type="submit" disabled>S’inscrire</button>
+          <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
+          <p id="newsletter-status" class="statut" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+          <noscript><p class="statut">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
+        </form>
       </div>
     </div>
 
-    <div class="portes">
-      {portes.map((p) => (
-        <a
-          class="carte porte"
-          href={p.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-fast-goal={p.goal}
-          data-fast-goal-source="home_portes"
-        >
-          <span class="surtitre">{p.surtitre}</span>
-          <h3>{p.nom}</h3>
-          <p>{p.texte}</p>
-          <span class="lien">{p.lien}<span class="sr-only"> (nouvel onglet)</span></span>
-        </a>
+    <ul class="ailleurs" aria-label="Ailleurs">
+      {ailleurs.map((a) => (
+        <li>
+          <a
+            class="lien"
+            href={a.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-fast-goal={a.goal}
+            data-fast-goal-source={a.goal ? 'home_suivre_ailleurs' : undefined}
+          >{a.nom}<Icon name="lucide:arrow-up-right" class="icone" aria-hidden="true" /><span class="sr-only"> (nouvel onglet)</span></a>
+          <span>{a.texte}</span>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 </section>
 
@@ -152,14 +131,8 @@ const portes = [
   .suivre {
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-    gap: 24px;
+    gap: 28px;
     align-items: start;
-  }
-
-  .suivre__video {
-    display: grid;
-    gap: 18px;
-    justify-items: start;
   }
 
   .video {
@@ -171,8 +144,8 @@ const portes = [
     display: block;
     overflow: hidden;
     aspect-ratio: 16 / 9;
-    border: 2px solid var(--encre);
-    border-radius: 12px;
+    border: var(--trait-fin) solid var(--encre);
+    border-radius: var(--r-s);
   }
 
   .video__image img {
@@ -190,10 +163,11 @@ const portes = [
     width: 76px;
     height: 76px;
     margin: -38px 0 0 -38px;
-    border: 2.5px solid var(--encre);
+    border: var(--trait) solid var(--encre);
     border-radius: 50%;
     background: var(--rose);
-    box-shadow: 4px 4px 0 var(--encre);
+    box-shadow: var(--ombre-m);
+    transition: transform 0.2s ease;
   }
 
   .video__lecture::after {
@@ -205,31 +179,21 @@ const portes = [
     clip-path: polygon(0 0, 100% 50%, 0 100%);
   }
 
+  .video:hover .video__lecture {
+    transform: scale(1.06);
+  }
+
   .video__texte {
     display: block;
-    padding: 16px 8px 6px;
+    padding: 18px 8px 8px;
   }
 
   .carte.video h3 {
     font-size: clamp(1.6rem, 2.4vw, 2.1rem);
-    margin-top: 8px;
-  }
-
-  .carte.video p {
-    margin-top: 10px;
-  }
-
-  .suivre__abonner {
-    background: var(--rose);
-  }
-
-  .suivre__pile {
-    display: grid;
-    gap: 20px;
   }
 
   .bloc {
-    padding: 22px 22px 18px;
+    padding: 22px 22px 20px;
   }
 
   .bloc__ligne {
@@ -244,8 +208,8 @@ const portes = [
     place-items: center;
     width: 56px;
     height: 56px;
-    border: 2.5px solid var(--encre);
-    border-radius: 16px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-m);
     background: var(--papier);
   }
 
@@ -254,19 +218,25 @@ const portes = [
     height: 36px;
   }
 
-  .numero {
-    margin-top: 14px;
-    padding: 12px 14px 4px;
-    border: 2px dashed rgb(29 26 34 / 0.35);
-    border-radius: 12px;
-    background: var(--papier);
+  /* Le dernier numéro : une ligne, pas un encadré dans la carte. */
+  .carte .numero {
+    margin: 20px 0 0;
+    padding-top: 14px;
+    border-top: var(--trait-fin) dashed var(--encre-filet);
+    color: var(--encre);
+    line-height: 1.35;
   }
 
-  .carte .numero__titre {
-    margin: 4px 0 0;
-    color: var(--encre);
-    font-weight: 700;
-    font-size: 16px;
+  .numero__label {
+    display: block;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+  }
+
+  .numero :global(.lien) {
+    display: inline;
+    min-height: 0;
+    font-size: var(--t-corps);
   }
 
   /* L'inscription : le champ prend la place, le bouton se range à côté, ou
@@ -276,7 +246,7 @@ const portes = [
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 10px;
-    margin-top: 14px;
+    margin-top: 18px;
   }
 
   .inscription__champ {
@@ -286,12 +256,13 @@ const portes = [
 
   .inscription input {
     width: 100%;
+    min-height: 52px;
     padding: 13px 14px;
-    border: 2.5px solid var(--encre);
-    border-radius: 14px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-m);
     background: var(--blanc);
     color: var(--encre);
-    font: 16px / 1.4 var(--carnet-titre);
+    font: var(--t-corps) / 1.4 var(--carnet-titre);
   }
 
   .inscription input::placeholder {
@@ -300,7 +271,7 @@ const portes = [
   }
 
   .inscription input:focus {
-    box-shadow: 3px 3px 0 var(--encre);
+    box-shadow: var(--ombre-s);
   }
 
   .inscription input[aria-invalid='true'] {
@@ -313,50 +284,77 @@ const portes = [
     margin: 4px 0 0;
     max-width: none;
     font-weight: 700;
-    font-size: 15px;
+    font-size: var(--t-petit);
     color: var(--encre);
   }
 
-  .statut[data-state='subscribed']::before,
-  .statut[data-state='pending']::before,
-  .statut[data-state='error']::before {
-    display: inline-grid;
-    place-items: center;
+  /* Une pastille devant le message : coche verte, ou point d'exclamation
+     rouge. Le tracé vient de Lucide, en masque, pour rester au trait. */
+  .statut[data-state]:not([data-state='loading'])::before {
+    content: '';
+    display: inline-block;
     width: 22px;
     height: 22px;
     margin-right: 8px;
     border-radius: 50%;
-    color: #fff;
-    font: 800 13px / 1 var(--carnet-titre);
-    vertical-align: -5px;
+    vertical-align: -6px;
+    background-color: var(--vert);
+    background-image: var(--statut-icone);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px;
   }
 
-  .statut[data-state='subscribed']::before,
-  .statut[data-state='pending']::before {
-    content: '✓';
-    background: var(--vert);
+  .statut[data-state='subscribed'],
+  .statut[data-state='pending'] {
+    --statut-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf8' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+
+  .statut[data-state='error'] {
+    --statut-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf8' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v7M12 18h.01'/%3E%3C/svg%3E");
   }
 
   .statut[data-state='error']::before {
-    content: '!';
-    background: var(--rouge);
+    background-color: var(--rouge);
   }
 
-  .portes {
+  /* Ailleurs : trois liens, chacun avec sa phrase, sans carte. */
+  .ailleurs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 24px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 28px;
+    margin: 32px 0 0;
+    padding: 20px 0 0;
+    border-top: var(--trait-fin) dashed var(--encre-filet);
+    list-style: none;
   }
 
-  .porte {
-    padding: 22px 22px 14px;
+  .ailleurs li {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+  }
+
+  .ailleurs li > span {
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.4;
+  }
+
+  .ailleurs :global(.lien) {
+    font-size: 1.25rem;
+    font-stretch: 85%;
+    text-transform: uppercase;
+    font-weight: 800;
   }
 
   @media (max-width: 900px) {
-    .suivre,
-    .portes {
+    .suivre {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .ailleurs {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
     }
   }
 </style>

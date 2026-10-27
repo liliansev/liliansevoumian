@@ -37,6 +37,21 @@ colors:
   feuille-note: "#4b5565"
   lueur-froide: "#6f7cff"
   braise: "#ff8a65"
+  carnet-papier: "#f6f2e8"
+  carnet-blanc: "#fffdf8"
+  carnet-encre: "#1d1a22"
+  carnet-encre-doux: "#4f4a56"
+  carnet-violet: "#6a3df5"
+  carnet-lilas: "#b59cff"
+  carnet-menthe: "#4fe0a0"
+  carnet-jaune: "#ffd23f"
+  carnet-rose: "#ff8fc8"
+  carnet-bleu: "#6ab7ff"
+  carnet-vert: "#0c7a3c"
+  carnet-vert-clair: "#effaf3"
+  carnet-vert-point: "#14a554"
+  carnet-rouge: "#c9302c"
+  carnet-coeur: "#e0368a"
 typography:
   nom:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
@@ -137,6 +152,66 @@ typography:
     fontSize: "0.75rem"
     fontWeight: 400
     lineHeight: 1.4
+  carnet-nom:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "clamp(4.2rem, 10.4vw, 9.6rem)"
+    fontWeight: 800
+  carnet-pied:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "clamp(2.6rem, 11vw, 10.5rem)"
+    fontWeight: 800
+  carnet-adore:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "clamp(3.6rem, 9vw, 8rem)"
+    fontWeight: 800
+  carnet-section:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "clamp(2.5rem, 5.4vw, 4.8rem)"
+    fontWeight: 800
+  carnet-signature:
+    fontFamily: "Gochi Hand, Comic Sans MS, cursive"
+    fontSize: "clamp(1.8rem, 3vw, 2.6rem)"
+    fontWeight: 400
+  carnet-main:
+    fontFamily: "Gochi Hand, Comic Sans MS, cursive"
+    fontSize: "clamp(1.35rem, 1.9vw, 1.7rem)"
+    fontWeight: 400
+  carnet-chapo:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "clamp(1.12rem, 1.45vw, 1.32rem)"
+    fontWeight: 400
+  carnet-chiffre:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "1.875rem"
+    fontWeight: 800
+  carnet-carte:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "1.625rem"
+    fontWeight: 800
+  carnet-note:
+    fontFamily: "Gochi Hand, Comic Sans MS, cursive"
+    fontSize: "1.3125rem"
+    fontWeight: 400
+  carnet-citation:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "1.1875rem"
+    fontWeight: 400
+  carnet-corps:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 400
+  carnet-petit:
+    fontFamily: "Bricolage Grotesque Variable, Arial Narrow, Arial, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 400
+  carnet-code:
+    fontFamily: "JetBrains Mono, ui-monospace, Menlo, monospace"
+    fontSize: "0.8125rem"
+    fontWeight: 700
+  carnet-etiquette:
+    fontFamily: "JetBrains Mono, ui-monospace, Menlo, monospace"
+    fontSize: "0.75rem"
+    fontWeight: 700
 rounded:
   xs: "6px"
   sm: "10px"
@@ -146,6 +221,11 @@ rounded:
   diagram: "16px"
   cta: "9999px"
   full: "9999px"
+  carnet-xs: "6px"
+  carnet-s: "12px"
+  carnet-m: "16px"
+  carnet-l: "22px"
+  carnet-xl: "28px"
 spacing:
   section-y: "clamp(5rem, 8vw, 8rem)"
   section-x: "clamp(1.5rem, 5vw, 7.5rem)"
@@ -586,8 +666,14 @@ couleur : le texte est en encre, posé dessus.
   serrées (graisse 800, chasse 75 %), le texte courant.
 - **Gochi Hand** : les notes à la main (signature, apartés, légendes des
   polaroïds, notes du kanban). Jamais pour une information qu'on doit lire.
-- **JetBrains Mono** : les intitulés en code au-dessus des titres, les
-  étiquettes, les chiffres d'audience.
+- **JetBrains Mono** : les étiquettes, les libellés des chiffres
+  d'audience, les lignes de contexte sous les titres de carte, la barre du
+  kanban. Jamais de sur-titre au-dessus d'un titre (retirés après la critique
+  du 27 octobre 2026) : le titre parle seul.
+
+Les tailles, les arrondis et les ombres sont des jetons de `carnet.css`
+(`--t-*`, `--r-*`, `--ombre-*`), repris dans l'en-tête de ce fichier sous le
+préfixe `carnet-`.
 
 ### Les objets
 
@@ -605,26 +691,32 @@ le kanban.
 |---|---|---|---|
 | (ouverture) | — | — | nom, signature, phrase, « S'abonner sur YouTube », audience datée, polaroïd du NoCode Summit, pastille Make |
 | (défilé) | — | — | logos des clients, avec bouton pause |
-| 1 | `#suivre` | rose | dernière vidéo, newsletter (`#newsletter`), LinkedIn, Augmentés et agenceafk |
-| 2 | `#adore` | lilas | « J'adore… » et les huit autocollants |
-| 3 | `#methode` | jaune | le kanban d'exemple, déplaçable à la souris et au clavier |
+| 1 | `#suivre` | rose | dernière vidéo et newsletter (`#newsletter`) en cartes, puis LinkedIn, Augmentés et agenceafk en liens |
+| 2 | `#adore` | lilas | « J'adore… », les huit autocollants rangés par type, le lien vers l'index des cas clients |
+| 3 | `#methode` | jaune | le kanban d'exemple : un toucher fait avancer une carte, elle se glisse aussi, au clavier Entrée et les flèches ; « Remettre à zéro » ; colonnes en défilement horizontal sur téléphone |
 | 4 | `#coulisses` | bleu | quatre polaroïds |
 | 5 | `#avis` | blanc | trois citations, passage clé surligné |
 | 6 | `#ecrire` | menthe | le formulaire de contact (habit `carnet`) et le lien vers l'agenda |
 
 Le premier geste est de s'abonner sur YouTube ; le contact suit (« Écrire »
 dans la barre, « ou parlons de votre projet » sous le bouton), et tout mène
-au formulaire du module 6. Les chiffres d'audience viennent de
+au formulaire du module 6. Pas de bandeau au-dessus de la barre : il
+disputait ce geste au premier écran. Les chiffres d'audience viennent de
 `data/parcours.ts`, avec leur date de relevé ; le nombre d'abonnés de la
 newsletter n'est jamais affiché.
 
 ### Le mouvement
 
-Peu, et utile : les objets se soulèvent au survol, le défilé des logos tourne
-(avec sa pause), le kanban se manipule. Le chemin de pointillés est tracé une
-fois par le script et retracé quand la page change de hauteur ; il n'existe
-qu'à partir de 700 px de large. Avec `prefers-reduced-motion`, plus rien ne
-bouge et le défilé passe sur plusieurs lignes.
+Peu, et utile. Un seul moment conçu : le scénario s'exécute à la lecture.
+À mesure qu'on descend, le chemin de pointillés se colore en violet d'un
+module au suivant, et la pastille de chaque module atteint passe au vert,
+comme un module exécuté dans Make (`chemin.astro`). Le reste est de la
+réponse : les objets se soulèvent au survol, une carte du kanban se pose
+quand elle arrive dans sa colonne, le défilé des logos tourne (avec sa
+pause). Le chemin n'existe qu'à partir de 700 px de large ; les pastilles
+s'exécutent à toutes les tailles. Avec `prefers-reduced-motion`, plus rien
+ne bouge : le chemin reste à l'encre, les pastilles changent d'état sans
+animation, le défilé passe sur plusieurs lignes.
 
 ## L'accueil d'avant : le documentaire
 

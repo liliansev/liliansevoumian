@@ -21,13 +21,10 @@ import portrait from '../../assets/lilian-photo.jpg';
     <Tete numero={6} couleur="menthe" forme="enveloppe" graine={91} class="fin__module" />
     <div class="fin__cadre">
       <div>
-        <div class="fin__titre">
-          <p class="code">on en parle ?</p>
-          <h2 class="caps caps--section" id="titre-fin">Dites-moi ce que vous refaites</h2>
-        </div>
+        <h2 class="caps caps--section fin__titre" id="titre-fin">Dites-moi ce que vous refaites</h2>
         <FormulaireContact source="home_fin" variante="carnet">
           <BoutonReservation slot="pied" source="home_fin" direct class="lien">
-            ou réserver un appel<span class="sr-only"> (nouvel onglet)</span>
+            ou réserver un appel<span class="sr-only"> (ouvre l’agenda)</span>
           </BoutonReservation>
         </FormulaireContact>
       </div>
@@ -60,19 +57,14 @@ import portrait from '../../assets/lilian-photo.jpg';
     gap: clamp(32px, 4vw, 64px);
     align-items: center;
     padding: clamp(24px, 4vw, 56px);
-    border: 2.5px solid var(--encre);
-    border-radius: 28px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-xl);
     background: var(--menthe);
-    box-shadow: 8px 8px 0 var(--encre);
+    box-shadow: var(--ombre-xl);
   }
 
   .fin__titre {
-    margin-bottom: 24px;
-  }
-
-  .fin__titre .code {
-    margin-bottom: 14px;
-    color: var(--encre);
+    margin-bottom: 28px;
   }
 
   .fin__portrait {

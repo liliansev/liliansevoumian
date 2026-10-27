@@ -6,27 +6,67 @@
  * se brancher sur le module suivant par le haut, comme les liens d'un
  * scénario Make.
  *
- * Elle n'est tracée qu'à partir de 700 px de large : en dessous, il n'y a pas
- * de marge où descendre, et chaque module garde sa courte ligne verticale
- * (`.tete::before`, dans `carnet.css`). Le tracé est refait quand la page
- * change de hauteur (polices, images, kanban). Décorative : `aria-hidden`.
+ * Le scénario s'exécute à la lecture (27 octobre 2026, le seul mouvement
+ * conçu pour la page) : à mesure qu'on descend, le chemin se colore en violet
+ * d'un module au suivant, et la pastille de chaque module atteint passe au
+ * vert, comme un module exécuté dans Make. Avec `prefers-reduced-motion`, le
+ * chemin reste à l'encre et seules les pastilles changent d'état.
+ *
+ * Le chemin n'est tracé qu'à partir de 768 px de large (là où la gouttière
+ * passe à 32 px) : en dessous, il n'y a pas de marge où descendre, et chaque module garde sa courte ligne verticale
+ * (`.tete::before`, dans `carnet.css`) ; les pastilles, elles, s'exécutent à
+ * toutes les tailles. Le tracé est refait quand la page change de hauteur
+ * (polices, images, kanban). Décoratif : `aria-hidden`.
  */
 ---
 
 <svg class="chemin" aria-hidden="true" focusable="false" data-chemin></svg>
 
 <script>
+  const SVG = 'http://www.w3.org/2000/svg';
   const chemin = document.querySelector<SVGSVGElement>('[data-chemin]');
   const page = chemin?.parentElement;
   if (chemin && page) {
     const modules = [...page.querySelectorAll<HTMLElement>('.module')];
     const reference = page.querySelector<HTMLElement>('#suivre .carnet-enveloppe');
+    const reduit = matchMedia('(prefers-reduced-motion: reduce)');
+    /* Le seuil d'exécution : un peu sous le milieu de l'écran. */
+    const seuil = () => innerHeight * 0.62;
+
+    type Troncon = { depart: number; arrivee: number; trace: SVGPathElement; longueur: number };
+    let troncons: Troncon[] = [];
+
+    const element = <K extends keyof SVGElementTagNameMap>(nom: K, attributs: Record<string, string>) => {
+      const el = document.createElementNS(SVG, nom);
+      Object.entries(attributs).forEach(([cle, valeur]) => el.setAttribute(cle, valeur));
+      return el;
+    };
+
+    /* Avance le scénario : chaque tronçon se colore à proportion de la
+       distance parcourue entre ses deux modules, et chaque module dont le
+       centre a passé le seuil est marqué exécuté. */
+    const avancer = () => {
+      const ligne = seuil();
+      modules.forEach((m) => {
+        const r = m.getBoundingClientRect();
+        m.toggleAttribute('data-execute', r.top + r.height / 2 < ligne);
+      });
+      if (!troncons.length) return;
+      const haut = page.getBoundingClientRect().top;
+      const position = ligne - haut;
+      troncons.forEach((t) => {
+        const part = Math.min(1, Math.max(0, (position - t.depart) / (t.arrivee - t.depart)));
+        t.trace.style.strokeDashoffset = String(t.longueur * (1 - part));
+      });
+    };
 
     const tracer = () => {
-      const large = innerWidth >= 700;
+      const large = innerWidth >= 768;
       document.documentElement.classList.toggle('chemin-actif', large && modules.length > 1);
+      troncons = [];
       if (!large || modules.length < 2 || !reference) {
         chemin.replaceChildren();
+        avancer();
         return;
       }
       const cadre = page.getBoundingClientRect();
@@ -45,32 +85,67 @@
         const r = m.getBoundingClientRect();
         return { x: r.left - cadre.left + r.width / 2, y: r.top - cadre.top + r.height / 2, haut: r.top - cadre.top, rayon: r.width / 2 };
       });
-      let d = '';
+
+      const segments: { d: string; depart: number; arrivee: number }[] = [];
       for (let i = 0; i < points.length - 1; i++) {
         const a = points[i];
         const b = points[i + 1];
         const sens = i % 2 ? 1 : -1;
         const xs = sens < 0 ? marge : L - marge;
         const k = 40;
-        const ye = b.haut - 46;
-        d +=
-          `M${a.x + sens * (a.rayon + 8)} ${a.y} L${xs - sens * k} ${a.y} Q${xs} ${a.y} ${xs} ${a.y + k} ` +
-          `L${xs} ${ye - k} Q${xs} ${ye} ${xs - sens * k} ${ye} L${b.x + sens * k} ${ye} Q${b.x} ${ye} ${b.x} ${ye + k} L${b.x} ${b.haut - 8} `;
+        // Le dernier coude finit juste au-dessus du module, sans revenir en arrière.
+        const ye = b.haut - 8 - k;
+        segments.push({
+          d:
+            `M${a.x + sens * (a.rayon + 8)} ${a.y} L${xs - sens * k} ${a.y} Q${xs} ${a.y} ${xs} ${a.y + k} ` +
+            `L${xs} ${ye - k} Q${xs} ${ye} ${xs - sens * k} ${ye} L${b.x + sens * k} ${ye} Q${b.x} ${ye} ${b.x} ${ye + k}`,
+          depart: a.y,
+          arrivee: b.y,
+        });
       }
-      const trace = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      trace.setAttribute('d', d);
-      chemin.replaceChildren(trace);
+
+      const tout = segments.map((s) => s.d).join(' ');
+      const encre = element('path', { d: tout });
+      if (reduit.matches) {
+        chemin.replaceChildren(encre);
+        avancer();
+        return;
+      }
+      // Le violet n'apparaît qu'à travers un masque, un tracé par tronçon, que
+      // l'on dévoile en jouant sur son pointillé (longueur, puis décalage).
+      const masque = element('mask', { id: 'chemin-parcouru', maskUnits: 'userSpaceOnUse', x: '0', y: '0', width: String(L), height: String(H) });
+      const violet = element('path', { d: tout, class: 'chemin__parcouru', mask: 'url(#chemin-parcouru)' });
+      chemin.replaceChildren(element('defs', {}), encre, violet);
+      chemin.querySelector('defs')?.append(masque);
+      troncons = segments.map((s) => {
+        const trace = element('path', { d: s.d });
+        masque.append(trace);
+        // Un peu plus que la longueur mesurée : aucun bout de trait ne doit
+        // rester visible quand le tronçon n'est pas encore parcouru.
+        const longueur = Math.ceil(trace.getTotalLength()) + 2;
+        trace.style.strokeDasharray = `${longueur} ${longueur}`;
+        trace.style.strokeDashoffset = String(longueur);
+        return { depart: s.depart, arrivee: s.arrivee, trace, longueur };
+      });
+      avancer();
     };
 
-    let attente = 0;
-    const demander = () => {
-      cancelAnimationFrame(attente);
-      attente = requestAnimationFrame(tracer);
+    let attenteTrace = 0;
+    const demanderTrace = () => {
+      cancelAnimationFrame(attenteTrace);
+      attenteTrace = requestAnimationFrame(tracer);
     };
-    new ResizeObserver(demander).observe(page);
-    addEventListener('resize', demander);
-    addEventListener('load', demander);
-    document.fonts?.ready.then(demander).catch((erreur: unknown) => console.error('[chemin] polices', erreur));
+    let attenteDefilement = 0;
+    const demanderAvance = () => {
+      cancelAnimationFrame(attenteDefilement);
+      attenteDefilement = requestAnimationFrame(avancer);
+    };
+    new ResizeObserver(demanderTrace).observe(page);
+    addEventListener('resize', demanderTrace);
+    addEventListener('load', demanderTrace);
+    addEventListener('scroll', demanderAvance, { passive: true });
+    reduit.addEventListener('change', demanderTrace);
+    document.fonts?.ready.then(demanderTrace).catch((erreur: unknown) => console.error('[chemin] polices', erreur));
     tracer();
   }
 </script>
