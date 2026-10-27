@@ -1,0 +1,85 @@
+---
+/*
+ * Module 4, « Dans les coulisses » : quatre vraies photos de Lilian au
+ * travail, posées en polaroïds sur la page (son bureau, le micro, une salle de
+ * formation, une promo). Chaque photo garde son format ; seule la légende
+ * est écrite à la main.
+ */
+import { Image } from 'astro:assets';
+import Tete from './tete.astro';
+import bureau from '../../assets/lilian-au-bureau.jpg';
+import micro from '../../assets/documentaire/studio-micro.jpg';
+import formation from '../../assets/documentaire/formation-salle.jpg';
+import promo from '../../assets/documentaire/rocket-school-promo.jpg';
+
+const photos = [
+  { src: bureau, alt: 'Lilian à son bureau, trois écrans dont un scénario Make', legende: 'mon bureau, et un scénario Make', largeur: 360, format: '4/3', scotch: 'g' },
+  { src: micro, alt: 'Lilian au micro, casquette à l’envers', legende: 'au micro, à La Capsule', largeur: 300, format: '4/4.4', scotch: 'd', cadrage: '62% 40%' },
+  { src: formation, alt: 'Lilian forme une salle devant un écran', legende: 'en formation, chez Maria Schools', largeur: 380, format: '16/9', scotch: 'g', cadrage: '38% 50%' },
+  { src: promo, alt: 'Photo de groupe d’une promotion Rocket School, Lilian au centre du premier rang', legende: 'avec une promo Rocket School', largeur: 380, format: '984/443', scotch: 'd' },
+];
+---
+
+<section class="etape coulisses" id="coulisses" aria-labelledby="titre-coulisses">
+  <div class="carnet-enveloppe">
+    <Tete
+      numero={4}
+      couleur="bleu"
+      forme="photo"
+      graine={71}
+      titre="Dans les coulisses"
+      idTitre="titre-coulisses"
+      chapo="Là où je travaille, j’enregistre et je forme."
+    />
+    <div class="album">
+      {photos.map((p) => (
+        <figure class="polaroid" style={`--l:${p.largeur}px;--r:${p.format}`}>
+          <span class={`scotch scotch--${p.scotch}`} aria-hidden="true"></span>
+          <span class="cadre">
+            <Image
+              src={p.src}
+              alt={p.alt}
+              width={p.largeur * 2}
+              widths={[p.largeur, p.largeur * 2]}
+              sizes={`(max-width: 620px) calc(100vw - 32px), ${p.largeur}px`}
+              loading="lazy"
+              style={p.cadrage ? `object-position:${p.cadrage}` : undefined}
+            />
+          </span>
+          <figcaption>{p.legende}</figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .coulisses {
+    overflow-x: clip;
+  }
+
+  .album {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 44px 34px;
+    max-width: 860px;
+    margin-inline: auto;
+  }
+
+  .album .polaroid {
+    width: min(100%, var(--l, 300px));
+  }
+
+  .album .polaroid:nth-child(1) { transform: rotate(-3deg); }
+  .album .polaroid:nth-child(2) { transform: rotate(2deg) translateY(30px); }
+  .album .polaroid:nth-child(3) { transform: rotate(-1.5deg); }
+  .album .polaroid:nth-child(4) { transform: rotate(2.5deg) translateY(14px); }
+
+  @media (max-width: 620px) {
+    .album .polaroid:nth-child(n) {
+      transform: rotate(-1.5deg);
+    }
+  }
+</style>

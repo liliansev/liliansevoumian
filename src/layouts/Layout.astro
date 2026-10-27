@@ -22,6 +22,12 @@ interface Props {
   noindex?: boolean;
   faqSchema?: Array<{ question: string; answer: string }>;
   directionContract?: string;
+  /** La couleur de la barre du navigateur mobile : la nuit du site, ou le
+      papier sur l'accueil « Le carnet ». */
+  themeColor?: string;
+  /** La police à précharger (URL d'un woff2) : Geist partout, Bricolage
+      Grotesque sur l'accueil « Le carnet ». */
+  policePrechargee?: string;
 }
 
 const {
@@ -38,6 +44,8 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   pageSchema,
   breadcrumbs,
   noindex = false,
+  themeColor = '#0c121f',
+  policePrechargee = geistLatin,
   faqSchema,
   directionContract
 } = Astro.props;
@@ -245,7 +253,7 @@ const faqPageSchema = faqSchema ? {
       })();
     </script>
 
-    <meta name="theme-color" content="#0c121f" />
+    <meta name="theme-color" content={themeColor} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -280,12 +288,16 @@ const faqPageSchema = faqSchema ? {
     {pageSchema && <script type="application/ld+json" set:html={safeJsonLd(pageSchema)} />}
     {faqPageSchema && <script type="application/ld+json" set:html={safeJsonLd(faqPageSchema)} />}
 
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon_liliansevoumian.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {/* L'icône est le visage de Lilian, en rond (27 octobre 2026, à sa demande ;
+        avant, un « L » sur la pêche). Tirée de `assets/lilian-photo.jpg`, l'avatar
+        de la barre mobile. `?v=` force les navigateurs, qui gardent une icône
+        longtemps en cache, à recharger la nouvelle. */}
+    <link rel="icon" href="/favicon.ico?v=2" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png?v=2" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
     <meta name="generator" content={Astro.generator} />
 
-    <link rel="preload" as="font" type="font/woff2" href={geistLatin} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={policePrechargee} crossorigin />
     {/* File DataFast : capture les goals déclenchés avant le chargement du script. */}
     <script is:inline>
       window.datafast = window.datafast || function () {
@@ -435,7 +447,8 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                var config = { layout: "month_view", theme: "dark" };
+                // L'agenda prend le thème de la page : clair sur l'accueil « Le carnet ».
+                var config = { layout: "month_view", theme: document.querySelector('.accueil-carnet') ? "light" : "dark" };
                 if (note) config.notes = note;
                 window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: config });
                 inited = true;

@@ -1,0 +1,31 @@
+---
+/*
+ * Griffe : un griffonnage du carnet (cœur, vague, petites icônes), tracé au
+ * build par `lib/carnet/griffonnages.ts`. Toujours décoratif : le sens est
+ * porté par le texte à côté.
+ */
+import { boites, griffonner, type Forme } from '../../lib/carnet/griffonnages';
+
+interface Props {
+  forme: Forme;
+  /** La graine : la même donne toujours le même trait. */
+  graine?: number;
+  class?: string;
+  /** Étire le tracé à la taille de la boîte (la vague sous la signature). */
+  etire?: boolean;
+}
+
+const { forme, graine = 1, class: classe, etire = false } = Astro.props;
+const [largeur, hauteur] = boites[forme];
+const traces = griffonner(forme, largeur, hauteur, graine);
+---
+
+<svg
+  class:list={['griffe', classe]}
+  viewBox={`0 0 ${largeur} ${hauteur}`}
+  preserveAspectRatio={etire ? 'none' : undefined}
+  aria-hidden="true"
+  focusable="false"
+>
+  {traces.map((d) => <path d={d} />)}
+</svg>

@@ -1,0 +1,89 @@
+---
+/*
+ * Module 6, la fin : « Dites-moi ce que vous refaites ». Le formulaire de
+ * contact du site (`formulaire-contact.astro`, habit `carnet`) dans un cadre
+ * menthe, la couleur du contact, avec le lien vers l'agenda à côté du bouton
+ * (goal `lead_call`). Le portrait de Lilian, en polaroïd, quitte la page sous
+ * 900 px pour laisser la place aux champs.
+ *
+ * C'est la cible de tous les « Écrire » et « Parlons de votre projet » de la
+ * page : Layout fait défiler jusqu'au formulaire au lieu d'ouvrir /contact.
+ */
+import { Image } from 'astro:assets';
+import BoutonReservation from '../BoutonReservation.astro';
+import FormulaireContact from '../formulaire-contact.astro';
+import Tete from './tete.astro';
+import portrait from '../../assets/lilian-photo.jpg';
+---
+
+<section class="etape fin" id="ecrire" aria-labelledby="titre-fin">
+  <div class="carnet-enveloppe">
+    <Tete numero={6} couleur="menthe" forme="enveloppe" graine={91} class="fin__module" />
+    <div class="fin__cadre">
+      <div>
+        <h2 class="caps caps--section fin__titre" id="titre-fin">Dites-moi ce que vous refaites</h2>
+        <FormulaireContact source="home_fin" variante="carnet">
+          <BoutonReservation slot="pied" source="home_fin" direct class="lien">
+            ou réserver un appel<span class="sr-only"> (ouvre l’agenda)</span>
+          </BoutonReservation>
+        </FormulaireContact>
+      </div>
+      <figure class="polaroid fin__portrait">
+        <span class="scotch scotch--g" aria-hidden="true"></span>
+        <span class="cadre">
+          <Image src={portrait} alt="Portrait de Lilian, chemise lilas" width={600} widths={[300, 600]} sizes="300px" loading="lazy" class="fin__photo" />
+        </span>
+        <figcaption>à très vite</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fin {
+    padding-bottom: clamp(72px, 9vw, 110px);
+    overflow-x: clip;
+  }
+
+  .fin :global(.fin__module) {
+    margin-bottom: 0;
+    padding-bottom: 28px;
+  }
+
+  .fin__cadre {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    gap: clamp(32px, 4vw, 64px);
+    align-items: center;
+    padding: clamp(24px, 4vw, 56px);
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-xl);
+    background: var(--menthe);
+    box-shadow: var(--ombre-xl);
+  }
+
+  .fin__titre {
+    margin-bottom: 28px;
+  }
+
+  .fin__portrait {
+    max-width: 300px;
+    margin-inline: auto;
+    transform: rotate(3deg);
+    --r: 1;
+  }
+
+  .fin__portrait :global(.fin__photo) {
+    object-position: 50% 25%;
+  }
+
+  @media (max-width: 900px) {
+    .fin__cadre {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .fin__portrait {
+      display: none;
+    }
+  }
+</style>

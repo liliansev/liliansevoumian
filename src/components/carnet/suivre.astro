@@ -1,0 +1,490 @@
+---
+/*
+ * Module 1, « Où me suivre » : la dernière vidéo YouTube en grand et la
+ * newsletter (son dernier numéro et l'inscription), puis une ligne de liens
+ * plus discrets : LinkedIn, Augmentés pour apprendre avec Lilian, agenceafk
+ * pour lui confier un projet.
+ *
+ * Distillé le 27 octobre 2026 (critique) : cinq cartes de même poids et deux
+ * boutons « S'abonner » faisaient de la section une page de liens ; le
+ * bouton d'abonnement reste au premier écran, LinkedIn et les deux maisons
+ * de Lilian passent en liens, l'encadré du dernier numéro devient une ligne.
+ *
+ * Les deux scripts sont ceux de l'accueil d'avant (`documentaire/
+ * publications.astro`) : la vidéo écrite dans la page est remplacée par une
+ * plus récente si le serveur en connaît une (`/api/derniere-video`), et
+ * l'inscription passe par `/api/newsletter` (`lib/newsletter-signup.ts`).
+ * Le dernier numéro de la newsletter est relevé à la main, dans
+ * `data/derniere-newsletter.ts`.
+ */
+import { Icon } from 'astro-icon/components';
+import Griffe from './griffe.astro';
+import Tete from './tete.astro';
+import { derniereVideo, urlVideo } from '../../data/derniere-video';
+import { derniereNewsletter } from '../../data/derniere-newsletter';
+import { organisations, profils } from '../../data/parcours';
+
+const video = {
+  id: derniereVideo.id,
+  publiee: derniereVideo.publiee,
+  titre: derniereVideo.titre,
+  url: urlVideo(derniereVideo.id),
+  vignette: `/videos/${derniereVideo.id}.webp`,
+};
+
+/* Les autres endroits où suivre Lilian, du plus proche au plus engageant. */
+const organisation = (nom: string) => organisations.find((o) => o.nom === nom);
+const ailleurs: { nom: string; texte: string; url?: string; goal?: string }[] = [
+  { nom: 'LinkedIn', texte: 'mes réalisations et mes coulisses d’indépendant', url: profils.linkedin },
+  { nom: 'Augmentés', texte: 'mes formations à Make, n8n et à l’IA', url: organisation('Augmentés')?.url, goal: organisation('Augmentés')?.goal },
+  { nom: 'agenceafk', texte: 'mon agence : vos agents IA, automatisations et outils sur mesure', url: organisation('agenceafk')?.url, goal: organisation('agenceafk')?.goal },
+];
+---
+
+<section class="etape" id="suivre" aria-labelledby="titre-suivre">
+  <div class="carnet-enveloppe">
+    <Tete
+      numero={1}
+      couleur="rose"
+      forme="lecture"
+      graine={51}
+      titre="Où me suivre"
+      idTitre="titre-suivre"
+      chapo="Je montre mon travail sur YouTube, et je raconte les coulisses chaque semaine dans ma newsletter."
+    />
+
+    <div class="suivre">
+      <a
+        class="carte video"
+        href={video.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-derniere-video={video.id}
+        data-video-publiee={video.publiee}
+        data-fast-goal="youtube_opened"
+        data-fast-goal-source="home_suivre_video"
+      >
+        <span class="video__image">
+          <img src={video.vignette} alt="" width="1280" height="720" loading="lazy" decoding="async" />
+          <span class="video__lecture" aria-hidden="true"></span>
+        </span>
+        <div class="video__texte">
+          <h3 data-video-titre>{video.titre}</h3>
+          <span class="meta">ma dernière vidéo sur YouTube</span>
+          <p>Des tutos, des tests et des cas concrets sur Make, n8n et l’IA.<span class="sr-only"> (s’ouvre dans un nouvel onglet)</span></p>
+        </div>
+      </a>
+
+      <div class="carte bloc" id="newsletter">
+        <div class="bloc__ligne">
+          <span class="bloc__icone" aria-hidden="true"><Griffe forme="enveloppe" graine={52} /></span>
+          <div>
+            <h3>Lilian l’indé super augmenté</h3>
+            <span class="meta">ma newsletter, chaque semaine</span>
+          </div>
+        </div>
+        <p class="numero">
+          <span class="numero__label">Dernier numéro :</span>
+          <a class="lien" href={derniereNewsletter.url} target="_blank" rel="noopener noreferrer">{derniereNewsletter.titre}<span class="sr-only"> (nouvel onglet)</span></a>
+        </p>
+        <form id="newsletter-form" class="inscription" action="/api/newsletter" method="post">
+          <div class="inscription__champ">
+            <label for="newsletter-email" class="sr-only">Votre adresse e-mail</label>
+            <input
+              id="newsletter-email"
+              type="email"
+              name="email"
+              required
+              maxlength="254"
+              autocomplete="email"
+              placeholder="vous@entreprise.fr"
+              aria-describedby="newsletter-status"
+            />
+          </div>
+          <button class="pilule" type="submit" disabled>S’inscrire</button>
+          <div hidden aria-hidden="true"><label for="newsletter-website">Votre site</label><input id="newsletter-website" name="website" tabindex="-1" autocomplete="off" /></div>
+          <p id="newsletter-status" class="statut" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+          <noscript><p class="statut">Activez JavaScript pour vous inscrire à la newsletter.</p></noscript>
+        </form>
+      </div>
+    </div>
+
+    <ul class="ailleurs" aria-label="Ailleurs">
+      {ailleurs.map((a) => (
+        <li>
+          <a
+            class="lien"
+            href={a.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-fast-goal={a.goal}
+            data-fast-goal-source={a.goal ? 'home_suivre_ailleurs' : undefined}
+          >{a.nom}<Icon name="lucide:arrow-up-right" class="icone" aria-hidden="true" /><span class="sr-only"> (nouvel onglet)</span></a>
+          <span>{a.texte}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .suivre {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .video {
+    padding: 14px;
+  }
+
+  .video__image {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border: var(--trait-fin) solid var(--encre);
+    border-radius: var(--r-s);
+  }
+
+  .video__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video__lecture {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin: -38px 0 0 -38px;
+    border: var(--trait) solid var(--encre);
+    border-radius: 50%;
+    background: var(--rose);
+    box-shadow: var(--ombre-m);
+    transition: transform 0.2s ease;
+  }
+
+  .video__lecture::after {
+    content: '';
+    width: 22px;
+    height: 26px;
+    margin-left: 6px;
+    background: var(--encre);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .video:hover .video__lecture {
+    transform: scale(1.06);
+  }
+
+  .video__texte {
+    display: block;
+    padding: 18px 8px 8px;
+  }
+
+  .carte.video h3 {
+    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  }
+
+  .bloc {
+    padding: 22px 22px 20px;
+  }
+
+  .bloc__ligne {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bloc__icone {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-m);
+    background: var(--papier);
+  }
+
+  .bloc__icone :global(.griffe) {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Le dernier numéro : une ligne, pas un encadré dans la carte. */
+  .carte .numero {
+    margin: 20px 0 0;
+    padding-top: 14px;
+    border-top: var(--trait-fin) dashed var(--encre-filet);
+    color: var(--encre);
+    line-height: 1.35;
+  }
+
+  .numero__label {
+    display: block;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+  }
+
+  .numero :global(.lien) {
+    display: inline;
+    min-height: 0;
+    font-size: var(--t-corps);
+  }
+
+  /* L'inscription : le champ prend la place, le bouton se range à côté, ou
+     dessous sur un téléphone étroit. */
+  .inscription {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .inscription__champ {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .inscription input {
+    width: 100%;
+    min-height: 52px;
+    padding: 13px 14px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-m);
+    background: var(--blanc);
+    color: var(--encre);
+    font: var(--t-corps) / 1.4 var(--carnet-titre);
+  }
+
+  .inscription input::placeholder {
+    color: var(--encre-doux);
+    opacity: 1;
+  }
+
+  .inscription input:focus {
+    box-shadow: var(--ombre-s);
+  }
+
+  .inscription input[aria-invalid='true'] {
+    border-color: var(--rouge);
+    box-shadow: 3px 3px 0 var(--rouge);
+  }
+
+  .statut {
+    flex-basis: 100%;
+    margin: 4px 0 0;
+    max-width: none;
+    font-weight: 700;
+    font-size: var(--t-petit);
+    color: var(--encre);
+  }
+
+  /* Une pastille devant le message : coche verte, ou point d'exclamation
+     rouge. Le tracé vient de Lucide, en masque, pour rester au trait. */
+  .statut[data-state]:not([data-state='loading'])::before {
+    content: '';
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    border-radius: 50%;
+    vertical-align: -6px;
+    background-color: var(--vert);
+    background-image: var(--statut-icone);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px;
+  }
+
+  .statut[data-state='subscribed'],
+  .statut[data-state='pending'] {
+    --statut-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf8' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+
+  .statut[data-state='error'] {
+    --statut-icone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf8' stroke-width='3.2' stroke-linecap='round'%3E%3Cpath d='M12 6v7M12 18h.01'/%3E%3C/svg%3E");
+  }
+
+  .statut[data-state='error']::before {
+    background-color: var(--rouge);
+  }
+
+  /* Ailleurs : trois liens, chacun avec sa phrase, sans carte. */
+  .ailleurs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px 28px;
+    margin: 32px 0 0;
+    padding: 20px 0 0;
+    border-top: var(--trait-fin) dashed var(--encre-filet);
+    list-style: none;
+  }
+
+  .ailleurs li {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+  }
+
+  .ailleurs li > span {
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.4;
+  }
+
+  .ailleurs :global(.lien) {
+    font-size: 1.25rem;
+    font-stretch: 85%;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  @media (max-width: 900px) {
+    .suivre {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .ailleurs {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+    }
+  }
+</style>
+
+<script>
+  /* La vidéo écrite dans la page est celle qui était la dernière à la mise en
+     ligne. Le serveur connaît la dernière de la chaîne (`/api/derniere-video`,
+     dans `deploy/server.mjs`) : si une vidéo plus récente est sortie, le lien,
+     le titre et la vignette sont remplacés, une fois la nouvelle vignette
+     chargée, pour que titre et image changent ensemble. Sans réponse (hors
+     ligne, serveur de développement), la page reste telle qu'elle est. */
+  const lienVideo = document.querySelector<HTMLAnchorElement>('[data-derniere-video]');
+  const imageVideo = lienVideo?.querySelector('img');
+  const titreVideo = lienVideo?.querySelector('[data-video-titre]');
+  if (lienVideo && imageVideo && titreVideo) {
+    fetch('/api/derniere-video', { headers: { Accept: 'application/json' } })
+      .then((reponse) => (reponse.ok ? reponse.json() : null))
+      .then((video: unknown) => {
+        if (!video || typeof video !== 'object') return;
+        const { id, titre, publiee } = video as { id?: unknown; titre?: unknown; publiee?: unknown };
+        if (typeof id !== 'string' || typeof titre !== 'string' || !/^[\w-]{11}$/.test(id)) return;
+        if (id === lienVideo.dataset.derniereVideo) return;
+        /* Une vidéo différente n'est pas forcément plus récente : juste après
+           une publication, le flux peut encore annoncer la précédente. Les
+           dates sont en AAAA-MM-JJ, elles se comparent telles quelles. */
+        const ecrite = lienVideo.dataset.videoPubliee;
+        if (typeof publiee === 'string' && ecrite && publiee <= ecrite) return;
+        const vignette = new Image();
+        vignette.onload = () => {
+          imageVideo.src = vignette.src;
+          titreVideo.textContent = titre;
+          lienVideo.href = `https://www.youtube.com/watch?v=${id}`;
+          lienVideo.dataset.derniereVideo = id;
+          if (typeof publiee === 'string') lienVideo.dataset.videoPubliee = publiee;
+        };
+        vignette.src = `/api/derniere-video/vignette?v=${id}`;
+      })
+      .catch((erreur: unknown) => console.error('[vidéo] dernière vidéo non relevée', erreur));
+  }
+
+  // La réponse de `/api/newsletter` tient en deux champs. Elle est vérifiée ici
+  // à la main : importer zod dans le navigateur pour ces deux champs chargeait
+  // toute la bibliothèque sur la page d'accueil. La validation qui compte,
+  // celle de l'adresse et des réponses de Mailcheap, reste côté serveur, avec zod
+  // (`lib/newsletter-signup.ts`).
+  type Resultat = { status: 'pending' | 'subscribed' | 'error'; message: string };
+  const STATUTS: readonly string[] = ['pending', 'subscribed', 'error'];
+  const lireResultat = (brut: unknown): Resultat | null => {
+    if (typeof brut !== 'object' || brut === null) return null;
+    const { status, message } = brut as Record<string, unknown>;
+    if (typeof status !== 'string' || !STATUTS.includes(status)) return null;
+    if (typeof message !== 'string' || message.length === 0) return null;
+    return { status: status as Resultat['status'], message };
+  };
+  const form = document.querySelector<HTMLFormElement>('#newsletter-form');
+  const email = form?.querySelector<HTMLInputElement>('#newsletter-email');
+  const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const status = form?.querySelector<HTMLParagraphElement>('#newsletter-status');
+  if (form && email && button && status) {
+    // Le bouton sort désactivé du HTML : si ce script n'a pas tourné, un envoi
+    // natif du formulaire afficherait la réponse JSON brute du serveur.
+    button.disabled = false;
+    const libelle = button.textContent ?? 'S’inscrire';
+    let envoi = false;
+    // La vérification du navigateur se dit dans la ligne d'état, près du
+    // champ, avec les mots du site : sa bulle native ne tient pas dans le
+    // carnet et disparaît avant d'être lue.
+    form.noValidate = true;
+    const dire = (etat: Resultat['status'] | 'loading', texte: string) => {
+      status.hidden = false;
+      status.dataset.state = etat;
+      status.textContent = texte;
+    };
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (envoi) return;
+      email.removeAttribute('aria-invalid');
+      if (!email.value.trim() || !email.checkValidity()) {
+        email.setAttribute('aria-invalid', 'true');
+        email.focus();
+        dire('error', email.value.trim() ? 'Cet e-mail semble incomplet : il manque peut-être le @ ou le domaine.' : 'Indiquez votre adresse e-mail.');
+        return;
+      }
+      envoi = true;
+      button.disabled = true;
+      button.textContent = 'Inscription…';
+      form.setAttribute('aria-busy', 'true');
+      dire('loading', 'Votre demande est en cours d’envoi.');
+
+      const envoyer = async () => {
+        // `AbortSignal.timeout` manque avant Safari 16 : sur ces iPhone l'appel
+        // levait avant même le `fetch`, et aucune inscription ne partait.
+        const controleur = new AbortController();
+        const minuterie = window.setTimeout(() => controleur.abort(), 25_000);
+        try {
+          const data = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: data.get('email'), website: data.get('website') }),
+            signal: controleur.signal,
+          });
+          // Une page d'erreur du frontal (502 pendant un redémarrage) n'est pas du JSON.
+          const result = lireResultat(await response.json().catch(() => null));
+          if (!result) throw new Error(`Réponse d’inscription illisible (HTTP ${response.status})`);
+          dire(result.status, result.message);
+          if (response.status === 422) email.setAttribute('aria-invalid', 'true');
+          if (response.ok && result.status !== 'error') form.reset();
+        } finally {
+          window.clearTimeout(minuterie);
+          envoi = false;
+          button.disabled = false;
+          button.textContent = libelle;
+          form.removeAttribute('aria-busy');
+        }
+      };
+      envoyer().catch((erreur: unknown) => {
+        console.error('[newsletter] envoi en échec', erreur);
+        const nom = erreur instanceof Error ? erreur.name : '';
+        // Trois causes, trois messages : ne pas envoyer le visiteur vérifier sa
+        // connexion quand c'est le serveur qui ne répond pas.
+        dire(
+          'error',
+          nom === 'AbortError' || nom === 'TimeoutError'
+            ? 'Le serveur met trop de temps à répondre. Réessayez dans une minute.'
+            : erreur instanceof TypeError && !navigator.onLine
+              ? 'Vous semblez hors ligne. Vérifiez votre connexion puis réessayez.'
+              : 'L’inscription n’a pas abouti de mon côté. Réessayez dans quelques instants.',
+        );
+      });
+    });
+  }
+</script>

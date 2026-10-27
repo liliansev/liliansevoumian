@@ -1,0 +1,527 @@
+---
+/*
+ * Module 3, « Comment je travaille » : la méthode en quatre temps, montrée
+ * comme un vrai tableau de projet. Un clic ou un toucher sur une carte la fait
+ * avancer d'une colonne ; elle se glisse aussi à la souris, et au clavier
+ * Entrée la fait avancer, les flèches ← → la déplacent. Les compteurs suivent,
+ * chaque déplacement est annoncé aux lecteurs d'écran, et « Remettre à zéro »
+ * rend le tableau de départ. La dernière colonne passe ses cartes en vert.
+ *
+ * Revu le 27 octobre 2026 (critique et audit) : le glisser seul laissait le
+ * tableau inerte au toucher (WCAG 2.5.7) ; sur téléphone, les colonnes
+ * défilent à l'horizontale au lieu de s'empiler sur deux mille pixels ; les
+ * principes de la méthode passent de l'écriture manuscrite au texte courant,
+ * puisqu'ils sont à lire.
+ *
+ * Le post-it porte la conviction de Lilian ; au-dessus de 1200 px il est collé
+ * sur le coin du tableau, en dessous il passe dans le fil.
+ */
+import { Icon } from 'astro-icon/components';
+import Tete from './tete.astro';
+
+type Qui = 'moi' | 'vous';
+interface Tache {
+  tag: string;
+  couleur?: 'c-lilas' | 'c-rose' | 'c-jaune';
+  texte: string;
+  qui: Qui[];
+}
+interface Colonne {
+  etat: string;
+  nom: string;
+  note: string;
+  taches: Tache[];
+}
+
+const colonnes: Colonne[] = [
+  {
+    etat: 'cadrer',
+    nom: 'À cadrer',
+    note: 'on part de votre travail réel, pas d’une liste d’outils',
+    taches: [
+      { tag: 'cadrage', texte: 'Lister ce que l’équipe refait chaque semaine', qui: ['moi', 'vous'] },
+      { tag: 'cadrage', texte: 'Repérer les logiciels déjà en place', qui: ['moi'] },
+    ],
+  },
+  {
+    etat: 'cours',
+    nom: 'En cours',
+    note: 'sur vos logiciels, avec votre équipe',
+    taches: [
+      { tag: 'automatisation', couleur: 'c-lilas', texte: 'Relier le CRM à l’outil de facturation', qui: ['moi'] },
+      { tag: 'agent IA', couleur: 'c-rose', texte: 'Brancher l’agent sur votre base de connaissances', qui: ['moi', 'vous'] },
+    ],
+  },
+  {
+    etat: 'test',
+    nom: 'En test',
+    note: 'un humain garde la main sur les cas douteux',
+    taches: [{ tag: 'test', texte: 'Essayer sur de vrais dossiers avec l’équipe', qui: ['vous', 'moi'] }],
+  },
+  {
+    etat: 'prod',
+    nom: 'En prod',
+    note: 'et je vous apprends à vous passer de moi',
+    taches: [{ tag: 'formation', couleur: 'c-jaune', texte: 'Former l’équipe à ajuster le scénario', qui: ['moi', 'vous'] }],
+  },
+];
+
+const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
+---
+
+<section class="etape" id="methode" aria-labelledby="titre-methode">
+  <div class="carnet-enveloppe">
+    <Tete
+      numero={3}
+      couleur="jaune"
+      forme="tableau"
+      graine={53}
+      titre="Comment je travaille"
+      idTitre="titre-methode"
+      chapo="Un projet avance en quatre temps, avec votre équipe dedans du début à la fin. Voici un tableau d’exemple."
+    />
+    <div class="kanban">
+      <div class="postit">
+        <span class="scotch" aria-hidden="true"></span>
+        <p>Ce qui se répète s’automatise</p>
+      </div>
+      <div class="fenetre">
+        <div class="fenetre__barre">
+          <span>projet-exemple</span>
+          <button class="fenetre__zero" type="button" data-kanban-zero>Remettre à zéro</button>
+        </div>
+        <p class="fenetre__aide" id="aide-kanban">Touchez une carte pour la faire avancer, ou glissez-la. Au clavier&nbsp;: Entrée, ou les flèches gauche et droite.</p>
+        <div class="tableau" data-kanban>
+          {colonnes.map((c, i) => (
+            <div class="colonne" data-etat={c.etat} data-nom={c.nom} role="group" aria-labelledby={`colonne-${c.etat}`}>
+              <div class="colonne__tete">
+                <span class="colonne__num" aria-hidden="true">{i + 1}</span>
+                <h3 id={`colonne-${c.etat}`}>{c.nom}</h3>
+                <span class="colonne__compte" aria-hidden="true">{c.taches.length}</span>
+              </div>
+              <p class="colonne__note">{c.note}</p>
+              {c.taches.map((t) => (
+                <div class="tache" draggable="true" tabindex="0" role="button" aria-roledescription="carte déplaçable" aria-describedby="aide-kanban">
+                  <span class:list={['tag', t.couleur]}>{t.tag}</span>
+                  <p>{t.texte}</p>
+                  <div class="tache__pied">
+                    {t.qui.map((q) => <span class:list={['qui', `qui--${q}`]}>{nomQui[q]}</span>)}
+                    <span class="tache__fait"><Icon name="lucide:check" class="icone" aria-hidden="true" />fait</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <p class="sr-only" aria-live="polite" data-kanban-annonce></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kanban {
+    position: relative;
+  }
+
+  .fenetre {
+    overflow: hidden;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-l);
+    background: var(--blanc);
+    box-shadow: var(--ombre-xl);
+  }
+
+  .fenetre__barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 6px 0 16px;
+    background: var(--encre);
+    color: var(--papier);
+    font: 700 var(--t-code) / 1 var(--carnet-code);
+  }
+
+  .fenetre__zero {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 0;
+    background: none;
+    color: var(--lilas);
+    font: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  .fenetre__zero:hover {
+    color: var(--blanc);
+  }
+
+  .fenetre__aide {
+    max-width: none;
+    margin: 0;
+    padding: 12px 20px 0;
+    color: var(--encre-doux);
+    font: 700 var(--t-code) / 1.4 var(--carnet-code);
+  }
+
+  .postit {
+    position: absolute;
+    right: -22px;
+    top: -118px;
+    z-index: 3;
+    width: min(250px, 58vw);
+    padding: 26px 20px 18px;
+    border: var(--trait) solid var(--encre);
+    border-radius: var(--r-xs) var(--r-xs) var(--r-l) var(--r-xs);
+    background: var(--jaune);
+    box-shadow: 5px 5px 0 var(--encre);
+    transform: rotate(3deg);
+  }
+
+  .postit p {
+    margin: 0;
+    font: 800 var(--t-carte) / 0.95 var(--carnet-titre);
+    font-stretch: 75%;
+    text-transform: uppercase;
+  }
+
+  .postit .scotch {
+    left: 50%;
+    margin-left: -46px;
+    transform: rotate(-4deg);
+  }
+
+  .tableau {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    padding: 16px 20px 20px;
+  }
+
+  .colonne {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 330px;
+    padding: 12px;
+    border: var(--trait-fin) solid var(--encre);
+    border-radius: var(--r-m);
+    background: var(--papier);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .colonne[data-survol] {
+    background: var(--blanc);
+    box-shadow: inset 0 0 0 3px var(--violet);
+  }
+
+  .colonne__tete {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 0;
+  }
+
+  .colonne__num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--encre);
+    color: var(--blanc);
+    font: 700 var(--t-etiquette) / 1 var(--carnet-code);
+  }
+
+  .colonne__tete h3 {
+    margin: 0;
+    font: 800 1.0625rem / 1 var(--carnet-titre);
+    font-stretch: 80%;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .colonne__compte {
+    margin-left: auto;
+    padding: 4px 8px;
+    border: var(--trait-fin) solid var(--encre);
+    border-radius: var(--r-pilule);
+    background: var(--blanc);
+    font: 700 var(--t-etiquette) / 1 var(--carnet-code);
+  }
+
+  .colonne__note {
+    margin: 0 4px 2px;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.4;
+  }
+
+  .tache {
+    padding: 12px 12px 10px;
+    border: var(--trait-fin) solid var(--encre);
+    border-radius: var(--r-s);
+    background: var(--blanc);
+    box-shadow: var(--ombre-s);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+
+  .tache:hover {
+    transform: translate(-1px, -1px) rotate(-0.6deg);
+    box-shadow: 5px 5px 0 var(--encre);
+  }
+
+  .tache:active {
+    cursor: grabbing;
+  }
+
+  .tache:focus-visible {
+    outline: 3px solid var(--violet);
+    outline-offset: 2px;
+  }
+
+  .tache[data-prise] {
+    opacity: 0.4;
+    transform: rotate(2deg);
+  }
+
+  /* Une carte qui vient d'arriver dans sa colonne se pose : un léger
+     rebond et un liseré violet qui s'efface. */
+  .tache[data-arrivee] {
+    animation: tache-arrivee 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes tache-arrivee {
+    0% { transform: translateY(-6px) scale(0.97); box-shadow: 0 0 0 3px var(--violet), var(--ombre-s); }
+    100% { transform: none; box-shadow: var(--ombre-s); }
+  }
+
+  .tache p {
+    max-width: none;
+    margin: 10px 0 0;
+    font-weight: 600;
+    font-size: 0.96875rem;
+    line-height: 1.3;
+  }
+
+  .tache__pied {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .qui {
+    padding: 5px 8px;
+    border: var(--trait-fin) solid var(--encre);
+    border-radius: var(--r-pilule);
+    font: 700 var(--t-etiquette) / 1 var(--carnet-code);
+  }
+
+  .qui--moi {
+    background: var(--encre);
+    color: var(--blanc);
+  }
+
+  .qui--vous {
+    background: var(--blanc);
+  }
+
+  .tache__fait {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: auto;
+    color: var(--vert);
+    font: 700 var(--t-etiquette) / 1 var(--carnet-code);
+  }
+
+  .colonne[data-etat='prod'] .tache {
+    background: var(--vert-clair);
+  }
+
+  .colonne:not([data-etat='prod']) .tache__fait {
+    display: none;
+  }
+
+  @media (max-width: 1200px) {
+    .postit {
+      position: relative;
+      right: auto;
+      top: auto;
+      margin: 0 0 26px auto;
+      transform: rotate(2deg);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .tableau {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Sur un téléphone, les colonnes défilent à l'horizontale, une à la fois,
+     la suivante dépassant au bord pour montrer qu'il y en a d'autres. */
+  @media (max-width: 620px) {
+    .tableau {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: min(82%, 300px);
+      gap: 12px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 14px;
+      padding: 14px 0 18px 14px;
+    }
+    .tableau::after {
+      content: '';
+      width: 2px;
+    }
+    .colonne {
+      min-height: 0;
+      scroll-snap-align: start;
+    }
+    .fenetre__aide {
+      padding: 12px 14px 0;
+    }
+    .postit {
+      margin: 0 auto 26px;
+      transform: rotate(-2deg);
+    }
+  }
+</style>
+
+<script>
+  /* Le kanban : un clic, un toucher ou Entrée fait avancer la carte ; le
+     glisser-déposer et les flèches ← → la déplacent ; les compteurs suivent,
+     une phrase est annoncée après chaque déplacement, et « Remettre à zéro »
+     rend le tableau tel qu'il était au chargement. */
+  const tableau = document.querySelector<HTMLElement>('[data-kanban]');
+  const annonce = document.querySelector<HTMLElement>('[data-kanban-annonce]');
+  const zero = document.querySelector<HTMLButtonElement>('[data-kanban-zero]');
+  if (tableau && annonce && zero) {
+    const depart = tableau.innerHTML;
+    const reduit = matchMedia('(prefers-reduced-motion: reduce)');
+    const colonnes = () => [...tableau.querySelectorAll<HTMLElement>('.colonne')];
+    const compter = () =>
+      colonnes().forEach((c) => {
+        const compte = c.querySelector('.colonne__compte');
+        if (compte) compte.textContent = String(c.querySelectorAll('.tache').length);
+      });
+    const dire = (texte: string) => {
+      annonce.textContent = texte;
+    };
+    const titre = (tache: HTMLElement) => tache.querySelector('p')?.textContent ?? '';
+    const poser = (tache: HTMLElement) => {
+      tache.removeAttribute('data-arrivee');
+      void tache.offsetWidth;
+      tache.setAttribute('data-arrivee', '');
+    };
+    tableau.addEventListener('animationend', (e) => (e.target as HTMLElement).removeAttribute('data-arrivee'));
+
+    /* Déplace la carte d'une colonne (sens +1 ou -1) ; rien au bord. */
+    const deplacer = (tache: HTMLElement, sens: 1 | -1, focus: boolean) => {
+      const liste = colonnes();
+      const actuelle = tache.closest<HTMLElement>('.colonne');
+      const i = (actuelle ? liste.indexOf(actuelle) : -1) + sens;
+      if (i < 0 || i >= liste.length) {
+        dire(sens > 0 ? `« ${titre(tache)} » est déjà en prod.` : `« ${titre(tache)} » est déjà dans la première colonne.`);
+        return;
+      }
+      const cible = liste[i];
+      cible.appendChild(tache);
+      compter();
+      poser(tache);
+      if (focus) tache.focus({ preventScroll: true });
+      // Sur téléphone, la colonne d'arrivée vient à l'écran.
+      if (tableau.scrollWidth > tableau.clientWidth) {
+        tableau.scrollTo({ left: cible.offsetLeft - tableau.offsetLeft - 14, behavior: reduit.matches ? 'auto' : 'smooth' });
+      }
+      dire(`« ${titre(tache)} » est maintenant dans ${cible.dataset.nom ?? ''}.`);
+    };
+
+    // Un clic sans pointeur (`detail` à 0 : lecteur d'écran) rend le focus à
+    // la carte déplacée, que `appendChild` lui a fait perdre.
+    tableau.addEventListener('click', (e) => {
+      const tache = (e.target as HTMLElement).closest<HTMLElement>('.tache');
+      if (tache) deplacer(tache, 1, e.detail === 0);
+    });
+    tableau.addEventListener('keydown', (e) => {
+      const tache = (e.target as HTMLElement).closest<HTMLElement>('.tache');
+      // Les raccourcis du navigateur (Alt+←, Cmd+←…) restent au navigateur.
+      if (!tache || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        deplacer(tache, 1, true);
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        deplacer(tache, e.key === 'ArrowRight' ? 1 : -1, true);
+      }
+    });
+
+    // La carte prise et sa place de départ : un glisser annulé (Échap, lâcher
+    // hors d'une colonne) la remet où elle était.
+    let prise: HTMLElement | null = null;
+    let origine: { colonne: HTMLElement; suivante: Element | null } | null = null;
+    tableau.addEventListener('dragstart', (e) => {
+      const tache = (e.target as HTMLElement).closest<HTMLElement>('.tache');
+      const colonne = tache?.closest<HTMLElement>('.colonne');
+      if (!tache || !colonne || !e.dataTransfer) return;
+      prise = tache;
+      origine = { colonne, suivante: tache.nextElementSibling };
+      tache.setAttribute('data-prise', '');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', '');
+    });
+    tableau.addEventListener('dragend', (e) => {
+      if (prise) {
+        prise.removeAttribute('data-prise');
+        if (e.dataTransfer?.dropEffect === 'none' && origine) {
+          origine.colonne.insertBefore(prise, origine.suivante);
+        } else {
+          poser(prise);
+          dire(`« ${titre(prise)} » est maintenant dans ${prise.closest<HTMLElement>('.colonne')?.dataset.nom ?? ''}.`);
+        }
+      }
+      prise = null;
+      origine = null;
+      tableau.querySelectorAll('[data-survol]').forEach((c) => c.removeAttribute('data-survol'));
+      compter();
+    });
+    tableau.addEventListener('dragover', (e) => {
+      const colonne = (e.target as HTMLElement).closest<HTMLElement>('.colonne');
+      if (!prise || !colonne) return;
+      e.preventDefault();
+      colonnes().forEach((c) => c.toggleAttribute('data-survol', c === colonne));
+      const suivante = [...colonne.querySelectorAll<HTMLElement>('.tache:not([data-prise])')].find((t) => {
+        const r = t.getBoundingClientRect();
+        return e.clientY < r.top + r.height / 2;
+      });
+      if (suivante) colonne.insertBefore(prise, suivante);
+      else colonne.appendChild(prise);
+    });
+    tableau.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+      tableau.querySelectorAll('[data-survol]').forEach((c) => c.removeAttribute('data-survol'));
+      compter();
+    });
+
+    zero.addEventListener('click', () => {
+      tableau.innerHTML = depart;
+      tableau.scrollTo({ left: 0 });
+      dire('Le tableau est revenu à son état de départ.');
+    });
+  }
+</script>
