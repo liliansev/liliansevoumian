@@ -73,7 +73,7 @@ export const activites: Activite[] = [
     depuis: 'En vidéo et par mail',
     resume:
       'Des tutos, des tests et des cas concrets sur l’IA et l’automatisation, et un mail par semaine.',
-    lien: { href: '#contenus', label: 'Regarder et s’abonner', externe: false },
+    lien: { href: '#suivre', label: 'Regarder et s’abonner', externe: false },
   },
   {
     id: 'missions',
@@ -81,7 +81,7 @@ export const activites: Activite[] = [
     depuis: 'Depuis septembre 2020',
     resume:
       'Je conçois, reprends et maintiens des automatisations, des sites et des applications métier.',
-    lien: { href: '#offres', label: 'Voir les offres', externe: false },
+    lien: { href: 'automatisations-ia#offres', label: 'Voir les offres', externe: false },
   },
 ];
 
@@ -189,11 +189,20 @@ export const parcours: { annee: string; etapes: EtapeParcours[] }[] = [
 /**
  * Les chiffres d'audience, chacun avec la date de son relevé. C'est le seul
  * endroit où ils s'écrivent : un chiffre non daté vieillit sans qu'on le sache.
- * LinkedIn affichait 11 444 abonnés le 1er octobre 2026. YouTube n'a pas de
- * chiffre affiché sur le site, par choix de Lilian.
+ * Relevés le 1er octobre 2026 : LinkedIn 11 444 abonnés ; YouTube 1,87 k
+ * abonnés, 96 vidéos et 103 094 vues (page publique de la chaîne).
+ *
+ * Le 27 octobre 2026, Lilian a demandé de les montrer comme preuve sociale sur
+ * l'accueil (« Le carnet »), YouTube compris : il revient ainsi sur son choix
+ * de ne pas afficher de chiffre YouTube. Chaque chiffre est arrondi vers le
+ * bas (`nombre`) et toujours affiché avec sa date (`releveAffiche`). Le nombre
+ * d'abonnés à la newsletter n'est pas public et ne s'écrit nulle part.
  */
 export const audience = {
-  linkedin: { affiche: 'Plus de 11\u00a0000 abonnés', releve: '2026-10-01' },
+  linkedin: { affiche: 'Plus de 11\u00a0000 abonnés', nombre: '+11\u00a0000', libelle: 'abonnés sur LinkedIn', releve: '2026-10-01' },
+  youtube: { nombre: '+1\u00a0800', libelle: 'abonnés sur YouTube', releve: '2026-10-01' },
+  vues: { nombre: '+100\u00a0000', libelle: 'vues sur 96 vidéos', releve: '2026-10-01' },
+  releveAffiche: '1er octobre 2026',
 } as const;
 
 /** Les deux structures fondées par Lilian, pour le balisage, le pied de page et /llms.txt. */

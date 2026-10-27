@@ -89,12 +89,21 @@ Le site ne présente donc pas « un freelance et ses offres » mais **un pratici
 - **Voix** : directe, factuelle, sans fioriture. Pas de « passionné par la transformation digitale ». Plutôt « j'ai fait économiser X heures par semaine à Y en branchant Z à W ».
 - **Direction, précisée le 1er octobre 2026 au soir** : « tech moderne, propre », appuyée sur des grilles ; références désignées par Lilian : novu.co, vimcal.com, juanmora.co, qdrant.tech. Il veut aussi de la 3D, sous forme de blocs « tech, lego, premium » (proposition sur `/explorations-blocs`, style non encore choisi). Titre du premier écran, dicté par lui : « Salut, je m'appelle Lilian Sevoumian et je suis expert en Automatisations & Agents IA ».
 - **Direction visuelle** : « nuit et pêche », validée le 1er octobre 2026, sans angle vif et avec trois gestes de mouvement. Le détail fait foi dans `DESIGN.md`. Le lime est abandonné sur ce site : c'est déjà la couleur d'agenceafk.fr et d'augmentes.fr, et le site personnel doit s'en distinguer.
+- **Refonte « Le carnet », choisie par Lilian le 27 octobre 2026** (remplace « nuit et pêche » une fois intégrée ; tant qu'elle ne l'est pas, `DESIGN.md` décrit encore le site en ligne). Il déteste désormais l'accueil « documentaire » et veut une page de marque : qui il est, ce qu'il croit, ce qu'il adore faire, où le suivre ; aucun prix ni chiffre de prestation sur l'accueil. Style : néo-brutalisme doux et ludique, « un tout petit plus IT », couleurs vives. Références qu'il a données : wisprflow.ai et gemeosagency.com, pour l'esprit (chaleur, démos vivantes, avis en cartes), jamais pour la forme. Il a dit non à une copie trop proche de wisprflow.ai. Le détail fait foi dans le design system de la maquette (artefact « Lilian Sevoumian », type Design System) :
+  - papier quadrillé `#f6f2e8`, encre `#1d1a22`, quatre couleurs vives qui codent les types de travail (rose agent IA, lilas automatisation, bleu outil métier, jaune formation), menthe pour le contact, violet `#6a3df5` pour sa signature ;
+  - Bricolage Grotesque condensée en capitales, Gochi Hand pour les notes manuscrites, JetBrains Mono pour les clins d'œil de code ;
+  - traits d'encre de 2,5 px, ombres décalées pleines, objets légèrement penchés (polaroïd, post-it, autocollants, kanban) ;
+  - chaque section est un module de scénario coloré, comme dans Make, relié au suivant par un chemin de pointillés qui serpente dans les marges ; son symbole est une pastille lilas traversée de trois nœuds reliés ;
+  - le premier écran a un seul geste principal, « S’abonner sur YouTube » ; le contact passe en lien secondaire (« ou parlons de votre projet ») et reste en pilule dans la barre ;
+  - les chiffres d’audience datés sont la preuve sociale du premier écran (choix de Lilian, 27 octobre 2026, qui lève celui de `data/parcours.ts` de ne pas afficher YouTube) : plus de 11 000 abonnés LinkedIn, plus de 1 800 abonnés YouTube, plus de 100 000 vues sur 96 vidéos, relevés le 1er octobre 2026. Toujours avec leur date de relevé ; jamais le nombre d’abonnés à la newsletter ; aucun chiffre de prestation ;
+  - la photo d'ouverture est celle du NoCode Summit (casquette), en noir et blanc.
 - **À fuir** :
-  - le look agence freelance générique : hero en dégradé bleu/violet, photo casquette, « bonjour je suis X et je vous accompagne », grille 3×3 d'icônes colorées ;
-  - la sur-décoration : ombres multicolores, blobs flous, illustrations 3D vibrantes, dégradés sur le texte, verre décoratif ;
-  - le ton chaleureux convenu : palette crème / sable / terracotta, polices rondes humanistes, vocabulaire « bienveillance » et « accompagnement » ;
-  - l'ancien site : crème et orange chaud, ombres colorées, accents quadricolores, Bricolage Grotesque.
-- **Références positives** (à étudier, pas à copier) : vercel.com pour la grille tenue et les filets ; plain.com pour les micro-animations et les logos intégrés au titre ; modal.com pour la sensation premium par la précision.
+  - le look agence freelance générique : hero en dégradé bleu/violet, « bonjour je suis X et je vous accompagne », grille 3×3 d'icônes colorées ;
+  - la sur-décoration : blobs flous, illustrations 3D vibrantes, dégradés sur le texte, verre décoratif ;
+  - le ton chaleureux convenu : palette sable / terracotta, polices rondes humanistes, vocabulaire « bienveillance » et « accompagnement » ;
+  - les clichés de développeur sans rapport avec son métier (fausses fenêtres de terminal, JSON décoratif) : la touche « IT » passe par le scénario Make.
+  - Levés le 27 octobre 2026 par le choix du carnet : le fond crème, Bricolage Grotesque, les ombres (désormais pleines et en encre, jamais floues ni multicolores), les accents multicolores (désormais porteurs de sens) et la photo casquette, qui est la sienne et qu'il a gardée.
+- **Références positives** (à étudier, pas à copier) : wisprflow.ai et gemeosagency.com pour l'esprit (27 octobre 2026) ; vercel.com pour la grille tenue et les filets ; plain.com pour les micro-animations et les logos intégrés au titre ; modal.com pour la sensation premium par la précision.
 
 ## Evidence on Hand
 

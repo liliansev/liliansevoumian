@@ -1,0 +1,432 @@
+---
+/*
+ * Module 3, « Comment je travaille » : la méthode en quatre temps, montrée
+ * comme un vrai tableau de projet. Les cartes se déplacent à la souris (glisser
+ * -déposer) et au clavier (flèches ← →), les compteurs suivent, et chaque
+ * déplacement est annoncé aux lecteurs d'écran. La dernière colonne passe ses
+ * cartes en vert, « fait ».
+ *
+ * Le post-it porte la conviction de Lilian ; au-dessus de 1200 px il est collé
+ * sur le coin du tableau, en dessous il passe dans le fil.
+ */
+import Symbole from './symbole.astro';
+import Tete from './tete.astro';
+
+type Qui = 'moi' | 'vous';
+interface Tache {
+  tag: string;
+  couleur?: 'c-lilas' | 'c-rose' | 'c-jaune';
+  texte: string;
+  qui: Qui[];
+}
+interface Colonne {
+  etat: string;
+  nom: string;
+  note: string;
+  taches: Tache[];
+}
+
+const colonnes: Colonne[] = [
+  {
+    etat: 'cadrer',
+    nom: 'À cadrer',
+    note: 'on part de votre travail réel, pas d’une liste d’outils',
+    taches: [
+      { tag: 'cadrage', texte: 'Lister ce que l’équipe refait chaque semaine', qui: ['moi', 'vous'] },
+      { tag: 'cadrage', texte: 'Repérer les logiciels déjà en place', qui: ['moi'] },
+    ],
+  },
+  {
+    etat: 'cours',
+    nom: 'En cours',
+    note: 'sur vos logiciels, avec votre équipe',
+    taches: [
+      { tag: 'automatisation', couleur: 'c-lilas', texte: 'Relier le CRM à l’outil de facturation', qui: ['moi'] },
+      { tag: 'agent IA', couleur: 'c-rose', texte: 'Brancher l’agent sur votre base de connaissances', qui: ['moi', 'vous'] },
+    ],
+  },
+  {
+    etat: 'test',
+    nom: 'En test',
+    note: 'un humain garde la main sur les cas douteux',
+    taches: [{ tag: 'test', texte: 'Essayer sur de vrais dossiers avec l’équipe', qui: ['vous', 'moi'] }],
+  },
+  {
+    etat: 'prod',
+    nom: 'En prod',
+    note: 'et je vous apprends à vous passer de moi',
+    taches: [{ tag: 'formation', couleur: 'c-jaune', texte: 'Former l’équipe à ajuster le scénario', qui: ['moi', 'vous'] }],
+  },
+];
+
+const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
+---
+
+<section class="etape" id="methode" aria-labelledby="titre-methode">
+  <div class="carnet-enveloppe">
+    <Tete
+      numero={3}
+      couleur="jaune"
+      forme="tableau"
+      graine={53}
+      code="la méthode"
+      titre="Comment je travaille"
+      idTitre="titre-methode"
+      chapo="Un projet avance en quatre temps, avec votre équipe dedans du début à la fin. Voici un tableau d’exemple."
+    />
+    <div class="kanban">
+      <div class="postit">
+        <span class="scotch" aria-hidden="true"></span>
+        <p>Ce qui se répète s’automatise</p>
+      </div>
+      <div class="fenetre">
+        <div class="fenetre__barre">
+          <Symbole />
+          <span>projet-exemple</span>
+          <span class="fenetre__aide" id="aide-kanban">glissez une carte, ou flèches ← → pour la changer de colonne</span>
+        </div>
+        <div class="tableau" data-kanban>
+          {colonnes.map((c, i) => (
+            <div class="colonne" data-etat={c.etat} data-nom={c.nom}>
+              <div class="colonne__tete">
+                <span class="colonne__num" aria-hidden="true">{i + 1}</span>
+                <h3>{c.nom}</h3>
+                <span class="colonne__compte" aria-hidden="true">{c.taches.length}</span>
+              </div>
+              <p class="colonne__note">{c.note}</p>
+              {c.taches.map((t) => (
+                <article class="tache" draggable="true" tabindex="0" aria-roledescription="carte déplaçable" aria-describedby="aide-kanban">
+                  <span class:list={['tag', t.couleur]}>{t.tag}</span>
+                  <p>{t.texte}</p>
+                  <div class="tache__pied">
+                    {t.qui.map((q) => <span class:list={['qui', `qui--${q}`]}>{nomQui[q]}</span>)}
+                    <span class="tache__fait">✓ fait</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <p class="sr-only" aria-live="polite" data-kanban-annonce></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kanban {
+    position: relative;
+  }
+
+  .fenetre {
+    overflow: hidden;
+    border: 2.5px solid var(--encre);
+    border-radius: 20px;
+    background: var(--blanc);
+    box-shadow: 8px 8px 0 var(--encre);
+  }
+
+  .fenetre__barre {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--encre);
+    color: #ece8f4;
+    font: 600 13.5px / 1 var(--carnet-code);
+  }
+
+  .fenetre__barre :global(.symbole) {
+    flex: none;
+    width: 28px;
+    height: 28px;
+  }
+
+  .fenetre__aide {
+    margin-left: auto;
+    max-width: none;
+    font-weight: 400;
+    color: #d5cfe0;
+  }
+
+  .postit {
+    position: absolute;
+    right: -22px;
+    top: -118px;
+    z-index: 3;
+    width: min(250px, 58vw);
+    padding: 26px 20px 18px;
+    border: 2.5px solid var(--encre);
+    border-radius: 6px 6px 22px 6px;
+    background: var(--jaune);
+    box-shadow: 5px 5px 0 var(--encre);
+    transform: rotate(3deg);
+  }
+
+  .postit p {
+    margin: 0;
+    font: 800 26px / 0.95 var(--carnet-titre);
+    font-stretch: 75%;
+    text-transform: uppercase;
+  }
+
+  .postit .scotch {
+    left: 50%;
+    margin-left: -46px;
+    transform: rotate(-4deg);
+  }
+
+  .tableau {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    padding: 20px;
+    background-image:
+      linear-gradient(var(--quadrillage) 1px, transparent 1px),
+      linear-gradient(90deg, var(--quadrillage) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .colonne {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 330px;
+    padding: 12px;
+    border: 2px solid var(--encre);
+    border-radius: 16px;
+    background: var(--papier);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .colonne[data-survol] {
+    background: var(--blanc);
+    box-shadow: inset 0 0 0 3px var(--violet);
+  }
+
+  .colonne__tete {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 0;
+  }
+
+  .colonne__num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--encre);
+    color: var(--blanc);
+    font: 700 12.5px / 1 var(--carnet-code);
+  }
+
+  .colonne__tete h3 {
+    margin: 0;
+    font: 800 17px / 1 var(--carnet-titre);
+    font-stretch: 80%;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .colonne__compte {
+    margin-left: auto;
+    padding: 4px 8px;
+    border: 2px solid var(--encre);
+    border-radius: 999px;
+    background: var(--blanc);
+    font: 700 12.5px / 1 var(--carnet-code);
+  }
+
+  .colonne__note {
+    margin: -2px 4px 2px;
+    font-family: var(--carnet-main);
+    font-size: 19px;
+    line-height: 1.3;
+    color: var(--encre);
+  }
+
+  .tache {
+    padding: 12px 12px 10px;
+    border: 2px solid var(--encre);
+    border-radius: 12px;
+    background: var(--blanc);
+    box-shadow: 3px 3px 0 var(--encre);
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+
+  .tache:hover {
+    transform: translate(-1px, -1px) rotate(-0.6deg);
+    box-shadow: 5px 5px 0 var(--encre);
+  }
+
+  .tache:focus-visible {
+    outline: 3px solid var(--violet);
+    outline-offset: 2px;
+  }
+
+  .tache[data-prise] {
+    opacity: 0.4;
+    transform: rotate(2deg);
+  }
+
+  .tache p {
+    max-width: none;
+    margin: 10px 0 0;
+    font-weight: 600;
+    font-size: 15.5px;
+    line-height: 1.3;
+  }
+
+  .tache__pied {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .qui {
+    padding: 5px 8px;
+    border: 2px solid var(--encre);
+    border-radius: 999px;
+    font: 700 12px / 1 var(--carnet-code);
+  }
+
+  .qui--moi {
+    background: var(--encre);
+    color: var(--blanc);
+  }
+
+  .qui--vous {
+    background: var(--blanc);
+  }
+
+  .tache__fait {
+    margin-left: auto;
+    font: 700 12px / 1 var(--carnet-code);
+    color: var(--vert);
+  }
+
+  .colonne[data-etat='prod'] .tache {
+    background: var(--vert-clair);
+  }
+
+  .colonne:not([data-etat='prod']) .tache__fait {
+    display: none;
+  }
+
+  @media (max-width: 1200px) {
+    .postit {
+      position: relative;
+      right: auto;
+      top: auto;
+      margin: 0 0 26px auto;
+      transform: rotate(2deg);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .tableau {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .tableau {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 14px;
+    }
+    .colonne {
+      min-height: 0;
+    }
+    .postit {
+      margin: 0 auto 26px;
+      transform: rotate(-2deg);
+    }
+    /* Sur un téléphone, l'aide reste lue par les lecteurs d'écran (elle
+       décrit chaque carte) mais quitte la barre, trop étroite. */
+    .fenetre__aide {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+  }
+</style>
+
+<script>
+  /* Le kanban : glisser-déposer à la souris, flèches ← → au clavier,
+     compteurs à jour, et une phrase annoncée après chaque déplacement. */
+  const tableau = document.querySelector<HTMLElement>('[data-kanban]');
+  const annonce = document.querySelector<HTMLElement>('[data-kanban-annonce]');
+  if (tableau && annonce) {
+    const colonnes = [...tableau.querySelectorAll<HTMLElement>('.colonne')];
+    const compter = () =>
+      colonnes.forEach((c) => {
+        const compte = c.querySelector('.colonne__compte');
+        if (compte) compte.textContent = String(c.querySelectorAll('.tache').length);
+      });
+    const dire = (tache: HTMLElement, colonne: HTMLElement | null) => {
+      annonce.textContent = `« ${tache.querySelector('p')?.textContent ?? ''} » est maintenant dans ${colonne?.dataset.nom ?? ''}.`;
+    };
+    let prise: HTMLElement | null = null;
+
+    tableau.addEventListener('dragstart', (e) => {
+      const tache = (e.target as HTMLElement).closest<HTMLElement>('.tache');
+      if (!tache || !e.dataTransfer) return;
+      prise = tache;
+      tache.setAttribute('data-prise', '');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', '');
+    });
+    tableau.addEventListener('dragend', () => {
+      if (prise) {
+        prise.removeAttribute('data-prise');
+        dire(prise, prise.closest<HTMLElement>('.colonne'));
+      }
+      prise = null;
+      tableau.querySelectorAll('[data-survol]').forEach((c) => c.removeAttribute('data-survol'));
+      compter();
+    });
+    colonnes.forEach((colonne) => {
+      colonne.addEventListener('dragover', (e) => {
+        if (!prise) return;
+        e.preventDefault();
+        colonne.setAttribute('data-survol', '');
+        const suivante = [...colonne.querySelectorAll<HTMLElement>('.tache:not([data-prise])')].find((t) => {
+          const r = t.getBoundingClientRect();
+          return e.clientY < r.top + r.height / 2;
+        });
+        if (suivante) colonne.insertBefore(prise, suivante);
+        else colonne.appendChild(prise);
+      });
+      colonne.addEventListener('dragleave', (e) => {
+        if (!colonne.contains(e.relatedTarget as Node | null)) colonne.removeAttribute('data-survol');
+      });
+      colonne.addEventListener('drop', (e) => {
+        e.preventDefault();
+        colonne.removeAttribute('data-survol');
+        compter();
+      });
+    });
+    tableau.addEventListener('keydown', (e) => {
+      const tache = (e.target as HTMLElement).closest<HTMLElement>('.tache');
+      if (!tache || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      const actuelle = tache.closest<HTMLElement>('.colonne');
+      const i = (actuelle ? colonnes.indexOf(actuelle) : -1) + (e.key === 'ArrowRight' ? 1 : -1);
+      if (i < 0 || i >= colonnes.length) return;
+      e.preventDefault();
+      colonnes[i].appendChild(tache);
+      tache.focus();
+      compter();
+      dire(tache, colonnes[i]);
+    });
+  }
+</script>

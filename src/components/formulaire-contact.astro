@@ -15,6 +15,11 @@
  * trouvent par `[data-formulaire-contact]` (voir Layout) et y mènent.
  * Sans script, le formulaire ne peut pas partir (l'endpoint attend du JSON) :
  * la ligne sous le bouton donne alors l'adresse à laquelle écrire.
+ *
+ * `variante="carnet"` l'habille pour l'accueil « Le carnet » (27 octobre
+ * 2026) : champs bordés d'encre, bouton en pilule, ligne d'état à pastille.
+ * Le comportement ne change pas. Le slot `pied` se range à côté du bouton
+ * (le lien vers l'agenda, sur l'accueil).
  */
 import { Icon } from 'astro-icon/components';
 import { EMAIL_CONTACT } from '../lib/contact';
@@ -22,12 +27,15 @@ import { EMAIL_CONTACT } from '../lib/contact';
 interface Props {
   /** D'où vient le message, dans les statistiques et dans le mail reçu. */
   source: string;
+  /** L'habit : la nuit du site (par défaut) ou le papier du carnet. */
+  variante?: 'nuit' | 'carnet';
 }
 
-const { source } = Astro.props;
+const { source, variante = 'nuit' } = Astro.props;
+const carnet = variante === 'carnet';
 ---
 
-<form class="contact" action="/api/contact" method="post" novalidate data-formulaire-contact data-source={source}>
+<form class:list={['contact', carnet && 'contact--carnet']} action="/api/contact" method="post" novalidate data-formulaire-contact data-source={source}>
   <div class="contact__ligne">
     <div class="contact__champ">
       <label for="contact-email">Votre e-mail</label>
@@ -44,9 +52,14 @@ const { source } = Astro.props;
   </div>
   <div hidden aria-hidden="true"><label for="contact-website">Votre site</label><input id="contact-website" name="website" tabindex="-1" autocomplete="off" /></div>
   <div class="contact__pied">
-    <button type="submit" class="btn-primary contact__envoi">
-      Envoyer <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
-    </button>
+    {carnet ? (
+      <button type="submit" class="pilule pilule-encre contact__envoi">Envoyer</button>
+    ) : (
+      <button type="submit" class="btn-primary contact__envoi">
+        Envoyer <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+      </button>
+    )}
+    <slot name="pied" />
     <p class="contact__statut" role="status" aria-live="polite" aria-atomic="true" data-contact-statut>
       Le message arrive directement dans ma boîte mail. Vous pouvez aussi écrire à <a class="lien-prose" href={`mailto:${EMAIL_CONTACT}`}>{EMAIL_CONTACT}</a>.
     </p>
@@ -157,6 +170,99 @@ const { source } = Astro.props;
     .contact__ligne {
       grid-template-columns: minmax(0, 1fr);
     }
+  }
+
+  /* ── L'habit du carnet ── */
+  .contact--carnet {
+    width: 100%;
+    margin-top: 0;
+    gap: 12px;
+  }
+
+  .contact--carnet .contact__ligne {
+    gap: 12px;
+  }
+
+  .contact--carnet .contact__champ label {
+    color: var(--encre);
+    font-size: 14.5px;
+    font-weight: 700;
+  }
+
+  .contact--carnet .contact__facultatif {
+    color: var(--encre-doux);
+    font-weight: 400;
+  }
+
+  .contact--carnet input,
+  .contact--carnet textarea {
+    padding: 13px 14px;
+    border: 2.5px solid var(--encre);
+    border-radius: 14px;
+    background: var(--blanc);
+    color: var(--encre);
+    font: 16px / 1.4 var(--carnet-titre);
+  }
+
+  .contact--carnet input::placeholder,
+  .contact--carnet textarea::placeholder {
+    color: var(--encre-doux);
+  }
+
+  .contact--carnet input:focus,
+  .contact--carnet textarea:focus {
+    border-color: var(--encre);
+    box-shadow: 3px 3px 0 var(--encre);
+  }
+
+  .contact--carnet [aria-invalid='true'] {
+    border-color: var(--rouge);
+    box-shadow: 3px 3px 0 var(--rouge);
+  }
+
+  .contact--carnet .contact__pied {
+    gap: 8px 22px;
+    margin-top: 8px;
+  }
+
+  .contact--carnet .contact__statut {
+    flex-basis: 100%;
+    max-width: none;
+    color: var(--encre);
+    font-size: 15px;
+  }
+
+  .contact--carnet .contact__statut[data-etat='error'],
+  .contact--carnet .contact__statut[data-etat='sent'] {
+    color: var(--encre);
+    font-weight: 700;
+  }
+
+  .contact--carnet .contact__statut[data-etat='error']::before,
+  .contact--carnet .contact__statut[data-etat='sent']::before {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-right: 8px;
+    border-radius: 50%;
+    color: #fff;
+    font: 800 13px / 1 var(--carnet-titre);
+    vertical-align: -5px;
+  }
+
+  .contact--carnet .contact__statut[data-etat='error']::before {
+    content: '!';
+    background: var(--rouge);
+  }
+
+  .contact--carnet .contact__statut[data-etat='sent']::before {
+    content: '✓';
+    background: var(--vert);
+  }
+
+  .contact--carnet .contact__statut .lien-prose {
+    border-bottom-color: var(--encre);
   }
 </style>
 

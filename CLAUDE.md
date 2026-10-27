@@ -19,7 +19,7 @@ pnpm preview    # Preview production build locally
 - **Framework**: Astro 5.x with static output
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
 - **Icons**: astro-icon with Lucide and Simple Icons
-- **Fonts**: Geist Variable, self-hosted (`@fontsource-variable/geist`); no monospace
+- **Fonts**: Geist Variable, self-hosted (`@fontsource-variable/geist`); no monospace. The home page (« Le carnet ») alone adds Bricolage Grotesque, Gochi Hand and JetBrains Mono, self-hosted (`@fontsource`), imported by `pages/index.astro`
 - **Language**: French (fr)
 - **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
 
@@ -42,7 +42,24 @@ src/
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   │   # — accueil « Le documentaire » (choisi par Lilian le 14 octobre 2026) —
+│   │   # — accueil « Le carnet » (choisi par Lilian le 27 octobre 2026) —
+│   ├── carnet/                # l'accueil en carnet d'ingénieur, lu comme un scénario Make : un module coloré par section, un chemin de pointillés entre eux
+│   │   ├── carnet.css         # la grammaire, rangée sous `.accueil-carnet` : jetons, trois voix, pilules, polaroïds, scotch, modules, chemin, cartes
+│   │   ├── griffe.astro       # un griffonnage (cœur, vague, icônes) tracé au build par `lib/carnet/griffonnages.ts`
+│   │   ├── symbole.astro      # le symbole : trois points d'un scénario dans un rond lilas
+│   │   ├── tete.astro         # l'en-tête d'une section : module (couleur, griffonnage, numéro), intitulé en code, titre, chapô
+│   │   ├── barre.astro        # bandeau newsletter, barre collante (sections, « Écrire »), menu plein écran en `dialog`
+│   │   ├── ouverture.astro    # le nom, la signature, « S'abonner sur YouTube », l'audience datée (data/parcours.ts, `audience`), le polaroïd du NoCode Summit
+│   │   ├── defile.astro       # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
+│   │   ├── suivre.astro       # module 1 : dernière vidéo, newsletter (dernier numéro dans data/derniere-newsletter.ts, inscription /api/newsletter), LinkedIn, Augmentés, agenceafk
+│   │   ├── adore.astro        # module 2 : « J'adore… », huit autocollants, une couleur par type de travail
+│   │   ├── methode.astro      # module 3 : le kanban d'exemple, déplaçable à la souris et au clavier
+│   │   ├── coulisses.astro    # module 4 : quatre polaroïds
+│   │   ├── avis.astro         # module 5 : trois citations (celles de documentaire/voix.astro)
+│   │   ├── contact.astro      # module 6 (`#ecrire`) : formulaire-contact en habit `carnet`, lien vers l'agenda
+│   │   ├── pied.astro         # le pied de l'accueil : grand symbole, liens dehors et pages du site, sans année
+│   │   └── chemin.astro       # le chemin de pointillés d'un module à l'autre, tracé en SVG à partir de 700 px
+│   │   # — accueil « Le documentaire » (14 au 27 octobre 2026), plus rendu sur `/` —
 │   ├── documentaire/          # les chapitres de l'accueil, lus comme un court documentaire sur Lilian au travail
 │   │   ├── documentaire.css   # la grammaire commune : plan et sa lumière, incrustation, sous-titre, carton, crédit, étalonnage
 │   │   ├── chapitre.astro     # un chapitre : `data-chapitre` (son nom dans la barre), `data-lueur` (sa teinte), carton et colonne
@@ -121,7 +138,9 @@ api/
 `DESIGN.md` is the source of truth; tokens live in the `@theme` block of
 `src/styles/global.css`. In short ("nuit et pêche", "tech propre"; the home
 page direction of 2 October 2026 was extended to every page on 3 October 2026,
-see *La tenue commune* in `global.css` and `DESIGN.md`):
+see *La tenue commune* in `global.css` and `DESIGN.md`). Since 27 October 2026
+the home page alone wears « Le carnet » instead (see below), so the rules of
+this list apply to every page but `/`:
 
 - Background: deep night `#0c121f` everywhere (`--color-paper`); white text,
   greys tinted toward the night. `#111827` is `--color-night`
@@ -140,9 +159,8 @@ see *La tenue commune* in `global.css` and `DESIGN.md`):
   `46ch` is a 70-character line (base rule on `p, li`)
 - Motion: the underline is drawn once (`<mark>`), a page header enters once
   (`.entree`), media open with the scroll (`.media-ouvre`), pages cross-fade.
-  On the home page a movement plays once and stops: the opening shot opens
-  once from a slit, the four service scenes rest on their final image, quotes
-  stay still. One loop remains by choice, with its pause
+  On the former home page (« Le documentaire ») a movement played once and
+  stopped. One loop remains by choice, with its pause
   control: the client logo marquee of the first screen. The tool marquee of
   `/automatisations-ia` is the other loop on the site
 
@@ -154,7 +172,21 @@ Every page is built from the shared components: `Navigation`, `tete-de-page`
 `fin-de-page`, `Footer`. Reading pages use `partie`. A new inner page must not
 hand-roll a header, an FAQ, a contact section or a back link.
 
-Home page only (« Le documentaire », 14 October 2026): the page reads as a
+Home page only (« Le carnet », 27 October 2026): a brand page, not a services
+brochure (no prices, no prestation figures). An engineer's notebook on grid
+paper: ink lines, offset solid shadows, four vivid colours that code the type
+of work (pink AI agent, lilac automation, blue business tool, yellow
+training) and each section's module, mint for contact, handwritten notes
+(Gochi Hand), code labels (JetBrains Mono), condensed caps titles (Bricolage
+Grotesque). The page reads as a Make scenario: numbered round modules joined
+by a dotted path through the margins. First gesture: « S'abonner sur
+YouTube »; the contact form closes the page. Dated audience figures as social
+proof, never the newsletter subscriber count. Grammar in
+`src/components/carnet/carnet.css`, scoped under `.accueil-carnet`; DESIGN.md,
+*L'accueil : le carnet*. Inner pages still wear night and peach.
+
+Previous home (« Le documentaire », 14 to 27 October 2026, components kept
+in `src/components/documentaire/`): the page read as a
 short documentary about Lilian at work. Large rounded shots of real photos
 of him that cast their light on the night, lower-thirds (name and role under
 a peach line), centred peach-light subtitles, big chapter titles, a fixed
@@ -186,11 +218,8 @@ one sequence (`documentaire/expertises.astro`; scenes in
   le parcours dans `data/parcours.ts`. Rien ne s'écrit sur une page qui ne soit
   dans `PRODUCT.md` (« Evidence on Hand »).
 - L'accueil ne nomme aucun client à la main. Le défilé des logos les cite
-  tous, depuis `data/clients.ts` ; le chapitre « Projets
-  clients » (`documentaire/filmographie.astro`, demandé par Lilian le 14
-  octobre 2026 à la place de ses projets perso) lit la collection des cas :
-  un cas publié y entre de lui-même, la page ne dépend d'aucun en
-  particulier. Chaque ligne mène à la page de son cas.
+  tous, depuis `data/clients.ts` ; le pied de page mène à l'index des cas
+  (`/cas-clients`), jamais à un cas en particulier.
 - La dernière vidéo YouTube est relevée par le serveur de production
   (`deploy/server.mjs`, `/api/derniere-video`, flux des vidéos longues) et la
   page la remplace d'elle-même : rien à faire à chaque publication.

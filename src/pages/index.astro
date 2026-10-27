@@ -1,57 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro';
-import Ouverture from '../components/documentaire/ouverture.astro';
-import Portrait from '../components/documentaire/portrait.astro';
-import EnCeMoment from '../components/documentaire/en-ce-moment.astro';
-import Publications from '../components/documentaire/publications.astro';
-import Filmographie from '../components/documentaire/filmographie.astro';
-import Expertises from '../components/documentaire/expertises.astro';
-import Voix from '../components/documentaire/voix.astro';
-import Fin from '../components/documentaire/fin.astro';
-import BarreChapitres from '../components/documentaire/barre-chapitres.astro';
-import '../components/documentaire/documentaire.css';
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource/gochi-hand/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '../components/carnet/carnet.css';
+import bricolageLatin from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2?url';
+import Chemin from '../components/carnet/chemin.astro';
+import Barre from '../components/carnet/barre.astro';
+import Ouverture from '../components/carnet/ouverture.astro';
+import Defile from '../components/carnet/defile.astro';
+import Suivre from '../components/carnet/suivre.astro';
+import Adore from '../components/carnet/adore.astro';
+import Methode from '../components/carnet/methode.astro';
+import Coulisses from '../components/carnet/coulisses.astro';
+import Avis from '../components/carnet/avis.astro';
+import Contact from '../components/carnet/contact.astro';
+import Pied from '../components/carnet/pied.astro';
 import { resume, resumeCourt } from '../data/parcours';
 
-/* L'accueil est un site personnel depuis le 14 octobre 2026. Le même jour,
-   Lilian a écarté deux versions (des cartes sobres, puis le retour à la DA
-   d'avant) et choisi « Le documentaire » : la page se lit comme un court
-   documentaire sur lui au travail, en chapitres, avec des photos en grand
-   légendées comme dans un reportage. La grammaire commune est dans
-   `components/documentaire/documentaire.css`.
+/* L'accueil est « Le carnet » depuis le 27 octobre 2026, choisi par Lilian
+   après plusieurs pistes écartées : le carnet d'un ingénieur un peu bricolé,
+   papier quadrillé, encre, couleurs vives, notes à la main, inspiré dans
+   l'esprit (pas dans la forme) de wisprflow.ai et de gemeosagency.com. C'est
+   une page de marque : qui il est, où le suivre, ce qu'il adore faire,
+   comment il travaille, et un formulaire pour lui écrire. Ni prix ni
+   chiffres de prestation.
 
-   Les chapitres, dans l'ordre : il se présente, ce qu'il construit, ce qu'il
-   sait faire (les quatre scènes des métiers, en une séquence), ce qu'il
-   publie, ce qu'il a construit pour ses clients (sa filmographie, lue dans les
-   cas clients ; ses projets perso en sont sortis le 14 octobre 2026, à sa
-   demande), ce qu'en disent ceux qui ont travaillé avec lui, et la fin, où
-   on lui écrit (le générique de fin en est sorti le 14 octobre 2026, à sa
-   demande). La barre des chapitres (`barre-chapitres.astro`) reprend la même
-   liste. Le pied de page y perd sa date (`sansDate`).
+   La page se lit comme un scénario Make : chaque section s'ouvre sur un
+   module rond et coloré, numéroté, et un chemin de pointillés les relie
+   (`components/carnet/chemin.astro`). La grammaire est dans
+   `components/carnet/carnet.css`, rangée sous `.accueil-carnet` : les autres pages
+   gardent la tenue « nuit et pêche » tant qu'elles n'ont pas été passées au
+   carnet. Le détail des choix est dans PRODUCT.md.
 
-   La barre de navigation nomme les chapitres, dans leur ordre. */
-const homeNavigation = [
-  { href: '#a-propos', label: 'À propos' },
-  { href: '#en-ce-moment', label: 'En ce moment' },
-  { href: '#services', label: 'Expertises' },
-  { href: '#contenus', label: 'Vidéos' },
-  { href: '#projets', label: 'Projets clients' },
-  { href: '/blog', label: 'Blog' },
-];
-
-/* Les chapitres de la barre de lecture : l'ancre et le nom court de chacun.
-   Chaque section porte le même nom dans `data-chapitre`. */
-const chapitres = [
-  { id: 'hero', nom: 'Au bureau' },
-  { id: 'a-propos', nom: 'Portrait' },
-  { id: 'en-ce-moment', nom: 'En ce moment' },
-  { id: 'services', nom: 'Expertises' },
-  { id: 'contenus', nom: 'Vidéos' },
-  { id: 'projets', nom: 'Projets clients' },
-  { id: 'temoignages', nom: 'Ils en parlent' },
-  { id: 'fin', nom: 'Contact' },
-];
+   Le premier geste est de s'abonner sur YouTube ; le contact suit, et tous
+   les « Écrire » de la page mènent au formulaire du bas (`contact.astro`). */
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
    doit rattacher à l'entité `Person` déclarée par Layout.astro. */
@@ -73,25 +57,22 @@ const pageSchema = {
   ogImage="/og-home.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA"
   pageSchema={pageSchema}
+  themeColor="#f6f2e8"
+  policePrechargee={bricolageLatin}
 >
-  <Navigation
-    links={homeNavigation}
-    ctaSource="home_nav"
-    trackHero={true}
-  />
-
-  <main id="main-content" tabindex="-1" class="film outline-none">
-    <Ouverture />
-    <Portrait />
-    <EnCeMoment />
-    <Expertises />
-    <Publications />
-    <Filmographie />
-    <Voix />
-    {/* Le contact : la fin de page commune, avec le formulaire de contact. */}
-    <Fin />
-  </main>
-
-  <BarreChapitres chapitres={chapitres} />
-  <Footer sansDate />
+  <div class="accueil-carnet">
+    <Chemin />
+    <Barre />
+    <main id="main-content" tabindex="-1">
+      <Ouverture />
+      <Defile />
+      <Suivre />
+      <Adore />
+      <Methode />
+      <Coulisses />
+      <Avis />
+      <Contact />
+    </main>
+    <Pied />
+  </div>
 </Layout>

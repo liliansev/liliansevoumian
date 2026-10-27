@@ -1,0 +1,296 @@
+---
+/*
+ * La barre du carnet : le bandeau de la newsletter, puis la barre collante
+ * (le nom, les sections, « Écrire »). Sous 920 px, les sections passent dans
+ * un menu plein écran : une boîte de dialogue native, fermée par Échap, par
+ * « Fermer » ou par un lien, qui rend ensuite le focus à la section visée.
+ *
+ * « Écrire » et « Parlons de votre projet » sont des `BoutonReservation` :
+ * ils mènent au formulaire du bas de page avec le goal `contact_opened`.
+ */
+import BoutonReservation from '../BoutonReservation.astro';
+import Symbole from './symbole.astro';
+
+const sections = [
+  { href: '#suivre', label: 'Me suivre' },
+  { href: '#adore', label: 'Ce que je fais' },
+  { href: '#methode', label: 'Comment je travaille' },
+  { href: '#coulisses', label: 'Coulisses' },
+];
+---
+
+<div class="bandeau">
+  <span class="bandeau__long">Chaque semaine, ma newsletter « Lilian l’indé super augmenté ». </span>
+  <span class="bandeau__court">Ma newsletter, chaque semaine. </span>
+  <a href="#newsletter">S’inscrire</a>
+</div>
+
+<header class="barre">
+  <div class="carnet-enveloppe barre__ligne">
+    <a class="marque" href="#main-content" aria-label="Lilian Sevoumian, haut de page">
+      <Symbole />
+      <span>Lilian Sevoumian</span>
+    </a>
+    <nav class="barre__sections" aria-label="Sections">
+      {sections.map((s) => <a href={s.href} data-barre-section>{s.label}</a>)}
+    </nav>
+    <BoutonReservation source="home_nav" class="pilule barre__ecrire">
+      <span class="point" aria-hidden="true"></span>Écrire
+    </BoutonReservation>
+    <button class="pilule barre__menu" type="button" aria-haspopup="dialog" aria-controls="menu-carnet" data-menu-ouvrir>Menu</button>
+  </div>
+</header>
+
+<dialog class="menu" id="menu-carnet" aria-label="Menu">
+  <div class="menu__cadre" tabindex="-1">
+    <div class="menu__haut">
+      <span class="marque"><Symbole />Menu</span>
+      <button class="pilule" type="button" data-menu-fermer>Fermer</button>
+    </div>
+    {sections.map((s) => <a class="menu__entree" href={s.href}>{s.label}</a>)}
+    <BoutonReservation source="home_menu" class="pilule pilule-encre menu__appel">
+      <span class="point" aria-hidden="true"></span>Parlons de votre projet
+    </BoutonReservation>
+  </div>
+</dialog>
+
+<style>
+  .bandeau {
+    background: var(--encre);
+    color: var(--blanc);
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    padding-inline: var(--gauche) var(--droite);
+  }
+
+  .bandeau a {
+    display: inline-block;
+    padding: 12px 4px;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .bandeau__court {
+    display: none;
+  }
+
+  @media (max-width: 620px) {
+    .bandeau__long {
+      display: none;
+    }
+    .bandeau__court {
+      display: inline;
+    }
+  }
+
+  .barre {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: rgb(246 242 232 / 0.94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .barre__ligne {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 78px;
+  }
+
+  .marque {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 44px;
+    min-height: 44px;
+    font-family: var(--carnet-titre);
+    font-weight: 800;
+    font-stretch: 75%;
+    font-size: 24px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--encre);
+    text-decoration: none;
+  }
+
+  .marque :global(.symbole) {
+    flex: none;
+    width: 40px;
+    height: 40px;
+  }
+
+  .barre__sections {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .barre__sections a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: var(--encre);
+    text-decoration: none;
+  }
+
+  .barre__sections a:hover,
+  .barre__sections a[aria-current='true'] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+    text-decoration-color: var(--violet);
+  }
+
+  .barre :global(.pilule) {
+    min-height: 46px;
+    padding: 0 18px;
+    font-size: 15px;
+  }
+
+  .barre__menu {
+    display: none;
+  }
+
+  @media (max-width: 920px) {
+    .barre__sections {
+      display: none;
+    }
+    .barre :global(.barre__ecrire) {
+      margin-left: auto;
+    }
+    .barre__menu {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .barre .marque span {
+      display: none;
+    }
+  }
+
+  /* Le menu plein écran */
+  .menu {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--papier);
+    color: var(--encre);
+  }
+
+  .menu::backdrop {
+    background: rgb(29 26 34 / 0.4);
+  }
+
+  .menu__cadre {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 100%;
+    padding: calc(env(safe-area-inset-top, 0px) + 18px) var(--droite) calc(env(safe-area-inset-bottom, 0px) + 24px) var(--gauche);
+    outline: none;
+  }
+
+  .menu__haut {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+
+  .menu__entree {
+    padding: 12px 0;
+    border-bottom: 2.5px dashed rgb(29 26 34 / 0.25);
+    color: var(--encre);
+    font: 800 clamp(2.2rem, 11vw, 3.2rem) / 1 var(--carnet-titre);
+    font-stretch: 75%;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .menu :global(.menu__appel) {
+    align-self: flex-start;
+    margin-top: 22px;
+  }
+</style>
+
+<script>
+  /* Le menu : ouvert en boîte de dialogue, il rend le focus à la section
+     choisie, ou au bouton Menu s'il est fermé sans choix. Le lien « Parlons de
+     votre projet » est pris en charge par Layout (défilement jusqu'au
+     formulaire, curseur dans le premier champ) : le menu se ferme sans
+     reprendre le focus. */
+  const menu = document.querySelector<HTMLDialogElement>('#menu-carnet');
+  const ouvrir = document.querySelector<HTMLButtonElement>('[data-menu-ouvrir]');
+  const fermer = menu?.querySelector<HTMLButtonElement>('[data-menu-fermer]');
+  /* Le verrou de défilement de Layout (`window.__verrouDefilement`), celui du
+     menu des autres pages et de l'agenda : sans lui, la page défile derrière
+     la boîte de dialogue sur iOS. Il est levé avant que le lien choisi ne
+     fasse défiler la page, sinon il la ramènerait à sa position d'avant. */
+  const verrou = (actif: boolean) =>
+    (window as unknown as { __verrouDefilement?: (proprietaire: string, actif: boolean) => void }).__verrouDefilement?.(
+      'menu-carnet',
+      actif,
+    );
+  if (menu && ouvrir && fermer) {
+    ouvrir.addEventListener('click', () => {
+      menu.showModal();
+      verrou(true);
+      menu.querySelector<HTMLElement>('.menu__cadre')?.focus();
+    });
+    fermer.addEventListener('click', () => menu.close());
+    let cible: HTMLElement | null = null;
+    let lienChoisi = false;
+    menu.querySelectorAll<HTMLAnchorElement>('a').forEach((lien) =>
+      lien.addEventListener('click', () => {
+        const href = lien.getAttribute('href') ?? '';
+        cible = href.startsWith('#') ? document.querySelector<HTMLElement>(href) : null;
+        lienChoisi = true;
+        verrou(false);
+        menu.close();
+      }),
+    );
+    menu.addEventListener('close', () => {
+      verrou(false);
+      if (cible) {
+        cible.setAttribute('tabindex', '-1');
+        cible.focus({ preventScroll: true });
+      } else if (!lienChoisi) {
+        ouvrir.focus({ preventScroll: true });
+      }
+      cible = null;
+      lienChoisi = false;
+    });
+  }
+
+  /* La section en cours, soulignée dans la barre. Toutes les sections sont
+     suivies, celles qui n'ont pas de lien comprises (l'ouverture, les avis, le
+     contact) : en haut de page comme passé « Coulisses », rien n'est
+     souligné. */
+  const liens = [...document.querySelectorAll<HTMLAnchorElement>('[data-barre-section]')];
+  const sections = [...document.querySelectorAll<HTMLElement>('main section[id]')];
+  const marquer = (id: string) =>
+    liens.forEach((lien) =>
+      lien.getAttribute('href') === `#${id}` ? lien.setAttribute('aria-current', 'true') : lien.removeAttribute('aria-current'),
+    );
+  if (sections.length) {
+    const observateur = new IntersectionObserver(
+      (entrees) => entrees.forEach((e) => e.isIntersecting && marquer(e.target.id)),
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => observateur.observe(s));
+  }
+</script>

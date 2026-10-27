@@ -1,0 +1,131 @@
+---
+/*
+ * Module 2, « J'adore… » : ce que Lilian fait, en autocollants, chacun avec
+ * l'étiquette de son type de travail (rose agent IA, lilas automatisation,
+ * bleu outil métier, jaune formation : le code de couleur de tout le carnet).
+ * La liste vient de lui (27 octobre 2026) : tout y a déjà été fait, pour des
+ * clients ou pour ses propres entreprises. Ni prix ni délais : la page est
+ * une page de marque.
+ */
+import Griffe from './griffe.astro';
+import Tete from './tete.astro';
+
+type Type = 'agent IA' | 'automatisation' | 'outil métier' | 'formation';
+
+const couleur: Record<Type, string> = {
+  'agent IA': 'c-rose',
+  automatisation: 'c-lilas',
+  'outil métier': 'c-bleu',
+  formation: 'c-jaune',
+};
+
+const autocollants: { type: Type; texte: string }[] = [
+  { type: 'agent IA', texte: 'créer des agents IA qui gèrent votre support' },
+  { type: 'automatisation', texte: 'automatiser votre facturation' },
+  { type: 'agent IA', texte: 'créer des agents qui répondent au téléphone à votre place' },
+  { type: 'automatisation', texte: 'transformer des bons de commande en commandes et en factures' },
+  { type: 'outil métier', texte: 'créer une application pour organiser les sessions de vos intervenants' },
+  { type: 'outil métier', texte: 'construire des dashboards pour voir vos chiffres d’un coup d’œil' },
+  { type: 'formation', texte: 'former vos équipes à Make, n8n et l’IA' },
+  { type: 'automatisation', texte: 'réparer une automatisation qui casse' },
+];
+---
+
+<section class="etape adore" id="adore" aria-labelledby="titre-adore">
+  <div class="carnet-enveloppe">
+    <Tete numero={2} couleur="lilas" forme="coeur" graine={61} code="ce que je fais">
+      <h2 slot="titre" class="caps adore__titre" id="titre-adore">J’adore…<Griffe forme="coeur" graine={62} /></h2>
+      <p class="main adore__aparte">(liste non exhaustive)</p>
+    </Tete>
+    <ul class="autocollants">
+      {autocollants.map((a) => (
+        <li class:list={['autocollant', couleur[a.type]]}>
+          <span class="tag">{a.type}</span>{a.texte}
+        </li>
+      ))}
+    </ul>
+    <p class="main adore__note">tout ça, je l’ai déjà fait, pour des clients ou pour mes propres boîtes</p>
+  </div>
+</section>
+
+<style>
+  .adore__titre {
+    position: relative;
+    display: inline-block;
+    font-size: clamp(3.6rem, 9vw, 8rem);
+    line-height: 0.85;
+  }
+
+  .adore__titre :global(.griffe) {
+    position: absolute;
+    right: -56px;
+    top: -16px;
+    width: 60px;
+    height: 54px;
+  }
+
+  .adore__titre :global(.griffe path) {
+    stroke: var(--coeur);
+    stroke-width: 3.2;
+  }
+
+  .adore__aparte {
+    margin-top: 10px;
+    color: var(--encre-doux);
+    transform: rotate(-2deg);
+  }
+
+  .autocollants {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px 16px;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .autocollant {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    max-width: none;
+    padding: 10px 22px 10px 10px;
+    border: 2.5px solid var(--encre);
+    border-radius: 999px;
+    box-shadow: 4px 4px 0 var(--encre);
+    font: 700 clamp(16px, 1.4vw, 20px) / 1.2 var(--carnet-titre);
+    transform: rotate(var(--r, 0deg));
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .autocollant:hover {
+    transform: rotate(0) translate(-2px, -3px) scale(1.04);
+    box-shadow: 6px 7px 0 var(--encre);
+  }
+
+  .autocollant:nth-child(4n + 1) { --r: -2deg; }
+  .autocollant:nth-child(4n + 2) { --r: 1.5deg; }
+  .autocollant:nth-child(4n + 3) { --r: -0.6deg; }
+  .autocollant:nth-child(4n) { --r: 2.2deg; }
+
+  .adore__note {
+    max-width: none;
+    margin: 32px auto 0;
+    font-size: 21px;
+    text-align: center;
+  }
+
+  @media (max-width: 560px) {
+    .autocollant {
+      padding: 9px 16px 9px 9px;
+      border-radius: 22px;
+    }
+    .adore__titre :global(.griffe) {
+      right: -38px;
+      width: 42px;
+      height: 38px;
+    }
+  }
+</style>

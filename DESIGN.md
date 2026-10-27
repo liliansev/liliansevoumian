@@ -536,10 +536,100 @@ un seul `mark` au plus.
 | `/expert-make`, `/expert-n8n` | `pourquoi-moi` |
 | pages de lecture et page de reprise | une `partie clair` : le comparatif, le prix du suivi, la première tâche à confier |
 | `/cas-clients/[slug]` | la pièce « Les résultats » |
-| accueil | aucune : le documentaire reste sur la nuit |
+| accueil | aucune : le carnet a sa propre grammaire (voir *L'accueil : le carnet*) |
 | `/cas-clients`, `/principes`, mentions légales, 404 | aucune |
 
-## L'accueil : le documentaire
+## L'accueil : le carnet
+
+Choisi par Lilian le 27 octobre 2026, après avoir rejeté le documentaire et
+plusieurs autres pistes. L'accueil est une page de marque, pas une plaquette
+de services : qui il est, où le suivre, ce qu'il adore faire, comment il
+travaille, et un formulaire pour lui écrire. Ni prix ni chiffres de
+prestation. L'esprit vient de wisprflow.ai et de gemeosagency.com (néo-
+brutalisme doux et joueur), jamais leur forme.
+
+C'est le carnet d'un ingénieur un peu bricolé : papier quadrillé, encre,
+couleurs vives, notes à la main, intitulés en code. La page se lit comme un
+scénario Make : chaque section s'ouvre sur un module rond, coloré et
+numéroté, et un chemin de pointillés serpente de l'un à l'autre par les
+marges.
+
+Pour l'instant le carnet ne sert que sur `/`. Sa grammaire est dans
+`src/components/carnet/carnet.css`, rangée sous `.accueil-carnet`, et chaque section
+est un composant du même dossier. Les autres pages gardent *La tenue
+commune* (nuit et pêche) tant qu'elles n'ont pas été passées au carnet. Le
+design system de référence, composants compris, est l'artefact « Lilian
+Sevoumian » (type Design System) ; la maquette, l'artefact « Le carnet ».
+
+### Les jetons
+
+| Rôle | Jeton | Valeur |
+|---|---|---|
+| fond, quadrillé de 28 px | `--papier`, `--quadrillage` | `#f6f2e8`, encre à 7 % |
+| surfaces posées | `--blanc` | `#fffdf8` |
+| texte, traits, ombres | `--encre`, `--encre-doux` | `#1d1a22`, `#4f4a56` |
+| liens, intitulés en code, signature | `--violet` | `#6a3df5` |
+| agent IA | `--rose` | `#ff8fc8` |
+| automatisation, symbole | `--lilas` | `#b59cff` |
+| outil métier | `--bleu` | `#6ab7ff` |
+| formation, post-it, surlignage | `--jaune` | `#ffd23f` |
+| contact | `--menthe` | `#4fe0a0` |
+| succès, erreur | `--vert`, `--rouge` | `#0c7a3c`, `#c9302c` |
+
+Les quatre couleurs vives codent un type de travail (autocollants, étiquettes
+du kanban) ou une section (son module). Elles ne portent jamais de texte en
+couleur : le texte est en encre, posé dessus.
+
+### Les trois voix
+
+- **Bricolage Grotesque** (variable, auto-hébergée) : les titres en capitales
+  serrées (graisse 800, chasse 75 %), le texte courant.
+- **Gochi Hand** : les notes à la main (signature, apartés, légendes des
+  polaroïds, notes du kanban). Jamais pour une information qu'on doit lire.
+- **JetBrains Mono** : les intitulés en code au-dessus des titres, les
+  étiquettes, les chiffres d'audience.
+
+### Les objets
+
+Traits d'encre de 2,5 px, ombres décalées pleines (`4px 4px 0` encre),
+arrondis francs, objets légèrement de travers (de -3 à 3 degrés), qui se
+redressent au survol. Les pilules sont les boutons : la pilule d'encre
+(ombre lilas) porte le geste principal, une seule par écran. Polaroïds
+scotchés pour les vraies photos de Lilian ; post-it jaune pour une
+conviction ; autocollants pour les services ; une fenêtre d'application pour
+le kanban.
+
+### Les sections
+
+| Module | Ancre | Couleur | Contenu |
+|---|---|---|---|
+| (ouverture) | — | — | nom, signature, phrase, « S'abonner sur YouTube », audience datée, polaroïd du NoCode Summit, pastille Make |
+| (défilé) | — | — | logos des clients, avec bouton pause |
+| 1 | `#suivre` | rose | dernière vidéo, newsletter (`#newsletter`), LinkedIn, Augmentés et agenceafk |
+| 2 | `#adore` | lilas | « J'adore… » et les huit autocollants |
+| 3 | `#methode` | jaune | le kanban d'exemple, déplaçable à la souris et au clavier |
+| 4 | `#coulisses` | bleu | quatre polaroïds |
+| 5 | `#avis` | blanc | trois citations, passage clé surligné |
+| 6 | `#ecrire` | menthe | le formulaire de contact (habit `carnet`) et le lien vers l'agenda |
+
+Le premier geste est de s'abonner sur YouTube ; le contact suit (« Écrire »
+dans la barre, « ou parlons de votre projet » sous le bouton), et tout mène
+au formulaire du module 6. Les chiffres d'audience viennent de
+`data/parcours.ts`, avec leur date de relevé ; le nombre d'abonnés de la
+newsletter n'est jamais affiché.
+
+### Le mouvement
+
+Peu, et utile : les objets se soulèvent au survol, le défilé des logos tourne
+(avec sa pause), le kanban se manipule. Le chemin de pointillés est tracé une
+fois par le script et retracé quand la page change de hauteur ; il n'existe
+qu'à partir de 700 px de large. Avec `prefers-reduced-motion`, plus rien ne
+bouge et le défilé passe sur plusieurs lignes.
+
+## L'accueil d'avant : le documentaire
+
+Rendu sur `/` du 14 au 27 octobre 2026, remplacé par le carnet ; ses
+composants restent dans `src/components/documentaire/`.
 
 Choisi par Lilian le 14 octobre 2026, le même jour où il a écarté deux autres
 versions (des cartes sobres, puis le retour à la direction d'avant).

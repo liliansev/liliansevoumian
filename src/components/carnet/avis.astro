@@ -1,0 +1,130 @@
+---
+/*
+ * Module 5, « Mieux que moi, forcément » : trois personnes qui ont travaillé
+ * avec Lilian, sur des cartes posées de travers. Les citations sont celles de
+ * l'accueil d'avant (`documentaire/voix.astro`), mot pour mot ; seul le
+ * passage qui compte est surligné en jaune.
+ */
+import { Image } from 'astro:assets';
+import Tete from './tete.astro';
+import ismail from '../../assets/testimonials/ismail.jpeg';
+import alexis from '../../assets/testimonials/alexis.jpeg';
+import benjamin from '../../assets/testimonials/benjamin.png';
+
+/* La citation en trois morceaux : avant, le passage surligné, après. */
+const avis = [
+  {
+    citation: ['Les projets qu’il prend en charge ', 'sont un succès.', ''],
+    nom: 'Benjamin Potet',
+    role: 'Solution Architect Customer Experience, Make',
+    image: benjamin,
+  },
+  {
+    citation: ['J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de ', 'son expertise en automatisation.', ''],
+    nom: 'Alexis Kovalenko',
+    role: 'Cofondateur, Contournement',
+    image: alexis,
+  },
+  {
+    citation: ['', 'Un vrai bonheur de travailler avec Lilian', ' sur des sujets de connectivité via Make.'],
+    nom: 'Ismail Landoulsi',
+    role: 'Cofondateur & COO, CasanovaParis',
+    image: ismail,
+  },
+];
+---
+
+<section class="etape" id="avis" aria-labelledby="titre-avis">
+  <div class="carnet-enveloppe">
+    <Tete
+      numero={5}
+      couleur="blanc"
+      forme="bulle"
+      graine={81}
+      code="ils en parlent"
+      titre="Mieux que moi, forcément"
+      idTitre="titre-avis"
+      chapo="Ce qu’en disent des personnes avec qui j’ai travaillé."
+    />
+    <div class="mur">
+      {avis.map((a) => (
+        <figure class="avis">
+          <blockquote>« {a.citation[0]}<span class="surligne">{a.citation[1]}</span>{a.citation[2]} »</blockquote>
+          <figcaption class="avis__qui">
+            <Image src={a.image} alt="" width={52} height={52} densities={[1, 2]} loading="lazy" class="avis__photo" />
+            <span><b>{a.nom}</b><span>{a.role}</span></span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mur {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+  }
+
+  .avis {
+    margin: 0;
+    padding: 26px;
+    border: 2.5px solid var(--encre);
+    border-radius: 20px;
+    background: var(--blanc);
+    box-shadow: 6px 6px 0 var(--encre);
+  }
+
+  .avis:nth-child(1) { transform: rotate(-1.2deg); }
+  .avis:nth-child(2) { transform: rotate(0.8deg); margin-top: 28px; }
+  .avis:nth-child(3) { transform: rotate(-0.5deg); }
+
+  .avis blockquote {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.45;
+  }
+
+  .surligne {
+    padding: 0 2px;
+    background: linear-gradient(transparent 38%, var(--jaune) 38%, var(--jaune) 88%, transparent 88%);
+  }
+
+  .avis__qui {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    font-size: 14.5px;
+    line-height: 1.3;
+  }
+
+  .avis__qui b {
+    display: block;
+  }
+
+  .avis__qui span span {
+    color: var(--encre-doux);
+  }
+
+  .avis__qui :global(.avis__photo) {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border: 2.5px solid var(--encre);
+    border-radius: 50%;
+    background: var(--blanc);
+    object-fit: cover;
+  }
+
+  @media (max-width: 900px) {
+    .mur {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .avis:nth-child(2) {
+      margin-top: 0;
+    }
+  }
+</style>

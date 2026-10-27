@@ -1,0 +1,173 @@
+---
+/*
+ * Le défilé des clients, sur une bande blanche bordée d'encre : les logos en
+ * silhouette noire, les noms sans logo composés en lettres (`data/clients.ts`
+ * en garde la provenance). C'est la seule boucle de la page, voulue par Lilian
+ * ; elle a son bouton pause, et s'arrête d'elle-même quand le visiteur demande
+ * moins de mouvement (la liste passe alors sur plusieurs lignes).
+ */
+import { clients } from '../../data/clients';
+---
+
+<section class="clients" aria-labelledby="titre-clients">
+  <div class="carnet-enveloppe clients__tete">
+    <p id="titre-clients">avec qui j’ai travaillé</p>
+    <button class="clients__pause" type="button" aria-controls="clients-defile" data-defile-pause>Mettre en pause</button>
+  </div>
+  <div class="clients__defile" id="clients-defile">
+    <div class="clients__piste">
+      {[false, true].map((double) => (
+        <ul aria-hidden={double ? 'true' : undefined}>
+          {clients.map((client) => (
+            <li>
+              {client.logo ? (
+                <img
+                  src={client.logo.src}
+                  alt={double ? '' : client.nom}
+                  width={client.logo.largeur}
+                  height={client.logo.hauteur}
+                  style={client.logo.echelle ? `--e:${client.logo.echelle}` : undefined}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <span class="clients__nom">{client.nom}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .clients {
+    padding-block: 0 8px;
+  }
+
+  .clients__tete {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .clients__tete p {
+    margin: 0;
+    max-width: none;
+    font: 600 15px / 1.2 var(--carnet-code);
+    color: var(--encre-doux);
+  }
+
+  .clients__pause {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 2px solid var(--encre);
+    border-radius: 999px;
+    background: var(--blanc);
+    color: var(--encre);
+    font: 700 13px / 1 var(--carnet-code);
+    cursor: pointer;
+  }
+
+  .clients__pause::before {
+    content: '';
+    width: 10px;
+    height: 12px;
+    border-inline: 3.5px solid var(--encre);
+  }
+
+  .clients__pause[data-arret]::before {
+    width: 11px;
+    height: 14px;
+    border-inline: 0;
+    background: var(--encre);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  .clients__defile {
+    overflow: hidden;
+    padding-block: 22px;
+    border-block: 2.5px solid var(--encre);
+    background: var(--blanc);
+  }
+
+  .clients__piste {
+    display: flex;
+    width: max-content;
+    animation: clients-defile 60s linear infinite;
+  }
+
+  .clients__defile[data-arret] .clients__piste {
+    animation-play-state: paused;
+  }
+
+  .clients__piste ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(40px, 5vw, 64px);
+    margin: 0;
+    padding: 0 clamp(20px, 2.5vw, 32px);
+    list-style: none;
+  }
+
+  .clients__piste li {
+    flex: none;
+    max-width: none;
+  }
+
+  .clients__piste img {
+    width: auto;
+    height: calc(26px * var(--e, 1));
+    filter: brightness(0);
+    opacity: 0.85;
+  }
+
+  .clients__nom {
+    font: 800 22px var(--carnet-titre);
+    font-stretch: 80%;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @keyframes clients-defile {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .clients__piste {
+      width: auto;
+      animation: none;
+    }
+    .clients__piste ul {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 22px;
+    }
+    .clients__piste ul + ul,
+    .clients__pause {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const pause = document.querySelector<HTMLButtonElement>('[data-defile-pause]');
+  const defile = document.querySelector<HTMLElement>('#clients-defile');
+  if (pause && defile) {
+    pause.addEventListener('click', () => {
+      const arret = !defile.hasAttribute('data-arret');
+      defile.toggleAttribute('data-arret', arret);
+      pause.toggleAttribute('data-arret', arret);
+      pause.textContent = arret ? 'Relancer le défilé' : 'Mettre en pause';
+    });
+  }
+</script>

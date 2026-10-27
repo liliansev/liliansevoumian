@@ -1,0 +1,76 @@
+---
+/*
+ * Le chemin du scénario : une ligne de pointillés, tracée derrière la page,
+ * qui va de chaque module au suivant. Elle sort du module sur le côté,
+ * descend dans la marge (à gauche, puis à droite, un côté sur deux) et revient
+ * se brancher sur le module suivant par le haut, comme les liens d'un
+ * scénario Make.
+ *
+ * Elle n'est tracée qu'à partir de 700 px de large : en dessous, il n'y a pas
+ * de marge où descendre, et chaque module garde sa courte ligne verticale
+ * (`.tete::before`, dans `carnet.css`). Le tracé est refait quand la page
+ * change de hauteur (polices, images, kanban). Décorative : `aria-hidden`.
+ */
+---
+
+<svg class="chemin" aria-hidden="true" focusable="false" data-chemin></svg>
+
+<script>
+  const chemin = document.querySelector<SVGSVGElement>('[data-chemin]');
+  const page = chemin?.parentElement;
+  if (chemin && page) {
+    const modules = [...page.querySelectorAll<HTMLElement>('.module')];
+    const reference = page.querySelector<HTMLElement>('#suivre .carnet-enveloppe');
+
+    const tracer = () => {
+      const large = innerWidth >= 700;
+      document.documentElement.classList.toggle('chemin-actif', large && modules.length > 1);
+      if (!large || modules.length < 2 || !reference) {
+        chemin.replaceChildren();
+        return;
+      }
+      const cadre = page.getBoundingClientRect();
+      const L = page.clientWidth;
+      // La hauteur de la boîte, pas `scrollHeight` : le SVG déborde de la
+      // page et y compte, si bien qu'une page qui raccourcit (fenêtre élargie,
+      // polices chargées) garderait sous le pied la hauteur d'avant.
+      const H = page.offsetHeight;
+      // La marge : à mi-chemin entre le bord de l'écran et le texte.
+      const bord = reference.getBoundingClientRect().left - cadre.left + parseFloat(getComputedStyle(reference).paddingLeft);
+      const marge = Math.max(14, bord / 2);
+      chemin.setAttribute('width', String(L));
+      chemin.setAttribute('height', String(H));
+      chemin.setAttribute('viewBox', `0 0 ${L} ${H}`);
+      const points = modules.map((m) => {
+        const r = m.getBoundingClientRect();
+        return { x: r.left - cadre.left + r.width / 2, y: r.top - cadre.top + r.height / 2, haut: r.top - cadre.top, rayon: r.width / 2 };
+      });
+      let d = '';
+      for (let i = 0; i < points.length - 1; i++) {
+        const a = points[i];
+        const b = points[i + 1];
+        const sens = i % 2 ? 1 : -1;
+        const xs = sens < 0 ? marge : L - marge;
+        const k = 40;
+        const ye = b.haut - 46;
+        d +=
+          `M${a.x + sens * (a.rayon + 8)} ${a.y} L${xs - sens * k} ${a.y} Q${xs} ${a.y} ${xs} ${a.y + k} ` +
+          `L${xs} ${ye - k} Q${xs} ${ye} ${xs - sens * k} ${ye} L${b.x + sens * k} ${ye} Q${b.x} ${ye} ${b.x} ${ye + k} L${b.x} ${b.haut - 8} `;
+      }
+      const trace = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      trace.setAttribute('d', d);
+      chemin.replaceChildren(trace);
+    };
+
+    let attente = 0;
+    const demander = () => {
+      cancelAnimationFrame(attente);
+      attente = requestAnimationFrame(tracer);
+    };
+    new ResizeObserver(demander).observe(page);
+    addEventListener('resize', demander);
+    addEventListener('load', demander);
+    document.fonts?.ready.then(demander).catch((erreur: unknown) => console.error('[chemin] polices', erreur));
+    tracer();
+  }
+</script>

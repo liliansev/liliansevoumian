@@ -1,0 +1,170 @@
+---
+/*
+ * Le pied du carnet : le grand symbole et le nom, la signature, puis deux
+ * lignes de liens, ce que Lilian publie et fonde, et les pages du site (les
+ * cas clients, les offres, les pages d'outil et les pages-réponses, qu'il
+ * faut pouvoir atteindre depuis l'accueil). Pas d'année : l'accueil ne porte
+ * aucune date (Lilian, 14 octobre 2026), hors celle des chiffres d'audience.
+ */
+import Symbole from './symbole.astro';
+import { organisations, profils } from '../../data/parcours';
+
+const dehors: { label: string; href: string; goal?: string }[] = [
+  { label: 'YouTube', href: profils.youtube, goal: 'youtube_opened' },
+  { label: 'LinkedIn', href: profils.linkedin },
+  ...organisations.map((o) => ({ label: o.nom, href: o.url, goal: o.goal })),
+];
+
+const pages = [
+  { label: 'Newsletter', href: '#newsletter' },
+  { label: 'Cas clients', href: '/cas-clients' },
+  { label: 'Automatisation et agents IA', href: '/automatisations-ia' },
+  { label: 'Sites web et dashboards', href: '/sites-web-abonnement' },
+  { label: 'Expert Make', href: '/expert-make' },
+  { label: 'Expert n8n', href: '/expert-n8n' },
+  { label: 'Automatisation en panne', href: '/reprendre-une-automatisation-qui-casse' },
+  { label: 'Make ou n8n ?', href: '/make-ou-n8n' },
+  { label: 'Combien coûte une automatisation ?', href: '/combien-coute-une-automatisation' },
+  { label: 'Agent IA pour PME', href: '/agent-ia-pour-pme' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Principes', href: '/principes' },
+  { label: 'Mentions légales', href: '/mentions-legales' },
+];
+---
+
+<footer class="pied">
+  <div class="carnet-enveloppe">
+    <div class="pied__marque">
+      <Symbole fin />
+      <p class="caps">Lilian Sevoumian</p>
+    </div>
+    <p class="main pied__signature">l’indé super augmenté</p>
+    <div class="pied__liens">
+      <nav aria-label="Ailleurs">
+        <span class="surtitre">ailleurs</span>
+        <ul>
+          {dehors.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-fast-goal={l.goal}
+                data-fast-goal-source={l.goal ? 'home_pied' : undefined}
+              >{l.label}<span class="sr-only"> (nouvel onglet)</span></a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <nav aria-label="Sur le site">
+        <span class="surtitre">sur le site</span>
+        <ul>
+          {pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+    <p class="pied__droits">© Lilian Sevoumian</p>
+  </div>
+</footer>
+
+<style>
+  .pied {
+    padding-block: clamp(40px, 6vw, 72px) max(28px, env(safe-area-inset-bottom, 0px));
+    border-top: 2.5px solid var(--encre);
+    overflow-x: clip;
+  }
+
+  .pied__marque {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 2vw, 28px);
+  }
+
+  .pied__marque :global(.symbole) {
+    flex: none;
+    width: clamp(64px, 10vw, 140px);
+    height: clamp(64px, 10vw, 140px);
+  }
+
+  .pied__marque .caps {
+    max-width: none;
+    font-size: clamp(2.6rem, 9.4vw, 8.8rem);
+    line-height: 0.82;
+  }
+
+  .pied__signature {
+    margin: 14px 0 0 calc(clamp(64px, 10vw, 140px) + clamp(14px, 2vw, 28px));
+    color: var(--violet);
+  }
+
+  .pied__liens {
+    display: grid;
+    gap: 18px;
+    margin-top: clamp(28px, 4vw, 44px);
+  }
+
+  .pied__liens nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 18px;
+  }
+
+  .pied__liens .surtitre {
+    flex: none;
+    width: 92px;
+  }
+
+  .pied__liens ul {
+    display: flex;
+    flex: 1 1 0;
+    flex-wrap: wrap;
+    gap: 0 4px;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pied__liens li {
+    max-width: none;
+  }
+
+  .pied__liens a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 8px;
+    color: var(--encre);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .pied__liens a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--violet);
+  }
+
+  .pied__droits {
+    margin: 18px 0 0;
+    color: var(--encre-doux);
+    font-size: 15px;
+  }
+
+  @media (max-width: 560px) {
+    .pied__signature {
+      margin-left: 0;
+    }
+    .pied__liens nav {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pied__liens a {
+      padding: 0 12px 0 0;
+    }
+  }
+</style>
