@@ -46,8 +46,7 @@ export const metiers = [
        l'accueil. Ce qui est affirmé vient de /llms.txt (« dashboards, portails
        clients et applications métiers, sur un périmètre chiffré
        séparément ») ; le prix est donc « sur devis », choix de Lilian. Le lien
-       mène à la partie « Applications » de la page d'offre, qui reste en
-       ligne. La phrase est de moi : à lui de la valider. */
+       mène à `/outils-metiers`. La phrase est de moi : à lui de la valider. */
     id: 'dashboards',
     nom: 'Dashboards et outils métiers',
     onglet: 'Dashboards',
@@ -55,7 +54,7 @@ export const metiers = [
     texte:
       'Dashboards, portails clients et applications internes, de la conception aux évolutions.',
     note: 'Sur devis',
-    lien: { href: '/sites-web-abonnement#applications', label: 'Voir les applications métier', goal: 'service_path_opened', source: 'home_metier_web' },
+    lien: { href: '/outils-metiers', label: 'Voir les outils métiers', goal: 'service_path_opened', source: 'home_metier_web' },
   },
   {
     id: 'formations',

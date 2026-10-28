@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { faqs } from '../data/faq';
-import { creationOffers, subscriptionOffers } from '../data/sites-web';
 import { automationSubscriptions, maintenanceScope } from '../data/maintenance';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { EMAIL_CONTACT } from '../lib/contact';
@@ -17,8 +16,8 @@ import { automationStartingPrice } from '../data/service-pricing';
  * FAQ viennent des mêmes sources que les pages.
  *
  * Ne contient que des faits sourcés. Les prix viennent des mêmes sources que
- * les pages : `service-pricing` pour les prix d'entrée, `sites-web` et
- * `maintenance` pour les formules.
+ * les pages : `service-pricing` pour les prix d'entrée, `maintenance` pour
+ * les formules.
  */
 export const GET: APIRoute = async () => {
   const cas = (await getCollection('cas-clients', (e) => !e.data.draft)).sort(
@@ -60,7 +59,7 @@ export const GET: APIRoute = async () => {
 ## Identité
 
 - Nom : Lilian Sevoumian
-- Activité : automatisation, agents IA, création de sites web et formation, depuis 2020
+- Activité : automatisation, agents IA, outils métiers et formation, depuis 2020
 - Structures fondées : ${organisations.map((o) => `${o.nom} (${o.fondation.slice(0, 4)}, ${o.url})`).join(' ; ')}
 - Certifications : Make niveau 5 (premier Français certifié, en 2022), Airtable Certified
 - Formation : plus de 300 personnes formées à Make, n8n et à l'IA
@@ -83,7 +82,6 @@ ${parcours.map(ligneAnnee).join('\n')}
 - Construire des agents IA qui prennent en charge une tâche entière
 - Reprendre des automatisations existantes qui tombent en panne ou se sont empilées
 - Former les équipes à utiliser et comprendre ce qui a été livré
-- Créer une landing page ou un site vitrine, puis le maintenir ou l'améliorer
 - Construire des dashboards, portails clients et applications métiers, sur un périmètre chiffré séparément
 
 ## Méthode commune
@@ -123,7 +121,7 @@ ${articles.map((b) => `- [${b.data.title}](https://liliansevoumian.fr/blog/${b.i
 - [Make ou n8n : lequel choisir ?](https://liliansevoumian.fr/make-ou-n8n) : les critères de choix entre les deux outils, avec les cas construits sur chacun
 - [Combien coûte une automatisation ?](https://liliansevoumian.fr/combien-coute-une-automatisation) : prix d'entrée, abonnement de suivi, ce qui fait varier le devis
 - [Agent IA pour PME : par où commencer ?](https://liliansevoumian.fr/agent-ia-pour-pme) : par quelle tâche commencer, ce qui reste aux règles et à l'équipe
-- [Sites et applications web](https://liliansevoumian.fr/sites-web-abonnement)
+- [Outils métiers](https://liliansevoumian.fr/outils-metiers) : dashboards, portails clients et outils internes, sur devis
 - [Principes de travail](https://liliansevoumian.fr/principes)
 
 ## Questions fréquentes — automatisation et IA
@@ -134,10 +132,9 @@ ${faqs.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 
 - Une automatisation ou un agent IA démarre à ${automationStartingPrice.toLocaleString('fr-FR')} € HT. Le projet est chiffré après
   un appel de ${DUREE_RESERVATION_MINUTES} min, et le devis est ferme une fois le périmètre posé.
-- L'offre sites web publie ses prix d'entrée : ${creationOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Le suivi mensuel propose ${subscriptionOffers.map((offer) => `${offer.name} ${offer.price}`).join(' ou ')}.
-- Chaque projet livré s'accompagne d'un abonnement de suivi, facturé séparément de la création. Les applications métiers et leur suivi font l'objet d'un devis adapté au périmètre.
+- Chaque projet livré s'accompagne d'un abonnement de suivi, facturé séparément de la création. Les outils métiers et leur suivi font l'objet d'un devis adapté au périmètre.
 - Abonnements automatisation : ${automationSubscriptions.map((offer) => `${offer.name} ${offer.price}`).join(' ; ')}. Les coûts IA sont inclus dans l'offre IA et agents.
-- Le suivi comprend hébergement, maintenance et petits ajustements de l'existant. ${maintenanceScope} La rédaction récurrente d'articles est distincte de l'abonnement blog.
+- Le suivi comprend hébergement, maintenance et petits ajustements de l'existant. ${maintenanceScope}
 - Les chiffres cités dans les cas clients sont ceux mesurés chez le client
   concerné. Ils ne sont pas des moyennes et ne se transposent pas tels quels.
 `;

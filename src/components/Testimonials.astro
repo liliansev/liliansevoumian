@@ -1,54 +1,18 @@
 ---
 /*
  * Testimonials — trois recommandations de vraies personnes, sur
- * /automatisations-ia. Sur l'accueil, `home-voices` porte les mêmes mots, une
- * voix à la fois ; ici, page de référence, elles se lisent à la suite : la
- * citation à gauche, qui la signe à droite, et l'espace seul entre deux voix.
+ * /automatisations-ia : les mêmes que sur l'accueil (`data/avis.ts`), en
+ * cartes, le passage clé surligné en jaune comme là-bas.
  *
  * Ce sont des recommandations, pas des rapports de mission : aucune ne porte
  * de chiffre. Les chiffres sont dans les cas clients, plus haut sur la page.
  *
- * Les trois citations sont tronquées, et la règle de coupe est stricte : on ne
- * retire que des phrases entières ou des fins de phrase, jamais un fragment au
- * milieu d'une idée, et aucun mot n'est reformulé. Toutes les coupes retirent
- * un éloge : aucune ne peut faire dire à quelqu'un plus que ce qu'il a écrit,
- * seulement moins. Les versions intégrales sont dans l'historique git de ce
- * fichier. Portraits dans `src/assets/testimonials/`.
+ * La règle de coupe des citations est écrite dans `data/avis.ts`.
  */
 import { Image } from 'astro:assets';
 import LinkCTA from './LinkCTA.astro';
 import SectionHeader from './SectionHeader.astro';
-import ismailImg from '../assets/testimonials/ismail.jpeg';
-import alexisImg from '../assets/testimonials/alexis.jpeg';
-import benjaminImg from '../assets/testimonials/benjamin.png';
-
-interface Testimonial {
-  quote: string;
-  name: string;
-  role: string;
-  image: ImageMetadata;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    quote: 'Un vrai bonheur de travailler avec Lilian sur des sujets de connectivité via Make.',
-    name: 'Ismail Landoulsi',
-    role: 'Cofondateur & COO · CasanovaParis',
-    image: ismailImg,
-  },
-  {
-    quote: 'J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de son expertise en automatisation.',
-    name: 'Alexis Kovalenko',
-    role: 'Cofondateur · Contournement',
-    image: alexisImg,
-  },
-  {
-    quote: 'Les projets qu’il prend en charge sont un succès.',
-    name: 'Benjamin Potet',
-    role: 'Solution Architect Customer Experience · Make',
-    image: benjaminImg,
-  },
-];
+import { avis } from '../data/avis';
 ---
 
 <section
@@ -61,9 +25,9 @@ const testimonials: Testimonial[] = [
     <SectionHeader title="Ils ont travaillé avec moi." titleMaxWidth="22ch" />
 
     <div class="reveal-stagger temoins">
-      {testimonials.map((t) => (
+      {avis.map((t) => (
         <figure class="reveal temoin">
-          <blockquote>«&nbsp;{t.quote}&nbsp;»</blockquote>
+          <blockquote>«&nbsp;{t.citation[0]}<span class="surligne">{t.citation[1]}</span>{t.citation[2]}&nbsp;»</blockquote>
           <figcaption>
             <Image
               src={t.image}
@@ -75,7 +39,7 @@ const testimonials: Testimonial[] = [
               class="temoin__portrait"
               loading="lazy"
             />
-            <span class="temoin__nom">{t.name}</span>
+            <span class="temoin__nom">{t.nom}</span>
             <span class="temoin__role">{t.role}</span>
           </figcaption>
         </figure>
@@ -113,6 +77,12 @@ const testimonials: Testimonial[] = [
   .temoin:nth-child(1) { rotate: -0.8deg; }
   .temoin:nth-child(2) { rotate: 0.6deg; }
   .temoin:nth-child(3) { rotate: -0.4deg; }
+
+  /* Le surligneur de l'accueil (`carnet/avis.astro`). */
+  .surligne {
+    padding: 0 2px;
+    background: linear-gradient(transparent 38%, var(--jaune) 38%, var(--jaune) 88%, transparent 88%);
+  }
 
   .temoin blockquote {
     max-width: 34ch;

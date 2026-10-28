@@ -61,9 +61,9 @@ src/
 │   ├── Stack.astro            # 4 outils (n8n, Make, Notion, Airtable), une ligne d'usage chacun
 │   ├── Offres.astro           # formats, prix de création et abonnements, en île claire
 │   ├── ROICalculator.astro    # simulateur de temps (2 curseurs)
-│   │   # — page d'offre /sites-web-abonnement —
-│   ├── SubscriptionGrid.astro # liste de prix à plat (sert aussi à Offres)
-│   ├── ProjectVisual.astro    # vignette d'une réalisation
+│   │   # — page d'offre /outils-metiers —
+│   ├── SubscriptionGrid.astro # liste de prix à plat (abonnements de /automatisations-ia)
+│   ├── ProjectVisual.astro    # vignette d'une réalisation (vitrine des explorations)
 │   ├── application-system-diagram.astro
 │   │   # — cas clients —
 │   ├── mockups/               # MockupWindow (châssis fenêtre), WorkflowCanvas (faux canvas n8n/Make)
@@ -72,7 +72,7 @@ src/
 │   └── explorations/          # essais non retenus, page /explorations-metiers
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
-├── data/                      # faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, sites-web.ts, brands.ts
+├── data/                      # faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, outils-metiers.ts, brands.ts
 ├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (e-mail et WhatsApp), roi.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, barre d'écriture, suivi DataFast
@@ -81,7 +81,7 @@ src/
 ├── pages/
 │   ├── index.astro
 │   ├── automatisations-ia.astro   # offre automation complète
-│   ├── sites-web-abonnement.astro # offre web complète
+│   ├── outils-metiers.astro   # offre outils métiers (dashboards, portails, outils internes), sur devis ; remplace /sites-web-abonnement (redirigée) depuis le 28/10/2026
 │   ├── cas-clients/index.astro et [slug].astro
 │   ├── expert-make.astro · expert-n8n.astro   # contenu seul, charpente partagée
 │   ├── make-ou-n8n.astro · combien-coute-une-automatisation.astro · agent-ia-pour-pme.astro   # pages-réponses

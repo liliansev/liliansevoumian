@@ -113,9 +113,12 @@ const breadcrumbs = [
     list-style: none;
   }
 
+  /* `max-width: none` : la règle de base `p, li { max-width: 46ch }` prenait
+     le `li`, qui est ici une grille, et la rognait à la moitié de la page. */
   .principe {
     display: grid;
     gap: var(--spacing-lie);
+    max-width: none;
   }
 
   .principe h2 {

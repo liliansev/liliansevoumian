@@ -2,36 +2,12 @@
 /*
  * Module 5, « Mieux que moi, forcément » : trois personnes qui ont travaillé
  * avec Lilian, sur des cartes posées de travers. Les citations sont celles de
- * l'accueil d'avant (`documentaire/voix.astro`), mot pour mot ; seul le
- * passage qui compte est surligné en jaune.
+ * l'accueil d'avant, mot pour mot (`data/avis.ts`, que lit aussi la page
+ * d'offre) ; seul le passage qui compte est surligné en jaune.
  */
 import { Image } from 'astro:assets';
 import Tete from './tete.astro';
-import ismail from '../../assets/testimonials/ismail.jpeg';
-import alexis from '../../assets/testimonials/alexis.jpeg';
-import benjamin from '../../assets/testimonials/benjamin.png';
-
-/* La citation en trois morceaux : avant, le passage surligné, après. */
-const avis = [
-  {
-    citation: ['Les projets qu’il prend en charge ', 'sont un succès.', ''],
-    nom: 'Benjamin Potet',
-    role: 'Solution Architect Customer Experience, Make',
-    image: benjamin,
-  },
-  {
-    citation: ['J’ai la chance d’avoir collaboré à de nombreuses reprises avec Lilian. Je peux témoigner de ', 'son expertise en automatisation.', ''],
-    nom: 'Alexis Kovalenko',
-    role: 'Cofondateur, Contournement',
-    image: alexis,
-  },
-  {
-    citation: ['', 'Un vrai bonheur de travailler avec Lilian', ' sur des sujets de connectivité via Make.'],
-    nom: 'Ismail Landoulsi',
-    role: 'Cofondateur & COO, CasanovaParis',
-    image: ismail,
-  },
-];
+import { avis } from '../../data/avis';
 ---
 
 <section class="etape" id="avis" aria-labelledby="titre-avis">

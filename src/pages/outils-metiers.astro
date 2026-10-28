@@ -1,0 +1,192 @@
+---
+/*
+ * /outils-metiers : l'offre des outils métiers (dashboards, portails clients,
+ * outils internes reliés aux automatisations). Elle remplace le 28 octobre
+ * 2026 `/sites-web-abonnement` : Lilian ne propose plus de sites web, il garde
+ * les outils métiers. L'ancienne adresse redirige ici (`deploy/server.mjs`,
+ * `vercel.json`). Tout est sur devis : aucune grille de prix.
+ *
+ * Le premier écran pose la promesse face au schéma des données reliées ;
+ * l'île dit ce que je construis et ce que ça coûte, avec le cas qui le
+ * montre ; puis la méthode, les questions et le formulaire.
+ */
+import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import BoutonReservation from '../components/BoutonReservation.astro';
+import LinkCTA from '../components/LinkCTA.astro';
+import Footer from '../components/Footer.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ApplicationSystemDiagram from '../components/application-system-diagram.astro';
+import Questions from '../components/questions.astro';
+import FinDePage from '../components/fin-de-page.astro';
+import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
+import { etapesOutil, formesOutil, prixOutil, questionsOutil } from '../data/outils-metiers';
+
+const navLinks = [
+  { href: '#outils', label: 'Ce que je construis' },
+  { href: '#methode', label: 'Méthode' },
+  { href: '#faq', label: 'FAQ' },
+];
+
+const faqSchema = questionsOutil.map((faq) => ({ question: faq.q, answer: faq.a }));
+const pageDescription = `Dashboards, portails clients et outils internes reliés à vos outils et à vos automatisations. Création et suivi sur devis. Échange de ${DUREE_RESERVATION_MINUTES} min.`;
+
+const serviceSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  '@id': 'https://liliansevoumian.fr/outils-metiers#service',
+  name: 'Outils métiers : dashboards, portails clients, outils internes',
+  description: 'Applications métiers reliées à vos outils et à vos automatisations : dashboards de suivi, portails clients, outils internes. Création et suivi sur devis.',
+  url: 'https://liliansevoumian.fr/outils-metiers',
+  areaServed: { '@type': 'Country', name: 'France' },
+  provider: { '@id': 'https://liliansevoumian.fr/#person' },
+  serviceType: ['Développement d’applications métier', 'Dashboard', 'Portail client', 'Outil interne'],
+};
+---
+
+<Layout
+  title="Outils métiers : dashboards et portails clients · Lilian Sevoumian"
+  description={pageDescription}
+  ogImageAlt="Outils métiers par Lilian Sevoumian"
+  breadcrumbs={[
+    { name: 'Accueil', url: '/' },
+    { name: 'Outils métiers', url: '/outils-metiers' },
+  ]}
+  faqSchema={faqSchema}
+  pageSchema={serviceSchema}
+>
+  <Navigation links={navLinks} ctaSource="outils_nav" />
+
+  <main id="main-content" tabindex="-1" class="outline-none">
+    <section id="hero" class="relative px-[var(--spacing-section-x)] pt-28 pb-[var(--spacing-bloc)] lg:pt-36">
+      <div class="relative max-w-[1200px] mx-auto w-full grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-[var(--spacing-gouttiere)] items-center">
+        <div class="min-w-0 entree">
+          <h1 class="m-0 max-w-[16ch]">
+            Vos dossiers au même endroit. Votre équipe y <mark>voit clair.</mark>
+          </h1>
+          <p class="mt-[var(--spacing-lie)] mb-0 max-w-[46ch] text-[length:var(--text-body-large)] leading-[1.5] text-[var(--color-ink-mid)]">
+            Des fichiers Excel, des demandes par mail, des informations à recopier&nbsp;: votre équipe passe du temps à faire le lien. Je construis une application métier reliée à vos outils pour rassembler ce travail.
+          </p>
+          <div class="mt-[var(--spacing-groupe)] flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-7 gap-y-2">
+            <BoutonReservation source="outils_hero" />
+            <LinkCTA href="#outils">Ce que je construis</LinkCTA>
+          </div>
+        </div>
+        <div class="min-w-0 reveal">
+          <ApplicationSystemDiagram />
+        </div>
+      </div>
+    </section>
+
+    {/* L'île : ce que je construis, ce que ça coûte, et le cas qui le montre. */}
+    <section id="outils" data-section class="bloc-encre relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <SectionHeader
+          title="Ce que je construis."
+          body={prixOutil}
+          titleMaxWidth="16ch"
+        />
+
+        <ul class="formes reveal-stagger" role="list">
+          {formesOutil.map((forme) => (
+            <li class="reveal forme">
+              <h3 class="m-0">{forme.nom}</h3>
+              <p class="mt-[var(--spacing-colle)] mb-0 leading-[var(--leading-body)] text-[var(--color-ink-mid)]">{forme.texte}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div class="reveal cas">
+          <p class="m-0 max-w-[58ch] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">
+            Chez Deuxième Souffle, des tableaux Excel servaient à organiser les sessions d’une trentaine de coachs. J’ai livré une première application pour recueillir leurs disponibilités, faciliter les affectations et suivre le pointage.
+          </p>
+          <div class="mt-[var(--spacing-lie)] flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-7 gap-y-2">
+            <BoutonReservation source="outils_ile" />
+            <LinkCTA href="/cas-clients/deuxieme-souffle">Voir le cas Deuxième Souffle</LinkCTA>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Les étapes gardent leur numéro : ici l'ordre est l'information. */}
+    <section id="methode" data-section class="relative py-[var(--spacing-section-y)] px-[var(--spacing-section-x)] border-b border-[var(--color-divider)]">
+      <div class="relative max-w-[1200px] mx-auto">
+        <SectionHeader
+          title="De votre besoin à la mise en service."
+          body="Vous validez les choix importants et testez le résultat avant la mise en service. Voici comment nous avançons."
+          titleMaxWidth="18ch"
+        />
+
+        <ol class="m-0 p-0 list-none grid grid-cols-1 lg:grid-cols-2 gap-x-[var(--spacing-gouttiere)] gap-y-[var(--spacing-groupe)]">
+          {etapesOutil.map((step, index) => (
+            <li class="reveal grid grid-cols-[auto_minmax(0,1fr)] gap-x-4">
+              <span class="method-index" aria-hidden="true">{index + 1}</span>
+              <div>
+                <h3 class="m-0 max-w-[24ch]">{step.title}</h3>
+                <p class="mt-3 mb-0 max-w-[58ch] leading-[var(--leading-body)] text-[var(--color-ink-mid)]">{step.description}</p>
+                <p class="mt-3 mb-0 max-w-[58ch] text-[length:var(--text-body-sm)] leading-[1.5] text-[var(--color-ink)]"><strong>Livrable&nbsp;:</strong> {step.output}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div class="reveal mt-[var(--spacing-groupe)] flex flex-col sm:flex-row gap-x-7 gap-y-2">
+          <LinkCTA href="/cas-clients">Lire les cas clients</LinkCTA>
+          <LinkCTA href="/principes">Voir mes principes</LinkCTA>
+        </div>
+      </div>
+    </section>
+
+    <Questions id="faq" titre="Vos questions, avant de vous lancer." titreLargeur="14ch" items={questionsOutil} />
+
+    <FinDePage
+      source="outils_fin"
+      titre={`Quel outil vous <mark>manque&nbsp;?</mark>`}
+      suite={`Une phrase suffit. Je vous réponds <span class="whitespace-nowrap">moi-même</span> et je vous dis ce qui est faisable.`}
+    />
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .formes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacing-groupe) var(--spacing-gouttiere);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .forme {
+    max-width: none;
+    padding-top: var(--spacing-lie);
+    border-top: 2px dashed var(--color-service-border);
+  }
+
+  .cas {
+    margin-top: var(--spacing-bloc);
+  }
+
+  @media (max-width: 899px) {
+    .formes {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* Le rang d'une étape, dans la pastille d'encre des colonnes du kanban de
+     l'accueil. */
+  .method-index {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: 0.1rem;
+    border-radius: var(--radius-full);
+    background: var(--color-ink);
+    color: var(--color-surface-low);
+    font: 700 0.8125rem / 1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
