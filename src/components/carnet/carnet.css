@@ -7,18 +7,21 @@
  * scénario Make : chaque section s'ouvre sur un module rond et coloré, et un
  * chemin de pointillés serpente de l'un à l'autre (`chemin.astro`).
  *
- * Ce fichier n'est importé que par `pages/index.astro` : les autres pages
- * gardent la tenue « nuit et pêche » de `styles/global.css` tant qu'elles
- * n'ont pas été passées au carnet. Les jetons sont posés sur la racine quand
- * elle contient `.accueil-carnet` (et sur `.accueil-carnet` pour les
+ * Ce fichier est importé par `layouts/Layout.astro` : depuis le 28 octobre
+ * 2026, toutes les pages portent le carnet, sauf le blog. Les jetons sont posés sur la racine quand
+ * elle contient `.tenue-carnet` (et sur `.tenue-carnet` pour les
  * navigateurs sans `:has`, grâce à `:is()` qui ignore l'argument qu'il ne
  * comprend pas au lieu d'invalider la règle) : ce qui vit hors de la page
  * mais s'y affiche (le
  * lien d'évitement, la fenêtre de l'agenda, la barre de défilement) les lit
- * aussi. Le reste est rangé sous `.accueil-carnet`.
+ * aussi. La base (papier, titres, focus) est rangée sous `.tenue-carnet`,
+ * que Layout pose sur toutes les pages sauf le blog ; les objets du carnet
+ * (pilules, modules, polaroïds…) sous `.carnet-ui`, que portent l'accueil,
+ * la barre, le pied et le formulaire : leurs noms courts (`tete`, `meta`,
+ * `etape`) existent aussi dans les composants des pages intérieures.
  */
 
-:is(:root:has(.accueil-carnet), .accueil-carnet) {
+:is(:root:has(.tenue-carnet), .tenue-carnet) {
   /* Les couleurs */
   --papier: #f6f2e8;
   --blanc: #fffdf8;
@@ -86,7 +89,7 @@
 }
 
 @media (min-width: 768px) {
-  :is(:root:has(.accueil-carnet), .accueil-carnet) {
+  :is(:root:has(.tenue-carnet), .tenue-carnet) {
     --gauche: max(32px, env(safe-area-inset-left, 0px));
     --droite: max(32px, env(safe-area-inset-right, 0px));
   }
@@ -94,28 +97,28 @@
 
 /* Le fond du document : sous la barre de défilement élastique d'iOS comme
    sous la page, c'est le papier. Les ancres s'arrêtent sous la barre (78 px). */
-:root:has(.accueil-carnet) {
+:root:has(.tenue-carnet) {
   background-color: var(--papier);
   scroll-padding-top: 96px;
   scrollbar-color: var(--encre-pointille) transparent;
 }
 
-:root:has(.accueil-carnet) body {
+:root:has(.tenue-carnet) body {
   background-color: var(--papier);
   /* Ce qui vit hors de la page (la fenêtre de l'agenda, cachée) hérite du
      corps : en Bricolage, Geist n'est plus téléchargé sur l'accueil. */
   font-family: var(--carnet-titre);
 }
 
-.accueil-carnet * {
+.tenue-carnet * {
   scrollbar-color: var(--encre-pointille) transparent;
 }
 
-:root:has(.accueil-carnet) ::-webkit-scrollbar-thumb {
+:root:has(.tenue-carnet) ::-webkit-scrollbar-thumb {
   background: var(--encre-pointille);
 }
 
-.accueil-carnet {
+.tenue-carnet {
   position: relative;
   isolation: isolate;
   min-height: 100vh;
@@ -132,25 +135,25 @@
   overflow-x: clip;
 }
 
-.accueil-carnet ::selection {
+.tenue-carnet ::selection {
   background: var(--jaune);
   color: var(--encre);
 }
 
-.accueil-carnet :is(input, textarea) {
+.tenue-carnet :is(input, textarea) {
   caret-color: var(--violet);
 }
 
-.accueil-carnet :is(h1, h2, h3, h4) {
+.tenue-carnet :is(h1, h2, h3, h4) {
   color: var(--encre);
   letter-spacing: normal;
 }
 
-.accueil-carnet :is(p, li) {
+.tenue-carnet :is(p, li) {
   max-width: 58ch;
 }
 
-.accueil-carnet img {
+.tenue-carnet img {
   max-width: 100%;
   height: auto;
   display: block;
@@ -159,12 +162,12 @@
 /* Focus : un anneau d'encre au clavier, sous la même condition que l'anneau
    pêche de `global.css` (pas de cadre noir au toucher sur iPhone). Les
    champs gardent le leur au toucher : un champ focalisé ouvre un clavier. */
-.accueil-carnet :focus {
+.tenue-carnet :focus {
   outline: none;
 }
 
 @media (any-hover: hover), (any-pointer: fine) {
-  .accueil-carnet :focus-visible {
+  .tenue-carnet :focus-visible {
     outline: 3px solid var(--encre);
     outline-offset: 3px;
     border-radius: var(--r-xs);
@@ -172,7 +175,7 @@
 }
 
 @media (hover: none) and (pointer: coarse) {
-  .accueil-carnet :is(input, textarea):focus-visible {
+  .tenue-carnet :is(input, textarea):focus-visible {
     outline: 3px solid var(--encre);
     outline-offset: 2px;
   }
@@ -180,13 +183,13 @@
 
 /* Une section qui reçoit le focus par un lien du menu ne s'encadre pas :
    le focus y est posé pour le lecteur d'écran, pas pour l'œil. */
-.accueil-carnet [tabindex='-1']:focus-visible {
+.tenue-carnet [tabindex='-1']:focus-visible {
   outline: none;
 }
 
 /* Le lien d'évitement et la fenêtre de l'agenda vivent hors de la page :
    ils prennent ici les couleurs du carnet au lieu de celles de la nuit. */
-:root:has(.accueil-carnet) .skip-link:is(:focus, :focus-visible) {
+:root:has(.tenue-carnet) .skip-link:is(:focus, :focus-visible) {
   background: var(--encre);
   color: var(--blanc);
   font-family: var(--carnet-titre);
@@ -194,7 +197,7 @@
   outline: 3px solid var(--violet);
 }
 
-:root:has(.accueil-carnet) .cal-overlay {
+:root:has(.tenue-carnet) .cal-overlay {
   --color-paper: var(--papier);
   --color-ink: var(--encre);
   --color-ink-mid: var(--encre-doux);
@@ -213,7 +216,7 @@
 
 /* ── Les trois voix ─────────────────────────────────────────────────── */
 
-.accueil-carnet .caps {
+.carnet-ui .caps {
   font-family: var(--carnet-titre);
   font-weight: 800;
   font-stretch: 75%;
@@ -224,11 +227,11 @@
   text-wrap: balance;
 }
 
-.accueil-carnet .caps--section {
+.carnet-ui .caps--section {
   font-size: var(--t-section);
 }
 
-.accueil-carnet .main {
+.carnet-ui .main {
   font-family: var(--carnet-main);
   font-size: var(--t-main);
   font-weight: 400;
@@ -237,7 +240,7 @@
   margin: 0;
 }
 
-.accueil-carnet .chapo {
+.carnet-ui .chapo {
   font-size: var(--t-chapo);
   line-height: 1.5;
   color: var(--encre-doux);
@@ -245,7 +248,7 @@
 
 /* Une ligne en code sous un titre de carte : son contexte, jamais un
    sur-titre. */
-.accueil-carnet .meta {
+.carnet-ui .meta {
   display: block;
   margin: 6px 0 0;
   max-width: none;
@@ -253,7 +256,7 @@
   color: var(--encre-doux);
 }
 
-.accueil-carnet .tag {
+.carnet-ui .tag {
   flex: none;
   display: inline-block;
   padding: 6px 9px;
@@ -265,21 +268,21 @@
 
 /* Les couleurs vives, en fond : un type de travail sur un autocollant ou une
    étiquette, une section sur un module. */
-.accueil-carnet .c-lilas { background: var(--lilas); }
-.accueil-carnet .c-menthe { background: var(--menthe); }
-.accueil-carnet .c-jaune { background: var(--jaune); }
-.accueil-carnet .c-rose { background: var(--rose); }
-.accueil-carnet .c-bleu { background: var(--bleu); }
-.accueil-carnet .c-blanc { background: var(--blanc); }
+.carnet-ui .c-lilas { background: var(--lilas); }
+.carnet-ui .c-menthe { background: var(--menthe); }
+.carnet-ui .c-jaune { background: var(--jaune); }
+.carnet-ui .c-rose { background: var(--rose); }
+.carnet-ui .c-bleu { background: var(--bleu); }
+.carnet-ui .c-blanc { background: var(--blanc); }
 
 /* ── Griffonnages et icônes ─────────────────────────────────────────── */
 
-.accueil-carnet .griffe {
+.carnet-ui .griffe {
   overflow: visible;
   pointer-events: none;
 }
 
-.accueil-carnet .griffe path {
+.carnet-ui .griffe path {
   fill: none;
   stroke: var(--encre);
   stroke-width: 2.6;
@@ -289,7 +292,7 @@
 }
 
 /* Les flèches et les coches de Lucide, au trait du texte. */
-.accueil-carnet .icone {
+.carnet-ui .icone {
   flex: none;
   width: 1.05em;
   height: 1.05em;
@@ -297,7 +300,7 @@
 
 /* ── Liens et pilules ───────────────────────────────────────────────── */
 
-.accueil-carnet .lien {
+.carnet-ui .lien {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -309,19 +312,19 @@
   text-underline-offset: 4px;
 }
 
-.accueil-carnet .lien:hover {
+.carnet-ui .lien:hover {
   text-decoration-color: var(--violet);
 }
 
-.accueil-carnet .lien .icone {
+.carnet-ui .lien .icone {
   transition: transform 0.15s ease;
 }
 
-.accueil-carnet .lien:hover .icone {
+.carnet-ui .lien:hover .icone {
   transform: translateX(3px);
 }
 
-.accueil-carnet .pilule {
+.carnet-ui .pilule {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -341,33 +344,33 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.accueil-carnet .pilule:hover {
+.carnet-ui .pilule:hover {
   transform: translate(-2px, -2px);
   box-shadow: var(--ombre-l);
 }
 
-.accueil-carnet .pilule:active {
+.carnet-ui .pilule:active {
   transform: translate(3px, 3px);
   box-shadow: 1px 1px 0 var(--encre);
 }
 
-.accueil-carnet .pilule[disabled] {
+.carnet-ui .pilule[disabled] {
   opacity: 0.6;
   cursor: progress;
 }
 
-.accueil-carnet .pilule-encre {
+.carnet-ui .pilule-encre {
   background: var(--encre);
   color: var(--blanc);
   box-shadow: 4px 4px 0 var(--lilas);
 }
 
-.accueil-carnet .pilule-encre:hover {
+.carnet-ui .pilule-encre:hover {
   box-shadow: 6px 6px 0 var(--lilas);
 }
 
 /* Le point vert : « disponible », devant ce qui mène au contact. */
-.accueil-carnet .point {
+.carnet-ui .point {
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -375,12 +378,12 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--vert-point) 20%, transparent);
 }
 
-.accueil-carnet .pilule-encre .point {
+.carnet-ui .pilule-encre .point {
   background: var(--menthe);
 }
 
 /* Le triangle de lecture, en petit, devant ce qui mène à YouTube. */
-.accueil-carnet .lecture-mini {
+.carnet-ui .lecture-mini {
   flex: none;
   width: 11px;
   height: 14px;
@@ -388,13 +391,13 @@
   clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
-.accueil-carnet .pilule-encre .lecture-mini {
+.carnet-ui .pilule-encre .lecture-mini {
   background: var(--rose);
 }
 
 /* ── Objets posés : polaroïd, scotch ────────────────────────────────── */
 
-.accueil-carnet .polaroid {
+.carnet-ui .polaroid {
   position: relative;
   margin: 0;
   padding: 12px 12px 0;
@@ -404,7 +407,7 @@
   box-shadow: var(--ombre-xl);
 }
 
-.accueil-carnet .polaroid .cadre {
+.carnet-ui .polaroid .cadre {
   display: block;
   overflow: hidden;
   border: var(--trait-fin) solid var(--encre);
@@ -412,13 +415,13 @@
   aspect-ratio: var(--r, 4 / 4.4);
 }
 
-.accueil-carnet .polaroid .cadre img {
+.carnet-ui .polaroid .cadre img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.accueil-carnet .polaroid figcaption {
+.carnet-ui .polaroid figcaption {
   padding: 11px 6px 13px;
   font-family: var(--carnet-main);
   font-size: var(--t-note);
@@ -426,7 +429,7 @@
   text-align: center;
 }
 
-.accueil-carnet .scotch {
+.carnet-ui .scotch {
   position: absolute;
   top: -14px;
   z-index: 2;
@@ -436,12 +439,12 @@
   background: color-mix(in srgb, var(--jaune) 78%, transparent);
 }
 
-.accueil-carnet .scotch--g {
+.carnet-ui .scotch--g {
   left: 16px;
   transform: rotate(-12deg);
 }
 
-.accueil-carnet .scotch--d {
+.carnet-ui .scotch--d {
   right: 16px;
   transform: rotate(9deg);
   background: color-mix(in srgb, var(--lilas) 85%, transparent);
@@ -449,11 +452,11 @@
 
 /* ── En-tête de section : un module du scénario ─────────────────────── */
 
-.accueil-carnet .etape {
+.carnet-ui .etape {
   padding-top: clamp(80px, 10vw, 130px);
 }
 
-.accueil-carnet .tete {
+.carnet-ui .tete {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -463,7 +466,7 @@
 
 /* Sous 768 px, ou tant que le chemin n'est pas tracé, une courte ligne de
    pointillés relie chaque module à ce qui précède. */
-.accueil-carnet .tete::before {
+.carnet-ui .tete::before {
   content: '';
   width: 4px;
   height: clamp(44px, 6vw, 72px);
@@ -473,11 +476,11 @@
 
 /* Une fois le chemin tracé, il remplace ces lignes et leur place, sauf la
    toute première (de la photo au premier module), qu'il ne dessine pas. */
-.chemin-actif .accueil-carnet .etape:not(#suivre) .tete::before {
+.chemin-actif .carnet-ui .etape:not(#suivre) .tete::before {
   display: none;
 }
 
-.accueil-carnet .module {
+.carnet-ui .module {
   position: relative;
   z-index: 1;
   display: grid;
@@ -491,14 +494,14 @@
   box-shadow: var(--ombre-m), 0 0 0 7px var(--papier);
 }
 
-.accueil-carnet .module .griffe {
+.carnet-ui .module .griffe {
   width: 32px;
   height: 32px;
 }
 
 /* La pastille du module : son rang dans le scénario. Elle passe au vert
    quand le chemin l'atteint, comme un module exécuté (`chemin.astro`). */
-.accueil-carnet .module b {
+.carnet-ui .module b {
   position: absolute;
   top: -6px;
   right: -8px;
@@ -513,7 +516,7 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.accueil-carnet .module[data-execute] b {
+.carnet-ui .module[data-execute] b {
   background: var(--vert);
   color: var(--blanc);
   animation: module-execute 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -525,14 +528,14 @@
   100% { transform: scale(1); }
 }
 
-.accueil-carnet .tete .chapo {
+.carnet-ui .tete .chapo {
   margin: 18px auto 0;
   max-width: 36em;
 }
 
 /* Le chemin du scénario, tracé par `chemin.astro` derrière le contenu : en
    pointillés d'encre, et en violet sur la partie déjà parcourue. */
-.accueil-carnet .chemin {
+.carnet-ui .chemin {
   position: absolute;
   left: 0;
   top: 0;
@@ -541,7 +544,7 @@
   overflow: visible;
 }
 
-.accueil-carnet .chemin path {
+.carnet-ui .chemin path {
   fill: none;
   stroke: var(--encre-pointille);
   stroke-width: 3.4;
@@ -550,12 +553,12 @@
   stroke-dasharray: 0 11;
 }
 
-.accueil-carnet .chemin .chemin__parcouru {
+.carnet-ui .chemin .chemin__parcouru {
   stroke: var(--violet);
   stroke-width: 4.2;
 }
 
-.accueil-carnet .chemin mask path {
+.carnet-ui .chemin mask path {
   stroke: #fff;
   stroke-width: 14;
   stroke-linecap: butt;
@@ -564,7 +567,7 @@
 
 /* ── Cartes ─────────────────────────────────────────────────────────── */
 
-.accueil-carnet .carte {
+.carnet-ui .carte {
   display: block;
   border: var(--trait) solid var(--encre);
   border-radius: var(--r-l);
@@ -574,23 +577,23 @@
   text-decoration: none;
 }
 
-.accueil-carnet a.carte {
+.carnet-ui a.carte {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.accueil-carnet a.carte:hover {
+.carnet-ui a.carte:hover {
   transform: translate(-3px, -3px);
   box-shadow: var(--ombre-survol);
 }
 
-.accueil-carnet .carte h3 {
+.carnet-ui .carte h3 {
   margin: 0;
   font: 800 var(--t-carte) / 1 var(--carnet-titre);
   font-stretch: 75%;
   text-transform: uppercase;
 }
 
-.accueil-carnet .carte p {
+.carnet-ui .carte p {
   margin: 10px 0 0;
   color: var(--encre-doux);
 }
@@ -598,9 +601,9 @@
 /* Mouvement réduit : plus de déplacement ni d'animation ; les changements
    d'état restent, sans transition. */
 @media (prefers-reduced-motion: reduce) {
-  .accueil-carnet *,
-  .accueil-carnet *::before,
-  .accueil-carnet *::after {
+  .tenue-carnet *,
+  .tenue-carnet *::before,
+  .tenue-carnet *::after {
     animation: none !important;
     transition: none !important;
   }

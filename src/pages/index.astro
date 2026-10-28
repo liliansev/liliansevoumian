@@ -1,10 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import '@fontsource-variable/bricolage-grotesque/standard.css';
-import '@fontsource/gochi-hand/latin-400.css';
-import '@fontsource/jetbrains-mono/latin-700.css';
-import '../components/carnet/carnet.css';
-import bricolageLatin from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2?url';
 import Chemin from '../components/carnet/chemin.astro';
 import Barre from '../components/carnet/barre.astro';
 import Ouverture from '../components/carnet/ouverture.astro';
@@ -29,7 +24,7 @@ import { resume, resumeCourt } from '../data/parcours';
    La page se lit comme un scénario Make : chaque section s'ouvre sur un
    module rond et coloré, numéroté, et un chemin de pointillés les relie
    (`components/carnet/chemin.astro`). La grammaire est dans
-   `components/carnet/carnet.css`, rangée sous `.accueil-carnet` : les autres pages
+   `components/carnet/carnet.css`, rangée sous `.tenue-carnet` : les autres pages
    gardent la tenue « nuit et pêche » tant qu'elles n'ont pas été passées au
    carnet. Le détail des choix est dans PRODUCT.md.
 
@@ -56,10 +51,8 @@ const pageSchema = {
   ogImage="/og-carnet.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA"
   pageSchema={pageSchema}
-  themeColor="#f6f2e8"
-  policePrechargee={bricolageLatin}
 >
-  <div class="accueil-carnet">
+  <div class="carnet-ui">
     <Chemin />
     <Barre />
     <main id="main-content" tabindex="-1">
