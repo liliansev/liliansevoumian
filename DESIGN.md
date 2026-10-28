@@ -1,6 +1,6 @@
 ---
 name: Lilian Sevoumian
-description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, formations, sites web. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, un trait pêche sous un fragment de titre, tout en bas de casse, un seul bouton qui ouvre la conversation, seul à porter la pastille pêche. L'accueil se lit comme un court documentaire : des plans en cinémascope de vraies photos de Lilian qui éclairent la nuit, des incrustations, ses sous-titres en pêche claire, des cartons de chapitre, une barre de lecture."
+description: "Site personnel de Lilian Sevoumian : automatisation, agents IA, outils métiers, formations. Une seule tenue sur toutes les pages : nuit profonde en fond, un seul accent pêche, le clair seulement dans une île arrondie, titres en graisse 500, un trait pêche sous un fragment de titre, tout en bas de casse, un seul bouton qui ouvre la conversation, seul à porter la pastille pêche. L'accueil se lit comme un court documentaire : des plans en cinémascope de vraies photos de Lilian qui éclairent la nuit, des incrustations, ses sous-titres en pêche claire, des cartons de chapitre, une barre de lecture."
 colors:
   paper: "#0c121f"
   surface-low: "#1a2439"
@@ -502,6 +502,18 @@ Ce qui change :
 - Les pages intérieures ne portent ni modules ni chemin de pointillés : ce
   sont des pages de lecture et d'offre, pas des pages de marque.
 
+**Plus de sites web (28 octobre 2026).** Lilian retire l'offre de création et
+de suivi de sites web. `/outils-metiers` (dashboards, portails clients,
+outils internes, création et suivi sur devis) remplace
+`/sites-web-abonnement`, qui y redirige en 308 (`deploy/server.mjs`,
+`vercel.json`). Données dans `src/data/outils-metiers.ts` ; les grilles de prix
+des sites sont retirées de `maintenance.ts` et `service-pricing.ts`. Le même
+jour, les scènes de bureau générées de `/automatisations-ia`
+(`src/assets/work-scenes/`) sont supprimées : « elles font banque d'images ».
+Aucune image de personne générée ne va plus sur une page du site. Les
+passages plus bas qui décrivent `/sites-web-abonnement` ou ces scènes sont
+corrigés en ce sens.
+
 La suite décrit la tenue « nuit et pêche » (3 au 28 octobre 2026). Ses
 règles de structure valent toujours (un seul bouton d'appel, les îles, les
 composants communs, la mesure, le mouvement) ; ses couleurs et sa
@@ -632,7 +644,7 @@ Un en-tête (c'est `tete-de-page`), une FAQ (`questions`), une section de
 contact (`fin-de-page`), un lien de retour (`retour`), un lien vers l'agenda
 (`BoutonReservation`). Trois pages gardent un premier écran à elles, parce
 qu'il porte autre chose qu'un titre : `/automatisations-ia` (`HeroManifesto`),
-`/sites-web-abonnement` (le titre face aux repères de prix) et les pages de cas
+`/outils-metiers` (le titre face au schéma des données reliées) et les pages de cas
 (la liste, dont l'en-tête et les rangées partagent une section ; un cas, avec
 sa ligne de contexte et ses chiffres). Elles suivent les mêmes règles :
 `h1` en `--text-display`, entrée par `.entree` ou par la cascade du manifeste,
@@ -643,7 +655,7 @@ un seul `mark` au plus.
 | Page | Île(s) |
 |---|---|
 | `/automatisations-ia` | la méthode (`Methode`) et les offres (`Offres`) |
-| `/sites-web-abonnement` | les tarifs de création et les abonnements |
+| `/outils-metiers` | ce que je construis (trois formes, prix sur devis, cas Deuxième Souffle) |
 | `/expert-make`, `/expert-n8n` | `pourquoi-moi` |
 | pages de lecture et page de reprise | une `partie clair` : le comparatif, le prix du suivi, la première tâche à confier |
 | `/cas-clients/[slug]` | la pièce « Les résultats » |
@@ -1266,7 +1278,8 @@ demande.
 vrai, et rien d'autre : son bureau, son portrait, des captures de Radio
 Contournement, une séance de formation. Chaque image du dossier
 `src/assets/documentaire/` a sa provenance dans son `README.md`. Les scènes de
-travail générées (`src/assets/work-scenes/`) ne vont jamais sur l'accueil.
+travail générées (`src/assets/work-scenes/`) sont supprimées du site depuis le
+28 octobre 2026.
 
 **La règle des deux voix.** La pêche claire est la voix de Lilian, et
 seulement la sienne : ses sous-titres. Les mots des autres sont blancs, signés
@@ -1637,7 +1650,7 @@ titres collants, du nom en toutes lettres dans la barre et de
 `scrollbar-gutter: stable` ; sur l'accueil, de la barre d'écriture à droite
 du titre, du portrait face à sa parole.
 Les autres sont des empilements locaux, écrits avec leur composant : 900 px (liste de prix, offres,
-témoignages, scènes de travail ; les deux affiches d'« En ce moment », les trois
+témoignages, tâches automatisables ; les deux affiches d'« En ce moment », les trois
 colonnes de la filmographie, le rail des intervenants), 768 px (blocs sur deux colonnes ; les plans
 larges passent de 4:3 à 2,39:1), 720 px (tableau d'une `partie` replié en
 blocs), 640 px (rythme de téléphone, fin de page empilée, liste des plans en
@@ -2101,11 +2114,13 @@ lesquelles. Dans le carrousel (`CaseStudy`), les résultats d'un cas se lisent
 à la suite, à l'encre, séparés par un point médian en `ink-low` : chacun était
 dans une pastille pêche jusqu'au 8 octobre 2026.
 
-**`/sites-web-abonnement`** ouvre sur son titre face aux repères de prix : un
-panneau `surface-low` arrondi en `lg`, seule surface du premier écran. Les
-tarifs de création puis les abonnements sont deux îles, séparées par la partie
-des applications métier ; chacune porte une liste de prix. Tarifs et inclusions
-viennent de `src/data/maintenance.ts`.
+**`/outils-metiers`** (depuis le 28 octobre 2026, à la place de
+`/sites-web-abonnement`) ouvre sur son titre face au schéma 3D des données
+reliées (`application-system-diagram`). Une seule île : ce que je construis,
+les trois formes (dashboard, portail client, outil interne) sous des
+pointillés d'encre, le prix en une phrase (tout est sur devis, aucune liste de
+prix) et le cas Deuxième Souffle. Puis la méthode en quatre étapes, les
+questions et la fin. Textes dans `src/data/outils-metiers.ts`.
 
 **Les pages de cas** (`/cas-clients/[slug]`) ouvrent sur le fil de retour, le
 titre, une ligne de contexte (secteur, sujets, date de publication) et les
@@ -2163,14 +2178,14 @@ encre ; la marque tierce n'apparaît qu'au survol, et jamais sur pointeur
 grossier : logos du bandeau d'outils (`LogoMarquee`), canaux du pied de page.
 Une marque dont la teinte est un noir (Notion) reste à l'encre.
 
-### Scènes de travail et schémas des cas clients
+### Tâches automatisables et schémas des cas clients
 
-La page `/automatisations-ia` associe trois scènes photoréalistes à six
-usages : dossiers et reporting, commandes et catalogue, prospection et demandes
-entrantes. Images illustratives de personnes fictives générées par IA ;
-provenance et prompts conservés dans `src/assets/work-scenes/README.md`. Photos
-en 3:2, qui s'ouvrent au défilement, trois colonnes puis empilement sous
-900 px.
+La page `/automatisations-ia` liste six tâches (facturation, commandes,
+prospection, catalogue, reporting, demandes entrantes) en trois colonnes, deux
+sous 900 px, une sous 600 px, chacune sous un trait de pointillés d'encre. Les
+trois scènes photoréalistes générées qui les coiffaient sont retirées le 28
+octobre 2026 (« ça fait banque d'images ») ; leurs fichiers et leurs prompts
+avec.
 
 Les visuels du carrousel utilisent `CaseIllustration.astro` : trois étapes
 reliées, outils nommés et logos de marque disponibles ; les outils sans logo
@@ -2331,9 +2346,9 @@ seuils de chargement sont décrits dans `src/lib/site-scenes/README.md`.
   en dehors du défilé des logos. Ni y remettre une forme 3D, une FAQ, des
   prix, ou le générique de fin qui citait clients, recommandations et outils
   (retiré le 14 octobre 2026 : tout y faisait doublon).
-- **Don't** poser sur l'accueil une image générée (les scènes de
-  `src/assets/work-scenes/`) ni une photo qui ne montre pas Lilian pour de
-  vrai.
+- **Don't** poser sur l'accueil une photo qui ne montre pas Lilian pour de
+  vrai, ni nulle part sur le site une image générée de personnes (les scènes
+  de `src/assets/work-scenes/`, retirées le 28 octobre 2026).
 - **Don't** écrire une date sur l'accueil : ni année, ni « depuis », ni pied
   de page daté.
 - **Don't** prêter la pêche claire à d'autres mots que ceux de Lilian.
