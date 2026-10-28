@@ -57,7 +57,7 @@ src/
 │   │   ├── avis.astro         # module 5 : trois citations (celles de documentaire/voix.astro)
 │   │   ├── contact.astro      # module 6 (`#ecrire`) : formulaire-contact en habit `carnet`, lien vers l'agenda
 │   │   ├── pied.astro         # le pied de l'accueil : le nom en très grand, liens dehors et pages du site, sans année
-│   │   └── chemin.astro       # le chemin de pointillés d'un module à l'autre (SVG, à partir de 700 px), qui se colore en violet à la lecture ; les pastilles des modules atteints passent au vert
+│   │   └── chemin.astro       # le chemin de pointillés d'un module à l'autre (SVG, à partir de 768 px, là où la gouttière passe à 32 px), qui se colore en violet à la lecture ; les pastilles des modules atteints passent au vert
 │   │   # — accueil « Le documentaire » (14 au 27 octobre 2026), plus rendu sur `/` —
 │   ├── documentaire/          # les chapitres de l'accueil, lus comme un court documentaire sur Lilian au travail
 │   │   ├── documentaire.css   # la grammaire commune : plan et sa lumière, incrustation, sous-titre, carton, crédit, étalonnage
