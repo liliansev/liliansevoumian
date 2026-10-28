@@ -1,0 +1,143 @@
+<!doctype html>
+<!--
+  Source de la vignette sociale de l'accueil (public/og-carnet.png), dans la
+  grammaire du « Carnet » (src/components/carnet/carnet.css) : papier
+  quadrillé, encre, ombres pleines décalées, la photo du NoCode Summit en
+  polaroïd, le nom en capitales condensées, la signature à la main.
+  Aucun chiffre de prestation, comme sur l'accueil.
+  Régénérer : node scripts/generate-og-carnet.mjs
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face {
+    font-family: 'Bricolage Grotesque Variable';
+    src: url(../../node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2) format('woff2');
+    font-weight: 200 800;
+    font-stretch: 75% 100%;
+  }
+  @font-face {
+    font-family: 'Gochi Hand';
+    src: url(../../node_modules/@fontsource/gochi-hand/files/gochi-hand-latin-400-normal.woff2) format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url(../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2) format('woff2');
+    font-weight: 700;
+  }
+  :root {
+    --papier: #f6f2e8;
+    --blanc: #fffdf8;
+    --encre: #1d1a22;
+    --encre-doux: #4f4a56;
+    --violet: #6a3df5;
+    --lilas: #b59cff;
+    --menthe: #4fe0a0;
+    --jaune: #ffd23f;
+    --rose: #ff8fc8;
+    --bleu: #6ab7ff;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative;
+    background-color: var(--papier);
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--encre) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--encre) 7%, transparent) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: -1px -1px;
+    color: var(--encre);
+    font-family: 'Bricolage Grotesque Variable', 'Arial Narrow', sans-serif;
+  }
+  .gauche { position: absolute; left: 72px; top: 70px; width: 700px; }
+  .salut { font-family: 'Gochi Hand', cursive; font-size: 40px; line-height: 1; transform: rotate(-2deg); transform-origin: left; }
+  h1 {
+    margin-top: 14px;
+    font-weight: 800;
+    font-stretch: 75%;
+    text-transform: uppercase;
+    font-size: 150px;
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+  }
+  .signature {
+    position: relative;
+    display: inline-block;
+    margin-top: 22px;
+    font-family: 'Gochi Hand', cursive;
+    font-size: 50px;
+    line-height: 1;
+    color: var(--violet);
+    transform: rotate(-2deg);
+  }
+  .signature svg { position: absolute; left: -2%; bottom: -14px; width: 104%; height: 16px; }
+  .pilules { position: absolute; left: 72px; bottom: 62px; display: flex; gap: 14px; }
+  .pilule {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 20px 10px 14px;
+    border: 2.5px solid var(--encre);
+    border-radius: 999px;
+    box-shadow: 4px 4px 0 var(--encre);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .pilule i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--encre); background: var(--blanc); }
+  .lilas { background: var(--lilas); }
+  .rose { background: var(--rose); }
+  .bleu { background: var(--bleu); }
+  .jaune { background: var(--jaune); }
+
+  .photo { position: absolute; right: 78px; top: 58px; width: 330px; transform: rotate(3deg); }
+  .polaroid {
+    position: relative;
+    padding: 12px 12px 0;
+    border: 2.5px solid var(--encre);
+    border-radius: 16px;
+    background: var(--blanc);
+    box-shadow: 8px 8px 0 var(--encre);
+  }
+  .cadre { display: block; overflow: hidden; height: 360px; border: 2px solid var(--encre); border-radius: 6px; }
+  .cadre img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+  .polaroid p { padding: 10px 6px 13px; font-family: 'Gochi Hand', cursive; font-size: 24px; text-align: center; }
+  .scotch { position: absolute; top: -14px; z-index: 2; width: 92px; height: 28px; border: 1px solid color-mix(in srgb, var(--encre) 12%, transparent); }
+  .scotch--g { left: 16px; transform: rotate(-12deg); background: color-mix(in srgb, var(--jaune) 78%, transparent); }
+  .scotch--d { right: 16px; transform: rotate(9deg); background: color-mix(in srgb, var(--lilas) 85%, transparent); }
+  .pastille {
+    position: absolute; left: -64px; bottom: 34px; z-index: 3;
+    display: grid; place-items: center;
+    width: 140px; height: 140px; padding: 16px;
+    border: 2.5px solid var(--encre); border-radius: 50%;
+    background: var(--menthe);
+    box-shadow: 4px 4px 0 var(--encre);
+    transform: rotate(-10deg);
+    text-align: center; font-weight: 700; font-size: 15px; line-height: 1.15;
+  }
+  .pastille strong { display: block; font-size: 32px; line-height: 0.9; font-weight: 800; }
+</style>
+</head>
+<body>
+  <div class="gauche">
+    <p class="salut">salut, moi c’est</p>
+    <h1>Lilian<br />Sevoumian</h1>
+    <p class="signature">l’indé super augmenté<svg viewBox="0 0 300 16" preserveAspectRatio="none"><path d="M2 9 C 40 2, 70 15, 110 8 S 180 2, 220 9 S 280 14, 298 6" fill="none" stroke="#6a3df5" stroke-width="3" stroke-linecap="round"/></svg></p>
+  </div>
+  <div class="pilules">
+    <span class="pilule lilas"><i></i>automatisation</span>
+    <span class="pilule rose"><i></i>agents IA</span>
+    <span class="pilule bleu"><i></i>outils métiers</span>
+    <span class="pilule jaune"><i></i>formations</span>
+  </div>
+  <div class="photo">
+    <figure class="polaroid">
+      <span class="scotch scotch--g"></span>
+      <span class="scotch scotch--d"></span>
+      <span class="cadre"><img src="../../src/assets/carnet/nocode-summit.jpg" alt="" /></span>
+      <p>moi, au NoCode Summit</p>
+    </figure>
+    <p class="pastille"><span><strong>1er</strong>Français certifié Make niveau 5</span></p>
+  </div>
+</body>
+</html>

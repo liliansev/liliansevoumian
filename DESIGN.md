@@ -1323,7 +1323,9 @@ il répond déjà.
 
 ### Ce qui se refait à la main
 
-`public/og-home.png` se refait à chaque changement de l'ouverture. Les
+`public/og-carnet.png`, la vignette de partage de l'accueil, se refait à
+chaque changement de l'ouverture : `node scripts/generate-og-carnet.mjs`
+photographie `scripts/og-carnet/index.html`. Les
 composants de l'accueil d'avant (`home-hero`, `home-story`, `home-services`,
 `home-today-path`, `home-content`, `home-voices`) existent encore dans
 `src/components/` mais ne sont plus rendus sur `/` : ils ne sont pas une
