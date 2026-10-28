@@ -47,4 +47,4 @@ Ce cas présente le premier lot réalisé : sessions disponibles, candidatures, 
 
 Je ne dispose pas de mesures de temps gagné, de données d’adoption ni d’un témoignage client à publier pour ce projet. Le cas documente donc le besoin et les fonctionnalités réalisées, sans leur attribuer un résultat chiffré.
 
-Vous avez un parcours similaire à organiser ? Découvrez mon accompagnement pour les [applications métiers, dashboards et portails clients](/sites-web-abonnement#applications).
+Vous avez un parcours similaire à organiser ? Découvrez mon accompagnement pour les [applications métiers, dashboards et portails clients](/outils-metiers).

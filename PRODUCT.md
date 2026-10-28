@@ -70,7 +70,8 @@ Le site ne présente donc pas « un freelance et ses offres » mais **un pratici
 ## Capabilities and Constraints
 
 - Site statique Astro, sans compte ni espace connecté.
-- **Les pages d'offre existent et restent** : `/automatisations-ia`, `/sites-web-abonnement`, `/expert-make`, `/expert-n8n`, `/reprendre-une-automatisation-qui-casse`, `/cas-clients` et ses fiches, `/principes`. Elles passent au second plan, elles ne sont pas supprimées.
+- **Les pages d'offre existent et restent** : `/automatisations-ia`, `/outils-metiers`, `/expert-make`, `/expert-n8n`, `/reprendre-une-automatisation-qui-casse`, `/cas-clients` et ses fiches, `/principes`. Elles passent au second plan, elles ne sont pas supprimées.
+- **Plus de sites web** (Lilian, 28 octobre 2026) : l'offre de création et de suivi de sites est retirée ; les outils métiers (dashboards, portails clients, outils internes) restent, sur devis, sur `/outils-metiers`. `/sites-web-abonnement` y redirige. Les sites qu'il a réalisés restent des faits (« Evidence on Hand »), pas une offre.
 - **Un fait, une source.** Un chiffre ou un titre affiché sur une page, dans le balisage et dans `/llms.txt` vient du même endroit dans le code. Un moteur qui lit deux versions d'un fait n'en cite aucune.
 - **Rien d'inventé.** Seuls les faits listés dans « Evidence on Hand » peuvent être affirmés. Tout chiffre d'audience est daté et doit pouvoir être mis à jour à un seul endroit.
 - **Arbitrages du 1er octobre 2026**, quand le site et LinkedIn divergeaient : LinkedIn fait foi pour le parcours (un an chez Jellysmack, cofondateur de La Capsule, au passé) ; le site n'affiche pas de nombre de vidéos YouTube ; Substack n'est plus cité nulle part.

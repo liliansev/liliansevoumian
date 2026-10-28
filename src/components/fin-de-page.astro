@@ -45,9 +45,9 @@ const {
 } = Astro.props;
 
 /* Mêmes noms que dans les blocs des métiers : une offre n'a qu'un nom sur la
-   page. Les sites web ont quitté l'accueil le 3 octobre 2026 : la seconde
-   offre est « Dashboards et outils métiers », sur devis, et mène à la partie
-   « Applications » de la page d'offre. */
+   page. La seconde offre est « Dashboards et outils métiers », sur devis, et
+   mène à `/outils-metiers` (Lilian ne propose plus de sites web depuis le
+   28 octobre 2026). */
 const euros = (montant: number) => `${montant.toLocaleString('fr-FR')}\u00a0€\u00a0HT`;
 const offres = [
   {
@@ -58,7 +58,7 @@ const offres = [
     source: 'home_services_automation',
   },
   {
-    href: '/sites-web-abonnement#applications',
+    href: '/outils-metiers',
     nom: 'Dashboards et outils métiers',
     avant: '',
     prix: 'sur devis',

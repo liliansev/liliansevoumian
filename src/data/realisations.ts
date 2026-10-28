@@ -1,6 +1,7 @@
 /*
- * Les sites réalisés par Lilian. Une seule liste, lue par la page d'offre
- * (/sites-web-abonnement) et par la page d'accueil : la capture, le lien et la
+ * Les sites réalisés par Lilian. Une seule liste, lue par la
+ * (vitrine de /explorations-metiers ; l’offre sites web a été retirée le 28
+ * octobre 2026) : la capture, le lien et la
  * légende d'un site ne s'écrivent qu'ici.
  *
  * `long` est facultatif : la même page d'accueil, capturée sur toute sa

@@ -34,12 +34,14 @@ export function parseLatestVideo(xml) {
   return { id, titre, publiee: /<published>(\d{4}-\d{2}-\d{2})/.exec(entry)?.[1] ?? null };
 }
 /* Les adresses que des robots demandent encore : trois cas retirés en avril
-   2026 et un en octobre, le nom courant du sitemap, et celles que des agents
-   devinent. */
+   2026 et un en octobre, le nom courant du sitemap, celles que des agents
+   devinent, et l'offre sites web, remplacée le 28 octobre 2026 par les outils
+   métiers (le navigateur garde l'ancre `#applications`). */
 const moved = new Map([
   ['/sitemap.xml', '/sitemap-index.xml'],
   ['/cas-clients/chatbot-support-saas', '/cas-clients'], ['/cas-clients/onboarding-ecommerce', '/cas-clients'], ['/cas-clients/reporting-dashboards-ia', '/cas-clients'], ['/cas-clients/celeris', '/cas-clients'],
   ['/offres', '/automatisations-ia'], ['/about', '/'], ['/legal', '/mentions-legales'],
+  ['/sites-web-abonnement', '/outils-metiers'],
 ]);
 const etagOf = bytes => `"${createHash('sha1').update(bytes).digest('base64url').slice(0, 27)}"`;
 const matches = (header, etag) => typeof header === 'string' && header.split(',').some(tag => { const value = tag.trim(); return value === '*' || value.replace(/^W\//, '') === etag; });

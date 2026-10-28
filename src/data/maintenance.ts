@@ -26,28 +26,3 @@ export const automationSubscriptions: readonly MaintenanceOffer[] = [
     includes: [...maintenanceIncludes, 'Coûts IA inclus'],
   },
 ];
-
-export const webSubscriptions: readonly MaintenanceOffer[] = [
-  {
-    name: 'Landing page',
-    price: 'Dès 90\u00a0€\u00a0HT\u00a0/\u00a0mois',
-    schemaPrice: 90,
-    minimum: true,
-    promise: 'Une page pour présenter votre offre.',
-    includes: maintenanceIncludes,
-  },
-  {
-    name: 'Site multipage',
-    price: '190\u00a0€\u00a0HT\u00a0/\u00a0mois',
-    schemaPrice: 190,
-    promise: 'Plusieurs pages pour présenter votre activité et vos services.',
-    includes: maintenanceIncludes,
-  },
-  {
-    name: 'Site avec blog',
-    price: '390\u00a0€\u00a0HT\u00a0/\u00a0mois',
-    schemaPrice: 390,
-    promise: 'Un site avec un espace pour publier vos contenus.',
-    includes: maintenanceIncludes,
-  },
-];

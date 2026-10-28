@@ -35,6 +35,6 @@ est celle que Lilian a publiée lui-même, et c'est lui qui l'a demandée sur
 l'accueil.
 
 Les autres photos de Lilian viennent de `src/assets/` : `lilian-au-bureau.jpg`
-(son bureau) et `lilian-photo.jpg` (portrait). Les images de
-`src/assets/work-scenes/` sont générées et ne le montrent pas : elles ne vont
-pas sur l'accueil.
+(son bureau) et `lilian-photo.jpg` (portrait). Les scènes de bureau générées
+(`work-scenes/`, retirées du site le 28 octobre 2026) ne le montraient pas : elles n’allaient
+pas sur l’accueil.

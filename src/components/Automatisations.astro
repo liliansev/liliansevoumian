@@ -1,13 +1,9 @@
 ---
 /*
- * Automatisations — six points de départ, rangés sous trois scènes de travail.
- * Les photos sont des scènes illustratives générées par IA, distinctes des
- * vrais cas clients.
+ * Automatisations — six points de départ, en trois colonnes. Les photos de
+ * scènes de bureau générées qui les coiffaient sont retirées le 28 octobre
+ * 2026 (Lilian : elles « font banque d'images ») : le texte suffit.
  */
-import { Image } from 'astro:assets';
-import dossiers from '../assets/work-scenes/dossiers.png';
-import commandes from '../assets/work-scenes/commandes.png';
-import appel from '../assets/work-scenes/appel.png';
 import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
 
@@ -49,11 +45,6 @@ const familles: Famille[] = [
   },
 ];
 
-const scenes = [
-  { image: dossiers, alt: 'Une professionnelle consulte ses dossiers devant son ordinateur.', familles: [familles[0], familles[4]] },
-  { image: commandes, alt: 'Un professionnel prépare une commande sur ordinateur dans une réserve.', familles: [familles[1], familles[3]] },
-  { image: appel, alt: 'Une professionnelle au téléphone prend des notes à son bureau.', familles: [familles[2], familles[5]] },
-];
 ---
 
 <section
@@ -69,36 +60,14 @@ const scenes = [
       titleMaxWidth="20ch"
     />
 
-    <div class="process-grille">
-      {scenes.map((scene) => (
-        <div class="process-group">
-          {/* L'enveloppe porte le rayon et le rognage, et c'est elle qui s'ouvre
-              au défilement pendant que la photo se pose (geste n° 3 de
-              global.css). Sans `animation-timeline`, la photo est simplement
-              là, arrondie. */}
-          <div class="media-ouvre process-media">
-            <Image
-              src={scene.image}
-              alt={scene.alt}
-              width={768}
-              widths={[384, 768, 1200]}
-              sizes="(min-width: 1340px) 352px, (min-width: 900px) 27vw, (min-width: 768px) 90vw, calc(100vw - 48px)"
-              format="webp"
-              quality={82}
-              loading="lazy"
-              decoding="async"
-              class="process-photo"
-            />
-          </div>
-          {scene.familles.map((f) => (
-            <div class="process-item">
-              <h3 class="m-0">{f.titre}</h3>
-              <p class="m-0 mt-[var(--spacing-colle)] leading-[var(--leading-body)] text-[var(--color-ink-mid)]" set:html={f.corps} />
-            </div>
-          ))}
-        </div>
+    <ul class="process-grille" role="list">
+      {familles.map((f) => (
+        <li class="process-item reveal">
+          <h3 class="m-0">{f.titre}</h3>
+          <p class="m-0 mt-[var(--spacing-colle)] leading-[var(--leading-body)] text-[var(--color-ink-mid)]" set:html={f.corps} />
+        </li>
       ))}
-    </div>
+    </ul>
 
     {/* La sortie de la section : un lien fléché. Le bouton plein reste celui
         de la conversation, dans la barre et en fin de page. */}
@@ -113,46 +82,32 @@ const scenes = [
 </section>
 
 <style>
+  /* Six tâches en trois colonnes, chacune sous un trait de pointillés
+     d'encre, comme les entrées du menu du carnet. */
   .process-grille {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--spacing-gouttiere);
+    gap: var(--spacing-groupe) var(--spacing-gouttiere);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  /* Trois rangées par scène : la photo, puis deux tâches de même hauteur, pour
-     que les titres de la seconde rangée s'alignent d'une colonne à l'autre.
-     L'espace les sépare, sans filet. */
-  .process-group {
-    display: grid;
-    grid-template-rows: auto 1fr 1fr;
-    gap: var(--spacing-groupe);
-    min-width: 0;
-  }
-
-  /* Le fond d'attente est sur l'enveloppe : posé sur l'image, il dépasserait
-     du rayon pendant le chargement. */
-  .process-media {
-    background: var(--color-surface-low);
-  }
-
-  .process-group :global(.process-photo) {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    border: 2.5px solid var(--color-border-strong);
-    border-radius: var(--radius-lg);
+  .process-item {
+    max-width: none;
+    padding-top: var(--spacing-lie);
+    border-top: 2px dashed var(--color-service-border);
   }
 
   @media (max-width: 899px) {
     .process-grille {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--spacing-bloc);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
 
-    .process-group {
-      grid-template-rows: auto;
+  @media (max-width: 599px) {
+    .process-grille {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 

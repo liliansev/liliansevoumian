@@ -3,8 +3,8 @@ import SectionHeader from './SectionHeader.astro';
 import LinkCTA from './LinkCTA.astro';
 import BoutonReservation from './BoutonReservation.astro';
 import SubscriptionGrid from './SubscriptionGrid.astro';
-import { automationSubscriptions, webSubscriptions, maintenanceScope } from '../data/maintenance';
-import { automationStartingPrice, webStartingPrice } from '../data/service-pricing';
+import { automationSubscriptions, maintenanceScope } from '../data/maintenance';
+import { automationStartingPrice } from '../data/service-pricing';
 import { DUREE_RESERVATION_MINUTES } from '../lib/reservation';
 /*
  * Offres — les trois formats de collaboration, puis ce qu'ils coûtent.
@@ -112,11 +112,9 @@ const formats = [
 
         <div class="offres-porte">
           <p>
-            Pour un site web, la création commence à {webStartingPrice.toLocaleString('fr-FR')}&nbsp;€&nbsp;HT, puis
-            l’abonnement de suivi commence à {webSubscriptions[0].schemaPrice}&nbsp;€&nbsp;HT&nbsp;/&nbsp;mois pour une
-            landing page.
+            Un dashboard, un portail client ou un outil interne relié à vos automatisations&nbsp;: création et suivi sur devis.
           </p>
-          <LinkCTA href="/sites-web-abonnement">Voir l’offre sites web</LinkCTA>
+          <LinkCTA href="/outils-metiers">Voir les outils métiers</LinkCTA>
         </div>
 
         {/* La sortie vers augmentes.fr, pour qui veut apprendre à le faire

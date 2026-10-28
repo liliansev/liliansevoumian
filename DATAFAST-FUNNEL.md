@@ -62,7 +62,8 @@ La prop `source` dit lequel a converti :
 - `home_metier_automation`, `home_metier_web` : le lien d'offre des blocs
   Automatisation et Dashboards et outils métiers de la section « Mes expertises ». `home_metier_web` garde son nom pour ne pas casser les filtres : le
   bloc s'appelait « Sites web et dashboards » jusqu'au 3 octobre 2026, et son
-  lien mène maintenant à `/sites-web-abonnement#applications` ;
+  lien mène maintenant à `/outils-metiers` (l'offre sites web est retirée le
+  28 octobre 2026) ;
 - `home_metier_agents` : le prix du bloc Agents IA, qui mène à
   `/automatisations-ia` (le bouton du bloc, lui, sort vers agenceafk) ;
 - `home_services_automation`, `home_services_web` : la ligne de prix sous le
@@ -158,7 +159,7 @@ La prop `source` dit d'où :
 |----------------|-----|
 | `home_nav` · `home_nav_mobile` · `home_pourquoi_moi` · `home_offres` | Accueil `/` |
 | `automatisations_nav` · `automatisations_nav_mobile` · `hero` · `roi` · `offres` · `automatisations_fin` | Offre `/automatisations-ia` |
-| `sites_web_nav` · `sites_web_nav_mobile` · `sites_web_hero` · `sites_web_applications` · `sites_web_fin` | Offre `/sites-web-abonnement` |
+| `outils_nav` · `outils_nav_mobile` · `outils_hero` · `outils_ile` · `outils_fin` | Offre `/outils-metiers` (remplace `sites_web_*` de `/sites-web-abonnement`, retirée le 28 octobre 2026) |
 | `expert-make` · `expert-make_nav` · `expert-make_fin` · `expert-n8n` · `expert-n8n_nav` · `expert-n8n_fin` | Pages d'outil |
 | `cas_index_nav` · `cas_index_fin` · `cas_article_nav` · `cas_article_fin` | Pages cas-clients |
 | `reprise_nav` · `reprise-hero` · `reprise_fin` | `/reprendre-une-automatisation-qui-casse` |
