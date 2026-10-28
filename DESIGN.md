@@ -713,7 +713,7 @@ module au suivant, et la pastille de chaque module atteint passe au vert,
 comme un module exécuté dans Make (`chemin.astro`). Le reste est de la
 réponse : les objets se soulèvent au survol, une carte du kanban se pose
 quand elle arrive dans sa colonne, le défilé des logos tourne (avec sa
-pause). Le chemin n'existe qu'à partir de 700 px de large ; les pastilles
+pause). Le chemin n'existe qu'à partir de 768 px de large ; les pastilles
 s'exécutent à toutes les tailles. Avec `prefers-reduced-motion`, plus rien
 ne bouge : le chemin reste à l'encre, les pastilles changent d'état sans
 animation, le défilé passe sur plusieurs lignes.
