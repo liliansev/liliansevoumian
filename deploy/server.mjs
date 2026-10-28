@@ -50,10 +50,26 @@ async function readBody(req, limit) {
   for await (const chunk of req) { size += chunk.length; if (size > limit) throw new HttpError(413); chunks.push(chunk); }
   return Buffer.concat(chunks);
 }
+/* Le débit du formulaire de contact, par adresse IP : `max` demandes par
+   fenêtre de `windowMs`, comptées en mémoire (un seul process, persistant).
+   Les jetons (GET) ont leur propre compteur, plus large. */
+export function createRateLimiter({ max, windowMs, now = Date.now }) {
+  const hits = new Map();
+  return key => {
+    const t = now();
+    if (hits.size > 10_000) for (const [k, list] of hits) if (list.at(-1) <= t - windowMs) hits.delete(k);
+    const list = (hits.get(key) ?? []).filter(at => at > t - windowMs);
+    if (list.length >= max) { hits.set(key, list); return Math.ceil((list[0] + windowMs - t) / 1000); }
+    list.push(t); hits.set(key, list);
+    return 0;
+  };
+}
 /** Only expose through Caddy; it must overwrite X-Real-IP with the client IP. */
-export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNewsletter, sendContactMessage, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
+export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNewsletter, sendContactMessage, contactLimits = { messages: 5, jetons: 30, windowMs: 600_000 }, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
   let newsletterPromise;
   let contactPromise;
+  const contactMessages = createRateLimiter({ max: contactLimits.messages, windowMs: contactLimits.windowMs });
+  const contactJetons = createRateLimiter({ max: contactLimits.jetons, windowMs: contactLimits.windowMs });
   /* Le flux est relu au plus toutes les demi-heures. Si YouTube ne répond pas,
      la dernière réponse connue sert encore et on réessaie une minute plus tard. */
   let video = null, videoCheckedAt = -Infinity, videoPending = null, thumbnail = null, thumbnailPending = null;
@@ -112,11 +128,16 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNews
         return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
       }
       if (url.pathname === '/api/contact') {
-        if (req.method !== 'POST') return send(405, '', { Allow: 'POST' });
-        const bytes = await readBody(req, 8192);
+        if (req.method !== 'POST' && req.method !== 'GET') return send(405, '', { Allow: 'GET, POST' });
+        const wait = (req.method === 'GET' ? contactJetons : contactMessages)(ip ?? req.socket.remoteAddress ?? 'inconnu');
+        if (wait) {
+          const minutes = Math.max(1, Math.ceil(wait / 60));
+          return send(429, JSON.stringify({ status: 'error', message: `Trop de messages envoyés d’ici. Réessayez dans ${minutes} minute${minutes > 1 ? 's' : ''}.` }), { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Retry-After': String(wait) });
+        }
+        const bytes = req.method === 'POST' ? await readBody(req, 8192) : undefined;
         if (!sendContactMessage) contactPromise ??= import('../runtime/contact-message.mjs');
         const envoyer = sendContactMessage ?? (await contactPromise).envoyerMessageContact;
-        const response = await envoyer(new Request(url, { method: 'POST', headers, body: bytes }), process.env, origin);
+        const response = await envoyer(new Request(url, { method: req.method, headers, body: bytes }), process.env, origin);
         return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
       }
       if (url.pathname === '/api/dfst-events') {

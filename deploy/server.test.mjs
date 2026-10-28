@@ -124,5 +124,23 @@ test('contact delegates original body, environment and canonical origin to share
   const response = await fetch(`${url}/api/contact`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://liliansevoumian.fr' }, body: '{"email":"test@example.com","message":"Bonjour"}' });
   assert.equal(response.status, 200); assert.equal(received.origin, 'https://liliansevoumian.fr'); assert.equal(received.body.message, 'Bonjour'); assert.equal(received.header, received.origin); assert.equal(received.env, process.env);
   assert.equal((await fetch(`${url}/api/contact`, { method: 'POST', body: 'a'.repeat(8193) })).status, 413);
-  assert.equal((await fetch(`${url}/api/contact`)).status, 405);
+  assert.equal((await fetch(`${url}/api/contact`, { method: 'PUT' })).status, 405);
+});
+test('contact token request is delegated as GET without a body', async t => {
+  let method;
+  const { url } = await fixture(t, { sendContactMessage: async req => { method = req.method; return Response.json({ jeton: 'x', attente: 4000 }); } });
+  const response = await fetch(`${url}/api/contact`);
+  assert.equal(response.status, 200); assert.equal(method, 'GET'); assert.equal((await response.json()).jeton, 'x');
+});
+test('contact messages are rate limited per IP, tokens separately', async t => {
+  let calls = 0;
+  const { url } = await fixture(t, { contactLimits: { messages: 2, jetons: 3, windowMs: 60_000 }, sendContactMessage: async () => { calls++; return Response.json({ status: 'sent' }); } });
+  const post = ip => fetch(`${url}/api/contact`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Real-IP': ip }, body: '{}' });
+  assert.equal((await post('203.0.113.1')).status, 200); assert.equal((await post('203.0.113.1')).status, 200);
+  const blocked = await post('203.0.113.1');
+  assert.equal(blocked.status, 429); assert.ok(Number(blocked.headers.get('retry-after')) > 0); assert.match((await blocked.json()).message, /Réessayez dans 1 minute/);
+  assert.equal((await post('203.0.113.2')).status, 200);
+  assert.equal(calls, 3);
+  for (let i = 0; i < 3; i++) assert.equal((await fetch(`${url}/api/contact`, { headers: { 'X-Real-IP': '203.0.113.1' } })).status, 200);
+  assert.equal((await fetch(`${url}/api/contact`, { headers: { 'X-Real-IP': '203.0.113.1' } })).status, 429);
 });

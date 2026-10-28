@@ -19,6 +19,13 @@
  * dans une ligne à part, reliée au champ en erreur (`aria-describedby`), pour qu'une
  * erreur n'efface jamais l'adresse de secours (audit du 27 octobre 2026).
  *
+ * Contre les robots (28 octobre 2026, détail dans `lib/contact-message.ts`) :
+ * quand le formulaire approche de l'écran ou prend le focus, la page demande
+ * un jeton signé à `/api/contact` et l'envoie avec le message ; si elle a dû
+ * le demander au dernier moment, elle attend le délai minimal avant de poster.
+ * Le champ `website` est un piège. Une fois le message parti, le formulaire
+ * se verrouille (champs et bouton désactivés) : on ne renvoie pas en rafale.
+ *
  * `variante="carnet"` l'habille pour l'accueil « Le carnet » (27 octobre
  * 2026) : champs bordés d'encre, bouton en pilule, ligne d'état à pastille.
  * Le comportement ne change pas. Le slot `pied` se range à côté du bouton
@@ -320,6 +327,36 @@ const carnet = variante === 'carnet';
       statut.textContent = texte;
       statut.dataset.etat = etat;
     };
+
+    // Le jeton signé, demandé une fois quand le formulaire approche de l'écran
+    // ou prend le focus. `pret` : l'instant où le serveur l'acceptera.
+    type Jeton = { valeur: string; pret: number; recu: number };
+    let jeton: Promise<Jeton | null> | null = null;
+    const demanderJeton = () => {
+      jeton ??= fetch(formulaire.action, { headers: { Accept: 'application/json' } })
+        .then(async (r) => {
+          const corps = (await r.json()) as { jeton?: string; attente?: number };
+          if (!r.ok || typeof corps.jeton !== 'string') throw new Error(String(r.status));
+          // Une marge d'une demi-seconde sur le délai du serveur.
+          return { valeur: corps.jeton, pret: Date.now() + (corps.attente ?? 4000) + 500, recu: Date.now() };
+        })
+        .catch(() => { jeton = null; return null; });
+      return jeton;
+    };
+    // Resté ouvert une demi-journée, l'onglet en redemande un frais.
+    const jetonFrais = async () => {
+      const actuel = await demanderJeton();
+      if (actuel && Date.now() - actuel.recu > 12 * 3_600_000) { jeton = null; return demanderJeton(); }
+      return actuel;
+    };
+    if ('IntersectionObserver' in window) {
+      const guet = new IntersectionObserver((entrees) => {
+        if (entrees.some((e) => e.isIntersecting)) { guet.disconnect(); void demanderJeton(); }
+      }, { rootMargin: '400px 0px' });
+      guet.observe(formulaire);
+    }
+    formulaire.addEventListener('focusin', () => void jetonFrais(), { once: true });
+
     // Dès qu'on corrige un champ signalé, il cesse d'être en erreur.
     formulaire.addEventListener('input', (e) => {
       const champ = e.target as HTMLElement;
@@ -331,8 +368,11 @@ const carnet = variante === 'carnet';
         delete statut.dataset.etat;
       }
     });
+
+    let enCours = false;
     formulaire.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (enCours || formulaire.dataset.envoye !== undefined) return;
       const email = formulaire.elements.namedItem('email') as HTMLInputElement;
       const message = formulaire.elements.namedItem('message') as HTMLTextAreaElement;
       for (const champ of [email, message]) {
@@ -354,33 +394,41 @@ const carnet = variante === 'carnet';
           'error',
         );
       }
-      if (!message.value.trim()) {
+      if (message.value.trim().length < 2) {
         signaler(message);
         return dire('Écrivez votre message, même en une phrase.', 'error');
       }
       const donnees = Object.fromEntries(new FormData(formulaire));
       const source = formulaire.dataset.source ?? '';
+      enCours = true;
       bouton.disabled = true;
       dire('Envoi en cours…', 'envoi');
       try {
+        const leJeton = await jetonFrais();
+        if (leJeton && Date.now() < leJeton.pret) await new Promise((fin) => setTimeout(fin, leJeton.pret - Date.now()));
         const reponse = await fetch(formulaire.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...donnees, source: `${source} (${location.pathname})` }),
+          body: JSON.stringify({ ...donnees, jeton: leJeton?.valeur ?? '', source: `${source} (${location.pathname})` }),
         });
         const corps = await reponse.json().catch(() => null) as { status?: string; message?: string } | null;
         if (reponse.ok && corps?.status === 'sent') {
-          formulaire.reset();
+          // Parti : le formulaire se fige sur ce qui a été envoyé.
+          formulaire.dataset.envoye = '';
+          for (const champ of formulaire.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')) champ.disabled = true;
           dire(corps.message ?? 'Votre message est bien parti.', 'sent');
           const { datafast } = window as unknown as { datafast?: (nom: string, props?: Record<string, string>) => void };
           if (typeof datafast === 'function') datafast('lead_message', { canal: 'formulaire', source });
-        } else {
-          dire(corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.', 'error');
+          return;
         }
+        // Un jeton refusé ne resservira pas : on en redemandera un au prochain essai.
+        if (reponse.status === 403) jeton = null;
+        dire(corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.', 'error');
       } catch {
         dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.', 'error');
       } finally {
-        bouton.disabled = false;
+        enCours = false;
+        if (formulaire.dataset.envoye === undefined) bouton.disabled = false;
       }
     });
   }
