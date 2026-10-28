@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 /* =========================================================================
-   DESIGN SYSTEM — « Nuit et pêche »
-   Octobre 2026 — fond nuit, un seul accent pêche, aucune élévation.
+   DESIGN SYSTEM — « Le carnet » depuis le 28 octobre 2026 (« nuit et
+   pêche » du 3 au 28 octobre) : papier, encre, lilas et violet, ombres
+   pleines. Le bloc « LE CARNET SUR TOUT LE SITE », en fin de fichier, et
+   `components/carnet/carnet.css` complètent ces jetons.
    Source: DESIGN.md / DESIGN.json
    ========================================================================= */
 
@@ -196,21 +198,16 @@
   --radius-lg: clamp(1rem, 0.6rem + 1.2vw, 1.5rem);
   --radius-xl: clamp(1.25rem, 0.6rem + 2vw, 2rem);
   --radius-cta: 9999px;
-  /* L'épaisseur du trait pêche tiré sous un fragment de titre (`mark`). */
+  /* L'épaisseur du trait tiré sous un fragment de titre (`mark`). */
   --trait-souligne: max(2px, 0.075em);
   --radius-diagram: 16px;
   --radius-full: 9999px;
 
   /* ── Surfaces ──
-     Le fond général est la nuit profonde. Une surface monte en
-     s'éclaircissant, et seulement pour un panneau arrondi : fenêtre ou média,
-     puis surface haute. `night` et
-     `night-deep` sont des valeurs FIXES, qu'aucun bloc ne remappe : ce sont
-     elles qu'un composant lit quand il veut la nuit quel que soit son parent
-     (libellé d'un CTA pêche, pied de page, panneau toujours sombre). */
-  /* Le fond de tout le site est la nuit profonde, celle de l'accueil, depuis le
-     3 octobre 2026 (il valait #111827, resté la couleur du texte posé sur la
-     pêche : `--color-night`). */
+     Le fond est le papier ; une carte ou un panneau monte au blanc
+     (`surface-low`, `surface-high`). `night` et `night-deep` (noms hérités)
+     valent l'encre et ne sont remappés par aucune île : un composant les lit
+     quand il veut l'encre quel que soit son parent. */
   --color-paper: #f6f2e8;
   --color-surface-low: #fffdf8;
   --color-night: #1d1a22;
@@ -219,9 +216,9 @@
   --color-service-border: rgb(29 26 34 / 0.25);
   --color-surface-high: #fffdf8;
 
-  /* ── Encres, teintées vers la nuit plutôt que grises. Sur le fond général :
-     10,67:1 pour le texte secondaire, 7,75:1 pour les légendes. `ink-faint`
-     reste un trait, pas du texte, à 4,88:1. ── */
+  /* ── Encres. Sur le papier #f6f2e8 : 7,68:1 pour le texte secondaire
+     (`ink-mid`), 6,52:1 pour les légendes (`ink-low`). `ink-faint` est un
+     trait, JAMAIS du texte : 3,24:1 (mesuré le 28 octobre 2026). ── */
   --color-ink: #1d1a22;
   --color-ink-mid: #4f4a56;
   --color-ink-low: #5a5462;
@@ -231,9 +228,7 @@
   --color-divider: rgb(29 26 34 / 0.16);
   --color-grid-line: rgb(29 26 34 / 0.07);
   --color-grid-line-active: rgb(29 26 34 / 0.3);
-  /* 5,57:1 sur la nuit, donc au-dessus des 3:1 exigés pour un contour de
-     composant. Un filet blanc pur d'un pixel éblouissait autour de chaque
-     question de la FAQ. */
+  /* Le trait d'encre des cartes, des champs et des contours (15:1). */
   --color-border-strong: #1d1a22;
 
   /* ── Les panneaux « toujours sombres » (schémas, scène 3D, vignettes) :
@@ -247,15 +242,14 @@
   --color-surface-on-dark: #fffdf8;
 
   /* ── L'accent ──
-     --color-accent est la pêche en FOND : le bouton d'appel. Son
-     libellé est toujours la nuit, 10,19:1. --color-accent-text est ce qu'on
-     écrit quand un composant veut du texte accentué : sur la nuit c'est la
-     pêche elle-même, sur un panneau clair `.bloc-encre` le remappe en nuit. */
-  /* La lumière. Sur l'accueil, la nuit est éclairée : la pêche en est la
-     source chaude, et une lueur froide lui donne de la profondeur. La lueur
-     froide n'est jamais une couleur de texte ni de bouton : elle n'existe que
-     dans les halos, derrière les choses. Le grain évite que ces dégradés ne
-     se découpent en bandes. */
+     Depuis le carnet (28 octobre 2026) : `--color-accent` et `--color-peche`
+     (noms hérités) valent le lilas #b59cff, une SURFACE (fond, ombre du
+     bouton, trait épais), jamais du texte : 1,9:1 sur le papier.
+     `--color-accent-text` est le violet #6a3df5, ce qu'on écrit quand un
+     composant veut du texte ou un trait fin accentué : 5,22:1 sur le papier,
+     5,74:1 sur le blanc. */
+  /* Restes de l'accueil « documentaire » (lueurs, grain), lus seulement par
+     ses composants, qui ne sont plus rendus sur le site. */
   --color-lueur-froide: #6f7cff;
   --color-braise: #ff8a65;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
@@ -271,30 +265,19 @@
   --color-peche-clair: #c8b6ff;
   --color-accent: #b59cff;
   --color-accent-text: #6a3df5;
-  /* 18 % de pêche dans la nuit. Le texte blanc y tient 12,05:1. */
+  /* Un fond lilas très clair, pour un état actif discret. */
   --color-accent-soft: #ece5ff;
 
-  /* La pêche tient 10,19:1 sur la nuit : l'anneau de focus peut être l'accent.
-     Sur un panneau clair, où elle tombe à 1,64:1, `.bloc-encre` le remappe. */
+  /* L'anneau de focus : l'encre, 15:1 sur le papier. */
   --color-focus: #1d1a22;
 
-  /* La pêche étant la couleur de marque, elle ne peut pas signifier
-     « valide » : un état correct serait indiscernable d'un élément de marque.
-     Le succès passe en encre, porté par un libellé. */
-  /* L'erreur garde un rouge, éclairci pour le fond sombre : 7,25:1 sur la
-     nuit. Il est voisin de la pêche en teinte, donc jamais seul : l'état
-     d'erreur est toujours porté par une phrase. */
+  /* L'erreur en rouge (5,6:1 sur le papier), le succès en vert (5,08:1),
+     chacun toujours porté par une phrase : la couleur seule n'informe pas. */
   --color-error: #c9302c;
   --color-success: #0c7a3c;
 
-  /* ── Élévation : aucune. La structure vient des filets. ──
-     Les deux jetons ne rendent rien et c'est leur rôle : ils tiennent la place
-     de l'ombre pour que « pas d'élévation » soit une valeur écrite, et non une
-     absence qu'un composant comblerait un jour au jugé. Quatre déclarations
-     les lisent encore (MockupWindow, WorkflowCanvas deux fois, CaseStudy) :
-     les retirer y ferait échouer `box-shadow: var(--shadow-card)` en silence.
-     Ce qui a été retiré, ce sont les déclarations inertes qui les peignaient
-     dans ce fichier. */
+  /* ── Élévation : l'ombre pleine du carnet, à l'encre, sans flou. ──
+     Une carte posée (`card`), soulevée au survol (`card-hover`). */
   --shadow-card: 4px 4px 0 #1d1a22;
   --shadow-card-hover: 6px 6px 0 #1d1a22;
 }
@@ -1256,82 +1239,68 @@ mark {
 ::selection { background: var(--color-peche); color: var(--color-night); }
 
 /* =========================================================================
-   LE PANNEAU INVERSÉ — `.bloc-encre`, autre nom hérité. Sur l'ancien papier
-   blanc c'était l'aplat sombre ; sur la nuit, c'est le seul endroit où le
-   clair revient. Même mécanique que la bande : on remappe les jetons de rôle,
-   et les composants suivent sans variante.
+   L'ÎLE — `.bloc-encre`, nom hérité de la tenue où elle était l'aplat
+   sombre. Dans le carnet, c'est une feuille blanche posée sur le papier, au
+   trait d'encre et à l'ombre pleine : elle porte ce que le lecteur vient
+   vérifier (un prix, une méthode, des résultats). On remappe les jetons de
+   rôle, et les composants suivent sans variante.
    ========================================================================= */
 
 .bloc-encre {
   /* Valeurs LITTÉRALES ici, jamais var(--color-ink) : un remap se résout
      contre la NOUVELLE valeur posée sur le même élément. Écrire
-     `color: var(--color-ink)` à côté de `--color-ink: <nuit>` est le cycle
-     déjà rencontré deux fois dans ce fichier. */
-  background: #f7f8fa;
-  color: #111827;
-  /* Une île, pas une bande. Bord à bord, le panneau clair coupait la page en
-     trois à angle droit ; détaché et arrondi, il se lit comme un objet posé
-     sur la nuit. La marge est petite et fluide : c'est un liseré de nuit, pas
-     une gouttière, et le contenu garde son alignement dès que la fenêtre
-     dépasse la colonne de 1 200 px. */
-  margin: clamp(0.5rem, 1.5vw, 1.25rem);
-  border: 0;
+     `color: var(--color-ink)` à côté de `--color-ink: …` est le cycle déjà
+     rencontré deux fois dans ce fichier. */
+  background: #fffdf8;
+  color: #1d1a22;
+  margin-inline: clamp(0.75rem, 2vw, 1.5rem);
+  margin-block: clamp(1rem, 2vw, 1.5rem);
+  border: 2.5px solid #1d1a22;
   border-radius: var(--radius-xl);
+  box-shadow: 8px 8px 0 #1d1a22;
 
-  --color-paper: #f7f8fa;
-  --color-surface-low: #eef0f4;
+  /* Sur ce blanc : 8,44:1 (`ink-mid`), 7,17:1 (`ink-low`), 5,74:1 (violet). */
+  --color-paper: #fffdf8;
+  --color-surface-low: #f6f2e8;
   --color-surface-high: #ffffff;
-  --color-service-border: #dce1e8;
-  /* Encres teintées vers la nuit : 16,69:1, 7,09:1 et 5,38:1 sur ce panneau. */
-  --color-ink: #111827;
-  --color-ink-mid: #4b5565;
-  --color-ink-low: #5d6777;
-  --color-ink-faint: #8b94a3;
-  --color-divider: #dce1e8;
-  --color-grid-line: #e6e9ef;
-  --color-grid-line-active: #c3c9d4;
-  --color-border-strong: #111827;
-  /* Sur le clair, la pêche retombe à 1,64:1 : elle reste une surface (le
-     bouton) et ne porte ni texte, ni trait, ni focus. Aucun titre souligné
-     (`mark`) ne se pose donc dans une île. */
-  --color-accent-text: #111827;
-  --color-accent-soft: #ffe9dd;
-  --color-focus: #111827;
-  --color-error: #b3261e;
-  --color-success: #111827;
+  --color-service-border: rgb(29 26 34 / 0.25);
+  --color-ink: #1d1a22;
+  --color-ink-mid: #4f4a56;
+  --color-ink-low: #5a5462;
+  --color-ink-faint: #8a8492;
+  --color-divider: rgb(29 26 34 / 0.16);
+  --color-grid-line: rgb(29 26 34 / 0.07);
+  --color-grid-line-active: rgb(29 26 34 / 0.3);
+  --color-border-strong: #1d1a22;
+  --color-accent-text: #6a3df5;
+  --color-accent-soft: #ece5ff;
+  --color-focus: #1d1a22;
+  --color-error: #c9302c;
+  --color-success: #0c7a3c;
+}
+
+/* Sur téléphone, l'île est à 12 px du bord : une ombre de 8 px s'y collait. */
+@media (max-width: 640px) {
+  .bloc-encre {
+    box-shadow: 5px 5px 0 #1d1a22;
+  }
 }
 
 /* La section qui précède une île ne trace pas son filet de pied : l'île se
-   détache déjà de la nuit, un trait à vingt pixels au-dessus d'elle ferait
-   double emploi. */
+   détache déjà du papier, un trait juste au-dessus d'elle ferait double
+   emploi. */
 section:has(+ .bloc-encre) {
   border-bottom-color: transparent;
 }
 
-/* Un bouton pêche sur panneau clair n'aurait que 1,64:1 de contour. L'action
-   primaire y passe donc en nuit, libellé blanc, 16,69:1 contre le panneau. */
-.bloc-encre .btn-primary { background: var(--color-night); color: #ffffff; }
-.bloc-encre .btn-primary:hover,
-.bloc-encre .btn-primary:focus-visible { background: var(--color-night-soft); color: #ffffff; }
-
-/* Même raison pour le trait d'accent : la pêche d'un pixel ou deux ne se voit
-   pas sur le clair, le trait y repasse en nuit. */
-.bloc-encre .lien-prose { border-bottom-color: #111827; }
-
-/* Lien dans une phrase de prose : souligné d'un trait pêche, qui passe à
-   l'encre au survol.
-
-   POURQUOI 2 PX ET NON 1, dans un système qui déclare « des filets, d'un seul
-   poids : 1 px ». Ce n'en est pas un. Un filet sépare ou encadre une surface ;
-   ceci souligne des mots. Sur la nuit la pêche tient 10,19:1, le trait se lit
-   donc sans peine ; le pixel de plus sert à le distinguer d'un filet de
-   séparation par autre chose que la teinte, une information portée par la
-   seule couleur n'en étant pas une (WCAG 1.4.1). Sur un panneau clair, où la
-   pêche ne tient plus que 1,64:1, `.bloc-encre` repasse le trait en nuit. */
+/* Lien dans une phrase de prose : souligné d'un trait violet de 2 px (5,22:1
+   sur le papier), qui passe à l'encre au survol. Deux pixels et non un : le
+   trait souligne des mots, il ne doit pas se lire comme un filet de
+   séparation (WCAG 1.4.1). */
 .lien-prose {
   color: inherit;
   text-decoration: none;
-  border-bottom: 2px solid var(--color-peche);
+  border-bottom: 2px solid var(--color-accent-text);
   padding-bottom: 1px;
 }
 .lien-prose:hover { border-bottom-color: var(--color-ink); }
@@ -1480,10 +1449,11 @@ section:has(+ .bloc-encre) {
    le prennent à leur tour. Les jetons du haut de ce fichier ont pris les
    valeurs du carnet ; ce bloc reprend ce qu'un jeton ne suffit pas à dire :
    le papier quadrillé, les titres en capitales condensées, le bouton d'appel
-   en pilule d'encre à l'ombre décalée, le soulignement violet, et l'île
-   (`.bloc-encre`), qui devient une feuille blanche posée à l'encre. Il est
-   écrit en dernier pour l'emporter sur les règles « nuit et pêche » qu'il
-   remplace, à spécificité égale.
+   en pilule d'encre à l'ombre décalée, le soulignement violet (l'île,
+   `.bloc-encre`, est plus haut). Il lit les couleurs nommées du carnet
+   (`--encre`, `--blanc`, `--lilas`, `--violet`, `--jaune`, posées par
+   `components/carnet/carnet.css`), qu'aucune île ne remappe. Il est écrit en
+   dernier pour l'emporter sur les règles d'origine, à spécificité égale.
    ========================================================================= */
 
 /* Les titres : h1 et h2 en capitales condensées, comme le nom et les
@@ -1511,36 +1481,36 @@ section:has(+ .bloc-encre) {
 }
 
 html:not(:has(.carnet)) ::selection {
-  background: #ffd23f;
-  color: #1d1a22;
+  background: var(--jaune);
+  color: var(--encre);
 }
 
 /* Le bouton d'appel : la pilule d'encre du carnet, ombre lilas décalée. */
 .tenue-carnet .btn-primary {
   min-height: 52px;
   padding: 0 24px;
-  border: 2.5px solid #1d1a22;
-  background: #1d1a22;
-  color: #fffdf8;
+  border: 2.5px solid var(--encre);
+  background: var(--encre);
+  color: var(--blanc);
   font: 800 1rem / 1 var(--font-display);
   font-stretch: 85%;
   text-transform: uppercase;
   letter-spacing: 0.01em;
-  box-shadow: 4px 4px 0 #b59cff;
+  box-shadow: 4px 4px 0 var(--lilas);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tenue-carnet .btn-primary:hover,
 .tenue-carnet .btn-primary:focus-visible {
-  background: #1d1a22;
-  color: #fffdf8;
+  background: var(--encre);
+  color: var(--blanc);
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #b59cff;
+  box-shadow: 6px 6px 0 var(--lilas);
 }
 
 .tenue-carnet .btn-primary:active {
   transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 #b59cff;
+  box-shadow: 1px 1px 0 var(--lilas);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1561,9 +1531,9 @@ html:not(:has(.carnet)) ::selection {
 }
 
 .tenue-carnet .chip {
-  border: 2px solid #1d1a22;
-  background: #fffdf8;
-  color: #1d1a22;
+  border: 2px solid var(--encre);
+  background: var(--blanc);
+  color: var(--encre);
   font-family: var(--font-mono);
   font-weight: 700;
 }
@@ -1572,48 +1542,8 @@ html:not(:has(.carnet)) ::selection {
 .tenue-carnet mark {
   --trait-souligne: max(3px, 0.06em);
   background:
-    linear-gradient(#6a3df5, #6a3df5) no-repeat 0 96% /
+    linear-gradient(var(--violet), var(--violet)) no-repeat 0 96% /
     calc(var(--draw) * 100%) var(--trait-souligne);
-}
-
-.tenue-carnet .lien-prose {
-  border-bottom: 2px solid #6a3df5;
-}
-
-/* L'île : une feuille blanche posée sur le papier, au trait d'encre et à
-   l'ombre pleine. Elle garde son rôle (ce que le lecteur vient vérifier). */
-.tenue-carnet .bloc-encre {
-  background: #fffdf8;
-  color: #1d1a22;
-  border: 2.5px solid #1d1a22;
-  box-shadow: 8px 8px 0 #1d1a22;
-  margin-inline: clamp(0.75rem, 2vw, 1.5rem);
-  margin-block: clamp(1rem, 2vw, 1.5rem);
-
-  --color-paper: #fffdf8;
-  --color-surface-low: #f6f2e8;
-  --color-surface-high: #ffffff;
-  --color-service-border: rgb(29 26 34 / 0.25);
-  --color-ink: #1d1a22;
-  --color-ink-mid: #4f4a56;
-  --color-ink-low: #5a5462;
-  --color-ink-faint: #8a8492;
-  --color-divider: rgb(29 26 34 / 0.16);
-  --color-grid-line: rgb(29 26 34 / 0.07);
-  --color-grid-line-active: rgb(29 26 34 / 0.3);
-  --color-border-strong: #1d1a22;
-  --color-accent-text: #6a3df5;
-  --color-accent-soft: #ece5ff;
-  --color-focus: #1d1a22;
-  --color-error: #c9302c;
-  --color-success: #0c7a3c;
-}
-
-/* Sur téléphone, l'île est à 12 px du bord : une ombre de 8 px s'y collait. */
-@media (max-width: 640px) {
-  .tenue-carnet .bloc-encre {
-    box-shadow: 5px 5px 0 #1d1a22;
-  }
 }
 
 /* L'anneau de focus clavier : l'encre, en 3 px, comme sur l'accueil. */

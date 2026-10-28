@@ -121,18 +121,22 @@ const etapes = [
 
   /* Le numéro est un compteur CSS : la liste reste une `ol`, qu'un lecteur
      d'écran annonce déjà « 1 sur 4 », et le chiffre ne part pas dans le
-     presse-papier avec la phrase. Au corps du titre, en retrait : il donne
-     l'ordre sans faire un second titre. */
+     presse-papier avec la phrase. Dans la pastille d'encre des colonnes du
+     kanban de l'accueil : le même signe pour une étape partout. */
   .methode-etape::before {
     counter-increment: etape;
     content: counter(etape);
     grid-column: 1;
     grid-row: 1;
-    color: var(--color-ink-low);
-    font-family: var(--font-display);
-    font-size: var(--text-title);
-    font-weight: 500;
-    line-height: 1.2;
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: 0.1rem;
+    border-radius: var(--radius-full);
+    background: var(--color-ink);
+    color: var(--color-surface-low);
+    font: 700 0.8125rem / 1 var(--font-mono);
     font-variant-numeric: tabular-nums;
   }
 </style>

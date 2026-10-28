@@ -68,8 +68,6 @@ const offres = [
 ---
 
 <section id={id} data-section class="fin relative px-[var(--spacing-section-x)]">
-  <div class="fin__grille" aria-hidden="true"></div>
-
   <div class="fin__centre reveal">
     {/* Sur l'accueil, le titre répond à celui qui ouvre le récit (« Vous
         perdez du temps. ») : la page se ferme sur la même idée, rendue cette
@@ -103,8 +101,6 @@ const offres = [
 
 <style>
   .fin {
-    --maille: var(--spacing-maille);
-    --trait: color-mix(in srgb, var(--color-ink) 10%, transparent);
     display: grid;
     place-items: center;
     min-height: min(46rem, 88svh);
@@ -113,24 +109,19 @@ const offres = [
     isolation: isolate;
   }
 
-  /* La maille du premier écran, comptée depuis le centre, qui s'efface vers
-     les bords. Immobile : le mouvement était au début, ici la page se pose. */
-  .fin__grille {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      linear-gradient(var(--trait) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille),
-      linear-gradient(90deg, var(--trait) 1px, transparent 1px) 50% 50% / var(--maille) var(--maille);
-    -webkit-mask-image: radial-gradient(ellipse 62% 70% at 50% 50%, var(--color-night) 0%, transparent 100%);
-    mask-image: radial-gradient(ellipse 62% 70% at 50% 50%, var(--color-night) 0%, transparent 100%);
-  }
-
+  /* La fin est une feuille posée sur le papier, comme les îles : bord
+     d'encre, ombre pleine (carnet, 28 octobre 2026). C'est là qu'on décide
+     d'écrire ; posé nu, le formulaire se perdait dans la page. */
   .fin__centre {
     display: grid;
     justify-items: center;
     gap: var(--spacing-lie);
-    max-width: 62rem;
+    width: min(100%, 62rem);
+    padding: clamp(1.75rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3.5rem);
+    border: 2.5px solid var(--color-border-strong);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-low);
+    box-shadow: var(--shadow-card-hover);
     text-align: center;
   }
 
@@ -142,9 +133,11 @@ const offres = [
     /* Borné par la largeur sous 372 px, pour que « perdre du temps. » reste
        sur une ligne à 320 px. */
     font-size: min(var(--text-story), 8.6vw);
-    font-weight: 500;
-    line-height: var(--leading-display);
-    letter-spacing: var(--tracking-display);
+    font-weight: 800;
+    font-stretch: 75%;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
@@ -204,10 +197,6 @@ const offres = [
   }
 
   @media (max-width: 640px) {
-    .fin {
-      --maille: 3rem;
-    }
-
     /* Une offre par ligne : côte à côte, les deux prix se coupaient au milieu.
        Le lien redevient un bloc de texte : en boîte flexible, son libellé se
        repliait en colonne à côté du prix quand la ligne ne tenait plus. Son

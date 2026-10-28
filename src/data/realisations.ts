@@ -14,7 +14,7 @@ export const projects = {
     href: 'https://liliansevoumian.fr',
     name: 'Lilian Sevoumian',
     detail: 'Site personnel',
-    alt: 'Page d’accueil du site Lilian Sevoumian, sur fond bleu nuit',
+    alt: 'Page d’accueil du site Lilian Sevoumian, en carnet sur papier quadrillé',
   },
   agenceafk: {
     src: '/sites-web/projects/agenceafk-home.webp',

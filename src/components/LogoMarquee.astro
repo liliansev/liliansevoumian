@@ -8,8 +8,10 @@
  * sur un appareil à souris.
  *
  * La liste est doublée pour boucler sans couture, les bords se fondent, le
- * défilement s'arrête au survol et hors de l'écran (`data-motion-pause`). En
- * mouvement réduit, la bande devient une liste à plat dans la colonne.
+ * défilement s'arrête au survol et hors de l'écran (`data-motion-pause`), et
+ * un bouton le met en pause, comme le défilé des clients de l'accueil (WCAG
+ * 2.2.2 : au toucher et au clavier, le survol n'existe pas). En mouvement
+ * réduit, la bande devient une liste à plat dans la colonne, sans bouton.
  */
 import { Icon } from 'astro-icon/components';
 import SectionHeader from './SectionHeader.astro';
@@ -60,12 +62,13 @@ const loop = [...tools, ...tools];
   {/* Le titre est sur la colonne de la page, comme ceux des autres sections ;
       la bande, elle, va d'un bord à l'autre de l'écran. */}
   <div class="px-[var(--spacing-section-x)]">
-    <div class="mx-auto max-w-[1200px]">
+    <div class="lm-tete mx-auto max-w-[1200px]">
       <SectionHeader title="Ce que je branche à vos agents&nbsp;IA&nbsp;:" titleMaxWidth="none" spacing="none" />
+      <button class="lm-pause" type="button" aria-controls="lm-defile" data-lm-pause>Mettre en pause</button>
     </div>
   </div>
 
-  <div class="lm-viewport reveal">
+  <div class="lm-viewport reveal" id="lm-defile">
     <div class="lm-track">
       {loop.map((t, i) => (
         <span
@@ -108,7 +111,46 @@ const loop = [...tools, ...tools];
   /* Arrêt au survol et au focus, indépendant de la préférence de mouvement
      réduit du système (WCAG 2.2.2). */
   .lm-viewport:hover .lm-track,
-  .lm-viewport:focus-within .lm-track { animation-play-state: paused; }
+  .lm-viewport:focus-within .lm-track,
+  .lm-viewport[data-arret] .lm-track { animation-play-state: paused; }
+
+  .lm-tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: var(--spacing-lie);
+  }
+
+  /* Le bouton du défilé des clients de l'accueil (`carnet/defile.astro`). */
+  .lm-pause {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 2px solid var(--color-border-strong);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-low);
+    color: var(--color-ink);
+    font: 700 0.8125rem / 1 var(--font-mono);
+    cursor: pointer;
+  }
+
+  .lm-pause::before {
+    content: '';
+    width: 10px;
+    height: 12px;
+    border-inline: 3.5px solid currentColor;
+  }
+
+  .lm-pause[data-arret]::before {
+    width: 11px;
+    height: 14px;
+    border-inline: 0;
+    background: currentColor;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
 
   @keyframes lm-scroll {
     to { transform: translateX(-50%); }
@@ -156,10 +198,8 @@ const loop = [...tools, ...tools];
                   opacity var(--duration-default) var(--ease-out-quint);
     }
 
-    /* La teinte de marque est relevée de 30 % de blanc : plusieurs marques sont
-       sombres (l'aubergine de Slack, le violet d'OpenAI) et, posées telles
-       quelles sur la nuit, elles éteindraient le logo qu'on vient de viser. */
-    .lm-tool:hover .lm-tool-ic.is-tinted { color: color-mix(in oklab, var(--tool-c) 70%, white); }
+    /* Sur le papier du carnet, la teinte de marque se pose telle quelle. */
+    .lm-tool:hover .lm-tool-ic.is-tinted { color: var(--tool-c); }
   }
 
   /* `ink-low` et non `ink-faint` : le nom complète le logo, il porte du sens
@@ -194,8 +234,22 @@ const loop = [...tools, ...tools];
       animation: none;
     }
 
-    .lm-tool[aria-hidden='true'] { display: none; }
+    .lm-tool[aria-hidden='true'],
+    .lm-pause { display: none; }
     .lm-tool-ic.is-tinted { transition: none; }
     .lm-tool:hover .lm-tool-ic { transform: none; }
   }
 </style>
+
+<script>
+  const pause = document.querySelector<HTMLButtonElement>('[data-lm-pause]');
+  const defile = document.querySelector<HTMLElement>('#lm-defile');
+  if (pause && defile) {
+    pause.addEventListener('click', () => {
+      const arret = !defile.hasAttribute('data-arret');
+      defile.toggleAttribute('data-arret', arret);
+      pause.toggleAttribute('data-arret', arret);
+      pause.textContent = arret ? 'Relancer le défilé' : 'Mettre en pause';
+    });
+  }
+</script>

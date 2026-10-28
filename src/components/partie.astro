@@ -83,14 +83,18 @@ const { titre, id, clair = false } = Astro.props;
     list-style: none;
   }
 
+  /* Au corps et à la couleur des paragraphes : une liste à 17 px en encre
+     pleine, à côté d'une prose à 20 px en gris, paraissait plus petite et
+     plus dure que le texte qu'elle détaille. */
   .partie__corps :global(li) {
     position: relative;
     padding-left: 1.4em;
-    color: var(--color-ink);
-    line-height: var(--leading-body);
+    color: var(--color-ink-mid);
+    font-size: var(--text-body-large);
+    line-height: 1.65;
   }
 
-  /* Une puce discrète, à l'encre : la pêche reste au soulignement et au bouton. */
+  /* Une puce discrète, à l’encre. */
   .partie__corps :global(li)::before {
     content: '';
     position: absolute;
@@ -99,7 +103,7 @@ const { titre, id, clair = false } = Astro.props;
     width: 6px;
     height: 6px;
     border-radius: var(--radius-full);
-    background: var(--color-ink-faint);
+    background: var(--color-ink);
   }
 
   /* Un tableau : des données, donc des filets fins entre les rangées et rien
