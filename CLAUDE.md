@@ -19,7 +19,7 @@ pnpm preview    # Preview production build locally
 - **Framework**: Astro 5.x with static output
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
 - **Icons**: astro-icon with Lucide and Simple Icons
-- **Fonts**: Geist Variable, self-hosted (`@fontsource-variable/geist`); no monospace. The home page (« Le carnet ») alone adds Bricolage Grotesque, Gochi Hand and JetBrains Mono, self-hosted (`@fontsource`), imported by `pages/index.astro`
+- **Fonts**: Bricolage Grotesque (text and titles), Gochi Hand (handwritten notes) and JetBrains Mono (code labels), self-hosted (`@fontsource`), imported by `layouts/Layout.astro` for every page. The blog alone keeps Geist Variable, imported by `layouts/Carnet.astro`
 - **Language**: French (fr)
 - **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
 
@@ -44,7 +44,7 @@ src/
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   │   # — accueil « Le carnet » (choisi par Lilian le 27 octobre 2026) —
 │   ├── carnet/                # l'accueil en carnet d'ingénieur, lu comme un scénario Make : un module coloré par section, un chemin de pointillés entre eux
-│   │   ├── carnet.css         # la grammaire, rangée sous `.accueil-carnet` : jetons, trois voix, pilules, polaroïds, scotch, modules, chemin, cartes
+│   │   ├── carnet.css         # la grammaire, rangée sous `.tenue-carnet` : jetons, trois voix, pilules, polaroïds, scotch, modules, chemin, cartes
 │   │   ├── griffe.astro       # un griffonnage (cœur, vague, icônes) tracé au build par `lib/carnet/griffonnages.ts`
 │   │   ├── tete.astro         # l'en-tête d'une section : module (couleur, griffonnage, numéro), titre, chapô ; pas de sur-titre
 │   │   ├── barre.astro        # barre collante (nom, sections, « Écrire »), menu plein écran en `dialog`
@@ -135,11 +135,27 @@ api/
 ## Design System
 
 `DESIGN.md` is the source of truth; tokens live in the `@theme` block of
-`src/styles/global.css`. In short ("nuit et pêche", "tech propre"; the home
-page direction of 2 October 2026 was extended to every page on 3 October 2026,
-see *La tenue commune* in `global.css` and `DESIGN.md`). Since 27 October 2026
-the home page alone wears « Le carnet » instead (see below), so the rules of
-this list apply to every page but `/`:
+`src/styles/global.css`.
+
+Since 28 October 2026 every page but the blog wears « Le carnet » (see
+below): `Layout` wraps the page in `.tenue-carnet` and loads
+`components/carnet/carnet.css` and its three fonts; `Navigation` and `Footer`
+render the carnet's `barre` and `pied`. The `@theme` tokens kept their old
+names but carry carnet values (`--color-paper` = paper `#f6f2e8`,
+`--color-ink` and `--color-night` = ink `#1d1a22`, `--color-peche` /
+`--color-accent` = lilac `#b59cff` as a surface, `--color-accent-text` =
+violet `#6a3df5`, fonts = Bricolage Grotesque, mono = JetBrains Mono); the
+last block of `global.css` (« LE CARNET SUR TOUT LE SITE ») restyles what a
+token cannot: caps headings, ink call pill with a lilac offset shadow,
+violet `mark`, and `.bloc-encre` as a white sheet with ink border and solid
+shadow. The carnet's object classes (`pilule`, `caps`, `meta`, `tete`…) are
+scoped under `.carnet-ui` (home, barre, pied, contact form) because inner
+components reuse those short names. The blog (`layouts/Carnet.astro`, an
+older name) keeps its white Geist look and passes `carnet={false}`.
+
+The list below is the former « nuit et pêche » system (3 to 28 October
+2026). Its structural rules still hold (one call button, islands, shared
+components, measure, motion); its colours and type no longer do:
 
 - Background: deep night `#0c121f` everywhere (`--color-paper`); white text,
   greys tinted toward the night. `#111827` is `--color-night`
@@ -181,8 +197,9 @@ Grotesque). The page reads as a Make scenario: numbered round modules joined
 by a dotted path through the margins. First gesture: « S'abonner sur
 YouTube »; the contact form closes the page. Dated audience figures as social
 proof, never the newsletter subscriber count. Grammar in
-`src/components/carnet/carnet.css`, scoped under `.accueil-carnet`; DESIGN.md,
-*L'accueil : le carnet*. Inner pages still wear night and peach.
+`src/components/carnet/carnet.css`; DESIGN.md, *L'accueil : le carnet*.
+Inner pages wear the carnet's base since 28 October 2026 (papier, encre,
+titles, pills), without its modules and dotted path.
 
 Previous home (« Le documentaire », 14 to 27 October 2026, components kept
 in `src/components/documentaire/`): the page read as a

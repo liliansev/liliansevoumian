@@ -6,7 +6,20 @@
  * faut pouvoir atteindre depuis l'accueil). Pas d'année : l'accueil ne porte
  * aucune date (Lilian, 14 octobre 2026), hors celle des chiffres d'audience.
  */
+import BoutonReservation from '../BoutonReservation.astro';
 import { organisations, profils } from '../../data/parcours';
+
+interface Props {
+  /** Sur l'accueil, la newsletter est une ancre de la page ; ailleurs, le
+      pied y ramène et nomme l'accueil. */
+  surAccueil?: boolean;
+  /** Le nom du pied dans les statistiques. */
+  source?: string;
+  /** Pour une page sans formulaire de contact en fin de page. */
+  contact?: boolean;
+}
+
+const { surAccueil = true, source = 'home_pied', contact = false } = Astro.props;
 
 const dehors: { label: string; href: string; goal?: string }[] = [
   { label: 'YouTube', href: profils.youtube, goal: 'youtube_opened' },
@@ -15,7 +28,8 @@ const dehors: { label: string; href: string; goal?: string }[] = [
 ];
 
 const pages = [
-  { label: 'Newsletter', href: '#newsletter' },
+  ...(surAccueil ? [] : [{ label: 'Accueil', href: '/' }]),
+  { label: 'Newsletter', href: surAccueil ? '#newsletter' : '/#newsletter' },
   { label: 'Cas clients', href: '/cas-clients' },
   { label: 'Automatisation et agents IA', href: '/automatisations-ia' },
   { label: 'Sites web et dashboards', href: '/sites-web-abonnement' },
@@ -31,10 +45,17 @@ const pages = [
 ];
 ---
 
-<footer class="pied">
+<footer class="pied carnet-ui">
   <div class="carnet-enveloppe">
     <p class="caps pied__nom">Lilian Sevoumian</p>
     <p class="main pied__signature">l’indé super augmenté</p>
+    {contact && (
+      <p class="pied__contact">
+        <BoutonReservation source={`${source}_contact`} class="pilule pilule-encre">
+          <span class="point" aria-hidden="true"></span>Parlons de votre projet
+        </BoutonReservation>
+      </p>
+    )}
     <div class="pied__liens">
       <nav aria-label="Ailleurs">
         <span class="meta">ailleurs</span>
@@ -46,7 +67,7 @@ const pages = [
                 target="_blank"
                 rel="noopener noreferrer"
                 data-fast-goal={l.goal}
-                data-fast-goal-source={l.goal ? 'home_pied' : undefined}
+                data-fast-goal-source={l.goal ? source : undefined}
               >{l.label}<span class="sr-only"> (nouvel onglet)</span></a>
             </li>
           ))}
@@ -74,6 +95,10 @@ const pages = [
     max-width: none;
     font-size: var(--t-pied);
     line-height: 0.82;
+  }
+
+  .pied__contact {
+    margin: 28px 0 0;
   }
 
   .pied__signature {

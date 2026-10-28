@@ -12,37 +12,60 @@
  */
 import BoutonReservation from '../BoutonReservation.astro';
 
-const sections = [
-  { href: '#suivre', label: 'Me suivre' },
-  { href: '#adore', label: 'Ce que je fais' },
-  { href: '#methode', label: 'Comment je travaille' },
-  { href: '#coulisses', label: 'Coulisses' },
-];
+interface Lien {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  /** Les liens de la barre : les sections de l'accueil par défaut, les
+      ancres d'une page d'offre, ou les pages du site. */
+  sections?: Lien[];
+  /** Le nom de la barre dans les statistiques (`contact_opened`). */
+  source?: string;
+  /** Le nom du menu plein écran dans les statistiques. */
+  sourceMenu?: string;
+  /** Où mène le nom : le haut de la page sur l'accueil, l'accueil ailleurs. */
+  marqueHref?: string;
+}
+
+const {
+  sections = [
+    { href: '#suivre', label: 'Me suivre' },
+    { href: '#adore', label: 'Ce que je fais' },
+    { href: '#methode', label: 'Comment je travaille' },
+    { href: '#coulisses', label: 'Coulisses' },
+  ],
+  source = 'home_nav',
+  sourceMenu = 'home_menu',
+  marqueHref = '#main-content',
+} = Astro.props;
+const marqueLibelle = marqueHref === '/' ? "Lilian Sevoumian, retour à l'accueil" : 'Lilian Sevoumian, haut de page';
 ---
 
-<header class="barre">
+<header class="barre carnet-ui">
   <div class="carnet-enveloppe barre__ligne">
-    <a class="marque" href="#main-content" aria-label="Lilian Sevoumian, haut de page">
+    <a class="marque" href={marqueHref} aria-label={marqueLibelle}>
       <span>Lilian</span> <span>Sevoumian</span>
     </a>
     <nav class="barre__sections" aria-label="Sections">
-      {sections.map((s) => <a href={s.href} data-barre-section>{s.label}</a>)}
+      {sections.map((s) => <a href={s.href} data-barre-section={s.href.startsWith('#') ? '' : undefined}>{s.label}</a>)}
     </nav>
-    <BoutonReservation source="home_nav" class="pilule barre__ecrire">
+    <BoutonReservation source={source} class="pilule barre__ecrire">
       <span class="point" aria-hidden="true"></span>Écrire
     </BoutonReservation>
     <button class="pilule barre__menu" type="button" aria-haspopup="dialog" aria-controls="menu-carnet" data-menu-ouvrir>Menu</button>
   </div>
 </header>
 
-<dialog class="menu" id="menu-carnet" aria-label="Menu">
+<dialog class="menu carnet-ui" id="menu-carnet" aria-label="Menu">
   <div class="menu__cadre" tabindex="-1">
     <div class="menu__haut">
       <span class="marque">Lilian Sevoumian</span>
       <button class="pilule" type="button" data-menu-fermer>Fermer</button>
     </div>
     {sections.map((s) => <a class="menu__entree" href={s.href}>{s.label}</a>)}
-    <BoutonReservation source="home_menu" class="pilule pilule-encre menu__appel">
+    <BoutonReservation source={sourceMenu} class="pilule pilule-encre menu__appel">
       <span class="point" aria-hidden="true"></span>Parlons de votre projet
     </BoutonReservation>
   </div>

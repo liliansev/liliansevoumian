@@ -1,7 +1,10 @@
 ---
-import '@fontsource-variable/geist';
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '@fontsource/gochi-hand/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
 import '../styles/global.css';
-import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import '../components/carnet/carnet.css';
+import bricolageLatin from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { organisations, profils, resume } from '../data/parcours';
@@ -22,12 +25,14 @@ interface Props {
   noindex?: boolean;
   faqSchema?: Array<{ question: string; answer: string }>;
   directionContract?: string;
-  /** La couleur de la barre du navigateur mobile : la nuit du site, ou le
-      papier sur l'accueil « Le carnet ». */
+  /** La couleur de la barre du navigateur mobile : le papier du carnet, ou
+      le blanc du blog. */
   themeColor?: string;
-  /** La police à précharger (URL d'un woff2) : Geist partout, Bricolage
-      Grotesque sur l'accueil « Le carnet ». */
+  /** La police à précharger (URL d'un woff2) : Bricolage Grotesque, ou
+      Geist sur le blog. */
   policePrechargee?: string;
+  /** Pose la tenue du carnet (`.tenue-carnet`) autour de la page. Le blog, qui a la sienne, la refuse. */
+  carnet?: boolean;
 }
 
 const {
@@ -44,8 +49,9 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   pageSchema,
   breadcrumbs,
   noindex = false,
-  themeColor = '#0c121f',
-  policePrechargee = geistLatin,
+  themeColor = '#f6f2e8',
+  policePrechargee = bricolageLatin,
+  carnet = true,
   faqSchema,
   directionContract
 } = Astro.props;
@@ -447,8 +453,8 @@ const faqPageSchema = faqSchema ? {
             return bootCal()
               .then(function () {
                 embedTarget.replaceChildren();
-                // L'agenda prend le thème de la page : clair sur l'accueil « Le carnet ».
-                var config = { layout: "month_view", theme: document.querySelector('.accueil-carnet') ? "light" : "dark" };
+                // L'agenda prend le thème de la page : clair sous la tenue du carnet.
+                var config = { layout: "month_view", theme: document.querySelector('.tenue-carnet') ? "light" : "dark" };
                 if (note) config.notes = note;
                 window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: config });
                 inited = true;
@@ -543,7 +549,7 @@ const faqPageSchema = faqSchema ? {
     <a href="#main-content" class="skip-link">
       Aller au contenu principal
     </a>
-    <slot />
+    {carnet ? <div class="tenue-carnet"><slot /></div> : <slot />}
 
     <!-- Overlay plein écran de réservation cal.com (barre + croix, scroll lock). -->
     <!-- data-cal-link est réservé à Cal : le poser ici ouvre aussi sa popup au clic Fermer. -->

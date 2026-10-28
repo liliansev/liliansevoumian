@@ -8,6 +8,13 @@
 
 @theme {
   /* =======================================================================
+     DEPUIS LE 28 OCTOBRE 2026, LES VALEURS SONT CELLES DU « CARNET »
+     (components/carnet/carnet.css) : papier, encre, lilas en aplat, violet
+     en texte, Bricolage Grotesque. Les noms (paper, night, peche, accent)
+     sont restés ceux de la tenue « nuit et pêche » qu'ils portaient avant,
+     et que décrit la suite de ce commentaire : les composants les lisent
+     toujours, et toute la page bascule d'un coup. `night` vaut l'encre.
+     -----------------------------------------------------------------------
      DA « NUIT ET PÊCHE » appliquée au contenu de main.
      Les NOMS de jetons sont ceux que les 25 composants consomment déjà : on
      ne change que les valeurs, et toute la page bascule d'un coup. Les
@@ -30,11 +37,11 @@
      ======================================================================= */
 
   /* ── Polices ── */
-  --font-display: 'Geist Variable', system-ui, -apple-system, sans-serif;
-  --font-body: 'Geist Variable', system-ui, -apple-system, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'Bricolage Grotesque Variable', system-ui, -apple-system, sans-serif;
   /* Plus de famille monospace : --font-mono existe encore parce que 11
      composants l'appellent, mais il vaut la police de texte. */
-  --font-mono: 'Geist Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
 
   /* ── Échelle typographique, espacement et motion ──
      Repris tels quels de main : ce sont des mesures, pas une direction
@@ -109,8 +116,8 @@
      le plus lisible. Un pixel de moins sur un téléphone, gagné nulle part.
      Le plancher de 16 px est par ailleurs celui sous lequel iOS zoome un champ
      de saisie et sous lequel une prose se lit à la loupe. */
-  --text-body: 1rem;
-  --text-body-sm: 0.875rem;
+  --text-body: 1.0625rem;
+  --text-body-sm: 0.9375rem;
   --text-mono-label: 0.75rem;
   /* --text-mono-body a été retiré. Le rang de 13 px avait déjà quitté
      l'échelle rendue (il était à 1,08 de --text-body-sm et à 1,08 de
@@ -204,39 +211,39 @@
   /* Le fond de tout le site est la nuit profonde, celle de l'accueil, depuis le
      3 octobre 2026 (il valait #111827, resté la couleur du texte posé sur la
      pêche : `--color-night`). */
-  --color-paper: #0c121f;
-  --color-surface-low: #1a2439;
-  --color-night: #111827;
-  --color-night-soft: #263449;
-  --color-night-deep: #0c121f;
-  --color-service-border: #2f3b52;
-  --color-surface-high: #1f2a42;
+  --color-paper: #f6f2e8;
+  --color-surface-low: #fffdf8;
+  --color-night: #1d1a22;
+  --color-night-soft: #3a3542;
+  --color-night-deep: #1d1a22;
+  --color-service-border: rgb(29 26 34 / 0.25);
+  --color-surface-high: #fffdf8;
 
   /* ── Encres, teintées vers la nuit plutôt que grises. Sur le fond général :
      10,67:1 pour le texte secondaire, 7,75:1 pour les légendes. `ink-faint`
      reste un trait, pas du texte, à 4,88:1. ── */
-  --color-ink: #ffffff;
-  --color-ink-mid: #c3c9d4;
-  --color-ink-low: #a3acbb;
-  --color-ink-faint: #7c8799;
+  --color-ink: #1d1a22;
+  --color-ink-mid: #4f4a56;
+  --color-ink-low: #5a5462;
+  --color-ink-faint: #8a8492;
 
   /* ── Filets ── */
-  --color-divider: rgb(255 255 255 / 0.09);
-  --color-grid-line: #1d2739;
-  --color-grid-line-active: #3d4a62;
+  --color-divider: rgb(29 26 34 / 0.16);
+  --color-grid-line: rgb(29 26 34 / 0.07);
+  --color-grid-line-active: rgb(29 26 34 / 0.3);
   /* 5,57:1 sur la nuit, donc au-dessus des 3:1 exigés pour un contour de
      composant. Un filet blanc pur d'un pixel éblouissait autour de chaque
      question de la FAQ. */
-  --color-border-strong: #8591a6;
+  --color-border-strong: #1d1a22;
 
   /* ── Texte sur fond sombre, pour les panneaux qui restent sombres quel que
      soit leur parent. Mêmes valeurs que les encres du fond général. ── */
   --color-text-on-dark: #ffffff;
-  --color-text-on-dark-mid: #c3c9d4;
-  --color-text-on-dark-low: #a3acbb;
-  --color-text-on-dark-faint: #7c8799;
-  --color-divider-dark: #2a3548;
-  --color-surface-on-dark: #1a2439;
+  --color-text-on-dark-mid: #d6d1dc;
+  --color-text-on-dark-low: #bdb6c6;
+  --color-text-on-dark-faint: #948d9e;
+  --color-divider-dark: #3a3542;
+  --color-surface-on-dark: #2a2530;
 
   /* ── L'accent ──
      --color-accent est la pêche en FOND : le bouton d'appel. Son
@@ -259,16 +266,16 @@
   /* Le texte secondaire d'une feuille claire. `--color-ink-faint` y tombait à
      3,4:1 ; celui-ci tient 7,1:1. */
   --color-feuille-note: #4b5565;
-  --color-peche: #ffb38a;
-  --color-peche-clair: #ffc4a3;
-  --color-accent: #ffb38a;
-  --color-accent-text: #ffb38a;
+  --color-peche: #b59cff;
+  --color-peche-clair: #c8b6ff;
+  --color-accent: #b59cff;
+  --color-accent-text: #6a3df5;
   /* 18 % de pêche dans la nuit. Le texte blanc y tient 12,05:1. */
-  --color-accent-soft: #3c3439;
+  --color-accent-soft: #ece5ff;
 
   /* La pêche tient 10,19:1 sur la nuit : l'anneau de focus peut être l'accent.
      Sur un panneau clair, où elle tombe à 1,64:1, `.bloc-encre` le remappe. */
-  --color-focus: #ffb38a;
+  --color-focus: #1d1a22;
 
   /* La pêche étant la couleur de marque, elle ne peut pas signifier
      « valide » : un état correct serait indiscernable d'un élément de marque.
@@ -276,8 +283,8 @@
   /* L'erreur garde un rouge, éclairci pour le fond sombre : 7,25:1 sur la
      nuit. Il est voisin de la pêche en teinte, donc jamais seul : l'état
      d'erreur est toujours porté par une phrase. */
-  --color-error: #ff8073;
-  --color-success: #ffffff;
+  --color-error: #c9302c;
+  --color-success: #0c7a3c;
 
   /* ── Élévation : aucune. La structure vient des filets. ──
      Les deux jetons ne rendent rien et c'est leur rôle : ils tiennent la place
@@ -287,8 +294,8 @@
      les retirer y ferait échouer `box-shadow: var(--shadow-card)` en silence.
      Ce qui a été retiré, ce sont les déclarations inertes qui les peignaient
      dans ce fichier. */
-  --shadow-card: 0 0 0 0 transparent;
-  --shadow-card-hover: 0 0 0 0 transparent;
+  --shadow-card: 4px 4px 0 #1d1a22;
+  --shadow-card-hover: 6px 6px 0 #1d1a22;
 }
 
 /* Troisième courbe du système, la plus douce des trois. Elle vivait en dur dans
@@ -1679,4 +1686,146 @@ section:has(+ .bloc-encre) {
   }
   html, body { background: #ffffff; }
   .nav-root { display: none; }
+}
+
+/* =========================================================================
+   LE CARNET SUR TOUT LE SITE — 28 octobre 2026.
+   L'accueil porte « Le carnet » depuis le 27 octobre ; les pages intérieures
+   le prennent à leur tour. Les jetons du haut de ce fichier ont pris les
+   valeurs du carnet ; ce bloc reprend ce qu'un jeton ne suffit pas à dire :
+   le papier quadrillé, les titres en capitales condensées, le bouton d'appel
+   en pilule d'encre à l'ombre décalée, le soulignement violet, et l'île
+   (`.bloc-encre`), qui devient une feuille blanche posée à l'encre. Il est
+   écrit en dernier pour l'emporter sur les règles « nuit et pêche » qu'il
+   remplace, à spécificité égale.
+   ========================================================================= */
+
+/* Les titres : h1 et h2 en capitales condensées, comme le nom et les
+   sections de l'accueil ; h3 et h4 en Bricolage gras, en bas de casse. */
+.tenue-carnet :is(h1, h2) {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 75%;
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+}
+
+.tenue-carnet h1 {
+  font-size: clamp(2.6rem, 6.2vw + 0.6rem, 6.4rem);
+}
+
+.tenue-carnet h2 {
+  font-size: clamp(2.1rem, 3.8vw + 0.6rem, 4rem);
+}
+
+.tenue-carnet :is(h3, h4) {
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+html:not(:has(.carnet)) ::selection {
+  background: #ffd23f;
+  color: #1d1a22;
+}
+
+/* Le bouton d'appel : la pilule d'encre du carnet, ombre lilas décalée. */
+.tenue-carnet .btn-primary {
+  min-height: 52px;
+  padding: 0 24px;
+  border: 2.5px solid #1d1a22;
+  background: #1d1a22;
+  color: #fffdf8;
+  font: 800 1rem / 1 var(--font-display);
+  font-stretch: 85%;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  box-shadow: 4px 4px 0 #b59cff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tenue-carnet .btn-primary:hover,
+.tenue-carnet .btn-primary:focus-visible {
+  background: #1d1a22;
+  color: #fffdf8;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #b59cff;
+}
+
+.tenue-carnet .btn-primary:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 #b59cff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tenue-carnet .btn-primary,
+  .tenue-carnet .btn-primary:hover,
+  .tenue-carnet .btn-primary:focus-visible,
+  .tenue-carnet .btn-primary:active {
+    transform: none;
+  }
+}
+
+/* Les liens secondaires et les puces parlent en code, comme les étiquettes
+   du carnet. */
+.tenue-carnet .link-cta {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tenue-carnet .chip {
+  border: 2px solid #1d1a22;
+  background: #fffdf8;
+  color: #1d1a22;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+/* Le fragment mis en avant d'un titre : un trait violet tiré dessous. */
+.tenue-carnet mark {
+  --trait-souligne: max(3px, 0.06em);
+  background:
+    linear-gradient(#6a3df5, #6a3df5) no-repeat 0 96% /
+    calc(var(--draw) * 100%) var(--trait-souligne);
+}
+
+.tenue-carnet .lien-prose {
+  border-bottom: 2px solid #6a3df5;
+}
+
+/* L'île : une feuille blanche posée sur le papier, au trait d'encre et à
+   l'ombre pleine. Elle garde son rôle (ce que le lecteur vient vérifier). */
+.tenue-carnet .bloc-encre {
+  background: #fffdf8;
+  color: #1d1a22;
+  border: 2.5px solid #1d1a22;
+  box-shadow: 8px 8px 0 #1d1a22;
+  margin-inline: clamp(0.75rem, 2vw, 1.5rem);
+  margin-block: clamp(1rem, 2vw, 1.5rem);
+
+  --color-paper: #fffdf8;
+  --color-surface-low: #f6f2e8;
+  --color-surface-high: #ffffff;
+  --color-service-border: rgb(29 26 34 / 0.25);
+  --color-ink: #1d1a22;
+  --color-ink-mid: #4f4a56;
+  --color-ink-low: #5a5462;
+  --color-ink-faint: #8a8492;
+  --color-divider: rgb(29 26 34 / 0.16);
+  --color-grid-line: rgb(29 26 34 / 0.07);
+  --color-grid-line-active: rgb(29 26 34 / 0.3);
+  --color-border-strong: #1d1a22;
+  --color-accent-text: #6a3df5;
+  --color-accent-soft: #ece5ff;
+  --color-focus: #1d1a22;
+  --color-error: #c9302c;
+  --color-success: #0c7a3c;
+}
+
+/* L'anneau de focus clavier : l'encre, en 3 px, comme sur l'accueil. */
+@media (any-hover: hover), (any-pointer: fine) {
+  :focus-visible {
+    outline-width: 3px;
+  }
 }

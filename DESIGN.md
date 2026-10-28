@@ -476,6 +476,37 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
   visuels, jamais dans le chrome du site.
 
+## Le carnet sur tout le site (28 octobre 2026)
+
+Le 28 octobre 2026, les pages intérieures prennent le carnet de l'accueil.
+Ce qui change :
+
+- `Layout` pose `.tenue-carnet` autour de chaque page (sauf le blog, qui
+  passe `carnet={false}` et garde son blanc et Geist) et charge
+  `components/carnet/carnet.css` et ses trois polices.
+- Les jetons du `@theme` de `global.css` gardent leurs noms et prennent les
+  valeurs du carnet : papier `#f6f2e8`, encre `#1d1a22` (texte et `night`),
+  lilas `#b59cff` en aplat (`peche`, `accent`), violet `#6a3df5` en texte
+  (`accent-text`), Bricolage Grotesque, JetBrains Mono pour `--font-mono`,
+  ombre pleine décalée pour `--shadow-card`.
+- Le dernier bloc de `global.css`, « LE CARNET SUR TOUT LE SITE », reprend
+  ce qu'un jeton ne dit pas : h1 et h2 en capitales condensées, le bouton
+  d'appel en pilule d'encre à l'ombre lilas, `mark` en trait violet, l'île
+  `.bloc-encre` en feuille blanche bordée d'encre à l'ombre pleine.
+- `Navigation` et `Footer` rendent la barre et le pied du carnet
+  (`carnet/barre.astro`, `carnet/pied.astro`), paramétrés : liens, source des
+  statistiques, nom qui ramène à l'accueil, newsletter vers `/#newsletter`.
+- Les objets du carnet (`pilule`, `caps`, `meta`, `tete`, `etape`…) sont
+  rangés sous `.carnet-ui` (accueil, barre, pied, formulaire de contact) :
+  les composants des pages intérieures emploient les mêmes noms courts.
+- Les pages intérieures ne portent ni modules ni chemin de pointillés : ce
+  sont des pages de lecture et d'offre, pas des pages de marque.
+
+La suite décrit la tenue « nuit et pêche » (3 au 28 octobre 2026). Ses
+règles de structure valent toujours (un seul bouton d'appel, les îles, les
+composants communs, la mesure, le mouvement) ; ses couleurs et sa
+typographie ne valent plus.
+
 ## La tenue commune
 
 Les règles nées sur l'accueil, étendues à toutes les pages le 3 octobre 2026.
@@ -634,10 +665,10 @@ scénario Make : chaque section s'ouvre sur un module rond, coloré et
 numéroté, et un chemin de pointillés serpente de l'un à l'autre par les
 marges.
 
-Pour l'instant le carnet ne sert que sur `/`. Sa grammaire est dans
-`src/components/carnet/carnet.css`, rangée sous `.accueil-carnet`, et chaque section
-est un composant du même dossier. Les autres pages gardent *La tenue
-commune* (nuit et pêche) tant qu'elles n'ont pas été passées au carnet. Le
+Sa grammaire est dans `src/components/carnet/carnet.css` (base sous
+`.tenue-carnet`, objets sous `.carnet-ui`), et chaque section est un
+composant du même dossier. Depuis le 28 octobre 2026 les autres pages
+portent sa base (voir *Le carnet sur tout le site*). Le
 design system de référence, composants compris, est l'artefact « Lilian
 Sevoumian » (type Design System) ; la maquette, l'artefact « Le carnet ».
 

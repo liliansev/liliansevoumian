@@ -11,6 +11,8 @@
  * pied, couleurs) est propre au blog et ne sort pas de cette charpente.
  */
 import type { ComponentProps } from 'astro/types';
+import '@fontsource-variable/geist';
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import Layout from './Layout.astro';
 
 type Props = ComponentProps<typeof Layout>;
@@ -19,7 +21,7 @@ const props = Astro.props as Props;
 const annee = new Date().getFullYear();
 ---
 
-<Layout {...props}>
+<Layout themeColor="#ffffff" policePrechargee={geistLatin} {...props} carnet={false}>
   <div class="carnet">
     <header class="carnet__barre">
       <a href="/" class="carnet__nom">Lilian Sevoumian</a>
@@ -83,6 +85,11 @@ const annee = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     padding: 0 1.25rem;
+    /* Le reste du site est passé en Bricolage avec le carnet (28 octobre
+       2026) : le blog garde Geist. */
+    --font-body: 'Geist Variable', system-ui, -apple-system, sans-serif;
+    --font-display: 'Geist Variable', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Geist Variable', system-ui, -apple-system, sans-serif;
     color: var(--carnet-encre);
     font-family: var(--font-body);
     font-size: 1.125rem;
