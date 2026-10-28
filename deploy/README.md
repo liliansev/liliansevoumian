@@ -38,7 +38,7 @@ taken out of the config for one reload, otherwise Caddy keeps the cached one. Af
 `docker exec edge-caddy-1 caddy validate --config /etc/caddy/Caddyfile`, then
 `docker exec edge-caddy-1 caddy reload --config /etc/caddy/Caddyfile`.
 
-Validation: pnpm exec tsc --noEmit; node --test deploy/server.test.mjs;
+Validation: pnpm exec tsc --noEmit; node --test deploy/server.test.mjs deploy/contact-message.test.mjs (after the esbuild bundle of runtime/);
 Docker build (includes Astro production build and tests), then check actual HTTPS
 routes and the newsletter validation path. Unit tests never send subscriber emails.
 

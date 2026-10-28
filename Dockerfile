@@ -5,7 +5,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build && pnpm exec esbuild src/lib/newsletter-signup.ts --bundle --platform=node --format=esm --outfile=runtime/newsletter-signup.mjs && pnpm exec esbuild src/lib/contact-message.ts --bundle --platform=node --format=esm --outfile=runtime/contact-message.mjs
-RUN node --test deploy/server.test.mjs
+RUN node --test deploy/server.test.mjs deploy/contact-message.test.mjs
 RUN CI=true pnpm prune --prod
 
 FROM node:24-alpine
