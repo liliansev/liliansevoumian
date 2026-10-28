@@ -52,12 +52,14 @@ import ThreeScene from './three-scene.astro';
 <style>
   /* Le schéma est une fenêtre : un panneau relevé d'un cran sur la nuit de la
      page, au rayon fluide des médias, comme les vignettes de la même page. Il
-     reste sombre quel que soit son parent (jetons `-on-dark`).
+     est une feuille du carnet quel que soit son parent (jetons `-on-dark`,
+     clairs depuis le 28 octobre 2026).
      Pas d'enveloppe `.media-ouvre` : la scène 3D a déjà son propre mouvement,
      et un rognage lié au défilement se battrait avec lui. */
   .application-system {
-    border: 1px solid var(--color-divider-dark);
+    border: 2.5px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
     background: var(--color-surface-on-dark);
     color: var(--color-text-on-dark);
   }
@@ -68,7 +70,7 @@ import ThreeScene from './three-scene.astro';
   }
 
   .application-system__center {
-    stroke: var(--color-peche);
+    stroke: var(--color-accent-text);
   }
 
   .application-system__labels {

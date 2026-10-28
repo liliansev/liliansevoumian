@@ -51,7 +51,7 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
     {/* Une fenêtre : surface relevée, rayon de grande carte. Ses deux moitiés
         vont jusqu'au bord, d'où `overflow-hidden`. */}
     <div
-      class="roi-carte reveal border border-[var(--color-divider)] rounded-[var(--radius-lg)] overflow-hidden"
+      class="roi-carte reveal rounded-[var(--radius-lg)] overflow-hidden"
       data-roi-calc
     >
       <!-- Le résultat en tête : il est visible dès l'entrée dans la section, et
@@ -132,6 +132,8 @@ const { isCapped, manualHours, hoursSaved, moneySaved } = compute(initial.hours,
 <style>
   .roi-carte {
     background: var(--color-surface-low);
+    border: 2.5px solid var(--color-border-strong);
+    box-shadow: var(--shadow-card);
   }
 
   .roi-sortie {

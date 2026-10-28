@@ -37,10 +37,14 @@ export function mountScene(host: HTMLElement): () => void {
   const stepButtons = [...host.querySelectorAll<HTMLButtonElement>('[data-step]')];
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const styles = getComputedStyle(host);
+  /* Les scènes sont posées sur une feuille claire du carnet depuis le
+     28 octobre 2026 : la lumière est blanche (les jetons `-on-dark` portent
+     désormais l'encre), les traits à l'encre adoucie. */
+  const LUMIERE = '#ffffff';
   const palette: ScenePalette = {
-    lime: styles.getPropertyValue('--color-peche').trim(),
+    lime: styles.getPropertyValue('--color-accent-text').trim(),
     paper: styles.getPropertyValue('--color-text-on-dark').trim(),
-    muted: styles.getPropertyValue('--color-text-on-dark-faint').trim(),
+    muted: styles.getPropertyValue('--color-text-on-dark-low').trim(),
     dark: styles.getPropertyValue('--color-surface-on-dark').trim(),
   };
   const id = host.dataset.scene;
@@ -83,10 +87,10 @@ export function mountScene(host: HTMLElement): () => void {
     gl.outputColorSpace = SRGBColorSpace;
     const scene = new Scene();
     scene.background = new Color(palette.dark);
-    scene.add(new AmbientLight(palette.paper, .9));
-    const key = new DirectionalLight(palette.paper, 1.4);
+    scene.add(new AmbientLight(LUMIERE, .9));
+    const key = new DirectionalLight(LUMIERE, 1.4);
     key.position.set(-3, 5, 5);
-    const rim = new DirectionalLight(palette.paper, .7);
+    const rim = new DirectionalLight(LUMIERE, .7);
     rim.position.set(4, 1, -3);
     scene.add(key, rim);
     let compact = viewport.clientWidth < 600;

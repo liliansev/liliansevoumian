@@ -71,11 +71,13 @@ const {
 
   .questions__liste {
     max-width: 44rem;
-    border-bottom: 1px solid var(--color-divider);
+    border-bottom: 2px dashed var(--color-service-border);
   }
 
+  /* Les filets en pointillés d'encre et le signe dans une pastille bordée :
+     la FAQ du carnet (28 octobre 2026). */
   .question {
-    border-top: 1px solid var(--color-divider);
+    border-top: 2px dashed var(--color-service-border);
   }
 
   /* La ligne entière se clique : la question à gauche, le signe à droite. */
@@ -99,7 +101,7 @@ const {
     margin: 0;
     color: var(--color-ink);
     font-size: var(--text-body-large);
-    font-weight: 500;
+    font-weight: 700;
     line-height: 1.35;
     letter-spacing: 0;
     text-wrap: pretty;
@@ -109,10 +111,14 @@ const {
   .question__signe {
     position: relative;
     flex: none;
-    width: 0.875rem;
-    height: 0.875rem;
-    color: var(--color-ink-low);
-    transition: color 160ms var(--ease-out-quint);
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid var(--color-border-strong);
+    border-radius: 50%;
+    background: var(--color-surface-low);
+    color: var(--color-ink);
+    box-shadow: 2px 2px 0 var(--color-border-strong);
+    transition: background-color 160ms var(--ease-out-quint);
   }
 
   .question__signe::before,
@@ -120,10 +126,10 @@ const {
     content: '';
     position: absolute;
     top: 50%;
-    left: 0;
-    width: 100%;
-    height: 1.5px;
-    margin-top: -0.75px;
+    left: 30%;
+    width: 40%;
+    height: 2px;
+    margin-top: -1px;
     background: currentColor;
     transition: transform 260ms var(--ease-out-quint);
   }
@@ -138,7 +144,7 @@ const {
 
   .question__tete:hover .question__signe,
   .question[open] .question__signe {
-    color: var(--color-ink);
+    background: #b59cff;
   }
 
   .question__reponse {

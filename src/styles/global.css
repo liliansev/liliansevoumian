@@ -236,14 +236,15 @@
      question de la FAQ. */
   --color-border-strong: #1d1a22;
 
-  /* ── Texte sur fond sombre, pour les panneaux qui restent sombres quel que
-     soit leur parent. Mêmes valeurs que les encres du fond général. ── */
-  --color-text-on-dark: #ffffff;
-  --color-text-on-dark-mid: #d6d1dc;
-  --color-text-on-dark-low: #bdb6c6;
-  --color-text-on-dark-faint: #948d9e;
-  --color-divider-dark: #3a3542;
-  --color-surface-on-dark: #2a2530;
+  /* ── Les panneaux « toujours sombres » (schémas, scène 3D, vignettes) :
+     depuis le 28 octobre 2026 ils sont des feuilles claires du carnet, et ces
+     jetons portent l'encre sur le blanc. Les noms sont restés. ── */
+  --color-text-on-dark: #1d1a22;
+  --color-text-on-dark-mid: #4f4a56;
+  --color-text-on-dark-low: #5a5462;
+  --color-text-on-dark-faint: #8a8492;
+  --color-divider-dark: rgb(29 26 34 / 0.2);
+  --color-surface-on-dark: #fffdf8;
 
   /* ── L'accent ──
      --color-accent est la pêche en FOND : le bouton d'appel. Son
@@ -983,224 +984,9 @@ body {
 [data-hero-stagger] > .reveal:nth-child(4) { transition-delay: 400ms; }
 [data-hero-stagger] > .reveal:nth-child(5) { transition-delay: 540ms; }
 
-/* =========================================================================
-   NAV — fixed top, no shadow, border-bottom shifts on scroll
-   La même barre sur toutes les pages : fond plein, liens en bas de casse,
-   un seul bouton. Le gabarit est dans `Navigation.astro`.
-   ========================================================================= */
-
-.nav-root {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  background: var(--color-paper);
-  border-bottom: 1px solid var(--color-divider);
-  /* En rem, comme --spacing-barre : quand le visiteur agrandit le texte, la
-     barre grandit avec lui au lieu de couper ses libellés. */
-  height: var(--spacing-barre);
-  transition: border-color var(--duration-default) var(--ease-out-quint),
-              background-color var(--duration-default) var(--ease-out-quint);
-}
-
-/* Les liens de la barre demandent environ 56em de large (893 px à la taille
-   normale du texte, mesurés le 3 octobre 2026). La condition est en em : quand
-   le visiteur agrandit le texte, la largeur nécessaire grandit avec lui, et la
-   barre passe au menu, comme sur téléphone, au lieu de couper ses libellés. */
-.nav-root > div {
-  container: barre-nav / inline-size;
-}
-
-@container barre-nav (max-width: 56em) {
-  .nav-root .nav-liens {
-    display: none;
-  }
-
-  .nav-root .menu-trigger {
-    display: inline-flex;
-  }
-}
-
-.nav-root.scrolled {
-  border-bottom-color: var(--color-ink-faint);
-}
-
-.nav-link {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: var(--text-body-sm);
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--color-ink-mid);
-  padding: 8px 12px;
-  border-radius: var(--radius-full);
-  text-decoration: none;
-  transition: color var(--duration-default) var(--ease-out-quint);
-}
-
-.nav-link:hover,
-.nav-link.is-active {
-  color: var(--color-ink);
-}
-
-/* Le lien de la section en cours garde un point pêche : avec la pastille de
-   survol, la graisse seule ne suffisait plus à le distinguer. */
-.nav-link.is-active {
-  font-weight: 600;
-}
-
-.nav-link.is-active::after {
-  content: '';
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  width: 4px;
-  height: 4px;
-  margin-left: -2px;
-  border-radius: var(--radius-full);
-  background: var(--color-peche);
-}
-
-/* Menu natif en top layer : aucune barre fixe de la page ne passe au-dessus.
-   L'en-tête et le CTA restent accessibles ; seule la liste défile. */
-.mobile-menu {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  height: 100dvh;
-  max-width: none;
-  max-height: none;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  color: var(--color-ink);
-  background: var(--color-paper);
-}
-.mobile-menu::backdrop { background: var(--color-paper); }
-.mobile-menu__panel {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  height: 100%;
-  min-height: 0;
-}
-.mobile-menu__panel:focus { outline: none; }
-.mobile-menu__header,
-.mobile-menu__content,
-.mobile-menu__footer {
-  padding-inline: max(var(--spacing-section-x), env(safe-area-inset-left))
-    max(var(--spacing-section-x), env(safe-area-inset-right));
-}
-.mobile-menu__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: var(--spacing-barre);
-  padding-top: env(safe-area-inset-top);
-  border-bottom: 1px solid var(--color-divider);
-}
-.mobile-menu__close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-width: 44px;
-  min-height: 44px;
-  /* Une gélule : au survol, l'aplat collait au texte, à angles vifs. */
-  padding-inline: 0.85rem;
-  border-radius: var(--radius-full);
-  color: var(--color-ink);
-  font-size: var(--text-body-sm);
-  cursor: pointer;
-}
-.mobile-menu__marque {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--color-ink);
-  font-size: var(--text-body);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-}
-/* Les métiers en grand, en haut ; la suite, plus discrète, en bas, juste
-   au-dessus du bouton. L'écran est tenu par ses deux bouts et l'espace qui
-   reste est entre les deux groupes, où il sépare. Deux essais avant celui-ci :
-   la liste collée en haut laissait 560 px de vide dessous ; calée en bas, elle
-   laissait le même vide au-dessus (capture d'iPhone de Lilian, le 8 octobre
-   2026). C'était la taille des liens qui ne remplissait pas l'écran, pas leur
-   place. Pas de filet entre les liens : c'est la taille qui les sépare. */
-.mobile-menu__content {
-  display: grid;
-  align-content: space-between;
-  gap: var(--spacing-groupe);
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding-block: 2rem 1.5rem;
-  -webkit-overflow-scrolling: touch;
-}
-.mobile-link {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--color-ink);
-  text-decoration: none;
-}
-.mobile-menu__links,
-.mobile-menu__suite {
-  display: grid;
-}
-.mobile-menu__link {
-  padding-block: 0.4rem;
-  font-size: var(--text-menu);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: var(--tracking-display);
-}
-.mobile-menu__suite .mobile-link {
-  color: var(--color-ink-mid);
-  font-size: var(--text-body-large);
-}
-.mobile-menu__footer {
-  padding-block: 1rem max(1rem, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--color-divider);
-  background: var(--color-paper);
-}
-@media (hover: hover) and (pointer: fine) {
-  .mobile-link:hover,
-  .mobile-menu__close:hover { background: var(--color-accent-soft); }
-}
-
-/* L'ouverture du menu. Il se posait d'un coup, plein écran : une coupe franche
-   sur la surface la plus grande du site. Le voile se fond, puis les liens
-   arrivent l'un après l'autre — c'est une liste, la cascade y est à sa place.
-   Seule l'ouverture est animée : la fermeture reste immédiate, on ne fait pas
-   attendre quelqu'un qui s'en va. Des `@keyframes` sur `[open]`, donc rien à
-   brancher côté script, et rien de masqué si l'animation ne joue pas. */
-@media (prefers-reduced-motion: no-preference) {
-  .mobile-menu[open] {
-    animation: menu-ouvre 260ms var(--ease-out-quint) backwards;
-  }
-  .mobile-menu[open] .mobile-link {
-    animation: menu-lien 560ms var(--ease-out-expo) backwards;
-    animation-delay: calc(70ms + var(--rang, 0) * 50ms);
-  }
-  .mobile-menu__links .mobile-link:nth-child(2) { --rang: 1; }
-  .mobile-menu__links .mobile-link:nth-child(3) { --rang: 2; }
-  .mobile-menu__links .mobile-link:nth-child(n + 4) { --rang: 3; }
-  .mobile-menu__suite .mobile-link { --rang: 4; }
-  .mobile-menu__suite .mobile-link:nth-child(2) { --rang: 5; }
-  .mobile-menu__suite .mobile-link:nth-child(n + 3) { --rang: 6; }
-}
-
-@keyframes menu-ouvre { from { opacity: 0; } }
-@keyframes menu-lien { from { opacity: 0; transform: translateY(14px); } }
+/* La barre « nuit et pêche » (`.nav-root`, `.mobile-menu`) a été retirée le
+   28 octobre 2026 : toutes les pages portent la barre du carnet
+   (`carnet/barre.astro`), qui a ses styles. */
 
 footer a {
   display: inline-flex;
@@ -1647,7 +1433,7 @@ section:has(+ .bloc-encre) {
    ========================================================================= */
 @view-transition { navigation: auto; }
 
-.nav-root { view-transition-name: barre-nav; }
+.barre { view-transition-name: barre-nav; }
 
 ::view-transition-old(root) {
   animation: page-sort 160ms var(--ease-out-quint) both;
@@ -1685,7 +1471,7 @@ section:has(+ .bloc-encre) {
     --color-accent-text: #111827;
   }
   html, body { background: #ffffff; }
-  .nav-root { display: none; }
+  .barre, .pied { display: none; }
 }
 
 /* =========================================================================
@@ -1821,6 +1607,13 @@ html:not(:has(.carnet)) ::selection {
   --color-focus: #1d1a22;
   --color-error: #c9302c;
   --color-success: #0c7a3c;
+}
+
+/* Sur téléphone, l'île est à 12 px du bord : une ombre de 8 px s'y collait. */
+@media (max-width: 640px) {
+  .tenue-carnet .bloc-encre {
+    box-shadow: 5px 5px 0 #1d1a22;
+  }
 }
 
 /* L'anneau de focus clavier : l'encre, en 3 px, comme sur l'accueil. */

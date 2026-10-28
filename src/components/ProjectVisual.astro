@@ -67,11 +67,13 @@ const debutNom = mots.join(' ');
     min-width: 0;
     overflow: hidden;
     border-radius: var(--radius-lg);
-    background: var(--color-night-deep);
+    background: var(--color-surface-on-dark);
     color: var(--color-text-on-dark);
+    box-shadow: var(--shadow-card);
     text-decoration: none;
     isolation: isolate;
     margin: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
   /* Le filet est un calque posé par-dessus la vignette, et non sa bordure.
@@ -84,7 +86,7 @@ const debutNom = mots.join(' ');
     position: absolute;
     inset: 0;
     z-index: 3;
-    border: 1px solid var(--color-service-border);
+    border: 2.5px solid var(--color-border-strong);
     border-radius: inherit;
     pointer-events: none;
     transition: border-color var(--duration-default) var(--ease-out-quint);
@@ -119,14 +121,14 @@ const debutNom = mots.join(' ');
   /* La légende est un pied plein, sous la capture, et non un texte posé dessus.
      Elle a d'abord été incrustée sur un voile : sur les trois captures claires
      le voile virait au gris, le texte de la capture transparaissait dessous, et
-     le détail tombait sous 4,5:1. Sur son propre fond nuit, le nom tient
-     18,72:1 et le détail 11,25:1, quelle que soit la capture. */
+     le détail tombait sous 4,5:1. Sur son propre fond (le blanc du carnet
+     depuis le 28 octobre 2026), il se lit quelle que soit la capture. */
   .project-visual__caption {
     display: grid;
     gap: 0.3rem;
     padding: clamp(0.9rem, 1.8vw, 1.15rem) clamp(1rem, 2vw, 1.35rem);
-    border-top: 1px solid var(--color-divider-dark);
-    background: var(--color-night-deep);
+    border-top: 2px solid var(--color-border-strong);
+    background: var(--color-surface-on-dark);
     color: var(--color-text-on-dark);
   }
 
@@ -163,11 +165,11 @@ const debutNom = mots.join(' ');
     white-space: nowrap;
   }
 
-  /* La vignette entière est un lien : c'est son contenu qui répond. Le filet
-     passe à la pêche, la capture avance, la flèche part vers l'extérieur. Le
+  /* La vignette entière est un lien : elle se soulève comme une carte du
+     carnet, la capture avance, la flèche part vers l'extérieur. Le
      clavier reçoit la même réponse que la souris. */
   .project-visual:focus-visible::after {
-    border-color: var(--color-peche);
+    border-color: var(--color-accent-text);
   }
 
   .project-visual:focus-visible img {
@@ -176,13 +178,14 @@ const debutNom = mots.join(' ');
   }
 
   .project-visual:focus-visible strong svg {
-    color: var(--color-peche);
+    color: var(--color-accent-text);
     transform: translate(0.15rem, -0.15rem);
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .project-visual:hover::after {
-      border-color: var(--color-peche);
+    .project-visual:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-card-hover);
     }
 
     .project-visual:hover img {
@@ -191,7 +194,7 @@ const debutNom = mots.join(' ');
     }
 
     .project-visual:hover strong svg {
-      color: var(--color-peche);
+      color: var(--color-accent-text);
       transform: translate(0.15rem, -0.15rem);
     }
   }
@@ -203,6 +206,7 @@ const debutNom = mots.join(' ');
       transition: none;
     }
 
+    .project-visual:hover,
     .project-visual:hover img,
     .project-visual:focus-visible img,
     .project-visual:hover strong svg,
