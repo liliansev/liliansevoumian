@@ -11,6 +11,9 @@ Runtime secrets: /opt/liliansevoumian/secrets/runtime.env (MAILCHEAP_API_KEY for
 the newsletter, RESEND_API_KEY for the contact form). The contact form sends from
 CONTACT_FROM (default formulaire@liliansevoumian.fr, a domain verified in Resend)
 to CONTACT_TO (default bonjour@liliansevoumian.fr); both are optional.
+TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY (Cloudflare Turnstile widget,
+domain liliansevoumian.fr) switch the captcha on, both or none; the page gets
+the site key with its form token, so a container restart is enough.
 Never put secrets in the image or archive.
 
 Link page (/liens): since 18 October 2026 it lives in the liliansev/linkinbio

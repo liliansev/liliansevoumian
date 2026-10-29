@@ -139,6 +139,8 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNews
         const bytes = req.method === 'POST' ? await readBody(req, 8192) : undefined;
         if (!sendContactMessage) contactPromise ??= import('../runtime/contact-message.mjs');
         const envoyer = sendContactMessage ?? (await contactPromise).envoyerMessageContact;
+        // L'adresse du visiteur, que Turnstile prend en compte (posée par Caddy).
+        if (ip) headers.set('x-real-ip', ip);
         const response = await envoyer(new Request(url, { method: req.method, headers, body: bytes }), process.env, origin);
         return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
       }

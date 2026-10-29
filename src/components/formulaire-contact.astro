@@ -61,6 +61,7 @@ const carnet = variante === 'carnet';
     <textarea id="contact-message" name="message" required maxlength="5000" rows="5" placeholder="J’ai une société de… et j’aimerais…"></textarea>
   </div>
   <div hidden aria-hidden="true"><label for="contact-website">Votre site</label><input id="contact-website" name="website" tabindex="-1" autocomplete="off" /></div>
+  <div class="contact__captcha" data-turnstile hidden></div>
   <div class="contact__pied">
     {carnet ? (
       <button type="submit" class="pilule pilule-encre contact__envoi">Envoyer</button>
@@ -145,6 +146,11 @@ const carnet = variante === 'carnet';
   .contact [aria-invalid='true'],
   .contact [aria-invalid='true']:focus {
     border-color: var(--color-error);
+  }
+
+  /* Cloudflare Turnstile : n'apparaît que si Cloudflare demande une case à cocher. */
+  .contact__captcha:empty {
+    display: none;
   }
 
   .contact__pied {
@@ -335,8 +341,9 @@ const carnet = variante === 'carnet';
     const demanderJeton = () => {
       jeton ??= fetch(formulaire.action, { headers: { Accept: 'application/json' } })
         .then(async (r) => {
-          const corps = (await r.json()) as { jeton?: string; attente?: number };
+          const corps = (await r.json()) as { jeton?: string; attente?: number; turnstile?: string };
           if (!r.ok || typeof corps.jeton !== 'string') throw new Error(String(r.status));
+          if (typeof corps.turnstile === 'string') afficherCaptcha(corps.turnstile);
           // Une marge d'une demi-seconde sur le délai du serveur.
           return { valeur: corps.jeton, pret: Date.now() + (corps.attente ?? 4000) + 500, recu: Date.now() };
         })
@@ -349,6 +356,45 @@ const carnet = variante === 'carnet';
       if (actuel && Date.now() - actuel.recu > 12 * 3_600_000) { jeton = null; return demanderJeton(); }
       return actuel;
     };
+    // Cloudflare Turnstile, si le serveur en donne la clé avec le jeton. Le
+    // script n'est chargé que dans ce cas ; la case ne s'affiche que si
+    // Cloudflare a un doute (`interaction-only`).
+    type Turnstile = { render: (el: HTMLElement, options: Record<string, unknown>) => string; reset: (id: string) => void };
+    const zone = formulaire.querySelector<HTMLElement>('[data-turnstile]');
+    let captcha = '';
+    let widget: string | null = null;
+    const afficherCaptcha = (cle: string) => {
+      if (!zone || widget !== null || document.querySelector('script[data-turnstile-script]')) return;
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      script.dataset.turnstileScript = '';
+      script.addEventListener('load', () => {
+        const api = (window as unknown as { turnstile?: Turnstile }).turnstile;
+        if (!api) return;
+        zone.hidden = false;
+        widget = api.render(zone, {
+          sitekey: cle,
+          language: 'fr',
+          appearance: 'interaction-only',
+          callback: (valeur: string) => { captcha = valeur; },
+          'expired-callback': () => { captcha = ''; },
+          'error-callback': () => { captcha = ''; },
+        });
+      });
+      document.head.append(script);
+    };
+    // La réponse Turnstile ne sert qu'une fois : après chaque essai, une neuve.
+    const renouvelerCaptcha = () => {
+      const api = (window as unknown as { turnstile?: Turnstile }).turnstile;
+      if (api && widget !== null) { captcha = ''; api.reset(widget); }
+    };
+    // Avant d'envoyer, la vérification peut encore tourner : on l'attend un peu.
+    const attendreCaptcha = async () => {
+      for (let i = 0; widget !== null && !captcha && i < 40; i++) await new Promise((fin) => setTimeout(fin, 250));
+      return captcha;
+    };
+
     if ('IntersectionObserver' in window) {
       const guet = new IntersectionObserver((entrees) => {
         if (entrees.some((e) => e.isIntersecting)) { guet.disconnect(); void demanderJeton(); }
@@ -406,10 +452,11 @@ const carnet = variante === 'carnet';
       try {
         const leJeton = await jetonFrais();
         if (leJeton && Date.now() < leJeton.pret) await new Promise((fin) => setTimeout(fin, leJeton.pret - Date.now()));
+        const reponseCaptcha = await attendreCaptcha();
         const reponse = await fetch(formulaire.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...donnees, jeton: leJeton?.valeur ?? '', source: `${source} (${location.pathname})` }),
+          body: JSON.stringify({ ...donnees, jeton: leJeton?.valeur ?? '', turnstile: reponseCaptcha, source: `${source} (${location.pathname})` }),
         });
         const corps = await reponse.json().catch(() => null) as { status?: string; message?: string } | null;
         if (reponse.ok && corps?.status === 'sent') {
@@ -423,6 +470,7 @@ const carnet = variante === 'carnet';
         }
         // Un jeton refusé ne resservira pas : on en redemandera un au prochain essai.
         if (reponse.status === 403) jeton = null;
+        renouvelerCaptcha();
         dire(corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.', 'error');
       } catch {
         dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.', 'error');
