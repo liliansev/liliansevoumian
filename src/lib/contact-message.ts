@@ -1,5 +1,6 @@
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { z } from 'astro/zod';
+import domainesJetables from 'disposable-email-domains-js/dist/dict/disposable_email_blocklist.json';
 import { EMAIL_CONTACT } from './contact';
 
 /*
@@ -15,6 +16,10 @@ import { EMAIL_CONTACT } from './contact';
  *                    Resend, `formulaire@liliansevoumian.fr` sinon.
  *   CONTACT_SECRET   facultative : la clé qui signe les jetons du formulaire ;
  *                    dérivée de RESEND_API_KEY sinon (rien à poser en plus).
+ *   TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY  facultatives, à poser ensemble :
+ *                    le captcha Cloudflare Turnstile. Posées, la page le
+ *                    reçoit avec son jeton et l'affiche, le serveur le vérifie ;
+ *                    absentes, le formulaire marche sans.
  *
  * Les robots (28 octobre 2026, demande de Lilian), sans CAPTCHA ni service
  * tiers, le site restant sans cookie :
@@ -28,6 +33,18 @@ import { EMAIL_CONTACT } from './contact';
  *     (`deploy/server.mjs`).
  *   - après l'envoi : le même message de la même adresse, renvoyé dans le
  *     quart d'heure, ne repart pas ; le formulaire se verrouille côté page.
+ *
+ * Le 29 octobre 2026, un robot passait tout cela : il ouvre la vraie page,
+ * attend, et laisse un seul lien personnalisé, sous une adresse et un domaine
+ * de lien différents à chaque fois, toutes les six heures. Depuis :
+ *   - rien qui ressemble à un lien dans le message, pas même un nom de
+ *     domaine écrit seul : le message est refusé, avec une phrase qui le dit ;
+ *   - les adresses jetables connues (la liste publique tenue sur GitHub,
+ *     paquet `disposable-email-domains-js`) sont refusées, avec une phrase ;
+ *   - les domaines de `DOMAINES_BLOQUES`, vus chez des robots, reçoivent le
+ *     succès factice : le robot croit être passé et ne change pas d'adresse ;
+ *   - Cloudflare Turnstile, si ses clés sont posées : invisible le plus
+ *     souvent, une case « Je suis humain » quand Cloudflare a un doute.
  */
 
 const messageSchema = z.object({
@@ -36,6 +53,7 @@ const messageSchema = z.object({
   message: z.string().trim().min(2).max(5000),
   source: z.string().trim().max(160).optional().default(''),
   jeton: z.string().max(200).optional().default(''),
+  turnstile: z.string().max(4096).optional().default(''),
 });
 const environmentSchema = z.object({
   apiKey: z.string().trim().min(1),
@@ -55,6 +73,33 @@ export interface ContactEnvironment {
   CONTACT_TO?: string;
   CONTACT_FROM?: string;
   CONTACT_SECRET?: string;
+  TURNSTILE_SITE_KEY?: string;
+  TURNSTILE_SECRET_KEY?: string;
+}
+
+/** Les deux clés Turnstile, ou rien : l'une sans l'autre n'allume rien. */
+function turnstile(env: ContactEnvironment): { site: string; secret: string } | null {
+  const site = env.TURNSTILE_SITE_KEY?.trim();
+  const secret = env.TURNSTILE_SECRET_KEY?.trim();
+  return site && secret ? { site, secret } : null;
+}
+
+const turnstileUrl = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+async function turnstileValide(secret: string, reponse: string, ip: string | null, fetchImpl: typeof fetch): Promise<boolean> {
+  if (!reponse) return false;
+  try {
+    const corps = new URLSearchParams({ secret, response: reponse });
+    if (ip) corps.set('remoteip', ip);
+    const resultat = await fetchImpl(turnstileUrl, { method: 'POST', body: corps, signal: AbortSignal.timeout(10_000) });
+    const verdict = (await resultat.json()) as { success?: unknown; 'error-codes'?: unknown };
+    if (verdict.success !== true) tracer('turnstile refusé', verdict['error-codes']);
+    return verdict.success === true;
+  } catch (erreur) {
+    // Cloudflare injoignable : on ne bloque pas les humains pour autant, le
+    // jeton signé et les autres règles restent.
+    tracer('turnstile injoignable : vérification sautée', erreur);
+    return true;
+  }
 }
 
 /** Seul le serveur de développement de Vite appelle cet export. */
@@ -98,7 +143,8 @@ const encore = (table: Map<string, number>, valeur: string) => (table.get(valeur
 
 export function emettreJetonContact(env: ContactEnvironment, maintenant = Date.now()): Response {
   const charge = `${maintenant.toString(36)}.${randomBytes(12).toString('base64url')}`;
-  return Response.json({ jeton: `${charge}.${signer(env, charge)}`, attente: DUREE_MIN }, { headers: { 'Cache-Control': 'no-store' } });
+  const captcha = turnstile(env);
+  return Response.json({ jeton: `${charge}.${signer(env, charge)}`, attente: DUREE_MIN, ...(captcha ? { turnstile: captcha.site } : {}) }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
 type Verdict = 'valide' | 'absent' | 'faux' | 'perime' | 'trop-tot' | 'deja-servi';
@@ -116,10 +162,22 @@ function verifierJeton(env: ContactEnvironment, jeton: string, maintenant = Date
   return { verdict: 'valide', nonce };
 }
 
-// Un lien, c'est un protocole ou un « www. » ; au-delà de trois, c'est une
-// annonce, pas une demande.
-const LIENS_MAX = 3;
-const compterLiens = (texte: string) => texte.match(/https?:\/\/|www\./gi)?.length ?? 0;
+// Tout ce qui ressemble à un lien : un protocole, un « www. », ou un nom de
+// domaine écrit seul (`monsite.fr`, `mondocs.my.id`). Les adresses e-mail sont
+// retirées avant, et la liste des extensions évite « Node.js » ou « etc. ».
+const extensions = 'fr|com|net|org|io|co|ai|app|dev|me|id|info|biz|online|site|website|xyz|top|click|link|live|shop|store|tech|pro|page|club|space|fun|icu|cc|tv|ly|gl|gg|to|eu|be|ch|ca|uk|de|es|it|nl|pt|us|ru|cn|in|br';
+const motifLien = new RegExp(`https?:\\/\\/|www\\.|\\b[a-z0-9-]+(?:\\.[a-z0-9-]+)*\\.(?:${extensions})\\b`, 'gi');
+const compterLiens = (texte: string) => texte.replace(/\S+@\S+/g, ' ').match(motifLien)?.length ?? 0;
+
+// Les domaines d'adresse vus chez des robots qui passaient le formulaire. On y
+// ajoute le domaine qui suit le @ dans un mail indésirable reçu.
+const DOMAINES_BLOQUES = new Set(['prodmail.online']);
+const jetables = new Set<string>(domainesJetables);
+/** Le domaine et chacun de ses parents : `a.b.prodmail.online` est bloqué aussi. */
+function domaineDans(email: string, liste: Set<string>): boolean {
+  const parties = email.slice(email.lastIndexOf('@') + 1).toLowerCase().split('.');
+  return parties.some((_, i) => i < parties.length - 1 && liste.has(parties.slice(i).join('.')));
+}
 
 /** Partagé par le serveur de production, la fonction Vercel et le serveur de dev. */
 export async function envoyerMessageContact(
@@ -180,11 +238,20 @@ export async function envoyerMessageContact(
       : 'Vérifiez les champs puis réessayez.';
     return reply({ status: 'error', message }, 422);
   }
+  if (domaineDans(parsed.data.email, DOMAINES_BLOQUES)) {
+    tracer('domaine bloqué : succès factice');
+    return reply({ status: 'sent', message: envoye });
+  }
+  if (domaineDans(parsed.data.email, jetables)) {
+    tracer('adresse jetable');
+    return reply({ status: 'error', message: 'Cette adresse est une adresse jetable : indiquez celle où je pourrai vous répondre.' }, 422);
+  }
   if (compterLiens(parsed.data.nom) > 0) {
     return reply({ status: 'error', message: 'Le champ du nom ne prend pas de lien.' }, 422);
   }
-  if (compterLiens(parsed.data.message) > LIENS_MAX) {
-    return reply({ status: 'error', message: `Gardez ${LIENS_MAX} liens au plus dans le message : je vous demanderai le reste.` }, 422);
+  if (compterLiens(parsed.data.message) > 0) {
+    tracer('lien dans le message');
+    return reply({ status: 'error', message: 'Votre message a été refusé : il contient un lien. Retirez-le, je vous demanderai l’adresse en vous répondant.' }, 422);
   }
   const { verdict, nonce } = verifierJeton(env, parsed.data.jeton);
   if (verdict === 'trop-tot' || verdict === 'deja-servi') {
@@ -197,6 +264,10 @@ export async function envoyerMessageContact(
   if (verdict !== 'valide' || !nonce) {
     tracer(`jeton ${verdict}`);
     return reply({ status: 'error', message: 'Rechargez la page puis réessayez.' }, 403);
+  }
+  const captcha = turnstile(env);
+  if (captcha && !(await turnstileValide(captcha.secret, parsed.data.turnstile, request.headers.get('x-real-ip'), fetchImpl))) {
+    return reply({ status: 'error', message: 'La vérification anti-robot n’a pas abouti. Cochez la case au-dessus du bouton, puis renvoyez.' }, 403);
   }
   const environment = environmentSchema.safeParse({
     apiKey: env.RESEND_API_KEY,
