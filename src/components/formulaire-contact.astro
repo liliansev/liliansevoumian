@@ -377,6 +377,8 @@ const carnet = variante === 'carnet';
           sitekey: cle,
           language: 'fr',
           appearance: 'interaction-only',
+          // Le formulaire est sur papier clair : la case suit, quel que soit le thème du système.
+          theme: 'light',
           callback: (valeur: string) => { captcha = valeur; },
           'expired-callback': () => { captcha = ''; },
           'error-callback': () => { captcha = ''; },
