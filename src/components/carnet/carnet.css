@@ -46,13 +46,15 @@
   /* Les trois voix */
   --carnet-titre: 'Bricolage Grotesque Variable', 'Arial Narrow', Arial, sans-serif;
   --carnet-main: 'Gochi Hand', 'Comic Sans MS', cursive;
-  --carnet-code: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  /* Les étiquettes et les lignes de contexte : le texte du carnet, plus de
+     monospace hors du code (revue taste, 30 octobre 2026). */
+  --carnet-code: var(--carnet-titre);
 
   /* Les tailles : une échelle courte, en rem pour suivre le réglage du
      visiteur. Les titres de section et les notes à la main sont fluides. */
-  --t-etiquette: 0.75rem;   /* 12 px : étiquettes, numéros des modules */
-  --t-code: 0.8125rem;      /* 13 px : lignes en code, barre du kanban */
-  --t-petit: 0.9375rem;     /* 15 px : légendes, pied, lignes d'état */
+  --t-etiquette: 0.875rem;  /* 14 px : étiquettes, numéros des modules */
+  --t-code: 0.875rem;       /* 14 px : lignes de contexte, barre du kanban */
+  --t-petit: 1rem;          /* 16 px : légendes, pied, lignes d'état */
   --t-corps: 1.0625rem;     /* 17 px : le texte courant */
   --t-note: 1.3125rem;      /* 21 px : notes à la main, légendes des polaroïds */
   --t-carte: 1.625rem;      /* 26 px : titres des cartes */
@@ -76,11 +78,14 @@
   --r-pilule: 999px;
   --trait: 2.5px;
   --trait-fin: 2px;
-  --ombre-s: 3px 3px 0 var(--encre);
-  --ombre-m: 4px 4px 0 var(--encre);
-  --ombre-l: 6px 6px 0 var(--encre);
+  /* Les surfaces plates (boutons, pilules, cartes) ne portent plus d'ombre :
+     seuls les objets posés sur la page (les polaroïds) gardent la leur. Les
+     jetons restent, à vide, pour que les transitions tiennent. */
+  --ombre-s: 0 0 0 transparent;
+  --ombre-m: 0 0 0 transparent;
+  --ombre-l: 0 0 0 transparent;
+  --ombre-survol: 0 0 0 transparent;
   --ombre-xl: 8px 8px 0 var(--encre);
-  --ombre-survol: 9px 9px 0 var(--encre);
 
   /* La gouttière, et la largeur de la colonne */
   --gauche: max(16px, env(safe-area-inset-left, 0px));
@@ -123,11 +128,6 @@
   isolation: isolate;
   min-height: 100vh;
   background-color: var(--papier);
-  background-image:
-    linear-gradient(var(--quadrillage) 1px, transparent 1px),
-    linear-gradient(90deg, var(--quadrillage) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-position: -1px -1px;
   color: var(--encre);
   font-family: var(--carnet-titre);
   font-size: var(--t-corps);
@@ -350,8 +350,7 @@
 }
 
 .carnet-ui .pilule:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 var(--encre);
+  transform: translate(1px, 1px);
 }
 
 .carnet-ui .pilule[disabled] {
@@ -362,11 +361,6 @@
 .carnet-ui .pilule-encre {
   background: var(--encre);
   color: var(--blanc);
-  box-shadow: 4px 4px 0 var(--lilas);
-}
-
-.carnet-ui .pilule-encre:hover {
-  box-shadow: 6px 6px 0 var(--lilas);
 }
 
 /* Le point vert : « disponible », devant ce qui mène au contact. */
@@ -459,8 +453,8 @@
 .carnet-ui .tete {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   margin-bottom: clamp(36px, 5vw, 56px);
 }
 
@@ -491,7 +485,7 @@
   border: var(--trait) solid var(--encre);
   border-radius: 50%;
   background: var(--c, var(--encre));
-  box-shadow: var(--ombre-m), 0 0 0 7px var(--papier);
+  box-shadow: 0 0 0 7px var(--papier);
 }
 
 .carnet-ui .module .griffe {
@@ -529,7 +523,7 @@
 }
 
 .carnet-ui .tete .chapo {
-  margin: 18px auto 0;
+  margin: 18px 0 0;
   max-width: 36em;
 }
 
