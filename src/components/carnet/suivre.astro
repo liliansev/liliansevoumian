@@ -191,12 +191,12 @@ const ailleurs: { nom: string; texte: string; url?: string; goal?: string }[] = 
   /* Le titre vient de YouTube, sa longueur n'est pas à nous : deux lignes
      au plus sur téléphone, en casse normale. */
   .carte.video h3 {
-    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+    font-size: var(--t-carte);
   }
 
   @media (max-width: 767px) {
     .carte.video h3 {
-      font-size: 1.25rem;
+      font-size: var(--t-note);
       line-height: 1.15;
       text-transform: none;
       font-stretch: 100%;
@@ -353,7 +353,7 @@ const ailleurs: { nom: string; texte: string; url?: string; goal?: string }[] = 
   }
 
   .ailleurs :global(.lien) {
-    font-size: 1.25rem;
+    font-size: var(--t-note);
     font-stretch: 85%;
     text-transform: uppercase;
     font-weight: 800;

@@ -85,7 +85,7 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
         <span class="scotch" aria-hidden="true"></span>
         <p>Ce qui se répète s’automatise</p>
       </div>
-      <div class="fenetre">
+      <div class="fenetre" data-ui>
         <div class="fenetre__barre">
           <span>projet-exemple</span>
           <button class="fenetre__zero" type="button" data-kanban-zero>Remettre à zéro</button>
@@ -124,6 +124,9 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
     position: relative;
   }
 
+  /* La fenêtre porte `data-ui` : c'est un vrai fragment d'application (un
+     kanban qui marche), qui garde ses conventions, dont le défilement par
+     colonnes sur téléphone. La page autour suit les règles du carnet. */
   .fenetre {
     overflow: hidden;
     border: var(--trait) solid var(--encre);
@@ -309,7 +312,7 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
     max-width: none;
     margin: 10px 0 0;
     font-weight: 600;
-    font-size: 0.96875rem;
+    font-size: var(--t-petit);
     line-height: 1.3;
   }
 

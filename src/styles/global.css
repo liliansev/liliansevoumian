@@ -2,8 +2,9 @@
 
 /* =========================================================================
    DESIGN SYSTEM — « Le carnet » depuis le 28 octobre 2026 (« nuit et
-   pêche » du 3 au 28 octobre) : papier, encre, lilas et violet, ombres
-   pleines. Le bloc « LE CARNET SUR TOUT LE SITE », en fin de fichier, et
+   pêche » du 3 au 28 octobre) : papier uni, encre, lilas et violet, surfaces
+   plates (revue taste du 30 octobre 2026 : plus d'ombre décalée ni de
+   quadrillage, plus de monospace). Le bloc « LE CARNET SUR TOUT LE SITE », en fin de fichier, et
    `components/carnet/carnet.css` complètent ces jetons.
    Source: DESIGN.md / DESIGN.json
    ========================================================================= */
@@ -42,8 +43,9 @@
   --font-display: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
   --font-body: 'Bricolage Grotesque Variable', system-ui, -apple-system, sans-serif;
   /* Plus de famille monospace : --font-mono existe encore parce que 11
-     composants l'appellent, mais il vaut la police de texte. */
-  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+     composants l'appellent, mais il vaut la police de texte (JetBrains Mono
+     retirée le 30 octobre 2026, revue taste). */
+  --font-mono: 'Bricolage Grotesque Variable', system-ui, -apple-system, sans-serif;
 
   /* ── Échelle typographique, espacement et motion ──
      Repris tels quels de main : ce sont des mesures, pas une direction
@@ -243,8 +245,8 @@
 
   /* ── L'accent ──
      Depuis le carnet (28 octobre 2026) : `--color-accent` et `--color-peche`
-     (noms hérités) valent le lilas #b59cff, une SURFACE (fond, ombre du
-     bouton, trait épais), jamais du texte : 1,9:1 sur le papier.
+     (noms hérités) valent le lilas #b59cff, une SURFACE (fond, trait
+     épais), jamais du texte : 1,9:1 sur le papier.
      `--color-accent-text` est le violet #6a3df5, ce qu'on écrit quand un
      composant veut du texte ou un trait fin accentué : 5,22:1 sur le papier,
      5,74:1 sur le blanc. */
@@ -276,10 +278,13 @@
   --color-error: #c9302c;
   --color-success: #0c7a3c;
 
-  /* ── Élévation : l'ombre pleine du carnet, à l'encre, sans flou. ──
-     Une carte posée (`card`), soulevée au survol (`card-hover`). */
-  --shadow-card: 4px 4px 0 #1d1a22;
-  --shadow-card-hover: 6px 6px 0 #1d1a22;
+  /* ── Élévation : aucune. Depuis la revue taste du 30 octobre 2026, une
+     carte est une surface plate, cernée d'encre, sans ombre ; seuls les
+     polaroïds de l'accueil gardent l'ombre pleine. Les jetons restent, à
+     vide, parce que les composants les appellent et que les transitions
+     ont besoin d'une valeur. */
+  --shadow-card: 0 0 0 transparent;
+  --shadow-card-hover: 0 0 0 transparent;
 }
 
 /* Troisième courbe du système, la plus douce des trois. Elle vivait en dur dans
@@ -1241,7 +1246,7 @@ mark {
 /* =========================================================================
    L'ÎLE — `.bloc-encre`, nom hérité de la tenue où elle était l'aplat
    sombre. Dans le carnet, c'est une feuille blanche posée sur le papier, au
-   trait d'encre et à l'ombre pleine : elle porte ce que le lecteur vient
+   trait d'encre, sans ombre : elle porte ce que le lecteur vient
    vérifier (un prix, une méthode, des résultats). On remappe les jetons de
    rôle, et les composants suivent sans variante.
    ========================================================================= */
@@ -1257,7 +1262,6 @@ mark {
   margin-block: clamp(1rem, 2vw, 1.5rem);
   border: 2.5px solid #1d1a22;
   border-radius: var(--radius-xl);
-  box-shadow: 8px 8px 0 #1d1a22;
 
   /* Sur ce blanc : 8,44:1 (`ink-mid`), 7,17:1 (`ink-low`), 5,74:1 (violet). */
   --color-paper: #fffdf8;
@@ -1277,13 +1281,6 @@ mark {
   --color-focus: #1d1a22;
   --color-error: #c9302c;
   --color-success: #0c7a3c;
-}
-
-/* Sur téléphone, l'île est à 12 px du bord : une ombre de 8 px s'y collait. */
-@media (max-width: 640px) {
-  .bloc-encre {
-    box-shadow: 5px 5px 0 #1d1a22;
-  }
 }
 
 /* La section qui précède une île ne trace pas son filet de pied : l'île se
@@ -1448,8 +1445,8 @@ section:has(+ .bloc-encre) {
    L'accueil porte « Le carnet » depuis le 27 octobre ; les pages intérieures
    le prennent à leur tour. Les jetons du haut de ce fichier ont pris les
    valeurs du carnet ; ce bloc reprend ce qu'un jeton ne suffit pas à dire :
-   le papier quadrillé, les titres en capitales condensées, le bouton d'appel
-   en pilule d'encre à l'ombre décalée, le soulignement violet (l'île,
+   les titres en capitales condensées, le bouton d'appel en pilule d'encre,
+   le soulignement violet (l'île,
    `.bloc-encre`, est plus haut). Il lit les couleurs nommées du carnet
    (`--encre`, `--blanc`, `--lilas`, `--violet`, `--jaune`, posées par
    `components/carnet/carnet.css`), qu'aucune île ne remappe. Il est écrit en
@@ -1485,19 +1482,20 @@ html:not(:has(.carnet)) ::selection {
   color: var(--encre);
 }
 
-/* Le bouton d'appel : la pilule d'encre du carnet, ombre lilas décalée. */
+/* Le bouton d'appel : la pilule d'encre du carnet, à plat, comme sur
+   l'accueil ; il monte de deux pixels au survol et s'enfonce d'un au clic. */
 .tenue-carnet .btn-primary {
   min-height: 52px;
   padding: 0 24px;
   border: 2.5px solid var(--encre);
   background: var(--encre);
   color: var(--blanc);
-  font: 800 1rem / 1 var(--font-display);
+  font: 800 1.0625rem / 1 var(--font-display);
   font-stretch: 85%;
   text-transform: uppercase;
   letter-spacing: 0.01em;
-  box-shadow: 4px 4px 0 var(--lilas);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: none;
+  transition: transform 0.15s ease;
 }
 
 .tenue-carnet .btn-primary:hover,
@@ -1505,12 +1503,10 @@ html:not(:has(.carnet)) ::selection {
   background: var(--encre);
   color: var(--blanc);
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--lilas);
 }
 
 .tenue-carnet .btn-primary:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 var(--lilas);
+  transform: translate(1px, 1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1522,8 +1518,7 @@ html:not(:has(.carnet)) ::selection {
   }
 }
 
-/* Les liens secondaires et les puces parlent en code, comme les étiquettes
-   du carnet. */
+/* Les liens secondaires et les puces : le texte du carnet, en gras. */
 .tenue-carnet .link-cta {
   font-family: var(--font-display);
   font-size: 1rem;
@@ -1534,7 +1529,7 @@ html:not(:has(.carnet)) ::selection {
   border: 2px solid var(--encre);
   background: var(--blanc);
   color: var(--encre);
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
   font-weight: 700;
 }
 
