@@ -1,9 +1,11 @@
 /*
  * La grammaire du « Carnet », l'accueil choisi par Lilian le 27 octobre 2026.
  *
- * Un carnet d'ingénieur un peu bricolé : papier quadrillé, traits d'encre de
- * 2,5 px, ombres décalées pleines, quatre couleurs vives qui codent les types
- * de travail, notes à la main et étiquettes en code. La page se lit comme un
+ * Un carnet d'ingénieur un peu bricolé : papier uni, traits d'encre de
+ * 2,5 px, quatre couleurs vives qui codent les types de travail, notes à la
+ * main. Depuis la revue taste du 30 octobre 2026, plus de quadrillage, plus de
+ * monospace, et l'ombre décalée pleine ne reste qu'aux objets posés sur la
+ * page (les polaroïds) ; les surfaces plates n'en portent plus. La page se lit comme un
  * scénario Make : chaque section s'ouvre sur un module rond et coloré, et un
  * chemin de pointillés serpente de l'un à l'autre (`chemin.astro`).
  *
@@ -38,34 +40,42 @@
   --vert-point: #14a554;
   --rouge: #c9302c;
   --coeur: #e0368a;
-  /* L'encre éclaircie : le quadrillage, les traits secondaires, le chemin. */
-  --quadrillage: color-mix(in srgb, var(--encre) 7%, transparent);
+  /* L'encre éclaircie : les traits secondaires, le chemin. */
   --encre-filet: color-mix(in srgb, var(--encre) 25%, transparent);
   --encre-pointille: color-mix(in srgb, var(--encre) 50%, transparent);
 
-  /* Les trois voix */
+  /* Les deux voix : le texte et la main */
   --carnet-titre: 'Bricolage Grotesque Variable', 'Arial Narrow', Arial, sans-serif;
   --carnet-main: 'Gochi Hand', 'Comic Sans MS', cursive;
-  --carnet-code: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  /* Les étiquettes et les lignes de contexte : le texte du carnet, plus de
+     monospace hors du code (revue taste, 30 octobre 2026). */
+  --carnet-code: var(--carnet-titre);
 
-  /* Les tailles : une échelle courte, en rem pour suivre le réglage du
-     visiteur. Les titres de section et les notes à la main sont fluides. */
-  --t-etiquette: 0.75rem;   /* 12 px : étiquettes, numéros des modules */
-  --t-code: 0.8125rem;      /* 13 px : lignes en code, barre du kanban */
-  --t-petit: 0.9375rem;     /* 15 px : légendes, pied, lignes d'état */
-  --t-corps: 1.0625rem;     /* 17 px : le texte courant */
+  /* Les tailles : sept crans, en rem pour suivre le réglage du visiteur
+     (revue taste, 30 octobre 2026 : la page en comptait vingt, à un ou deux
+     pixels d'écart). Petit 14, corps 17, chapô 21, titre de carte 28,
+     signature 42, section 77, nom 150 ; les valeurs fluides retombent sur
+     ces crans au bureau, et sur téléphone sur 14, 17, 18, 21, 28, 40 et 67.
+     Les anciens noms restent, comme alias d'un cran. */
+  --t-petit: 0.875rem;      /* 14 px : étiquettes, légendes, pied, lignes d'état */
+  --t-etiquette: var(--t-petit);
+  --t-code: var(--t-petit);
+  --t-corps: 1.0625rem;     /* 17 px : le texte courant, les citations */
+  --t-citation: var(--t-corps);
   --t-note: 1.3125rem;      /* 21 px : notes à la main, légendes des polaroïds */
-  --t-carte: 1.625rem;      /* 26 px : titres des cartes */
-  --t-chiffre: 1.875rem;    /* 30 px : chiffres d'audience */
-  --t-citation: 1.1875rem;  /* 19 px : citations, nom sur deux lignes */
-  --t-chapo: clamp(1.12rem, 1.45vw, 1.32rem);
-  --t-main: clamp(1.35rem, 1.9vw, 1.7rem);
+  --t-carte: 1.75rem;       /* 28 px : titres des cartes, chiffres d'audience */
+  --t-chiffre: var(--t-carte);
+  --t-chapo: clamp(1.125rem, 1.45vw, 1.3125rem);
+  --t-main: clamp(1.3125rem, 1.95vw, 1.75rem);
   --t-section: clamp(2.5rem, 5.4vw, 4.8rem);
-  /* Les quatre moments d'affichage, chacun à sa place unique. */
-  --t-signature: clamp(1.8rem, 3vw, 2.6rem);
-  --t-adore: clamp(3.6rem, 9vw, 8rem);
+  /* Les moments d'affichage : la signature, et le nom (ouverture, « J'adore »,
+     pied), qui partagent un seul cran. */
+  --t-signature: clamp(1.75rem, 3vw, 2.6rem);
   --t-nom: clamp(4.2rem, 10.4vw, 9.6rem);
-  --t-pied: clamp(2.6rem, 11vw, 10.5rem);
+  --t-adore: var(--t-nom);
+  /* Le pied tient sur une ligne : sur téléphone il descend jusqu'au cran
+     des sections (40 px) au lieu de celui du nom. */
+  --t-pied: clamp(2.5rem, 10.4vw, 9.6rem);
 
   /* Les arrondis et les ombres pleines */
   --r-xs: 6px;
@@ -76,11 +86,14 @@
   --r-pilule: 999px;
   --trait: 2.5px;
   --trait-fin: 2px;
-  --ombre-s: 3px 3px 0 var(--encre);
-  --ombre-m: 4px 4px 0 var(--encre);
-  --ombre-l: 6px 6px 0 var(--encre);
+  /* Les surfaces plates (boutons, pilules, cartes) ne portent plus d'ombre :
+     seuls les objets posés sur la page (les polaroïds) gardent la leur. Les
+     jetons restent, à vide, pour que les transitions tiennent. */
+  --ombre-s: 0 0 0 transparent;
+  --ombre-m: 0 0 0 transparent;
+  --ombre-l: 0 0 0 transparent;
+  --ombre-survol: 0 0 0 transparent;
   --ombre-xl: 8px 8px 0 var(--encre);
-  --ombre-survol: 9px 9px 0 var(--encre);
 
   /* La gouttière, et la largeur de la colonne */
   --gauche: max(16px, env(safe-area-inset-left, 0px));
@@ -123,11 +136,6 @@
   isolation: isolate;
   min-height: 100vh;
   background-color: var(--papier);
-  background-image:
-    linear-gradient(var(--quadrillage) 1px, transparent 1px),
-    linear-gradient(90deg, var(--quadrillage) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-position: -1px -1px;
   color: var(--encre);
   font-family: var(--carnet-titre);
   font-size: var(--t-corps);
@@ -214,7 +222,7 @@
   padding-right: var(--droite);
 }
 
-/* ── Les trois voix ─────────────────────────────────────────────────── */
+/* ── Les voix : capitales, main, chapô ──────────────────────────────── */
 
 .carnet-ui .caps {
   font-family: var(--carnet-titre);
@@ -246,7 +254,7 @@
   color: var(--encre-doux);
 }
 
-/* Une ligne en code sous un titre de carte : son contexte, jamais un
+/* Une petite ligne sous un titre de carte : son contexte, jamais un
    sur-titre. */
 .carnet-ui .meta {
   display: block;
@@ -334,7 +342,7 @@
   border-radius: var(--r-pilule);
   background: var(--blanc);
   color: var(--encre);
-  font: 800 1rem / 1 var(--carnet-titre);
+  font: 800 var(--t-corps) / 1 var(--carnet-titre);
   font-stretch: 85%;
   text-transform: uppercase;
   letter-spacing: 0.01em;
@@ -350,8 +358,7 @@
 }
 
 .carnet-ui .pilule:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 var(--encre);
+  transform: translate(1px, 1px);
 }
 
 .carnet-ui .pilule[disabled] {
@@ -362,11 +369,6 @@
 .carnet-ui .pilule-encre {
   background: var(--encre);
   color: var(--blanc);
-  box-shadow: 4px 4px 0 var(--lilas);
-}
-
-.carnet-ui .pilule-encre:hover {
-  box-shadow: 6px 6px 0 var(--lilas);
 }
 
 /* Le point vert : « disponible », devant ce qui mène au contact. */
@@ -459,8 +461,8 @@
 .carnet-ui .tete {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   margin-bottom: clamp(36px, 5vw, 56px);
 }
 
@@ -491,7 +493,7 @@
   border: var(--trait) solid var(--encre);
   border-radius: 50%;
   background: var(--c, var(--encre));
-  box-shadow: var(--ombre-m), 0 0 0 7px var(--papier);
+  box-shadow: 0 0 0 7px var(--papier);
 }
 
 .carnet-ui .module .griffe {
@@ -529,7 +531,7 @@
 }
 
 .carnet-ui .tete .chapo {
-  margin: 18px auto 0;
+  margin: 18px 0 0;
   max-width: 36em;
 }
 

@@ -104,6 +104,9 @@ const chiffres = [audience.linkedin, audience.youtube, audience.vues];
     font-size: var(--t-signature);
     color: var(--violet);
     transform: rotate(-2deg);
+    /* Pivot en haut à gauche : penchée, la signature ne sort pas de la
+       gouttière (16 px sur téléphone). */
+    transform-origin: left top;
   }
 
   .ouverture__signature :global(.griffe) {
@@ -244,7 +247,7 @@ const chiffres = [audience.linkedin, audience.youtube, audience.vues];
       font-size: var(--t-code);
     }
     .ouverture__pastille strong {
-      font-size: 1.5rem;
+      font-size: var(--t-note);
     }
   }
 

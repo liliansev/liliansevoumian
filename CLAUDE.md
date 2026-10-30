@@ -19,7 +19,8 @@ pnpm preview    # Preview production build locally
 - **Framework**: Astro 5.x with static output
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
 - **Icons**: astro-icon with Lucide and Simple Icons
-- **Fonts**: Bricolage Grotesque (text and titles), Gochi Hand (handwritten notes) and JetBrains Mono (code labels), self-hosted (`@fontsource`), imported by `layouts/Layout.astro` for every page. The blog alone keeps Geist Variable, imported by `layouts/Carnet.astro`
+- **Fonts**: Bricolage Grotesque (text, titles and labels) and Gochi Hand (handwritten notes), self-hosted (`@fontsource`), imported by `layouts/Layout.astro` for every page. No monospace since 30 October 2026: `@fontsource/jetbrains-mono` stays in `package.json` only for `scripts/og-carnet` (the share image). The blog alone keeps Geist Variable, imported by `layouts/Carnet.astro`
+- **pnpm**: the lockfile and the Dockerfile are pnpm 10.26.2; with an older global pnpm, run `npx -y pnpm@10.26.2 <command>`
 - **Language**: French (fr)
 - **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
 
@@ -44,7 +45,7 @@ src/
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   │   # — accueil « Le carnet » (choisi par Lilian le 27 octobre 2026) —
 │   ├── carnet/                # l'accueil en carnet d'ingénieur, lu comme un scénario Make : un module coloré par section, un chemin de pointillés entre eux
-│   │   ├── carnet.css         # la grammaire, rangée sous `.tenue-carnet` : jetons, trois voix, pilules, polaroïds, scotch, modules, chemin, cartes
+│   │   ├── carnet.css         # la grammaire, rangée sous `.tenue-carnet` : jetons, voix, pilules, polaroïds, scotch, modules, chemin, cartes
 │   │   ├── griffe.astro       # un griffonnage (cœur, vague, icônes) tracé au build par `lib/carnet/griffonnages.ts`
 │   │   ├── tete.astro         # l'en-tête d'une section : module (couleur, griffonnage, numéro), titre, chapô ; pas de sur-titre
 │   │   ├── barre.astro        # barre collante (nom, sections, « Écrire »), menu plein écran en `dialog`
@@ -139,15 +140,15 @@ api/
 
 Since 28 October 2026 every page but the blog wears « Le carnet » (see
 below): `Layout` wraps the page in `.tenue-carnet` and loads
-`components/carnet/carnet.css` and its three fonts; `Navigation` and `Footer`
+`components/carnet/carnet.css` and its two fonts; `Navigation` and `Footer`
 render the carnet's `barre` and `pied`. The `@theme` tokens kept their old
 names but carry carnet values (`--color-paper` = paper `#f6f2e8`,
 `--color-ink` and `--color-night` = ink `#1d1a22`, `--color-peche` /
 `--color-accent` = lilac `#b59cff` as a surface, `--color-accent-text` =
-violet `#6a3df5`, fonts = Bricolage Grotesque, mono = JetBrains Mono); the
-last block of `global.css` (« LE CARNET SUR TOUT LE SITE ») restyles what a
-token cannot: caps headings, ink call pill with a lilac offset shadow,
-violet `mark`, and `.bloc-encre` as a white sheet with ink border and solid
+violet `#6a3df5`, fonts = Bricolage Grotesque, mono = Bricolage too,
+`--shadow-card` empty); the last block of `global.css` (« LE CARNET SUR TOUT
+LE SITE ») restyles what a token cannot: caps headings, a flat ink call pill,
+violet `mark`, and `.bloc-encre` as a white sheet with an ink border, no
 shadow. The carnet's object classes (`pilule`, `caps`, `meta`, `tete`…) are
 scoped under `.carnet-ui` (home, barre, pied, contact form) because inner
 components reuse those short names. The blog (`layouts/Carnet.astro`, an
@@ -188,13 +189,17 @@ Every page is built from the shared components: `Navigation`, `tete-de-page`
 hand-roll a header, an FAQ, a contact section or a back link.
 
 Home page only (« Le carnet », 27 October 2026): a brand page, not a services
-brochure (no prices, no prestation figures). An engineer's notebook on grid
-paper: ink lines, offset solid shadows, four vivid colours that code the type
-of work (pink AI agent, lilac automation, blue business tool, yellow
-training) and each section's module, mint for contact, handwritten notes
-(Gochi Hand), code labels (JetBrains Mono), condensed caps titles (Bricolage
-Grotesque). The page reads as a Make scenario: numbered round modules joined
-by a dotted path through the margins. First gesture: « S'abonner sur
+brochure (no prices, no prestation figures). An engineer's notebook on plain
+paper: ink lines, flat surfaces, four vivid colours that code the type of
+work (pink AI agent, lilac automation, blue business tool, yellow training)
+and each section's module, mint for contact, handwritten notes (Gochi Hand),
+condensed caps titles and bold labels (Bricolage Grotesque). The page reads
+as a Make scenario: numbered round modules, left-aligned on the content edge,
+joined by a dotted path through the margins. Since the taste review of 30
+October 2026 (DESIGN.md, *L'accueil : le carnet*): no grid paper, no
+monospace, a solid offset shadow on the polaroids only, and a seven-step type
+scale in `carnet.css` (14, 17, 21, 28, 42, 77, 150 px on desktop); do not add
+a size outside it. First gesture: « S'abonner sur
 YouTube »; the contact form closes the page. Dated audience figures as social
 proof, never the newsletter subscriber count. Grammar in
 `src/components/carnet/carnet.css`; DESIGN.md, *L'accueil : le carnet*.

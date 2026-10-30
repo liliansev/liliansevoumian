@@ -483,16 +483,18 @@ Ce qui change :
 
 - `Layout` pose `.tenue-carnet` autour de chaque page (sauf le blog, qui
   passe `carnet={false}` et garde son blanc et Geist) et charge
-  `components/carnet/carnet.css` et ses trois polices.
+  `components/carnet/carnet.css` et ses deux polices (trois jusqu'au 30
+  octobre 2026, avec JetBrains Mono).
 - Les jetons du `@theme` de `global.css` gardent leurs noms et prennent les
   valeurs du carnet : papier `#f6f2e8`, encre `#1d1a22` (texte et `night`),
   lilas `#b59cff` en aplat (`peche`, `accent`), violet `#6a3df5` en texte
-  (`accent-text`), Bricolage Grotesque, JetBrains Mono pour `--font-mono`,
-  ombre pleine décalée pour `--shadow-card`.
+  (`accent-text`), Bricolage Grotesque, y compris pour `--font-mono` (plus de
+  monospace depuis le 30 octobre 2026), et `--shadow-card` à vide (plus
+  d'ombre sur les cartes depuis la même date).
 - Le dernier bloc de `global.css`, « LE CARNET SUR TOUT LE SITE », reprend
   ce qu'un jeton ne dit pas : h1 et h2 en capitales condensées, le bouton
-  d'appel en pilule d'encre à l'ombre lilas, `mark` en trait violet, l'île
-  `.bloc-encre` en feuille blanche bordée d'encre à l'ombre pleine.
+  d'appel en pilule d'encre à plat, `mark` en trait violet, l'île
+  `.bloc-encre` en feuille blanche bordée d'encre, sans ombre.
 - `Navigation` et `Footer` rendent la barre et le pied du carnet
   (`carnet/barre.astro`, `carnet/pied.astro`), paramétrés : liens, source des
   statistiques, nom qui ramène à l'accueil, newsletter vers `/#newsletter`.
@@ -671,11 +673,26 @@ travaille, et un formulaire pour lui écrire. Ni prix ni chiffres de
 prestation. L'esprit vient de wisprflow.ai et de gemeosagency.com (néo-
 brutalisme doux et joueur), jamais leur forme.
 
-C'est le carnet d'un ingénieur un peu bricolé : papier quadrillé, encre,
-couleurs vives, notes à la main, intitulés en code. La page se lit comme un
-scénario Make : chaque section s'ouvre sur un module rond, coloré et
-numéroté, et un chemin de pointillés serpente de l'un à l'autre par les
-marges.
+C'est le carnet d'un ingénieur un peu bricolé : papier, encre, couleurs
+vives, notes à la main. La page se lit comme un scénario Make : chaque
+section s'ouvre sur un module rond, coloré et numéroté, aligné à gauche sur
+le bord du contenu, et un chemin de pointillés serpente de l'un à l'autre par
+les marges.
+
+**Revue taste du 30 octobre 2026.** Le skill taste (lint et mesure dans un
+navigateur à 1440, 768 et 390 px) a retiré trois habits qui faisaient
+« kit » sans porter l'idée : le quadrillage du papier, le monospace (les
+étiquettes et lignes de contexte passent en Bricolage, 14 px au moins) et
+l'ombre décalée des surfaces plates (boutons, pilules, cartes, kanban,
+contact, île). L'ombre pleine reste aux seuls polaroïds, des objets posés sur
+la page. Les titres de section passent à gauche, et l'échelle typographique
+tombe de vingt tailles à sept (14, 17, 21, 28, 42, 77, 150 px au bureau). Ce
+qui reste signalé par le skill et se défend : le violet (la couleur de Make,
+donc du sujet), l'anneau de papier autour des modules (il masque le chemin,
+ce n'est pas une ombre), le surlignage jaune des avis (un aplat à bords nets),
+le défilé des logos qui touche les bords (il défile, avec sa pause), le
+kanban qui défile par colonnes sur téléphone (fragment d'application,
+`data-ui`).
 
 Sa grammaire est dans `src/components/carnet/carnet.css` (base sous
 `.tenue-carnet`, objets sous `.carnet-ui`), et chaque section est un
@@ -688,10 +705,10 @@ Sevoumian » (type Design System) ; la maquette, l'artefact « Le carnet ».
 
 | Rôle | Jeton | Valeur |
 |---|---|---|
-| fond, quadrillé de 28 px | `--papier`, `--quadrillage` | `#f6f2e8`, encre à 7 % |
+| fond, uni | `--papier` | `#f6f2e8` |
 | surfaces posées | `--blanc` | `#fffdf8` |
-| texte, traits, ombres | `--encre`, `--encre-doux` | `#1d1a22`, `#4f4a56` |
-| liens, intitulés en code, signature | `--violet` | `#6a3df5` |
+| texte, traits, ombre des polaroïds | `--encre`, `--encre-doux` | `#1d1a22`, `#4f4a56` |
+| liens, chemin parcouru, signature | `--violet` | `#6a3df5` |
 | agent IA | `--rose` | `#ff8fc8` |
 | automatisation | `--lilas` | `#b59cff` |
 | outil métier | `--bleu` | `#6ab7ff` |
@@ -703,27 +720,32 @@ Les quatre couleurs vives codent un type de travail (autocollants, étiquettes
 du kanban) ou une section (son module). Elles ne portent jamais de texte en
 couleur : le texte est en encre, posé dessus.
 
-### Les trois voix
+### Les deux voix
 
 - **Bricolage Grotesque** (variable, auto-hébergée) : les titres en capitales
-  serrées (graisse 800, chasse 75 %), le texte courant.
+  serrées (graisse 800, chasse 75 %), le texte courant, et en gras les
+  étiquettes, les libellés des chiffres d'audience, les lignes de contexte
+  sous les titres de carte, la barre du kanban (JetBrains Mono jusqu'au 30
+  octobre 2026 ; le jeton `--carnet-code` vaut désormais Bricolage). Jamais de
+  sur-titre au-dessus d'un titre (retirés après la critique du 27 octobre
+  2026) : le titre parle seul.
 - **Gochi Hand** : les notes à la main (signature, apartés, légendes des
   polaroïds, notes du kanban). Jamais pour une information qu'on doit lire.
-- **JetBrains Mono** : les étiquettes, les libellés des chiffres
-  d'audience, les lignes de contexte sous les titres de carte, la barre du
-  kanban. Jamais de sur-titre au-dessus d'un titre (retirés après la critique
-  du 27 octobre 2026) : le titre parle seul.
 
 Les tailles, les arrondis et les ombres sont des jetons de `carnet.css`
 (`--t-*`, `--r-*`, `--ombre-*`), repris dans l'en-tête de ce fichier sous le
-préfixe `carnet-`.
+préfixe `carnet-`. L'échelle a sept crans : petit 14, corps 17, chapô 21,
+titre de carte 28, signature 42, section 77, nom 150 (le nom de l'ouverture,
+« J'adore… » et le pied partagent le dernier). Les jetons `--ombre-s`,
+`-m`, `-l` et `-survol` sont à vide ; seul `--ombre-xl` (les polaroïds) dessine.
 
 ### Les objets
 
-Traits d'encre de 2,5 px, ombres décalées pleines (`4px 4px 0` encre),
-arrondis francs, objets légèrement de travers (de -3 à 3 degrés), qui se
-redressent au survol. Les pilules sont les boutons : la pilule d'encre
-(ombre lilas) porte le geste principal, une seule par écran. Polaroïds
+Traits d'encre de 2,5 px, surfaces à plat, arrondis francs, objets
+légèrement de travers (de -3 à 3 degrés), qui se redressent au survol. Les
+pilules sont les boutons : la pilule d'encre porte le geste principal, une
+seule par écran ; au survol elle monte de deux pixels, au clic elle s'enfonce
+d'un. Polaroïds, seuls à garder l'ombre pleine (`8px 8px 0` encre),
 scotchés pour les vraies photos de Lilian ; post-it jaune pour une
 conviction ; autocollants pour les services ; une fenêtre d'application pour
 le kanban.

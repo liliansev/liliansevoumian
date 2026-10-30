@@ -85,7 +85,7 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
         <span class="scotch" aria-hidden="true"></span>
         <p>Ce qui se répète s’automatise</p>
       </div>
-      <div class="fenetre">
+      <div class="fenetre" data-ui>
         <div class="fenetre__barre">
           <span>projet-exemple</span>
           <button class="fenetre__zero" type="button" data-kanban-zero>Remettre à zéro</button>
@@ -124,12 +124,15 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
     position: relative;
   }
 
+  /* La fenêtre porte `data-ui` : c'est un vrai fragment d'application (un
+     kanban qui marche), qui garde ses conventions, dont le défilement par
+     colonnes sur téléphone. La page autour suit les règles du carnet. */
   .fenetre {
     overflow: hidden;
     border: var(--trait) solid var(--encre);
     border-radius: var(--r-l);
     background: var(--blanc);
-    box-shadow: var(--ombre-xl);
+    box-shadow: var(--ombre-l);
   }
 
   .fenetre__barre {
@@ -179,7 +182,7 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
     border: var(--trait) solid var(--encre);
     border-radius: var(--r-xs) var(--r-xs) var(--r-l) var(--r-xs);
     background: var(--jaune);
-    box-shadow: 5px 5px 0 var(--encre);
+    box-shadow: var(--ombre-s);
     transform: rotate(3deg);
   }
 
@@ -277,7 +280,7 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
 
   .tache:hover {
     transform: translate(-1px, -1px) rotate(-0.6deg);
-    box-shadow: 5px 5px 0 var(--encre);
+    box-shadow: var(--ombre-s);
   }
 
   .tache:active {
@@ -309,7 +312,7 @@ const nomQui: Record<Qui, string> = { moi: 'Lilian', vous: 'votre équipe' };
     max-width: none;
     margin: 10px 0 0;
     font-weight: 600;
-    font-size: 0.96875rem;
+    font-size: var(--t-petit);
     line-height: 1.3;
   }
 
