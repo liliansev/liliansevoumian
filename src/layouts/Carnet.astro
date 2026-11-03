@@ -1,109 +1,69 @@
 ---
 /*
- * Carnet : la charpente du blog.
+ * Carnet : la charpente du blog (le nom date du carnet kraft d'octobre).
  *
- * Le blog vit sur le site mais ne porte pas sa nuit : il se lit sur fond
- * blanc, en Geist, avec un orange tiré de la pêche du site pour seul accent,
- * posé sur quelques repères et jamais sur le texte courant (22 octobre 2026 :
- * le carnet kraft en Garamond était « trop beige, trop italique », Lilian veut
- * un blog personnel qui reste tech). Une seule colonne, aucun ornement. Le
- * Layout commun garde le SEO, le balisage et le suivi ; tout le reste (barre,
- * pied, couleurs) est propre au blog et ne sort pas de cette charpente.
+ * Depuis le 3 novembre 2026, le blog porte la DA du site, « Entre les deux »
+ * (Lilian : « colle la DA partout dans le site, même le blog ») : le même
+ * en-tête et le même pied que les autres pages, le papier, l'encre, Geist
+ * Mono et le bleu des liens. Il garde sa forme de blog : une seule colonne
+ * de lecture, aucun ornement. Le Layout commun garde le SEO, le balisage et
+ * le suivi.
  */
 import type { ComponentProps } from 'astro/types';
-import '@fontsource-variable/geist';
-import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import Layout from './Layout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
 
 type Props = ComponentProps<typeof Layout>;
 
 const props = Astro.props as Props;
-const annee = new Date().getFullYear();
 ---
 
-<Layout themeColor="#ffffff" policePrechargee={geistLatin} {...props} carnet={false}>
+<Layout {...props}>
   <div class="carnet">
-    <header class="carnet__barre">
-      <a href="/" class="carnet__nom">Lilian Sevoumian</a>
-      <nav aria-label="Blog" class="carnet__liens">
-        <a href="/blog">Blog</a>
-        <a href="#inscription">Recevoir par e-mail</a>
-      </nav>
-    </header>
+    <Navigation ctaSource="blog_nav" />
 
     <main id="main-content" tabindex="-1" class="carnet__page">
       <slot />
     </main>
 
-    <footer class="carnet__pied">
-      <ul class="carnet__pied-liste" role="list">
-        <li>© {annee} Lilian Sevoumian</li>
-        <li><a href="/">Le site</a></li>
-        <li><a href="/blog/rss.xml">RSS</a></li>
-        <li><a href="/mentions-legales">Mentions légales</a></li>
-      </ul>
-    </footer>
+    <Footer />
   </div>
 </Layout>
 
 <style is:global>
-  /* La page entière passe au blanc, y compris sous la barre de défilement et
-     au-delà du bas de page : la nuit du site ne doit pas réapparaître. */
-  html:has(.carnet),
-  html:has(.carnet) body {
-    background-color: #ffffff;
-    color-scheme: light;
-  }
-
-  html:has(.carnet) ::selection {
-    background: #fed7aa;
-    color: #111827;
-  }
-
-  html:has(.carnet) .skip-link:focus-visible {
-    background: #111827;
-    color: #ffffff;
-  }
-
   .carnet {
-    /* Les teintes du blog. L'encre est la nuit du site (17,7:1 sur le blanc),
-       le gris tient 7,6:1, le trait ne sert qu'aux filets. L'orange est la
-       pêche du site poussée pour tenir sur le blanc : vif pour les traits et
-       les puces (3,6:1, au-delà du 3:1 des éléments graphiques), foncé quand
-       il porte du texte (5,2:1). Il marque quelques repères, pas plus. */
-    --carnet-papier: #ffffff;
-    --carnet-encre: #111827;
-    --carnet-gris: #4b5563;
-    --carnet-trait: #e5e7eb;
-    --carnet-accent: #ea580c;
-    --carnet-accent-texte: #c2410c;
-    --carnet-colonne: 40rem;
+    /* Les teintes du blog sont celles du site (`carnet/carnet.css`) : l'encre
+       sur le papier (16,9:1), le gris (4,8:1), le filet, et le bleu pour ce
+       qui se clique (6,1:1). Les repères (trait des intertitres, puces,
+       citations) passent à l'encre : le bleu reste aux liens. */
+    --carnet-papier: var(--papier);
+    --carnet-encre: var(--encre);
+    --carnet-gris: var(--encre-doux);
+    --carnet-trait: var(--encre-filet);
+    --carnet-accent: var(--encre);
+    --carnet-accent-texte: var(--violet);
+    /* 42 rem de Geist Mono à 16 px : environ 70 signes par ligne. */
+    --carnet-colonne: 42rem;
 
     position: relative;
     min-height: 100vh;
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 0 1.25rem;
-    /* Le reste du site est passé en Bricolage avec le carnet (28 octobre
-       2026) : le blog garde Geist. */
-    --font-body: 'Geist Variable', system-ui, -apple-system, sans-serif;
-    --font-display: 'Geist Variable', system-ui, -apple-system, sans-serif;
-    --font-mono: 'Geist Variable', system-ui, -apple-system, sans-serif;
     color: var(--carnet-encre);
-    font-family: var(--font-body);
-    font-size: 1.125rem;
-    line-height: 1.7;
-    font-feature-settings: 'ss01';
+    font-family: var(--carnet-titre);
+    font-size: 1rem;
+    line-height: 1.75;
   }
 
   /* `html` en tête : la tenue commune pose sa graisse et son interlettrage
-     sur `:root :is(h1, h2…)`, il faut la dépasser d'un cran. */
+     sur `.tenue-carnet :is(h1, h2…)`, il faut la dépasser d'un cran. */
   html .carnet :is(h1, h2, h3, h4) {
     color: var(--carnet-encre);
-    font-family: var(--font-display);
+    font-family: var(--carnet-titre);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     line-height: 1.2;
   }
 
@@ -111,104 +71,30 @@ const annee = new Date().getFullYear();
     max-width: none;
   }
 
-  /* Un lien se souligne en orange ; au survol, le texte prend l'orange
-     foncé. */
-  .carnet a {
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-decoration-color: var(--carnet-accent);
-    text-underline-offset: 0.22em;
-    transition: text-decoration-color 150ms ease;
-  }
-
-  .carnet a:hover {
+  /* Un lien du texte : en bleu, souligné d'un trait fin ; au survol, il
+     passe à l'encre. */
+  .carnet__page a {
     color: var(--carnet-accent-texte);
-    text-decoration-color: currentColor;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    transition: color 150ms ease;
   }
 
-  .carnet :focus-visible {
-    outline: 2px solid var(--carnet-encre);
-    outline-offset: 3px;
-    border-radius: var(--radius-xs, 4px);
-  }
-
-  .carnet__barre,
-  .carnet__page,
-  .carnet__pied {
-    width: 100%;
-    max-width: var(--carnet-colonne);
-    margin-inline: auto;
-  }
-
-  .carnet__barre {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.25rem 1.5rem;
-    padding: 1.5rem 0 1.25rem;
-    border-bottom: 1px solid var(--carnet-trait);
-    font-size: 0.9375rem;
-  }
-
-  .carnet__nom {
-    font-weight: 600;
-  }
-
-  .carnet .carnet__nom,
-  .carnet .carnet__liens a {
-    text-decoration-color: transparent;
-  }
-
-  .carnet .carnet__nom:hover,
-  .carnet .carnet__liens a:hover {
-    text-decoration-color: var(--carnet-accent);
-  }
-
-  .carnet__liens {
-    display: flex;
-    gap: 1.25rem;
-    color: var(--carnet-gris);
+  .carnet__page a:hover {
+    color: var(--carnet-encre);
   }
 
   .carnet__page {
     flex: 1;
-    padding: 4rem 0 3rem;
+    width: 100%;
+    max-width: calc(var(--carnet-colonne) + var(--gauche) + var(--droite));
+    margin-inline: auto;
+    padding: 4rem var(--droite) 1rem var(--gauche);
     outline: none;
   }
 
-  .carnet__pied {
-    padding: 2rem 0 3rem;
-    color: var(--carnet-gris);
-    font-size: 0.875rem;
-  }
-
-  /* Chaque élément porte le point qui le suit : à la coupure de ligne, le
-     point finit la ligne et n'en commence jamais une. */
-  .carnet__pied-liste {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.25rem 0;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .carnet__pied-liste li {
-    margin: 0;
-    white-space: nowrap;
-  }
-
-  .carnet__pied-liste li:not(:last-child)::after {
-    content: '·';
-    margin: 0 0.6em;
-    color: var(--carnet-gris);
-  }
-
-  .carnet hr,
-  .carnet__pied::before {
+  .carnet hr {
     display: block;
     height: 1px;
     margin: 0;
@@ -216,16 +102,7 @@ const annee = new Date().getFullYear();
     background: var(--carnet-trait);
   }
 
-  .carnet__pied::before {
-    content: '';
-    margin-bottom: 1.25rem;
-  }
-
   @media (max-width: 30rem) {
-    .carnet {
-      font-size: 1.0625rem;
-    }
-
     .carnet__page {
       padding-top: 2.75rem;
     }

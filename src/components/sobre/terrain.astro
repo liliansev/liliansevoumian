@@ -1,0 +1,79 @@
+---
+/*
+ * « Sur le terrain » : trois vraies photos de Lilian au travail (formation,
+ * promo de Rocket School, bureau), en couleur, avec leur légende. Seules de
+ * vraies photos de lui vont sur l'accueil.
+ */
+import { Image } from 'astro:assets';
+import formation from '../../assets/documentaire/formation-salle.jpg';
+import promo from '../../assets/documentaire/rocket-school-promo.jpg';
+import bureau from '../../assets/lilian-au-bureau.jpg';
+
+const photos = [
+  { src: formation, legende: 'En formation, à Maria Schools', alt: 'Lilian en formation devant une salle, à Maria Schools' },
+  { src: promo, legende: 'Avec une promo de Rocket School', alt: 'Lilian avec une promo de Rocket School' },
+  { src: bureau, legende: 'Au bureau', alt: 'Lilian à son bureau, devant ses écrans' },
+];
+---
+
+<section class="sec" id="terrain" aria-labelledby="titre-terrain">
+  <h2 class="sec__titre" id="titre-terrain">Sur le terrain</h2>
+  <div class="bande">
+    {photos.map((p, i) => (
+      <figure>
+        <Image
+          src={p.src}
+          alt={p.alt}
+          width={i === 0 ? 1000 : 640}
+          widths={i === 0 ? [500, 1000] : [320, 640]}
+          sizes={i === 0 ? '(max-width: 760px) 100vw, 440px' : '(max-width: 760px) 50vw, 220px'}
+          loading="lazy"
+        />
+        <figcaption>{p.legende}</figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+
+<style>
+  .bande {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .bande figure {
+    margin: 0;
+  }
+
+  .bande :global(img) {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .bande figcaption {
+    margin-top: 6px;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+  }
+
+  @media (max-width: 760px) {
+    .bande {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .bande figure:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .bande :global(img) {
+      height: 150px;
+    }
+
+    .bande figure:first-child :global(img) {
+      height: 210px;
+    }
+  }
+</style>

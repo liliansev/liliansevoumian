@@ -26,8 +26,10 @@
  * Le champ `website` est un piège. Une fois le message parti, le formulaire
  * se verrouille (champs et bouton désactivés) : on ne renvoie pas en rafale.
  *
- * `variante="carnet"` l'habille pour l'accueil « Le carnet » (27 octobre
- * 2026) : champs bordés d'encre, bouton en pilule, ligne d'état à pastille.
+ * `variante="carnet"` l'habille pour le papier du site (né avec l'accueil
+ * « Le carnet » le 27 octobre 2026, repris par « Entre les deux » le 3
+ * novembre) : champs blancs au filet gris, bouton bleu, ligne d'état à
+ * pastille.
  * Le comportement ne change pas. Le slot `pied` se range à côté du bouton
  * (le lien vers l'agenda, sur l'accueil).
  */
@@ -64,7 +66,7 @@ const carnet = variante === 'carnet';
   <div class="contact__captcha" data-turnstile hidden></div>
   <div class="contact__pied">
     {carnet ? (
-      <button type="submit" class="pilule pilule-encre contact__envoi">Envoyer</button>
+      <button type="submit" class="pilule pilule-bleue contact__envoi">Envoyer</button>
     ) : (
       <button type="submit" class="btn-primary contact__envoi">
         Envoyer <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
@@ -320,7 +322,51 @@ const carnet = variante === 'carnet';
   }
 
   .contact--carnet .contact__note .lien-prose {
-    border-bottom-color: var(--encre);
+    border-bottom-color: currentColor;
+  }
+
+  /* « Entre les deux » (3 novembre 2026) : des champs blancs au filet gris
+     (3:1 sur le blanc, comme le veut une commande), en mono ; le libellé en
+     petit, gris ; le focus en bleu. */
+  .contact--carnet .contact__champ label {
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    font-weight: 500;
+  }
+
+  .contact--carnet input,
+  .contact--carnet textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--champ);
+    border-radius: 4px;
+    font: var(--t-corps) / 1.5 var(--carnet-titre);
+  }
+
+  .contact--carnet input::placeholder,
+  .contact--carnet textarea::placeholder {
+    color: #8a8a85;
+  }
+
+  .contact--carnet input:focus,
+  .contact--carnet textarea:focus {
+    border-color: var(--violet);
+    box-shadow: none;
+  }
+
+  .contact--carnet input:focus-visible,
+  .contact--carnet textarea:focus-visible {
+    outline: 2px solid var(--violet);
+    outline-offset: 1px;
+  }
+
+  .contact--carnet [aria-invalid='true'],
+  .contact--carnet [aria-invalid='true']:focus {
+    box-shadow: inset 0 0 0 1px var(--rouge);
+  }
+
+  .contact--carnet .contact__statut[data-etat='error'],
+  .contact--carnet .contact__statut[data-etat='sent'] {
+    font-weight: 600;
   }
 </style>
 

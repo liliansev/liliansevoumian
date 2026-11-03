@@ -1,0 +1,80 @@
+---
+/*
+ * Les clients : tous les logos de `data/clients.ts`, en silhouette d'encre,
+ * dans une grille calme (quatre colonnes, deux sur téléphone). Les noms sans
+ * logo officiel sont composés en lettres, à la même hauteur. Pas de nombre à
+ * côté du titre (Lilian, 3 novembre 2026), et aucun client nommé à la main.
+ */
+import { clients } from '../../data/clients';
+---
+
+<section class="sec" id="clients" aria-labelledby="titre-clients">
+  <h2 class="sec__titre" id="titre-clients">Clients</h2>
+  <ul class="logos">
+    {clients.map((c) => (
+      <li>
+        {c.logo ? (
+          <img
+            src={c.logo.src}
+            alt={c.nom}
+            width={c.logo.largeur}
+            height={c.logo.hauteur}
+            style={c.logo.echelle ? `--e:${c.logo.echelle}` : undefined}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <span>{c.nom}</span>
+        )}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .logos {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 36px 28px;
+    align-items: center;
+    margin: 0;
+    padding: 8px 0 0;
+    list-style: none;
+  }
+
+  .logos li {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+    max-width: none;
+  }
+
+  .logos img {
+    width: auto;
+    max-width: 100%;
+    height: calc(22px * var(--e, 1));
+    object-fit: contain;
+    object-position: left center;
+    filter: brightness(0);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .logos img:hover {
+    opacity: 1;
+  }
+
+  .logos span {
+    color: var(--encre);
+    font: 600 var(--t-ui) / 1 var(--carnet-titre);
+    letter-spacing: -0.02em;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 760px) {
+    .logos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+  }
+</style>

@@ -77,10 +77,10 @@ const articleSchema = {
 </Carnet>
 
 <style>
-  /* La date en orange : le premier repère de la page. */
+  /* La date, en gris, au-dessus du titre. */
   .billet__meta {
     margin: 0;
-    color: var(--carnet-accent-texte);
+    color: var(--carnet-gris);
     font-weight: 500;
     font-size: 0.875rem;
     font-variant-numeric: tabular-nums;
@@ -88,7 +88,7 @@ const articleSchema = {
 
   .billet__titre {
     margin: 0.75rem 0 0;
-    font-size: 2.5rem;
+    font-size: 2rem;
     line-height: 1.15;
     text-wrap: balance;
   }
@@ -101,10 +101,10 @@ const articleSchema = {
     margin: 0 0 1.15em;
   }
 
-  /* Un intertitre porte un court trait orange au-dessus. */
+  /* Un intertitre porte un court trait d'encre au-dessus. */
   .billet__corps :global(h2) {
     margin: 2.6em 0 0.7em;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1.3;
   }
 
@@ -120,7 +120,7 @@ const articleSchema = {
 
   .billet__corps :global(h3) {
     margin: 2em 0 0.5em;
-    font-size: 1.1875rem;
+    font-size: 1rem;
   }
 
   .billet__corps :global(:is(ul, ol)) {
@@ -163,8 +163,8 @@ const articleSchema = {
     font-weight: 650;
   }
 
-  /* Un lien qui sort du site se voit : en gras et en orange foncé, le seul
-     texte en couleur de la colonne. Les liens internes restent à l'encre. */
+  /* Un lien qui sort du site se voit : en demi-gras, en bleu comme tous les
+     liens du texte. */
   .billet__corps :global(a[href^='http']) {
     color: var(--carnet-accent-texte);
     font-weight: 650;
@@ -180,9 +180,9 @@ const articleSchema = {
   .billet__corps :global(code) {
     padding: 0.1em 0.35em;
     border-radius: var(--radius-xs, 4px);
-    background: #f3f4f6;
-    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-    font-size: 0.85em;
+    background: #ebebe7;
+    font-family: inherit;
+    font-size: 0.9em;
   }
 
   .billet__corps :global(pre) {
@@ -190,8 +190,8 @@ const articleSchema = {
     margin: 1.6em 0;
     padding: 1rem 1.1rem;
     border-radius: var(--radius-md, 10px);
-    background: #111827 !important;
-    color: #f9fafb !important;
+    background: #17171a !important;
+    color: #f6f6f3 !important;
     font-size: 0.85em;
     line-height: 1.6;
   }
@@ -214,6 +214,31 @@ const articleSchema = {
     border-radius: var(--radius-md, 10px);
   }
 
+  /* Un tableau : des filets fins, rien d'autre ; défile seul sur téléphone. */
+  .billet__corps :global(table) {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    margin: 1.8em 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .billet__corps :global(th),
+  .billet__corps :global(td) {
+    padding: 0.6em 0.9em 0.6em 0;
+    border-bottom: 1px solid var(--encre-filet, #dededa);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .billet__corps :global(th) {
+    border-bottom-color: var(--encre, #17171a);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
   .billet__corps :global(hr) {
     width: 4rem;
     margin: 2.5em auto;
@@ -226,7 +251,7 @@ const articleSchema = {
 
   @media (max-width: 30rem) {
     .billet__titre {
-      font-size: 2rem;
+      font-size: 1.625rem;
     }
   }
 </style>

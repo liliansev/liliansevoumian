@@ -1,37 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Chemin from '../components/carnet/chemin.astro';
-import Barre from '../components/carnet/barre.astro';
-import Ouverture from '../components/carnet/ouverture.astro';
-import Defile from '../components/carnet/defile.astro';
-import Suivre from '../components/carnet/suivre.astro';
-import Adore from '../components/carnet/adore.astro';
-import Methode from '../components/carnet/methode.astro';
-import Coulisses from '../components/carnet/coulisses.astro';
-import Avis from '../components/carnet/avis.astro';
-import Contact from '../components/carnet/contact.astro';
-import Pied from '../components/carnet/pied.astro';
+import Entete from '../components/sobre/entete.astro';
+import Ouverture from '../components/sobre/ouverture.astro';
+import Services from '../components/sobre/services.astro';
+import Clients from '../components/sobre/clients.astro';
+import Projets from '../components/sobre/projets.astro';
+import Terrain from '../components/sobre/terrain.astro';
+import Avis from '../components/sobre/avis.astro';
+import Contact from '../components/sobre/contact.astro';
+import Pied from '../components/sobre/pied.astro';
+import '../components/sobre/sobre.css';
 import { resume, resumeCourt } from '../data/parcours';
 
-/* L'accueil est « Le carnet » depuis le 27 octobre 2026, choisi par Lilian
-   après plusieurs pistes écartées : le carnet d'un ingénieur un peu bricolé,
-   papier, encre, couleurs vives, notes à la main, inspiré dans l'esprit (pas
-   dans la forme) de wisprflow.ai et de gemeosagency.com. Le 30 octobre, une
-   revue taste lui a retiré le quadrillage, la monospace et les ombres des
-   surfaces plates. C'est
-   une page de marque : qui il est, où le suivre, ce qu'il adore faire,
-   comment il travaille, et un formulaire pour lui écrire. Ni prix ni
-   chiffres de prestation.
+/* L'accueil est « Entre les deux » depuis le 3 novembre 2026, choisi par
+   Lilian parmi six directions : « super simple, super sobre, avec des typo
+   un peu robot ». Le croisement d'une page de manuel claire et d'un
+   afficheur : papier gris très clair, encre presque noire, Geist Mono
+   partout, un seul bleu pour ce qui se clique. Une colonne de 900 px.
 
-   La page se lit comme un scénario Make : chaque section s'ouvre sur un
-   module rond et coloré, numéroté, et un chemin de pointillés les relie
-   (`components/carnet/chemin.astro`). La grammaire est dans
-   `components/carnet/carnet.css`, rangée sous `.tenue-carnet` : les autres pages
-   gardent la tenue « nuit et pêche » tant qu'elles n'ont pas été passées au
-   carnet. Le détail des choix est dans PRODUCT.md.
+   C'est une page de marque : qui il est, ce qu'il fait, pour qui, des
+   photos de terrain, ce qu'on en dit, et un formulaire pour lui écrire. Ni
+   prix ni chiffres de prestation. Le premier geste est de s'abonner sur
+   YouTube ; le seul appel est « Parlons de votre projet » (l'en-tête), qui
+   mène au formulaire du bas (`sobre/contact.astro`). La grammaire est dans
+   `components/sobre/sobre.css` ; le détail des choix dans DESIGN.md.
 
-   Le premier geste est de s'abonner sur YouTube ; le contact suit, et tous
-   les « Écrire » de la page mènent au formulaire du bas (`contact.astro`). */
+   Les accueils d'avant (« Le carnet », 27 octobre ; « Le documentaire »,
+   14 octobre) restent dans `components/carnet/` et
+   `components/documentaire/`, sans être rendus. */
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
    doit rattacher à l'entité `Person` déclarée par Layout.astro. */
@@ -55,18 +51,27 @@ const pageSchema = {
   pageSchema={pageSchema}
 >
   <div class="carnet-ui">
-    <Chemin />
-    <Barre />
-    <main id="main-content" tabindex="-1">
+    <Entete
+      liens={[
+        { href: '#services', label: 'services' },
+        { href: '#projets', label: 'projets' },
+        { href: '#avis', label: 'avis' },
+        { href: '/blog', label: 'blog' },
+        { href: '#ecrire', label: 'contact' },
+      ]}
+      source="home_nav"
+      sourceMenu="home_menu"
+      marqueHref="#main-content"
+    />
+    <main id="main-content" tabindex="-1" class="accueil">
       <Ouverture />
-      <Defile />
-      <Suivre />
-      <Adore />
-      <Methode />
-      <Coulisses />
+      <Services />
+      <Clients />
+      <Projets />
+      <Terrain />
       <Avis />
       <Contact />
     </main>
-    <Pied />
+    <Pied surAccueil source="home_pied" />
   </div>
 </Layout>

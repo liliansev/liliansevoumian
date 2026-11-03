@@ -1,0 +1,161 @@
+---
+/*
+ * Les projets clients (pas les projets personnels de Lilian, 14 octobre
+ * 2026), lus dans les cas publiés (`content/cas-clients`) : une ligne par
+ * client, du plus récent au plus ancien. À gauche le client, son secteur et
+ * le type de travail ; au milieu ce que Lilian a construit (`accroche`) et
+ * les outils ; à droite le premier chiffre du cas (`kpis`), s'il en a un.
+ * Le nom du client mène au cas complet.
+ */
+import { getCollection } from 'astro:content';
+
+const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+/* Le type de travail, déduit du cas : une application est un outil métier,
+   un cas qui fait lire ou décider un modèle est un agent IA. */
+const modeles = ['Claude', 'Mistral', 'OpenAI', 'GPT', 'Gemini'];
+const types = (d: (typeof cas)[number]['data']) => {
+  const t: string[] = [];
+  if (d.category === 'application') t.push('outil métier');
+  else t.push('automatisation');
+  if (d.tags.includes('IA') || d.tools.some((o) => modeles.includes(o))) t.push('agent IA');
+  return t;
+};
+---
+
+<section class="sec" id="projets" aria-labelledby="titre-projets">
+  <h2 class="sec__titre" id="titre-projets">Projets <a href="/cas-clients">tous les cas →</a></h2>
+  <div class="tableau">
+    {cas.map(({ id, data }) => {
+      const chiffre = data.kpis[0];
+      return (
+        <article class="rang">
+          <div>
+            <h3 class="rang__client"><a href={`/cas-clients/${id}`}>{data.client ?? data.title}</a></h3>
+            {data.secteur && <p class="rang__secteur">{data.secteur}</p>}
+            <p class="rang__types">{types(data).map((t) => <span>{t}</span>)}</p>
+          </div>
+          <div>
+            <p class="rang__texte">{data.accroche ?? data.description}</p>
+            <p class="rang__outils">{data.tools.slice(0, 4).join(' · ')}</p>
+          </div>
+          {chiffre ? (
+            <p class="rang__chiffre"><strong>{chiffre.value}</strong><span>{chiffre.label}</span></p>
+          ) : <span />}
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<style>
+  .tableau {
+    border: 1px solid var(--encre-filet);
+    border-radius: 6px;
+    background: var(--blanc);
+    overflow: hidden;
+  }
+
+  .rang {
+    position: relative;
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr) 170px;
+    gap: 24px;
+    padding: 20px;
+    border-top: 1px solid var(--encre-filet);
+    transition: background-color 0.2s ease;
+  }
+
+  .rang:first-child {
+    border-top: 0;
+  }
+
+  .rang:hover {
+    background: #fafaf8;
+  }
+
+  .rang__client {
+    margin: 0;
+    font: 600 var(--t-corps) / 1.25 var(--carnet-titre);
+    letter-spacing: -0.01em;
+  }
+
+  .rang__client a {
+    color: var(--encre);
+    text-decoration: none;
+  }
+
+  /* Toute la ligne mène au cas. */
+  .rang__client a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .rang:hover .rang__client a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .rang__secteur {
+    margin-top: 6px !important;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.4;
+  }
+
+  .rang__types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px !important;
+  }
+
+  .rang__types span {
+    padding: 3px 7px;
+    border: 1px solid var(--encre-filet);
+    border-radius: 3px;
+    color: var(--encre-doux);
+    font: 500 var(--t-petit) / 1.2 var(--carnet-titre);
+  }
+
+  .rang__texte {
+    max-width: 60ch;
+  }
+
+  .rang__outils {
+    margin-top: 6px !important;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+  }
+
+  .rang__chiffre {
+    display: grid;
+    gap: 6px;
+    text-align: right;
+  }
+
+  .rang__chiffre strong {
+    font: 600 var(--t-carte) / 1.1 var(--carnet-titre);
+    letter-spacing: -0.02em;
+  }
+
+  .rang__chiffre span {
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 760px) {
+    .rang {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .rang__chiffre {
+      text-align: left;
+    }
+  }
+</style>

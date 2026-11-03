@@ -24,81 +24,85 @@
  */
 
 :is(:root:has(.tenue-carnet), .tenue-carnet) {
-  /* Les couleurs */
-  --papier: #f6f2e8;
-  --blanc: #fffdf8;
-  --encre: #1d1a22;
-  --encre-doux: #4f4a56;
-  --violet: #6a3df5;
-  --lilas: #b59cff;
-  --menthe: #4fe0a0;
-  --jaune: #ffd23f;
-  --rose: #ff8fc8;
-  --bleu: #6ab7ff;
+  /* DEPUIS LE 3 NOVEMBRE 2026, CES JETONS PORTENT LA DA « ENTRE LES DEUX »
+     (DESIGN.md, components/sobre/) : papier gris très clair, encre presque
+     noire, un seul bleu, Geist Mono partout. Les noms sont ceux du carnet,
+     que les composants lisent toujours : toute la page bascule d'un coup.
+     `--violet` vaut le bleu, réservé aux actions (boutons, liens, focus) ;
+     les couleurs vives du carnet retombent sur des gris, et la main
+     (`--carnet-main`) sur la mono. */
+  --papier: #f6f6f3;
+  --blanc: #ffffff;
+  --encre: #17171a;
+  --encre-doux: #6c6d69;
+  --violet: #2b44f0;
+  --bleu-fonce: #1c2fc4;
+  --lilas: #e8ebfd;
+  --menthe: #eef0ec;
+  --jaune: #e8ebfd;
+  --rose: #eef0ec;
+  --bleu: #e8ebfd;
   --vert: #0c7a3c;
   --vert-clair: #effaf3;
   --vert-point: #14a554;
   --rouge: #c9302c;
-  --coeur: #e0368a;
-  /* L'encre éclaircie : les traits secondaires, le chemin. */
-  --encre-filet: color-mix(in srgb, var(--encre) 25%, transparent);
-  --encre-pointille: color-mix(in srgb, var(--encre) 50%, transparent);
+  --coeur: #c9302c;
+  /* Le filet des panneaux et des séparations, et celui des champs (3:1 sur
+     le blanc, comme le demande une commande). */
+  --encre-filet: #dededa;
+  --encre-pointille: #8e8e89;
+  --champ: #8e8e89;
 
-  /* Les deux voix : le texte et la main */
-  --carnet-titre: 'Bricolage Grotesque Variable', 'Arial Narrow', Arial, sans-serif;
-  --carnet-main: 'Gochi Hand', 'Comic Sans MS', cursive;
-  /* Les étiquettes et les lignes de contexte : le texte du carnet, plus de
-     monospace hors du code (revue taste, 30 octobre 2026). */
+  /* Une seule voix : Geist Mono, pour les titres comme pour le texte. */
+  --carnet-titre: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+  --carnet-main: var(--carnet-titre);
   --carnet-code: var(--carnet-titre);
 
-  /* Les tailles : sept crans, en rem pour suivre le réglage du visiteur
-     (revue taste, 30 octobre 2026 : la page en comptait vingt, à un ou deux
-     pixels d'écart). Petit 14, corps 17, chapô 21, titre de carte 28,
-     signature 42, section 77, nom 150 ; les valeurs fluides retombent sur
-     ces crans au bureau, et sur téléphone sur 14, 17, 18, 21, 28, 40 et 67.
-     Les anciens noms restent, comme alias d'un cran. */
-  --t-petit: 0.875rem;      /* 14 px : étiquettes, légendes, pied, lignes d'état */
+  /* Les tailles : sept crans, en rem (12, 14, 16, 20, 24, 32, 48 px), plus
+     le chapô à 18. Les anciens noms du carnet restent, comme alias. */
+  --t-petit: 0.75rem;       /* 12 : étiquettes, légendes, pied */
   --t-etiquette: var(--t-petit);
   --t-code: var(--t-petit);
-  --t-corps: 1.0625rem;     /* 17 px : le texte courant, les citations */
+  --t-ui: 0.875rem;         /* 14 : barre, boutons, texte dense */
+  --t-corps: 1rem;          /* 16 : le texte courant */
   --t-citation: var(--t-corps);
-  --t-note: 1.3125rem;      /* 21 px : notes à la main, légendes des polaroïds */
-  --t-carte: 1.75rem;       /* 28 px : titres des cartes, chiffres d'audience */
+  --t-chapo: 1.125rem;      /* 18 : le chapô d'une page */
+  --t-note: 1.25rem;        /* 20 : titres de section de l'accueil */
+  --t-carte: 1.5rem;        /* 24 : chiffres, titres de bloc */
   --t-chiffre: var(--t-carte);
-  --t-chapo: clamp(1.125rem, 1.45vw, 1.3125rem);
-  --t-main: clamp(1.3125rem, 1.95vw, 1.75rem);
-  --t-section: clamp(2.5rem, 5.4vw, 4.8rem);
-  /* Les moments d'affichage : la signature, et le nom (ouverture, « J'adore »,
-     pied), qui partagent un seul cran. */
-  --t-signature: clamp(1.75rem, 3vw, 2.6rem);
-  --t-nom: clamp(4.2rem, 10.4vw, 9.6rem);
+  --t-main: var(--t-note);
+  --t-section: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);   /* 24 à 32 */
+  --t-signature: var(--t-carte);
+  --t-nom: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);     /* 34 à 48 */
   --t-adore: var(--t-nom);
-  /* Le pied tient sur une ligne : sur téléphone il descend jusqu'au cran
-     des sections (40 px) au lieu de celui du nom. */
-  --t-pied: clamp(2.5rem, 10.4vw, 9.6rem);
+  --t-pied: var(--t-carte);
 
-  /* Les arrondis et les ombres pleines */
-  --r-xs: 6px;
-  --r-s: 12px;
-  --r-m: 16px;
-  --r-l: 22px;
-  --r-xl: 28px;
-  --r-pilule: 999px;
-  --trait: 2.5px;
-  --trait-fin: 2px;
-  /* Les surfaces plates (boutons, pilules, cartes) ne portent plus d'ombre :
-     seuls les objets posés sur la page (les polaroïds) gardent la leur. Les
-     jetons restent, à vide, pour que les transitions tiennent. */
+  /* Des angles à peine adoucis, des filets d'un pixel, aucune ombre. */
+  --r-xs: 4px;
+  --r-s: 4px;
+  --r-m: 6px;
+  --r-l: 6px;
+  --r-xl: 8px;
+  --r-pilule: 4px;
+  --trait: 1px;
+  --trait-fin: 1px;
   --ombre-s: 0 0 0 transparent;
   --ombre-m: 0 0 0 transparent;
   --ombre-l: 0 0 0 transparent;
   --ombre-survol: 0 0 0 transparent;
-  --ombre-xl: 8px 8px 0 var(--encre);
+  --ombre-xl: 0 0 0 transparent;
 
   /* La gouttière, et la largeur de la colonne */
   --gauche: max(16px, env(safe-area-inset-left, 0px));
   --droite: max(16px, env(safe-area-inset-right, 0px));
-  --colonne: 1304px;
+  --colonne: 960px;
+  /* La largeur du contenu des pages, sur laquelle s'alignent l'en-tête et le
+     pied : 1200 px ailleurs, la colonne de 900 px sur l'accueil. */
+  --largeur-site: 1200px;
+}
+
+:root:has(.accueil) {
+  --largeur-site: 900px;
 }
 
 @media (min-width: 768px) {
@@ -609,4 +613,147 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* =========================================================================
+   « ENTRE LES DEUX », 3 NOVEMBRE 2026
+   La DA choisie par Lilian après la série du 3 novembre : super simple,
+   super sobre, une typo « un peu robot ». Les jetons du haut de ce fichier
+   en portent déjà les valeurs ; ce bloc reprend les objets du carnet que
+   les pages partagent (pilules, étiquettes, liens, cartes) pour leur ôter
+   capitales condensées, traits épais et décalages au survol. Il est écrit en
+   dernier pour l'emporter, à spécificité égale. Détail : DESIGN.md.
+   ========================================================================= */
+
+.tenue-carnet {
+  font-size: var(--t-corps);
+  line-height: 1.65;
+}
+
+.tenue-carnet :is(p, li) {
+  max-width: 68ch;
+}
+
+.tenue-carnet ::selection {
+  background: var(--encre);
+  color: var(--papier);
+}
+
+@media (any-hover: hover), (any-pointer: fine) {
+  .tenue-carnet :focus-visible {
+    outline: 2px solid var(--violet);
+    outline-offset: 2px;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .tenue-carnet :is(input, textarea):focus-visible {
+    outline: 2px solid var(--violet);
+  }
+}
+
+.carnet-ui .caps {
+  font-weight: 600;
+  font-stretch: normal;
+  text-transform: none;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.carnet-ui .main {
+  font-size: var(--t-ui);
+  color: var(--encre-doux);
+}
+
+.carnet-ui .meta {
+  font-weight: 400;
+}
+
+.carnet-ui .tag {
+  padding: 3px 7px;
+  border-color: var(--encre-filet);
+  background: none;
+  color: var(--encre-doux);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.carnet-ui :is(.c-lilas, .c-menthe, .c-jaune, .c-rose, .c-bleu) {
+  background: var(--blanc);
+}
+
+.carnet-ui .lien {
+  font-weight: 500;
+  font-size: var(--t-ui);
+  color: var(--violet);
+  text-decoration-thickness: 1px;
+}
+
+.carnet-ui .lien:hover {
+  color: var(--bleu-fonce);
+  text-decoration-color: currentColor;
+}
+
+/* Le bouton : un rectangle à peine arrondi. Blanc bordé par défaut, encre
+   pour l'appel, bleu pour l'action principale d'un bloc (`.pilule-bleue`). */
+.carnet-ui .pilule {
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--encre);
+  font: 600 var(--t-ui) / 1 var(--carnet-titre);
+  font-stretch: normal;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.carnet-ui .pilule:hover,
+.carnet-ui .pilule:active {
+  transform: none;
+  background: var(--encre);
+  color: var(--blanc);
+}
+
+.carnet-ui .pilule-encre:hover {
+  background: var(--violet);
+  border-color: var(--violet);
+}
+
+.carnet-ui .pilule-bleue {
+  border-color: var(--violet);
+  background: var(--violet);
+  color: var(--blanc);
+}
+
+.carnet-ui .pilule-bleue:hover {
+  border-color: var(--bleu-fonce);
+  background: var(--bleu-fonce);
+}
+
+/* Plus de pastille verte « disponible » ni de triangle rose : un seul bleu. */
+.carnet-ui .point {
+  display: none;
+}
+
+.carnet-ui .lecture-mini,
+.carnet-ui .pilule-encre .lecture-mini {
+  width: 8px;
+  height: 10px;
+  background: currentColor;
+}
+
+.carnet-ui .carte {
+  border-color: var(--encre-filet);
+}
+
+.carnet-ui a.carte:hover {
+  transform: none;
+  border-color: var(--encre);
+}
+
+.carnet-ui .carte h3 {
+  font: 600 var(--t-corps) / 1.3 var(--carnet-titre);
+  font-stretch: normal;
+  text-transform: none;
 }

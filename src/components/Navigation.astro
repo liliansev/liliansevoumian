@@ -1,5 +1,5 @@
 ---
-import Barre from './carnet/barre.astro';
+import Entete from './sobre/entete.astro';
 import { serviceNavigation } from '../data/service-navigation';
 
 interface NavigationLink {
@@ -12,15 +12,15 @@ interface Props {
   links?: NavigationLink[];
   /** Nom de la page dans les statistiques : d'où le formulaire a été ouvert. */
   ctaSource?: string;
-  /** Hérité de la barre « nuit et pêche » ; la barre du carnet n'en a plus besoin. */
+  /** Hérité de la barre « nuit et pêche » ; l'en-tête n'en a plus besoin. */
   trackHero?: boolean;
 }
 
-/* La barre des pages intérieures est celle de l'accueil « Le carnet »
-   (`carnet/barre.astro`) depuis le 28 octobre 2026 : le nom, qui ramène à
-   l'accueil, les liens, et la pilule « Écrire », qui mène au formulaire de
+/* L'en-tête des pages intérieures est celui de l'accueil (`sobre/entete.astro`,
+   « Entre les deux », 3 novembre 2026) : le logo, qui ramène à l'accueil,
+   les liens, et « Parlons de votre projet », qui mène au formulaire de
    contact. Seule la liste des liens change : une page d'offre nomme ses
-   ancres, les autres pages les liens du site. Le nom de la barre dans les
+   ancres, les autres pages les liens du site. Le nom de l'en-tête dans les
    statistiques reste celui de la page. */
 const defaultNavLinks: NavigationLink[] = [
   ...serviceNavigation,
@@ -35,4 +35,4 @@ const { links: suppliedLinks, ctaSource = 'nav' } = Astro.props;
 const sourceMenu = suppliedLinks ? `${ctaSource}_mobile` : 'nav_mobile_cta';
 ---
 
-<Barre sections={suppliedLinks ?? defaultNavLinks} source={ctaSource} sourceMenu={sourceMenu} marqueHref="/" />
+<Entete liens={suppliedLinks ?? defaultNavLinks} source={ctaSource} sourceMenu={sourceMenu} marqueHref="/" />

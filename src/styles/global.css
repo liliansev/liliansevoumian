@@ -39,13 +39,17 @@
          du 1er octobre 2026.
      ======================================================================= */
 
-  /* ── Polices ── */
-  --font-display: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
-  --font-body: 'Bricolage Grotesque Variable', system-ui, -apple-system, sans-serif;
+  /* ── Polices et tailles ──
+     « Entre les deux » (3 novembre 2026) : Geist Mono partout, et des
+     tailles ramenées sur l'échelle de la DA (12, 14, 16, 20, 24, 32, 48) ;
+     Lilian trouvait les grands titres « exagérés ». Les commentaires qui
+     suivent racontent les courbes d'avant. */
+  --font-display: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-body: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
   /* Plus de famille monospace : --font-mono existe encore parce que 11
      composants l'appellent, mais il vaut la police de texte (JetBrains Mono
      retirée le 30 octobre 2026, revue taste). */
-  --font-mono: 'Bricolage Grotesque Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* ── Échelle typographique, espacement et motion ──
      Repris tels quels de main : ce sont des mesures, pas une direction
@@ -56,7 +60,7 @@
      en plein glyphe — on lisait « l'automatisatio ». C'est le seul défaut de
      l'audit responsive qu'un visiteur pouvait voir directement. La courbe est
      inchangée au-dessus de 400 px de large. */
-  --text-display: clamp(2.25rem, 5vw + 1rem, 5.25rem);
+  --text-display: clamp(2rem, 1.4rem + 2.4vw, 3rem);
   /* UNE seule courbe pour le manifeste, et non deux jetons commutés à 1024 px.
      Mesuré sur la page vivante, l'ancien dispositif faisait perdre au titre
      10,2 px (−14,7 %) quand la fenêtre gagnait UN pixel, et il ne repassait
@@ -67,9 +71,9 @@
      Calée à ×1,20 de --text-display sur toute la plage : le manifeste de la
      home cessait d'être plus petit que le titre d'une page SEO (76 contre
      84 px). Vérifié : 3 lignes à 1440 px comme avant, aucun débordement. */
-  --text-display-hero: clamp(3.25rem, 6vw + 1.2rem, 6.25rem);
+  --text-display-hero: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);
   --spacing-home-hero-y: clamp(3rem, 5vw, 5rem);
-  --text-headline: clamp(2rem, 3vw + 0.5rem, 3rem);
+  --text-headline: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
   /* La phrase d'un métier et la citation : un rang sous le titre de section.
      Elles prenaient --text-headline, donc exactement la taille du h2 qui les
      annonce, à toutes les largeurs (48/48, 38,7/38,7, 32/32) : le titre et ce
@@ -78,7 +82,7 @@
      est à 39 px et non 40 : à 40, la phrase du métier Formations demandait
      451,2 px dans une colonne de 451,19, et laissait un mot seul sur sa
      troisième ligne. */
-  --text-phrase: clamp(1.625rem, 2.2vw + 0.6rem, 2.4375rem);
+  --text-phrase: clamp(1.25rem, 1rem + 0.8vw, 1.5rem);
   /* Interligne et approche, par rôle. Ils étaient des littéraux recopiés dans
      chaque composant, et ils avaient divergé : le titre du hero, à 72 px, était
      moins serré (1,12 / -0,028em, réglé à la demande de Lilian) que les h2 à
@@ -92,14 +96,14 @@
   /* Le récit qui ouvre l'accueil : des phrases qui se disent en grand, une par
      écran, dans une demi-largeur. La pente suit la largeur, et la hauteur de la
      fenêtre la borne : six lignes doivent tenir sur un écran de portable. */
-  --text-story: clamp(2rem, min(3.6vw + 0.5rem, 8svh), 4rem);
+  --text-story: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
   /* Les liens du menu plein écran, sur téléphone et tablette : assez grands
      pour tenir l'écran à quatre. La hauteur de la fenêtre les borne, pour
      qu'ils tiennent sans défiler sur un petit téléphone. */
-  --text-menu: clamp(2rem, min(9vw + 0.25rem, 5.5svh), 3rem);
+  --text-menu: clamp(1.5rem, 6vw, 2rem);
   /* La phrase qui ouvre l'accueil, seule et centrée : le plus grand corps du
      site. */
-  --text-affiche: clamp(2.125rem, min(4.6vw + 0.4rem, 11svh), 4.5rem);
+  --text-affiche: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
   /* --text-signature a été retiré. Même plancher et même pente que
      --text-headline, seul son plafond différait : les deux rendaient
      exactement 32 px sous 700 px de large. Deux jetons pour une valeur, et un
@@ -108,10 +112,10 @@
   /* Le chiffre héros du simulateur porte désormais les HEURES, plus l'euro :
      garder le nom `money` ferait mentir le jeton. Le second niveau a disparu
      avec la ligne « formule », l'euro tenant maintenant dans une phrase. */
-  --text-roi-primary: clamp(2.5rem, 5vw, 4rem);
-  --text-title-lg: clamp(1.5rem, 1.5vw + 0.75rem, 1.875rem);
-  --text-title: clamp(1.25rem, 1vw + 0.875rem, 1.5rem);
-  --text-body-large: clamp(1.0625rem, 0.5vw + 0.875rem, 1.25rem);
+  --text-roi-primary: clamp(2rem, 3vw, 2.5rem);
+  --text-title-lg: 1.25rem;
+  --text-title: 1.125rem;
+  --text-body-large: 1.0625rem;
   /* 1rem fixe, et la courbe qui était écrite ici tombe pour la raison que ce
      système applique déjà aux quatre rangs du dessous : elle ne parcourait
      QU'UN pixel. Mesuré, `clamp(0.9375rem, 0.25vw + 0.875rem, 1rem)` rendait
@@ -120,8 +124,8 @@
      le plus lisible. Un pixel de moins sur un téléphone, gagné nulle part.
      Le plancher de 16 px est par ailleurs celui sous lequel iOS zoome un champ
      de saisie et sous lequel une prose se lit à la loupe. */
-  --text-body: 1.0625rem;
-  --text-body-sm: 0.9375rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
   --text-mono-label: 0.75rem;
   /* --text-mono-body a été retiré. Le rang de 13 px avait déjà quitté
      l'échelle rendue (il était à 1,08 de --text-body-sm et à 1,08 de
@@ -194,15 +198,15 @@
      champ ou une vignette (sm), une carte (md), un média ou une grande carte
      (lg), un panneau (xl). Les deux derniers sont fluides : 24 et 32 px sur un
      panneau de 343 px de large le transformeraient en gélule. */
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: clamp(1rem, 0.6rem + 1.2vw, 1.5rem);
-  --radius-xl: clamp(1.25rem, 0.6rem + 2vw, 2rem);
-  --radius-cta: 9999px;
+  --radius-xs: 4px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --radius-cta: 4px;
   /* L'épaisseur du trait tiré sous un fragment de titre (`mark`). */
   --trait-souligne: max(2px, 0.075em);
-  --radius-diagram: 16px;
+  --radius-diagram: 6px;
   --radius-full: 9999px;
 
   /* ── Surfaces ──
@@ -210,38 +214,38 @@
      (`surface-low`, `surface-high`). `night` et `night-deep` (noms hérités)
      valent l'encre et ne sont remappés par aucune île : un composant les lit
      quand il veut l'encre quel que soit son parent. */
-  --color-paper: #f6f2e8;
-  --color-surface-low: #fffdf8;
-  --color-night: #1d1a22;
-  --color-night-soft: #3a3542;
-  --color-night-deep: #1d1a22;
-  --color-service-border: rgb(29 26 34 / 0.25);
-  --color-surface-high: #fffdf8;
+  --color-paper: #f6f6f3;
+  --color-surface-low: #ffffff;
+  --color-night: #17171a;
+  --color-night-soft: #3a3a3e;
+  --color-night-deep: #17171a;
+  --color-service-border: #dededa;
+  --color-surface-high: #ffffff;
 
   /* ── Encres. Sur le papier #f6f2e8 : 7,68:1 pour le texte secondaire
      (`ink-mid`), 6,52:1 pour les légendes (`ink-low`). `ink-faint` est un
      trait, JAMAIS du texte : 3,24:1 (mesuré le 28 octobre 2026). ── */
-  --color-ink: #1d1a22;
-  --color-ink-mid: #4f4a56;
-  --color-ink-low: #5a5462;
-  --color-ink-faint: #8a8492;
+  --color-ink: #17171a;
+  --color-ink-mid: #4a4b48;
+  --color-ink-low: #6c6d69;
+  --color-ink-faint: #8e8e89;
 
   /* ── Filets ── */
-  --color-divider: rgb(29 26 34 / 0.16);
-  --color-grid-line: rgb(29 26 34 / 0.07);
-  --color-grid-line-active: rgb(29 26 34 / 0.3);
+  --color-divider: #dededa;
+  --color-grid-line: rgb(23 23 26 / 0.06);
+  --color-grid-line-active: rgb(23 23 26 / 0.3);
   /* Le trait d'encre des cartes, des champs et des contours (15:1). */
-  --color-border-strong: #1d1a22;
+  --color-border-strong: #17171a;
 
   /* ── Les panneaux « toujours sombres » (schémas, scène 3D, vignettes) :
      depuis le 28 octobre 2026 ils sont des feuilles claires du carnet, et ces
      jetons portent l'encre sur le blanc. Les noms sont restés. ── */
-  --color-text-on-dark: #1d1a22;
-  --color-text-on-dark-mid: #4f4a56;
-  --color-text-on-dark-low: #5a5462;
-  --color-text-on-dark-faint: #8a8492;
-  --color-divider-dark: rgb(29 26 34 / 0.2);
-  --color-surface-on-dark: #fffdf8;
+  --color-text-on-dark: #17171a;
+  --color-text-on-dark-mid: #4a4b48;
+  --color-text-on-dark-low: #6c6d69;
+  --color-text-on-dark-faint: #8e8e89;
+  --color-divider-dark: #dededa;
+  --color-surface-on-dark: #ffffff;
 
   /* ── L'accent ──
      Depuis le carnet (28 octobre 2026) : `--color-accent` et `--color-peche`
@@ -263,15 +267,15 @@
   /* Le texte secondaire d'une feuille claire. `--color-ink-faint` y tombait à
      3,4:1 ; celui-ci tient 7,1:1. */
   --color-feuille-note: #4b5565;
-  --color-peche: #b59cff;
-  --color-peche-clair: #c8b6ff;
-  --color-accent: #b59cff;
-  --color-accent-text: #6a3df5;
+  --color-peche: #e8ebfd;
+  --color-peche-clair: #eef0fe;
+  --color-accent: #e8ebfd;
+  --color-accent-text: #2b44f0;
   /* Un fond lilas très clair, pour un état actif discret. */
-  --color-accent-soft: #ece5ff;
+  --color-accent-soft: #eef0fe;
 
   /* L'anneau de focus : l'encre, 15:1 sur le papier. */
-  --color-focus: #1d1a22;
+  --color-focus: #2b44f0;
 
   /* L'erreur en rouge (5,6:1 sur le papier), le succès en vert (5,08:1),
      chacun toujours porté par une phrase : la couleur seule n'informe pas. */
@@ -402,7 +406,7 @@ body {
  *
  * Écrites hors couche, ces deux déclarations l'emportaient sur tout ce que
  * Tailwind émet dans @layer utilities, quelle que soit la spécificité. Un
- * paragraphe portant `max-w-[43ch]` rendait donc 72ch, soit 955 px au lieu de
+ * paragraphe portant `max-w-[62ch]` rendait donc 72ch, soit 955 px au lieu de
  * 570 : aucune des contraintes de largeur écrites dans les composants ne
  * s'appliquait, et la colonne de texte du site mesurait 85 caractères de
  * médiane au lieu des 65 à 75 lisibles.
@@ -420,7 +424,7 @@ body {
        rendu. `72ch` plafonnait donc à cent dix caractères, pas à soixante-douze,
        et trente-sept pour cent des blocs de la home dépassaient soixante-quinze.
        La fourchette annoncée par DESIGN.md est enfin celle qui est rendue. */
-    max-width: 46ch;
+    max-width: 66ch;
   }
 
   /* Un `li` n'est pas toujours de la prose : sur /principes, la liste des huit
@@ -514,7 +518,7 @@ body {
    quelle que soit la spécificité : les quatorze `transition-colors` posées dans
    les composants sur des `<a>` ne pilotaient rien, et un futur `duration-300`
    sur un lien aurait été ignoré sans erreur ni avertissement. Même cause que le
-   `<h2>` qui rendait 48 px au lieu de 30 et que le `max-w-[43ch]` qui rendait
+   `<h2>` qui rendait 48 px au lieu de 30 et que le `max-w-[62ch]` qui rendait
    72ch, troisième propriété.
    Le passage sous @layer base est SANS effet visible parce que les deux défauts
    de Tailwind ont été alignés sur les jetons du projet juste au-dessus : une
@@ -1255,30 +1259,31 @@ mark {
   /* Valeurs LITTÉRALES ici, jamais var(--color-ink) : un remap se résout
      contre la NOUVELLE valeur posée sur le même élément. Écrire
      `color: var(--color-ink)` à côté de `--color-ink: …` est le cycle déjà
-     rencontré deux fois dans ce fichier. */
-  background: #fffdf8;
-  color: #1d1a22;
+     rencontré deux fois dans ce fichier. Depuis le 3 novembre 2026
+     (« Entre les deux ») : une feuille blanche au filet gris d'un pixel. */
+  background: #ffffff;
+  color: #17171a;
   margin-inline: clamp(0.75rem, 2vw, 1.5rem);
   margin-block: clamp(1rem, 2vw, 1.5rem);
-  border: 2.5px solid #1d1a22;
+  border: 1px solid #dededa;
   border-radius: var(--radius-xl);
 
-  /* Sur ce blanc : 8,44:1 (`ink-mid`), 7,17:1 (`ink-low`), 5,74:1 (violet). */
-  --color-paper: #fffdf8;
-  --color-surface-low: #f6f2e8;
+  /* Sur ce blanc : 9,6:1 (`ink-mid`), 5,2:1 (`ink-low`), 6,6:1 (bleu). */
+  --color-paper: #ffffff;
+  --color-surface-low: #f6f6f3;
   --color-surface-high: #ffffff;
-  --color-service-border: rgb(29 26 34 / 0.25);
-  --color-ink: #1d1a22;
-  --color-ink-mid: #4f4a56;
-  --color-ink-low: #5a5462;
-  --color-ink-faint: #8a8492;
-  --color-divider: rgb(29 26 34 / 0.16);
-  --color-grid-line: rgb(29 26 34 / 0.07);
-  --color-grid-line-active: rgb(29 26 34 / 0.3);
-  --color-border-strong: #1d1a22;
-  --color-accent-text: #6a3df5;
-  --color-accent-soft: #ece5ff;
-  --color-focus: #1d1a22;
+  --color-service-border: #dededa;
+  --color-ink: #17171a;
+  --color-ink-mid: #4a4b48;
+  --color-ink-low: #6c6d69;
+  --color-ink-faint: #8e8e89;
+  --color-divider: #dededa;
+  --color-grid-line: rgb(23 23 26 / 0.06);
+  --color-grid-line-active: rgb(23 23 26 / 0.3);
+  --color-border-strong: #17171a;
+  --color-accent-text: #2b44f0;
+  --color-accent-soft: #eef0fe;
+  --color-focus: #2b44f0;
   --color-error: #c9302c;
   --color-success: #0c7a3c;
 }
@@ -1290,17 +1295,16 @@ section:has(+ .bloc-encre) {
   border-bottom-color: transparent;
 }
 
-/* Lien dans une phrase de prose : souligné d'un trait violet de 2 px (5,22:1
-   sur le papier), qui passe à l'encre au survol. Deux pixels et non un : le
-   trait souligne des mots, il ne doit pas se lire comme un filet de
-   séparation (WCAG 1.4.1). */
+/* Lien dans une phrase de prose : en bleu (6,1:1 sur le papier), souligné
+   d'un trait, qui passe à l'encre au survol (« Entre les deux », 3 novembre
+   2026 : le bleu est la couleur de ce qui se clique). */
 .lien-prose {
-  color: inherit;
+  color: var(--color-accent-text);
   text-decoration: none;
-  border-bottom: 2px solid var(--color-accent-text);
+  border-bottom: 1px solid currentColor;
   padding-bottom: 1px;
 }
-.lien-prose:hover { border-bottom-color: var(--color-ink); }
+.lien-prose:hover { color: var(--color-ink); }
 
 /* =========================================================================
    MOUVEMENT D'AUTEUR — trois gestes, et pas un de plus.
@@ -1441,109 +1445,98 @@ section:has(+ .bloc-encre) {
 }
 
 /* =========================================================================
-   LE CARNET SUR TOUT LE SITE — 28 octobre 2026.
-   L'accueil porte « Le carnet » depuis le 27 octobre ; les pages intérieures
-   le prennent à leur tour. Les jetons du haut de ce fichier ont pris les
-   valeurs du carnet ; ce bloc reprend ce qu'un jeton ne suffit pas à dire :
-   les titres en capitales condensées, le bouton d'appel en pilule d'encre,
-   le soulignement violet (l'île,
-   `.bloc-encre`, est plus haut). Il lit les couleurs nommées du carnet
-   (`--encre`, `--blanc`, `--lilas`, `--violet`, `--jaune`, posées par
-   `components/carnet/carnet.css`), qu'aucune île ne remappe. Il est écrit en
-   dernier pour l'emporter sur les règles d'origine, à spécificité égale.
+   « ENTRE LES DEUX » SUR TOUT LE SITE — 3 novembre 2026.
+   Les jetons du haut de ce fichier, et ceux de `components/carnet/carnet.css`
+   (`--encre`, `--violet`…), portent les valeurs de la DA choisie par Lilian
+   le 3 novembre : papier #f6f6f3, encre #17171a, un seul bleu #2b44f0, Geist
+   Mono partout. Ce bloc reprend ce qu'un jeton ne suffit pas à dire : des
+   titres en mono demi-gras, en bas de casse, sans démesure ; un bouton
+   d'appel en rectangle d'encre qui passe au bleu ; un soulignement d'encre
+   sous le fragment mis en avant. Il est écrit en dernier pour l'emporter
+   sur les règles d'origine, à spécificité égale.
    ========================================================================= */
 
-/* Les titres : h1 et h2 en capitales condensées, comme le nom et les
-   sections de l'accueil ; h3 et h4 en Bricolage gras, en bas de casse. */
-.tenue-carnet :is(h1, h2) {
+.tenue-carnet :is(h1, h2, h3, h4) {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 75%;
-  text-transform: uppercase;
-  line-height: 0.92;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  font-stretch: normal;
+  text-transform: none;
+  letter-spacing: -0.03em;
 }
 
 .tenue-carnet h1 {
-  font-size: clamp(2.6rem, 6.2vw + 0.6rem, 6.4rem);
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+  line-height: 1.08;
 }
 
 .tenue-carnet h2 {
-  font-size: clamp(2.1rem, 3.8vw + 0.6rem, 4rem);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  line-height: 1.15;
 }
 
 .tenue-carnet :is(h3, h4) {
-  font-weight: 700;
-  letter-spacing: -0.005em;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
 }
 
 html:not(:has(.carnet)) ::selection {
-  background: var(--jaune);
-  color: var(--encre);
+  background: var(--encre);
+  color: var(--papier);
 }
 
-/* Le bouton d'appel : la pilule d'encre du carnet, à plat, comme sur
-   l'accueil ; il monte de deux pixels au survol et s'enfonce d'un au clic. */
+/* Le bouton d'appel : un rectangle d'encre, qui passe au bleu au survol. */
 .tenue-carnet .btn-primary {
-  min-height: 52px;
-  padding: 0 24px;
-  border: 2.5px solid var(--encre);
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--encre);
+  border-radius: 4px;
   background: var(--encre);
   color: var(--blanc);
-  font: 800 1.0625rem / 1 var(--font-display);
-  font-stretch: 85%;
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
+  font: 600 0.875rem / 1 var(--font-display);
+  font-stretch: normal;
+  text-transform: none;
+  letter-spacing: -0.01em;
   box-shadow: none;
-  transition: transform 0.15s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .tenue-carnet .btn-primary:hover,
 .tenue-carnet .btn-primary:focus-visible {
-  background: var(--encre);
+  border-color: var(--violet);
+  background: var(--violet);
   color: var(--blanc);
-  transform: translate(-2px, -2px);
+  transform: none;
 }
 
-.tenue-carnet .btn-primary:active {
-  transform: translate(1px, 1px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tenue-carnet .btn-primary,
-  .tenue-carnet .btn-primary:hover,
-  .tenue-carnet .btn-primary:focus-visible,
-  .tenue-carnet .btn-primary:active {
-    transform: none;
-  }
-}
-
-/* Les liens secondaires et les puces : le texte du carnet, en gras. */
+/* Les liens secondaires et les puces. */
 .tenue-carnet .link-cta {
   font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--violet);
 }
 
 .tenue-carnet .chip {
-  border: 2px solid var(--encre);
+  border: 1px solid var(--encre-filet);
   background: var(--blanc);
-  color: var(--encre);
+  color: var(--encre-doux);
   font-family: var(--font-display);
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
-/* Le fragment mis en avant d'un titre : un trait violet tiré dessous. */
+/* Le fragment mis en avant d'un titre : un trait d'encre tiré dessous. Le
+   bleu reste aux actions. */
 .tenue-carnet mark {
-  --trait-souligne: max(3px, 0.06em);
+  --trait-souligne: 2px;
   background:
-    linear-gradient(var(--violet), var(--violet)) no-repeat 0 96% /
+    linear-gradient(var(--encre), var(--encre)) no-repeat 0 94% /
     calc(var(--draw) * 100%) var(--trait-souligne);
 }
 
-/* L'anneau de focus clavier : l'encre, en 3 px, comme sur l'accueil. */
+/* L'anneau de focus clavier : le bleu, en 2 px. */
 @media (any-hover: hover), (any-pointer: fine) {
   :focus-visible {
-    outline-width: 3px;
+    outline-width: 2px;
   }
 }

@@ -1,0 +1,91 @@
+---
+/*
+ * « Avis » : les trois recommandations de `data/avis.ts`, mot pour mot, en
+ * trois colonnes posées sur le papier. Le passage qui compte est en
+ * demi-gras ; le bleu reste aux actions.
+ */
+import { Image } from 'astro:assets';
+import { avis } from '../../data/avis';
+---
+
+<section class="sec" id="avis" aria-labelledby="titre-avis">
+  <h2 class="sec__titre" id="titre-avis">Avis</h2>
+  <div class="avis">
+    {avis.map((a) => (
+      <figure>
+        <blockquote><p>{a.citation[0]}<strong>{a.citation[1]}</strong>{a.citation[2]}</p></blockquote>
+        <figcaption>
+          <Image src={a.image} alt="" width={34} height={34} densities={[1, 2]} loading="lazy" />
+          <span><b>{a.nom}</b>{a.role}</span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+
+<style>
+  .avis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 40px;
+  }
+
+  .avis figure {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 0;
+  }
+
+  .avis blockquote {
+    margin: 0;
+  }
+
+  .avis blockquote p {
+    font-size: var(--t-corps);
+    line-height: 1.6;
+  }
+
+  .avis strong {
+    font-weight: 600;
+  }
+
+  .avis figcaption {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+  }
+
+  .avis figcaption :global(img) {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .avis figcaption span {
+    min-height: 3lh;
+  }
+
+  .avis b {
+    display: block;
+    color: var(--encre);
+    font-weight: 500;
+  }
+
+  @media (max-width: 760px) {
+    .avis {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+
+    .avis figcaption span {
+      min-height: 0;
+    }
+  }
+</style>

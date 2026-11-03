@@ -389,6 +389,10 @@ components:
 
 ## Overview
 
+> Depuis le 3 novembre 2026, la tenue du site est « Entre les deux » :
+> voir le chapitre du même nom, qui fait foi. La suite de cette vue
+> d'ensemble décrit la tenue « nuit et pêche » et reste pour l'histoire.
+
 **Creative North Star : « Nuit et pêche »**
 
 Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait
@@ -475,6 +479,107 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
   des logos boucle, avec son bouton pause.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
   visuels, jamais dans le chrome du site.
+
+## Entre les deux (3 novembre 2026) : la tenue actuelle
+
+**Ce chapitre fait foi.** Le 3 novembre 2026, Lilian demande une refonte
+« super simple, super sobre, avec des typo un peu robot ». Parmi six
+directions, il choisit la sixième, « Entre les deux » (entre une page
+monochrome et une page trop chargée), l'affine sur la maquette, puis demande
+de « coller la DA partout dans le site, même le blog ». Tout ce qui suit dans
+ce fichier (le carnet, nuit et pêche, le documentaire) est l'histoire : les
+règles de structure tiennent (un seul bouton d'appel, les composants communs,
+les îles), les couleurs, les polices et les formes ne tiennent plus.
+
+**Le monde.** Une feuille de papier blanc cassé, de l'encre presque noire, une
+seule couleur pour ce qui agit. Rien n'est décoré : la hiérarchie vient de la
+taille, de la graisse et des filets d'un pixel.
+
+- **Papier** `#f6f6f3` (fond), **blanc** `#ffffff` (panneaux), **encre**
+  `#17171a` (texte, bouton d'appel), **encre douce** `#6c6d69` (texte
+  secondaire), **filet** `#dededa` (séparations), **champ** `#8e8e89`
+  (bordure des champs de formulaire, 3:1 sur le blanc).
+- **Cobalt** `#2b44f0` (survol `#1c2fc4`) : réservé à ce qui agit. Liens,
+  bouton « S’abonner sur YouTube », bouton d'envoi des formulaires, anneau de
+  focus, survol du bouton d'appel, curseur du logo, accent des icônes des
+  métiers. Jamais en fond de section, jamais en titre.
+- **Une seule famille : Geist Mono Variable** (`@fontsource-variable/geist-mono`,
+  préchargée par `Layout`). Titres en 600, sans capitales de style, approche
+  légèrement serrée. En Geist Mono, `1ch` vaut un caractère : une ligne de
+  prose tient en `66ch` (le `46ch` de Geist en valait 70).
+- **Échelle** : 12, 14, 16, 20, 24, 32, 48 px, plus 18 px pour un chapô.
+  Le nom de l'accueil et les h1 plafonnent à 48 px : Lilian a trouvé
+  « exagéré » tout ce qui dépassait.
+- **Formes** : rayons de 4 à 8 px, filets d'un pixel, aucune ombre (sauf la
+  barre collante une fois détachée). Les boutons sont des rectangles de 44 px
+  de haut, bordés d'un pixel d'encre.
+- **Le logo** : un bloc d'encre « ls » suivi d'un curseur cobalt qui clignote
+  (immobile sous `prefers-reduced-motion`), puis le nom.
+
+**Les pièces communes** (`src/components/sobre/`) :
+
+- `entete.astro` : la barre de toutes les pages (rendue par `Navigation`).
+  Collante ; après 60 px de défilement, elle se détache en barre blanche
+  flottante, floutée, arrondie, et revient sous 20 px (hystérésis). Un seul
+  bouton, « Parlons de votre projet » (`BoutonReservation`). Sous 860 px, un
+  bouton Menu ouvre un `dialog` plein écran ; sous 560 px, le nom s'efface
+  derrière le bloc « ls ».
+- `pied.astro` : le pied de toutes les pages (rendu par `Footer`). Le logo et
+  une ligne, « Ailleurs » (YouTube, LinkedIn, ses organisations), « Sur le
+  site » (les pages). Pas d'année.
+- La largeur de la barre et du pied suit `--largeur-site` : 1200 px sur les
+  pages intérieures, 900 px sur l'accueil.
+
+**L'accueil** (`src/pages/index.astro`, styles dans `sobre/sobre.css`), une
+colonne de 900 px, des sections ouvertes par un titre de 20 px posé sur un
+filet d'encre :
+
+1. `ouverture` : « Lilian / Sevoumian », une ligne, un chapô, un seul geste
+   (S’abonner sur YouTube, en cobalt), le portrait à droite (au-dessus du nom,
+   en petit, sur téléphone) ; puis quatre chiffres en colonnes (audience de
+   `data/parcours.ts` et la certification Make), sans ligne de date visible
+   (la date reste dans l'`aria-label`).
+2. `services` (« Ce que je fais ») : les quatre métiers de `data/metiers.ts`
+   en panneau blanc de quatre cases, chacun avec son icône dessinée pour le
+   site (grille de 32, trait de 1,75, un seul élément plein en cobalt).
+   Lilian ne voulait pas d'icônes génériques. Ni prix ni bouton.
+3. `clients` : les logos de `data/clients.ts` en grille, en noir à 70 %.
+4. `projets` : les cas clients en lignes (client, secteur, type de travail,
+   accroche, outils, un résultat), toute la ligne cliquable.
+5. `terrain` : trois photos de Lilian au travail.
+6. `avis` : les trois recommandations de `data/avis.ts`, en colonnes, le
+   passage clé en graisse.
+7. `contact` (`#ecrire`) : « Écrivez-moi », le formulaire de contact, et le
+   lien vers l'agenda.
+
+**Les pages intérieures** gardent leurs composants (`tete-de-page`, `partie`,
+`questions`, `fin-de-page`…) et prennent la tenue par les jetons. Les noms
+hérités ne changent pas, leurs valeurs si :
+
+- dans `carnet/carnet.css`, `.tenue-carnet` porte les jetons (`--papier`,
+  `--encre`, `--violet` vaut le cobalt, `--lilas`/`--jaune`/`--bleu` valent
+  un bleu très pâle `#e8ebfd`, `--carnet-titre` et `--carnet-main` valent
+  Geist Mono, toutes les ombres sont transparentes) ; le bloc final « ENTRE
+  LES DEUX » redessine les objets sous `.carnet-ui` (`pilule`,
+  `pilule-encre`, `pilule-bleue`, `lien`, `tag`, `carte`) ;
+- dans `styles/global.css`, le `@theme` prend les mêmes valeurs
+  (`--color-paper` papier, `--color-ink` et `--color-night` encre,
+  `--color-peche` et `--color-accent` le bleu pâle, `--color-accent-text` le
+  cobalt, polices Geist Mono, rayons de 4 à 8 px) et le dernier bloc, « ENTRE
+  LES DEUX SUR TOUT LE SITE », règle les titres, le bouton d'appel (rectangle
+  d'encre, cobalt au survol), `mark` (un trait d'encre) et le focus ;
+- les bordures de 2 et 2,5 px du carnet sont redescendues à un pixel de
+  filet, les capitales et les graisses 800 sont retirées.
+
+**Le blog** (`layouts/Carnet.astro`, un nom hérité) porte désormais la même
+tenue : `Layout` avec la tenue, la même barre et le même pied, une colonne de
+42 rem en Geist Mono 16 px, liens cobalt soulignés d'un pixel, titres et dates
+en encre et en gris, tableaux à filets. Son blanc et son Geist sont retirés.
+
+**Ce qui n'est plus rendu** : `carnet/barre.astro`, `carnet/pied.astro` et
+les modules du carnet (`ouverture`, `suivre`, `adore`, `methode`,
+`coulisses`, `avis`, `contact`, `chemin`, `defile`) restent dans le dépôt,
+comme le documentaire avant eux, mais aucune page ne les appelle.
 
 ## Le carnet sur tout le site (28 octobre 2026)
 

@@ -1,9 +1,8 @@
 ---
-import '@fontsource-variable/bricolage-grotesque/standard.css';
-import '@fontsource/gochi-hand/latin-400.css';
+import '@fontsource-variable/geist-mono/wght.css';
 import '../styles/global.css';
 import '../components/carnet/carnet.css';
-import bricolageLatin from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2?url';
+import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { organisations, profils, resume } from '../data/parcours';
@@ -24,11 +23,9 @@ interface Props {
   noindex?: boolean;
   faqSchema?: Array<{ question: string; answer: string }>;
   directionContract?: string;
-  /** La couleur de la barre du navigateur mobile : le papier du carnet, ou
-      le blanc du blog. */
+  /** La couleur de la barre du navigateur mobile : le papier du site. */
   themeColor?: string;
-  /** La police à précharger (URL d'un woff2) : Bricolage Grotesque, ou
-      Geist sur le blog. */
+  /** La police à précharger (URL d'un woff2) : Geist Mono, partout. */
   policePrechargee?: string;
   /** Pose la tenue du carnet (`.tenue-carnet`) autour de la page. Le blog, qui a la sienne, la refuse. */
   carnet?: boolean;
@@ -48,8 +45,8 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   pageSchema,
   breadcrumbs,
   noindex = false,
-  themeColor = '#f6f2e8',
-  policePrechargee = bricolageLatin,
+  themeColor = '#f6f6f3',
+  policePrechargee = geistMonoLatin,
   carnet = true,
   faqSchema,
   directionContract
