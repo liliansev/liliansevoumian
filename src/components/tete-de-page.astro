@@ -49,7 +49,7 @@ const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
 <section data-section class="tete relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)]">
   <div class="entree relative mx-auto max-w-[1200px]">
     {retour ? <Retour href={retour.href}>{retour.libelle}</Retour> : <Retour />}
-    <h1 class="tete__titre" style={`max-width: ${titreLargeur};`} set:html={titre} />
+    <h1 class="tete__titre" style={`max-width: calc(${titreLargeur} * 1.5);`} set:html={titre} />
     {chapo && <p class="tete__chapo" set:html={chapo} />}
     {bouton && (
       <div class="tete__action">
@@ -78,10 +78,11 @@ const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
     text-wrap: balance;
   }
 
-  /* 46ch : dans Geist, un `ch` vaut un caractère et demi de prose, soit une
-     ligne d'environ 70 caractères. */
+  /* 66ch : en Geist Mono (« Entre les deux », 3 novembre 2026), un `ch` vaut
+     exactement un caractère ; c'était 46ch en Geist, où il en valait un et
+     demi. Une ligne d'environ 66 caractères dans les deux cas. */
   .tete__chapo {
-    max-width: 46ch;
+    max-width: 66ch;
     margin: var(--spacing-lie) 0 0;
     color: var(--color-ink-mid);
     font-size: var(--text-body-large);
@@ -94,7 +95,7 @@ const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
   }
 
   .tete__preuves {
-    max-width: 46ch;
+    max-width: 66ch;
     margin: var(--spacing-lie) 0 0;
     color: var(--color-ink-low);
     font-size: var(--text-body-sm);

@@ -19,7 +19,7 @@ pnpm preview    # Preview production build locally
 - **Framework**: Astro 5.x with static output
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
 - **Icons**: astro-icon with Lucide and Simple Icons
-- **Fonts**: Bricolage Grotesque (text, titles and labels) and Gochi Hand (handwritten notes), self-hosted (`@fontsource`), imported by `layouts/Layout.astro` for every page. No monospace since 30 October 2026: `@fontsource/jetbrains-mono` stays in `package.json` only for `scripts/og-carnet` (the share image). The blog alone keeps Geist Variable, imported by `layouts/Carnet.astro`
+- **Fonts**: Geist Mono Variable everywhere since 3 November 2026 (`@fontsource-variable/geist-mono`, imported and preloaded by `layouts/Layout.astro` for every page, the blog included). Bricolage Grotesque and Gochi Hand stay in `package.json` but no page loads them; `@fontsource/jetbrains-mono` stays only for `scripts/og-carnet` (the share image)
 - **pnpm**: the lockfile and the Dockerfile are pnpm 10.26.2; with an older global pnpm, run `npx -y pnpm@10.26.2 <command>`
 - **Language**: French (fr)
 - **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
@@ -43,7 +43,20 @@ src/
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   │   # — accueil « Le carnet » (choisi par Lilian le 27 octobre 2026) —
+│   │   # — la tenue « Entre les deux » (3 novembre 2026), l'actuelle —
+│   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
+│   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section
+│   │   ├── entete.astro       # la barre collante de toutes les pages (rendue par Navigation) : logo « ls » à curseur, liens, « Parlons de votre projet », menu en `dialog` ; se détache en barre flottante au défilement
+│   │   ├── pied.astro         # le pied de toutes les pages (rendu par Footer) : logo, « Ailleurs », « Sur le site »
+│   │   ├── ouverture.astro    # le nom, une ligne, le chapô, « S’abonner sur YouTube », le portrait, quatre chiffres
+│   │   ├── services.astro     # « Ce que je fais » : les 4 métiers (data/metiers.ts), icônes dessinées pour le site
+│   │   ├── clients.astro      # la grille des logos clients (data/clients.ts)
+│   │   ├── projets.astro      # les cas clients en lignes cliquables (collection cas-clients)
+│   │   ├── terrain.astro      # trois photos de Lilian au travail
+│   │   ├── avis.astro         # trois recommandations (data/avis.ts)
+│   │   └── contact.astro      # `#ecrire` : le formulaire de contact et le lien vers l'agenda
+│   │   # — accueil « Le carnet » (27 octobre au 3 novembre 2026), plus rendu ; carnet.css porte encore les jetons de toutes les pages —
+
 │   ├── carnet/                # l'accueil en carnet d'ingénieur, lu comme un scénario Make : un module coloré par section, un chemin de pointillés entre eux
 │   │   ├── carnet.css         # la grammaire, rangée sous `.tenue-carnet` : jetons, voix, pilules, polaroïds, scotch, modules, chemin, cartes
 │   │   ├── griffe.astro       # un griffonnage (cœur, vague, icônes) tracé au build par `lib/carnet/griffonnages.ts`
@@ -137,6 +150,23 @@ api/
 
 `DESIGN.md` is the source of truth; tokens live in the `@theme` block of
 `src/styles/global.css`.
+
+Since 3 November 2026 every page, the blog included, wears « Entre les
+deux » (DESIGN.md, *Entre les deux*, which is authoritative): paper
+`#f6f6f3`, white panels, ink `#17171a`, grey `#6c6d69`, 1px rules `#dededa`,
+one cobalt `#2b44f0` reserved for actions (links, YouTube and form buttons,
+focus, the logo cursor, call-button hover), Geist Mono Variable only, type
+scale 12/14/16/20/24/32/48 (18 for a chapô), radii 4 to 8 px, no shadows,
+rectangular 44 px buttons. The home page is `components/sobre/`; `Navigation`
+and `Footer` render `sobre/entete.astro` (sticky, turns into a floating bar
+after 60 px of scroll) and `sobre/pied.astro`. It is a token swap: the
+carnet and `@theme` token names are kept (`--violet` is the cobalt,
+`--color-peche` a pale blue, `--carnet-titre` Geist Mono…), and the last
+block of `carnet.css` (« ENTRE LES DEUX ») and of `global.css` (« ENTRE LES
+DEUX SUR TOUT LE SITE ») redraw the objects. In Geist Mono `1ch` is one
+character: prose measure is `66ch`, and `tete-de-page`/`SectionHeader`
+multiply their title width prop by 1.5. Never infer a colour from a token
+name. Everything below about « Le carnet » and « nuit et pêche » is history.
 
 Since 28 October 2026 every page but the blog wears « Le carnet » (see
 below): `Layout` wraps the page in `.tenue-carnet` and loads

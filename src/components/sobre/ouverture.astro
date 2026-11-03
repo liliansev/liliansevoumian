@@ -1,0 +1,172 @@
+---
+/*
+ * L'ouverture : le nom, ce que fait Lilian en une ligne, sa phrase, un seul
+ * geste (s'abonner sur YouTube, son choix du 27 octobre 2026), et son
+ * portrait. Dessous, quatre chiffres en colonnes : l'audience (une seule
+ * source, `data/parcours.ts`) et la certification Make.
+ *
+ * Retours de Lilian du 3 novembre 2026 : le nom à 48 px au plus (« exagéré »
+ * au-delà), aucune ligne de date sous les chiffres, pas de second appel à
+ * côté du bouton (l'en-tête porte déjà « Parlons de votre projet »).
+ */
+import { Image } from 'astro:assets';
+import { audience, profils } from '../../data/parcours';
+import portrait from '../../assets/lilian-photo.jpg';
+
+const chiffres = [
+  { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
+  { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
+  { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
+  { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
+];
+---
+
+<section class="ouverture" id="a-propos" aria-labelledby="titre-ouverture">
+  <div class="ouverture__grille">
+    <div>
+      <h1 class="ouverture__nom" id="titre-ouverture">Lilian<br />Sevoumian</h1>
+      <p class="ouverture__sous">Freelance en automatisation et agents IA, depuis 2020</p>
+      <p class="ouverture__chapo">
+        J’automatise le travail répétitif des entreprises avec Make, n8n et des agents IA. Et je montre comment je fais sur YouTube.
+      </p>
+      <p class="ouverture__actions">
+        <a
+          class="pilule pilule-bleue"
+          href={profils.youtube}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-fast-goal="youtube_opened"
+          data-fast-goal-source="home_hero_abonner"
+        ><span class="lecture-mini" aria-hidden="true"></span>S’abonner sur YouTube<span class="sr-only"> (nouvel onglet)</span></a>
+      </p>
+    </div>
+    <figure class="ouverture__photo">
+      <Image
+        src={portrait}
+        alt="Portrait de Lilian Sevoumian"
+        width={560}
+        widths={[240, 560]}
+        sizes="(max-width: 760px) 112px, 280px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </figure>
+  </div>
+  <ul class="chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
+    {chiffres.map((c) => (
+      <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .ouverture__grille {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 56px;
+    align-items: center;
+    padding-block: 56px 36px;
+  }
+
+  .ouverture__nom {
+    margin: 0;
+    font: 600 var(--t-nom) / 1.08 var(--carnet-titre);
+    letter-spacing: -0.035em;
+  }
+
+  .ouverture__sous {
+    margin-top: 10px;
+    color: var(--encre-doux);
+    font-size: var(--t-ui);
+  }
+
+  .ouverture__chapo {
+    max-width: 44ch;
+    margin-top: 22px;
+    font-size: var(--t-corps);
+    line-height: 1.65;
+  }
+
+  .ouverture__actions {
+    margin-top: 26px;
+  }
+
+  .ouverture__photo {
+    margin: 0;
+  }
+
+  .ouverture__photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 30%;
+    border-radius: 4px;
+  }
+
+  .chiffres {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    border-block: 1px solid var(--encre-filet);
+  }
+
+  .chiffres li {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    max-width: none;
+    padding: 20px 20px 18px;
+    border-left: 1px solid var(--encre-filet);
+  }
+
+  .chiffres li:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .chiffres strong {
+    font: 600 var(--t-carte) / 1.1 var(--carnet-titre);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .chiffres span {
+    color: var(--encre-doux);
+    font-size: var(--t-petit);
+    line-height: 1.5;
+  }
+
+  /* Sur téléphone, le portrait passe au-dessus du nom, en petit. */
+  @media (max-width: 760px) {
+    .ouverture__grille {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+      padding-block: 28px 24px;
+    }
+
+    .ouverture__photo {
+      order: -1;
+      width: 112px;
+    }
+
+    .ouverture__photo :global(img) {
+      aspect-ratio: 1;
+    }
+
+    .chiffres {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .chiffres li:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+
+    .chiffres li:nth-child(n + 3) {
+      border-top: 1px solid var(--encre-filet);
+    }
+  }
+</style>

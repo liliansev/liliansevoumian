@@ -1,0 +1,59 @@
+/*
+ * La grammaire de l'accueil « Entre les deux » (3 novembre 2026), importée par
+ * `pages/index.astro`. Les jetons sont ceux de `carnet/carnet.css` (posés sur
+ * toute page qui porte `.tenue-carnet`), qui ont pris les valeurs de la DA :
+ * papier #f6f6f3, encre #17171a, un seul bleu, Geist Mono.
+ *
+ * Une colonne de 900 px. Chaque section s'ouvre sur un titre de 20 px en
+ * demi-gras, sous un filet d'encre ; 88 px entre deux sections, 60 sur
+ * téléphone. Deux panneaux seulement (les métiers, le contact) : le reste
+ * se pose sur le papier.
+ */
+
+.accueil {
+  max-width: calc(900px + var(--gauche) + var(--droite));
+  margin-inline: auto;
+  padding-inline: var(--gauche) var(--droite);
+  font-size: var(--t-ui);
+  line-height: 1.7;
+}
+
+.accueil p {
+  margin: 0;
+}
+
+.sec {
+  margin-top: 88px;
+  scroll-margin-top: 96px;
+}
+
+.accueil .sec__titre {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--encre);
+  font: 600 var(--t-note) / 1.2 var(--carnet-titre);
+  letter-spacing: -0.02em;
+}
+
+.accueil .sec__titre a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  color: var(--encre-doux);
+  font: 400 var(--t-petit) / 1 var(--carnet-titre);
+  letter-spacing: 0;
+  text-underline-offset: 3px;
+}
+
+.accueil .sec__titre a:hover {
+  color: var(--violet);
+}
+
+@media (max-width: 760px) {
+  .sec {
+    margin-top: 60px;
+  }
+}

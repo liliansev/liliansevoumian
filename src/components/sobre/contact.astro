@@ -1,0 +1,62 @@
+---
+/*
+ * La fin de l'accueil : « Écrivez-moi », le seul appel de la page avec le
+ * bouton de l'en-tête. Le formulaire de contact du site
+ * (`formulaire-contact.astro`) dans un panneau blanc, et le lien vers
+ * l'agenda (goal `lead_call`). Tous les « Parlons de votre projet » de la
+ * page y mènent : Layout fait défiler jusqu'au formulaire.
+ */
+import BoutonReservation from '../BoutonReservation.astro';
+import FormulaireContact from '../formulaire-contact.astro';
+import { DUREE_RESERVATION_MINUTES } from '../../lib/reservation';
+---
+
+<section class="sec" id="ecrire" aria-labelledby="titre-ecrire">
+  <div class="contact-panneau carnet-ui">
+    <div>
+      <h2 class="contact-panneau__titre" id="titre-ecrire">Écrivez-moi</h2>
+      <p class="contact-panneau__texte">Décrivez ce qui vous prend du temps chaque semaine. Le message arrive directement dans ma boîte.</p>
+      <p class="contact-panneau__texte">
+        <BoutonReservation source="home_fin" direct class="lien">ou réservez un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes&nbsp;→<span class="sr-only"> (ouvre l’agenda)</span></BoutonReservation>
+      </p>
+    </div>
+    <FormulaireContact source="home_fin" variante="carnet" />
+  </div>
+</section>
+
+<style>
+  .contact-panneau {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 40px;
+    padding: 36px;
+    border: 1px solid var(--encre-filet);
+    border-radius: 6px;
+    background: var(--blanc);
+  }
+
+  .contact-panneau__titre {
+    margin: 0;
+    font: 600 2rem / 1.05 var(--carnet-titre);
+    letter-spacing: -0.03em;
+  }
+
+  .contact-panneau__texte {
+    max-width: 36ch;
+    margin-top: 14px !important;
+    color: var(--encre-doux);
+  }
+
+  /* La colonne du formulaire est étroite : un champ par ligne. */
+  .contact-panneau :global(.contact__ligne) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (max-width: 760px) {
+    .contact-panneau {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+      padding: 22px;
+    }
+  }
+</style>

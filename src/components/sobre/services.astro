@@ -1,0 +1,121 @@
+---
+/*
+ * « Ce que je fais » : les quatre métiers (`data/metiers.ts`, la seule
+ * source), en panneau de quatre cases. Chacun a son icône, dessinée pour le
+ * site (grille de 32, trait de 1,75, angles nets, un seul élément plein en
+ * bleu ; Lilian ne voulait pas d'icônes génériques, 3 novembre 2026), son
+ * nom, sa phrase et une ligne de détail.
+ *
+ * Ni prix ni bouton : l'accueil est une page de marque, et « les gens me
+ * contacteront via le formulaire » (Lilian, 3 novembre 2026).
+ */
+import { metiers } from '../../data/metiers';
+
+const icones: Record<(typeof metiers)[number]['id'], string> = {
+  automatisation:
+    '<rect x="3" y="11" width="9" height="10" rx="2.5"/><rect x="20" y="4" width="9" height="9" rx="2.5"/><rect x="20" y="19" width="9" height="9" rx="2.5" class="accent"/><path d="M12 16h3.5v-7.5H20M15.5 16v7.5H20"/><circle cx="15.5" cy="16" r="1.6" fill="currentColor" stroke="none"/>',
+  'agents-ia':
+    '<path d="M5 6.5h17.5a2.5 2.5 0 0 1 2.5 2.5v9.5a2.5 2.5 0 0 1-2.5 2.5H13l-5 4.5V21H5a2.5 2.5 0 0 1-2.5-2.5V9A2.5 2.5 0 0 1 5 6.5z"/><path d="M8 11.5h7M8 15.5h4.5"/><path d="M25.5 2.5l1.1 2.9 2.9 1.1-2.9 1.1-1.1 2.9-1.1-2.9-2.9-1.1 2.9-1.1z" class="accent" stroke-width="1"/>',
+  dashboards:
+    '<rect x="3" y="5" width="26" height="22" rx="3"/><path d="M3 10.5h26"/><circle cx="6.5" cy="7.8" r=".9" fill="currentColor" stroke="none"/><circle cx="9.5" cy="7.8" r=".9" fill="currentColor" stroke="none"/><rect x="7" y="17" width="3.5" height="6" class="accent" stroke-width="1"/><path d="M14.25 23v-9M18 23v-5"/><path d="M21.5 19l2.5-3.5 2 1.5"/>',
+  formations:
+    '<rect x="3" y="4" width="26" height="17" rx="2.5"/><path d="M16 21v4M10.5 28l5.5-3 5.5 3"/><path d="M13.5 9.5l6 3-6 3z" class="accent" stroke-width="1.2"/>',
+};
+---
+
+<section class="sec" id="services" aria-labelledby="titre-services">
+  <h2 class="sec__titre" id="titre-services">Ce que je fais</h2>
+  <div class="services">
+    {metiers.map((m) => (
+      <article class="service">
+        <svg class="service__icone" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="square" aria-hidden="true" set:html={icones[m.id]} />
+        <h3>{m.nom}</h3>
+        <p class="service__phrase">{m.phrase}</p>
+        <p class="service__texte" set:html={m.texte} />
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .services {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border: 1px solid var(--encre-filet);
+    border-radius: 6px;
+    background: var(--blanc);
+    overflow: hidden;
+  }
+
+  .service {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 26px 26px 24px;
+    border-top: 1px solid var(--encre-filet);
+  }
+
+  .service:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .service:nth-child(even) {
+    border-left: 1px solid var(--encre-filet);
+  }
+
+  .service__icone {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 6px;
+    color: var(--encre);
+  }
+
+  .service__icone :global(.accent) {
+    fill: var(--violet);
+    stroke: var(--violet);
+  }
+
+  .service h3 {
+    margin: 0;
+    font: 600 var(--t-corps) / 1.3 var(--carnet-titre);
+    letter-spacing: -0.01em;
+  }
+
+  .service__phrase {
+    font-size: var(--t-corps);
+    line-height: 1.55;
+  }
+
+  .service__texte {
+    color: var(--encre-doux);
+    font-size: var(--t-ui);
+    line-height: 1.6;
+  }
+
+  .service__texte :global(a) {
+    color: inherit;
+    text-underline-offset: 3px;
+  }
+
+  .service__texte :global(a:hover) {
+    color: var(--violet);
+  }
+
+  @media (max-width: 760px) {
+    .services {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .service {
+      padding: 20px;
+    }
+
+    .service:nth-child(2) {
+      border-top: 1px solid var(--encre-filet);
+    }
+
+    .service:nth-child(even) {
+      border-left: 0;
+    }
+  }
+</style>

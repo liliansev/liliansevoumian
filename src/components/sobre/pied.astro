@@ -1,0 +1,191 @@
+---
+/*
+ * Le pied du site, le même partout depuis le 3 novembre 2026 (« Entre les
+ * deux ») : le logo et une ligne qui dit ce que fait Lilian, puis deux listes
+ * en petit, ce qu'il publie et fonde (« Ailleurs ») et les pages du site
+ * (« Sur le site »), qu'il faut pouvoir atteindre depuis l'accueil. Pas
+ * d'année : l'accueil ne porte aucune date (Lilian, 14 octobre 2026).
+ */
+import BoutonReservation from '../BoutonReservation.astro';
+import { organisations, profils } from '../../data/parcours';
+
+interface Props {
+  /** Sur l'accueil, le logo ramène en haut de page ; ailleurs, à l'accueil. */
+  surAccueil?: boolean;
+  /** Le nom du pied dans les statistiques. */
+  source?: string;
+  /** Pour une page sans formulaire de contact en fin de page. */
+  contact?: boolean;
+}
+
+const { surAccueil = false, source = 'pied', contact = false } = Astro.props;
+
+const dehors: { label: string; href: string; goal?: string }[] = [
+  { label: 'YouTube', href: profils.youtube, goal: 'youtube_opened' },
+  { label: 'LinkedIn', href: profils.linkedin },
+  ...organisations.map((o) => ({ label: o.nom, href: o.url, goal: o.goal })),
+];
+
+const pages = [
+  ...(surAccueil ? [] : [{ label: 'Accueil', href: '/' }]),
+  { label: 'Cas clients', href: '/cas-clients' },
+  { label: 'Automatisation et agents IA', href: '/automatisations-ia' },
+  { label: 'Outils métiers', href: '/outils-metiers' },
+  { label: 'Expert Make', href: '/expert-make' },
+  { label: 'Expert n8n', href: '/expert-n8n' },
+  { label: 'Automatisation en panne', href: '/reprendre-une-automatisation-qui-casse' },
+  { label: 'Make ou n8n ?', href: '/make-ou-n8n' },
+  { label: 'Combien coûte une automatisation ?', href: '/combien-coute-une-automatisation' },
+  { label: 'Agent IA pour PME', href: '/agent-ia-pour-pme' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Principes', href: '/principes' },
+  { label: 'Mentions légales', href: '/mentions-legales' },
+];
+---
+
+<footer class="pied carnet-ui">
+  <div class="pied__grille">
+    <div class="pied__marque">
+      <a class="pied__logo" href={surAccueil ? '#main-content' : '/'} aria-label={surAccueil ? 'Lilian Sevoumian, haut de page' : "Lilian Sevoumian, retour à l'accueil"}>
+        <span class="pied__bloc" aria-hidden="true">ls</span>
+        <span aria-hidden="true">Lilian Sevoumian</span>
+      </a>
+      <p>Freelance en automatisation et agents IA, depuis 2020.</p>
+      {contact && (
+        <p class="pied__contact">
+          <BoutonReservation source={`${source}_contact`} class="pilule pilule-encre">Parlons de votre projet</BoutonReservation>
+        </p>
+      )}
+    </div>
+    <nav aria-label="Ailleurs">
+      <h2 class="pied__titre">Ailleurs</h2>
+      <ul>
+        {dehors.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-fast-goal={l.goal}
+              data-fast-goal-source={l.goal ? source : undefined}
+            >{l.label}<span class="sr-only"> (nouvel onglet)</span></a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <nav aria-label="Sur le site">
+      <h2 class="pied__titre">Sur le site</h2>
+      <ul class="pied__pages">
+        {pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .pied {
+    margin-top: 96px;
+    padding-block: 24px 48px;
+  }
+
+  .pied__grille {
+    width: calc(100% - var(--gauche) - var(--droite));
+    max-width: var(--largeur-site);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 1.6fr);
+    gap: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--encre-filet);
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+  }
+
+  .pied__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--encre);
+    font: 600 var(--t-petit) / 1 var(--carnet-titre);
+    text-decoration: none;
+  }
+
+  .pied__bloc {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: var(--encre);
+    color: var(--blanc);
+    font-size: var(--t-petit);
+  }
+
+  .pied__marque p {
+    margin: 4px 0 0;
+  }
+
+  .pied__contact {
+    margin-top: 16px !important;
+  }
+
+  .pied__titre {
+    margin: 12px 0 8px;
+    color: var(--encre);
+    font: 600 var(--t-petit) / 1.4 var(--carnet-titre);
+    letter-spacing: 0;
+  }
+
+  .pied ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pied__pages {
+    columns: 2;
+    column-gap: 24px;
+  }
+
+  .pied li {
+    break-inside: avoid;
+  }
+
+  .pied li a {
+    display: inline-block;
+    padding-block: 3px;
+    color: var(--encre-doux);
+    text-decoration: none;
+  }
+
+  .pied li a:hover {
+    color: var(--violet);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 760px) {
+    .pied {
+      margin-top: 64px;
+    }
+
+    .pied__grille {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px 16px;
+    }
+
+    .pied__marque {
+      grid-column: 1 / -1;
+    }
+
+    .pied__pages {
+      columns: 1;
+    }
+
+    /* Au doigt, chaque lien a sa hauteur de cible. */
+    .pied li a {
+      padding-block: 10px;
+    }
+  }
+</style>
