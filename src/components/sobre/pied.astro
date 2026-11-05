@@ -5,6 +5,8 @@
  * en petit, ce qu'il publie et fonde (« Ailleurs ») et les pages du site
  * (« Sur le site »), qu'il faut pouvoir atteindre depuis l'accueil. Pas
  * d'année : l'accueil ne porte aucune date (Lilian, 14 octobre 2026).
+ * Depuis le 5 novembre 2026 (« Nuit et menthe »), il est posé sur la nuit,
+ * sur toutes les pages : `.sombre` retourne ses jetons.
  */
 import BoutonReservation from '../BoutonReservation.astro';
 import { organisations, profils } from '../../data/parcours';
@@ -43,7 +45,7 @@ const pages = [
 ];
 ---
 
-<footer class="pied carnet-ui">
+<footer class="pied carnet-ui sombre">
   <div class="pied__grille">
     <div class="pied__marque">
       <a class="pied__logo" href={surAccueil ? '#main-content' : '/'} aria-label={surAccueil ? 'Lilian Sevoumian, haut de page' : "Lilian Sevoumian, retour à l'accueil"}>
@@ -85,7 +87,7 @@ const pages = [
 <style>
   .pied {
     margin-top: 96px;
-    padding-block: 24px 48px;
+    padding-block: 32px 56px;
   }
 
   .pied__grille {
@@ -96,7 +98,6 @@ const pages = [
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 1.6fr);
     gap: 32px;
     padding-top: 24px;
-    border-top: 1px solid var(--encre-filet);
     font-size: var(--t-petit);
     color: var(--encre-doux);
   }

@@ -7,7 +7,9 @@
  * Une colonne de 900 px. Chaque section s'ouvre sur un titre de 20 px en
  * demi-gras, sous un filet d'encre ; 88 px entre deux sections, 60 sur
  * téléphone. Deux panneaux seulement (les métiers, le contact) : le reste
- * se pose sur le papier.
+ * se pose sur le papier. Depuis le 5 novembre 2026 (« Nuit et menthe »), les
+ * clients et les projets forment une seule bande sur la nuit, les avis une
+ * seconde ; la mécanique `.sombre` est dans `carnet/carnet.css`.
  */
 
 .accueil {
@@ -50,6 +52,11 @@
 
 .accueil .sec__titre a:hover {
   color: var(--violet);
+}
+
+/* Sur la nuit, le filet du titre passe à la menthe. */
+.accueil .sombre .sec__titre {
+  border-top-color: var(--menthe-vive);
 }
 
 @media (max-width: 760px) {

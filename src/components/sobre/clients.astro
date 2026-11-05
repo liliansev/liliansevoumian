@@ -4,11 +4,13 @@
  * dans une grille calme (quatre colonnes, deux sur téléphone). Les noms sans
  * logo officiel sont composés en lettres, à la même hauteur. Pas de nombre à
  * côté du titre (Lilian, 3 novembre 2026), et aucun client nommé à la main.
+ * Depuis le 5 novembre 2026, sur la nuit (logos en blanc), en une bande avec
+ * les projets.
  */
 import { clients } from '../../data/clients';
 ---
 
-<section class="sec" id="clients" aria-labelledby="titre-clients">
+<section class="sec sombre bande-sombre" id="clients" aria-labelledby="titre-clients">
   <h2 class="sec__titre" id="titre-clients">Clients</h2>
   <ul class="logos">
     {clients.map((c) => (
@@ -55,8 +57,9 @@ import { clients } from '../../data/clients';
     height: calc(22px * var(--e, 1));
     object-fit: contain;
     object-position: left center;
-    filter: brightness(0);
-    opacity: 0.7;
+    /* Sur la nuit : les logos en blanc. */
+    filter: brightness(0) invert(1);
+    opacity: 0.78;
     transition: opacity 0.2s ease;
   }
 

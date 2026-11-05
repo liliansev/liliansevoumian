@@ -25,7 +25,7 @@ const types = (d: (typeof cas)[number]['data']) => {
 };
 ---
 
-<section class="sec" id="projets" aria-labelledby="titre-projets">
+<section class="sec sombre bande-sombre suite-sombre" id="projets" aria-labelledby="titre-projets">
   <h2 class="sec__titre" id="titre-projets">Projets <a href="/cas-clients">tous les cas →</a></h2>
   <div class="tableau">
     {cas.map(({ id, data }) => {
@@ -73,7 +73,7 @@ const types = (d: (typeof cas)[number]['data']) => {
   }
 
   .rang:hover {
-    background: #fafaf8;
+    background: #1c2349;
   }
 
   .rang__client {
@@ -113,6 +113,12 @@ const types = (d: (typeof cas)[number]['data']) => {
     margin-top: 10px !important;
   }
 
+  /* Le type principal en menthe, le second en gris. */
+  .rang__types span:first-child {
+    border-color: var(--menthe-vive);
+    background: var(--menthe-vive);
+    color: var(--nuit);
+  }
   .rang__types span {
     padding: 3px 7px;
     border: 1px solid var(--encre-filet);
