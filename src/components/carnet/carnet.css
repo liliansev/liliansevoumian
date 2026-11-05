@@ -37,6 +37,15 @@
   --encre-doux: #6c6d69;
   --violet: #2b44f0;
   --bleu-fonce: #1c2fc4;
+  /* Nuit et menthe (5 novembre 2026) : le fond des sections sombres et la
+     troisième couleur. La menthe vive ne se pose que sur la nuit ; sur le
+     papier, elle prend sa teinte foncée (`--menthe-texte`) ou son aplat pâle. */
+  --nuit: #0f1430;
+  --menthe-vive: #6ff0c4;
+  --menthe-texte: #0d8f66;
+  --menthe-pale: #e3fbf2;
+  --menthe-pale-filet: #b4efd9;
+  --menthe-pale-texte: #0b6b4c;
   --lilas: #e8ebfd;
   --menthe: #eef0ec;
   --jaune: #e8ebfd;
@@ -756,4 +765,58 @@
   font: 600 var(--t-corps) / 1.3 var(--carnet-titre);
   font-stretch: normal;
   text-transform: none;
+}
+
+/* =========================================================================
+   NUIT ET MENTHE, 5 NOVEMBRE 2026
+   Lilian trouvait la tenue « trop noir et blanc » : une troisième couleur,
+   la menthe, et quelques sections sur la nuit (bleu nuit, pas noir). Une
+   section `.sombre` retourne les jetons, donc tout ce qu'elle contient
+   (titres, filets, panneaux, liens) suit sans réécrire ses composants.
+   `.bande-sombre` étend son fond sur toute la largeur de l'écran sans
+   changer sa colonne ; `.suite-sombre` la colle à la bande précédente.
+   Le cobalt reste aux actions : sur la nuit, il passe à sa teinte claire.
+   ========================================================================= */
+
+.sombre {
+  --encre: #f2f2ee;
+  --encre-doux: #a3aac8;
+  --encre-filet: #283058;
+  --encre-pointille: #4a5380;
+  --champ: #6b7398;
+  --blanc: #161c3d;
+  --violet: #8d9cff;
+  --bleu-fonce: #b3bdff;
+  color: var(--encre);
+  background: var(--nuit);
+}
+
+.sombre ::selection {
+  background: var(--menthe-vive);
+  color: var(--nuit);
+}
+
+.bande-sombre {
+  padding-block: 72px 80px;
+  background: none;
+  border-image: linear-gradient(var(--nuit), var(--nuit)) fill 0 / 0 / 0 100vmax;
+}
+
+.bande-sombre + .sec {
+  margin-top: 96px;
+}
+
+.suite-sombre {
+  margin-top: 0 !important;
+  padding-top: 0;
+}
+
+@media (max-width: 760px) {
+  .bande-sombre {
+    padding-block: 48px 56px;
+  }
+
+  .bande-sombre + .sec {
+    margin-top: 64px;
+  }
 }

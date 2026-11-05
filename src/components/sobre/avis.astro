@@ -1,14 +1,14 @@
 ---
 /*
  * « Avis » : les trois recommandations de `data/avis.ts`, mot pour mot, en
- * trois colonnes posées sur le papier. Le passage qui compte est en
- * demi-gras ; le bleu reste aux actions.
+ * trois colonnes, sur la nuit depuis le 5 novembre 2026. Le passage qui
+ * compte est en demi-gras et en menthe ; le bleu reste aux actions.
  */
 import { Image } from 'astro:assets';
 import { avis } from '../../data/avis';
 ---
 
-<section class="sec" id="avis" aria-labelledby="titre-avis">
+<section class="sec sombre bande-sombre" id="avis" aria-labelledby="titre-avis">
   <h2 class="sec__titre" id="titre-avis">Avis</h2>
   <div class="avis">
     {avis.map((a) => (
@@ -48,6 +48,7 @@ import { avis } from '../../data/avis';
   }
 
   .avis strong {
+    color: var(--menthe-vive);
     font-weight: 600;
   }
 

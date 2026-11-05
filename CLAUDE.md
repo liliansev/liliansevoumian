@@ -166,7 +166,11 @@ block of `carnet.css` (« ENTRE LES DEUX ») and of `global.css` (« ENTRE LES
 DEUX SUR TOUT LE SITE ») redraw the objects. In Geist Mono `1ch` is one
 character: prose measure is `66ch`, and `tete-de-page`/`SectionHeader`
 multiply their title width prop by 1.5. Never infer a colour from a token
-name. Everything below about « Le carnet » and « nuit et pêche » is history.
+name. Since 5 November 2026 (« Nuit et menthe », DESIGN.md): a navy night
+`#0f1430` (`--nuit`) and a third colour, mint `#6ff0c4` (`--menthe-vive`,
+`#0d8f66` `--menthe-texte` on paper); `.sombre` flips the tokens of a section,
+`.bande-sombre` makes it full-bleed. Home: clients+projets and avis are dark
+bands; the footer is dark on every page. Everything below about « Le carnet » and « nuit et pêche » is history.
 
 Since 28 October 2026 every page but the blog wears « Le carnet » (see
 below): `Layout` wraps the page in `.tenue-carnet` and loads

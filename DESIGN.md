@@ -516,6 +516,34 @@ taille, de la graisse et des filets d'un pixel.
 - **Le logo** : un bloc d'encre « ls » suivi d'un curseur cobalt qui clignote
   (immobile sous `prefers-reduced-motion`), puis le nom.
 
+**Nuit et menthe (5 novembre 2026).** Lilian aime la tenue mais la trouve
+« trop noir et blanc » : il veut une troisième couleur et quelques sections
+sur fond sombre. Parmi quatre variantes (Signal en orange, Terminal en vert
+phosphore, Afficheur en jaune, Nuit et menthe), il choisit Nuit et menthe.
+
+- **Nuit** `#0f1430` (`--nuit`) : un bleu nuit, pas du noir. C'est le fond
+  des sections sombres et du pied de page.
+- **Menthe** `#6ff0c4` (`--menthe-vive`) : la troisième couleur. Vive, elle
+  ne se pose que sur la nuit (filet des titres de section, passage clé des
+  avis, type principal d'un projet en aplat) ou en aplat dans une icône.
+  Sur le papier, elle prend sa teinte foncée `#0d8f66` (`--menthe-texte`,
+  les quatre chiffres de l'ouverture, le contour de l'accent des icônes) ;
+  `--menthe-pale` et ses deux voisins restent disponibles pour un aplat pâle.
+  Elle ne remplace jamais le cobalt : les actions restent en cobalt.
+- **Les sections sombres de l'accueil** : les clients et les projets forment
+  une seule bande sur la nuit (logos passés en blanc), puis « Sur le
+  terrain » revient au papier, puis les avis forment une seconde bande. Le
+  contact reste un panneau blanc sur le papier, et le pied de page est sur la
+  nuit sur toutes les pages. Jamais deux bandes séparées par moins d'une
+  section de papier, sauf quand elles se suivent et fusionnent.
+- **La mécanique** (fin de `carnet/carnet.css`) : `.sombre` retourne les
+  jetons (`--encre` clair, `--encre-doux` `#a3aac8`, `--encre-filet`
+  `#283058`, `--blanc` `#161c3d` pour les panneaux posés sur la nuit,
+  `--violet` passé au cobalt clair `#8d9cff` pour les liens), donc un
+  composant n'a rien à réécrire. `.bande-sombre` étend le fond sur toute la
+  largeur de l'écran sans changer la colonne (`border-image`), avec 72 px
+  dessus et 80 dessous ; `.suite-sombre` colle une bande à la précédente.
+
 **Les pièces communes** (`src/components/sobre/`) :
 
 - `entete.astro` : la barre de toutes les pages (rendue par `Navigation`).
@@ -526,7 +554,7 @@ taille, de la graisse et des filets d'un pixel.
   derrière le bloc « ls ».
 - `pied.astro` : le pied de toutes les pages (rendu par `Footer`). Le logo et
   une ligne, « Ailleurs » (YouTube, LinkedIn, ses organisations), « Sur le
-  site » (les pages). Pas d'année.
+  site » (les pages). Pas d'année. Sur la nuit depuis le 5 novembre 2026.
 - La largeur de la barre et du pied suit `--largeur-site` : 1200 px sur les
   pages intérieures, 900 px sur l'accueil.
 
@@ -543,12 +571,13 @@ filet d'encre :
    en panneau blanc de quatre cases, chacun avec son icône dessinée pour le
    site (grille de 32, trait de 1,75, un seul élément plein en cobalt).
    Lilian ne voulait pas d'icônes génériques. Ni prix ni bouton.
-3. `clients` : les logos de `data/clients.ts` en grille, en noir à 70 %.
+3. `clients` : les logos de `data/clients.ts` en grille, en blanc à 78 % sur
+   la nuit (en une bande avec les projets).
 4. `projets` : les cas clients en lignes (client, secteur, type de travail,
    accroche, outils, un résultat), toute la ligne cliquable.
 5. `terrain` : trois photos de Lilian au travail.
-6. `avis` : les trois recommandations de `data/avis.ts`, en colonnes, le
-   passage clé en graisse.
+6. `avis` : les trois recommandations de `data/avis.ts`, en colonnes, sur la
+   nuit, le passage clé en graisse et en menthe.
 7. `contact` (`#ecrire`) : « Écrivez-moi », le formulaire de contact, et le
    lien vers l'agenda.
 
