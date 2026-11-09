@@ -75,6 +75,14 @@ La prop `source` dit lequel a converti :
 Jusqu'au 2 octobre 2026 les blocs des métiers et les lignes de prix émettaient
 la même source, et le funnel ne pouvait pas dire lequel des deux avait servi.
 
+### `newsletter_opened` : vers la newsletter « Augmentés » (Substack)
+Depuis le 9 novembre 2026, la newsletter vit sur Substack (newsletter.augmentes.fr)
+et le site n'inscrit plus personne lui-même. Le goal part au clic, avant que
+Substack ne s'ouvre ; l'inscription confirmée se lit dans Substack, pas ici.
+Sources : `blog_article` et `blog_index` (bouton « S'abonner sur Substack » du
+bloc du blog), `blog_article_archive` et `blog_index_archive` (lien vers les
+anciens numéros), et la source du pied de page (lien « Newsletter Augmentés »).
+
 ### `lead_call` — clic « Réserver un appel » (cal.com)
 Émis sur le **seul lien direct vers l'agenda** : « Réservez un appel de 45
 minutes », sous le formulaire de contact (`fin-de-page.astro`, avec la source

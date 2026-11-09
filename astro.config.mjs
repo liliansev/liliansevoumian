@@ -13,12 +13,10 @@ function formulairesDevApi() {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const chemin = req.url?.split('?')[0];
-        if (chemin !== '/api/newsletter' && chemin !== '/api/contact') return next();
-        const limite = chemin === '/api/contact' ? 8192 : 4096;
+        if (chemin !== '/api/contact') return next();
+        const limite = 8192;
         const run = async () => {
-          const traiter = chemin === '/api/contact'
-            ? (await server.ssrLoadModule('/src/lib/contact-message.ts')).envoyerMessageContactDepuisDev
-            : (await server.ssrLoadModule('/src/lib/newsletter-signup.ts')).signupNewsletterFromDev;
+          const traiter = (await server.ssrLoadModule('/src/lib/contact-message.ts')).envoyerMessageContactDepuisDev;
           const headers = new Headers();
           for (const [key, value] of Object.entries(req.headers)) {
             if (value !== undefined) headers.set(key, Array.isArray(value) ? value.join(', ') : value);

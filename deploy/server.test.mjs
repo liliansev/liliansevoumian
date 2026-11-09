@@ -71,13 +71,6 @@ test('upstream failures return 502 and script is served as JavaScript', async t 
   assert.equal((await fetch(`${url}/api/dfst-events`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })).status, 502);
   const script = await fetch(`${url}/js/script.js`); assert.equal(await script.text(), 'script'); assert.equal(script.headers.get('content-type'), 'text/javascript');
 });
-test('newsletter delegates original body and canonical origin to shared validator', async t => {
-  let received;
-  const { url } = await fixture(t, { signupNewsletter: async (req, key, origin) => { received = { url: req.url, origin, body: await req.json(), header: req.headers.get('origin') }; return Response.json({ status: 'pending' }); } });
-  const response = await fetch(`${url}/api/newsletter`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://liliansevoumian.fr' }, body: '{"email":"test@example.com"}' });
-  assert.equal(response.status, 200); assert.equal(received.origin, 'https://liliansevoumian.fr'); assert.equal(received.body.email, 'test@example.com'); assert.equal(received.header, received.origin);
-  assert.equal((await fetch(`${url}/api/newsletter`, { method: 'POST', body: 'a'.repeat(4097) })).status, 413);
-});
 test('crawler hooks receive public URL, response status and no spoofable IP headers', async t => {
   const calls = []; const lines = [];
   const { url } = await fixture(t, { analytics: true, track: (...args) => calls.push(args), log: line => lines.push(JSON.parse(line)) });
