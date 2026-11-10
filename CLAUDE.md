@@ -44,13 +44,15 @@ src/
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   ├── robot/                 # l'accueil « Citron et lilas » (10 novembre 2026), le seul rendu sur `/`
-│   │   ├── robot.css          # la grammaire, rangée sous `.tenue-robot` : noir chaud, citron (gestes), lilas (surfaces), Roboto Flex
-│   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro)
+│   │   ├── robot.css          # la grammaire, rangée sous `.tenue-robot` : noir chaud, citron (gestes), lilas (surfaces), Roboto Flex ; passe « plus fin » : titres en graisse 600, filets d'un pixel, une seule courbe sans rebond
+│   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
 │   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog`
-│   │   ├── ouverture.astro    # le nom, le portrait non retouché, « S’abonner à la newsletter » et « Me contacter » (après la photo sur téléphone), quatre chiffres
+│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, « S’abonner à la newsletter » et « Me contacter » (après la photo sur téléphone), quatre chiffres sur une ligne à filets
 │   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite)
-│   │   ├── clients.astro · projets.astro · avis.astro · contact.astro · pied.astro
+│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts)
+│   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron
+│   │   ├── projets.astro · contact.astro · pied.astro
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
 │   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section
@@ -163,9 +165,19 @@ Since 10 November 2026 the whole site wears « Citron et lilas » (DESIGN.md,
 *L'accueil « Citron et lilas »* and *« Citron et lilas » sur tout le site*,
 which are authoritative): warm black `#0f0d0b`, white islands, lemon
 `#ffd84d` for actions, lilac `#b9a6ff` for soft surfaces and marks, one
-coloured pill per tool (`data/outils.ts`), Roboto Flex, big radii, a blinking
+coloured pill per tool (`data/outils.ts`), Roboto Flex, a blinking
 robot mascot; Lilian's photo is never tinted, and the page never explains how
-it works. The home lives in `components/robot/` under `.tenue-robot` and
+it works. The same day Lilian asked for « un peu moins de friendly » and
+« plus premium et travaillé tout en gardant la DA »: the « plus fin » pass
+(DESIGN.md, *La passe « plus fin »*, which overrides older lines) sets
+headings at weight 600 (620 for the name and an `h1`, never 800+) on three
+sizes (`--r-t-nom`, `--r-t-2`, `--r-t-3`), 1px hairlines instead of 2px ink
+rings, borderless lemon pills that darken (`#f6cb33`) and lift 1px on hover,
+one easing curve (`--r-sortie`) with no bounce or tilt, straight 1.5px
+underlines instead of wavy ones, radii 32/28/24/18/14, and the robot in four
+places only (nav, hero greeting, contact, footer). Inner pages and the blog
+get it from the very last block of `global.css` (PASSE « PLUS FIN ») and of
+`carnet.css`. The home lives in `components/robot/` under `.tenue-robot` and
 passes `carnet={false}` to Layout. Every other page gets the same look
 through a token swap: the carnet and `@theme` token names are kept
 (`--violet` and `--color-peche` are the lemon…) and the last block of

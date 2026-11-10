@@ -3,7 +3,7 @@
  * « Ce que je fais » : les quatre métiers (`data/metiers.ts`) en onglets. À
  * gauche la liste, l'onglet choisi en citron ; à droite le grand panneau du
  * métier, sur lilas, son icône, sa phrase, son texte, ses outils (une
- * pastille par outil), le lien vers son offre et le robot qui dépasse du bas. Les flèches du clavier
+ * pastille par outil) et le lien vers son offre. Les flèches du clavier
  * passent d'un onglet à l'autre. Sous 1000 px la liste devient une colonne
  * d'icônes collante à gauche du panneau (Lilian, 10 novembre 2026 : ne plus
  * remonter pour choisir puis redescendre pour lire) ; le nom reste lu par les
@@ -11,7 +11,6 @@
  */
 import { metiers } from '../../data/metiers';
 import Outils from './outils.astro';
-import Robot from './robot.astro';
 
 const ICONES: Record<string, string> = {
   automatisation: '<circle cx="10" cy="24" r="6"/><circle cx="38" cy="12" r="6"/><circle cx="38" cy="36" r="6"/><path d="M16 24h6c4 0 4-12 10-12M22 24c4 0 4 12 10 12"/>',
@@ -42,7 +41,6 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
             <p class="r-pan__texte">{texteSeul(m.texte)}</p>
             <Outils outils={m.outils} />
             <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <span class="sr-only"> (nouvel onglet)</span>}</a>
-            <Robot class="r-pan__bot" />
           </div>
         ))}
       </div>

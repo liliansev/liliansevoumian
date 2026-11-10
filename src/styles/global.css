@@ -1853,3 +1853,70 @@ html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact ::placehol
 /* L'anneau de focus ne dépend plus du type de pointeur : un clavier branché
    sur une tablette le voit aussi. */
 .tenue-carnet :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+
+/* =========================================================================
+   PASSE « PLUS FIN » (10 novembre 2026), même tenue.
+   Lilian, l'accueil validé : « un peu moins de friendly, y a des gros
+   titres », « plus premium et travaillé tout en gardant la DA ». L'accueil
+   s'affine dans `robot/robot.css` ; les pages intérieures et le blog le
+   suivent ici, pour que rien ne jure d'une page à l'autre : titres en
+   graisse 600 et un cran plus petits, plus de cerne d'encre ni de rebond sur
+   le bouton d'appel, le fragment mis en avant souligné d'un trait droit,
+   champs au filet d'un pixel. Bloc écrit en dernier pour l'emporter.
+   ========================================================================= */
+
+:root {
+  --text-display: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+  --text-display-hero: clamp(2.5rem, 1.5rem + 3.6vw, 4rem);
+  --text-headline: clamp(1.75rem, 1.35rem + 1.6vw, 2.375rem);
+  --text-phrase: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --leading-display: 1.05;
+}
+
+.tenue-carnet :is(h1, h2, h3, h4) { font-weight: 600; letter-spacing: -0.02em; }
+html .tenue-carnet h1 { font-size: clamp(2.25rem, 1.5rem + 3vw, 3.5rem); line-height: 1.04; font-weight: 620; letter-spacing: -0.03em; }
+html .tenue-carnet h2 { font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.375rem); line-height: 1.1; letter-spacing: -0.025em; }
+.tenue-carnet :is(h3, h4) { letter-spacing: -0.015em; }
+
+.tenue-carnet .btn-primary {
+  border: 0;
+  font-weight: 600;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+}
+.tenue-carnet .btn-primary:hover,
+.tenue-carnet .btn-primary:focus-visible { background: #f6cb33; transform: translateY(-1px); }
+.tenue-carnet .btn-primary:active { transform: scale(0.98); }
+
+.tenue-carnet mark {
+  text-decoration: underline #b9a6ff;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.14em;
+  text-decoration-skip-ink: auto;
+}
+
+.tenue-carnet .fin__centre .fin__titre { font-weight: 600; letter-spacing: -0.025em; line-height: 1.08; }
+
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi {
+  border: 0;
+  font-weight: 600;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s;
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi:hover { background: #f6cb33; transform: translateY(-1px); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(input, textarea) { border-width: 1px; border-radius: 14px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact textarea { border-radius: 14px; }
+
+html .carnet :is(h1, h2, h3, h4) { font-weight: 600; letter-spacing: -0.02em; }
+html .carnet h1,
+html .carnet :is(.billet__titre, .blog__titre) { font-weight: 620; letter-spacing: -0.03em; line-height: 1.06; }
+html .carnet .billet__corps h2::before { height: 2px; }
+html .carnet .inscription__titre { font-weight: 600; }
+html .carnet .inscription__champ { border-width: 1px; }
+html .carnet .inscription__bouton { border: 0; font-weight: 600; }
+html .carnet .inscription__bouton:hover { background: #f6cb33; }
+
+.tenue-carnet :focus-visible { outline-width: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tenue-carnet .btn-primary:hover,
+  html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi:hover { transform: none; }
+}

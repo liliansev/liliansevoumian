@@ -1,18 +1,17 @@
 ---
 /*
- * Les clients : tous les logos de `data/clients.ts`, en blanc, chacun dans
- * une tuile arrondie qui se soulève et penche un peu au survol. Les noms
+ * Les clients : tous les logos de `data/clients.ts`, en blanc, dans un mur
+ * de cases séparées par des filets ; la case survolée s'éclaire. Les noms
  * sans logo officiel sont composés en lettres. Aucun client nommé à la main.
  */
 import { clients } from '../../data/clients';
-const penche = [-3, 2, -2, 3, -1, 2, -3, 1, -2, 3, -1, 2, -3, 2];
 ---
 <section class="r-sec r-sec--serre" id="clients" aria-labelledby="titre-clients">
   <div class="r-wrap">
     <header class="r-titre r-titre--petit"><h2 id="titre-clients">Ils m’ont fait confiance</h2></header>
     <ul class="r-tuiles">
-      {clients.map((c, i) => (
-        <li style={`--r:${penche[i % penche.length]}deg`}>
+      {clients.map((c) => (
+        <li>
           {c.logo ? (
             <img src={c.logo.src} alt={c.nom} width={c.logo.largeur} height={c.logo.hauteur} style={c.logo.echelle ? `--e:${c.logo.echelle}` : undefined} loading="lazy" decoding="async" />
           ) : <span>{c.nom}</span>}

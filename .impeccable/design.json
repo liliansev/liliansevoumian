@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T13:45:21Z",
+  "generatedAt": "2026-11-10T19:52:02Z",
   "title": "Design System: Lilian Sevoumian",
   "extensions": {
     "colorMeta": {
@@ -68,6 +68,12 @@
           "oklch(95% 0.007 67)"
         ]
       },
+      "robot-trait-2": {
+        "role": "neutral",
+        "displayName": "Trait appuyé",
+        "canonical": "oklch(38% 0.013 67)",
+        "purpose": "Filet d’une carte au survol, cercle de la flèche d’un cas."
+      },
       "robot-texte": {
         "role": "neutral",
         "displayName": "Texte clair",
@@ -83,6 +89,12 @@
           "oklch(86% 0.006 74)",
           "oklch(95% 0.005 74)"
         ]
+      },
+      "robot-texte-2": {
+        "role": "neutral",
+        "displayName": "Texte second",
+        "canonical": "oklch(86% 0.013 67)",
+        "purpose": "Texte courant d’une carte sur le noir, liens du pied."
       },
       "robot-gris": {
         "role": "neutral",
@@ -148,6 +160,12 @@
           "oklch(95% 0.011 71)"
         ]
       },
+      "robot-encre-3": {
+        "role": "neutral",
+        "displayName": "Encre légère",
+        "canonical": "oklch(50% 0.014 67)",
+        "purpose": "Légende des chiffres sur blanc."
+      },
       "robot-citron": {
         "role": "primary",
         "displayName": "Citron",
@@ -163,6 +181,12 @@
           "oklch(86% 0.111 93)",
           "oklch(95% 0.094 93)"
         ]
+      },
+      "robot-citron-fonce": {
+        "role": "primary",
+        "displayName": "Citron foncé",
+        "canonical": "oklch(86% 0.16 92)",
+        "purpose": "Le bouton citron au survol."
       },
       "robot-citron-clair": {
         "role": "primary",
@@ -243,6 +267,18 @@
           "oklch(86% 0.127 29)",
           "oklch(95% 0.107 29)"
         ]
+      },
+      "robot-erreur-fond": {
+        "role": "semantic",
+        "displayName": "Fond d’erreur",
+        "canonical": "oklch(97% 0.012 30)",
+        "purpose": "Fond d’un message d’erreur du formulaire."
+      },
+      "robot-erreur-texte": {
+        "role": "semantic",
+        "displayName": "Texte d’erreur",
+        "canonical": "oklch(40% 0.14 27)",
+        "purpose": "Texte d’un message d’erreur du formulaire."
       },
       "entre-papier": {
         "role": "neutral",
@@ -360,56 +396,66 @@
     "typographyMeta": {},
     "shadows": [
       {
-        "name": "aucune",
-        "value": "none",
-        "purpose": "Les deux tenues sont à plat : ni ombre ni lueur."
+        "name": "barre",
+        "value": "0 1px 2px rgb(15 13 11 / 0.05), 0 14px 30px -20px rgb(15 13 11 / 0.4)",
+        "purpose": "La barre flottante : une ombre courte et neutre, à la place du cerne d’encre."
+      },
+      {
+        "name": "etiquette",
+        "value": "0 0 0 1px rgb(23 19 15 / 0.1), 0 10px 22px -12px rgb(15 13 11 / 0.55)",
+        "purpose": "Les trois étiquettes posées sur le portrait."
       },
       {
         "name": "focus-champ",
         "value": "0 0 0 3px #b9a6ff",
-        "purpose": "Accueil : halo lilas d’un champ de formulaire en focus, avec un bord à l’encre."
+        "purpose": "Halo lilas d’un champ de formulaire en focus, avec un bord à l’encre."
       },
       {
         "name": "cerne-pastille",
-        "value": "inset 0 0 0 1.5px #17130f",
-        "purpose": "Accueil : cerne d’encre d’une pastille d’outil posée sur le lilas."
+        "value": "inset 0 0 0 1px rgb(23 19 15 / 0.7)",
+        "purpose": "Filet d’une pastille d’outil posée sur le lilas."
       }
     ],
     "motion": [
       {
-        "name": "ressort",
-        "value": "cubic-bezier(0.3, 1.6, 0.5, 1)",
-        "purpose": "Accueil : rebond des boutons, cartes, autocollants et tuiles au survol et à l’arrivée."
+        "name": "sortie",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "La seule courbe du site : arrivées et survols. Ni rebond ni ressort."
       },
       {
         "name": "bouton-survol",
-        "value": "translateY(-3px) rotate(-1.5deg), 0.2s",
-        "purpose": "Accueil : un bouton se soulève et penche."
+        "value": "translateY(-1px), 0.3s ; scale(0.98) à l’appui",
+        "purpose": "Un bouton monte d’un pixel et fonce ; il ne penche pas."
       },
       {
         "name": "nom-etire",
-        "value": "font-variation-settings 'wdth' 25→100, 'wght' 300→850",
-        "purpose": "Accueil : l’axe de largeur de Roboto Flex s’anime sur le nom, à l’arrivée et au survol."
+        "value": "font-variation-settings 'wdth' 62→100, opacity 0→1, 1.1s",
+        "purpose": "L’axe de largeur de Roboto Flex s’anime sur le nom, une fois, à l’arrivée."
+      },
+      {
+        "name": "etiquette-pose",
+        "value": "opacity 0→1, translateY(8px)→0, 0.7s",
+        "purpose": "Les trois étiquettes du portrait se posent l’une après l’autre."
       },
       {
         "name": "robot-cligne",
         "value": "4.5s infinite",
-        "purpose": "Accueil : le robot cligne des yeux ; ses yeux suivent la souris (pointeur fin seulement)."
-      },
-      {
-        "name": "robot-coucou",
-        "value": "1.6s ease-in-out, deux fois",
-        "purpose": "Accueil : le robot salue à l’arrivée."
+        "purpose": "Le robot cligne des yeux ; ses yeux suivent la souris (pointeur fin seulement)."
       },
       {
         "name": "panneau",
-        "value": "0.5s cubic-bezier(0.3, 1.4, 0.5, 1)",
-        "purpose": "Accueil : arrivée du panneau du métier choisi."
+        "value": "opacity 0→1, translateY(8px)→0, 0.5s",
+        "purpose": "Arrivée du panneau du métier choisi."
+      },
+      {
+        "name": "fleche-cas",
+        "value": "rotate(45deg), 0.4s",
+        "purpose": "La flèche d’une carte de cas pivote et passe au citron au survol."
       },
       {
         "name": "barre-resserre",
-        "value": "max-width 0.4s ease, height 0.3s ease",
-        "purpose": "Accueil : la barre flottante se resserre au défilement."
+        "value": "max-width 0.4s, height 0.3s",
+        "purpose": "La barre flottante se resserre au défilement."
       },
       {
         "name": "reduced-motion",
@@ -420,18 +466,13 @@
     "focus": [
       {
         "name": "focus-sur-noir",
-        "value": "3px solid #b9a6ff, offset 3px",
-        "purpose": "Accueil, sur le noir."
+        "value": "2px solid #b9a6ff, offset 3px",
+        "purpose": "Sur le noir."
       },
       {
         "name": "focus-sur-blanc",
-        "value": "3px solid #17130f, offset 3px",
-        "purpose": "Accueil, sur blanc (barre, ouverture, contact) : le lilas n’y fait que 2,1:1."
-      },
-      {
-        "name": "focus-cobalt",
-        "value": "2px solid #2b44f0",
-        "purpose": "Pages intérieures."
+        "value": "2px solid #17130f, offset 3px",
+        "purpose": "Sur blanc (barre, ouverture, contact, îles claires) : le lilas n’y fait que 2,1:1."
       }
     ],
     "breakpoints": [
@@ -452,7 +493,7 @@
         "value": "1000px"
       },
       {
-        "name": "tuiles-4",
+        "name": "mur-4",
         "value": "1180px"
       },
       {
@@ -466,33 +507,33 @@
       "name": "Bouton citron",
       "kind": "button",
       "refersTo": "robot-citron",
-      "description": "Le geste principal de l’accueil : pilule citron cerclée d’encre, qui rebondit au survol.",
+      "description": "Le geste principal : pilule citron sans bord, qui fonce et monte d’un pixel au survol.",
       "html": "<a class=\"ds-r-btn ds-r-btn--cta\" href=\"#\">Parlons de votre projet</a>",
-      "css": ".ds-r-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;padding:0 20px;border-radius:999px;font:700 15px/1 'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;font-variation-settings:'wdth' 104;text-decoration:none;white-space:nowrap;cursor:pointer;border:2px solid #17130f;color:#17130f;transition:transform .2s cubic-bezier(.3,1.6,.5,1),background-color .2s}.ds-r-btn:hover{transform:translateY(-3px) rotate(-1.5deg)}.ds-r-btn:active{transform:scale(.96)}.ds-r-btn:focus-visible{outline:3px solid #17130f;outline-offset:3px}.ds-r-btn--cta{background:#ffd84d}"
+      "css": ".ds-r-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;border-radius:999px;font:600 15px/1 'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer;border:1px solid transparent;color:#17130f;transition:transform .3s cubic-bezier(.16,1,.3,1),background-color .2s,border-color .2s}.ds-r-btn:hover{transform:translateY(-1px)}.ds-r-btn:active{transform:scale(.98)}.ds-r-btn:focus-visible{outline:2px solid #17130f;outline-offset:3px}.ds-r-btn--cta{background:#ffd84d}.ds-r-btn--cta:hover{background:#f6cb33}"
     },
     {
       "name": "Bouton au trait",
       "kind": "button",
-      "refersTo": "robot-lilas-clair",
-      "description": "Le geste secondaire sur blanc : même pilule, sans fond, lilas pâle au survol.",
-      "html": "<a class=\"ds-r-btn ds-r-btn--trait\" href=\"#\"><span class=\"ds-r-play\"></span>S’abonner sur YouTube</a>",
-      "css": ".ds-r-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;padding:0 20px;border-radius:999px;font:700 15px/1 'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;font-variation-settings:'wdth' 104;text-decoration:none;white-space:nowrap;cursor:pointer;border:2px solid #17130f;color:#17130f;transition:transform .2s cubic-bezier(.3,1.6,.5,1),background-color .2s}.ds-r-btn:hover{transform:translateY(-3px) rotate(-1.5deg)}.ds-r-btn:active{transform:scale(.96)}.ds-r-btn:focus-visible{outline:3px solid #17130f;outline-offset:3px}.ds-r-btn--trait{background:transparent}.ds-r-btn--trait:hover{background:#e9e3ff}.ds-r-play{width:0;height:0;border-left:10px solid currentColor;border-top:6px solid transparent;border-bottom:6px solid transparent}"
+      "refersTo": "robot-encre",
+      "description": "Le geste secondaire sur blanc : même pilule, sans fond, un filet d’encre qui s’affirme au survol.",
+      "html": "<a class=\"ds-r-btn ds-r-btn--trait\" href=\"#\">Me contacter</a>",
+      "css": ".ds-r-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:44px;padding:0 20px;border-radius:999px;font:600 15px/1 'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;text-decoration:none;white-space:nowrap;cursor:pointer;border:1px solid transparent;color:#17130f;transition:transform .3s cubic-bezier(.16,1,.3,1),background-color .2s,border-color .2s}.ds-r-btn:hover{transform:translateY(-1px)}.ds-r-btn:active{transform:scale(.98)}.ds-r-btn:focus-visible{outline:2px solid #17130f;outline-offset:3px}.ds-r-btn--trait{background:transparent;border-color:rgb(23 19 15 / .28)}.ds-r-btn--trait:hover{border-color:#17130f}"
     },
     {
-      "name": "Lien ondulé",
+      "name": "Lien souligné",
       "kind": "custom",
       "refersTo": "robot-lilas",
-      "description": "Lien dans le texte : une vague lilas, citron au survol sur le noir.",
+      "description": "Lien dans le texte : un trait droit de 1,5 px, lilas sur le noir (citron au survol), à l’encre sur blanc.",
       "html": "<div class=\"ds-r-fond\"><a class=\"ds-r-lien\" href=\"#\">Voir l’offre</a></div>",
-      "css": ".ds-r-fond{background:#0f0d0b;color:#f8f4ef;padding:20px;border-radius:20px;font:600 16px/1.4 'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-lien{color:inherit;text-decoration:underline wavy #b9a6ff;text-decoration-thickness:2px;text-underline-offset:5px}.ds-r-lien:hover{text-decoration-color:#ffd84d}.ds-r-lien:focus-visible{outline:3px solid #b9a6ff;outline-offset:3px}"
+      "css": ".ds-r-fond{background:#0f0d0b;color:#f8f4ef;padding:20px;border-radius:24px;font:550 16px/1.4 'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-lien{color:inherit;text-decoration:underline #b9a6ff;text-decoration-thickness:1.5px;text-underline-offset:5px;transition:text-decoration-color .2s}.ds-r-lien:hover{text-decoration-color:#ffd84d}.ds-r-lien:focus-visible{outline:2px solid #b9a6ff;outline-offset:3px}"
     },
     {
       "name": "Barre flottante",
       "kind": "nav",
       "refersTo": "robot-papier",
-      "description": "La barre de l’accueil : une pilule blanche cerclée d’encre, qui se resserre au défilement.",
-      "html": "<nav class=\"ds-r-barre\"><a class=\"ds-r-barre__logo\" href=\"#\">Lilian Sevoumian</a><span class=\"ds-r-barre__liens\"><a href=\"#\">Métiers</a><a href=\"#\">Projets</a><a href=\"#\">Avis</a></span><a class=\"ds-r-barre__cta\" href=\"#\">Parlons de votre projet</a></nav>",
-      "css": ".ds-r-barre{height:60px;display:flex;align-items:center;gap:20px;background:#fff;color:#17130f;border:2px solid #17130f;border-radius:999px;padding:0 6px 0 16px;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-barre__logo{font-weight:800;font-size:19px;font-variation-settings:'wdth' 112;letter-spacing:-.01em;text-decoration:none;color:inherit}.ds-r-barre__liens{display:flex;gap:4px;margin-left:auto}.ds-r-barre__liens a{text-decoration:none;color:inherit;padding:12px;border-radius:999px;font-weight:600;font-size:15px;line-height:20px;transition:background-color .2s}.ds-r-barre__liens a:hover{background:#e9e3ff}.ds-r-barre__cta{display:inline-flex;align-items:center;height:46px;padding:0 20px;border-radius:999px;background:#ffd84d;border:2px solid #17130f;color:#17130f;font-weight:700;font-size:15px;text-decoration:none;white-space:nowrap}.ds-r-barre a:focus-visible{outline:3px solid #17130f;outline-offset:3px}"
+      "description": "La barre de toutes les pages : une pilule blanche à filet, portée par une ombre courte, qui se resserre au défilement.",
+      "html": "<nav class=\"ds-r-barre\"><a class=\"ds-r-barre__logo\" href=\"#\">lilian</a><span class=\"ds-r-barre__liens\"><a href=\"#\">Ce que je fais</a><a href=\"#\">Projets</a><a href=\"#\">Avis</a></span><a class=\"ds-r-barre__cta\" href=\"#\">Parlons de votre projet</a></nav>",
+      "css": ".ds-r-barre{height:58px;display:flex;align-items:center;gap:20px;background:#fff;color:#17130f;border:1px solid rgb(23 19 15 / .12);border-radius:999px;padding:0 7px 0 14px;box-shadow:0 1px 2px rgb(15 13 11 / .05),0 14px 30px -20px rgb(15 13 11 / .4);font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-barre__logo{font-weight:650;font-size:17px;letter-spacing:-.01em;text-decoration:none;color:inherit}.ds-r-barre__liens{display:flex;gap:2px;margin-left:auto}.ds-r-barre__liens a{text-decoration:none;color:#4a4239;padding:10px 12px;border-radius:999px;font-weight:500;font-size:15px;line-height:20px;transition:background-color .2s,color .2s}.ds-r-barre__liens a:hover{background:rgb(23 19 15 / .06);color:#17130f}.ds-r-barre__cta{display:inline-flex;align-items:center;height:42px;padding:0 20px;border-radius:999px;background:#ffd84d;color:#17130f;font-weight:600;font-size:15px;text-decoration:none;white-space:nowrap}.ds-r-barre a:focus-visible{outline:2px solid #17130f;outline-offset:3px}"
     },
     {
       "name": "Pastilles d’outils",
@@ -500,62 +541,63 @@
       "refersTo": "robot-noir",
       "description": "Une pastille par outil, chacune sa couleur (data/outils.ts), en Roboto Mono 500. Jamais deux outils dans une pastille.",
       "html": "<ul class=\"ds-r-outils\"><li style=\"background:#ff8a5c\">n8n</li><li style=\"background:#d9a3ff\">Make</li><li style=\"background:#86bdff\">Airtable</li><li style=\"background:#ece7e0\">Notion</li></ul>",
-      "css": ".ds-r-outils{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:20px;background:#0f0d0b;border-radius:20px}.ds-r-outils li{font:500 13px/1 'Roboto Mono',ui-monospace,monospace;color:#17130f;padding:7px 11px;border-radius:999px}"
+      "css": ".ds-r-outils{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:20px;background:#0f0d0b;border-radius:24px}.ds-r-outils li{font:500 12.5px/1 'Roboto Mono',ui-monospace,monospace;color:#17130f;padding:6px 10px;border-radius:999px}"
     },
     {
-      "name": "Carte de chiffre",
-      "kind": "card",
-      "refersTo": "robot-citron-clair",
-      "description": "Les quatre chiffres de l’ouverture, en alternance citron pâle et lilas pâle.",
-      "html": "<ul class=\"ds-r-chiffres\"><li><strong>2020</strong><span>depuis</span></li><li><strong>4</strong><span>métiers</span></li></ul>",
-      "css": ".ds-r-chiffres{display:grid;grid-template-columns:1fr 1fr;gap:12px;list-style:none;margin:0;padding:0;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;color:#17130f}.ds-r-chiffres li{background:#fff1b8;border-radius:26px;padding:22px 24px;display:grid;gap:2px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}.ds-r-chiffres li:nth-child(even){background:#e9e3ff}.ds-r-chiffres li:hover{transform:translateY(-4px) rotate(-1deg)}.ds-r-chiffres strong{font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1}.ds-r-chiffres span{font-size:15px;color:#4a4239}"
+      "name": "Ligne de chiffres",
+      "kind": "custom",
+      "refersTo": "robot-papier",
+      "description": "Les quatre chiffres de l’ouverture sur une seule ligne, séparés par des filets ; ni tuile ni couleur.",
+      "html": "<ul class=\"ds-r-chiffres\"><li><strong>+11 000</strong><span>abonnés sur LinkedIn</span></li><li><strong>+1 800</strong><span>abonnés sur YouTube</span></li></ul>",
+      "css": ".ds-r-chiffres{display:grid;grid-template-columns:1fr 1fr;list-style:none;margin:0;padding:0;background:#fff;border-top:1px solid rgb(23 19 15 / .12);font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;color:#17130f}.ds-r-chiffres li{padding:22px 24px;display:grid;gap:6px}.ds-r-chiffres li+li{border-left:1px solid rgb(23 19 15 / .12)}.ds-r-chiffres strong{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}.ds-r-chiffres span{font-size:15px;color:#6b625a}"
     },
     {
       "name": "Panneau de métier",
       "kind": "card",
       "refersTo": "robot-lilas",
-      "description": "Le métier choisi dans les onglets : la grande surface lilas, texte à l’encre, lien vers l’offre.",
-      "html": "<div class=\"ds-r-pan\"><h3>Automatisation</h3><p>Les tâches répétées tournent toutes seules.</p><a href=\"#\">Voir l’offre</a></div>",
-      "css": ".ds-r-pan{background:#b9a6ff;color:#17130f;border-radius:36px;padding:36px;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-pan h3{font-size:40px;font-weight:850;letter-spacing:-.03em;line-height:1;margin:0 0 12px}.ds-r-pan p{font-size:17px;margin:0 0 16px}.ds-r-pan a{color:inherit;font-weight:600;text-decoration:underline wavy #17130f;text-decoration-thickness:2px;text-underline-offset:5px}.ds-r-pan a:focus-visible{outline:3px solid #17130f;outline-offset:3px}"
+      "description": "Le métier choisi dans les onglets : la grande surface lilas, texte à l’encre, lien souligné vers l’offre.",
+      "html": "<div class=\"ds-r-pan\"><h3>Automatisation</h3><p>Je relie vos outils, et les ressaisies disparaissent.</p><a href=\"#\">Voir l’offre automatisation</a></div>",
+      "css": ".ds-r-pan{background:#b9a6ff;color:#17130f;border-radius:28px;padding:40px 44px 36px;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-pan h3{font-size:36px;font-weight:600;letter-spacing:-.025em;line-height:1.05;margin:0 0 14px}.ds-r-pan p{font-size:19px;font-weight:550;margin:0 0 20px}.ds-r-pan a{color:inherit;font-weight:550;text-decoration:underline rgb(23 19 15 / .38);text-decoration-thickness:1.5px;text-underline-offset:5px}.ds-r-pan a:hover{text-decoration-color:#17130f}.ds-r-pan a:focus-visible{outline:2px solid #17130f;outline-offset:3px}"
     },
     {
-      "name": "Bouton d’appel (pages intérieures)",
-      "kind": "button",
-      "refersTo": "entre-encre",
-      "description": "« Entre les deux » : rectangle de 44 px à l’encre, cobalt au survol.",
-      "html": "<a class=\"ds-e-btn\" href=\"#\">Parlons de votre projet</a>",
-      "css": ".ds-e-btn{display:inline-flex;align-items:center;height:44px;padding:0 18px;background:#17171a;color:#fff;border:1px solid #17171a;border-radius:6px;font:500 14px/1 'Geist Mono Variable',ui-monospace,monospace;text-decoration:none;transition:background-color .15s,border-color .15s}.ds-e-btn:hover{background:#2b44f0;border-color:#2b44f0}.ds-e-btn:focus-visible{outline:2px solid #2b44f0;outline-offset:2px}"
+      "name": "Carte de cas",
+      "kind": "card",
+      "refersTo": "robot-surface",
+      "description": "Un projet client : le client en lilas, ce qui a été construit en clair, une flèche cerclée qui passe au citron au survol.",
+      "html": "<article class=\"ds-r-cas\"><p class=\"ds-r-cas__c\">Humble+</p><h3>Les bons de commande deviennent des commandes Shopify et des factures</h3><span class=\"ds-r-cas__f\" aria-hidden=\"true\">↗</span></article>",
+      "css": ".ds-r-cas{position:relative;background:#1b1815;border:1px solid #332e29;border-radius:24px;padding:28px 76px 26px 28px;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif;color:#f8f4ef;transition:background-color .25s,border-color .25s}.ds-r-cas:hover{background:#24201c;border-color:#4a433c}.ds-r-cas__c{margin:0 0 14px;color:#b9a6ff;font-weight:500;font-size:15px}.ds-r-cas h3{margin:0;font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.15}.ds-r-cas__f{position:absolute;top:22px;right:22px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid #4a433c;font-size:16px;transition:transform .4s cubic-bezier(.16,1,.3,1),background-color .25s,border-color .25s,color .25s}.ds-r-cas:hover .ds-r-cas__f{background:#ffd84d;border-color:#ffd84d;color:#17130f;transform:rotate(45deg)}"
     },
     {
-      "name": "Lien (pages intérieures)",
+      "name": "Citation",
       "kind": "custom",
-      "refersTo": "entre-cobalt",
-      "description": "« Entre les deux » : le cobalt est réservé à ce qui agit.",
-      "html": "<a class=\"ds-e-lien\" href=\"#\">Lire le cas client</a>",
-      "css": ".ds-e-lien{font:500 14px/1.5 'Geist Mono Variable',ui-monospace,monospace;color:#2b44f0;text-decoration:underline;text-underline-offset:3px}.ds-e-lien:hover{color:#1c2fc4}.ds-e-lien:focus-visible{outline:2px solid #2b44f0;outline-offset:2px}"
+      "refersTo": "robot-citron",
+      "description": "Un avis : une phrase en grand, le passage retenu en texte citron, la personne en dessous ; un filet entre deux avis.",
+      "html": "<figure class=\"ds-r-avis\"><blockquote>Les projets qu’il prend en charge <mark>sont un succès.</mark></blockquote><figcaption><strong>Benjamin Potet</strong>Solution Architect Customer Experience, Make</figcaption></figure>",
+      "css": ".ds-r-avis{margin:0;background:#0f0d0b;color:#f8f4ef;padding:32px 24px;border-top:1px solid #332e29;display:grid;gap:20px;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-avis blockquote{margin:0;font-size:24px;font-weight:450;line-height:1.35;letter-spacing:-.015em}.ds-r-avis mark{background:none;color:#ffd84d}.ds-r-avis figcaption{display:grid;gap:2px;font-size:15px;color:#aaa198}.ds-r-avis strong{color:#f8f4ef;font-weight:600}"
     }
   ],
   "narrative": {
     "northStar": "Citron et lilas",
-    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait aujourd'hui. Depuis le 10 novembre 2026, l'accueil seul porte « Citron et lilas » : fond noir chaud, deux sections blanches (l'ouverture et le contact), le citron pour les gestes, le lilas pour les surfaces douces, Roboto Flex, des formes très arrondies et un petit robot qui cligne des yeux. « Mignon, tech, geek mais sérieux », sans lueur.\n\nToutes les autres pages, blog compris, gardent « Entre les deux » (3 novembre 2026) : une feuille de papier blanc cassé, de l'encre presque noire, un cobalt réservé à ce qui agit, Geist Mono seul, des filets d'un pixel, aucune ombre ; une nuit marine et une menthe pour les bandes sombres et le pied.",
+    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait aujourd'hui. Depuis le 10 novembre 2026, tout le site porte « Citron et lilas » : fond noir chaud, des îles blanches (l'ouverture, le contact, ce que le lecteur vient vérifier), le citron pour les gestes, le lilas pour les surfaces douces, Roboto Flex et un petit robot qui cligne des yeux. « Mignon, tech, geek mais sérieux », sans lueur.\n\nLa passe « plus fin » du même jour en a calmé la main, à la demande de Lilian (« un peu moins de friendly », « plus premium et travaillé tout en gardant la DA ») : titres en graisse 600 et plus petits, filets d'un pixel à la place des cernes d'encre, une seule courbe de mouvement sans rebond, des liens au trait droit, le robot à quatre endroits seulement. Les pages intérieures et le blog reçoivent la même tenue par un échange de jetons (derniers blocs de global.css et de carnet.css).",
     "keyCharacteristics": [
-      "Accueil : noir chaud #0f0d0b, deux sections blanches seulement.",
-      "Citron #ffd84d pour les gestes, lilas #b9a6ff pour les surfaces douces.",
+      "Noir chaud #0f0d0b partout, îles blanches pour l’ouverture, le contact et les preuves.",
+      "Citron #ffd84d pour les gestes, lilas #b9a6ff pour les surfaces douces et les repères.",
       "Une pastille par outil, chacune sa couleur.",
       "La photo de Lilian garde ses couleurs.",
-      "Roboto Flex partout sur l’accueil, Roboto Mono 500 pour les pastilles seulement.",
-      "Pilules cerclées d’encre qui rebondissent, barre flottante en pilule blanche, largeur maximale 1240 px.",
-      "Pages intérieures : papier #f6f6f3, encre #17171a, cobalt #2b44f0, Geist Mono, rayons de 4 à 8 px."
+      "Roboto Flex partout, Roboto Mono 500 pour les pastilles seulement.",
+      "Titres en graisse 600 (620 pour le nom), trois tailles : 92, 42 et 28 px au plus.",
+      "Filets d’un pixel, pilules sans cerne, une seule courbe de mouvement, aucun rebond.",
+      "Barre flottante en pilule blanche, largeur maximale 1240 px."
     ],
     "rules": [
       {
         "name": "La règle du citron",
-        "body": "Le citron est réservé aux gestes : boutons, onglet choisi, flèche des cas, surlignage des avis.",
+        "body": "Le citron est réservé aux gestes : boutons, onglet choisi, flèche d’un cas au survol, passage retenu d’un avis. Jamais en texte sur blanc.",
         "section": "colors"
       },
       {
         "name": "La règle du lilas",
-        "body": "Le lilas porte les surfaces douces, texte à l’encre. Jamais en anneau de focus sur blanc (2,1:1).",
+        "body": "Le lilas porte les surfaces douces (texte à l’encre) et les repères : nom du client, soulignement des liens sur noir. Jamais en anneau de focus sur blanc (2,1:1).",
         "section": "colors"
       },
       {
@@ -574,35 +616,44 @@
         "section": "components"
       },
       {
-        "name": "La règle du cobalt",
-        "body": "Sur les pages intérieures, le cobalt est réservé à ce qui agit. Jamais en fond de section, jamais en titre.",
-        "section": "colors"
+        "name": "La règle du plat",
+        "body": "Ni lueur ni ombre colorée. Deux ombres courtes et neutres seulement, sous ce qui flotte : la barre et les étiquettes du portrait.",
+        "section": "elevation"
       },
       {
-        "name": "La règle de l’échelle",
-        "body": "Pages intérieures : 12, 14, 16, 20, 24, 32, 48 px, plus 18 px pour un chapô. Rien au-dessus de 48 px.",
+        "name": "La règle de la graisse",
+        "body": "Un titre pèse 600 (620 pour le nom et un h1). Jamais 800 et plus, jamais de capitales.",
         "section": "typography"
       },
       {
-        "name": "La règle du plat",
-        "body": "Ni ombre ni lueur, sur l’accueil comme ailleurs.",
-        "section": "elevation"
+        "name": "La règle du filet",
+        "body": "Un trait fait un pixel : l’encre à 12 % sur blanc, #332e29 sur noir. Aucun cerne de 2 px.",
+        "section": "components"
+      },
+      {
+        "name": "La règle du calme",
+        "body": "Une seule courbe, cubic-bezier(0.16, 1, 0.3, 1). Au survol un élément monte d’un pixel ou change de surface ; il ne rebondit pas et ne penche pas.",
+        "section": "motion"
       }
     ],
     "dos": [
-      "Garder deux sections blanches sur l’accueil : l’ouverture et le contact.",
+      "Garder l’ouverture et le contact sur blanc ; ailleurs, le blanc est une île.",
       "Poser le texte à l’encre sur le citron, le lilas et les pastilles.",
       "Mener chaque panneau de métier à son offre.",
       "Passer tout bouton d’appel par BoutonReservation.",
-      "Couper tout mouvement sous prefers-reduced-motion."
+      "Couper tout mouvement sous prefers-reduced-motion.",
+      "Garder le robot à quatre endroits : la barre, le salut, le contact, le pied."
     ],
     "donts": [
       "Ne pas teinter ni retoucher la photo de Lilian.",
       "Ne pas écrire de texte qui explique comment la page marche.",
       "Ne pas réunir plusieurs outils dans une même pastille.",
-      "Ne pas ajouter de lueur ni d’ombre.",
       "Ne pas afficher de prix ni de chiffres de prestation sur l’accueil.",
-      "Ne pas déduire une couleur du nom d’un jeton."
+      "Ne pas déduire une couleur du nom d’un jeton.",
+      "Ne pas ajouter de lueur ni d’ombre colorée.",
+      "Ne pas remonter un titre au-dessus de la graisse 650.",
+      "Ne pas faire rebondir ni pencher un élément au survol.",
+      "Ne pas revenir aux vagues, aux cernes d’encre ni aux tuiles pastel."
     ]
   }
 }
