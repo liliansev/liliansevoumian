@@ -27,7 +27,7 @@ const liens = [
     <button class="r-btn r-btn--cta r-barre__menu" type="button" aria-haspopup="dialog" aria-controls="r-menu" data-r-menu-ouvrir>Menu</button>
   </div>
 </header>
-<dialog class="r-menu tenue-robot" id="r-menu" aria-label="Menu">
+<dialog class="r-menu tenue-robot" id="r-menu" aria-label="Menu" tabindex="-1">
   <div class="r-menu__haut">
     <span class="r-barre__logo" aria-hidden="true"><Robot /><span>lilian</span></span>
     <button class="r-btn r-btn--trait" type="button" data-r-menu-fermer>Fermer</button>
@@ -41,7 +41,18 @@ const liens = [
   window.addEventListener('scroll', surDefile, { passive: true });
   surDefile();
   const menu = document.getElementById('r-menu') as HTMLDialogElement | null;
-  document.querySelector('[data-r-menu-ouvrir]')?.addEventListener('click', () => menu?.showModal());
+  // Ouvert au doigt ou à la souris, le menu ne pose d'anneau de focus ni sur
+  // « Fermer » à l'ouverture ni sur « Menu » à la fermeture (Lilian, 10
+  // novembre 2026) ; au clavier (detail à 0), l'anneau reste.
+  let auPointeur = false;
+  document.querySelector('[data-r-menu-ouvrir]')?.addEventListener('click', (e) => {
+    auPointeur = (e as MouseEvent).detail > 0;
+    menu?.showModal();
+    if (auPointeur) menu?.focus();
+  });
   document.querySelector('[data-r-menu-fermer]')?.addEventListener('click', () => menu?.close());
+  menu?.addEventListener('close', () => {
+    if (auPointeur) (document.activeElement as HTMLElement | null)?.blur();
+  });
   menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
 </script>

@@ -4,7 +4,10 @@
  * gauche la liste, l'onglet choisi en citron ; à droite le grand panneau du
  * métier, sur lilas, son icône, sa phrase, son texte, ses outils (une
  * pastille par outil), le lien vers son offre et le robot qui dépasse du bas. Les flèches du clavier
- * passent d'un onglet à l'autre. Sans script, le premier panneau reste lisible.
+ * passent d'un onglet à l'autre. Sous 1000 px la liste devient une colonne
+ * d'icônes collante à gauche du panneau (Lilian, 10 novembre 2026 : ne plus
+ * remonter pour choisir puis redescendre pour lire) ; le nom reste lu par les
+ * lecteurs d'écran. Sans script, le premier panneau reste lisible.
  */
 import { metiers } from '../../data/metiers';
 import Outils from './outils.astro';
@@ -26,7 +29,7 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
       <div class="r-onglets__liste" role="tablist" aria-label="Mes métiers">
         {metiers.map((m, i) => (
           <button type="button" role="tab" id={`onglet-${m.id}`} aria-controls={`panneau-${m.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
-            <span class="r-onglet__ic" set:html={icone(m.id)} />{m.nom}
+            <span class="r-onglet__ic" set:html={icone(m.id)} /><span class="r-onglet__nom">{m.nom}</span>
           </button>
         ))}
       </div>

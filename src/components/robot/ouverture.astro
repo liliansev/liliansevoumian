@@ -2,17 +2,19 @@
 /*
  * L'ouverture, sur blanc : « Salut, je suis », le nom en Roboto Flex qui
  * s'étire à l'arrivée (et au survol), une vague lilas sous « Sevoumian », la
- * ligne de métier, le chapô, « S'abonner sur YouTube » (le premier geste,
- * choix du 27 octobre 2026) et « Voir les projets ». À droite le portrait,
+ * ligne de métier, le chapô. À droite le portrait,
  * en couleurs d'origine (Lilian, 10 novembre 2026 : la photo n'est ni
  * retouchée ni teintée), entouré d'autocollants ; ceux des outils portent la
- * couleur de l'outil. Dessous, les quatre chiffres (`data/parcours.ts`).
+ * couleur de l'outil. Les deux gestes viennent après la photo sur téléphone,
+ * sous le texte au bureau : « S'abonner à la newsletter » et « Me contacter »
+ * (Lilian, 10 novembre 2026, à la place de YouTube). Dessous, les quatre chiffres (`data/parcours.ts`).
  */
 import { Image } from 'astro:assets';
 import portrait from '../../assets/lilian-photo.jpg';
 import { audience, profils } from '../../data/parcours';
 import { couleurOutil } from '../../data/outils';
 import Robot from './robot.astro';
+import BoutonReservation from '../BoutonReservation.astro';
 
 const chiffres = [
   { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
@@ -29,21 +31,21 @@ const autocollants = [
 ---
 <section class="r-hero" id="a-propos" aria-labelledby="titre-ouverture">
   <div class="r-wrap r-hero__grille">
-    <div>
+    <div class="r-hero__texte">
       <p class="r-salut"><Robot class="r-salut__bot" />Salut, je suis</p>
       <h1 class="r-hero__nom" id="titre-ouverture"><span class="r-nom">Lilian</span> <span class="r-nom r-nom--2">Sevoumian</span></h1>
       <p class="r-hero__sous">Freelance en automatisation et agents IA, depuis 2020.</p>
       <p class="r-hero__chapo">J’automatise le travail répétitif des entreprises avec Make, n8n et des agents IA. Et je montre comment je fais sur YouTube.</p>
-      <p class="r-hero__actions">
-        <a class="r-btn r-btn--cta r-btn--grand" href={profils.youtube} target="_blank" rel="noopener noreferrer" data-fast-goal="youtube_opened" data-fast-goal-source="home_hero_abonner"><span class="r-play" aria-hidden="true"></span>S’abonner sur YouTube<span class="sr-only"> (nouvel onglet)</span></a>
-        <a class="r-btn r-btn--trait r-btn--grand" href="#projets">Voir les projets</a>
-      </p>
     </div>
     <figure class="r-portrait">
       <Image src={portrait} alt="Portrait de Lilian Sevoumian" width={560} widths={[320, 560, 840]} sizes="(max-width: 860px) 80vw, 460px" loading="eager" fetchpriority="high" />
       {autocollants.map((a, i) => <span class={`r-sticker r-sticker--${i}`} style={`--s:${a.couleur}`} aria-hidden="true">{a.texte}</span>)}
       <Robot class="r-portrait__bot" />
     </figure>
+    <p class="r-hero__actions">
+      <a class="r-btn r-btn--cta r-btn--grand" href={profils.newsletter} target="_blank" rel="noopener noreferrer" data-fast-goal="newsletter_opened" data-fast-goal-source="home_hero">S’abonner à la newsletter<span class="sr-only"> (nouvel onglet)</span></a>
+      <BoutonReservation source="home_hero" class="r-btn r-btn--trait r-btn--grand">Me contacter</BoutonReservation>
+    </p>
   </div>
   <div class="r-wrap">
     <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>

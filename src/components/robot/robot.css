@@ -128,6 +128,7 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
   border: 2px solid var(--r-encre); border-radius: 28px; padding: 10px 12px 14px;
 }
 .r-menu.tenue-robot[open] { display: grid; gap: 4px; animation: r-pan 0.4s var(--r-ressort); }
+.r-menu.tenue-robot:focus { outline: none; }
 .r-menu.tenue-robot::backdrop { background: rgb(15 13 11 / 0.6); }
 .r-menu .r-menu__haut { display: flex; justify-content: space-between; align-items: center; padding: 0 0 8px 4px; }
 .r-menu .r-btn--trait { height: 44px; }
@@ -137,7 +138,10 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 
 /* ---------- l'ouverture, sur blanc ---------- */
 .tenue-robot .r-hero { background: var(--r-papier); color: var(--r-encre); padding: 140px 0 56px; border-radius: 0 0 48px 48px; }
-.tenue-robot .r-hero__grille { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 56px; align-items: center; }
+.tenue-robot .r-hero__grille { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); grid-template-areas: 'texte portrait' 'gestes portrait'; column-gap: 56px; align-items: center; }
+.tenue-robot .r-hero__texte { grid-area: texte; align-self: end; }
+.tenue-robot .r-hero__actions { grid-area: gestes; align-self: start; }
+.tenue-robot .r-hero .r-portrait { grid-area: portrait; }
 .tenue-robot .r-salut { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 19px; margin-bottom: 8px; }
 .tenue-robot .r-salut__bot { width: 36px; height: 36px; transform-origin: 50% 90%; animation: r-coucou 1.6s 0.6s ease-in-out 2; }
 @keyframes r-coucou { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(12deg); } }
@@ -213,6 +217,7 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
   background: var(--r-lilas); color: var(--r-encre); border-radius: 32px; padding: 40px 40px 56px;
   animation: r-pan 0.5s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
+@keyframes r-pan-cote { from { opacity: 0; transform: translateX(18px) scale(0.98); } }
 @keyframes r-pan { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
 .tenue-robot .r-pan__ic { width: 64px; height: 64px; color: var(--r-encre); margin-bottom: 6px; }
 .tenue-robot .r-pan h3 { font-size: clamp(30px, 3.4vw, 44px); font-weight: 850; letter-spacing: -0.03em; line-height: 1; }
@@ -330,8 +335,16 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 
 /* ---------- petits écrans ---------- */
 @media (max-width: 1000px) {
-  .tenue-robot .r-onglets { grid-template-columns: 1fr; }
-  .tenue-robot .r-pan { padding: 30px 26px 64px; }
+  /* Les métiers : une colonne d'icônes à gauche, le panneau à droite. */
+  .tenue-robot .r-onglets { grid-template-columns: 60px minmax(0, 1fr); gap: 10px; align-items: start; }
+  .tenue-robot .r-onglets__liste { position: sticky; top: 84px; gap: 8px; }
+  .tenue-robot .r-onglets__liste button { justify-content: center; width: 60px; height: 60px; padding: 0; border-radius: 20px; }
+  .tenue-robot .r-onglets__liste button:hover { transform: none; }
+  .tenue-robot .r-onglets__liste button:active { transform: scale(0.94); }
+  .tenue-robot .r-onglet__ic { background: none; width: 44px; height: 44px; }
+  .tenue-robot .r-onglets__liste button[aria-selected='true'] .r-onglet__ic { background: none; color: var(--r-encre); }
+  .tenue-robot .r-onglet__nom { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .tenue-robot .r-pan { height: auto; padding: 30px 26px 64px; animation-name: r-pan-cote; }
   .tenue-robot .r-pied__haut { grid-template-columns: 1fr; align-items: start; }
   .tenue-robot .r-avis .r-titre { position: static; }
   .tenue-robot .r-sticker--1 { right: -3%; }
@@ -339,6 +352,9 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 @media (max-width: 860px) {
   .tenue-robot .r-hero { padding-top: 118px; border-radius: 0 0 32px 32px; }
   .tenue-robot .r-hero__grille, .tenue-robot .r-contact__grille, .tenue-robot .r-avis { grid-template-columns: 1fr; gap: 40px; }
+  .tenue-robot .r-hero__grille { grid-template-areas: 'texte' 'portrait' 'gestes'; }
+  .tenue-robot .r-hero__chapo { margin-bottom: 0; }
+  .tenue-robot .r-hero__actions { justify-content: center; }
   .tenue-robot .r-portrait { max-width: 420px; width: 82%; margin-inline: auto; }
   .tenue-robot .r-chiffres { grid-template-columns: 1fr 1fr; }
   .tenue-robot .r-cas { grid-template-columns: 1fr; }
@@ -351,8 +367,11 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
   .tenue-robot .r-tuiles li { height: 64px; border-radius: 16px; padding: 8px; }
   .tenue-robot .r-tuiles img { max-width: 100%; max-height: calc(20px * var(--e, 1)); }
   .tenue-robot .r-tuiles span { font-size: 12px; line-height: 1.15; }
-  .tenue-robot .r-pan { padding-bottom: 30px; }
-  .tenue-robot .r-pan__bot { top: 18px; right: 20px; bottom: auto; width: 72px; height: 72px; }
+  .tenue-robot .r-pan { padding: 22px 20px 26px; border-radius: 26px; }
+  .tenue-robot .r-pan__ic { width: 52px; height: 52px; }
+  .tenue-robot .r-pan h3 { font-size: 26px; padding-right: 0; }
+  .tenue-robot .r-pan__phrase { font-size: 18px; }
+  .tenue-robot .r-pan__bot { top: 14px; right: 14px; bottom: auto; width: 60px; height: 60px; }
   .tenue-robot .r-pan__lien { padding-right: 0; }
   .tenue-robot .r-sticker { font-size: 13px; padding: 6px 11px; }
   .tenue-robot .r-sticker--0 { left: -6%; }

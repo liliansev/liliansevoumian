@@ -532,6 +532,12 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
 - Une carte de cas a pour titre ce qui a été construit, dit en clair
   (`enClair` du cas), jamais un chiffre seul : « 0 ressaisie, ça veut rien
   dire » (Lilian, 10 novembre 2026). Le client est en petit au-dessus.
+- Retours de Lilian sur téléphone (10 novembre 2026) : les deux gestes de
+  l'ouverture sont « S’abonner à la newsletter » (citron) et « Me contacter »
+  (au trait), plus YouTube, et ils viennent après la photo sur téléphone ;
+  sous 1000 px les métiers sont une colonne d'icônes collante à gauche et le
+  panneau à droite, pour choisir et lire sans défiler ; le menu ouvert au
+  doigt ne pose aucun anneau de focus sur « Fermer » ni sur « Menu ».
 - Chaque outil a sa couleur (`src/data/outils.ts`) et sa propre pastille :
   jamais deux outils dans une même pastille (n8n orange, Make violet…).
 - La photo de Lilian garde ses couleurs : aucun filtre, aucune teinte.
