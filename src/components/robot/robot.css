@@ -162,7 +162,7 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .r-menu .r-menu__cta { height: 52px; margin-top: 8px; }
 
 /* ---------- l'ouverture, sur blanc ---------- */
-.tenue-robot .r-hero { background: var(--r-papier); color: var(--r-encre); padding: 148px 0 40px; border-radius: 0 0 32px 32px; }
+.tenue-robot .r-hero { background: var(--r-papier); color: var(--r-encre); padding: 148px 0 96px; border-radius: 0 0 32px 32px; }
 .tenue-robot .r-hero__grille { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, 0.78fr); grid-template-areas: 'texte portrait' 'gestes portrait'; column-gap: 72px; align-items: center; }
 .tenue-robot .r-hero__texte { grid-area: texte; align-self: end; }
 .tenue-robot .r-hero__actions { grid-area: gestes; align-self: start; }
@@ -195,11 +195,12 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 @keyframes r-pose { from { opacity: 0; transform: translateY(8px); } }
 
 /* Les quatre chiffres : une ligne, des filets, pas de tuiles. */
-.tenue-robot .r-chiffres { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 72px; border-top: 1px solid var(--r-filet); }
-.tenue-robot .r-chiffres li { display: grid; gap: 4px; align-content: start; padding: 22px 24px 16px; border-left: 1px solid var(--r-filet); }
+/* Les chiffres, sur noir, sous les logos des clients. */
+.tenue-robot .r-chiffres { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 40px; }
+.tenue-robot .r-chiffres li { display: grid; gap: 4px; align-content: start; padding: 6px 24px; border-left: 1px solid var(--r-trait); }
 .tenue-robot .r-chiffres li:first-child { padding-left: 0; border-left: 0; }
 .tenue-robot .r-chiffres strong { font-size: clamp(26px, 2.5vw, 34px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.tenue-robot .r-chiffres span { font-size: 15px; color: var(--r-encre-3); line-height: 1.4; }
+.tenue-robot .r-chiffres span { font-size: 15px; color: var(--r-gris); line-height: 1.4; }
 
 /* ---------- les sections sur noir ---------- */
 .tenue-robot .r-sec { padding-block: 112px; }
@@ -352,7 +353,9 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-pied__liens a { display: inline-block; padding-block: 6px; font-size: 16px; text-decoration: none; color: var(--r-texte-2); transition: color 0.2s; }
 .tenue-robot .r-pied__liens a:hover { color: var(--r-citron); }
 .tenue-robot .r-pied { --robot-trait: var(--r-texte); }
-.tenue-robot .r-pied__contact { margin-top: 48px; }
+.tenue-robot .r-pied__contact { margin-top: 48px; display: flex; flex-wrap: wrap; gap: 10px; }
+.tenue-robot .r-pied .r-btn--trait { color: var(--r-texte); border-color: var(--r-trait); }
+.tenue-robot .r-pied .r-btn--trait:hover { border-color: var(--r-texte); }
 .tenue-robot .r-pied__bas { display: flex; align-items: center; gap: 12px; margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--r-trait); color: var(--r-gris); font-size: 14px; }
 .tenue-robot .r-pied__bas .robot { width: 24px; height: 24px; flex-shrink: 0; }
 
@@ -379,10 +382,10 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
   .tenue-robot .r-hero__chapo { margin-bottom: 0; }
   .tenue-robot .r-hero__actions { justify-content: center; }
   .tenue-robot .r-portrait { max-width: 420px; width: 84%; margin-inline: auto; }
-  .tenue-robot .r-chiffres { grid-template-columns: 1fr 1fr; margin-top: 48px; }
-  .tenue-robot .r-chiffres li { padding: 18px 16px 18px 20px; }
+  .tenue-robot .r-hero { padding-bottom: 56px; }
+  .tenue-robot .r-chiffres { grid-template-columns: 1fr 1fr; margin-top: 32px; row-gap: 24px; }
+  .tenue-robot .r-chiffres li { padding: 4px 16px 4px 20px; }
   .tenue-robot .r-chiffres li:nth-child(odd) { padding-left: 0; border-left: 0; }
-  .tenue-robot .r-chiffres li:nth-child(n + 3) { border-top: 1px solid var(--r-filet); }
   .tenue-robot .r-cas { grid-template-columns: 1fr; }
   .tenue-robot .r-sec { padding-block: 80px; }
   .tenue-robot .r-sec--serre { padding-block: 0 8px; }

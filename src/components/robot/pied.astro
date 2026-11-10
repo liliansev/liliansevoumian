@@ -2,7 +2,8 @@
 /*
  * Le pied de l'accueil : « À très vite. » en très grand (le point en lilas),
  * deux listes, ce que Lilian publie et fonde, et les pages du site, puis le
- * robot. Pas d'année (Lilian, 14 octobre 2026).
+ * robot. Pas d'année (Lilian, 14 octobre 2026). « S'abonner à la newsletter »
+ * est ici, tout en bas, et plus dans l'ouverture (Lilian, 10 novembre 2026).
  */
 import { organisations, profils } from '../../data/parcours';
 import Robot from './robot.astro';
@@ -42,7 +43,10 @@ const pages = [
         <nav aria-label="Sur le site"><h2>Sur le site</h2><ul>{pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul></nav>
       </div>
     </div>
-    {contact && <p class="r-pied__contact"><BoutonReservation source={`${source}_contact`} class="r-btn r-btn--cta r-btn--grand">Parlons de votre projet</BoutonReservation></p>}
+    <p class="r-pied__contact">
+      {contact && <BoutonReservation source={`${source}_contact`} class="r-btn r-btn--cta r-btn--grand">Parlons de votre projet</BoutonReservation>}
+      <a class={`r-btn r-btn--grand ${contact ? 'r-btn--trait' : 'r-btn--cta'}`} href={profils.newsletter} target="_blank" rel="noopener noreferrer" data-fast-goal="newsletter_opened" data-fast-goal-source={source}>S’abonner à la newsletter<span class="sr-only"> (nouvel onglet)</span></a>
+    </p>
     <p class="r-pied__bas"><Robot /><span>Lilian Sevoumian, freelance en automatisation et agents IA depuis 2020.</span></p>
   </div>
 </footer>

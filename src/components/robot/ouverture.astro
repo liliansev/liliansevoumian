@@ -5,24 +5,18 @@
  * portrait, en couleurs d'origine (Lilian, 10 novembre 2026 : la photo n'est
  * ni retouchée ni teintée), avec trois petites pastilles ; celles des outils
  * portent la couleur de l'outil. Depuis la passe « plus fin » du même jour :
- * plus de vague sous le nom, plus de robot sur la photo, les quatre chiffres
- * en une ligne séparée par des filets. Les deux gestes viennent après la photo sur téléphone,
- * sous le texte au bureau : « S'abonner à la newsletter » et « Me contacter »
- * (Lilian, 10 novembre 2026, à la place de YouTube). Dessous, les quatre chiffres (`data/parcours.ts`).
+ * plus de vague sous le nom, plus de robot sur la photo. Un seul geste,
+ * « Me contacter », en citron, après la photo sur téléphone et sous le texte
+ * au bureau (Lilian, 10 novembre 2026 au soir : la newsletter descend dans
+ * le pied, les chiffres sortent de l'ouverture et passent sous les logos
+ * des clients, `clients.astro`).
  */
 import { Image } from 'astro:assets';
 import portrait from '../../assets/lilian-photo.jpg';
-import { audience, profils } from '../../data/parcours';
 import { couleurOutil } from '../../data/outils';
 import Robot from './robot.astro';
 import BoutonReservation from '../BoutonReservation.astro';
 
-const chiffres = [
-  { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
-  { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
-  { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
-  { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
-];
 const autocollants = [
   { texte: 'Make niv. 5', couleur: couleurOutil('Make') },
   { texte: 'n8n', couleur: couleurOutil('n8n') },
@@ -42,13 +36,7 @@ const autocollants = [
       {autocollants.map((a, i) => <span class={`r-sticker r-sticker--${i}`} style={`--s:${a.couleur}`} aria-hidden="true">{a.texte}</span>)}
     </figure>
     <p class="r-hero__actions">
-      <a class="r-btn r-btn--cta r-btn--grand" href={profils.newsletter} target="_blank" rel="noopener noreferrer" data-fast-goal="newsletter_opened" data-fast-goal-source="home_hero">S’abonner à la newsletter<span class="sr-only"> (nouvel onglet)</span></a>
-      <BoutonReservation source="home_hero" class="r-btn r-btn--trait r-btn--grand">Me contacter</BoutonReservation>
+      <BoutonReservation source="home_hero" class="r-btn r-btn--cta r-btn--grand">Me contacter</BoutonReservation>
     </p>
-  </div>
-  <div class="r-wrap">
-    <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
-      {chiffres.map((c) => <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
-    </ul>
   </div>
 </section>

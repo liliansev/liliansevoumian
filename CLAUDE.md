@@ -48,11 +48,11 @@ src/
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
 │   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog`
-│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, « S’abonner à la newsletter » et « Me contacter » (après la photo sur téléphone), quatre chiffres sur une ligne à filets
+│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, un seul geste, « Me contacter » en citron (après la photo sur téléphone) ; ni newsletter ni chiffres ici (Lilian, 10 novembre 2026)
 │   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite)
-│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts)
+│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres d'audience
 │   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron
-│   │   ├── projets.astro · contact.astro · pied.astro
+│   │   ├── projets.astro · contact.astro · pied.astro   # le pied porte « S’abonner à la newsletter », tout en bas
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
 │   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section

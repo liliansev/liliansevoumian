@@ -544,9 +544,11 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
 - Une carte de cas a pour titre ce qui a été construit, dit en clair
   (`enClair` du cas), jamais un chiffre seul : « 0 ressaisie, ça veut rien
   dire » (Lilian, 10 novembre 2026). Le client est en petit au-dessus.
-- Retours de Lilian sur téléphone (10 novembre 2026) : les deux gestes de
-  l'ouverture sont « S’abonner à la newsletter » (citron) et « Me contacter »
-  (au trait), plus YouTube, et ils viennent après la photo sur téléphone ;
+- Retours de Lilian (10 novembre 2026, au soir, qui remplacent ceux du
+  matin) : l'ouverture n'a qu'un geste, « Me contacter », en citron, après
+  la photo sur téléphone ; « S’abonner à la newsletter » est tout en bas,
+  dans le pied ; les chiffres d'audience ne sont plus dans l'ouverture, ils
+  passent sous le mur de logos des clients ;
   sous 1000 px les métiers sont une colonne d'icônes collante à gauche et le
   panneau à droite, pour choisir et lire sans défiler ; le menu ouvert au
   doigt ne pose aucun anneau de focus sur « Fermer » ni sur « Menu ».
@@ -563,8 +565,8 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   pied.
 - La page n'explique jamais comment elle marche (Lilian, 10 novembre 2026) :
   pas de « survolez », « le robot vous suit des yeux », etc.
-- Sections : ouverture et quatre chiffres, métiers en onglets, clients en
-  mur de logos, projets clients en cartes, avis en citations, contact, pied
+- Sections : ouverture, métiers en onglets, clients en
+  mur de logos puis quatre chiffres, projets clients en cartes, avis en citations, contact, pied
   « À très vite. ». Ni prix ni chiffres de prestation.
 
 ### La passe « plus fin » (10 novembre 2026)
@@ -596,9 +598,9 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
   panneau du métier, 24 px pour les cartes et le mur de logos, 18 px pour
   un onglet, 14 px pour un champ, 999 px pour les pilules.
 - Ouverture : trois petites étiquettes autour du portrait (Make niv. 5,
-  n8n, agents IA), à peine inclinées. Les quatre chiffres tiennent sur une
-  ligne séparée par des filets (deux par deux sur téléphone), sans tuiles
-  de couleur.
+  n8n, agents IA), à peine inclinées. Les quatre chiffres, sous les logos
+  des clients, tiennent sur une ligne séparée par des filets (deux par deux
+  sur téléphone), sans tuiles de couleur.
 - Clients : un mur de logos à filets, huit par ligne (quatre sous 1180 px),
   logos à 66 % qui s'allument au survol.
 - Cas : au survol la carte change de surface et de filet, sa flèche cerclée

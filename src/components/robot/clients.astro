@@ -3,8 +3,18 @@
  * Les clients : tous les logos de `data/clients.ts`, en blanc, dans un mur
  * de cases séparées par des filets ; la case survolée s'éclaire. Les noms
  * sans logo officiel sont composés en lettres. Aucun client nommé à la main.
+ * Dessous, les quatre chiffres de l'audience (`data/parcours.ts`), sortis de
+ * l'ouverture à la demande de Lilian le 10 novembre 2026.
  */
 import { clients } from '../../data/clients';
+import { audience } from '../../data/parcours';
+
+const chiffres = [
+  { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
+  { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
+  { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
+  { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
+];
 ---
 <section class="r-sec r-sec--serre" id="clients" aria-labelledby="titre-clients">
   <div class="r-wrap">
@@ -17,6 +27,9 @@ import { clients } from '../../data/clients';
           ) : <span>{c.nom}</span>}
         </li>
       ))}
+    </ul>
+    <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
+      {chiffres.map((c) => <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
     </ul>
   </div>
 </section>
