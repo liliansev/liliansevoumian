@@ -4,33 +4,38 @@
  * se déplie une fois à l'arrivée, la ligne de métier, le chapô. À droite le
  * portrait, en couleurs d'origine (Lilian, 10 novembre 2026 : la photo n'est
  * ni retouchée ni teintée), avec trois petites pastilles ; celles des outils
- * portent la couleur de l'outil. Depuis la passe « plus fin » du même jour :
- * plus de vague sous le nom, plus de robot sur la photo, les quatre chiffres
- * en une ligne séparée par des filets. Les deux gestes viennent après la photo sur téléphone,
- * sous le texte au bureau : « S'abonner à la newsletter » et « Me contacter »
- * (Lilian, 10 novembre 2026, à la place de YouTube). Dessous, les quatre chiffres (`data/parcours.ts`).
+ * portent la couleur de l'outil. Un seul geste, « Me contacter », en citron,
+ * après la photo sur téléphone et sous le texte au bureau (Lilian, 10
+ * novembre 2026 au soir : la newsletter descend dans le pied, `pied.astro`,
+ * et les quatre chiffres sortent de l'ouverture pour passer sous les logos
+ * des clients, `clients.astro`).
+ *
+ * À partir de 1100 px (`bureau.css`), l'ouverture se lit comme un scénario,
+ * son métier : les trois pastilles deviennent trois modules à gauche du
+ * portrait, et des fils les y relient (Lilian, 10 novembre 2026 : des
+ * composants « plus créatifs », moins simples). Les fils sont tracés par le
+ * script ci-dessous, d'après la place réelle des modules ; ils se dessinent
+ * une fois à l'arrivée, puis un grain les parcourt quand on survole un module
+ * ou le portrait. Sans script il n'y a pas de fils, et rien ne manque ; en
+ * mouvement réduit ils sont posés d'un coup.
  */
 import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components';
 import portrait from '../../assets/lilian-photo.jpg';
-import { audience, profils } from '../../data/parcours';
 import { couleurOutil } from '../../data/outils';
 import Robot from './robot.astro';
 import BoutonReservation from '../BoutonReservation.astro';
 
-const chiffres = [
-  { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
-  { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
-  { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
-  { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
-];
+/* `couleur` est le fond de la pastille sur téléphone, `pastille` celui du
+   carré d'icône du module au bureau (le blanc n'y ferait rien sur blanc). */
 const autocollants = [
-  { texte: 'Make niv. 5', couleur: couleurOutil('Make') },
-  { texte: 'n8n', couleur: couleurOutil('n8n') },
-  { texte: 'agents IA', couleur: '#ffffff' },
+  { nom: 'Make', detail: 'niv. 5', icone: 'simple-icons:make', couleur: couleurOutil('Make'), pastille: couleurOutil('Make') },
+  { nom: 'n8n', detail: '', icone: 'simple-icons:n8n', couleur: couleurOutil('n8n'), pastille: couleurOutil('n8n') },
+  { nom: 'agents IA', detail: '', icone: 'lucide:bot', couleur: '#ffffff', pastille: couleurOutil('IA') },
 ];
 ---
 <section class="r-hero" id="a-propos" aria-labelledby="titre-ouverture">
-  <div class="r-wrap r-hero__grille">
+  <div class="r-wrap r-hero__grille" data-r-scenario>
     <div class="r-hero__texte">
       <p class="r-salut"><Robot class="r-salut__bot" />Salut, je suis</p>
       <h1 class="r-hero__nom" id="titre-ouverture"><span class="r-nom">Lilian</span> <span class="r-nom r-nom--2">Sevoumian</span></h1>
@@ -39,16 +44,55 @@ const autocollants = [
     </div>
     <figure class="r-portrait">
       <Image src={portrait} alt="Portrait de Lilian Sevoumian" width={560} widths={[320, 560, 840]} sizes="(max-width: 860px) 80vw, 460px" loading="eager" fetchpriority="high" />
-      {autocollants.map((a, i) => <span class={`r-sticker r-sticker--${i}`} style={`--s:${a.couleur}`} aria-hidden="true">{a.texte}</span>)}
+      {autocollants.map((a, i) => (
+        <span class={`r-sticker r-sticker--${i}`} style={`--s:${a.couleur};--ic:${a.pastille}`} aria-hidden="true"><span class="r-sticker__ic"><Icon name={a.icone} /></span><span class="r-sticker__nom">{a.nom}</span>{a.detail && <Fragment>{' '}<span class="r-sticker__detail">{a.detail}</span></Fragment>}</span>
+      ))}
     </figure>
     <p class="r-hero__actions">
-      <a class="r-btn r-btn--cta r-btn--grand" href={profils.newsletter} target="_blank" rel="noopener noreferrer" data-fast-goal="newsletter_opened" data-fast-goal-source="home_hero">S’abonner à la newsletter<span class="sr-only"> (nouvel onglet)</span></a>
-      <BoutonReservation source="home_hero" class="r-btn r-btn--trait r-btn--grand">Me contacter</BoutonReservation>
+      <BoutonReservation source="home_hero" class="r-btn r-btn--cta r-btn--grand">Me contacter</BoutonReservation>
     </p>
-  </div>
-  <div class="r-wrap">
-    <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
-      {chiffres.map((c) => <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
-    </ul>
+    <svg class="r-fils" aria-hidden="true" focusable="false"></svg>
   </div>
 </section>
+
+<script>
+  // Les fils de l'ouverture, au bureau seulement : des trois modules au
+  // portrait. Tracés d'après la place réelle de chaque pièce, retracés quand
+  // la grille change de taille (`lib/robot/fils.ts`).
+  import { bord, cadre, courir, dessiner, ports, tendre, type Fil } from '../../lib/robot/fils';
+
+  const grille = document.querySelector<HTMLElement>('[data-r-scenario]');
+  const svg = grille?.querySelector<SVGSVGElement>('.r-fils');
+  const photo = grille?.querySelector<HTMLElement>('.r-portrait');
+  if (grille && svg && photo && 'ResizeObserver' in window && 'animate' in Element.prototype) {
+    const entrees = [...grille.querySelectorAll<HTMLElement>('.r-sticker')];
+    const large = window.matchMedia('(min-width: 1100px)');
+    const calme = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let fils: Fil[] = [];
+    let arrive = false;
+
+    const passe = (depuis: Fil[]) => {
+      if (calme.matches) return;
+      depuis.forEach((f, i) => courir(f, i * 70));
+    };
+
+    const trace = () => {
+      svg.replaceChildren();
+      fils = [];
+      if (!large.matches) return;
+      const entree = bord(cadre(photo, grille), 'g');
+      const departs = entrees.map((e) => bord(cadre(e, grille), 'd'));
+      fils = departs.map((d) => tendre(svg, d, entree));
+      ports(svg, [...departs, entree]);
+      if (arrive || calme.matches) return;
+      // L'arrivée, une fois : les fils se dessinent, un grain les traverse.
+      arrive = true;
+      fils.forEach((f, i) => { dessiner(f, 720 + i * 80); courir(f, 1250 + i * 80); });
+    };
+
+    new ResizeObserver(trace).observe(grille);
+    large.addEventListener('change', trace);
+    entrees.forEach((e, i) => e.addEventListener('pointerenter', () => { if (fils[i]) passe([fils[i]]); }));
+    photo.addEventListener('pointerenter', () => passe(fils));
+  }
+</script>

@@ -7,9 +7,17 @@
  * rien, Lilian, 10 novembre 2026), le détail (`accroche`) et ses outils, une
  * pastille par outil. Toute la carte mène au cas ; au survol elle passe en
  * lilas.
+ *
+ * À partir de 1100 px (`bureau.css`), les cartes deviennent une pile : chaque
+ * cas est une grande feuille qui vient se poser sur la précédente au
+ * défilement, avec à droite ce qui a été construit, en cartes (`etapes.astro`,
+ * d'après `flow` ou `parcours`) et, dessous, un écart avant / après pris dans
+ * sa `bascule`. Rien n'y est animé (Lilian, 10 novembre 2026 : « pas
+ * d'animations ici, juste des belles cards »).
  */
 import { getCollection } from 'astro:content';
 import Outils from './outils.astro';
+import Etapes from './etapes.astro';
 const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
@@ -18,15 +26,26 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
   <div class="r-wrap">
     <header class="r-titre"><h2 id="titre-projets">Projets clients</h2><p>Ce que j’ai construit, et ce que ça a changé. <a class="r-lien" href="/cas-clients">Tous les cas</a></p></header>
     <div class="r-cas">
-      {cas.map(({ id, data }) => (
-        <article class="r-carte-cas">
-          <p class="r-carte-cas__client">{data.client ?? data.secteur}</p>
-          <h3><a href={`/cas-clients/${id}`}>{data.enClair ?? data.title}</a></h3>
-          <p class="r-carte-cas__texte">{data.accroche ?? data.description}</p>
-          <Outils outils={data.tools.slice(0, 4)} />
-          <span class="r-carte-cas__f" aria-hidden="true">↗</span>
+      {cas.map(({ id, data }, i) => (
+        <article class="r-carte-cas" style={`--i:${i}`}>
+          <div class="r-carte-cas__dit">
+            <p class="r-carte-cas__client">{data.client ?? data.secteur}</p>
+            <h3><a href={`/cas-clients/${id}`}>{data.enClair ?? data.title}</a></h3>
+            <p class="r-carte-cas__texte">{data.accroche ?? data.description}</p>
+            <Outils outils={data.tools.slice(0, 4)} />
+            <span class="r-carte-cas__f" aria-hidden="true"><span class="r-carte-cas__lire">Lire le cas</span><span class="r-carte-cas__fleche">↗</span></span>
+          </div>
+          {(data.flow || data.parcours) && (
+            <div class="r-carte-cas__montre">
+              <Etapes flow={data.flow} parcours={data.parcours} decrit={`Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`} />
+              {data.bascule && (
+                <p class="r-ecart"><span class="r-ecart__avant"><span class="r-ecart__mot">Avant</span>{data.bascule[0].avant}</span><span class="r-ecart__vers" aria-hidden="true"></span><span class="r-ecart__apres"><span class="r-ecart__mot">Après</span>{data.bascule[0].apres}</span></p>
+              )}
+            </div>
+          )}
         </article>
       ))}
     </div>
   </div>
 </section>
+

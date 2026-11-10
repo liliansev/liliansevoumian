@@ -40,7 +40,7 @@ En novembre 2023, je lance [Augmentés](https://augmentes.fr), mes formations pr
 
 C’est là que j’ai compris ce que vivent mes clients : une équipe, des clients à livrer, et jamais assez de temps pour mettre en place les bons outils.
 
-En janvier 2026, je fonde [agenceafk](https://agenceafk.fr), mon agence d’agents IA et d’automatisations pour les entreprises de 5 à 50 personnes.
+En janvier 2026, je fonde agenceafk, mon agence d’agents IA et d’automatisations pour les entreprises de 5 à 50 personnes.
 
 Aujourd’hui, ça fait **plus de 100 entreprises accompagnées et plus de 300 personnes formées**. Ce que j’ai vu chez ces stagiaires, je le raconte dans [Métiers menacés par l’IA](/blog/metiers-menaces-par-l-ia).
 

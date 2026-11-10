@@ -8,9 +8,27 @@
  * d'icônes collante à gauche du panneau (Lilian, 10 novembre 2026 : ne plus
  * remonter pour choisir puis redescendre pour lire) ; le nom reste lu par les
  * lecteurs d'écran. Sans script, le premier panneau reste lisible.
+ *
+ * À partir de 1100 px (`bureau.css`), la section est une seule grande scène
+ * sur lilas : les quatre métiers en liste à gauche, la phrase du métier
+ * choisi dessous, et à droite sa scène animée (`components/metiers/`, une
+ * petite interface qui joue le métier une fois, quand on le choisit). Les
+ * scènes ne sont pas affichées en dessous : rien ne change sur téléphone.
  */
 import { metiers } from '../../data/metiers';
 import Outils from './outils.astro';
+import SceneAutomatisation from '../metiers/scene-automatisation.astro';
+import SceneAppels from '../metiers/scene-appels.astro';
+import SceneCours from '../metiers/scene-cours.astro';
+import SceneSites from '../metiers/scene-sites.astro';
+
+/* Un métier sans scène garde son panneau, sans fenêtre à droite. */
+const scenes: Record<string, typeof SceneAutomatisation> = {
+  automatisation: SceneAutomatisation,
+  'agents-ia': SceneAppels,
+  dashboards: SceneSites,
+  formations: SceneCours,
+};
 
 const ICONES: Record<string, string> = {
   automatisation: '<circle cx="10" cy="24" r="6"/><circle cx="38" cy="12" r="6"/><circle cx="38" cy="36" r="6"/><path d="M16 24h6c4 0 4-12 10-12M22 24c4 0 4 12 10 12"/>',
@@ -33,16 +51,20 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
         ))}
       </div>
       <div class="r-onglets__pans">
-        {metiers.map((m, i) => (
-          <div class="r-pan" role="tabpanel" id={`panneau-${m.id}`} aria-labelledby={`onglet-${m.id}`} hidden={i !== 0}>
-            <div class="r-pan__ic" set:html={icone(m.id)} />
-            <h3>{m.nom}</h3>
-            <p class="r-pan__phrase">{m.phrase}</p>
-            <p class="r-pan__texte">{texteSeul(m.texte)}</p>
-            <Outils outils={m.outils} />
-            <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <span class="sr-only"> (nouvel onglet)</span>}</a>
-          </div>
-        ))}
+        {metiers.map((m, i) => {
+          const Scene = scenes[m.id];
+          return (
+            <div class="r-pan" role="tabpanel" id={`panneau-${m.id}`} aria-labelledby={`onglet-${m.id}`} hidden={i !== 0}>
+              <div class="r-pan__ic" set:html={icone(m.id)} />
+              <h3>{m.nom}</h3>
+              <p class="r-pan__phrase">{m.phrase}</p>
+              <p class="r-pan__texte">{texteSeul(m.texte)}</p>
+              <Outils outils={m.outils} />
+              <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <span class="sr-only"> (nouvel onglet)</span>}</a>
+              {Scene && <div class="r-pan__scene"><Scene /></div>}
+            </div>
+          );
+        })}
       </div>
     </div>
   </div>

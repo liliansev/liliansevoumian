@@ -18,6 +18,11 @@ aucune n'est générée ni retouchée.
   réduite à 2560 × 1280. Les autres photos du même album montrent la même
   séance : ne pas les présenter comme d'autres missions. Sur deux d'entre
   elles (01 et 03), le formateur en noir n'est pas Lilian.
+- `formation-formateur.jpg` : la même photo, recadrée sur Lilian devant son
+  écran (360 × 272, découpe 440, 505 à 800, 777 dans `formation-salle.jpg`),
+  sans autre retouche. C'est la vignette du formateur dans la scène du métier
+  Formations (`components/metiers/scene-cours.astro`), depuis le 10 novembre
+  2026.
 
 - `rocket-school-promo.jpg` : photo de groupe d'une promotion de Rocket School,
   Lilian au premier rang, au centre, après ses trois jours de formation à

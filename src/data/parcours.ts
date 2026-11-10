@@ -37,22 +37,18 @@ export interface Activite {
   };
 }
 
-/** Ce que Lilian fait aujourd'hui, chaque activité avec sa sortie. */
+/**
+ * Ce que Lilian fait aujourd'hui, chaque activité avec sa sortie.
+ *
+ * agenceafk n'y est plus depuis le 10 novembre 2026 (Lilian : « arrête de
+ * mettre en avant Agence AFK pour l'instant. Je mets ce projet un peu de
+ * côté »). Le site ne la met plus en avant nulle part : ni activité, ni
+ * structure dans le pied de page et le balisage, ni « fondateur d'agenceafk »
+ * dans les résumés, ni lien. Sa fondation, en janvier 2026, reste un fait du
+ * parcours ci-dessous ; sa fiche est dans PRODUCT.md pour le jour où elle
+ * revient.
+ */
 export const activites: Activite[] = [
-  {
-    id: 'agenceafk',
-    nom: 'agenceafk',
-    depuis: 'Depuis janvier 2026',
-    resume:
-      'Mon agence : agents IA, automatisations Make et n8n et outils métiers sur mesure, pour les entreprises de 5 à 50 personnes.',
-    lien: {
-      href: 'https://agenceafk.fr',
-      label: 'Voir l’agence',
-      externe: true,
-      goal: 'outbound_agence',
-      goalSource: 'home_activites',
-    },
-  },
   {
     id: 'augmentes',
     nom: 'Augmentés',
@@ -205,16 +201,9 @@ export const audience = {
   releveAffiche: '1er octobre 2026',
 } as const;
 
-/** Les deux structures fondées par Lilian, pour le balisage, le pied de page et /llms.txt. */
+/** La structure fondée par Lilian que le site met en avant, pour le balisage,
+    le pied de page et /llms.txt (agenceafk est en retrait, voir `activites`). */
 export const organisations = [
-  {
-    nom: 'agenceafk',
-    url: 'https://agenceafk.fr',
-    goal: 'outbound_agence',
-    fondation: '2026-01',
-    description:
-      'Agence d’agents IA, d’automatisations Make et n8n et d’outils métiers sur mesure pour les entreprises de 5 à 50 personnes.',
-  },
   {
     nom: 'Augmentés',
     url: 'https://augmentes.fr',
@@ -236,8 +225,8 @@ export const profils = {
 } as const;
 
 export const resumeCourt =
-  'Lilian Sevoumian, freelance en automatisation et agents IA depuis 2020. Fondateur d’agenceafk et d’Augmentés, premier Français certifié Make niveau 5.';
+  'Lilian Sevoumian, freelance en automatisation et agents IA depuis 2020. Fondateur d’Augmentés, premier Français certifié Make niveau 5.';
 
 /** La phrase qui résume Lilian, partagée par le balisage et /llms.txt. */
 export const resume =
-  'Lilian Sevoumian automatise le travail des entreprises depuis 2020. Fondateur d’agenceafk et d’Augmentés, premier Français certifié Make niveau 5, il a formé plus de 300 personnes à Make, à n8n et à l’IA.';
+  'Lilian Sevoumian automatise le travail des entreprises depuis 2020. Fondateur d’Augmentés, premier Français certifié Make niveau 5, il a formé plus de 300 personnes à Make, à n8n et à l’IA.';

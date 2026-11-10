@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal brand site for Lilian Sevoumian: the reference point for his track record and everything he does today (client work, videos, newsletter, training, agency). The two offers (automation/AI and websites) stay, in the background. Product truth lives in `PRODUCT.md`. Built with Astro 5.x.
+Personal brand site for Lilian Sevoumian: the reference point for his track record and everything he does today (client work, videos, newsletter, training). His agency, agenceafk, is set aside since 10 November 2026: the site no longer features it anywhere (see Key Implementation Notes). The two offers (automation/AI and websites) stay, in the background. Product truth lives in `PRODUCT.md`. Built with Astro 5.x.
 
 ## Commands
 
@@ -45,14 +45,18 @@ src/
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   ├── robot/                 # l'accueil « Citron et lilas » (10 novembre 2026), le seul rendu sur `/`
 │   │   ├── robot.css          # la grammaire, rangée sous `.tenue-robot` : noir chaud, citron (gestes), lilas (surfaces), Roboto Flex ; passe « plus fin » : titres en graisse 600, filets d'un pixel, une seule courbe sans rebond
+│   │   ├── bureau.css         # à partir de 1100 px seulement : chaque section devient un composant dessiné (ouverture à fils, une scène par métier, pile de cas en cartes d'étapes, trois cartes d'avis) ; sous 1100 px elle ne change rien
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
 │   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog`
-│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, « S’abonner à la newsletter » et « Me contacter » (après la photo sur téléphone), quatre chiffres sur une ligne à filets
-│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite)
-│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts)
-│   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron
-│   │   ├── projets.astro · contact.astro · pied.astro
+│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, un seul bouton « Me contacter » (après la photo sur téléphone) ; au bureau, un scénario : les trois étiquettes en modules reliés au portrait par des fils
+│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
+│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres de l'audience sur une ligne à filets (sortis de l'ouverture) ; au bureau, un défilé avec son bouton pause (un mur en mouvement réduit)
+│   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron ; au bureau, trois cartes : une grande sur lilas, deux sombres à sa droite ; aucun script
+│   │   ├── projets.astro      # les cas clients en cartes ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
+│   │   ├── etapes.astro       # les étapes d'un cas en cartes fixes, d'après son `flow` (deux puis trois) ou son `parcours` (trois puis deux, numérotées) ; ni fil ni script ; bureau seulement
+│   │   ├── contact.astro      # « Parlons de votre projet » et le formulaire seul : ni agenda ni adresse e-mail
+│   │   ├── pied.astro         # « À très vite. », les liens, et « S’abonner à la newsletter » tout en bas (sur toutes les pages, via Footer)
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
 │   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section
@@ -102,7 +106,7 @@ src/
 │   ├── home-hero.astro        # titre centré, bouton d'appel, grille, défilé des logos des clients
 │   ├── home-story.astro       # récit en 3 actes + scène ; au bureau le défilement joue les 4 modes, sur mobile deux vues
 │   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone. Ses métiers sont dans `data/metiers.ts`
-│   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
+│   ├── metiers/               # les scènes des métiers + leur socle CSS (scene-metier.css) ; rejouées sur l'accueil au bureau (`robot/metiers.astro`), sans leurs lueurs. `scene-cours.astro` (un atelier : diapositive, exercice, équipe) est la scène des formations sur l'accueil et `scene-appels.astro` (un téléphone, le support client, le compte rendu) celle des agents IA ; `scene-formations.astro`, qui ressemblait à un workflow, et `scene-agents.astro`, un agent de recherche, ne servent plus qu'à /explorations-metiers
 │   ├── home-today-path.astro  # « Pourquoi moi » (panneau clair) + frise du parcours
 │   ├── home-content.astro     # la dernière vidéo YouTube (relevée par le serveur, voir `data/derniere-video.ts`) + newsletter écrite comme un mail
 │   ├── home-voices.astro      # trois recommandations, une voix à la fois, choisie par le visiteur
@@ -129,7 +133,7 @@ src/
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
 ├── data/                      # metiers.ts (les 4 métiers), projets.ts, faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, outils-metiers.ts, brands.ts
-├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (adresse de contact), contact-message.ts (envoi du formulaire par Resend), roi.ts, metiers/scene.ts (moteur des scènes), blocs/atelier.ts (formes 3D, hors accueil)
+├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (adresse de contact), contact-message.ts (envoi du formulaire par Resend), roi.ts, metiers/scene.ts (moteur des scènes), robot/fils.ts (les fils de l'ouverture de l'accueil au bureau : tracé, ports, grain), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire, suivi DataFast
 │   ├── PageExpertOutil.astro  # charpente des pages d'outil (/expert-make, /expert-n8n)
@@ -175,7 +179,25 @@ sizes (`--r-t-nom`, `--r-t-2`, `--r-t-3`), 1px hairlines instead of 2px ink
 rings, borderless lemon pills that darken (`#f6cb33`) and lift 1px on hover,
 one easing curve (`--r-sortie`) with no bounce or tilt, straight 1.5px
 underlines instead of wavy ones, radii 32/28/24/18/14, and the robot in four
-places only (nav, hero greeting, contact, footer). Inner pages and the blog
+places only (nav, hero greeting, contact, footer). From 1100 px up the home
+also wears crafted desktop components (DESIGN.md, *Au bureau : des composants
+travaillés*; Lilian rejected plain cards and any bento grid as « pas assez
+créatifs, composants trop simplistes »), then commented on the preview the
+same evening: a hero with three modules wired to the portrait
+(`lib/robot/fils.ts`) and one single button, « Me contacter »; one animated
+scene per métier on a lilac stage, each shaped like its subject (« trouver
+une animation par sujet, là on dirait un workflow »: training is a workshop,
+`metiers/scene-cours.astro`, not a scenario; AI agents are a phone call and a
+support chat answered by the agent, `metiers/scene-appels.astro`); a logo marquee with a pause
+button, then the four audience figures (out of the hero: « j'aime pas les
+stats ici »); stacked case sheets whose steps are static cards
+(`robot/etapes.astro`; « pas d'animations ici, juste des belles cards »);
+three testimonial cards, one large on lilac and two dark (« mets les avis
+dans des cards élégantes »). The newsletter button sits at the very bottom,
+in the footer of every page, and the home's contact block is the form alone
+(« restons sur le formulaire point barre »). All of it lives in `robot/bureau.css` inside
+`@media (min-width: 1100px)`; below 1100 px only the hero button, the
+figures and the footer changed. Inner pages and the blog
 get it from the very last block of `global.css` (PASSE « PLUS FIN ») and of
 `carnet.css`. The home lives in `components/robot/` under `.tenue-robot` and
 passes `carnet={false}` to Layout. Every other page gets the same look
@@ -297,6 +319,19 @@ one sequence (`documentaire/expertises.astro`; scenes in
 
 ## Key Implementation Notes
 
+- agenceafk est en retrait depuis le 10 novembre 2026 (Lilian : « arrête de
+  mettre en avant Agence AFK pour l'instant. Je mets ce projet un peu de
+  côté »). Le site ne la met plus en avant : ni bouton ni lien vers
+  agenceafk.fr, ni « fondateur d'agenceafk » dans les résumés, le balisage ou
+  /llms.txt, ni dans le pied de page (`data/parcours.ts`, `organisations` et
+  `activites`). Sa fondation reste un fait daté du parcours. Ne pas la
+  remettre sans son mot.
+- Les agents IA se disent comme Lilian les dit (même jour) : support client
+  et agent vocal, « un agent qui prend les appels à ta place, qui répond aux
+  clients à ta place ». Ne pas écrire que l'agent « prend la main », ni
+  tourner la phrase de l'accueil autour de la main gardée par un humain. Les
+  pastilles d'outils de l'accueil : Make et n8n (automatisation), Claude Code
+  et Codex (dashboards et outils métiers).
 - Un seul geste sur tout le site : « Parlons de votre projet » mène au
   formulaire de contact (14 octobre 2026 : la conversation `home-invite` est
   retirée, jugée trop compliquée par Lilian). Tout bouton d'appel passe par
@@ -304,7 +339,12 @@ one sequence (`documentaire/expertises.astro`; scenes in
   que le goal `contact_opened` est posé avec sa provenance. Un `<a>` écrit à la
   main vers cal.com ouvre bien l'agenda mais n'apparaît dans aucun funnel. Le
   seul lien direct vers l'agenda est « Réservez un appel », sous le formulaire
-  (`direct`, goal `lead_call`). L'envoi demande `RESEND_API_KEY` dans
+  (`direct`, goal `lead_call`), sur les pages intérieures seulement : sur
+  l'accueil le contact est le formulaire seul, sans lien vers l'agenda ni
+  adresse e-mail sous le bouton (Lilian, 10 novembre 2026 : « trop
+  d'informations, le formulaire, l'appel, et le mail. restons sur le
+  formulaire point barre » ; `note={false}` sur `formulaire-contact`, qui ne
+  donne alors l'adresse que sans script ou après un échec d'envoi). L'envoi demande `RESEND_API_KEY` dans
   l'environnement du serveur (voir `deploy/README.md`). Hors composant (réponses de
   FAQ, llms.txt), l'URL vient de `lib/reservation.ts`. Voir `DATAFAST-FUNNEL.md`.
 - Un fait, une source : les prix se lisent dans `data/service-pricing.ts` et

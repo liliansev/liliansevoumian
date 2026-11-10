@@ -60,6 +60,19 @@ const casClients = defineCollection({
       })
       .optional(),
     /*
+     * `parcours` est le pendant de `flow` pour un cas qui se lit d'un bout à
+     * l'autre, une application par exemple : EXACTEMENT cinq étapes en file,
+     * chacune écrite dans le corps du cas. Il est dessiné dans la pile des
+     * projets de l'accueil (`components/robot/etapes.astro`), trois cartes en
+     * haut, deux en bas. `outil` nomme l'outil qui porte l'étape, quand on le
+     * sait : la carte en prend la couleur (`data/outils.ts`). Un cas a un
+     * `flow` ou un `parcours`, jamais les deux.
+     */
+    parcours: z
+      .array(z.object({ icon: z.string(), kicker: z.string(), title: z.string(), sub: z.string().optional(), outil: z.string().optional() }))
+      .length(5)
+      .optional(),
+    /*
      * `bascule` met en regard l'état d'avant et l'état d'après. Elle ouvre la
      * pièce « Les résultats », c'est-à-dire ce que le client achète : un écart.
      *

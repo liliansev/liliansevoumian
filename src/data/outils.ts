@@ -10,6 +10,8 @@ export const couleursOutils: Record<string, string> = {
   n8n: '#ff8a5c',
   Make: '#d9a3ff',
   Claude: '#f0b48e',
+  'Claude Code': '#f3a98b',
+  Codex: '#9adbc9',
   Mistral: '#ffa94d',
   Glide: '#ff9ecf',
   Notion: '#ece7e0',
