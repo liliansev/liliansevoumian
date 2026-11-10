@@ -1,8 +1,9 @@
 ---
 /*
  * « Ils en parlent » : les trois recommandations de `data/avis.ts`, mot pour
- * mot, en bulles de discussion, la deuxième à droite. Le passage qui compte
- * est surligné en citron.
+ * mot, l'une sous l'autre, séparées par un filet (plus de bulles de
+ * discussion depuis la passe « plus fin » du 10 novembre 2026). Le passage
+ * qui compte est en citron ; dessous, le portrait, le nom et le rôle.
  */
 import { Image } from 'astro:assets';
 import { avis } from '../../data/avis';
@@ -12,12 +13,12 @@ import { avis } from '../../data/avis';
     <header class="r-titre"><h2 id="titre-avis">Ils en parlent</h2><p>Trois personnes avec qui j’ai travaillé.</p></header>
     <div class="r-fil">
       {avis.map((a) => (
-        <figure class="r-bulle">
-          <Image src={a.image} alt="" width={50} height={50} densities={[1, 2]} loading="lazy" />
-          <div>
-            <blockquote><p>{a.citation[0]}<mark>{a.citation[1]}</mark>{a.citation[2]}</p></blockquote>
-            <figcaption><strong>{a.nom}</strong> · {a.role}</figcaption>
-          </div>
+        <figure class="r-avis__un">
+          <blockquote><p>{a.citation[0]}<mark>{a.citation[1]}</mark>{a.citation[2]}</p></blockquote>
+          <figcaption>
+            <Image src={a.image} alt="" width={40} height={40} densities={[1, 2]} loading="lazy" />
+            <span><strong>{a.nom}</strong>{a.role}</span>
+          </figcaption>
         </figure>
       ))}
     </div>

@@ -897,3 +897,14 @@
   --bleu-fonce: #ffe680;
 }
 .sombre ::selection { background: #ffd84d; color: #17130f; }
+
+/* Passe « plus fin » du 10 novembre 2026 (voir `robot/robot.css` et la fin
+   de `global.css`) : les titres du carnet perdent un cran, les traits
+   passent à un pixel. */
+:is(:root:has(.tenue-carnet), .tenue-carnet) {
+  --t-carte: 1.5rem;
+  --t-section: clamp(1.75rem, 1.35rem + 1.6vw, 2.375rem);
+  --t-nom: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+  --trait: 1px;
+  --trait-fin: 1px;
+}
