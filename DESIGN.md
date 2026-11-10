@@ -645,8 +645,12 @@ newsletter), « pas explicite, trouver une animation par sujet, là on dirait
 un workflow » (la scène des formations), « pas d'animations ici, juste des
 belles cards » (le parcours d'un cas), « j'aime pas du tout, mets les avis
 dans des cards élégantes, trouve un beau layout » (la citation unique et son
-rail). **Les fils ne servent donc qu'à l'ouverture ; un cas et un avis sont
-des cartes, sans mouvement ; une scène montre son sujet, pas un scénario.**
+rail), et sur le contact : « trop d'informations, le formulaire, l'appel, et
+le mail. restons sur le formulaire point barre ». **Les fils ne servent donc
+qu'à l'ouverture ; un cas et un avis sont des cartes, sans mouvement ; une
+scène montre son sujet, pas un scénario ; le contact de l'accueil est un
+titre, une phrase et le formulaire, sans lien vers l'agenda ni adresse sous
+le bouton (à toutes les largeurs).**
 
 - **L'ouverture, un scénario** : les trois étiquettes du portrait deviennent
   trois modules blancs à sa gauche (carré d'icône à la couleur de l'outil),

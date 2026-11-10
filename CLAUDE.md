@@ -55,7 +55,7 @@ src/
 │   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron ; au bureau, trois cartes : une grande sur lilas, deux sombres à sa droite ; aucun script
 │   │   ├── projets.astro      # les cas clients en cartes ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
 │   │   ├── etapes.astro       # les étapes d'un cas en cartes fixes, d'après son `flow` (deux puis trois) ou son `parcours` (trois puis deux, numérotées) ; ni fil ni script ; bureau seulement
-│   │   ├── contact.astro
+│   │   ├── contact.astro      # « Parlons de votre projet » et le formulaire seul : ni agenda ni adresse e-mail
 │   │   ├── pied.astro         # « À très vite. », les liens, et « S’abonner à la newsletter » tout en bas (sur toutes les pages, via Footer)
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
@@ -193,7 +193,8 @@ stats ici »); stacked case sheets whose steps are static cards
 (`robot/etapes.astro`; « pas d'animations ici, juste des belles cards »);
 three testimonial cards, one large on lilac and two dark (« mets les avis
 dans des cards élégantes »). The newsletter button sits at the very bottom,
-in the footer of every page. All of it lives in `robot/bureau.css` inside
+in the footer of every page, and the home's contact block is the form alone
+(« restons sur le formulaire point barre »). All of it lives in `robot/bureau.css` inside
 `@media (min-width: 1100px)`; below 1100 px only the hero button, the
 figures and the footer changed. Inner pages and the blog
 get it from the very last block of `global.css` (PASSE « PLUS FIN ») and of
@@ -324,7 +325,12 @@ one sequence (`documentaire/expertises.astro`; scenes in
   que le goal `contact_opened` est posé avec sa provenance. Un `<a>` écrit à la
   main vers cal.com ouvre bien l'agenda mais n'apparaît dans aucun funnel. Le
   seul lien direct vers l'agenda est « Réservez un appel », sous le formulaire
-  (`direct`, goal `lead_call`). L'envoi demande `RESEND_API_KEY` dans
+  (`direct`, goal `lead_call`), sur les pages intérieures seulement : sur
+  l'accueil le contact est le formulaire seul, sans lien vers l'agenda ni
+  adresse e-mail sous le bouton (Lilian, 10 novembre 2026 : « trop
+  d'informations, le formulaire, l'appel, et le mail. restons sur le
+  formulaire point barre » ; `note={false}` sur `formulaire-contact`, qui ne
+  donne alors l'adresse que sans script ou après un échec d'envoi). L'envoi demande `RESEND_API_KEY` dans
   l'environnement du serveur (voir `deploy/README.md`). Hors composant (réponses de
   FAQ, llms.txt), l'URL vient de `lib/reservation.ts`. Voir `DATAFAST-FUNNEL.md`.
 - Un fait, une source : les prix se lisent dans `data/service-pricing.ts` et

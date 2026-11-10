@@ -83,6 +83,12 @@ c'était le moyen « Réserver un appel · 45 min » de la conversation
 (`home-invite.astro`), source `home_causerie`. C'est une **intention de call** (le clic), pas la réservation
 confirmée — celle-ci se passe sur cal.com (voir Limite plus bas).
 
+Depuis le 10 novembre 2026 l'accueil n'a plus ce lien : son contact est le
+formulaire seul (demande de Lilian), donc plus de `lead_call` de source
+`home_fin`. Le même jour, « S’abonner à la newsletter » a quitté l'ouverture
+pour le pied de toutes les pages : `newsletter_opened` porte la source
+`home_pied` (accueil) ou `pied` (autres pages).
+
 Jusqu'au 3 octobre 2026, chaque bouton du site ouvrait l'agenda et émettait
 `lead_call` avec sa source (`hero`, `offres`, `expert-make`, `cas_article`…).
 Depuis, tous les « Parlons de votre projet » ouvrent la conversation et
