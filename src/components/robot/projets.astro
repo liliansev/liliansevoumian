@@ -2,9 +2,11 @@
 /*
  * Les projets clients (jamais les projets personnels, 14 octobre 2026), lus
  * dans les cas publiés, du plus récent au plus ancien : une carte par cas,
- * son premier chiffre en grand (en lilas), le client, ce que Lilian a
- * construit (`accroche`) et ses outils, une pastille par outil. Toute la
- * carte mène au cas ; au survol elle passe en lilas.
+ * le client en petit (en lilas), un titre qui dit en clair ce qui a été
+ * construit (`enClair`, jamais un chiffre seul : « 0 ressaisie » ne disait
+ * rien, Lilian, 10 novembre 2026), le détail (`accroche`) et ses outils, une
+ * pastille par outil. Toute la carte mène au cas ; au survol elle passe en
+ * lilas.
  */
 import { getCollection } from 'astro:content';
 import Outils from './outils.astro';
@@ -16,22 +18,15 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
   <div class="r-wrap">
     <header class="r-titre"><h2 id="titre-projets">Projets clients</h2><p>Ce que j’ai construit, et ce que ça a changé. <a class="r-lien" href="/cas-clients">Tous les cas</a></p></header>
     <div class="r-cas">
-      {cas.map(({ id, data }) => {
-        const chiffre = data.kpis[0];
-        return (
-          <article class="r-carte-cas">
-            {chiffre ? (
-              <p class="r-carte-cas__k"><strong>{chiffre.value}</strong><span>{chiffre.label}</span></p>
-            ) : (
-              <p class="r-carte-cas__k r-carte-cas__k--mot"><strong>{data.tags[0] ?? 'Projet'}</strong><span>{data.secteur}</span></p>
-            )}
-            <h3><a href={`/cas-clients/${id}`}>{data.client ?? data.title}</a></h3>
-            <p class="r-carte-cas__texte">{data.accroche ?? data.description}</p>
-            <Outils outils={data.tools.slice(0, 4)} />
-            <span class="r-carte-cas__f" aria-hidden="true">↗</span>
-          </article>
-        );
-      })}
+      {cas.map(({ id, data }) => (
+        <article class="r-carte-cas">
+          <p class="r-carte-cas__client">{data.client ?? data.secteur}</p>
+          <h3><a href={`/cas-clients/${id}`}>{data.enClair ?? data.title}</a></h3>
+          <p class="r-carte-cas__texte">{data.accroche ?? data.description}</p>
+          <Outils outils={data.tools.slice(0, 4)} />
+          <span class="r-carte-cas__f" aria-hidden="true">↗</span>
+        </article>
+      ))}
     </div>
   </div>
 </section>

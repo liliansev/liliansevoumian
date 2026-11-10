@@ -52,6 +52,28 @@ colors:
   carnet-vert-point: "#14a554"
   carnet-rouge: "#c9302c"
   carnet-coeur: "#e0368a"
+  robot-noir: "#0f0d0b"
+  robot-surface: "#1b1815"
+  robot-surface-2: "#24201c"
+  robot-trait: "#332e29"
+  robot-texte: "#f8f4ef"
+  robot-gris: "#aaa198"
+  robot-papier: "#ffffff"
+  robot-encre: "#17130f"
+  robot-encre-2: "#4a4239"
+  robot-citron: "#ffd84d"
+  robot-citron-clair: "#fff1b8"
+  robot-lilas: "#b9a6ff"
+  robot-lilas-clair: "#e9e3ff"
+  robot-champ: "#8f857a"
+  robot-erreur: "#b3261e"
+  entre-papier: "#f6f6f3"
+  entre-encre: "#17171a"
+  entre-encre-douce: "#6c6d69"
+  entre-filet: "#dededa"
+  entre-cobalt: "#2b44f0"
+  entre-nuit: "#0f1430"
+  entre-menthe: "#6ff0c4"
 typography:
   nom:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
@@ -496,8 +518,8 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   contact (une île arrondie).
 - Citron `#ffd84d` pour les gestes : boutons, onglet choisi, flèche des cas,
   surlignage des avis, tête du robot. Lilas `#b9a6ff` pour les surfaces
-  douces : le grand panneau du métier choisi (texte à l'encre), chiffre des
-  cas, survol des cartes, vague sous le nom. Les quatre chiffres de
+  douces : le grand panneau du métier choisi (texte à l'encre), nom du client
+  sur les cartes des cas, survol des cartes, vague sous le nom. Les quatre chiffres de
   l'ouverture alternent citron pâle `#fff1b8` et lilas pâle `#e9e3ff`.
 - Passe critique, couleur et finitions du 10 novembre 2026 : l'anneau de
   focus est à l'encre sur blanc (le lilas n'y fait que 2,1:1), lilas sur
@@ -507,6 +529,9 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   cerné de clair (`--robot-trait`) ; sélection de texte en citron. Les
   pastilles d'outils évitent les deux couleurs de la page : Make est un
   violet rosé `#d9a3ff`, pas le lilas.
+- Une carte de cas a pour titre ce qui a été construit, dit en clair
+  (`enClair` du cas), jamais un chiffre seul : « 0 ressaisie, ça veut rien
+  dire » (Lilian, 10 novembre 2026). Le client est en petit au-dessus.
 - Chaque outil a sa couleur (`src/data/outils.ts`) et sa propre pastille :
   jamais deux outils dans une même pastille (n8n orange, Make violet…).
 - La photo de Lilian garde ses couleurs : aucun filtre, aucune teinte.
