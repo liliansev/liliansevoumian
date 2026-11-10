@@ -1540,3 +1540,309 @@ html:not(:has(.carnet)) ::selection {
     outline-width: 2px;
   }
 }
+
+/* =========================================================================
+   « CITRON ET LILAS » SUR TOUT LE SITE — 10 novembre 2026.
+   L'accueil portait seul cette tenue ; Lilian demande de l'étendre aux
+   autres pages. Les jetons reprennent les valeurs de `robot/robot.css` :
+   noir chaud #0f0d0b, texte #f8f4ef, citron #ffd84d pour ce qui agit, lilas
+   #b9a6ff pour les repères et les surfaces douces, Roboto Flex, des formes
+   très arrondies. `.bloc-encre` redevient ce qu'il était au temps de « nuit
+   et pêche » : l'île claire, blanche, où l'encre est sombre. Ce bloc est
+   écrit en dernier pour l'emporter à spécificité égale.
+   ========================================================================= */
+
+:root {
+  --font-display: 'Roboto Flex Variable', 'Roboto Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Roboto Flex Variable', 'Roboto Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Comme avant, « mono » n'est plus une famille à part : les légendes sont en Roboto Flex. */
+  --font-mono: 'Roboto Flex Variable', 'Roboto Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Roboto Flex est plus étroite que Geist Mono : l'échelle remonte d'un cran. */
+  --text-display: clamp(2.5rem, 1.4rem + 4.4vw, 4.5rem);
+  --text-display-hero: clamp(2.75rem, 1.4rem + 5vw, 5rem);
+  --text-headline: clamp(1.875rem, 1.3rem + 2.2vw, 2.75rem);
+  --text-story: var(--text-headline);
+  --text-affiche: var(--text-headline);
+  --text-phrase: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+  --text-title-lg: 1.5rem;
+  --text-title: 1.25rem;
+  --text-body-large: 1.1875rem;
+  --text-body: 1.0625rem;
+  --text-body-sm: 0.9375rem;
+  --text-mono-label: 0.8125rem;
+  --text-mono-caption: 0.75rem;
+  --leading-display: 1.02;
+
+  --radius-xs: 10px;
+  --radius-sm: 14px;
+  --radius-md: 20px;
+  --radius-lg: 26px;
+  --radius-xl: 32px;
+  --radius-cta: 999px;
+  --radius-diagram: 20px;
+
+  --color-paper: #0f0d0b;
+  --color-surface-low: #1b1815;
+  --color-surface-high: #24201c;
+  --color-night: #17130f;
+  --color-night-soft: #4a4239;
+  --color-night-deep: #17130f;
+  --color-service-border: #332e29;
+  --color-ink: #f8f4ef;
+  --color-ink-mid: #d7cfc6;
+  --color-ink-low: #aaa198;
+  --color-ink-faint: #8f857a;
+  --color-divider: #332e29;
+  --color-grid-line: rgb(248 244 239 / 0.07);
+  --color-grid-line-active: rgb(248 244 239 / 0.32);
+  --color-border-strong: #6b6259;
+  --color-text-on-dark: #f8f4ef;
+  --color-text-on-dark-mid: #d7cfc6;
+  --color-text-on-dark-low: #aaa198;
+  --color-text-on-dark-faint: #8f857a;
+  --color-divider-dark: #332e29;
+  --color-surface-on-dark: #1b1815;
+  --color-peche: #ffd84d;
+  --color-peche-clair: #ffe680;
+  --color-accent: #ffd84d;
+  --color-accent-text: #ffd84d;
+  --color-accent-soft: #29243a;
+  --color-focus: #b9a6ff;
+  --color-error: #ff8073;
+  --color-success: #7fe0a3;
+}
+
+/* L'île claire : blanche, à l'encre, comme l'ouverture et le contact de
+   l'accueil. Le citron y reste une surface (1,4:1 en texte) : les liens y
+   sont à l'encre, soulignés. */
+.bloc-encre {
+  --color-paper: #ffffff;
+  --color-surface-low: #f5f0ea;
+  --color-surface-high: #ffffff;
+  --color-service-border: #e3dcd3;
+  --color-ink: #17130f;
+  --color-ink-mid: #4a4239;
+  --color-ink-low: #5f564c;
+  --color-ink-faint: #8f857a;
+  --color-divider: #e3dcd3;
+  --color-grid-line: rgb(23 19 15 / 0.07);
+  --color-grid-line-active: rgb(23 19 15 / 0.3);
+  --color-border-strong: #17130f;
+  --color-accent-text: #17130f;
+  --color-accent-soft: #e9e3ff;
+  --color-focus: #17130f;
+  --color-error: #b3261e;
+  --color-success: #0c7a3c;
+  --papier: #ffffff;
+  --blanc: #f5f0ea;
+  --encre: #17130f;
+  --encre-doux: #5f564c;
+  --encre-filet: #e3dcd3;
+  --encre-pointille: #8f857a;
+  --violet: #17130f;
+  --bleu-fonce: #4a4239;
+  --menthe-texte: #5b3fd6;
+  --lilas: #e9e3ff;
+  --jaune: #fff1b8;
+  --bleu: #e9e3ff;
+  --menthe: #f5f0ea;
+  --rose: #f5f0ea;
+  --vert: #0c7a3c;
+  --rouge: #b3261e;
+}
+
+.tenue-carnet :is(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'wdth' 100;
+}
+html .tenue-carnet h1 { font-size: clamp(2.5rem, 1.4rem + 4.4vw, 4.5rem); line-height: 1; font-weight: 850; letter-spacing: -0.035em; }
+html .tenue-carnet h2 { font-size: clamp(1.875rem, 1.3rem + 2.2vw, 2.75rem); line-height: 1.05; letter-spacing: -0.03em; }
+.tenue-carnet :is(h3, h4) { line-height: 1.2; letter-spacing: -0.02em; }
+
+html:not(:has(.carnet)) ::selection, html ::selection { background: #ffd84d; color: #17130f; }
+
+/* Le bouton d'appel : la pilule citron cerclée d'encre de l'accueil. */
+.tenue-carnet .btn-primary {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 2px solid #17130f;
+  border-radius: 999px;
+  background: #ffd84d;
+  color: #17130f;
+  font: 700 0.9375rem / 1 var(--font-display);
+  letter-spacing: 0;
+  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1), background-color 0.2s;
+}
+.tenue-carnet .btn-primary:hover,
+.tenue-carnet .btn-primary:focus-visible {
+  border-color: #17130f;
+  background: #ffe680;
+  color: #17130f;
+  transform: translateY(-3px) rotate(-1.5deg);
+}
+.tenue-carnet .btn-primary:active { transform: scale(0.96); }
+
+.tenue-carnet .link-cta { font-size: 1rem; font-weight: 600; color: var(--color-accent-text); }
+.tenue-carnet .chip {
+  border: 1.5px solid var(--color-divider);
+  border-radius: 999px;
+  background: var(--color-surface-low);
+  color: var(--color-ink-mid);
+  font-size: 0.8125rem;
+}
+
+/* Le fragment mis en avant d'un titre : la vague lilas du nom, sur l'accueil. */
+.tenue-carnet mark {
+  background: none;
+  color: inherit;
+  text-decoration: underline wavy #b9a6ff;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.16em;
+}
+
+@media (any-hover: hover), (any-pointer: fine) {
+  :focus-visible { outline-width: 3px; }
+}
+
+/* La barre flotte : la page commence sous elle. */
+.tenue-carnet > main, .carnet > main { padding-top: 96px; }
+@media (prefers-reduced-motion: reduce) {
+  .tenue-carnet .btn-primary { transition: none; }
+  .tenue-carnet .btn-primary:hover { transform: none; }
+}
+
+/* La fin de page est une île claire, comme le contact de l'accueil : c'est
+   là qu'on écrit. Elle reprend les jetons de `.bloc-encre`. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) {
+  --color-paper: #ffffff;
+  --color-surface-low: #f5f0ea;
+  --color-surface-high: #ffffff;
+  --color-ink: #17130f;
+  --color-ink-mid: #4a4239;
+  --color-ink-low: #5f564c;
+  --color-ink-faint: #8f857a;
+  --color-divider: #e3dcd3;
+  --color-border-strong: #17130f;
+  --color-accent-text: #17130f;
+  --color-focus: #17130f;
+  --color-error: #b3261e;
+  --color-success: #0c7a3c;
+  --papier: #ffffff;
+  --blanc: #ffffff;
+  --encre: #17130f;
+  --encre-doux: #5f564c;
+  --encre-filet: #d9d1c6;
+  --encre-pointille: #8f857a;
+  --violet: #17130f;
+  --bleu-fonce: #4a4239;
+  --champ: #8f857a;
+  --vert: #0c7a3c;
+  --rouge: #b3261e;
+  border: 0;
+  border-radius: 32px;
+  background: #ffffff;
+  color: #17130f;
+  box-shadow: none;
+}
+.tenue-carnet .fin__centre .fin__titre { font-weight: 850; letter-spacing: -0.035em; line-height: 1.02; }
+.tenue-carnet .bloc-encre { border: 0; }
+
+/* Le blog : même tenue, une colonne de lecture en Roboto Flex. */
+html .carnet { font-size: 1.125rem; line-height: 1.7; }
+html .carnet :is(h1, h2, h3, h4) { font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; }
+html .carnet h1 { font-weight: 850; letter-spacing: -0.035em; line-height: 1.02; }
+
+/* Le formulaire de la fin de page : les champs et le bouton de l'accueil. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 52px; padding: 0 28px;
+  border: 2px solid #17130f; border-radius: 999px;
+  background: #ffd84d; color: #17130f;
+  font: 700 1rem / 1 var(--font-display); letter-spacing: 0; text-transform: none; box-shadow: none;
+  transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi:hover { background: #ffd84d; transform: translateY(-3px) rotate(-1.5deg); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(input, textarea) {
+  border: 2px solid #8f857a; border-radius: 16px; background: #ffffff; color: #17130f; font-size: 1rem; padding: 12px 16px;
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact textarea { border-radius: 20px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(input, textarea):focus { border-color: #17130f; outline: 3px solid #b9a6ff; outline-offset: 2px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact label { font-size: 0.875rem; font-weight: 600; color: #17130f; }
+@media (prefers-reduced-motion: reduce) {
+  html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi { transition: none; }
+  html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi:hover { transform: none; }
+}
+
+html .carnet .carnet__page { padding-top: 8.5rem; }
+html .carnet h1 { font-size: clamp(2.25rem, 1.5rem + 3vw, 3.25rem); }
+
+/* Le blog : titres à la taille de la tenue, code et inscription redessinés
+   (leurs valeurs en dur dataient du papier clair). */
+html .carnet .billet__titre, html .carnet .blog__titre { font-size: clamp(2.25rem, 1.5rem + 3vw, 3.25rem); line-height: 1.04; }
+html .carnet .billet__corps h2 { font-size: 1.625rem; line-height: 1.15; }
+html .carnet .billet__corps h2::before { width: 2.25rem; height: 4px; border-radius: 999px; background: #b9a6ff; }
+html .carnet .billet__corps h3 { font-size: 1.25rem; }
+html .carnet .blog__nom { font-size: 1.5rem; line-height: 1.15; }
+html .carnet .billet__corps code { background: #24201c; color: #f8f4ef; border-radius: 8px; }
+html .carnet .billet__corps pre { border: 1.5px solid #332e29; border-radius: 20px; background: #1b1815 !important; }
+html .carnet .billet__corps pre code { background: none; }
+html .carnet .inscription { padding: clamp(1.25rem, 3vw, 2rem); border: 0; border-radius: 26px; background: #e9e3ff; color: #17130f; --carnet-encre: #17130f; --carnet-gris: #4a4239; }
+html .carnet .inscription__titre { font-size: 1.375rem; font-weight: 800; color: #17130f; }
+html .carnet .inscription__champ { min-height: 52px; padding-inline: 16px; border: 2px solid #17130f; border-radius: 999px; }
+html .carnet .inscription__champ::placeholder { color: #6b625a; }
+html .carnet .inscription__bouton {
+  min-height: 52px; padding-inline: 24px; border: 2px solid #17130f; border-radius: 999px;
+  background: #ffd84d; color: #17130f; font-weight: 700;
+}
+html .carnet .inscription__bouton:hover { background: #ffe680; }
+html .carnet .inscription__statut { color: #4a4239; }
+html .carnet :is(.billet__titre, .blog__titre) { font-weight: 850; letter-spacing: -0.035em; }
+
+/* Passe critique du 10 novembre 2026 (site entier). */
+
+/* Une scène reste sombre même dans une île claire : ses jetons aussi. */
+site-scene, .control-diagram {
+  --color-accent-text: #ffd84d;
+  --color-ink-faint: #8f857a;
+  --color-ink: #f8f4ef;
+  --color-ink-mid: #d7cfc6;
+  --color-ink-low: #aaa198;
+  --color-divider: #332e29;
+}
+
+/* Un outil, une pastille de sa couleur, comme sur l'accueil. */
+.tenue-carnet .chip.chip--outil {
+  border: 0;
+  background: var(--o, #e8e2da);
+  color: #17130f;
+  font: 500 0.8125rem / 1 'Roboto Mono', ui-monospace, monospace;
+  padding: 7px 11px;
+}
+
+/* Les pointillés du carnet deviennent des filets pleins. */
+html .tenue-carnet :is(details.question, .questions__liste, .process-item, ul.formes > li) { border-style: solid; border-color: #332e29; }
+html .tenue-carnet .bloc-encre :is(details.question, .questions__liste, .process-item, ul.formes > li) { border-color: #e3dcd3; }
+
+/* Le surlignage des avis : citron, texte à l'encre, comme sur l'accueil. */
+.tenue-carnet .surligne {
+  padding: 0.05em 0.3em;
+  border-radius: 0.4em;
+  background: #ffd84d;
+  color: #17130f;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.tenue-carnet mark { text-decoration-skip-ink: none; }
+
+/* Sur lilas pâle, l'anneau du champ est à l'encre. */
+html .carnet .inscription__champ:focus-visible { outline: 3px solid #17130f; outline-offset: 2px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(.contact__note, .contact__facultatif) { font-size: 0.875rem; color: #5f564c; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact ::placeholder { color: #6b625a; opacity: 1; }
+
+/* Le robot accueille sur la page introuvable. */
+.perdu__bot { --robot-trait: #f8f4ef; margin-bottom: 1.25rem; }
+.perdu__bot .robot { display: block; width: 88px; height: 88px; }

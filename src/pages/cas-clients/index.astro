@@ -7,6 +7,7 @@ import FinDePage from '../../components/fin-de-page.astro';
 import { Icon } from 'astro-icon/components';
 import { espaces } from '../../lib/espaces';
 import { getCollection } from 'astro:content';
+import { couleurOutil } from '../../data/outils';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
@@ -146,7 +147,7 @@ const debut =
                   <div class="cas__pied">
                     {cs.tools.length > 0 && (
                       <ul class="cas__outils" role="list" aria-label="Outils">
-                        {cs.tools.map((tool) => <li class="chip">{tool}</li>)}
+                        {cs.tools.map((tool) => <li class="chip chip--outil" style={`--o:${couleurOutil(tool)}`}>{tool}</li>)}
                       </ul>
                     )}
                     <span class="link-cta" aria-hidden="true">

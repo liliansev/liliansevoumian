@@ -19,7 +19,7 @@ pnpm preview    # Preview production build locally
 - **Framework**: Astro 5.x with static output
 - **Styling**: Tailwind CSS v4 (via @tailwindcss/vite)
 - **Icons**: astro-icon with Lucide and Simple Icons
-- **Fonts**: Geist Mono Variable everywhere since 3 November 2026 (`@fontsource-variable/geist-mono`, imported and preloaded by `layouts/Layout.astro` for every page, the blog included). Bricolage Grotesque and Gochi Hand stay in `package.json` but no page loads them; `@fontsource/jetbrains-mono` stays only for `scripts/og-carnet` (the share image)
+- **Fonts**: Roboto Flex Variable everywhere since 10 November 2026 (`@fontsource-variable/roboto-flex`, imported and preloaded by `layouts/Layout.astro` for every page, the blog included), Roboto Mono 500 for the tool pills only. Geist Mono, Bricolage Grotesque and Gochi Hand stay in `package.json` but no page loads them; `@fontsource/jetbrains-mono` stays only for `scripts/og-carnet` (the share image)
 - **pnpm**: the lockfile and the Dockerfile are pnpm 10.26.2; with an older global pnpm, run `npx -y pnpm@10.26.2 <command>`
 - **Language**: French (fr)
 - **QA**: agent-browser (headless). Playwright est INTERDIT sur ce projet : désinstallé, ne pas réinstaller, ne pas créer de fichier .spec.ts.
@@ -30,8 +30,8 @@ pnpm preview    # Preview production build locally
 src/
 ├── components/
 │   │   # — communs à toutes les pages —
-│   ├── Navigation.astro       # la barre, la même partout : nom, liens, un seul bouton « Parlons de votre projet », menu mobile
-│   ├── Footer.astro
+│   ├── Navigation.astro       # la barre, la même partout : rend `robot/barre.astro` (pilule blanche flottante) avec les liens de la page et un seul bouton « Parlons de votre projet »
+│   ├── Footer.astro           # rend `robot/pied.astro` (« À très vite. »)
 │   ├── BoutonReservation.astro # le bouton d'appel : mène au formulaire de contact (goal contact_opened) ; `direct` pour l'agenda
 │   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian
 │   ├── tete-de-page.astro     # en-tête d'une page intérieure : retour, h1, chapô, bouton, preuves
@@ -159,13 +159,24 @@ api/
 `DESIGN.md` is the source of truth; tokens live in the `@theme` block of
 `src/styles/global.css`.
 
-Since 10 November 2026 the home page alone wears « Citron et lilas »
-(DESIGN.md, *L'accueil « Citron et lilas »*): warm black `#0f0d0b`, a white
-hero and contact, lemon `#ffd84d` for actions, lilac `#b9a6ff` for soft
-surfaces, one coloured pill per tool (`data/outils.ts`), Roboto Flex, big
-radii, a blinking robot mascot; Lilian's photo is never tinted, and the page
-never explains how it works. It lives in `components/robot/` under
-`.tenue-robot` and passes `carnet={false}` to Layout.
+Since 10 November 2026 the whole site wears « Citron et lilas » (DESIGN.md,
+*L'accueil « Citron et lilas »* and *« Citron et lilas » sur tout le site*,
+which are authoritative): warm black `#0f0d0b`, white islands, lemon
+`#ffd84d` for actions, lilac `#b9a6ff` for soft surfaces and marks, one
+coloured pill per tool (`data/outils.ts`), Roboto Flex, big radii, a blinking
+robot mascot; Lilian's photo is never tinted, and the page never explains how
+it works. The home lives in `components/robot/` under `.tenue-robot` and
+passes `carnet={false}` to Layout. Every other page gets the same look
+through a token swap: the carnet and `@theme` token names are kept
+(`--violet` and `--color-peche` are the lemon…) and the last block of
+`carnet.css` and of `global.css` (« CITRON ET LILAS SUR TOUT LE SITE ») carry
+the values and redraw the objects; `Navigation` and `Footer` render
+`robot/barre.astro` and `robot/pied.astro`. `.bloc-encre`, the closing
+contact panel (`.fin__centre`) and the `/contact` sheet are white islands
+with ink text; lemon is never text on white. Never infer a colour from a
+token name. Everything below (« Entre les deux », « Nuit et menthe », « Le
+carnet », « nuit et pêche ») is history: structural rules still hold, colours
+and type do not.
 
 Since 3 November 2026 every other page, the blog included, wears « Entre les
 deux » (DESIGN.md, *Entre les deux*, which is authoritative): paper
