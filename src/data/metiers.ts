@@ -6,7 +6,9 @@
  * `home-services.astro`.
  *
  * Rien n'est affirmé qui ne soit dans PRODUCT.md ; les prix viennent de
- * `data/service-pricing`.
+ * `data/service-pricing`. `outils` : les outils montrés en pastilles sur
+ * l'accueil (« Citron et lilas »), tous attestés par les cas clients ou les
+ * pages d'offre ; leur couleur est dans `data/outils.ts`.
  */
 import { automationStartingPrice } from './service-pricing';
 
@@ -23,6 +25,7 @@ export const metiers = [
        écrits ici, aucun ne vient d'une saisie. */
     texte:
       'Commandes, factures, relances, rapports\u00a0: je les automatise avec <a href="/expert-make">Make</a> et <a href="/expert-n8n">n8n</a>.',
+    outils: ['Make', 'n8n'],
     note: prixMetier(automationStartingPrice),
     lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_metier_automation' },
   },
@@ -35,6 +38,7 @@ export const metiers = [
       'Il lit vos documents et vos outils, répond sources à l’appui, et un humain garde la main.',
     /* L'offre « Automatisation et agents IA » n'a qu'un prix d'entrée : il
        s'affiche sur ses deux blocs, comme sur la ligne de fin de page. */
+    outils: ['Claude', 'Mistral'],
     note: prixMetier(automationStartingPrice),
     /* Le bouton sort vers l'agence ; le prix, lui, mène à l'offre du site,
        qui couvre automatisation et agents IA. */
@@ -53,6 +57,7 @@ export const metiers = [
     phrase: 'Vos chiffres d’un coup d’œil, et des outils taillés pour votre métier.',
     texte:
       'Dashboards, portails clients et applications internes, de la conception aux évolutions.',
+    outils: ['Glide', 'Notion', 'Airtable'],
     note: 'Sur devis',
     lien: { href: '/outils-metiers', label: 'Voir les outils métiers', goal: 'service_path_opened', source: 'home_metier_web' },
   },
@@ -63,6 +68,7 @@ export const metiers = [
     phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
     texte:
       'Make, n8n et l’IA, appris sur vos propres cas, en ligne ou avec vos équipes.',
+    outils: ['Make', 'n8n', 'IA'],
     lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
   },
 ] as const;

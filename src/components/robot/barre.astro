@@ -1,0 +1,47 @@
+---
+/*
+ * La barre de l'accueil « Citron et lilas » : une pilule blanche cerclée
+ * d'encre qui flotte en haut de l'écran et se resserre dès qu'on défile.
+ * Le robot et « lilian » à gauche, les sections, puis le seul bouton
+ * d'appel, « Parlons de votre projet » (`BoutonReservation`). Sous 900 px,
+ * les liens passent dans un menu en `dialog`.
+ */
+import BoutonReservation from '../BoutonReservation.astro';
+import Robot from './robot.astro';
+
+const liens = [
+  { href: '#services', label: 'Ce que je fais' },
+  { href: '#projets', label: 'Projets' },
+  { href: '#avis', label: 'Avis' },
+  { href: '/blog', label: 'Blog' },
+  { href: '#ecrire', label: 'Contact' },
+];
+---
+<header class="r-barre" data-r-barre>
+  <div class="r-barre__in">
+    <a class="r-barre__logo" href="#main-content" aria-label="Lilian Sevoumian, haut de page"><Robot /><span aria-hidden="true">lilian</span></a>
+    <nav class="r-barre__liens" aria-label="Sections">
+      {liens.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <BoutonReservation source="home_nav" class="r-btn r-btn--cta r-barre__cta">Parlons de votre projet</BoutonReservation>
+    <button class="r-btn r-btn--cta r-barre__menu" type="button" aria-haspopup="dialog" aria-controls="r-menu" data-r-menu-ouvrir>Menu</button>
+  </div>
+</header>
+<dialog class="r-menu tenue-robot" id="r-menu" aria-label="Menu">
+  <div class="r-menu__haut">
+    <span class="r-barre__logo" aria-hidden="true"><Robot /><span>lilian</span></span>
+    <button class="r-btn r-btn--trait" type="button" data-r-menu-fermer>Fermer</button>
+  </div>
+  {liens.map((l) => <a class="r-menu__lien" href={l.href}>{l.label}</a>)}
+  <BoutonReservation source="home_menu" class="r-btn r-btn--cta r-menu__cta">Parlons de votre projet</BoutonReservation>
+</dialog>
+<script>
+  const barre = document.querySelector<HTMLElement>('[data-r-barre]');
+  const surDefile = () => barre?.classList.toggle('est-defile', window.scrollY > 40);
+  window.addEventListener('scroll', surDefile, { passive: true });
+  surDefile();
+  const menu = document.getElementById('r-menu') as HTMLDialogElement | null;
+  document.querySelector('[data-r-menu-ouvrir]')?.addEventListener('click', () => menu?.showModal());
+  document.querySelector('[data-r-menu-fermer]')?.addEventListener('click', () => menu?.close());
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+</script>

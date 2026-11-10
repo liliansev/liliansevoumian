@@ -1,33 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Entete from '../components/sobre/entete.astro';
-import Ouverture from '../components/sobre/ouverture.astro';
-import Services from '../components/sobre/services.astro';
-import Clients from '../components/sobre/clients.astro';
-import Projets from '../components/sobre/projets.astro';
-import Terrain from '../components/sobre/terrain.astro';
-import Avis from '../components/sobre/avis.astro';
-import Contact from '../components/sobre/contact.astro';
-import Pied from '../components/sobre/pied.astro';
-import '../components/sobre/sobre.css';
+import Barre from '../components/robot/barre.astro';
+import Ouverture from '../components/robot/ouverture.astro';
+import Metiers from '../components/robot/metiers.astro';
+import Clients from '../components/robot/clients.astro';
+import Projets from '../components/robot/projets.astro';
+import Avis from '../components/robot/avis.astro';
+import Contact from '../components/robot/contact.astro';
+import Pied from '../components/robot/pied.astro';
+import '@fontsource-variable/roboto-flex/wdth.css';
+import '@fontsource/roboto-mono/500.css';
+import robotoFlexLatin from '@fontsource-variable/roboto-flex/files/roboto-flex-latin-wdth-normal.woff2?url';
+import '../components/robot/robot.css';
 import { resume, resumeCourt } from '../data/parcours';
 
-/* L'accueil est « Entre les deux » depuis le 3 novembre 2026, choisi par
-   Lilian parmi six directions : « super simple, super sobre, avec des typo
-   un peu robot ». Le croisement d'une page de manuel claire et d'un
-   afficheur : papier gris très clair, encre presque noire, Geist Mono
-   partout, un seul bleu pour ce qui se clique. Une colonne de 900 px.
-
-   C'est une page de marque : qui il est, ce qu'il fait, pour qui, des
-   photos de terrain, ce qu'on en dit, et un formulaire pour lui écrire. Ni
-   prix ni chiffres de prestation. Le premier geste est de s'abonner sur
-   YouTube ; le seul appel est « Parlons de votre projet » (l'en-tête), qui
-   mène au formulaire du bas (`sobre/contact.astro`). La grammaire est dans
-   `components/sobre/sobre.css` ; le détail des choix dans DESIGN.md.
-
-   Les accueils d'avant (« Le carnet », 27 octobre ; « Le documentaire »,
-   14 octobre) restent dans `components/carnet/` et
-   `components/documentaire/`, sans être rendus. */
+// L'accueil est « Citron et lilas » depuis le 10 novembre 2026, choisi par
+// Lilian parmi quatre déclinaisons du « Petit robot » (fond noir, jaune ou
+// orange, Roboto, mignon et tech mais sérieux). Fond noir chaud, une
+// ouverture et un contact sur blanc, Roboto Flex, un petit robot qui cligne
+// des yeux et les suit à la souris. Citron pour les gestes, lilas pour les
+// surfaces, une couleur par outil. La page ne dit jamais comment elle marche.
+//
+// C'est une page de marque : qui il est, ce qu'il fait, pour qui, ce qu'on
+// en dit, un formulaire pour lui écrire. Ni prix ni chiffres de prestation.
+// Premier geste : s'abonner sur YouTube ; seul appel : « Parlons de votre
+// projet », qui mène au formulaire du bas. Grammaire dans
+// `components/robot/robot.css`, détail dans DESIGN.md. Les autres pages
+// gardent « Entre les deux » ; l'accueil d'avant reste dans `components/sobre/`.
 
 /* La page d'accueil est la page de profil de Lilian : c'est elle qu'un moteur
    doit rattacher à l'entité `Person` déclarée par Layout.astro. */
@@ -49,29 +48,73 @@ const pageSchema = {
   ogImage="/og-carnet.png"
   ogImageAlt="Lilian Sevoumian, expert en automatisations et agents IA"
   pageSchema={pageSchema}
+  themeColor="#0f0d0b"
+  policePrechargee={robotoFlexLatin}
+  carnet={false}
 >
-  <div class="carnet-ui">
-    <Entete
-      liens={[
-        { href: '#services', label: 'services' },
-        { href: '#projets', label: 'projets' },
-        { href: '#avis', label: 'avis' },
-        { href: '/blog', label: 'blog' },
-        { href: '#ecrire', label: 'contact' },
-      ]}
-      source="home_nav"
-      sourceMenu="home_menu"
-      marqueHref="#main-content"
-    />
-    <main id="main-content" tabindex="-1" class="accueil">
+  <div class="tenue-robot">
+    <Barre />
+    <main id="main-content" tabindex="-1">
       <Ouverture />
-      <Services />
+      <Metiers />
       <Clients />
       <Projets />
-      <Terrain />
       <Avis />
       <Contact />
     </main>
-    <Pied surAccueil source="home_pied" />
+    <Pied />
   </div>
 </Layout>
+
+<script>
+  // Les onglets des métiers : un clic, ou les flèches du clavier.
+  document.querySelectorAll<HTMLElement>('[data-r-onglets]').forEach((bloc) => {
+    const onglets = [...bloc.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const choisit = (choisi: HTMLButtonElement, focus = false) => {
+      onglets.forEach((o) => {
+        const actif = o === choisi;
+        o.setAttribute('aria-selected', String(actif));
+        o.tabIndex = actif ? 0 : -1;
+        const panneau = document.getElementById(o.getAttribute('aria-controls') ?? '');
+        if (panneau) panneau.hidden = !actif;
+      });
+      if (focus) choisi.focus();
+    };
+    onglets.forEach((o, i) => {
+      o.addEventListener('click', () => choisit(o));
+      o.addEventListener('keydown', (e) => {
+        const pas = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+        if (pas === undefined) return;
+        e.preventDefault();
+        choisit(onglets[(i + pas + onglets.length) % onglets.length], true);
+      });
+    });
+  });
+
+  // Les yeux des robots visibles suivent la souris (pas sur un écran tactile,
+  // ni quand le visiteur demande moins de mouvement).
+  const calme = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const souris = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!calme && souris) {
+    let cadre = 0;
+    let dernier: PointerEvent | null = null;
+    document.addEventListener('pointermove', (e) => {
+      dernier = e;
+      if (cadre) return;
+      cadre = requestAnimationFrame(() => {
+        cadre = 0;
+        if (!dernier) return;
+        document.querySelectorAll<SVGElement>('.tenue-robot .robot').forEach((r) => {
+          const b = r.getBoundingClientRect();
+          if (b.bottom < 0 || b.top > innerHeight || !b.width) return;
+          const dx = dernier!.clientX - (b.left + b.width / 2);
+          const dy = dernier!.clientY - (b.top + b.height / 2);
+          const l = Math.hypot(dx, dy) || 1;
+          const f = Math.min(1, l / 240) * 3.2;
+          const yeux = r.querySelector<SVGGElement>('.robot__yeux');
+          if (yeux) yeux.style.translate = `${((dx / l) * f).toFixed(2)}px ${((dy / l) * f).toFixed(2)}px`;
+        });
+      });
+    }, { passive: true });
+  }
+</script>

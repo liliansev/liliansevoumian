@@ -43,7 +43,15 @@ src/
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
 │   ├── LinkCTA.astro          # lien secondaire fléché
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
-│   │   # — la tenue « Entre les deux » (3 novembre 2026), l'actuelle —
+│   ├── robot/                 # l'accueil « Citron et lilas » (10 novembre 2026), le seul rendu sur `/`
+│   │   ├── robot.css          # la grammaire, rangée sous `.tenue-robot` : noir chaud, citron (gestes), lilas (surfaces), Roboto Flex
+│   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro)
+│   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
+│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog`
+│   │   ├── ouverture.astro    # le nom, « S’abonner sur YouTube », le portrait non retouché, quatre chiffres
+│   │   ├── metiers.astro      # les 4 métiers en onglets
+│   │   ├── clients.astro · projets.astro · avis.astro · contact.astro · pied.astro
+│   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
 │   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section
 │   │   ├── entete.astro       # la barre collante de toutes les pages (rendue par Navigation) : logo « ls » à curseur, liens, « Parlons de votre projet », menu en `dialog` ; se détache en barre flottante au défilement
@@ -151,13 +159,21 @@ api/
 `DESIGN.md` is the source of truth; tokens live in the `@theme` block of
 `src/styles/global.css`.
 
-Since 3 November 2026 every page, the blog included, wears « Entre les
+Since 10 November 2026 the home page alone wears « Citron et lilas »
+(DESIGN.md, *L'accueil « Citron et lilas »*): warm black `#0f0d0b`, a white
+hero and contact, lemon `#ffd84d` for actions, lilac `#b9a6ff` for soft
+surfaces, one coloured pill per tool (`data/outils.ts`), Roboto Flex, big
+radii, a blinking robot mascot; Lilian's photo is never tinted, and the page
+never explains how it works. It lives in `components/robot/` under
+`.tenue-robot` and passes `carnet={false}` to Layout.
+
+Since 3 November 2026 every other page, the blog included, wears « Entre les
 deux » (DESIGN.md, *Entre les deux*, which is authoritative): paper
 `#f6f6f3`, white panels, ink `#17171a`, grey `#6c6d69`, 1px rules `#dededa`,
 one cobalt `#2b44f0` reserved for actions (links, YouTube and form buttons,
 focus, the logo cursor, call-button hover), Geist Mono Variable only, type
 scale 12/14/16/20/24/32/48 (18 for a chapô), radii 4 to 8 px, no shadows,
-rectangular 44 px buttons. The home page is `components/sobre/`; `Navigation`
+rectangular 44 px buttons. The home page was `components/sobre/` until 10 November 2026; `Navigation`
 and `Footer` render `sobre/entete.astro` (sticky, turns into a floating bar
 after 60 px of scroll) and `sobre/pied.astro`. It is a token swap: the
 carnet and `@theme` token names are kept (`--violet` is the cobalt,
