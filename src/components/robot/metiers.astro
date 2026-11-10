@@ -2,8 +2,8 @@
 /*
  * « Ce que je fais » : les quatre métiers (`data/metiers.ts`) en onglets. À
  * gauche la liste, l'onglet choisi en citron ; à droite le grand panneau du
- * métier, son icône sur lilas, sa phrase, son texte, ses outils (une
- * pastille par outil) et le robot qui dépasse du bas. Les flèches du clavier
+ * métier, sur lilas, son icône, sa phrase, son texte, ses outils (une
+ * pastille par outil), le lien vers son offre et le robot qui dépasse du bas. Les flèches du clavier
  * passent d'un onglet à l'autre. Sans script, le premier panneau reste lisible.
  */
 import { metiers } from '../../data/metiers';
@@ -38,6 +38,7 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
             <p class="r-pan__phrase">{m.phrase}</p>
             <p class="r-pan__texte">{texteSeul(m.texte)}</p>
             <Outils outils={m.outils} />
+            <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <span class="sr-only"> (nouvel onglet)</span>}</a>
             <Robot class="r-pan__bot" />
           </div>
         ))}

@@ -494,9 +494,19 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   `#332e29`, texte `#f8f4ef`, gris `#aaa198`.
 - Deux sections blanches seulement : l'ouverture (arrondie en bas) et le
   contact (une île arrondie).
-- Citron `#ffd84d` pour les gestes : boutons, onglet choisi, surlignage des
-  avis, tête du robot. Lilas `#b9a6ff` pour les surfaces douces : icône du
-  métier, chiffre des cas, survol des cartes, vague sous le nom, focus.
+- Citron `#ffd84d` pour les gestes : boutons, onglet choisi, flèche des cas,
+  surlignage des avis, tête du robot. Lilas `#b9a6ff` pour les surfaces
+  douces : le grand panneau du métier choisi (texte à l'encre), chiffre des
+  cas, survol des cartes, vague sous le nom. Les quatre chiffres de
+  l'ouverture alternent citron pâle `#fff1b8` et lilas pâle `#e9e3ff`.
+- Passe critique, couleur et finitions du 10 novembre 2026 : l'anneau de
+  focus est à l'encre sur blanc (le lilas n'y fait que 2,1:1), lilas sur
+  noir ; les champs du formulaire ont un bord `#8f857a` (3:1) et une erreur
+  qui se voit (rouge `#b3261e`, fond `#fff4f2`) ; chaque panneau de métier
+  mène à son offre (`lien` de `data/metiers.ts`) ; sur noir le robot est
+  cerné de clair (`--robot-trait`) ; sélection de texte en citron. Les
+  pastilles d'outils évitent les deux couleurs de la page : Make est un
+  violet rosé `#d9a3ff`, pas le lilas.
 - Chaque outil a sa couleur (`src/data/outils.ts`) et sa propre pastille :
   jamais deux outils dans une même pastille (n8n orange, Make violet…).
 - La photo de Lilian garde ses couleurs : aucun filtre, aucune teinte.

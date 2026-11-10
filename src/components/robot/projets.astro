@@ -23,7 +23,7 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
             {chiffre ? (
               <p class="r-carte-cas__k"><strong>{chiffre.value}</strong><span>{chiffre.label}</span></p>
             ) : (
-              <p class="r-carte-cas__k"><strong>{data.tags[0] ?? 'Projet'}</strong><span>{data.secteur}</span></p>
+              <p class="r-carte-cas__k r-carte-cas__k--mot"><strong>{data.tags[0] ?? 'Projet'}</strong><span>{data.secteur}</span></p>
             )}
             <h3><a href={`/cas-clients/${id}`}>{data.client ?? data.title}</a></h3>
             <p class="r-carte-cas__texte">{data.accroche ?? data.description}</p>
