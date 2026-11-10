@@ -480,6 +480,39 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
   visuels, jamais dans le chrome du site.
 
+## L'accueil « Citron et lilas » (10 novembre 2026)
+
+L'accueil seul change de tenue ; toutes les autres pages gardent « Entre les
+deux » (chapitre suivant). Lilian voulait un fond noir, du jaune ou de
+l'orange, sans lueur, en Roboto, « mignon, tech, geek mais sérieux ». Parmi
+trois directions il a choisi « Petit robot », puis, parce qu'il le trouvait
+trop orange et trop monochrome, la déclinaison « Citron et lilas ». Composants
+dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
+`.tenue-robot` (la page passe `carnet={false}` à Layout).
+
+- Fond noir chaud `#0f0d0b`, surfaces `#1b1815` et `#24201c`, traits
+  `#332e29`, texte `#f8f4ef`, gris `#aaa198`.
+- Deux sections blanches seulement : l'ouverture (arrondie en bas) et le
+  contact (une île arrondie).
+- Citron `#ffd84d` pour les gestes : boutons, onglet choisi, surlignage des
+  avis, tête du robot. Lilas `#b9a6ff` pour les surfaces douces : icône du
+  métier, chiffre des cas, survol des cartes, vague sous le nom, focus.
+- Chaque outil a sa couleur (`src/data/outils.ts`) et sa propre pastille :
+  jamais deux outils dans une même pastille (n8n orange, Make violet…).
+- La photo de Lilian garde ses couleurs : aucun filtre, aucune teinte.
+- Roboto Flex partout (l'axe de largeur s'anime sur le nom à l'arrivée et au
+  survol), Roboto Mono 500 pour les pastilles d'outils seulement.
+- Formes très arrondies, boutons en pilules cerclées d'encre qui rebondissent
+  au survol ; barre de navigation en pilule blanche flottante qui se resserre
+  au défilement ; largeur maximale 1240 px.
+- Le petit robot : il cligne des yeux, salue à l'arrivée, ses yeux suivent la
+  souris (pas au doigt, pas en mouvement réduit). Décoratif, `aria-hidden`.
+- La page n'explique jamais comment elle marche (Lilian, 10 novembre 2026) :
+  pas de « survolez », « le robot vous suit des yeux », etc.
+- Sections : ouverture et quatre chiffres, métiers en onglets, clients en
+  tuiles, projets clients en cartes, avis en bulles, contact, pied « À très
+  vite. ». Ni prix ni chiffres de prestation.
+
 ## Entre les deux (3 novembre 2026) : la tenue actuelle
 
 **Ce chapitre fait foi.** Le 3 novembre 2026, Lilian demande une refonte
