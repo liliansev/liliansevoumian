@@ -28,7 +28,7 @@ J’ai passé une heure à construire un serveur MCP qui relie Pennylane à Clau
 
 Quand un logiciel ne me convient pas, je le construis. Pour mon CRM personnel par exemple, j’ai fait le tour du marché (Notion, Attio, Folk, Pipedrive, HubSpot, Twenty) : chacun était trop cher, trop lourd ou trop limité pour un indépendant.
 
-Avec Claude Code, je construis ce genre d’outil interne moi-même, **exactement à ma mesure**. J’utilise la même méthode pour mes clients, avec [agenceafk](https://agenceafk.fr) : des dashboards et des outils métiers sur mesure, branchés sur les logiciels qu’ils utilisent déjà.
+Avec Claude Code, je construis ce genre d’outil interne moi-même, **exactement à ma mesure**. J’utilise la même méthode pour mes clients : des dashboards et des outils métiers sur mesure, branchés sur les logiciels qu’ils utilisent déjà.
 
 ## Mon agent personnel demande de la configuration
 

@@ -665,14 +665,22 @@ le bouton (à toutes les largeurs).**
   (`src/components/metiers/`, moteur `lib/metiers/scene.ts`), jouée une fois
   quand elle arrive à l'écran, sans lueurs, sur le noir chaud, en Roboto
   Flex. Chaque scène a la forme de son sujet : l'automatisation est un
-  scénario (une réservation, un paiement, un message, l'agenda), l'agent une
-  question, ses sources et sa réponse à valider, les outils métiers une
+  scénario (une réservation, un paiement, un message, l'agenda), **l'agent
+  IA un téléphone** (`scene-appels.astro` : une cliente appelle, l'agent
+  décroche, l'échange se dit en bulles, le rendez-vous est déplacé ; puis un
+  message au support client et sa réponse ; « votre compte rendu » inscrit
+  les deux demandes), les outils métiers une
   application et son dashboard, **les formations un atelier**
   (`scene-cours.astro`) : la diapositive du module et ses trois points,
   Lilian en vignette (une vraie photo de lui en formation, ni teintée ni
   retouchée), « À vous : exercice 1 », le programme qui se coche et l'équipe
   qui avance jusqu'à « Autonome ». Une scène qui ressemble à un scénario
-  alors que son sujet n'en est pas un est à refaire.
+  alors que son sujet n'en est pas un est à refaire. Les agents IA se disent
+  comme Lilian les dit (10 novembre 2026) : support client, agent vocal,
+  « un agent qui prend les appels à ta place, qui répond aux clients à ta
+  place » ; jamais « l'agent prend la main », ni un texte tourné autour de la
+  main gardée par un humain. Pastilles : Make et n8n pour l'automatisation,
+  Claude Code et Codex pour les dashboards et outils métiers.
 - **Les clients, un défilé, puis les chiffres** : les logos passent sur une
   ligne entre deux filets, bords fondus, 70 s par tour ; il s'arrête au
   survol et par son bouton pause. En mouvement réduit il n'y a pas de défilé,

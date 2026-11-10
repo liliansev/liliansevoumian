@@ -30,34 +30,39 @@ export const metiers = [
     lien: { href: '/automatisations-ia', label: 'Voir l’offre automatisation', goal: 'service_path_opened', source: 'home_metier_automation' },
   },
   {
+    /* Lilian, 10 novembre 2026 : ne plus dire que l'agent « prend la main »
+       ni qu'un humain la garde ; un agent IA, ici, c'est du support client et
+       de l'agent vocal, « un agent qui prend les appels à ta place, qui répond
+       aux clients à ta place ». Le même jour l'agence (agenceafk) passe en
+       retrait : le bouton du bloc mène à l'offre du site, plus à l'agence. */
     id: 'agents-ia',
     nom: 'Agents IA',
     onglet: 'Agents IA',
-    phrase: 'Un agent qui va chercher la réponse à votre place.',
+    phrase: 'Un agent qui répond à votre place.',
     texte:
-      'Il lit vos documents et vos outils, répond sources à l’appui, et un humain garde la main.',
+      'Support client, agent vocal\u00a0: il prend les appels et répond à vos clients.',
     /* L'offre « Automatisation et agents IA » n'a qu'un prix d'entrée : il
        s'affiche sur ses deux blocs, comme sur la ligne de fin de page. */
     outils: ['Claude', 'Mistral'],
     note: prixMetier(automationStartingPrice),
-    /* Le bouton sort vers l'agence ; le prix, lui, mène à l'offre du site,
-       qui couvre automatisation et agents IA. */
-    noteHref: '/automatisations-ia',
-    lien: { href: 'https://agenceafk.fr', label: 'Voir mon agence, agenceafk', externe: true, goal: 'outbound_agence', source: 'home_services' },
+    lien: { href: '/automatisations-ia', label: 'Voir l’offre agents IA', goal: 'service_path_opened', source: 'home_metier_agents' },
   },
   {
     /* Le troisième métier, depuis le 3 octobre 2026 : plus de sites web sur
        l'accueil. Ce qui est affirmé vient de /llms.txt (« dashboards, portails
        clients et applications métiers, sur un périmètre chiffré
        séparément ») ; le prix est donc « sur devis », choix de Lilian. Le lien
-       mène à `/outils-metiers`. La phrase est de moi : à lui de la valider. */
+       mène à `/outils-metiers`. La phrase est de moi : à lui de la valider.
+       Les outils : Claude Code et Codex (Lilian, 10 novembre 2026, « pour les
+       interfaces, les dashboards, tu peux mettre Claude Code, Codex »), ceux
+       avec lesquels il construit ces outils, comme le dit déjà /llms.txt. */
     id: 'dashboards',
     nom: 'Dashboards et outils métiers',
     onglet: 'Dashboards',
     phrase: 'Vos chiffres d’un coup d’œil, et des outils taillés pour votre métier.',
     texte:
       'Dashboards, portails clients et applications internes, de la conception aux évolutions.',
-    outils: ['Glide', 'Notion', 'Airtable'],
+    outils: ['Claude Code', 'Codex'],
     note: 'Sur devis',
     lien: { href: '/outils-metiers', label: 'Voir les outils métiers', goal: 'service_path_opened', source: 'home_metier_web' },
   },

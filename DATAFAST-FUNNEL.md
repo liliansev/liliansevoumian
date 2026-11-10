@@ -64,8 +64,9 @@ La prop `source` dit lequel a converti :
   bloc s'appelait « Sites web et dashboards » jusqu'au 3 octobre 2026, et son
   lien mène maintenant à `/outils-metiers` (l'offre sites web est retirée le
   28 octobre 2026) ;
-- `home_metier_agents` : le prix du bloc Agents IA, qui mène à
-  `/automatisations-ia` (le bouton du bloc, lui, sort vers agenceafk) ;
+- `home_metier_agents` : le lien d'offre du bloc Agents IA, qui mène à
+  `/automatisations-ia` (jusqu'au 10 novembre 2026 ce bouton sortait vers
+  agenceafk, et seul le prix du bloc portait cette source) ;
 - `home_services_automation`, `home_services_web` : la ligne de prix sous le
   bouton de fin de page (`home_services_web` : « Dashboards et outils métiers,
   sur devis », même remarque) ;
@@ -207,10 +208,12 @@ ouvre YouTube dans un nouvel onglet : il mesure la sortie, pas le visionnage.
 Sources : `offres`, `faq`, `home_services`, `footer`. Ce n'est pas une perte : c'est
 l'intention « apprendre soi-même » qui trouve sa route.
 
-### `outbound_agence` — sortie vers agenceafk.fr
-Sources : `home_services`, `footer`. Depuis octobre 2026 l'accueil présente ce que Lilian
-fait aujourd'hui, et l'agence est une de ses sorties : comme pour les
-formations, un clic ici est une orientation réussie, pas une fuite.
+### `outbound_agence` — sortie vers agenceafk.fr (plus émis)
+Sources : `home_services`, `footer`, jusqu'au 10 novembre 2026. Ce jour-là
+Lilian met l'agence en retrait (« arrête de mettre en avant Agence AFK pour
+l'instant ») : le site n'a plus aucun lien vers agenceafk.fr, et ce goal ne
+reçoit plus rien. Ses données passées restent dans le tableau de bord ; s'il
+revient, il reprend le même nom.
 
 ### La page de liens `/liens/` (depuis le 16 octobre 2026)
 Jusque-là, `/liens/` n'avait pas le script DataFast : ses visiteurs humains
@@ -252,7 +255,7 @@ dans la même session compte comme converti.
 | # | Étape | Type | Valeur |
 |---|-------|------|--------|
 | 1 | Visite accueil | Page visit | URL equals `/` |
-| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_metier_automation, home_metier_web, home_services_automation, home_services_web)* |
+| 2 | A choisi une expertise | Goal | `service_path_opened` *(filtrer `source` ∈ home_metier_automation, home_metier_agents, home_metier_web, home_services_automation, home_services_web)* |
 
 ### Funnel A2 — « Automatisation → Call » (funnel complet en 5 étapes)
 | # | Étape | Type | Valeur |

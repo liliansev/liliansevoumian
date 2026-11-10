@@ -132,19 +132,7 @@ const scenes = {
             >
               {metier.lien.label}
             </LinkCTA>
-            {avecPrix && 'note' in metier &&
-              ('noteHref' in metier ? (
-                <a
-                  class="metier__note"
-                  href={metier.noteHref}
-                  data-fast-goal="service_path_opened"
-                  data-fast-goal-source="home_metier_agents"
-                >
-                  {metier.note}
-                </a>
-              ) : (
-                <span class="metier__note">{metier.note}</span>
-              ))}
+            {avecPrix && 'note' in metier && <span class="metier__note">{metier.note}</span>}
           </div>
         </div>
 
