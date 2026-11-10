@@ -1805,6 +1805,9 @@ html .carnet :is(.billet__titre, .blog__titre) { font-weight: 850; letter-spacin
 
 /* Une scène reste sombre même dans une île claire : ses jetons aussi. */
 site-scene, .control-diagram {
+  --color-text-on-dark: #f8f4ef;
+  --color-text-on-dark-mid: #d7cfc6;
+  --color-night: #17130f;
   --color-accent-text: #ffd84d;
   --color-ink-faint: #8f857a;
   --color-ink: #f8f4ef;
@@ -1827,7 +1830,7 @@ html .tenue-carnet :is(details.question, .questions__liste, .process-item, ul.fo
 html .tenue-carnet .bloc-encre :is(details.question, .questions__liste, .process-item, ul.formes > li) { border-color: #e3dcd3; }
 
 /* Le surlignage des avis : citron, texte à l'encre, comme sur l'accueil. */
-.tenue-carnet .surligne {
+html .tenue-carnet .surligne {
   padding: 0.05em 0.3em;
   border-radius: 0.4em;
   background: #ffd84d;
@@ -1845,4 +1848,8 @@ html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact ::placehol
 
 /* Le robot accueille sur la page introuvable. */
 .perdu__bot { --robot-trait: #f8f4ef; margin-bottom: 1.25rem; }
-.perdu__bot .robot { display: block; width: 88px; height: 88px; }
+.tenue-robot.perdu__bot .robot { display: block; width: 88px; height: 88px; }
+
+/* L'anneau de focus ne dépend plus du type de pointeur : un clavier branché
+   sur une tablette le voit aussi. */
+.tenue-carnet :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }

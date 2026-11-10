@@ -109,7 +109,7 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
   transition: max-width 0.4s ease, height 0.3s ease;
 }
 .tenue-robot .r-barre.est-defile .r-barre__in { max-width: min(1000px, calc(var(--r-max) - 16px)); height: 54px; }
-.tenue-robot .r-barre__logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; color: var(--r-encre); font-weight: 800; font-size: 19px; font-variation-settings: 'wdth' 112; letter-spacing: -0.01em; }
+.tenue-robot .r-barre__logo { min-height: 44px; display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; color: var(--r-encre); font-weight: 800; font-size: 19px; font-variation-settings: 'wdth' 112; letter-spacing: -0.01em; }
 .tenue-robot .r-barre__logo .robot { width: 34px; height: 34px; }
 .tenue-robot .r-barre__liens { display: flex; gap: 4px; margin-left: auto; }
 .tenue-robot .r-barre__liens a { text-decoration: none; padding: 12px 12px; border-radius: 999px; font-weight: 600; font-size: 15px; line-height: 20px; transition: background-color 0.2s; }
@@ -224,7 +224,7 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-pan__phrase { font-size: 21px; font-weight: 600; max-width: 24em; }
 .tenue-robot .r-pan__texte { color: #2f2748; font-size: 16px; max-width: 30em; }
 .tenue-robot .r-pan .r-outils li { box-shadow: inset 0 0 0 1.5px var(--r-encre); }
-.tenue-robot .r-pan__lien { align-self: flex-start; margin-top: 14px; padding-right: 120px; text-decoration-color: var(--r-encre); }
+.tenue-robot .r-pan__lien { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; padding-right: 120px; text-decoration-color: var(--r-encre); }
 .tenue-robot .r-pan__bot { position: absolute; right: 30px; bottom: -16px; width: 104px; height: 104px; rotate: -8deg; transition: rotate 0.4s var(--r-ressort); }
 .tenue-robot .r-pan:hover .r-pan__bot { rotate: 4deg; }
 
@@ -386,3 +386,6 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 @media (prefers-reduced-motion: reduce) {
   .tenue-robot *, .tenue-robot *::before, .tenue-robot *::after, .r-menu.tenue-robot { animation: none !important; transition: none !important; }
 }
+
+/* Sur le panneau lilas, l'anneau de focus est à l'encre (le lilas y ferait 1:1). */
+.tenue-robot .r-pan :focus-visible { outline: 3px solid var(--r-encre); outline-offset: 3px; }
