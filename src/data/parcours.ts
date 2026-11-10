@@ -231,6 +231,8 @@ export const profils = {
   linkedin: 'https://www.linkedin.com/in/liliansevoumian/',
   github: 'https://github.com/liliansev',
   youtube: 'https://www.youtube.com/@lilian.sevoumian',
+  // La newsletter « Augmentés », sur Substack.
+  newsletter: 'https://newsletter.augmentes.fr',
 } as const;
 
 export const resumeCourt =

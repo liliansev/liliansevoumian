@@ -6,10 +6,6 @@
 
 web
 
-## Register
-
-brand
-
 ## Users
 
 Le site s'adresse d'abord à **quelqu'un qui vient de croiser Lilian ailleurs** et qui veut savoir à qui il a affaire. Il arrive après une vidéo YouTube, un post LinkedIn, un numéro de la newsletter, une formation, une recommandation, ou en tapant son nom dans un moteur de recherche ou un assistant IA.

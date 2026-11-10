@@ -25,10 +25,12 @@ const pages = [
 ---
 <footer class="r-pied">
   <div class="r-wrap">
-    <p class="r-pied__mot" aria-hidden="true">À très vite<span>.</span></p>
-    <div class="r-pied__liens">
-      <nav aria-label="Ailleurs"><h2>Ailleurs</h2><ul>{dehors.map((l) => <li><a href={l.href} target="_blank" rel="noopener noreferrer" data-fast-goal={l.goal} data-fast-goal-source={l.goal ? 'home_pied' : undefined}>{l.label}<span class="sr-only"> (nouvel onglet)</span></a></li>)}</ul></nav>
-      <nav aria-label="Sur le site"><h2>Sur le site</h2><ul>{pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul></nav>
+    <div class="r-pied__haut">
+      <p class="r-pied__mot" aria-hidden="true">À très vite<span>.</span></p>
+      <div class="r-pied__liens">
+        <nav aria-label="Ailleurs"><h2>Ailleurs</h2><ul>{dehors.map((l) => <li><a href={l.href} target="_blank" rel="noopener noreferrer" data-fast-goal={l.goal} data-fast-goal-source={l.goal ? 'home_pied' : undefined}>{l.label}<span class="sr-only"> (nouvel onglet)</span></a></li>)}</ul></nav>
+        <nav aria-label="Sur le site"><h2>Sur le site</h2><ul>{pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul></nav>
+      </div>
     </div>
     <p class="r-pied__bas"><Robot /><span>Lilian Sevoumian, freelance en automatisation et agents IA depuis 2020.</span></p>
   </div>

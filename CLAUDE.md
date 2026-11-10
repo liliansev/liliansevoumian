@@ -48,8 +48,8 @@ src/
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro)
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
 │   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog`
-│   │   ├── ouverture.astro    # le nom, « S’abonner sur YouTube », le portrait non retouché, quatre chiffres
-│   │   ├── metiers.astro      # les 4 métiers en onglets
+│   │   ├── ouverture.astro    # le nom, le portrait non retouché, « S’abonner à la newsletter » et « Me contacter » (après la photo sur téléphone), quatre chiffres
+│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite)
 │   │   ├── clients.astro · projets.astro · avis.astro · contact.astro · pied.astro
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site

@@ -25,6 +25,10 @@ const casClients = defineCollection({
        cas n'établisse ; sans elle, la ligne prend la `description`, écrite
        pour les moteurs. */
     accroche: z.string().optional(),
+    /* Le titre de sa carte sur l'accueil : ce qui a été construit, dit en
+       clair (Lilian, 10 novembre 2026 : « 0 ressaisie, ça veut rien dire »).
+       Jamais un chiffre seul. */
+    enClair: z.string().optional(),
     category: z.enum(['automation', 'application']).default('automation'),
     scopeNote: z.string().optional(),
     secteur: z.string().optional(),
