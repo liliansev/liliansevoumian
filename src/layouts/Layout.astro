@@ -1,8 +1,10 @@
 ---
-import '@fontsource-variable/geist-mono/wght.css';
+import '@fontsource-variable/roboto-flex/wdth.css';
+import '@fontsource/roboto-mono/500.css';
 import '../styles/global.css';
 import '../components/carnet/carnet.css';
-import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
+import '../components/robot/robot.css';
+import robotoFlexLatin from '@fontsource-variable/roboto-flex/files/roboto-flex-latin-wdth-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { organisations, profils, resume } from '../data/parcours';
@@ -45,8 +47,8 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   pageSchema,
   breadcrumbs,
   noindex = false,
-  themeColor = '#f6f6f3',
-  policePrechargee = geistMonoLatin,
+  themeColor = '#0f0d0b',
+  policePrechargee = robotoFlexLatin,
   carnet = true,
   faqSchema,
   directionContract
@@ -450,7 +452,7 @@ const faqPageSchema = faqSchema ? {
               .then(function () {
                 embedTarget.replaceChildren();
                 // L'agenda prend le thème de la page : clair sous la tenue du carnet.
-                var config = { layout: "month_view", theme: document.querySelector('.tenue-carnet') ? "light" : "dark" };
+                var config = { layout: "month_view", theme: "dark" };
                 if (note) config.notes = note;
                 window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: config });
                 inited = true;

@@ -6,12 +6,22 @@
  */
 import { organisations, profils } from '../../data/parcours';
 import Robot from './robot.astro';
+import BoutonReservation from '../BoutonReservation.astro';
+interface Props {
+  /** Sur l'accueil, pas de lien « Accueil ». */
+  surAccueil?: boolean;
+  source?: string;
+  /** Pour une page sans formulaire de contact en fin de page. */
+  contact?: boolean;
+}
+const { surAccueil = true, source = 'home_pied', contact = false } = Astro.props;
 const dehors: { label: string; href: string; goal?: string }[] = [
   { label: 'YouTube', href: profils.youtube, goal: 'youtube_opened' },
   { label: 'LinkedIn', href: profils.linkedin },
   ...organisations.map((o) => ({ label: o.nom, href: o.url, goal: o.goal })),
 ];
 const pages = [
+  ...(surAccueil ? [] : [{ label: 'Accueil', href: '/' }]),
   { label: 'Cas clients', href: '/cas-clients' },
   { label: 'Automatisation et agents IA', href: '/automatisations-ia' },
   { label: 'Outils métiers', href: '/outils-metiers' },
@@ -28,10 +38,11 @@ const pages = [
     <div class="r-pied__haut">
       <p class="r-pied__mot" aria-hidden="true">À très vite<span>.</span></p>
       <div class="r-pied__liens">
-        <nav aria-label="Ailleurs"><h2>Ailleurs</h2><ul>{dehors.map((l) => <li><a href={l.href} target="_blank" rel="noopener noreferrer" data-fast-goal={l.goal} data-fast-goal-source={l.goal ? 'home_pied' : undefined}>{l.label}<span class="sr-only"> (nouvel onglet)</span></a></li>)}</ul></nav>
+        <nav aria-label="Ailleurs"><h2>Ailleurs</h2><ul>{dehors.map((l) => <li><a href={l.href} target="_blank" rel="noopener noreferrer" data-fast-goal={l.goal} data-fast-goal-source={l.goal ? source : undefined}>{l.label}<span class="sr-only"> (nouvel onglet)</span></a></li>)}</ul></nav>
         <nav aria-label="Sur le site"><h2>Sur le site</h2><ul>{pages.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul></nav>
       </div>
     </div>
+    {contact && <p class="r-pied__contact"><BoutonReservation source={`${source}_contact`} class="r-btn r-btn--cta r-btn--grand">Parlons de votre projet</BoutonReservation></p>}
     <p class="r-pied__bas"><Robot /><span>Lilian Sevoumian, freelance en automatisation et agents IA depuis 2020.</span></p>
   </div>
 </footer>

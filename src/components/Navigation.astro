@@ -1,5 +1,5 @@
 ---
-import Entete from './sobre/entete.astro';
+import Barre from './robot/barre.astro';
 import { serviceNavigation } from '../data/service-navigation';
 
 interface NavigationLink {
@@ -16,8 +16,8 @@ interface Props {
   trackHero?: boolean;
 }
 
-/* L'en-tête des pages intérieures est celui de l'accueil (`sobre/entete.astro`,
-   « Entre les deux », 3 novembre 2026) : le logo, qui ramène à l'accueil,
+/* L'en-tête des pages intérieures est celui de l'accueil (`robot/barre.astro`,
+   « Citron et lilas », 10 novembre 2026) : le logo, qui ramène à l'accueil,
    les liens, et « Parlons de votre projet », qui mène au formulaire de
    contact. Seule la liste des liens change : une page d'offre nomme ses
    ancres, les autres pages les liens du site. Le nom de l'en-tête dans les
@@ -35,4 +35,4 @@ const { links: suppliedLinks, ctaSource = 'nav' } = Astro.props;
 const sourceMenu = suppliedLinks ? `${ctaSource}_mobile` : 'nav_mobile_cta';
 ---
 
-<Entete liens={suppliedLinks ?? defaultNavLinks} source={ctaSource} sourceMenu={sourceMenu} marqueHref="/" />
+<div class="tenue-robot tenue-robot--barre"><Barre liens={suppliedLinks ?? defaultNavLinks} source={ctaSource} sourceMenu={sourceMenu} marqueHref="/" /></div>

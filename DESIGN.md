@@ -504,8 +504,8 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 
 ## L'accueil « Citron et lilas » (10 novembre 2026)
 
-L'accueil seul change de tenue ; toutes les autres pages gardent « Entre les
-deux » (chapitre suivant). Lilian voulait un fond noir, du jaune ou de
+L'accueil a changé de tenue le premier ; les autres pages l'ont suivi le
+même jour (chapitre suivant). Lilian voulait un fond noir, du jaune ou de
 l'orange, sans lueur, en Roboto, « mignon, tech, geek mais sérieux ». Parmi
 trois directions il a choisi « Petit robot », puis, parce qu'il le trouvait
 trop orange et trop monochrome, la déclinaison « Citron et lilas ». Composants
@@ -554,9 +554,43 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   tuiles, projets clients en cartes, avis en bulles, contact, pied « À très
   vite. ». Ni prix ni chiffres de prestation.
 
-## Entre les deux (3 novembre 2026) : la tenue actuelle
+## « Citron et lilas » sur tout le site (10 novembre 2026)
 
-**Ce chapitre fait foi.** Le 3 novembre 2026, Lilian demande une refonte
+**Ce chapitre fait foi pour les pages intérieures et le blog.** Le 10 novembre
+2026, l'accueil validé, Lilian demande d'« aligner le reste du site sur cette
+nouvelle DA ». C'est, comme les fois précédentes, un échange de jetons : les
+noms de `@theme` et du carnet sont gardés, leurs valeurs changent dans le
+dernier bloc de `global.css` et de `carnet/carnet.css`. Ne jamais déduire une
+couleur du nom d'un jeton (`--violet` et `--color-peche` valent le citron).
+
+- Mêmes valeurs que l'accueil : papier `#0f0d0b`, surfaces `#1b1815` et
+  `#24201c`, filets `#332e29`, texte `#f8f4ef`, gris `#aaa198`, citron
+  `#ffd84d` pour ce qui agit (bouton d'appel, liens fléchés, liens du texte,
+  curseurs), lilas `#b9a6ff` pour les repères (vague de `mark`, trait des
+  intertitres du blog, anneau de focus sur noir).
+- `Navigation` rend `robot/barre.astro` (la pilule blanche flottante, avec
+  les liens de la page) et `Footer` rend `robot/pied.astro` (« À très
+  vite. »). La page commence 96 px sous la barre.
+- `.bloc-encre` redevient l'île claire : blanche, à l'encre `#17130f`, sans
+  bord. La fin de page (`.fin__centre`) et la feuille de `/contact` sont des
+  îles claires elles aussi, avec les champs et le bouton « Envoyer » de
+  l'accueil (bord `#8f857a`, pilule citron cerclée d'encre). Sur blanc le
+  citron ne sert jamais de texte : les liens y sont à l'encre, soulignés.
+- Roboto Flex partout, chargée par `Layout` ; plus de Geist Mono. Titres en
+  graisse 800 à 850, interlettrage serré ; l'échelle `--text-*` remonte d'un
+  cran (corps 17 px, 18 px dans le blog).
+- Rayons 10 à 32 px, pilules 999 px ; le bouton d'appel est la pilule citron
+  cerclée d'encre qui rebondit au survol.
+- Le blog : colonne de lecture inchangée, titres à la taille de la tenue,
+  code sur `#24201c`, bloc d'inscription à la newsletter sur lilas pâle
+  `#e9e3ff` avec un champ et un bouton en pilules.
+- Les règles de structure de « La tenue commune » tiennent toujours (un seul
+  bouton d'appel, composants partagés, îles claires jamais en première ni en
+  dernière section sauf la fin de page).
+
+## Entre les deux (3 novembre 2026)
+
+**Histoire depuis le 10 novembre 2026 (ses couleurs et sa police ne valent plus).** Le 3 novembre 2026, Lilian demande une refonte
 « super simple, super sobre, avec des typo un peu robot ». Parmi six
 directions, il choisit la sixième, « Entre les deux » (entre une page
 monochrome et une page trop chargée), l'affine sur la maquette, puis demande
