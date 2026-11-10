@@ -544,10 +544,12 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
 - Une carte de cas a pour titre ce qui a été construit, dit en clair
   (`enClair` du cas), jamais un chiffre seul : « 0 ressaisie, ça veut rien
   dire » (Lilian, 10 novembre 2026). Le client est en petit au-dessus.
-- Retours de Lilian sur téléphone (10 novembre 2026) : les deux gestes de
-  l'ouverture sont « S’abonner à la newsletter » (citron) et « Me contacter »
-  (au trait), plus YouTube, et ils viennent après la photo sur téléphone ;
-  sous 1000 px les métiers sont une colonne d'icônes collante à gauche et le
+- Retours de Lilian (10 novembre 2026) : l'ouverture n'a qu'un geste,
+  « Me contacter », en citron (« CTA principal »), et il vient après la photo
+  sur téléphone ; « S’abonner à la newsletter » est tout en bas, dans le pied
+  de toutes les pages (« retire ce cta, mets le tout en bas ») ; les quatre
+  chiffres ne sont plus dans l'ouverture (« j'aime pas les stats ici »), ils
+  suivent les logos des clients ; sous 1000 px les métiers sont une colonne d'icônes collante à gauche et le
   panneau à droite, pour choisir et lire sans défiler ; le menu ouvert au
   doigt ne pose aucun anneau de focus sur « Fermer » ni sur « Menu ».
 - Chaque outil a sa couleur (`src/data/outils.ts`) et sa propre pastille :
@@ -563,9 +565,9 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   pied.
 - La page n'explique jamais comment elle marche (Lilian, 10 novembre 2026) :
   pas de « survolez », « le robot vous suit des yeux », etc.
-- Sections : ouverture et quatre chiffres, métiers en onglets, clients en
-  mur de logos, projets clients en cartes, avis en citations, contact, pied
-  « À très vite. ». Ni prix ni chiffres de prestation.
+- Sections : ouverture, métiers en onglets, clients en mur de logos puis
+  les quatre chiffres, projets clients en cartes, avis en citations, contact,
+  pied « À très vite. » et la newsletter. Ni prix ni chiffres de prestation.
 
 ### La passe « plus fin » (10 novembre 2026)
 
@@ -598,7 +600,8 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
 - Ouverture : trois petites étiquettes autour du portrait (Make niv. 5,
   n8n, agents IA), à peine inclinées. Les quatre chiffres tiennent sur une
   ligne séparée par des filets (deux par deux sur téléphone), sans tuiles
-  de couleur.
+  de couleur ; depuis le soir du 10 novembre ils sont sous les logos des
+  clients, sur le noir, plus dans l'ouverture.
 - Clients : un mur de logos à filets, huit par ligne (quatre sous 1180 px),
   logos à 66 % qui s'allument au survol.
 - Cas : au survol la carte change de surface et de filet, sa flèche cerclée
@@ -621,9 +624,10 @@ la place des blocs mais leur dessin. **Jamais de grille de tuiles sur
 l'accueil ; un composant simple déplacé reste un composant simple.**
 
 À partir de 1100 px chaque section devient un objet dessiné, pris dans son
-métier : des modules reliés par des fils, comme un scénario Make ou n8n. Tout
-est dans `robot/bureau.css`, sous `@media (min-width: 1100px)` ; sous
-1100 px la page est celle des chapitres précédents, au pixel près. Les règles
+métier. Tout est dans `robot/bureau.css`, sous `@media (min-width: 1100px)` ;
+sous 1100 px la page est celle des chapitres précédents, à trois changements
+près, communs à toutes les largeurs : un seul bouton dans l'ouverture, les
+chiffres sous les logos, la newsletter dans le pied. Les règles
 de la passe « plus fin » tiennent toujours (graisse 600, filets, une courbe,
 aucune lueur).
 
@@ -634,44 +638,63 @@ aucune lueur).
   quand le bloc change de taille. Sans script il n'y a pas de fils et rien ne
   manque. Encre à 26 % sur blanc ; sur le canvas noir, `--r-trait-2` et un
   grain citron.
+Le même soir, six retours de Lilian sur l'aperçu, qui font foi sur ce qui
+suit : « j'aime pas les stats ici » (les chiffres de l'ouverture), « CTA
+principal » (« Me contacter »), « retire ce cta, mets le tout en bas » (la
+newsletter), « pas explicite, trouver une animation par sujet, là on dirait
+un workflow » (la scène des formations), « pas d'animations ici, juste des
+belles cards » (le parcours d'un cas), « j'aime pas du tout, mets les avis
+dans des cards élégantes, trouve un beau layout » (la citation unique et son
+rail). **Les fils ne servent donc qu'à l'ouverture ; un cas et un avis sont
+des cartes, sans mouvement ; une scène montre son sujet, pas un scénario.**
+
 - **L'ouverture, un scénario** : les trois étiquettes du portrait deviennent
   trois modules blancs à sa gauche (carré d'icône à la couleur de l'outil),
-  les quatre chiffres quatre modules à sa droite, et sept fils passent par le
-  portrait (4/5, rayon 24 px). À l'arrivée, une fois : les fils d'amont se
-  dessinent, un grain les traverse, puis ceux d'aval partent. Ensuite un
-  grain repasse quand on survole un module ou le portrait. Nom à
-  `clamp(60px, 5.2vw, 76px)`.
-- **« Ce que je fais », une scène** : un seul panneau lilas (rayon 28 px). À
-  gauche la liste des quatre métiers (le choisi en pilule d'encre, son icône
-  sur citron), puis la phrase du métier en grand ; à droite, dans une fenêtre
-  noire de 4/3, la scène animée du métier (`src/components/metiers/`, moteur
-  `lib/metiers/scene.ts`), jouée une fois quand elle arrive à l'écran. Les
-  scènes viennent de l'accueil « Le documentaire » : même dessin, sans leurs
-  lueurs (panneau, grains, halo de l'agent), sur le noir chaud, en Roboto
-  Flex.
-- **Les clients, un défilé** : les logos passent sur une ligne entre deux
-  filets, bords fondus, 70 s par tour ; il s'arrête au survol et par son
-  bouton pause. En mouvement réduit il n'y a pas de défilé, le mur reste un
-  mur. C'est la seule boucle de la page.
-- **Les projets, une pile** : chaque cas est une grande feuille (rayon 28 px)
-  qui vient se poser sur la précédente au défilement (collante, décalée de
-  14 px par feuille, seulement si la fenêtre fait 680 px de haut). À gauche le
-  client, le titre en clair, le détail, les outils, « Lire le cas » ; à droite
-  son vrai parcours sur un canvas à points (`robot/flux.astro`) : `flow` du
-  cas en éventail (déclencheur, agent sur lilas, trois actions) ou `parcours`
-  en file de cinq étapes, chaque module à la couleur de son outil. Dessous,
-  un écart avant / après pris dans `bascule`. Un grain parcourt les fils quand
-  la feuille arrive, puis à chaque survol.
-- **Les avis, une voix** : une seule citation en grand sur toute la largeur
-  (`clamp(32px, 3.2vw, 44px)`, graisse 500, multipliée par `--t` : une
-  citation courte se dit plus grand qu'une longue), et dessous le rail des
-  trois personnes ; on en choisit une au survol, au clic ou au clavier, son
-  filet passe au citron. Sans script les trois citations restent l'une sous
-  l'autre.
+  reliés au portrait (4/5, rayon 24 px) par trois fils. À l'arrivée, une
+  fois : les fils se dessinent, un grain les traverse. Ensuite un grain
+  repasse quand on survole un module ou le portrait. Un seul bouton, « Me
+  contacter », en citron. Nom à `clamp(60px, 5.2vw, 76px)`.
+- **« Ce que je fais », une scène par sujet** : un seul panneau lilas (rayon
+  28 px). À gauche la liste des quatre métiers (le choisi en pilule d'encre,
+  son icône sur citron), puis la phrase du métier en grand ; à droite, dans
+  une fenêtre noire de 4/3, la scène animée du métier
+  (`src/components/metiers/`, moteur `lib/metiers/scene.ts`), jouée une fois
+  quand elle arrive à l'écran, sans lueurs, sur le noir chaud, en Roboto
+  Flex. Chaque scène a la forme de son sujet : l'automatisation est un
+  scénario (une réservation, un paiement, un message, l'agenda), l'agent une
+  question, ses sources et sa réponse à valider, les outils métiers une
+  application et son dashboard, **les formations un atelier**
+  (`scene-cours.astro`) : la diapositive du module et ses trois points,
+  Lilian en vignette (une vraie photo de lui en formation, ni teintée ni
+  retouchée), « À vous : exercice 1 », le programme qui se coche et l'équipe
+  qui avance jusqu'à « Autonome ». Une scène qui ressemble à un scénario
+  alors que son sujet n'en est pas un est à refaire.
+- **Les clients, un défilé, puis les chiffres** : les logos passent sur une
+  ligne entre deux filets, bords fondus, 70 s par tour ; il s'arrête au
+  survol et par son bouton pause. En mouvement réduit il n'y a pas de défilé,
+  le mur reste un mur. C'est la seule boucle de la page. Dessous, les quatre
+  chiffres de l'audience sur une ligne à filets (à toutes les largeurs).
+- **Les projets, une pile de feuilles** : chaque cas est une grande feuille
+  (rayon 28 px) qui vient se poser sur la précédente au défilement (collante,
+  décalée de 14 px par feuille, seulement si la fenêtre fait 680 px de haut).
+  À gauche le client, le titre en clair, le détail, les outils, « Lire le
+  cas » ; à droite ses étapes en cartes (`robot/etapes.astro`) : un carré
+  d'icône à la couleur de l'outil, une ligne de contexte, l'étape en gras,
+  sur une grille de six colonnes (trois cartes puis deux pour un `parcours`,
+  numérotées de 01 à 05 ; deux puis trois pour un `flow`). La carte forte
+  (l'agent d'un `flow`, la dernière étape d'un `parcours`) est sur lilas.
+  Dessous, un écart avant / après pris dans `bascule`. **Rien n'y bouge** :
+  ni fil, ni grain, ni script.
+- **Les avis, trois cartes** : une grande carte lilas à gauche pour la
+  citation la plus courte, dite en grand (`clamp(44px, 3.6vw, 52px)`, graisse
+  600, le début à 62 % d'encre, le passage retenu à l'encre pleine : le
+  citron ne se lit pas sur lilas), la personne en bas ; à droite les deux
+  autres, l'une sur l'autre, en cartes sombres (rayon 28 px, filet d'un
+  pixel), citation de 21 px, passage retenu en citron, portrait de 48 px.
+  Aucun script.
 - **Mouvement** : rien ne tourne en boucle hors du défilé des logos. Les fils
-  de l'ouverture, les scènes et les grains des cas jouent une fois, puis
-  seulement sur un geste du visiteur. En mouvement réduit tout est posé d'un
-  coup.
+  de l'ouverture et les scènes jouent une fois, puis seulement sur un geste
+  du visiteur. En mouvement réduit tout est posé d'un coup.
 
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 

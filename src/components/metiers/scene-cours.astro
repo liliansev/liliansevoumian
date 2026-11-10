@@ -1,0 +1,807 @@
+---
+/*
+ * scene-cours — la scène du métier Formations sur l'accueil : « J’apprends à
+ * vos équipes à le faire elles-mêmes. »
+ *
+ * Elle montre une formation, pas un scénario. La première scène de ce métier
+ * (`scene-formations.astro`, deux fenêtres du même outil où un scénario se
+ * construit deux fois) ressemblait à un workflow : Lilian, 10 novembre 2026,
+ * « pas explicite, trouver une animation par sujet, là on dirait un
+ * workflow ». Celle-ci ne contient ni module ni fil.
+ *
+ * Trois fenêtres, celles d'un atelier :
+ *   - l'atelier, à gauche : le support projeté (une diapositive sur sa page
+ *     claire), Lilian en vignette, l'exercice du module, et la piste des
+ *     trois modules ;
+ *   - le programme, en haut à droite : trois modules qui se cochent ;
+ *   - votre équipe, dessous : trois personnes dont la progression avance.
+ *
+ * La scène, un module après l'autre, un seul mouvement à la fois : la ligne
+ * du programme s'allume, la diapositive change, Lilian parle et ses trois
+ * points se posent ; puis « À vous » : l'équipe pratique, chacun avance d'un
+ * cran, l'exercice est réussi et le module se coche. Au deuxième, quelqu'un
+ * pose une question et il y répond. À la fin, l'atelier est terminé et
+ * l'équipe autonome. Elle joue une fois, quand elle entre à l'écran, et
+ * s'arrête sur cette image.
+ *
+ * La vignette est une vraie photo de Lilian en formation
+ * (`assets/documentaire/formation-formateur.jpg`, recadrée dans
+ * `formation-salle.jpg`, voir le README du dossier). Elle n'est ni teintée ni
+ * retouchée : rien ne se pose sur son visage, l'anneau jaune qui dit qu'il
+ * parle est autour de la vignette.
+ *
+ * Le panneau, les fenêtres, les pastilles et les états viennent du socle
+ * (`scene-metier.css`, `lib/metiers/scene.ts`). Ce composant écrit ce que le
+ * socle n'a pas : la diapositive, la vignette du formateur, l'exercice, la
+ * piste, la ligne de programme et la ligne d'équipe.
+ *
+ * Elle n'a que le grand plan (760 × 570) : sur l'accueil elle n'est montrée
+ * qu'à partir de 1100 px, dans un cadre d'au moins 600 px. Sous 520 px de
+ * large il faudrait lui écrire un plan étroit, comme aux autres scènes.
+ *
+ * Sans script ou en mouvement réduit, la scène est une image fixe : les trois
+ * modules faits, l'équipe autonome.
+ *
+ * Libellés inventés pour la scène (le programme est un exemple, pas une
+ * offre). Aucun nom de marque : les pictogrammes sont dessinés ici.
+ */
+import { Image } from 'astro:assets';
+import formateur from '../../assets/documentaire/formation-formateur.jpg';
+import './scene-metier.css';
+
+/* Les trois modules : leur titre, et les trois points de leur diapositive. */
+const modules = [
+  { titre: 'Brancher vos outils', points: ['Connecter vos comptes', 'Choisir un déclencheur', 'Lancer un premier test'] },
+  { titre: 'Construire un scénario', points: ['Enchaîner les étapes', 'Poser une condition', 'Prévoir les erreurs'] },
+  { titre: 'Le faire tourner seul', points: ['Planifier les lancements', 'Recevoir les alertes', 'Corriger sans aide'] },
+];
+const equipe = ['C', 'M', 'S'];
+const dernier = modules[modules.length - 1];
+
+const COCHE = 'M3.5 8.5l3 3 6-6.5';
+const LECTURE = 'M5.6 3.9v8.2l6.6-4.1z';
+const CRAYON = 'M3.2 12.8l.6-2.7 6.6-6.6 2.1 2.1-6.6 6.6-2.7.6zM9.3 4.6l2.1 2.1';
+---
+
+<div
+  class="sm est-abouti"
+  data-scene-cours
+  role="img"
+  aria-label="Un atelier en trois modules : brancher vos outils, construire un scénario, le faire tourner seul. Lilian présente chaque module, l’équipe fait l’exercice à son tour, et à la fin de l’atelier elle est autonome."
+>
+  <div class="sm-plan" aria-hidden="true" data-nosnippet>
+    {/* Pour qui lit le HTML sans la mise en page : ce plan est un décor, ses
+        noms sont inventés. */}
+    <span class="sr-only">Illustration, données fictives&nbsp;:</span>
+    <div class="sm-puces">
+      <span class="sm-puce">
+        <svg viewBox="0 0 16 16"><path d="M8 4.4C6.9 3.6 5.3 3.3 3 3.5v8.3c2.3-.2 3.9.1 5 .9 1.1-.8 2.7-1.1 5-.9V3.5c-2.3-.2-3.9.1-5 .9zM8 4.4v8.3" /></svg>
+        <span class="sm-puce__nom">Modules</span>
+        <b data-modules>{modules.length}/{modules.length}</b>
+      </span>
+      <span class="sm-puce sm-puce--peche">
+        <svg viewBox="0 0 16 16"><path d="M1.8 6.3 8 3.6l6.2 2.7L8 9 1.8 6.3zM4.6 7.6v2.6c1 .9 2.1 1.3 3.4 1.3s2.4-.4 3.4-1.3V7.6" /></svg>
+        <span class="sm-puce__nom">Équipe</span>
+        <b data-promesse>Autonome</b>
+      </span>
+    </div>
+
+    {/* L'atelier : le support, le formateur, la piste. */}
+    <div class="sm-poste poste--atelier" data-poste="atelier">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M2.5 3.5h11v7h-11zM8 10.5V13M5.5 13h5" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Atelier</span>
+          <span class="sm-etat" data-etat="fait">Terminé</span>
+        </div>
+        <div class="atelier">
+          <div class="diapo">
+            <span class="diapo__rang" data-rang>Module {modules.length} sur {modules.length}</span>
+            <b class="diapo__titre" data-titre>{dernier.titre}</b>
+            <span class="diapo__points">
+              {dernier.points.map((texte) => (
+                <span class="point est-dit" data-point>
+                  <span class="point__coche"><svg viewBox="0 0 16 16"><path d={COCHE} /></svg></span>
+                  <span class="point__texte" data-texte>{texte}</span>
+                </span>
+              ))}
+            </span>
+            <span class="exercice est-ouvert est-reussi" data-exercice>
+              <span class="exercice__signe">
+                <svg class="exercice__crayon" viewBox="0 0 16 16"><path d={CRAYON} /></svg>
+                <svg class="exercice__coche" viewBox="0 0 16 16"><path d={COCHE} /></svg>
+              </span>
+              <span data-consigne>Exercice {modules.length} réussi</span>
+            </span>
+            <span class="formateur" data-voix>
+              <Image src={formateur} alt="" width={280} height={212} loading="lazy" decoding="async" />
+              <span class="formateur__nom">
+                <span class="formateur__ondes"><i></i><i></i><i></i><i></i></span>
+                Lilian
+              </span>
+            </span>
+          </div>
+          <div class="lecteur">
+            <span class="lecteur__bouton"><svg viewBox="0 0 16 16"><path d={LECTURE} /></svg></span>
+            <span class="piste">
+              {modules.map(() => <span class="piste__part"><i data-part></i></span>)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Le programme : trois modules, qui se cochent. */}
+    <div class="sm-poste poste--programme" data-poste="programme">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M3 4.5h1M6.500 4.500h6.500M3 8h1M6.500 8h6.500M3 11.5h1M6.500 11.500h6.500" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Programme</span>
+        </div>
+        <div class="programme">
+          {modules.map((m, i) => (
+            <span class="module est-fait" data-module data-titre={m.titre} data-points={m.points.join('|')}>
+              <span class="module__rang">{i + 1}</span>
+              <b class="module__titre">{m.titre}</b>
+              <span class="temoin"><svg viewBox="0 0 16 16"><path d={COCHE} /></svg></span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    {/* L'équipe : trois personnes, leur progression. */}
+    <div class="sm-poste poste--equipe" data-poste="equipe">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M6 7.3a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM2.6 12.6c0-1.900 1.500-3.200 3.400-3.200s3.400 1.300 3.400 3.200M10.400 7.200a1.900 1.900 0 0 0 0-3.800M11.300 9.500c1.300.4 2.100 1.500 2.100 3.100" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Votre équipe</span>
+          <span class="sm-etat" data-etat="fait">Autonome</span>
+        </div>
+        <div class="equipe">
+          {equipe.map((initiale) => (
+            <span class="eleve est-fait" data-eleve style="--p: 1">
+              <span class="eleve__tete">{initiale}<i class="eleve__question">?</i></span>
+              <span class="eleve__jauge"><i></i></span>
+              <span class="temoin"><svg viewBox="0 0 16 16"><path d={COCHE} /></svg></span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Ce que le socle ne sait pas : la place des trois fenêtres, et les pièces
+     de l'atelier. Longueurs en pixels du plan ; les tailles de texte sont
+     celles du socle (`--sm-note`, `--sm-texte`, `--sm-fort`, `--sm-chiffre`),
+     jamais des pixels. */
+
+  /* Au chargement, la scène passe de l'image fixe à son repos : les
+     transitions de ce composant, plus précises que la règle du socle, sont
+     coupées ici aussi. */
+  .sm:not([data-pret]) .sm-plan *,
+  .sm:not([data-pret]) .sm-plan *::before,
+  .sm:not([data-pret]) .sm-plan *::after {
+    transition: none !important;
+  }
+
+  .sm-plan {
+    --jaune: var(--color-peche);
+    --filet-fort: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
+  .poste--atelier {
+    top: 62px;
+    left: 24px;
+    width: 444px;
+  }
+
+  .poste--programme {
+    top: 62px;
+    left: 484px;
+    width: 252px;
+  }
+
+  .poste--equipe {
+    top: 298px;
+    left: 484px;
+    width: 252px;
+  }
+
+  /* ── L'atelier ── */
+  .atelier {
+    display: grid;
+    gap: 12px;
+    padding: 14px 14px 12px;
+  }
+
+  /* La diapositive : une page claire, le rang du module, son titre, ses trois
+     points. Le titre est le seul texte de la scène à se lire de loin. */
+  .diapo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 344px;
+    padding: 26px 28px;
+    border-radius: 8px;
+    background: var(--color-feuille);
+    color: var(--color-night);
+  }
+
+  .diapo__rang {
+    color: var(--color-feuille-note);
+    font-size: var(--sm-note);
+    font-weight: 600;
+  }
+
+  .diapo__titre {
+    display: block;
+    max-width: 10em;
+    margin-top: 9px;
+    font-size: var(--sm-chiffre);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+  }
+
+  .diapo__points {
+    display: grid;
+    gap: 13px;
+    margin-top: 26px;
+  }
+
+  .point {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(5px);
+    transition:
+      opacity 260ms,
+      transform 420ms var(--ease-out-quint);
+  }
+
+  .point.est-dit {
+    opacity: 1;
+    transform: none;
+  }
+
+  .point__coche {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    background: var(--jaune);
+  }
+
+  .point__coche svg,
+  .temoin svg {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-night);
+    stroke-width: 2.2;
+  }
+
+  .point__texte {
+    font-size: var(--sm-fort);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  /* L'exercice du module, en bas de la diapositive : « À vous » pendant que
+     l'équipe pratique, puis plein et coché quand elle a réussi. */
+  .exercice {
+    position: absolute;
+    left: 28px;
+    bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding-inline: 7px 14px;
+    border: 1px solid color-mix(in srgb, var(--color-night) 20%, transparent);
+    border-radius: var(--radius-full);
+    font-size: var(--sm-texte);
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(5px);
+    transition:
+      opacity 240ms,
+      transform 420ms var(--ease-out-quint),
+      background-color 240ms,
+      border-color 240ms;
+  }
+
+  .exercice.est-ouvert {
+    opacity: 1;
+    transform: none;
+  }
+
+  .exercice.est-reussi {
+    border-color: var(--jaune);
+    background: var(--jaune);
+  }
+
+  .exercice__signe {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-night) 9%, transparent);
+  }
+
+  .exercice__signe svg {
+    grid-area: 1 / 1;
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-night);
+    stroke-width: 1.5;
+    transition: opacity 200ms;
+  }
+
+  .exercice__coche {
+    stroke-width: 2.2;
+    opacity: 0;
+  }
+
+  .exercice.est-reussi .exercice__crayon { opacity: 0; }
+  .exercice.est-reussi .exercice__coche { opacity: 1; }
+
+  /* Lilian, en vignette dans le coin du support, comme en visio. La photo
+     est telle quelle ; l'anneau jaune et les ondes disent qu'il parle. */
+  .formateur {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    width: 140px;
+    height: 106px;
+    border-radius: 10px;
+    background: var(--color-night);
+    color: var(--color-ink);
+    box-shadow: 0 0 0 2px transparent;
+    transition: box-shadow 260ms;
+  }
+
+  .formateur.parle {
+    box-shadow: 0 0 0 2px var(--jaune);
+  }
+
+  .formateur img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+  }
+
+  .formateur__nom {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 22px;
+    padding-inline: 8px 9px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-night) 86%, transparent);
+    font-size: var(--sm-note);
+    font-weight: 600;
+  }
+
+  .formateur__ondes {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 10px;
+  }
+
+  .formateur__ondes i {
+    width: 2px;
+    height: 100%;
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--color-ink) 42%, transparent);
+    transform: scaleY(0.3);
+    transition: background-color 200ms;
+  }
+
+  .formateur.parle .formateur__ondes i {
+    background: var(--jaune);
+    animation: cours-onde 620ms ease-in-out infinite alternate;
+  }
+
+  .formateur.parle .formateur__ondes i:nth-child(2) { animation-delay: -210ms; }
+  .formateur.parle .formateur__ondes i:nth-child(3) { animation-delay: -420ms; }
+  .formateur.parle .formateur__ondes i:nth-child(4) { animation-delay: -90ms; }
+
+  @keyframes cours-onde {
+    from { transform: scaleY(0.3); }
+    to { transform: scaleY(1); }
+  }
+
+  /* La piste : un bouton de lecture, et un segment par module. */
+  .lecteur {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 30px;
+    padding-inline: 2px;
+  }
+
+  .lecteur__bouton {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--filet-fort);
+    border-radius: var(--radius-full);
+  }
+
+  .lecteur__bouton svg {
+    width: 12px;
+    height: 12px;
+    fill: var(--color-ink);
+    stroke: none;
+  }
+
+  .piste {
+    display: grid;
+    flex: 1;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .piste__part {
+    height: 5px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-ink) 15%, transparent);
+  }
+
+  .piste__part i {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--jaune);
+    transform: scaleX(var(--p, 1));
+    transform-origin: 0 50%;
+    transition: transform 420ms var(--ease-out-quint);
+  }
+
+  /* ── Le programme ── */
+  .programme,
+  .equipe {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .module {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 50px;
+    padding-inline: 9px 11px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 11%, transparent);
+    border-radius: 9px;
+    transition:
+      border-color 240ms,
+      background-color 240ms;
+  }
+
+  .module__rang {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-ink) 10%, transparent);
+    color: var(--color-ink-mid);
+    font-size: var(--sm-texte);
+    font-weight: 600;
+    transition:
+      background-color 240ms,
+      color 240ms;
+  }
+
+  .module__titre {
+    flex: 1;
+    min-width: 0;
+    color: var(--color-ink-mid);
+    font-size: var(--sm-texte);
+    font-weight: 600;
+    line-height: 1.2;
+    transition: color 240ms;
+  }
+
+  /* Le module en cours : cerclé de jaune, son rang plein. */
+  .module.est-actif {
+    border-color: var(--jaune);
+    background: color-mix(in srgb, var(--jaune) 7%, transparent);
+  }
+
+  .module.est-actif .module__rang {
+    background: var(--jaune);
+    color: var(--color-night);
+  }
+
+  .module.est-actif .module__titre,
+  .module.est-fait .module__titre {
+    color: var(--color-ink);
+  }
+
+  /* Le témoin : un rond vide, qui se remplit et se coche. */
+  .temoin {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 24%, transparent);
+    border-radius: var(--radius-full);
+    transition:
+      background-color 220ms,
+      border-color 220ms;
+  }
+
+  .temoin svg {
+    opacity: 0;
+    scale: 0.4;
+    transition:
+      opacity 180ms,
+      scale 320ms var(--ease-out-expo);
+  }
+
+  .est-fait > .temoin {
+    border-color: var(--jaune);
+    background: var(--jaune);
+  }
+
+  .est-fait > .temoin svg {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* ── L'équipe ── */
+  .eleve {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    height: 50px;
+    padding-inline: 9px 11px;
+  }
+
+  .eleve__tete {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 13%, transparent);
+    color: var(--color-ink);
+    font-size: var(--sm-texte);
+    font-weight: 600;
+  }
+
+  /* La question : une petite bulle sur la personne qui la pose. */
+  .eleve__question {
+    position: absolute;
+    top: -7px;
+    right: -9px;
+    display: grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border-radius: var(--radius-full);
+    background: var(--color-ink);
+    color: var(--color-night);
+    font-size: var(--sm-note);
+    font-weight: 700;
+    opacity: 0;
+    scale: 0.4;
+    transition:
+      opacity 180ms,
+      scale 320ms var(--ease-out-expo);
+  }
+
+  .eleve.demande .eleve__question {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .eleve__jauge {
+    flex: 1;
+    height: 6px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
+  .eleve__jauge i {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--jaune);
+    transform: scaleX(var(--p, 1));
+    transform-origin: 0 50%;
+    transition: transform 520ms var(--ease-out-quint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .formateur.parle .formateur__ondes i {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de son
+   * tour. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * le moteur.
+   */
+  import { monterScenes } from '../../lib/metiers/scene';
+
+  type Valeur = 'attente' | 'cours' | 'fait';
+
+  monterScenes('[data-scene-cours]', (s) => {
+    const compteur = s.un('[data-modules]');
+    const promesse = s.un('[data-promesse]');
+    const etatAtelier = s.un('[data-poste="atelier"] .sm-etat');
+    const etatEquipe = s.un('[data-poste="equipe"] .sm-etat');
+    const rang = s.un('[data-rang]');
+    const titre = s.un('[data-titre]');
+    const points = s.tous('[data-point]');
+    const textes = s.tous('[data-texte]');
+    const exercice = s.un('[data-exercice]');
+    const consigne = s.un('[data-consigne]');
+    const voix = s.un('[data-voix]');
+    const parts = s.tous('[data-part]');
+    const modules = s.tous('[data-module]');
+    const eleves = s.tous('[data-eleve]');
+    const n = modules.length;
+
+    const titreDe = (i: number) => modules[i].dataset.titre ?? '';
+    const rangDe = (i: number) => `Module ${i + 1} sur ${n}`;
+    const avance = (el: HTMLElement, p: number) => el.style.setProperty('--p', String(p));
+    const ecrire = (etat: HTMLElement, texte: string, valeur: Valeur) => {
+      etat.textContent = texte;
+      etat.dataset.etat = valeur;
+    };
+    const changer = (etat: HTMLElement, texte: string, valeur: Valeur) => {
+      etat.textContent = texte;
+      s.basculer(etat, valeur);
+    };
+    /* Les trois points changent avec la diapositive. */
+    const ecrirePoints = (i: number) => {
+      const lignes = (modules[i].dataset.points ?? '').split('|');
+      textes.forEach((texte, k) => {
+        texte.textContent = lignes[k] ?? '';
+      });
+    };
+
+    /* ── Les états ── */
+
+    /* `faits` modules terminés ; rien d'autre n'a cours. */
+    const poser = (faits: number) => {
+      const fini = faits === n;
+      const affiche = Math.min(faits, n - 1);
+      compteur.textContent = `${faits}/${n}`;
+      promesse.textContent = fini ? 'Autonome' : 'En formation';
+      ecrire(etatAtelier, fini ? 'Terminé' : 'À venir', fini ? 'fait' : 'attente');
+      ecrire(etatEquipe, fini ? 'Autonome' : 'En attente', fini ? 'fait' : 'attente');
+      rang.textContent = rangDe(affiche);
+      titre.textContent = titreDe(affiche);
+      ecrirePoints(affiche);
+      points.forEach((point) => point.classList.toggle('est-dit', fini));
+      consigne.textContent = fini ? `Exercice ${n} réussi` : 'À vous : exercice 1';
+      exercice.classList.toggle('est-ouvert', fini);
+      exercice.classList.toggle('est-reussi', fini);
+      voix.classList.remove('parle');
+      parts.forEach((part, i) => avance(part, i < faits ? 1 : 0));
+      modules.forEach((module, i) => {
+        module.classList.remove('est-actif');
+        module.classList.toggle('est-fait', i < faits);
+      });
+      eleves.forEach((eleve) => {
+        avance(eleve, faits / n);
+        eleve.classList.remove('demande');
+        eleve.classList.toggle('est-fait', fini);
+      });
+      s.racine.classList.toggle('est-abouti', fini);
+    };
+
+    const figer = () => poser(n);
+    const repos = () => poser(0);
+
+    /* ── Le tour ── */
+
+    async function tour() {
+      await s.attendre(300);
+      changer(etatAtelier, 'En direct', 'cours');
+      changer(etatEquipe, 'Écoute', 'cours');
+
+      for (let i = 0; i < n; i++) {
+        /* Lilian présente : la ligne du programme s'allume, la diapositive
+           change, ses trois points se posent un à un. */
+        modules[i].classList.add('est-actif');
+        if (i > 0) {
+          points.forEach((point) => point.classList.remove('est-dit'));
+          exercice.classList.remove('est-ouvert');
+          await s.attendre(260);
+          exercice.classList.remove('est-reussi');
+          ecrirePoints(i);
+          s.tictac(rang, rangDe(i));
+          s.tictac(titre, titreDe(i));
+          s.tictac(etatEquipe, 'Écoute');
+        }
+        voix.classList.add('parle');
+        await s.attendre(260);
+        for (let k = 0; k < points.length; k++) {
+          points[k].classList.add('est-dit');
+          avance(parts[i], (k + 1) / points.length);
+          await s.attendre(300);
+        }
+        voix.classList.remove('parle');
+
+        /* Au deuxième module, quelqu'un pose une question ; il y répond. */
+        if (i === 1 && eleves[1]) {
+          await s.attendre(140);
+          eleves[1].classList.add('demande');
+          await s.attendre(420);
+          voix.classList.add('parle');
+          await s.attendre(520);
+          voix.classList.remove('parle');
+          eleves[1].classList.remove('demande');
+        }
+
+        /* À vous : l'équipe fait l'exercice, chacun avance d'un cran, puis
+           l'exercice est réussi et le module se coche. */
+        await s.attendre(160);
+        consigne.textContent = `À vous : exercice ${i + 1}`;
+        exercice.classList.add('est-ouvert');
+        s.tictac(etatEquipe, 'Pratique');
+        await s.attendre(300);
+        for (const eleve of eleves) {
+          avance(eleve, (i + 1) / n);
+          await s.attendre(150);
+        }
+        await s.attendre(300);
+        exercice.classList.add('est-reussi');
+        s.tictac(consigne, `Exercice ${i + 1} réussi`);
+        modules[i].classList.remove('est-actif');
+        modules[i].classList.add('est-fait');
+        s.tictac(compteur, `${i + 1}/${n}`);
+        await s.attendre(i === n - 1 ? 300 : 400);
+      }
+
+      /* La chute : chacun a fini, l'atelier se termine, l'équipe est autonome. */
+      for (const eleve of eleves) {
+        eleve.classList.add('est-fait');
+        await s.attendre(130);
+      }
+      changer(etatAtelier, 'Terminé', 'fait');
+      await s.attendre(200);
+      changer(etatEquipe, 'Autonome', 'fait');
+      s.tictac(promesse, 'Autonome');
+      s.racine.classList.add('est-abouti');
+    }
+
+    return { figer, repos, tour };
+  });
+</script>

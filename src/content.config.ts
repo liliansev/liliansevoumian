@@ -63,9 +63,9 @@ const casClients = defineCollection({
      * `parcours` est le pendant de `flow` pour un cas qui se lit d'un bout à
      * l'autre, une application par exemple : EXACTEMENT cinq étapes en file,
      * chacune écrite dans le corps du cas. Il est dessiné dans la pile des
-     * projets de l'accueil (`components/robot/flux.astro`), trois modules en
+     * projets de l'accueil (`components/robot/etapes.astro`), trois cartes en
      * haut, deux en bas. `outil` nomme l'outil qui porte l'étape, quand on le
-     * sait : le module en prend la couleur (`data/outils.ts`). Un cas a un
+     * sait : la carte en prend la couleur (`data/outils.ts`). Un cas a un
      * `flow` ou un `parcours`, jamais les deux.
      */
     parcours: z

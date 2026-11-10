@@ -10,14 +10,14 @@
  *
  * À partir de 1100 px (`bureau.css`), les cartes deviennent une pile : chaque
  * cas est une grande feuille qui vient se poser sur la précédente au
- * défilement, avec à droite son vrai parcours dessiné en modules et en fils
- * (`flux.astro`, d'après `flow` ou `parcours`) et, dessous, un écart
- * avant / après pris dans sa `bascule`. Un grain parcourt les fils quand la
- * feuille arrive à l'écran, puis à chaque survol (script ci-dessous).
+ * défilement, avec à droite ce qui a été construit, en cartes (`etapes.astro`,
+ * d'après `flow` ou `parcours`) et, dessous, un écart avant / après pris dans
+ * sa `bascule`. Rien n'y est animé (Lilian, 10 novembre 2026 : « pas
+ * d'animations ici, juste des belles cards »).
  */
 import { getCollection } from 'astro:content';
 import Outils from './outils.astro';
-import Flux from './flux.astro';
+import Etapes from './etapes.astro';
 const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
@@ -37,7 +37,7 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
           </div>
           {(data.flow || data.parcours) && (
             <div class="r-carte-cas__montre">
-              <Flux flow={data.flow} parcours={data.parcours} decrit={`Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`} />
+              <Etapes flow={data.flow} parcours={data.parcours} decrit={`Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`} />
               {data.bascule && (
                 <p class="r-ecart"><span class="r-ecart__avant"><span class="r-ecart__mot">Avant</span>{data.bascule[0].avant}</span><span class="r-ecart__vers" aria-hidden="true"></span><span class="r-ecart__apres"><span class="r-ecart__mot">Après</span>{data.bascule[0].apres}</span></p>
               )}
@@ -49,59 +49,3 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
   </div>
 </section>
 
-<script>
-  // Les fils des parcours, au bureau : tracés d'après la place des modules
-  // (`lib/robot/fils.ts`), retracés quand le canvas change de taille. Un
-  // grain les parcourt une fois quand la feuille arrive à l'écran, puis à
-  // chaque survol de la carte. Rien ne court en mouvement réduit.
-  import { bord, cadre, courir, ports, tendre, type Fil, type Pt } from '../../lib/robot/fils';
-
-  const large = window.matchMedia('(min-width: 1100px)');
-  const calme = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if ('ResizeObserver' in window && 'IntersectionObserver' in window && 'animate' in Element.prototype) {
-    document.querySelectorAll<HTMLElement>('[data-r-flux]').forEach((flux) => {
-      const svg = flux.querySelector<SVGSVGElement>('.r-fils')!;
-      const noeud = (nom: string) => flux.querySelector<HTMLElement>(`[data-n="${nom}"]`);
-      const liens = (flux.dataset.rFlux ?? '').split(' ').map((l) => l.match(/^(\w+)([><|])(\w+)$/)).filter((m): m is RegExpMatchArray => m !== null);
-      let fils: Fil[] = [];
-      let enFile = false;
-
-      const trace = () => {
-        svg.replaceChildren();
-        fils = [];
-        if (!large.matches || flux.offsetParent === null) return;
-        const points: Pt[] = [];
-        for (const [, de, sens, vers] of liens) {
-          const a = noeud(de);
-          const b = noeud(vers);
-          if (!a || !b) continue;
-          const ca = cadre(a, flux);
-          const cb = cadre(b, flux);
-          const depart = bord(ca, sens === '>' ? 'd' : sens === '<' ? 'g' : 'b');
-          const arrivee = bord(cb, sens === '>' ? 'g' : sens === '<' ? 'd' : 'h');
-          fils.push(tendre(svg, depart, arrivee, sens === '|' ? 'v' : 'h'));
-          points.push(depart, arrivee);
-        }
-        ports(svg, points);
-        enFile = flux.classList.contains('r-flux--file');
-      };
-      const joue = () => {
-        if (calme.matches) return;
-        fils.forEach((f, i) => {
-          f.grain.getAnimations().forEach((a) => a.cancel());
-          courir(f, i === 0 ? 0 : enFile ? i * 480 : 520, 800);
-        });
-      };
-
-      new ResizeObserver(trace).observe(flux);
-      large.addEventListener('change', trace);
-      const vu = new IntersectionObserver((entrees) => {
-        if (!entrees.some((e) => e.isIntersecting)) return;
-        joue();
-        vu.disconnect();
-      }, { threshold: 0.75 });
-      vu.observe(flux);
-      flux.closest('.r-carte-cas')?.addEventListener('pointerenter', joue);
-    });
-  }
-</script>

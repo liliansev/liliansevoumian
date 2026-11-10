@@ -5,26 +5,22 @@
  * discussion depuis la passe « plus fin » du 10 novembre 2026). Le passage
  * qui compte est en citron ; dessous, le portrait, le nom et le rôle.
  *
- * À partir de 1100 px et avec le script (`bureau.css`, classe `est-vivant`
- * posée ci-dessous), une seule citation est montrée, en grand, sur toute la
- * largeur, et les trois personnes forment un rail dessous : on en choisit une
- * au clic, au survol ou au clavier, la citation change sur place. Sans
- * script, les trois citations restent l'une sous l'autre.
+ * À partir de 1100 px (`bureau.css`), ce sont trois cartes : la première, la
+ * phrase la plus courte, en grand sur lilas, les deux autres à sa droite,
+ * l'une sur l'autre (Lilian, 10 novembre 2026 : « mets les avis dans des
+ * cards élégantes, trouve un beau layout » ; la citation unique avec son
+ * rail de personnes ne lui plaisait pas). Aucun script, rien ne bouge.
  */
 import { Image } from 'astro:assets';
 import { avis } from '../../data/avis';
-
-/* Au bureau, une citation courte se dit plus grand qu'une longue : les trois
-   occupent ainsi à peu près la même place (`--t`, lu par `bureau.css`). */
-const corps = (texte: string) => (texte.length < 60 ? 1.32 : texte.length < 100 ? 1.08 : 0.9);
 ---
 <section class="r-sec" id="avis" aria-labelledby="titre-avis">
-  <div class="r-wrap r-avis" data-r-avis>
+  <div class="r-wrap r-avis">
     <header class="r-titre"><h2 id="titre-avis">Ils en parlent</h2><p>Trois personnes avec qui j’ai travaillé.</p></header>
     <div class="r-fil">
       {avis.map((a) => (
         <figure class="r-avis__un">
-          <blockquote style={`--t:${corps(a.citation.join(''))}`}><p>{a.citation[0]}<mark>{a.citation[1]}</mark>{a.citation[2]}</p></blockquote>
+          <blockquote><p>{a.citation[0]}<mark>{a.citation[1]}</mark>{a.citation[2]}</p></blockquote>
           <figcaption>
             <Image src={a.image} alt="" width={56} height={56} densities={[1, 2]} loading="lazy" />
             <span><strong>{a.nom}</strong>{a.role}</span>
@@ -34,47 +30,3 @@ const corps = (texte: string) => (texte.length < 60 ? 1.32 : texte.length < 100 
     </div>
   </div>
 </section>
-
-<script>
-  // Au bureau : une citation à la fois, choisie dans le rail des personnes.
-  const bloc = document.querySelector<HTMLElement>('[data-r-avis]');
-  if (bloc) {
-    const voix = [...bloc.querySelectorAll<HTMLElement>('.r-avis__un')];
-    const qui = voix.map((v) => v.querySelector<HTMLElement>('figcaption')!);
-    const large = window.matchMedia('(min-width: 1100px)');
-    const choisit = (i: number) => {
-      voix.forEach((v, j) => v.classList.toggle('est-choisie', j === i));
-      qui.forEach((q, j) => q.setAttribute('aria-pressed', String(j === i)));
-    };
-    const regle = () => {
-      bloc.classList.toggle('est-vivant', large.matches);
-      qui.forEach((q) => {
-        if (large.matches) {
-          q.setAttribute('role', 'button');
-          q.tabIndex = 0;
-        } else {
-          q.removeAttribute('role');
-          q.removeAttribute('tabindex');
-          q.removeAttribute('aria-pressed');
-        }
-      });
-      if (large.matches) choisit(Math.max(0, voix.findIndex((v) => v.classList.contains('est-choisie'))));
-    };
-    qui.forEach((q, i) => {
-      q.addEventListener('click', () => { if (large.matches) choisit(i); });
-      q.addEventListener('pointerenter', (e) => { if (large.matches && e.pointerType === 'mouse') choisit(i); });
-      q.addEventListener('keydown', (e) => {
-        if (!large.matches) return;
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choisit(i); }
-        const pas = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-        if (pas === undefined) return;
-        e.preventDefault();
-        const j = (i + pas + qui.length) % qui.length;
-        choisit(j);
-        qui[j].focus();
-      });
-    });
-    large.addEventListener('change', regle);
-    regle();
-  }
-</script>

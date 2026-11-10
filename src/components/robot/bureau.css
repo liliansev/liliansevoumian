@@ -3,24 +3,26 @@
    Lilian, 10 novembre 2026 : « j'aime pas les layout sur la version
    desktop », puis, devant trois recompositions des mêmes blocs : « pas
    assez créatifs, composants trop simplistes ». Ce ne sont donc pas les
-   blocs qu'on déplace, ce sont les composants qu'on travaille : chaque
-   section montre son sujet au lieu de le ranger dans une carte.
+   blocs qu'on déplace, ce sont les composants qu'on travaille. Le soir
+   même, six retours sur la première version : les chiffres sortent de
+   l'ouverture, les projets et les avis redeviennent des cartes, sans
+   animation (« juste des belles cards », « des cards élégantes »).
 
-     - l'ouverture est un scénario : des modules, le portrait, des fils ;
+     - l'ouverture est un scénario : trois modules, le portrait, des fils ;
      - « Ce que je fais » est une scène sur lilas, une petite interface
        animée par métier ;
-     - les clients défilent sur une ligne ;
-     - les projets sont une pile de feuilles, chacune avec son vrai
-       parcours dessiné en modules et en fils ;
-     - les avis montrent une citation à la fois, en grand.
+     - les clients défilent sur une ligne, les quatre chiffres dessous ;
+     - les projets sont une pile de feuilles, chacune avec ce qui a été
+       construit, en cartes, et un écart avant / après ;
+     - les avis sont trois cartes : une grande sur lilas, deux à côté.
 
    Même DA, mêmes règles « plus fin » (graisse 600, filets d'un pixel, une
    seule courbe, aucune lueur). Rien ici ne s'applique sous 1100 px : le
    téléphone et la tablette gardent `robot.css` tel quel.
    ===================================================================== */
 
-/* Les fils (ouverture et parcours de cas), tracés par `lib/robot/fils.ts`.
-   Rangés sous `.r-fils` : `.r-fil` seul est aussi la liste des avis. */
+/* Les fils de l'ouverture, tracés par `lib/robot/fils.ts`. Rangés sous
+   `.r-fils` : `.r-fil` seul est aussi la liste des avis. */
 .tenue-robot .r-fils .r-fil { fill: none; stroke: var(--fil, rgb(23 19 15 / 0.26)); stroke-width: 1.5; stroke-dasharray: 1; }
 .tenue-robot .r-fils .r-fil__grain { fill: none; stroke: var(--grain, var(--r-encre)); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 0.18 1; stroke-dashoffset: 0.18; }
 .tenue-robot .r-fils .r-fil__port { fill: var(--port, var(--r-papier)); stroke: var(--port-trait, var(--r-encre)); stroke-width: 1.5; }
@@ -31,8 +33,8 @@
   .tenue-robot .r-hero__grille {
     position: relative;
     --h-fil: clamp(40px, 3.8vw, 52px);
-    grid-template-columns: minmax(0, 1fr) clamp(126px, 11.2vw, 144px) clamp(248px, 22vw, 288px) clamp(172px, 15vw, 190px);
-    grid-template-areas: 'texte . portrait sorties' 'gestes . portrait sorties';
+    grid-template-columns: minmax(0, 1fr) clamp(126px, 11.2vw, 144px) clamp(300px, 27vw, 372px);
+    grid-template-areas: 'texte . portrait' 'gestes . portrait';
     column-gap: var(--h-fil);
   }
   .tenue-robot .r-hero__chapo { margin-bottom: 28px; }
@@ -57,16 +59,6 @@
   .tenue-robot .r-sticker--2 .r-sticker__nom::first-letter { text-transform: uppercase; }
   .tenue-robot .r-sticker__detail { color: var(--r-encre-3); font-weight: 500; font-size: 14px; }
 
-  /* Les quatre chiffres deviennent quatre modules, à sa droite. */
-  .tenue-robot .r-chiffres { grid-area: sorties; align-self: center; grid-template-columns: 1fr; gap: 10px; margin: 0; border: 0; }
-  .tenue-robot .r-chiffres li,
-  .tenue-robot .r-chiffres li:first-child {
-    gap: 1px; padding: 10px 14px 11px; border: 0; border-radius: 14px;
-    box-shadow: 0 0 0 1px var(--r-filet), 0 12px 24px -18px rgb(15 13 11 / 0.5);
-    animation: r-pose 0.7s var(--r-sortie) both; animation-delay: calc(1.5s + var(--i) * 70ms);
-  }
-  .tenue-robot .r-chiffres strong { font-size: 22px; letter-spacing: -0.02em; }
-  .tenue-robot .r-chiffres span { font-size: 13.5px; line-height: 1.3; }
   .tenue-robot .r-hero .r-fils { display: block; position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 
   /* ---------- « Ce que je fais » : une scène sur lilas ---------- */
@@ -126,48 +118,41 @@
   }
   .tenue-robot .r-carte-cas__lire { display: inline; }
   .tenue-robot .r-carte-cas__fleche { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--r-surface-2); transition: transform 0.4s var(--r-sortie), background-color 0.25s, color 0.25s; }
+  /* Au survol la feuille garde son fond (ses cartes ont celui du survol des petits écrans) ; la flèche répond. */
+  .tenue-robot .r-carte-cas:hover { background: var(--r-surface); }
   .tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: none; border-color: var(--r-trait-2); color: var(--r-texte); transform: none; }
   .tenue-robot .r-carte-cas:hover .r-carte-cas__fleche { background: var(--r-citron); color: var(--r-encre); transform: rotate(45deg); }
   .tenue-robot .r-carte-cas__montre { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; min-width: 0; }
 
-  /* Le parcours du cas : un canvas, des modules, des fils. */
-  .tenue-robot .r-flux {
-    position: relative; min-height: 292px; border-radius: 18px; overflow: hidden;
-    border: 1px solid var(--r-trait);
-    background: radial-gradient(circle, #2e2924 1px, transparent 1.4px) 11px 11px / 22px 22px var(--r-noir);
-    --fil: var(--r-trait-2); --grain: var(--r-citron); --port: var(--r-noir); --port-trait: #7d7368;
-  }
-  .tenue-robot .r-flux .r-fils { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-  .tenue-robot .r-flux__plan {
-    position: relative; height: 100%; box-sizing: border-box; padding: 20px 22px;
-    display: grid; grid-template-columns: repeat(3, 27.5%); justify-content: space-between; align-items: center;
-  }
-  .tenue-robot .r-flux--eventail .r-flux__plan { grid-template-rows: repeat(3, minmax(0, 1fr)); }
-  .tenue-robot .r-flux--file .r-flux__plan { grid-template-rows: repeat(2, minmax(0, 1fr)); }
-  .tenue-robot .r-noeud {
-    display: grid; gap: 2px; min-width: 0; padding: 11px 13px 12px; border-radius: 14px;
+  /* Ce qui a été construit : des cartes, rien ne bouge. Deux rangées de même
+     hauteur ; une seule carte sur lilas. */
+  .tenue-robot .r-etapes { display: grid; min-height: 0; }
+  .tenue-robot .r-etapes__liste { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: minmax(132px, 1fr); gap: 10px; }
+  .tenue-robot .r-etape {
+    grid-column: span 2; display: flex; flex-direction: column; min-width: 0; box-sizing: border-box;
+    padding: 16px 18px 17px; border-radius: 18px;
     background: var(--r-surface-2); border: 1px solid var(--r-trait-2);
   }
-  .tenue-robot .r-noeud__tete { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; font-size: 13px; line-height: 1.2; color: var(--r-gris); }
-  .tenue-robot .r-noeud__ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--o); color: var(--r-encre); flex-shrink: 0; }
-  .tenue-robot .r-noeud__ic svg { width: 15px; height: 15px; }
-  .tenue-robot .r-noeud strong { font-size: 16px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--r-texte); }
-  .tenue-robot .r-noeud__sous { font-size: 13px; line-height: 1.3; color: var(--r-gris); }
-  .tenue-robot .r-noeud--depart { grid-column: 1; grid-row: 1 / -1; }
-  .tenue-robot .r-noeud--agent { grid-column: 2; grid-row: 1 / -1; }
-  /* Un module sur lilas par canvas : l'agent d'un éventail, l'aboutissement d'une file. */
-  .tenue-robot :is(.r-noeud--agent, .r-noeud--e4) { background: var(--r-lilas); border-color: var(--r-lilas); }
-  .tenue-robot :is(.r-noeud--agent, .r-noeud--e4) strong { color: var(--r-encre); }
-  .tenue-robot :is(.r-noeud--agent, .r-noeud--e4) :is(.r-noeud__tete, .r-noeud__sous) { color: #2f2748; }
-  .tenue-robot :is(.r-noeud--agent, .r-noeud--e4) .r-noeud__ic { background: var(--r-encre); color: var(--r-lilas); }
-  .tenue-robot :is(.r-noeud--s0, .r-noeud--s1, .r-noeud--s2) { grid-column: 3; }
-  .tenue-robot .r-noeud--e3 { grid-column: 3; grid-row: 2; }
-  .tenue-robot .r-noeud--e4 { grid-column: 1 / 3; grid-row: 2; }
+  .tenue-robot .r-etape__tete { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: auto; padding-bottom: 16px; }
+  .tenue-robot .r-etape__ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--o); color: var(--r-encre); flex-shrink: 0; }
+  .tenue-robot .r-etape__ic svg { width: 19px; height: 19px; }
+  .tenue-robot .r-etape__rang { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--r-gris); }
+  .tenue-robot .r-etape__sur { font-size: 13.5px; line-height: 1.3; color: var(--r-gris); margin-bottom: 3px; }
+  .tenue-robot .r-etape strong { font-size: 17px; font-weight: 600; line-height: 1.2; letter-spacing: -0.012em; color: var(--r-texte); text-wrap: balance; }
+  .tenue-robot .r-etape__sous { margin-top: 5px; font-size: 13.5px; line-height: 1.3; color: var(--r-gris); }
+  /* Une file : trois étapes, puis la quatrième et l'aboutissement, plus large. */
+  .tenue-robot .r-etapes--file .r-etape:nth-child(5) { grid-column: span 4; }
+  /* Un éventail : ce qui déclenche et ce qui traite, puis les trois actions. */
+  .tenue-robot .r-etapes--eventail .r-etape:nth-child(-n + 2) { grid-column: span 3; }
+  .tenue-robot .r-etape--forte { background: var(--r-lilas); border-color: var(--r-lilas); }
+  .tenue-robot .r-etape--forte strong { color: var(--r-encre); }
+  .tenue-robot .r-etape--forte :is(.r-etape__sur, .r-etape__sous, .r-etape__rang) { color: #2f2748; }
+  .tenue-robot .r-etape--forte .r-etape__ic { background: var(--r-encre); color: var(--r-lilas); }
 
   /* L'écart : avant, après. */
   .tenue-robot .r-ecart {
     display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 18px;
-    padding: 13px 18px 14px; border-radius: 16px; border: 1px solid var(--r-trait);
+    padding: 14px 18px 15px; border-radius: 18px; border: 1px solid var(--r-trait-2);
     font-size: 15px; line-height: 1.35;
   }
   .tenue-robot .r-ecart__mot { display: block; margin-bottom: 1px; font-size: 12.5px; color: var(--r-gris); }
@@ -176,39 +161,46 @@
   .tenue-robot .r-ecart__vers { position: relative; width: 30px; height: 1.5px; background: var(--r-citron); }
   .tenue-robot .r-ecart__vers::after { content: ''; position: absolute; right: 0; top: 50%; width: 7px; height: 7px; border: solid var(--r-citron); border-width: 1.5px 1.5px 0 0; transform: translateY(-50%) rotate(45deg); }
 
-  /* ---------- les avis : une citation à la fois ---------- */
-  .tenue-robot .r-avis.est-vivant { grid-template-columns: 1fr; gap: 0; }
-  .tenue-robot .r-avis.est-vivant .r-titre { position: static; margin-bottom: 56px; }
-  .tenue-robot .est-vivant .r-fil { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 32px; }
-  .tenue-robot .est-vivant .r-avis__un { display: contents; }
-  /* Les trois citations occupent la même case : la plus longue en fixe la hauteur, rien ne saute au changement. */
-  .tenue-robot .est-vivant .r-avis__un blockquote {
-    grid-column: 1 / -1; grid-row: 1; align-self: end; max-width: min(100%, 1080px);
-    font-size: calc(clamp(32px, 3.2vw, 44px) * var(--t, 1)); line-height: 1.12; font-weight: 500; letter-spacing: -0.028em; text-wrap: balance;
-    opacity: 0; visibility: hidden; transform: translateY(10px);
-    transition: opacity 0.2s, transform 0.2s, visibility 0s 0.2s;
+  /* ---------- les avis : trois cartes ----------
+     Une grande sur lilas, pour la phrase la plus courte, dite en grand ; les
+     deux autres à sa droite, l'une sur l'autre. Rien ne bouge. */
+  .tenue-robot .r-avis { grid-template-columns: 1fr; gap: 0; }
+  .tenue-robot .r-avis .r-titre { position: static; margin-bottom: 40px; }
+  .tenue-robot .r-fil { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 16px; }
+  .tenue-robot .r-avis__un,
+  .tenue-robot .r-avis__un:first-child,
+  .tenue-robot .r-avis__un:last-child {
+    display: flex; flex-direction: column; gap: 32px; padding: 32px 34px 28px;
+    border: 1px solid var(--r-trait); border-radius: 28px; background: var(--r-surface);
   }
-  /* Le paragraphe a sa propre règle de césure (`pretty`, couche de base) : on l'équilibre ici. */
-  .tenue-robot .est-vivant .r-avis__un blockquote p { text-wrap: balance; }
-  .tenue-robot .est-vivant .est-choisie blockquote { opacity: 1; visibility: visible; transform: none; transition: opacity 0.55s 0.12s var(--r-sortie), transform 0.7s 0.12s var(--r-sortie), visibility 0s; }
-  .tenue-robot .est-vivant .r-avis__un figcaption {
-    grid-row: 2; margin-top: 56px; padding-top: 20px; gap: 14px; align-items: flex-start; cursor: pointer;
-    border-top: 1px solid var(--r-trait); color: var(--r-gris);
-    transition: border-color 0.3s, opacity 0.3s; opacity: 0.55;
+  .tenue-robot .r-avis__un blockquote { font-size: 21px; line-height: 1.42; letter-spacing: -0.012em; }
+  .tenue-robot .r-avis__un figcaption { margin-top: auto; padding-top: 20px; gap: 14px; border-top: 1px solid var(--r-trait); }
+  .tenue-robot .r-avis__un figcaption img { width: 48px; height: 48px; }
+  /* La grande : la citation tient la carte, la personne est en bas. */
+  .tenue-robot .r-avis__un:first-child {
+    grid-row: 1 / -1; padding: 44px 44px 36px; min-height: 480px; box-sizing: border-box;
+    background: var(--r-lilas); border-color: var(--r-lilas); color: var(--r-encre);
   }
-  .tenue-robot .est-vivant .r-avis__un figcaption:hover { opacity: 0.85; }
-  .tenue-robot .est-vivant .est-choisie figcaption, .tenue-robot .est-vivant .est-choisie figcaption:hover { opacity: 1; border-top-color: var(--r-citron); }
-  .tenue-robot .est-vivant .r-avis__un figcaption img { width: 48px; height: 48px; }
-  .tenue-robot .est-vivant .r-avis__un figcaption:focus-visible { outline-offset: 6px; border-radius: 4px; }
+  .tenue-robot .r-avis__un:first-child blockquote {
+    max-width: 8.6em; font-size: clamp(44px, 3.6vw, 52px); line-height: 1.04; font-weight: 600; letter-spacing: -0.034em;
+    color: rgb(23 19 15 / 0.62);
+  }
+  .tenue-robot .r-avis__un:first-child blockquote p { text-wrap: balance; }
+  /* Sur lilas le citron ne se lit pas : le passage retenu est à l'encre pleine, le reste plus pâle. */
+  .tenue-robot .r-avis__un:first-child mark { color: var(--r-encre); }
+  .tenue-robot .r-avis__un:first-child figcaption { border-top-color: rgb(23 19 15 / 0.16); color: #2f2748; font-size: 16px; }
+  .tenue-robot .r-avis__un:first-child figcaption strong { color: var(--r-encre); }
+  .tenue-robot .r-avis__un:first-child figcaption img { width: 56px; height: 56px; }
 }
 
-/* Entre 1100 et 1240 px tout tient, un cran plus serré : les deux gestes de
-   l'ouverture restent sur une ligne, les titres des modules aussi. */
+/* Entre 1100 et 1240 px tout tient, un cran plus serré. */
 @media (min-width: 1100px) and (max-width: 1239px) {
-  .tenue-robot .r-hero__actions { flex-wrap: nowrap; }
-  .tenue-robot .r-hero__actions .r-btn--grand { padding: 0 20px; font-size: 15px; white-space: nowrap; }
-  .tenue-robot .r-flux__plan { grid-template-columns: repeat(3, 29.5%); padding-inline: 18px; }
-  .tenue-robot .r-noeud strong { font-size: 15px; }
+  .tenue-robot .r-etape { padding-inline: 15px; }
+  .tenue-robot .r-etape strong { font-size: 16px; }
+  /* Les deux petites cartes d'avis moins hautes : la grande garde ses proportions. */
+  .tenue-robot .r-avis__un:not(:first-child) { gap: 24px; padding: 28px 30px 24px; }
+  .tenue-robot .r-avis__un:not(:first-child) blockquote { font-size: 19px; }
+  .tenue-robot .r-avis__un:first-child { min-height: 0; }
 }
 
 /* La pile ne colle que si une feuille tient dans la fenêtre sous la barre. */

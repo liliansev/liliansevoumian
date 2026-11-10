@@ -4,35 +4,28 @@
  * se déplie une fois à l'arrivée, la ligne de métier, le chapô. À droite le
  * portrait, en couleurs d'origine (Lilian, 10 novembre 2026 : la photo n'est
  * ni retouchée ni teintée), avec trois petites pastilles ; celles des outils
- * portent la couleur de l'outil. Les deux gestes viennent après la photo sur
- * téléphone, sous le texte au bureau : « S'abonner à la newsletter » et « Me
- * contacter » (Lilian, 10 novembre 2026, à la place de YouTube). Dessous, les
- * quatre chiffres (`data/parcours.ts`), en une ligne séparée par des filets.
+ * portent la couleur de l'outil. Un seul geste, « Me contacter », en citron,
+ * après la photo sur téléphone et sous le texte au bureau (Lilian, 10
+ * novembre 2026 au soir : la newsletter descend dans le pied, `pied.astro`,
+ * et les quatre chiffres sortent de l'ouverture pour passer sous les logos
+ * des clients, `clients.astro`).
  *
  * À partir de 1100 px (`bureau.css`), l'ouverture se lit comme un scénario,
  * son métier : les trois pastilles deviennent trois modules à gauche du
- * portrait, les quatre chiffres quatre modules à sa droite, et des fils les
- * relient au portrait (Lilian, 10 novembre 2026 : des composants « plus
- * créatifs », moins simples). Les fils sont tracés par le script ci-dessous,
- * d'après la place réelle des modules ; ils se dessinent une fois à l'arrivée,
- * puis un grain les parcourt quand on survole un module ou le portrait. Sans
- * script il n'y a pas de fils, et rien ne manque ; en mouvement réduit ils
- * sont posés d'un coup.
+ * portrait, et des fils les y relient (Lilian, 10 novembre 2026 : des
+ * composants « plus créatifs », moins simples). Les fils sont tracés par le
+ * script ci-dessous, d'après la place réelle des modules ; ils se dessinent
+ * une fois à l'arrivée, puis un grain les parcourt quand on survole un module
+ * ou le portrait. Sans script il n'y a pas de fils, et rien ne manque ; en
+ * mouvement réduit ils sont posés d'un coup.
  */
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
 import portrait from '../../assets/lilian-photo.jpg';
-import { audience, profils } from '../../data/parcours';
 import { couleurOutil } from '../../data/outils';
 import Robot from './robot.astro';
 import BoutonReservation from '../BoutonReservation.astro';
 
-const chiffres = [
-  { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
-  { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
-  { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
-  { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
-];
 /* `couleur` est le fond de la pastille sur téléphone, `pastille` celui du
    carré d'icône du module au bureau (le blanc n'y ferait rien sur blanc). */
 const autocollants = [
@@ -56,20 +49,16 @@ const autocollants = [
       ))}
     </figure>
     <p class="r-hero__actions">
-      <a class="r-btn r-btn--cta r-btn--grand" href={profils.newsletter} target="_blank" rel="noopener noreferrer" data-fast-goal="newsletter_opened" data-fast-goal-source="home_hero">S’abonner à la newsletter<span class="sr-only"> (nouvel onglet)</span></a>
-      <BoutonReservation source="home_hero" class="r-btn r-btn--trait r-btn--grand">Me contacter</BoutonReservation>
+      <BoutonReservation source="home_hero" class="r-btn r-btn--cta r-btn--grand">Me contacter</BoutonReservation>
     </p>
-    <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
-      {chiffres.map((c, i) => <li style={`--i:${i}`}><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
-    </ul>
     <svg class="r-fils" aria-hidden="true" focusable="false"></svg>
   </div>
 </section>
 
 <script>
-  // Les fils de l'ouverture, au bureau seulement : des modules au portrait,
-  // du portrait aux chiffres. Tracés d'après la place réelle de chaque pièce,
-  // retracés quand la grille change de taille (`lib/robot/fils.ts`).
+  // Les fils de l'ouverture, au bureau seulement : des trois modules au
+  // portrait. Tracés d'après la place réelle de chaque pièce, retracés quand
+  // la grille change de taille (`lib/robot/fils.ts`).
   import { bord, cadre, courir, dessiner, ports, tendre, type Fil } from '../../lib/robot/fils';
 
   const grille = document.querySelector<HTMLElement>('[data-r-scenario]');
@@ -77,43 +66,33 @@ const autocollants = [
   const photo = grille?.querySelector<HTMLElement>('.r-portrait');
   if (grille && svg && photo && 'ResizeObserver' in window && 'animate' in Element.prototype) {
     const entrees = [...grille.querySelectorAll<HTMLElement>('.r-sticker')];
-    const sorties = [...grille.querySelectorAll<HTMLElement>('.r-chiffres li')];
     const large = window.matchMedia('(min-width: 1100px)');
     const calme = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let amont: Fil[] = [];
-    let aval: Fil[] = [];
+    let fils: Fil[] = [];
     let arrive = false;
 
     const passe = (depuis: Fil[]) => {
       if (calme.matches) return;
-      depuis.forEach((f) => courir(f));
-      aval.forEach((f, i) => courir(f, 520 + i * 60));
+      depuis.forEach((f, i) => courir(f, i * 70));
     };
 
     const trace = () => {
       svg.replaceChildren();
-      amont = [];
-      aval = [];
+      fils = [];
       if (!large.matches) return;
-      const p = cadre(photo, grille);
-      const entree = bord(p, 'g');
-      const sortie = bord(p, 'd');
+      const entree = bord(cadre(photo, grille), 'g');
       const departs = entrees.map((e) => bord(cadre(e, grille), 'd'));
-      const arrivees = sorties.map((s) => bord(cadre(s, grille), 'g'));
-      amont = departs.map((d) => tendre(svg, d, entree));
-      aval = arrivees.map((a) => tendre(svg, sortie, a));
-      ports(svg, [...departs, entree, sortie, ...arrivees]);
+      fils = departs.map((d) => tendre(svg, d, entree));
+      ports(svg, [...departs, entree]);
       if (arrive || calme.matches) return;
-      // L'arrivée, une fois : les fils d'amont se dessinent, un grain les
-      // traverse, puis ceux d'aval partent du portrait.
+      // L'arrivée, une fois : les fils se dessinent, un grain les traverse.
       arrive = true;
-      amont.forEach((f, i) => { dessiner(f, 720 + i * 80); courir(f, 1250 + i * 80); });
-      aval.forEach((f, i) => { dessiner(f, 1560 + i * 70); courir(f, 2150 + i * 70); });
+      fils.forEach((f, i) => { dessiner(f, 720 + i * 80); courir(f, 1250 + i * 80); });
     };
 
     new ResizeObserver(trace).observe(grille);
     large.addEventListener('change', trace);
-    entrees.forEach((e, i) => e.addEventListener('pointerenter', () => { if (amont[i]) passe([amont[i]]); }));
-    photo.addEventListener('pointerenter', () => passe(amont));
+    entrees.forEach((e, i) => e.addEventListener('pointerenter', () => { if (fils[i]) passe([fils[i]]); }));
+    photo.addEventListener('pointerenter', () => passe(fils));
   }
 </script>
