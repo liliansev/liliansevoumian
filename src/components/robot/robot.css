@@ -163,7 +163,7 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 
 /* ---------- l'ouverture, sur blanc ---------- */
 .tenue-robot .r-hero { background: var(--r-papier); color: var(--r-encre); padding: 148px 0 40px; border-radius: 0 0 32px 32px; }
-.tenue-robot .r-hero__grille { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, 0.78fr); grid-template-areas: 'texte portrait' 'gestes portrait'; column-gap: 72px; align-items: center; }
+.tenue-robot .r-hero__grille { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, 0.78fr); grid-template-areas: 'texte portrait' 'gestes portrait' 'chiffres chiffres'; column-gap: 72px; align-items: center; }
 .tenue-robot .r-hero__texte { grid-area: texte; align-self: end; }
 .tenue-robot .r-hero__actions { grid-area: gestes; align-self: start; }
 .tenue-robot .r-hero .r-portrait { grid-area: portrait; }
@@ -193,9 +193,11 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-sticker--1 { top: 30%; right: -5%; rotate: 3deg; animation-delay: 0.65s; }
 .tenue-robot .r-sticker--2 { bottom: 13%; left: -9%; rotate: 3deg; animation-delay: 0.75s; }
 @keyframes r-pose { from { opacity: 0; transform: translateY(8px); } }
+/* Le carré d'icône des modules et les fils n'existent qu'au bureau (`bureau.css`). */
+.tenue-robot .r-sticker__ic, .tenue-robot .r-fils { display: none; }
 
 /* Les quatre chiffres : une ligne, des filets, pas de tuiles. */
-.tenue-robot .r-chiffres { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 72px; border-top: 1px solid var(--r-filet); }
+.tenue-robot .r-chiffres { grid-area: chiffres; display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 72px; border-top: 1px solid var(--r-filet); }
 .tenue-robot .r-chiffres li { display: grid; gap: 4px; align-content: start; padding: 22px 24px 16px; border-left: 1px solid var(--r-filet); }
 .tenue-robot .r-chiffres li:first-child { padding-left: 0; border-left: 0; }
 .tenue-robot .r-chiffres strong { font-size: clamp(26px, 2.5vw, 34px); font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; font-variant-numeric: tabular-nums; }
@@ -248,6 +250,8 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-pan__texte { color: #2f2748; font-size: 16px; max-width: 30em; margin-bottom: 4px; }
 .tenue-robot .r-pan .r-outils li { box-shadow: inset 0 0 0 1px rgb(23 19 15 / 0.7); }
 .tenue-robot .r-pan__lien { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; margin-top: auto; padding-top: 16px; }
+/* La scène animée du métier n'est montrée qu'au bureau (`bureau.css`). */
+.tenue-robot .r-pan__scene { display: none; }
 
 /* Les clients : un mur de logos, des filets entre les cases. */
 .tenue-robot .r-tuiles { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; background: var(--r-trait); border: 1px solid var(--r-trait); border-radius: 24px; overflow: hidden; }
@@ -264,6 +268,8 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-tuiles img { width: auto; height: auto; max-height: calc(24px * var(--e, 1)); max-width: 104px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.66; transition: opacity 0.3s; }
 .tenue-robot .r-tuiles span { font-weight: 600; opacity: 0.66; font-size: 16px; letter-spacing: -0.01em; text-align: center; transition: opacity 0.3s; }
 .tenue-robot .r-tuiles li:hover :is(img, span) { opacity: 1; }
+/* La copie du défilé et son bouton pause n'existent qu'au bureau (`bureau.css`). */
+.tenue-robot .r-tuiles--bis, .tenue-robot .r-defile__pause { display: none; }
 
 /* Les projets clients. */
 .tenue-robot .r-cas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -282,6 +288,9 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: var(--r-citron); border-color: var(--r-citron); color: var(--r-encre); transform: rotate(45deg); }
 .tenue-robot .r-carte-cas:focus-within { outline: 2px solid var(--r-citron); outline-offset: 3px; }
 .tenue-robot .r-carte-cas h3 a:focus-visible { outline: none; }
+/* Le texte de la carte est une boîte au bureau seulement ; son parcours dessiné et « Lire le cas » aussi (`bureau.css`). */
+.tenue-robot .r-carte-cas__dit { display: contents; }
+.tenue-robot .r-carte-cas__montre, .tenue-robot .r-carte-cas__lire { display: none; }
 
 /* Les avis : trois citations posées, séparées par des filets. */
 .tenue-robot .r-avis { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 48px; align-items: start; }
@@ -375,11 +384,12 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 @media (max-width: 860px) {
   .tenue-robot .r-hero { padding-top: 118px; border-radius: 0 0 24px 24px; }
   .tenue-robot .r-hero__grille, .tenue-robot .r-contact__grille, .tenue-robot .r-avis { grid-template-columns: 1fr; gap: 36px; }
-  .tenue-robot .r-hero__grille { grid-template-areas: 'texte' 'portrait' 'gestes'; }
+  .tenue-robot .r-hero__grille { grid-template-areas: 'texte' 'portrait' 'gestes' 'chiffres'; }
   .tenue-robot .r-hero__chapo { margin-bottom: 0; }
   .tenue-robot .r-hero__actions { justify-content: center; }
   .tenue-robot .r-portrait { max-width: 420px; width: 84%; margin-inline: auto; }
-  .tenue-robot .r-chiffres { grid-template-columns: 1fr 1fr; margin-top: 48px; }
+  /* 12 px de marge et les 36 px de la gouttière : 48 px sous les gestes, comme avant. */
+  .tenue-robot .r-chiffres { grid-template-columns: 1fr 1fr; margin-top: 12px; }
   .tenue-robot .r-chiffres li { padding: 18px 16px 18px 20px; }
   .tenue-robot .r-chiffres li:nth-child(odd) { padding-left: 0; border-left: 0; }
   .tenue-robot .r-chiffres li:nth-child(n + 3) { border-top: 1px solid var(--r-filet); }

@@ -611,6 +611,68 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
   et les étiquettes du portrait), à la place des cernes d'encre. Jamais de
   lueur, jamais d'ombre colorée.
 
+### Au bureau : des composants travaillés (10 novembre 2026)
+
+Le soir de la passe « plus fin », Lilian : « j'aime pas les layout sur la
+version desktop ». Trois mises en page lui ont été montrées (tuiles « bento »,
+index à rail, fiche fixe) ; il les a refusées toutes les trois : « J'aime pas
+bento. Pas assez créatifs, composants trop simplistes. » Le défaut n'était pas
+la place des blocs mais leur dessin. **Jamais de grille de tuiles sur
+l'accueil ; un composant simple déplacé reste un composant simple.**
+
+À partir de 1100 px chaque section devient un objet dessiné, pris dans son
+métier : des modules reliés par des fils, comme un scénario Make ou n8n. Tout
+est dans `robot/bureau.css`, sous `@media (min-width: 1100px)` ; sous
+1100 px la page est celle des chapitres précédents, au pixel près. Les règles
+de la passe « plus fin » tiennent toujours (graisse 600, filets, une courbe,
+aucune lueur).
+
+- **Les fils** (`src/lib/robot/fils.ts`) : un trait de 1,5 px, deux ports
+  ronds de 3,5 px, un grain plus épais qui parcourt le fil. Ils sont tracés
+  par script d'après la place réelle des modules (`offsetLeft` / `offsetTop`,
+  pas la boîte à l'écran, pour ne pas suivre une entrée en cours) et retracés
+  quand le bloc change de taille. Sans script il n'y a pas de fils et rien ne
+  manque. Encre à 26 % sur blanc ; sur le canvas noir, `--r-trait-2` et un
+  grain citron.
+- **L'ouverture, un scénario** : les trois étiquettes du portrait deviennent
+  trois modules blancs à sa gauche (carré d'icône à la couleur de l'outil),
+  les quatre chiffres quatre modules à sa droite, et sept fils passent par le
+  portrait (4/5, rayon 24 px). À l'arrivée, une fois : les fils d'amont se
+  dessinent, un grain les traverse, puis ceux d'aval partent. Ensuite un
+  grain repasse quand on survole un module ou le portrait. Nom à
+  `clamp(60px, 5.2vw, 76px)`.
+- **« Ce que je fais », une scène** : un seul panneau lilas (rayon 28 px). À
+  gauche la liste des quatre métiers (le choisi en pilule d'encre, son icône
+  sur citron), puis la phrase du métier en grand ; à droite, dans une fenêtre
+  noire de 4/3, la scène animée du métier (`src/components/metiers/`, moteur
+  `lib/metiers/scene.ts`), jouée une fois quand elle arrive à l'écran. Les
+  scènes viennent de l'accueil « Le documentaire » : même dessin, sans leurs
+  lueurs (panneau, grains, halo de l'agent), sur le noir chaud, en Roboto
+  Flex.
+- **Les clients, un défilé** : les logos passent sur une ligne entre deux
+  filets, bords fondus, 70 s par tour ; il s'arrête au survol et par son
+  bouton pause. En mouvement réduit il n'y a pas de défilé, le mur reste un
+  mur. C'est la seule boucle de la page.
+- **Les projets, une pile** : chaque cas est une grande feuille (rayon 28 px)
+  qui vient se poser sur la précédente au défilement (collante, décalée de
+  14 px par feuille, seulement si la fenêtre fait 680 px de haut). À gauche le
+  client, le titre en clair, le détail, les outils, « Lire le cas » ; à droite
+  son vrai parcours sur un canvas à points (`robot/flux.astro`) : `flow` du
+  cas en éventail (déclencheur, agent sur lilas, trois actions) ou `parcours`
+  en file de cinq étapes, chaque module à la couleur de son outil. Dessous,
+  un écart avant / après pris dans `bascule`. Un grain parcourt les fils quand
+  la feuille arrive, puis à chaque survol.
+- **Les avis, une voix** : une seule citation en grand sur toute la largeur
+  (`clamp(32px, 3.2vw, 44px)`, graisse 500, multipliée par `--t` : une
+  citation courte se dit plus grand qu'une longue), et dessous le rail des
+  trois personnes ; on en choisit une au survol, au clic ou au clavier, son
+  filet passe au citron. Sans script les trois citations restent l'une sous
+  l'autre.
+- **Mouvement** : rien ne tourne en boucle hors du défilé des logos. Les fils
+  de l'ouverture, les scènes et les grains des cas jouent une fois, puis
+  seulement sur un geste du visiteur. En mouvement réduit tout est posé d'un
+  coup.
+
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 
 **Ce chapitre fait foi pour les pages intérieures et le blog.** Le 10 novembre

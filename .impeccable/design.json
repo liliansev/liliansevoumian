@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-10T19:52:02Z",
+  "generatedAt": "2026-11-10T21:50:00Z",
   "title": "Design System: Lilian Sevoumian",
   "extensions": {
     "colorMeta": {
@@ -458,6 +458,26 @@
         "purpose": "La barre flottante se resserre au défilement."
       },
       {
+        "name": "fil-dessine",
+        "value": "stroke-dashoffset 1→0, 0.62s, une fois",
+        "purpose": "Au bureau, les fils de l’ouverture se dessinent à l’arrivée, des modules vers le portrait puis du portrait vers les chiffres."
+      },
+      {
+        "name": "fil-grain",
+        "value": "stroke-dashoffset 0.18→-1, 0.8 à 0.85s",
+        "purpose": "Un grain parcourt un fil : une fois à l’arrivée, puis au survol d’un module, du portrait ou d’une feuille de cas."
+      },
+      {
+        "name": "defile-logos",
+        "value": "translateX(-100%), 70s linear infinite, pause au survol et par bouton",
+        "purpose": "La seule boucle de l’accueil, au bureau ; en mouvement réduit le mur de logos reste un mur."
+      },
+      {
+        "name": "citation-change",
+        "value": "opacity 0→1, translateY(10px)→0, 0.55s",
+        "purpose": "Au bureau, la citation choisie dans le rail remplace la précédente sur place."
+      },
+      {
         "name": "reduced-motion",
         "value": "animation: none; transition: none",
         "purpose": "Tout mouvement est coupé sous prefers-reduced-motion."
@@ -574,11 +594,19 @@
       "description": "Un avis : une phrase en grand, le passage retenu en texte citron, la personne en dessous ; un filet entre deux avis.",
       "html": "<figure class=\"ds-r-avis\"><blockquote>Les projets qu’il prend en charge <mark>sont un succès.</mark></blockquote><figcaption><strong>Benjamin Potet</strong>Solution Architect Customer Experience, Make</figcaption></figure>",
       "css": ".ds-r-avis{margin:0;background:#0f0d0b;color:#f8f4ef;padding:32px 24px;border-top:1px solid #332e29;display:grid;gap:20px;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-avis blockquote{margin:0;font-size:24px;font-weight:450;line-height:1.35;letter-spacing:-.015em}.ds-r-avis mark{background:none;color:#ffd84d}.ds-r-avis figcaption{display:grid;gap:2px;font-size:15px;color:#aaa198}.ds-r-avis strong{color:#f8f4ef;font-weight:600}"
+    },
+    {
+      "name": "Module et fil",
+      "kind": "custom",
+      "refersTo": "robot-surface",
+      "description": "Au bureau (1100 px et plus), l’accueil se lit comme un scénario Make ou n8n : des modules à la couleur de leur outil, reliés par des fils d’un pixel et demi tracés par script (lib/robot/fils.ts). L’agent est sur lilas, le grain qui parcourt le fil est citron.",
+      "html": "<div class=\"ds-r-flux\"><div class=\"ds-r-noeud\"><span class=\"ds-r-noeud__tete\"><i style=\"background:#ff9a73\"></i>Deal signé</span><strong>HubSpot</strong></div><svg width=\"56\" height=\"12\" aria-hidden=\"true\"><path d=\"M4 6H52\" fill=\"none\" stroke=\"#4a433c\" stroke-width=\"1.5\"/><circle cx=\"4\" cy=\"6\" r=\"3.5\" fill=\"#0f0d0b\" stroke=\"#7d7368\" stroke-width=\"1.5\"/><circle cx=\"52\" cy=\"6\" r=\"3.5\" fill=\"#0f0d0b\" stroke=\"#7d7368\" stroke-width=\"1.5\"/></svg><div class=\"ds-r-noeud ds-r-noeud--agent\"><span class=\"ds-r-noeud__tete\"><i style=\"background:#17130f\"></i>Règles</span><strong>Calcule &amp; découpe</strong></div></div>",
+      "css": ".ds-r-flux{display:flex;align-items:center;padding:20px 22px;border-radius:18px;border:1px solid #332e29;background:radial-gradient(circle,#2e2924 1px,transparent 1.4px) 11px 11px/22px 22px #0f0d0b;font-family:'Roboto Flex Variable','Roboto Flex',system-ui,sans-serif}.ds-r-noeud{display:grid;gap:2px;padding:11px 13px 12px;border-radius:14px;background:#24201c;border:1px solid #4a433c;color:#f8f4ef}.ds-r-noeud__tete{display:flex;align-items:center;gap:9px;margin-bottom:6px;font-size:13px;color:#aaa198}.ds-r-noeud__tete i{width:26px;height:26px;border-radius:8px}.ds-r-noeud strong{font-size:16px;font-weight:600;letter-spacing:-0.01em}.ds-r-noeud--agent{background:#b9a6ff;border-color:#b9a6ff;color:#17130f}.ds-r-noeud--agent .ds-r-noeud__tete{color:#2f2748}"
     }
   ],
   "narrative": {
     "northStar": "Citron et lilas",
-    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait aujourd'hui. Depuis le 10 novembre 2026, tout le site porte « Citron et lilas » : fond noir chaud, des îles blanches (l'ouverture, le contact, ce que le lecteur vient vérifier), le citron pour les gestes, le lilas pour les surfaces douces, Roboto Flex et un petit robot qui cligne des yeux. « Mignon, tech, geek mais sérieux », sans lueur.\n\nLa passe « plus fin » du même jour en a calmé la main, à la demande de Lilian (« un peu moins de friendly », « plus premium et travaillé tout en gardant la DA ») : titres en graisse 600 et plus petits, filets d'un pixel à la place des cernes d'encre, une seule courbe de mouvement sans rebond, des liens au trait droit, le robot à quatre endroits seulement. Les pages intérieures et le blog reçoivent la même tenue par un échange de jetons (derniers blocs de global.css et de carnet.css).",
+    "overview": "Le site est celui d'une personne : Lilian, ce qu'il a fait et ce qu'il fait aujourd'hui. Depuis le 10 novembre 2026, tout le site porte « Citron et lilas » : fond noir chaud, des îles blanches (l'ouverture, le contact, ce que le lecteur vient vérifier), le citron pour les gestes, le lilas pour les surfaces douces, Roboto Flex et un petit robot qui cligne des yeux. « Mignon, tech, geek mais sérieux », sans lueur.\n\nLa passe « plus fin » du même jour en a calmé la main, à la demande de Lilian (« un peu moins de friendly », « plus premium et travaillé tout en gardant la DA ») : titres en graisse 600 et plus petits, filets d'un pixel à la place des cernes d'encre, une seule courbe de mouvement sans rebond, des liens au trait droit, le robot à quatre endroits seulement. Les pages intérieures et le blog reçoivent la même tenue par un échange de jetons (derniers blocs de global.css et de carnet.css).\n\nAu bureau (1100 px et plus), chaque section de l'accueil est un composant dessiné, pris dans le métier de Lilian : des modules reliés par des fils, comme un scénario Make ou n8n. Il a refusé les tuiles « bento » et les cartes simples (« pas assez créatifs, composants trop simplistes ») : l'ouverture relie ses outils et ses chiffres au portrait, chaque métier a sa scène animée sur un panneau lilas, les logos défilent, les cas s'empilent avec leur vrai parcours, une citation à la fois se dit en grand. Sous 1100 px rien ne change.",
     "keyCharacteristics": [
       "Noir chaud #0f0d0b partout, îles blanches pour l’ouverture, le contact et les preuves.",
       "Citron #ffd84d pour les gestes, lilas #b9a6ff pour les surfaces douces et les repères.",
@@ -587,7 +615,8 @@
       "Roboto Flex partout, Roboto Mono 500 pour les pastilles seulement.",
       "Titres en graisse 600 (620 pour le nom), trois tailles : 92, 42 et 28 px au plus.",
       "Filets d’un pixel, pilules sans cerne, une seule courbe de mouvement, aucun rebond.",
-      "Barre flottante en pilule blanche, largeur maximale 1240 px."
+      "Barre flottante en pilule blanche, largeur maximale 1240 px.",
+      "Au bureau, des composants dessinés : modules et fils tracés par script, scènes animées des métiers, pile de cas, une citation en grand. Jamais de grille de tuiles."
     ],
     "rules": [
       {

@@ -1,0 +1,76 @@
+---
+/*
+ * Le parcours d'un cas client, dessiné comme sur un canvas Make ou n8n : des
+ * modules reliés par des fils. Il n'apparaît qu'au bureau (`bureau.css`),
+ * dans la pile des projets de l'accueil.
+ *
+ * Deux formes, lues dans le frontmatter du cas, jamais écrites ici :
+ *   - `flow` : un déclencheur, un agent, trois actions en éventail (la même
+ *     donnée que le schéma de la page du cas) ;
+ *   - `parcours` : cinq étapes en file, pour une application qui se lit d'un
+ *     bout à l'autre (trois en haut, deux en bas, le fil fait le tour).
+ * Un cas sans l'une ni l'autre n'a pas de canvas.
+ *
+ * Chaque module porte la couleur de son outil (`data/outils.ts`) quand on le
+ * connaît : par `outil`, par un nom d'outil dans son sur-titre ou son titre,
+ * ou par son icône de marque ; sinon le gris neutre. Le module de l'agent est
+ * sur lilas. Les fils sont tracés par script, d'après la place réelle des
+ * modules ; sans script il n'y a pas de fils, les modules restent rangés.
+ * Tout est décoratif (`aria-hidden`) ; `flow.describe` dit le schéma aux
+ * lecteurs d'écran.
+ */
+import { Icon } from 'astro-icon/components';
+import { couleursOutils } from '../../data/outils';
+
+interface Noeud { icon: string; kicker: string; title: string; sub?: string; outil?: string }
+interface Props {
+  flow?: { describe: string; trigger: Noeud; agent: Noeud; actions: Noeud[] };
+  parcours?: Noeud[];
+  decrit?: string;
+}
+const { flow, parcours, decrit } = Astro.props;
+
+const MARQUES: Record<string, string> = {
+  hubspot: 'HubSpot', gmail: 'Gmail', mistralai: 'Mistral', anthropic: 'Claude', claude: 'Claude',
+  shopify: 'Shopify', slack: 'Slack', notion: 'Notion', make: 'Make', n8n: 'n8n', airtable: 'Airtable', glide: 'Glide',
+};
+const couleur = (n: Noeud) => {
+  if (n.outil && couleursOutils[n.outil]) return couleursOutils[n.outil];
+  const texte = `${n.kicker} ${n.title}`;
+  const nomme = Object.keys(couleursOutils).find((o) => o !== 'IA' && new RegExp(`(^|[^\\p{L}])${o}([^\\p{L}]|$)`, 'u').test(texte));
+  if (nomme) return couleursOutils[nomme];
+  const marque = MARQUES[n.icon.split(':')[1] ?? ''];
+  return marque ? couleursOutils[marque] : '#cfc8bf';
+};
+
+/* Les fils, d'un module à l'autre : `>` part à droite, `<` à gauche, `|`
+   descend. Le script de `projets.astro` les trace d'après la place réelle
+   des modules (`lib/robot/fils.ts`). */
+const fils = flow ? 'depart>agent agent>s0 agent>s1 agent>s2' : 'e0>e1 e1>e2 e2|e3 e3<e4';
+---
+{(flow || parcours) && (
+  <div class:list={['r-flux', flow ? 'r-flux--eventail' : 'r-flux--file']} data-r-flux={fils}>
+    <p class="sr-only">{flow ? flow.describe : decrit}</p>
+    <div class="r-flux__plan" aria-hidden="true">
+      {flow && [
+        { ...flow.trigger, nom: 'depart', classe: 'r-noeud--depart' },
+        { ...flow.agent, nom: 'agent', classe: 'r-noeud--agent' },
+        ...flow.actions.map((a, i) => ({ ...a, nom: `s${i}`, classe: `r-noeud--s${i}` })),
+      ].map((n) => (
+        <div class:list={['r-noeud', n.classe]} style={`--o:${couleur(n)}`} data-n={n.nom}>
+          <span class="r-noeud__tete"><span class="r-noeud__ic"><Icon name={n.icon} /></span>{n.kicker}</span>
+          <strong>{n.title}</strong>
+          {n.sub && <span class="r-noeud__sous">{n.sub}</span>}
+        </div>
+      ))}
+      {parcours && parcours.map((n, i) => (
+        <div class:list={['r-noeud', `r-noeud--e${i}`]} style={`--o:${couleur(n)}`} data-n={`e${i}`}>
+          <span class="r-noeud__tete"><span class="r-noeud__ic"><Icon name={n.icon} /></span>{n.kicker}</span>
+          <strong>{n.title}</strong>
+          {n.sub && <span class="r-noeud__sous">{n.sub}</span>}
+        </div>
+      ))}
+    </div>
+    <svg class="r-fils" aria-hidden="true" focusable="false"></svg>
+  </div>
+)}
