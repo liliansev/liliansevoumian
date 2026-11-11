@@ -1,12 +1,15 @@
 ---
 /*
  * Les projets clients (jamais les projets personnels, 14 octobre 2026), lus
- * dans les cas publiés, du plus récent au plus ancien : une carte par cas,
+ * dans les cas publiés : ceux qui ont un avant / après d'abord (le chapô
+ * promet « ce que ça a changé », la première feuille doit le montrer ;
+ * critique du 11 novembre 2026), puis du plus récent au plus ancien. Une carte par cas,
  * le client en petit (en lilas), un titre qui dit en clair ce qui a été
  * construit (`enClair`, jamais un chiffre seul : « 0 ressaisie » ne disait
  * rien, Lilian, 10 novembre 2026), le détail (`accroche`) et ses outils, une
- * pastille par outil. Toute la carte mène au cas ; au survol elle passe en
- * lilas.
+ * pastille par outil. Toute la carte mène au cas ; au survol sa flèche passe
+ * au citron et avance de deux pixels. Elle pointe à droite : « ↗ » est le
+ * signe d'un lien qui ouvre un nouvel onglet (`.r-dehors`).
  *
  * À partir de 1100 px (`bureau.css`), les cartes deviennent une pile : chaque
  * cas est une grande feuille qui vient se poser sur la précédente au
@@ -18,28 +21,29 @@
 import { getCollection } from 'astro:content';
 import Outils from './outils.astro';
 import Etapes from './etapes.astro';
+import { espaces } from '../../lib/espaces';
 const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  (a, b) => Number(!!b.data.bascule) - Number(!!a.data.bascule) || b.data.date.getTime() - a.data.date.getTime(),
 );
 ---
 <section class="r-sec" id="projets" aria-labelledby="titre-projets">
   <div class="r-wrap">
-    <header class="r-titre"><h2 id="titre-projets">Projets clients</h2><p>Ce que j’ai construit, et ce que ça a changé. <a class="r-lien" href="/cas-clients">Tous les cas</a></p></header>
+    <header class="r-titre"><h2 id="titre-projets">Projets clients</h2><p>Ce que j’ai construit, et ce que ça a changé. <a class="r-lien" href="/cas-clients">Tous les cas clients</a></p></header>
     <div class="r-cas">
       {cas.map(({ id, data }, i) => (
         <article class="r-carte-cas" style={`--i:${i}`}>
           <div class="r-carte-cas__dit">
             <p class="r-carte-cas__client">{data.client ?? data.secteur}</p>
             <h3><a href={`/cas-clients/${id}`}>{data.enClair ?? data.title}</a></h3>
-            <p class="r-carte-cas__texte">{data.accroche ?? data.description}</p>
+            <p class="r-carte-cas__texte">{espaces(data.accroche ?? data.description)}</p>
             <Outils outils={data.tools.slice(0, 4)} />
-            <span class="r-carte-cas__f" aria-hidden="true"><span class="r-carte-cas__lire">Lire le cas</span><span class="r-carte-cas__fleche">↗</span></span>
+            <span class="r-carte-cas__f" aria-hidden="true"><span class="r-carte-cas__lire">Lire le cas</span><span class="r-carte-cas__fleche">→</span></span>
           </div>
           {(data.flow || data.parcours) && (
             <div class="r-carte-cas__montre">
               <Etapes flow={data.flow} parcours={data.parcours} decrit={`Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`} />
               {data.bascule && (
-                <p class="r-ecart"><span class="r-ecart__avant"><span class="r-ecart__mot">Avant</span>{data.bascule[0].avant}</span><span class="r-ecart__vers" aria-hidden="true"></span><span class="r-ecart__apres"><span class="r-ecart__mot">Après</span>{data.bascule[0].apres}</span></p>
+                <p class="r-ecart"><span class="r-ecart__avant"><span class="r-ecart__mot">Avant</span>{espaces(data.bascule[0].avant)}</span><span class="r-ecart__vers" aria-hidden="true"></span><span class="r-ecart__apres"><span class="r-ecart__mot">Après</span>{espaces(data.bascule[0].apres)}</span></p>
               )}
             </div>
           )}
@@ -49,3 +53,21 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
   </div>
 </section>
 
+<script>
+  // Au bureau la pile colle : une feuille vient recouvrir la précédente. Quand
+  // le clavier revient sur une feuille recouverte (Maj+Tab), son lien avait le
+  // focus sans être visible : la page remonte au point où cette feuille est
+  // seule en haut de la pile.
+  const pile = document.querySelector<HTMLElement>('.tenue-robot .r-cas');
+  pile?.addEventListener('focusin', (e) => {
+    const lien = e.target as HTMLElement;
+    const feuille = lien.closest<HTMLElement>('.r-carte-cas');
+    if (!feuille || !lien.matches(':focus-visible') || getComputedStyle(feuille).position !== 'sticky') return;
+    const feuilles = [...pile.querySelectorAll<HTMLElement>('.r-carte-cas')];
+    const ecart = parseFloat(getComputedStyle(pile).rowGap) || 0;
+    let haut = pile.getBoundingClientRect().top + window.scrollY;
+    for (const f of feuilles.slice(0, feuilles.indexOf(feuille))) haut += f.offsetHeight + ecart;
+    const cible = haut - (parseFloat(getComputedStyle(feuille).top) || 0);
+    if (window.scrollY > cible + 1) window.scrollTo({ top: cible });
+  });
+</script>

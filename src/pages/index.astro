@@ -24,8 +24,8 @@ import { resume, resumeCourt } from '../data/parcours';
 //
 // C'est une page de marque : qui il est, ce qu'il fait, pour qui, ce qu'on
 // en dit, un formulaire pour lui écrire. Ni prix ni chiffres de prestation.
-// Un seul geste dans l'ouverture : « Me contacter », qui mène au formulaire
-// du bas ; la newsletter est tout en bas, dans le pied. Grammaire dans
+// Un seul geste dans l'ouverture : « Parlons de votre projet », qui mène au
+// formulaire du bas ; la newsletter est tout en bas, dans le pied. Grammaire dans
 // `components/robot/robot.css`, détail dans DESIGN.md (dont la passe « plus
 // fin » : titres en graisse 600, filets d'un pixel, aucun rebond). Les autres
 // pages portent la même tenue par un échange de jetons ; l'accueil d'avant
@@ -70,26 +70,41 @@ const pageSchema = {
 </Layout>
 
 <script>
-  // Les onglets des métiers : un clic, ou les flèches du clavier.
+  // Les onglets des métiers : un clic, ou au clavier les flèches, Début et Fin.
   document.querySelectorAll<HTMLElement>('[data-r-onglets]').forEach((bloc) => {
     const onglets = [...bloc.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panneauDe = (o: HTMLButtonElement) => document.getElementById(o.getAttribute('aria-controls') ?? '');
+    // Un panneau au repos porte `data-repos`, plus `hidden` : la feuille de
+    // style décide s'il sort de la page (au bureau) ou s'il garde sa place,
+    // invisible, pour que le bloc ne change pas de hauteur (en dessous).
+    const repos = (o: HTMLButtonElement, oui: boolean) => {
+      const panneau = panneauDe(o);
+      if (!panneau) return;
+      panneau.hidden = false;
+      panneau.toggleAttribute('data-repos', oui);
+    };
+    onglets.forEach((o) => repos(o, o.getAttribute('aria-selected') !== 'true'));
     const choisit = (choisi: HTMLButtonElement, focus = false) => {
       onglets.forEach((o) => {
         const actif = o === choisi;
         o.setAttribute('aria-selected', String(actif));
         o.tabIndex = actif ? 0 : -1;
-        const panneau = document.getElementById(o.getAttribute('aria-controls') ?? '');
-        if (panneau) panneau.hidden = !actif;
+        repos(o, !actif);
       });
       if (focus) choisi.focus();
+      // Choisir un métier joue sa scène, y compris celui qui est déjà choisi :
+      // c'est la façon de la revoir (au bureau, là où elle est affichée).
+      const scene = panneauDe(choisi)?.querySelector<HTMLElement>('.sm');
+      if (scene?.offsetParent) scene.dispatchEvent(new CustomEvent('sm:rejouer'));
     };
     onglets.forEach((o, i) => {
       o.addEventListener('click', () => choisit(o));
       o.addEventListener('keydown', (e) => {
         const pas = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (pas === undefined) return;
+        const bout = { Home: 0, End: onglets.length - 1 }[e.key];
+        if (pas === undefined && bout === undefined) return;
         e.preventDefault();
-        choisit(onglets[(i + pas + onglets.length) % onglets.length], true);
+        choisit(onglets[bout ?? (i + pas! + onglets.length) % onglets.length], true);
       });
     });
   });

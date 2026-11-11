@@ -263,10 +263,27 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   horloge.className = 'sm-horloge';
   plan.append(horloge);
 
-  /* La commande d'arrêt (voir en bas) : montrée le temps du tour seulement. */
+  /* La commande de la scène (voir en bas) : pause le temps du tour, puis
+     « Rejouer » sur l'image fixe. */
   const commande = document.createElement('button');
   commande.hidden = true;
   let tourEnCours = false;
+
+  /* Ses deux rôles. En pause c'est un bouton à bascule (`aria-pressed`) ; en
+     « Rejouer » un bouton simple, dont le nom se lit (`data-mode`). */
+  function proposer(mode: 'pause' | 'rejouer') {
+    const nom = commande.querySelector('.sm-pause__nom');
+    if (mode === 'rejouer') {
+      commande.dataset.mode = 'rejouer';
+      commande.removeAttribute('aria-pressed');
+      if (nom) nom.textContent = 'Rejouer';
+    } else {
+      delete commande.dataset.mode;
+      commande.setAttribute('aria-pressed', String(arretee));
+      if (nom) nom.textContent = 'Mettre l’animation en pause';
+    }
+    commande.hidden = false;
+  }
 
   /* Elle se retire quand il n'y a plus rien à arrêter. Si elle porte le focus
      (un visiteur au clavier vient de s'en servir), elle attend de le perdre :
@@ -628,14 +645,14 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
   /* ── Le tour ── */
 
   /* La scène joue une fois, du repos à son image fixe, et y reste : il n'y a
-     alors plus rien à arrêter, la commande se retire. */
+     alors plus rien à arrêter, la commande propose de la rejouer. */
   async function jouerTour() {
     tourEnCours = true;
-    commande.hidden = false;
+    proposer('pause');
     ecrite.repos();
     await ecrite.tour();
     tourEnCours = false;
-    retirerCommande();
+    proposer('rejouer');
   }
 
   /* Tout ce que l'ancien tour attendait est annulé : il se défait sur son
@@ -647,6 +664,15 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
       ecrite.figer();
       retirerCommande();
     } else enMarge(jouerTour());
+  }
+
+  /* Le visiteur redemande le tour : par la commande, ou de l'extérieur par
+     l'événement `sm:rejouer` (l'onglet du métier choisi une seconde fois).
+     Une pause en cours est levée : rejouer, c'est repartir. */
+  function rejouer() {
+    arretee = false;
+    regler();
+    relancer();
   }
 
   /* ── L'échelle ── */
@@ -699,24 +725,30 @@ function monter(racine: HTMLElement, nom: string, ecrire: (scene: Scene) => Part
      être arrêtée, au clavier comme au doigt. Le bouton est posé APRÈS la
      racine, pas dedans : la racine est une image (`role="img"`), ce qu'elle
      contient n'est pas annoncé. Il s'appuie sur la pause du moteur : la scène
-     s'arrête net et reprend où elle en était. Il n'est montré que le temps du
-     tour (`jouerTour`) : sur l'image fixe, à la fin du tour comme en mouvement
-     réduit, il n'y a rien à arrêter.
-     `aria-pressed` porte l'état, le libellé reste le même : c'est la convention
-     d'un bouton à bascule. Changer
-     les deux à la fois s'annonçait « Relancer l'animation, enfoncé ». */
+     s'arrête net et reprend où elle en était. Le tour fini, sur l'image fixe,
+     il devient « Rejouer » (une scène jouée une fois ne se revoyait pas sans
+     recharger la page) ; en mouvement réduit il n'y a ni tour ni commande.
+     En pause, `aria-pressed` porte l'état et le libellé reste le même : c'est
+     la convention d'un bouton à bascule. Changer les deux à la fois
+     s'annonçait « Relancer l'animation, enfoncé ». */
   commande.type = 'button';
   commande.className = 'sm-pause';
   commande.setAttribute('aria-pressed', 'false');
   commande.innerHTML =
-    '<span class="sr-only">Mettre l’animation en pause</span>' +
     '<svg class="sm-pause__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>' +
-    '<svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>';
+    '<svg class="sm-pause__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>' +
+    '<svg class="sm-pause__rejouer" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+    '<span class="sm-pause__nom">Mettre l’animation en pause</span>';
   commande.addEventListener('click', () => {
+    if (commande.dataset.mode === 'rejouer') {
+      rejouer();
+      return;
+    }
     arretee = !arretee;
     commande.setAttribute('aria-pressed', String(arretee));
     regler();
   });
+  racine.addEventListener('sm:rejouer', rejouer);
   racine.after(commande);
 
   relancer();

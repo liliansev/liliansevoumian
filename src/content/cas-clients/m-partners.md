@@ -4,8 +4,8 @@ seoTitle: "Scraping et qualification de prospects par agent IA : cas client Make
 description: "M Partners qualifie 23 cibles en 7 minutes et scrape 300 entreprises par semaine, sourcing des signaux et notation des profils compris."
 client: "M Partners"
 enClair: "Un agent IA qui trouve et qualifie les prospects"
-accroche: "J’ai construit l’agent IA qui qualifie leurs prospects : 23 cibles en 7 minutes, et 300 entreprises analysées par semaine au lieu d’une cinquantaine."
-secteur: "Executive Search · Tech & VC"
+accroche: "J’ai construit l’agent IA qui lit la page « Équipe » de chaque entreprise, note chaque profil et envoie les bons contacts dans leur CRM."
+secteur: "Chasse de têtes · startups et capital-risque"
 date: 2026-05-05
 tags: ["Sales", "Ops"]
 tools: ["Make", "Claude", "Apollo", "Loxo"]
@@ -17,16 +17,16 @@ kpis:
   - value: "23"
     label: "Cibles qualifiées sur 4 entreprises (run mesuré, ~7 min)"
 flow:
-  describe: "Schéma du workflow de prospection M Partners : les cibles sont collectées et enrichies, un agent IA les qualifie et les score, puis les dirigeants retenus partent dans Loxo, qui centralise le CRM et les séquences de prospection."
-  trigger: { icon: "lucide:users", kicker: "Sourcing", title: "Cibles collectées", sub: "LinkedIn · bases" }
-  agent: { icon: "simple-icons:anthropic", kicker: "Agent IA", title: "Qualifie & score", sub: "fit · séniorité · signaux" }
+  describe: "Schéma du workflow de prospection M Partners : chaque semaine, un agent lit les pages d’équipe de 300 entreprises, Claude note chaque profil, le dirigeant valide la liste, puis les cibles retenues sont ajoutées dans Loxo et un e-mail récapitule le passage."
+  trigger: { icon: "lucide:users", kicker: "Chaque semaine", title: "300 entreprises lues", sub: "pages d’équipe" }
+  agent: { icon: "simple-icons:anthropic", kicker: "Claude", title: "Note chaque profil", sub: "décideurs · priorité 1 ou 2" }
   actions:
-    - { icon: "lucide:contact-round", kicker: "Loxo", title: "À approcher" }
-    - { icon: "lucide:list-checks", kicker: "Shortlist", title: "Top 20 %" }
-    - { icon: "lucide:bell", kicker: "Alerte", title: "Nouveau signal" }
+    - { icon: "lucide:user-check", kicker: "Le dirigeant", title: "Valide la liste" }
+    - { icon: "lucide:contact-round", kicker: "Loxo", title: "Cibles ajoutées" }
+    - { icon: "lucide:mail", kicker: "E-mail", title: "Récapitulatif envoyé" }
 bascule:
-  - { avant: "1 à 3 h pour 50 entreprises, à la main", apres: "~7 à 10 min par run" }
-  - { avant: "~50 entreprises passées en revue par semaine", apres: "300 par semaine" }
+  - { avant: "Une cinquantaine d’entreprises passées en revue par semaine", apres: "300 entreprises par semaine" }
+  - { avant: "1 à 3 heures pour 50 entreprises, à la main", apres: "7 à 10 minutes à chaque lancement de l’agent" }
   - { avant: "Le dirigeant prospecte", apres: "Le dirigeant valide" }
 nomenclature:
   - { etape: "Détection des signaux de levée et de recrutement", outil: "Make", role: "declencheur" }

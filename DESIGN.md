@@ -528,8 +528,9 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   `#332e29`, texte `#f8f4ef`, gris `#aaa198`.
 - Deux sections blanches seulement : l'ouverture (arrondie en bas) et le
   contact (une île arrondie).
-- Citron `#ffd84d` pour les gestes : boutons, onglet choisi, flèche d'un cas
-  au survol, passage retenu d'un avis (en texte citron), tête du robot. Lilas
+- Citron `#ffd84d` pour les gestes : boutons, icône de l'onglet choisi au
+  bureau, flèche d'un cas au survol, passage retenu d'un avis (en texte
+  citron), tête du robot (liste précisée le 11 novembre, voir *Le verrou*). Lilas
   `#b9a6ff` pour les surfaces douces et les repères : le grand panneau du
   métier choisi (texte à l'encre), nom du client sur les cartes des cas,
   soulignement des liens sur noir, point de « À très vite. ».
@@ -583,7 +584,8 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
   titres de section, `--r-t-3` `clamp(22px, 2.1vw, 28px)` pour une carte.
   Le titre du mur de logos est une simple étiquette grise de 15 px.
 - Traits : des filets d'un pixel. Sur blanc l'encre à 12 % (`--r-filet`),
-  sur noir `#332e29` (`--r-trait`), `#4a433c` (`--r-trait-2`) au survol.
+  sur noir `#332e29` (`--r-trait`), `#4a433c` (`--r-trait-2`) pour ce qui
+  borde une carte ou une ligne, `#6a6157` (`--r-trait-3`) au survol.
   Plus aucun cerne d'encre de 2 px autour d'un bouton, de la barre ou du
   portrait.
 - Boutons : la pilule citron n'a plus de bord ; au survol elle fonce
@@ -603,7 +605,7 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
   de couleur ; depuis le soir du 10 novembre ils sont sous les logos des
   clients, sur le noir, plus dans l'ouverture.
 - Clients : un mur de logos à filets, huit par ligne (quatre sous 1180 px),
-  logos à 66 % qui s'allument au survol.
+  logos à 82 % qui s'allument au survol.
 - Cas : au survol la carte change de surface et de filet, sa flèche cerclée
   passe au citron et pivote ; la carte ne vire plus au lilas.
 - Avis : des citations séparées par des filets, le titre de la section
@@ -699,7 +701,7 @@ le bouton (à toutes les largeurs).**
   ni fil, ni grain, ni script.
 - **Les avis, trois cartes** : une grande carte lilas à gauche pour la
   citation la plus courte, dite en grand (`clamp(44px, 3.6vw, 52px)`, graisse
-  600, le début à 62 % d'encre, le passage retenu à l'encre pleine : le
+  600, le début à 72 % d'encre, le passage retenu à l'encre pleine : le
   citron ne se lit pas sur lilas), la personne en bas ; à droite les deux
   autres, l'une sur l'autre, en cartes sombres (rayon 28 px, filet d'un
   pixel), citation de 21 px, passage retenu en citron, portrait de 48 px.
@@ -707,6 +709,255 @@ le bouton (à toutes les largeurs).**
 - **Mouvement** : rien ne tourne en boucle hors du défilé des logos. Les fils
   de l'ouverture et les scènes jouent une fois, puis seulement sur un geste
   du visiteur. En mouvement réduit tout est posé d'un coup.
+
+### Le verrou : critique, finitions et couleur (11 novembre 2026)
+
+La version en ligne validée, Lilian : « pas mal du tout, lance polish et
+colorize pour verrouiller ? mais un critique d'abord ? ». La critique (deux
+lectures indépendantes : une revue de design, 20 sur 32 aux heuristiques de
+Nielsen, et des mesures au navigateur) n'a trouvé aucun défaut bloquant ;
+l'écart tenait aux finitions et à la discipline de la couleur. **Ces règles
+priment sur les lignes plus anciennes du chapitre.**
+
+- **Le citron ne sert qu'aux gestes.** La liste entière : les boutons
+  d'appel, « Envoyer », la flèche d'un cas au survol, l'icône de l'onglet
+  choisi au bureau, le passage retenu d'un avis sur carte sombre, et dans
+  chaque scène un seul objet, son aboutissement (le créneau posé, le
+  rendez-vous déplacé, la colonne de l'objectif, « Autonome »). Le reste
+  d'une scène (états, compteurs, ports, coches) est en lilas : sous
+  `.tenue-robot .sm`, `--color-peche` vaut le lilas. Le faux bouton d'une
+  scène est à l'encre : en citron, il se lisait comme un vrai bouton et
+  c'était la plus grande surface citron de la page. « Menu » est un bouton au
+  trait ; « S’abonner à la newsletter » est au trait sur toutes les pages ;
+  un lien du pied se souligne en lilas au survol ; sous 1100 px l'onglet
+  choisi est lilas, icône à l'encre (une tuile citron de 56 px y pesait
+  autant qu'un bouton) ; l'anneau de focus d'une feuille de cas est lilas
+  comme les autres.
+- **La barre** : quatre liens et le bouton (« Contact » doublait « Parlons
+  de votre projet »). Le lien de la section à l'écran est marqué
+  (`aria-current="location"`, fond d'encre à 6 %). Quand le formulaire est à
+  l'écran le bouton d'appel passe au trait (`est-au-contact`) : il ne reste
+  qu'un citron, « Envoyer ».
+- **Le formulaire** (composant commun, donc toutes les pages) : une erreur
+  de saisie s'écrit sous son champ, avec sa marque, et le champ garde son
+  bord rouge même au focus. L'envoi en cours, l'échec et l'envoi réussi sont
+  trois boîtes à côté du bouton : neutre avec un anneau qui tourne, rosée
+  (texte `#8c1d18`), citron pâle `#fff1b8` avec une coche à l'encre. Pendant
+  l'envoi le bouton pâlit sans perdre son libellé ni le focus
+  (`aria-disabled`, jamais `disabled`) ; parti, il dit « Envoyé », au trait,
+  et les champs se grisent. En cas d'échec l'adresse de secours est un vrai
+  lien. Vide, la ligne d'état reste dans l'arbre d'accessibilité (masquée à
+  l'œil, pas en `display: none`). « Me contacter » fait arriver sur le titre
+  de la section, sous la barre, pas au milieu du formulaire.
+- **Les noirs, trois couches franches** : la page `#0f0d0b` ; une feuille de
+  cas ou une carte d'avis sombre sur `--r-surface-2` `#24201c` ; les cartes
+  d'étapes et l'écart avant / après en puits `--r-noir`. Filets
+  `--r-trait-2`, `--r-trait-3` au survol d'une feuille. Deux noirs voisins
+  (`#1b1815` sur `#0f0d0b`, 1,09:1) ne se distinguaient pas.
+- **Les projets** : les cas qui ont un avant / après viennent d'abord (le
+  chapô promet « ce que ça a changé »), puis du plus récent au plus ancien.
+  On n'invente pas d'écart pour un cas qui n'a pas de résultat mesuré. Au
+  clavier, revenir sur une feuille recouverte par la pile fait remonter la
+  page au point où cette feuille est seule en haut.
+- **Les clients** : logos et noms à 82 % (66 % se lisait gris), noms en
+  graisse 550. Dans le défilé chaque logo a une hauteur fixée, sa largeur
+  s'en déduit (en `auto` des deux côtés, quatre SVG sans taille propre
+  tombaient à 0 × 0), et tous se chargent à l'approche de la section. Le
+  signe d'un chiffre (« + », « er ») est en lilas.
+- **Les bords du bureau** : marges de 32 px entre 1100 et 1279 px ; le
+  panneau des métiers garde la même hauteur d'un onglet à l'autre ; 112 px
+  entre deux sections partout (80 px sur téléphone), y compris après la
+  pile ; la phrase d'un métier monte à 32 px, comme un titre de feuille ;
+  entre 521 et 860 px l'ouverture est centrée d'un bloc.
+- **Accessibilité mesurée** : `--r-encre-lilas` `#2f2748` pour le texte
+  secondaire posé sur lilas (6,6:1) ; la grande citation sur lilas à 72 %
+  d'encre (4,5:1 au moins) ; anneau lilas pour le bouton pause d'une scène ;
+  lien d'évitement à l'encre sur l'ouverture blanche ; onglets des métiers
+  avec `aria-orientation="vertical"`, Début et Fin ; « Menu » porte
+  `aria-expanded` ; un lien de texte fait 44 px de haut au doigt ; les liens
+  « Sur le site » du pied se lisent colonne par colonne.
+- **Laissé tel quel, exprès** : les pilules citron sans bord sur blanc (la
+  surface ne fait que 1,4:1, le libellé à l'encre 13:1 : c'est la passe
+  « plus fin ») ; le clignement du robot (un battement toutes les 4,5 s,
+  coupé en mouvement réduit) ; les couleurs des pastilles d'outils, qui sont
+  celles des marques ; les onglets en icônes seules sous 1000 px et le bouton
+  après la photo sur téléphone (décisions de Lilian).
+
+### La reprise : viser la note maximale (11 novembre 2026)
+
+Lilian, devant la critique à 20 sur 32 et l'index des cas : « n'est pas
+bonne, la critique a 20/32 aussi c'est pas bon on veut un score maximal ».
+L'accueil et `/cas-clients` sont repris, chacun relu par deux lecteurs
+indépendants (une revue de design, des mesures au navigateur) jusqu'à ce que
+chaque heuristique soit défendue. **Ces règles priment sur « Le verrou » là où
+elles le contredisent.**
+
+- **Un seul nom pour le geste.** Le bouton de l'ouverture dit « Parlons de
+  votre projet », comme la barre et le titre du formulaire où il mène
+  (« Me contacter » donnait deux noms à la même porte sur le même écran).
+- **La barre.** La pilule ne change jamais de largeur sous le pointeur (elle
+  attend qu'il la quitte). Entre 560 et 900 px elle porte le bouton d'appel à
+  côté de « Menu » (sous 560 px : voir le second tour, plus bas). Le menu
+  marque la section à l'écran, se ferme d'un clic sur le voile, et rend le
+  focus à « Menu » quand on le ferme sans choisir (sans anneau au pointeur). Au survol un lien ne prend que l'encre : le fond dit
+  où l'on est et rien d'autre. Une ancre ou un focus au clavier s'arrête sous
+  la barre (`scroll-margin`).
+- **Les métiers.** La colonne d'icônes seules ne vaut plus que sous 700 px
+  (décision de Lilian pour le téléphone) ; de 700 à 1000 px chaque onglet
+  écrit son nom. Choisir un métier joue sa scène, y compris celui déjà
+  choisi. Chaque scène a sa commande dans le coin du plateau : « Pause » le
+  temps du tour (`aria-pressed`), puis « Rejouer » sur l'image fixe. Le texte
+  d'une scène est un cran au-dessus du socle ; le plateau a la hauteur de la
+  liste et s'arrondit avec le cadre.
+- **Le formulaire prévient.** Toutes les erreurs se lisent d'un coup à
+  l'envoi, le focus sur la première ; une adresse se vérifie en quittant le
+  champ et l'erreur dit ce qui manque ; un domaine écorché (« gmial.com »,
+  « .con ») est proposé corrigé en un clic, sans rien changer d'office ; le
+  brouillon suit le visiteur d'une page à l'autre (`sessionStorage`) ; le
+  décompte s'affiche à l'approche des 5 000 caractères et n'est annoncé
+  qu'aux paliers. Le formulaire garde sa largeur quoi qu'il dise. Parti : le
+  bouton dit « Envoyé », au trait, la confirmation est **lilas** (un état,
+  jamais citron : elle était citron pâle), et « Écrire un autre message »
+  rouvre le formulaire. Au doigt, le bouton d'appel pose le focus sur le
+  titre de la zone, pas dans un champ (le clavier ne s'ouvre pas sur la page).
+- **Les chiffres portent leur date** à l'œil aussi : « Audience relevée le
+  1er octobre 2026 » sous la ligne. « er » est un exposant (`position:
+  static` : le socle de Tailwind remonte déjà tout `sup`).
+- **Les avis.** La carte lilas est une affiche étroite (0,8 pour 1,2), sa
+  citation en très grand (`clamp(46px, 4.3vw, 64px)`) : elle remplit la carte,
+  sans hauteur imposée.
+- **Les bords et les signes.** Le bord d'une commande au trait se voit (3:1
+  au moins, sur blanc comme sur noir). Un lien qui ouvre un autre onglet le
+  montre d'une petite flèche (`.r-dehors`). Une seule courbe (`--r-sortie`),
+  l'échelle de rayons 32/28/24/18/14. Une étape de cas ne porte de troisième
+  ligne que si elle est la carte forte.
+- **L'index des cas (`/cas-clients`).** Il porte la grammaire de l'accueil
+  (`.tenue-robot`) : une feuille par cas sur `--r-surface-2`, ce qui a été
+  construit à gauche, la preuve à droite dans un puits `--r-noir`. À gauche :
+  le nom du client en lettres (comme sur l'accueil) et son secteur, son logo
+  ramené au blanc en signature à droite de la ligne quand il en a un, le
+  titre en clair (`enClair`), l'accroche, quatre pastilles d'outils au plus,
+  « Lire le cas ». À droite : le registre avant / après, quatre lignes au
+  plus, dont la première est le résultat phare, dit en grand dans une cellule
+  **lilas** précédée de la flèche d'écart de l'accueil ; un cas sans écart
+  mesuré montre son parcours numéroté, sans lilas, et sa réserve dessous.
+  Trois petites tailles de texte (13, 15, 16 px). Toute la feuille est le
+  lien du titre : au survol le titre se souligne en lilas et la flèche passe
+  au citron, au focus la feuille prend l'anneau lilas, à l'appui son bord.
+  Les puits partent tous du haut de la feuille.
+- **Les pages intérieures.** `tete-de-page` ne compte plus la barre deux fois
+  (le fil de retour arrive à moins de 70 px sous elle, il était à 171 px). Un anneau de
+  focus n'est jamais citron : lilas sur noir, encre et halo lilas sur une île
+  blanche (`--color-focus`). Dans la fin de page l'état de l'envoi se lit à
+  côté du bouton et la note passe dessous, puis s'efface une fois le message
+  parti. Une page de cas ouvre sur son accroche, la même phrase que sur
+  l'index, puis sa réserve en plus petit.
+
+### La reprise, second tour (11 novembre 2026)
+
+Les notes relevées, telles quelles (H7 et H10 sans objet, donc sur 32) :
+l'accueil à 20, puis 25, puis 29 ; `/cas-clients` à 26, puis 28. Ce que les
+deux dernières revues et leurs mesures ont demandé. **Ces règles priment sur
+le paragraphe du dessus là où elles le contredisent.**
+
+- **La barre au téléphone.** Sous 560 px la pilule garde le bouton d'appel
+  (écrit en 14 px, 44 px de haut comme « Menu » : c'est une cible au doigt) et
+  le robot seul, sans le nom ; sous 344 px, « Menu » seul. Tant que le bouton
+  de l'ouverture est à l'écran, celui de la barre s'efface (`voit-le-geste`) :
+  sous 560 px un seul bouton d'appel se voit à la fois. Devant le formulaire
+  il passe au trait.
+- **Le menu.** Ouvert, il fige la page derrière lui (`html:has(.r-menu[open])`,
+  gouttière stable). Un lien vers une section de la page y emmène le focus
+  (la section, sans anneau), plus à « Menu » : la tabulation suivante repart
+  de là et la page ne remonte pas. Ses liens sont une `nav` nommée. Sans
+  script, « Menu » ne s'affiche pas (le bouton d'appel reste).
+- **Le retour arrière.** Le bouton d'appel pose une entrée d'historique
+  (`#ecrire`) : « Précédent » ramène où l'on était, et deux clics n'en
+  empilent pas deux.
+- **Les métiers au téléphone.** Sous 700 px chaque icône porte son nom court
+  dessous (11 px : « Automatisation », « Agents IA », « Dashboards »,
+  « Formations ») dans une colonne de 82 px. Pas 68 : « Automatisation »
+  mesure 73 px et l'axe de chasse de Roboto Flex ne le resserre presque pas.
+  Le bloc garde la même hauteur quel que soit l'onglet : les panneaux au
+  repos restent dans la grille (`data-repos`, invisibles et inertes), ils ne
+  sont plus `hidden` une fois le script passé. De 700 à 1099 px le panneau ne
+  répète ni l'icône ni le nom de son onglet.
+- **Les chiffres au téléphone** se lisent en registre : le chiffre à gauche,
+  sa légende à droite, un filet entre les lignes.
+- **De 861 à 1099 px** les cartes de cas vont par deux et partagent leurs
+  rangées (`subgrid`) : noms, titres, accroches, pastilles et puits s'alignent
+  d'une carte à l'autre, deux puits voisins ont la même hauteur, et une carte
+  sans écart s'arrête sous ses pastilles (sa marge basse négative rend à la
+  rangée ce que le sous-grillage lui ajoutait).
+- **Les flèches.** → pour un lien du site (un cas, une offre), ↗ pour un lien
+  qui ouvre un autre onglet. Au survol la flèche d'un cas avance de 2 px.
+- **Le texte des scènes** monte d'un cran de 1100 à 1235 px (13,75, 14,75 et
+  16 px), là où le plateau est le plus réduit. La règle vient après celle du
+  socle, sinon elle ne s'applique pas.
+- **L'anneau au clavier, quel que soit le pointeur.** La règle du site tient :
+  pas d'anneau générique au doigt, ni sur un focus posé par script. Mais la
+  première tabulation pose `data-clavier` sur `html` (Layout ; retiré au
+  premier toucher) et l'anneau se montre alors partout : une tablette avec
+  son clavier, sans souris, laissait le lien de retour, « Envoyer » et le
+  lien vers l'agenda sans indicateur. La règle est écrite deux fois, dans
+  `global.css` et dans `carnet.css` (chargé après, son `:focus { outline:
+  none }` l'emportait).
+- **Le formulaire.** Tab aussitôt après la frappe propose quand même la
+  correction de l'adresse, et le focus arrive dessus ; sa zone de touche fait
+  44 px sans mordre sur le champ ; pendant l'envoi les champs sont en lecture
+  seule ; l'état de l'envoi vient à l'écran ; un échec s'annonce tout de suite
+  (`aria-live="assertive"`), le reste poliment ; le brouillon est gardé en
+  quittant la page (`pagehide`) ; l'erreur de l'adresse court sur les deux
+  colonnes.
+- **Une seule courbe sur tout le site** : `--ease-out-quint` prend la valeur
+  de `--r-sortie` (les liens du menu, le logo et le lien d'évitement en
+  gardaient une autre).
+- **Le pied** marque la page où l'on est (`aria-current="page"`). Sur
+  téléphone ses liens font 44 px au moins et le bouton de la newsletter prend
+  la largeur. Ses libellés sont ceux de la barre : une destination, un nom
+  (« Automatisation », « Principes »).
+- **L'index des cas.** Chaque feuille est un `article` nommé par son titre ;
+  le nom du client est dit dans le lien du titre ; le texte d'une feuille
+  reste sélectionnable (le clic sur la feuille n'ouvre le cas que si rien
+  n'est sélectionné) ; les puits descendent jusqu'au pied de la feuille et
+  « Lire le cas » s'y aligne. La fin d'une page intérieure ne donne plus
+  l'adresse e-mail (`note={false}`) : le formulaire, puis « Réservez un
+  appel ».
+
+Laissé tel quel, en connaissance de cause : sans script seul le premier
+métier se lit (les panneaux gardent `hidden` côté serveur) ; le robot cligne
+sans commande de pause (un clin d'œil bref toutes les 4,5 s, coupé en
+mouvement réduit) ;
+un bouton citron n'a pas de bord sur blanc (son libellé fait 13:1).
+
+### Relecture de confirmation (11 novembre 2026)
+
+Deux relectures indépendantes de la version du second tour : `/cas-clients`
+notée 31 sur 32 (les douze points demandés au tour d'avant passent, il restait
+un écart de cohérence) et l'accueil noté 31 sur 32 (les dix points demandés
+passent, il restait un écart de contrôle). Les deux écarts sont corrigés
+depuis ; les notes de 31 sont celles d'avant la correction.
+
+- **« Précédent » défait le saut en entier.** Après un bouton d'appel, le
+  retour du navigateur ramène le défilement et le focus, qui se repose sur le
+  bouton utilisé. Il restait dans un champ hors de l'écran : la barre d'espace
+  renvoyait au formulaire et une lettre s'y écrivait. « Suivant » remet le
+  focus dans le formulaire (`Layout.astro`, écouteur `popstate`).
+
+- **Un seul formulaire.** Le formulaire de la fin d'une page intérieure et de
+  `/contact` se dessine comme celui de l'accueil, état par état : envoi dans
+  une boîte à l'anneau qui tourne, échec dans une boîte rouge, message parti
+  dans une boîte lilas à la coche d'encre, erreur de saisie en ligne rouge sous
+  son champ. Il gardait une pastille verte et une pastille rouge d'avant
+  « Citron et lilas ». Les valeurs sont dans le dernier bloc de `global.css`
+  (« UN SEUL FORMULAIRE »), écrites en clair parce que les jetons `--r-*`
+  n'existent que sous `.tenue-robot`. La référence est le formulaire de
+  l'accueil tel qu'il est rendu : toute retouche de l'un se reporte sur
+  l'autre.
+- **La fenêtre de l'agenda** écrit son titre en Roboto Flex et ses deux boutons
+  de secours en pilules au trait.
+- **Sur l'index des cas**, un clic qui ne fait que défaire une sélection de
+  texte n'ouvre plus le cas.
 
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 

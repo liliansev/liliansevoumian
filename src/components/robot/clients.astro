@@ -5,7 +5,9 @@
  * sans logo officiel sont composés en lettres. Aucun client nommé à la main.
  * Dessous, les quatre chiffres de l'audience (`data/parcours.ts`), sur une
  * ligne à filets : ils sont sortis de l'ouverture à la demande de Lilian le
- * 10 novembre 2026 (« j'aime pas les stats ici »).
+ * 10 novembre 2026 (« j'aime pas les stats ici »). La date du relevé est
+ * écrite dessous : un chiffre d'audience ne s'affiche jamais sans elle
+ * (`data/parcours.ts`), et elle n'était dite qu'aux lecteurs d'écran.
  *
  * À partir de 1100 px (`bureau.css`), le mur devient un défilé : une seule
  * ligne de logos entre deux filets, qui glisse lentement et s'arrête au
@@ -17,12 +19,18 @@
 import { clients } from '../../data/clients';
 import { audience } from '../../data/parcours';
 
+// Le signe d'un chiffre (« + » devant, « er » derrière) est rendu à part, en lilas.
 const chiffres = [
   { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
   { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
   { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
   { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
-];
+].map((c) => {
+  const [, avant = '', valeur = c.nombre, apres = ''] = c.nombre.match(/^(\+?)([\d\s\u00a0.,]+)(.*)$/) ?? [];
+  return { ...c, avant, valeur, apres };
+});
+// « 1er octobre 2026 » : le jour, son exposant, la suite.
+const [, jour = '', exposant = '', suite = audience.releveAffiche] = audience.releveAffiche.match(/^(\d+)(er)?(.*)$/) ?? [];
 ---
 <section class="r-sec r-sec--serre" id="clients" aria-labelledby="titre-clients">
   <div class="r-wrap">
@@ -36,7 +44,7 @@ const chiffres = [
     </header>
     <div class="r-defile" data-r-defile>
       {[false, true].map((copie) => (
-        <ul class:list={['r-tuiles', copie && 'r-tuiles--bis']} aria-hidden={copie ? 'true' : undefined}>
+        <ul class:list={['r-tuiles', copie && 'r-tuiles--bis']} role="list" aria-hidden={copie ? 'true' : undefined}>
           {clients.map((c) => (
             <li>
               {c.logo ? (
@@ -47,9 +55,10 @@ const chiffres = [
         </ul>
       ))}
     </div>
-    <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
-      {chiffres.map((c) => <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
+    <ul class="r-chiffres" role="list" aria-label="Quelques chiffres" aria-describedby="releve-audience">
+      {chiffres.map((c) => <li><strong>{c.avant && <i>{c.avant}</i>}{c.valeur}{c.apres && (c.apres === 'er' ? <sup>{c.apres}</sup> : <i>{c.apres}</i>)}</strong><span>{c.libelle}</span></li>)}
     </ul>
+    <p class="r-chiffres__releve" id="releve-audience">Audience relevée le {jour}{exposant && <sup>{exposant}</sup>}{suite}.</p>
   </div>
 </section>
 
@@ -62,4 +71,14 @@ const chiffres = [
     bouton.setAttribute('aria-pressed', String(arrete));
     defile?.classList.toggle('est-en-pause', arrete);
   });
+  // Les logos se chargent tous à l'approche de la section : dans le défilé, un
+  // logo attendu jusqu'à son entrée à l'écran arrivait après sa case.
+  if (defile && 'IntersectionObserver' in window) {
+    const guet = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      guet.disconnect();
+      defile.querySelectorAll('img').forEach((i) => { i.loading = 'eager'; });
+    }, { rootMargin: '800px 0px' });
+    guet.observe(defile);
+  }
 </script>

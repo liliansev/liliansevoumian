@@ -162,7 +162,7 @@ const articleSchema = {
           des `@keyframes` jouées au chargement et non un voile levé par
           script : le titre du cas est le message de la page, sans script il
           est simplement là. */}
-      <div class="entree relative max-w-[1200px] mx-auto pt-[calc(var(--spacing-barre)+var(--spacing-bloc))] pb-[var(--spacing-bloc)]">
+      <div class="entree relative max-w-[1200px] mx-auto pt-[var(--spacing-groupe)] pb-[var(--spacing-bloc)]">
 
         <div class="mb-[var(--spacing-groupe)]">
           <Retour href="/cas-clients">Retour aux cas</Retour>
@@ -170,7 +170,10 @@ const articleSchema = {
 
         <h1 class="cas-titre">{espaces(cs.title)}</h1>
 
-        {cs.scopeNote && <p class="cas-chapo">{cs.scopeNote}</p>}
+        {/* La phrase lue sur l'index et sur l'accueil, sous le titre du cas :
+            le visiteur retrouve ce qu'il vient de cliquer. */}
+        {cs.accroche && <p class="cas-chapo">{espaces(cs.accroche)}</p>}
+        {cs.scopeNote && <p class:list={['cas-chapo', cs.accroche && 'cas-chapo--reserve']}>{cs.scopeNote}</p>}
 
         {/* Le secteur, les sujets et la date sont de vraies informations : une
             ligne sobre sous le titre, comme la signature d'un article. */}
@@ -322,7 +325,7 @@ const articleSchema = {
                   <p class="voisin__fait"><strong>{espaces(v.data.kpis[0].value)}</strong> {espaces(v.data.kpis[0].label)}</p>
                 )}
                 <span class="link-cta" aria-hidden="true">
-                  <span class="link-cta__label">Lire le détail</span>
+                  <span class="link-cta__label">Lire le cas</span>
                   <Icon name="lucide:arrow-right" class="link-cta__arrow" />
                 </span>
               </article>
@@ -360,6 +363,14 @@ const articleSchema = {
     color: var(--color-ink-mid);
     font-size: var(--text-body-large);
     line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  /* La réserve du cas, sous sa phrase : une ligne plus discrète. */
+  .cas-chapo--reserve {
+    margin-top: var(--spacing-colle);
+    color: var(--color-ink-low);
+    font-size: var(--text-body);
   }
 
   .cas-meta {
@@ -549,11 +560,11 @@ const articleSchema = {
     color: var(--color-ink-low);
   }
 
-  /* La pêche ne marque QUE le contrôle, et par la couleur du mot : la pastille
-     pleine est réservée au bouton d'appel. `--color-accent-text` est la pêche
-     sur la nuit, la nuit dans une île claire. */
+  /* Le contrôle se marque par la couleur du mot, en lilas : c'est un repère,
+     pas un geste, et le citron ne sert qu'aux gestes (11 novembre 2026). Le
+     tableau est toujours posé sur le noir, jamais dans une île claire. */
   .nomenclature-role.est-controle {
-    color: var(--color-accent-text);
+    color: #b9a6ff;
     font-weight: 600;
   }
 
@@ -825,7 +836,7 @@ const articleSchema = {
   }
 
   /* Le bloc répond par son lien fléché, au survol comme au clavier : la
-     pastille se déroule sous « Lire le détail » et la flèche avance. */
+     pastille se déroule sous « Lire le cas » et la flèche avance. */
   .voisin:focus-within .link-cta__label::before {
     clip-path: inset(0 0 0 0 round 9999px);
   }

@@ -34,6 +34,9 @@ interface Props {
   /** La ligne des prix sous le formulaire : l'accueil seulement, les pages d'offre
       portent déjà leurs prix. */
   prix?: boolean;
+  /** La largeur du titre (17ch par défaut) : un titre plus long garde son
+      fragment souligné sur une seule ligne. */
+  titreLargeur?: string;
 }
 
 const {
@@ -42,6 +45,7 @@ const {
   suite = 'Écrivez-moi.',
   source,
   prix = false,
+  titreLargeur,
 } = Astro.props;
 
 /* Mêmes noms que dans les blocs des métiers : une offre n'a qu'un nom sur la
@@ -67,20 +71,23 @@ const offres = [
 ] as const;
 ---
 
-<section id={id} data-section class="fin relative px-[var(--spacing-section-x)]">
-  <div class="fin__centre reveal">
+<section id={id} data-section class="fin relative px-[var(--spacing-section-x)]" aria-labelledby={`${id}-titre`}>
+  <div class="fin__centre reveal" data-contact-zone>
     {/* Sur l'accueil, le titre répond à celui qui ouvre le récit (« Vous
         perdez du temps. ») : la page se ferme sur la même idée, rendue cette
         fois au visiteur. */}
-    <h2 class="fin__titre" set:html={titre} />
+    <h2 class="fin__titre" id={`${id}-titre`} style={titreLargeur ? `max-width:${titreLargeur}` : undefined} set:html={titre} />
     <p class="fin__suite" set:html={suite} />
-    <div class="carnet-ui"><FormulaireContact source={source} variante="carnet" /></div>
+    {/* Deux moyens, pas trois : le formulaire, et l'appel dessous. L'adresse
+        e-mail ne s'écrit que sans script ou après un échec d'envoi
+        (`note={false}`), comme sur l'accueil. */}
+    <div class="carnet-ui"><FormulaireContact source={source} variante="carnet" note={false} /></div>
     {/* L'appel reste un lien direct vers l'agenda (goal `lead_call`). « En
         visio » vient de l'événement Cal.com, qui se tient sur Google Meet
         (vérifié dans l'agenda le 2 octobre 2026) ; « sans engagement » est déjà
         écrit dans /llms.txt. */}
     <p class="fin__apres">
-      Vous préférez en parler de vive voix&nbsp;? <BoutonReservation source={source} class="lien-prose" direct>Réservez un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes</BoutonReservation> en visio, sans engagement.
+      Vous préférez en parler de vive voix&nbsp;? <BoutonReservation source={source} class="lien-prose" direct>Réservez un appel de {DUREE_RESERVATION_MINUTES}&nbsp;minutes</BoutonReservation> en&nbsp;visio, sans engagement.
     </p>
 
     {/* Les prix tiennent en une ligne sous le bouton, pour qui est descendu
@@ -125,6 +132,18 @@ const offres = [
     text-align: center;
   }
 
+  /* Le formulaire garde sa largeur quoi qu'il dise : centré comme le reste,
+     il épousait son contenu, et s'élargissait quand une erreur s'écrivait. */
+  .fin__centre > .carnet-ui {
+    justify-self: center;
+    width: min(100%, 42rem);
+  }
+
+  /* Au doigt, le bouton d'appel pose le focus sur le titre (voir Layout). */
+  .fin__titre:focus {
+    outline: none;
+  }
+
   .fin__titre {
     max-width: 17ch;
     margin: 0;
@@ -158,6 +177,19 @@ const offres = [
     font-size: var(--text-body-sm);
     line-height: 1.5;
     text-wrap: balance;
+  }
+
+  /* Le lien vers l'agenda ne se coupe pas en deux lignes ; au doigt sa cible
+     déborde de la ligne (44 px), sans la décaler. */
+  .fin__apres :global(a) {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .fin__apres :global(a)::after {
+    content: '';
+    position: absolute;
+    inset: -12px 0;
   }
 
   .fin__prix {
