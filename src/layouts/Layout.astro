@@ -1,8 +1,10 @@
 ---
-import '@fontsource-variable/geist-mono/wght.css';
+import '@fontsource-variable/roboto-flex/wdth.css';
+import '@fontsource/roboto-mono/500.css';
 import '../styles/global.css';
 import '../components/carnet/carnet.css';
-import geistMonoLatin from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
+import '../components/robot/robot.css';
+import robotoFlexLatin from '@fontsource-variable/roboto-flex/files/roboto-flex-latin-wdth-normal.woff2?url';
 import lilianPhoto from '../assets/lilian-photo.jpg';
 import { DUREE_RESERVATION_MINUTES, URL_RESERVATION } from '../lib/reservation';
 import { organisations, profils, resume } from '../data/parcours';
@@ -45,8 +47,8 @@ ogImageAlt = "« J'automatise ce que vos équipes font encore à la main » — 
   pageSchema,
   breadcrumbs,
   noindex = false,
-  themeColor = '#f6f6f3',
-  policePrechargee = geistMonoLatin,
+  themeColor = '#0f0d0b',
+  policePrechargee = robotoFlexLatin,
   carnet = true,
   faqSchema,
   directionContract
@@ -88,8 +90,8 @@ const personSchema = {
   "@id": "https://liliansevoumian.fr/#person",
   "name": "Lilian Sevoumian", "url": "https://liliansevoumian.fr",
   "image": personImage.toString(),
-  "jobTitle": ["Fondateur d’agenceafk", "Fondateur et formateur chez Augmentés", "Freelance en automatisation et agents IA", "Expert Make et n8n"],
-  /* Le résumé et les deux structures viennent de data/parcours.ts, la source
+  "jobTitle": ["Fondateur et formateur chez Augmentés", "Freelance en automatisation et agents IA", "Expert Make et n8n"],
+  /* Le résumé et la structure viennent de data/parcours.ts, la source
      que lisent aussi la page d'accueil et /llms.txt. */
   "description": resume,
   "worksFor": organisations.map((organisation) => ({
@@ -127,6 +129,7 @@ const serviceSchema = {
   "description": "Automatisation des processus métier, agents IA et outils métiers (dashboards, portails clients, outils internes).",
   "url": "https://liliansevoumian.fr", "image": new URL('/og-carnet.png', Astro.site).toString(),
   "address": adresse,
+  "legalName": "AURA GROUP", "vatID": "FR71991735036", "taxID": "99173503600014",
   "areaServed": [
     { "@type": "Country", "name": "France" },
     { "@type": "Place", "name": "Île-de-France" },
@@ -450,7 +453,7 @@ const faqPageSchema = faqSchema ? {
               .then(function () {
                 embedTarget.replaceChildren();
                 // L'agenda prend le thème de la page : clair sous la tenue du carnet.
-                var config = { layout: "month_view", theme: document.querySelector('.tenue-carnet') ? "light" : "dark" };
+                var config = { layout: "month_view", theme: "dark" };
                 if (note) config.notes = note;
                 window.Cal("inline", { elementOrSelector: "#cal-embed-target", calLink: overlay.dataset.reservationPath, config: config });
                 inited = true;
@@ -711,8 +714,8 @@ const faqPageSchema = faqSchema ? {
          6) "roi_used"        → premier mouvement d'un curseur du simulateur.
          7) "faq_opened"      → une question fermée qu'on ouvre, libellé en prop.
          8) "case_opened"     → clic vers un cas client, href en prop.
-         9) "service_path_opened", "youtube_opened", "outbound_formations",
-            "outbound_agence" → les sorties et les choix d'offre.
+         9) "service_path_opened", "youtube_opened", "outbound_formations"
+            → les sorties et les choix d'offre.
          Pas de mesure de profondeur de défilement. -->
   </body>
 </html>

@@ -52,6 +52,34 @@ colors:
   carnet-vert-point: "#14a554"
   carnet-rouge: "#c9302c"
   carnet-coeur: "#e0368a"
+  robot-noir: "#0f0d0b"
+  robot-surface: "#1b1815"
+  robot-surface-2: "#24201c"
+  robot-trait: "#332e29"
+  robot-trait-2: "#4a433c"
+  robot-texte: "#f8f4ef"
+  robot-texte-2: "#d7cfc6"
+  robot-gris: "#aaa198"
+  robot-papier: "#ffffff"
+  robot-encre: "#17130f"
+  robot-encre-2: "#4a4239"
+  robot-encre-3: "#6b625a"
+  robot-citron: "#ffd84d"
+  robot-citron-fonce: "#f6cb33"
+  robot-citron-clair: "#fff1b8"
+  robot-lilas: "#b9a6ff"
+  robot-lilas-clair: "#e9e3ff"
+  robot-champ: "#8f857a"
+  robot-erreur: "#b3261e"
+  robot-erreur-fond: "#fff4f2"
+  robot-erreur-texte: "#8c1d18"
+  entre-papier: "#f6f6f3"
+  entre-encre: "#17171a"
+  entre-encre-douce: "#6c6d69"
+  entre-filet: "#dededa"
+  entre-cobalt: "#2b44f0"
+  entre-nuit: "#0f1430"
+  entre-menthe: "#6ff0c4"
 typography:
   nom:
     fontFamily: "Geist Variable, system-ui, -apple-system, sans-serif"
@@ -226,6 +254,12 @@ rounded:
   carnet-m: "16px"
   carnet-l: "22px"
   carnet-xl: "28px"
+  robot-icone: "11px"
+  robot-champ: "14px"
+  robot-onglet: "18px"
+  robot-carte: "24px"
+  robot-panneau: "28px"
+  robot-ile: "32px"
 spacing:
   section-y: "clamp(5rem, 8vw, 8rem)"
   section-x: "clamp(1.5rem, 5vw, 7.5rem)"
@@ -480,9 +514,243 @@ seule la valeur a changé. Ne jamais déduire une couleur ni une forme d'un nom.
 - Les artefacts publics et les marques tierces gardent leur palette dans leurs
   visuels, jamais dans le chrome du site.
 
-## Entre les deux (3 novembre 2026) : la tenue actuelle
+## L'accueil « Citron et lilas » (10 novembre 2026)
 
-**Ce chapitre fait foi.** Le 3 novembre 2026, Lilian demande une refonte
+L'accueil a changé de tenue le premier ; les autres pages l'ont suivi le
+même jour (chapitre suivant). Lilian voulait un fond noir, du jaune ou de
+l'orange, sans lueur, en Roboto, « mignon, tech, geek mais sérieux ». Parmi
+trois directions il a choisi « Petit robot », puis, parce qu'il le trouvait
+trop orange et trop monochrome, la déclinaison « Citron et lilas ». Composants
+dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
+`.tenue-robot` (la page passe `carnet={false}` à Layout).
+
+- Fond noir chaud `#0f0d0b`, surfaces `#1b1815` et `#24201c`, traits
+  `#332e29`, texte `#f8f4ef`, gris `#aaa198`.
+- Deux sections blanches seulement : l'ouverture (arrondie en bas) et le
+  contact (une île arrondie).
+- Citron `#ffd84d` pour les gestes : boutons, onglet choisi, flèche d'un cas
+  au survol, passage retenu d'un avis (en texte citron), tête du robot. Lilas
+  `#b9a6ff` pour les surfaces douces et les repères : le grand panneau du
+  métier choisi (texte à l'encre), nom du client sur les cartes des cas,
+  soulignement des liens sur noir, point de « À très vite. ».
+- Passe critique, couleur et finitions du 10 novembre 2026 : l'anneau de
+  focus est à l'encre sur blanc (le lilas n'y fait que 2,1:1), lilas sur
+  noir ; les champs du formulaire ont un bord `#8f857a` (3:1) et une erreur
+  qui se voit (rouge `#b3261e`, fond `#fff4f2`) ; chaque panneau de métier
+  mène à son offre (`lien` de `data/metiers.ts`) ; sur noir le robot est
+  cerné de clair (`--robot-trait`) ; sélection de texte en citron. Les
+  pastilles d'outils évitent les deux couleurs de la page : Make est un
+  violet rosé `#d9a3ff`, pas le lilas.
+- Une carte de cas a pour titre ce qui a été construit, dit en clair
+  (`enClair` du cas), jamais un chiffre seul : « 0 ressaisie, ça veut rien
+  dire » (Lilian, 10 novembre 2026). Le client est en petit au-dessus.
+- Retours de Lilian (10 novembre 2026) : l'ouverture n'a qu'un geste,
+  « Me contacter », en citron (« CTA principal »), et il vient après la photo
+  sur téléphone ; « S’abonner à la newsletter » est tout en bas, dans le pied
+  de toutes les pages (« retire ce cta, mets le tout en bas ») ; les quatre
+  chiffres ne sont plus dans l'ouverture (« j'aime pas les stats ici »), ils
+  suivent les logos des clients ; sous 1000 px les métiers sont une colonne d'icônes collante à gauche et le
+  panneau à droite, pour choisir et lire sans défiler ; le menu ouvert au
+  doigt ne pose aucun anneau de focus sur « Fermer » ni sur « Menu ».
+- Chaque outil a sa couleur (`src/data/outils.ts`) et sa propre pastille :
+  jamais deux outils dans une même pastille (n8n orange, Make violet…).
+- La photo de Lilian garde ses couleurs : aucun filtre, aucune teinte.
+- Roboto Flex partout (l'axe de largeur s'anime sur le nom à l'arrivée, une
+  fois), Roboto Mono 500 pour les pastilles d'outils seulement.
+- Formes arrondies, boutons en pilules ; barre de navigation en pilule
+  blanche flottante qui se resserre au défilement ; largeur maximale 1240 px.
+- Le petit robot : il cligne des yeux, ses yeux suivent la souris (pas au
+  doigt, pas en mouvement réduit). Décoratif, `aria-hidden`. Il n'apparaît
+  qu'à quatre endroits : la barre, le salut de l'ouverture, le contact, le
+  pied.
+- La page n'explique jamais comment elle marche (Lilian, 10 novembre 2026) :
+  pas de « survolez », « le robot vous suit des yeux », etc.
+- Sections : ouverture, métiers en onglets, clients en mur de logos puis
+  les quatre chiffres, projets clients en cartes, avis en citations, contact,
+  pied « À très vite. » et la newsletter. Ni prix ni chiffres de prestation.
+
+### La passe « plus fin » (10 novembre 2026)
+
+Le soir même, Lilian : « j'aime bien ce qu'on a fait mais j'aimerais un peu
+moins de friendly, y a des gros titres », « rendre le site un peu plus
+premium et travaillé tout en gardant la DA ». La palette, la police, les
+îles blanches, les pastilles d'outils et le robot restent ; ce qui change
+est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
+
+- Titres : graisse 600 (620 pour le nom, 650 au plus pour le logo), jamais
+  800 et plus. Trois tailles, dans `robot.css` : `--r-t-nom`
+  `clamp(46px, 6.2vw, 92px)`, `--r-t-2` `clamp(30px, 3.1vw, 42px)` pour les
+  titres de section, `--r-t-3` `clamp(22px, 2.1vw, 28px)` pour une carte.
+  Le titre du mur de logos est une simple étiquette grise de 15 px.
+- Traits : des filets d'un pixel. Sur blanc l'encre à 12 % (`--r-filet`),
+  sur noir `#332e29` (`--r-trait`), `#4a433c` (`--r-trait-2`) au survol.
+  Plus aucun cerne d'encre de 2 px autour d'un bouton, de la barre ou du
+  portrait.
+- Boutons : la pilule citron n'a plus de bord ; au survol elle fonce
+  (`#f6cb33`) et monte d'un pixel. Le bouton au trait a un filet d'encre à
+  28 %, plein au survol. Hauteur 44 px, 52 px pour les deux gestes de
+  l'ouverture et « Envoyer ».
+- Mouvement : une seule courbe, `cubic-bezier(0.16, 1, 0.3, 1)`
+  (`--r-sortie`). Ni rebond, ni inclinaison, ni ressort au survol.
+- Liens : soulignement droit de 1,5 px, lilas sur noir, encre sur blanc.
+  Plus de vague, ni sous le nom ni sous un lien.
+- Rayons : 32 px pour les îles blanches, 28 px pour le portrait et le
+  panneau du métier, 24 px pour les cartes et le mur de logos, 18 px pour
+  un onglet, 14 px pour un champ, 999 px pour les pilules.
+- Ouverture : trois petites étiquettes autour du portrait (Make niv. 5,
+  n8n, agents IA), à peine inclinées. Les quatre chiffres tiennent sur une
+  ligne séparée par des filets (deux par deux sur téléphone), sans tuiles
+  de couleur ; depuis le soir du 10 novembre ils sont sous les logos des
+  clients, sur le noir, plus dans l'ouverture.
+- Clients : un mur de logos à filets, huit par ligne (quatre sous 1180 px),
+  logos à 66 % qui s'allument au survol.
+- Cas : au survol la carte change de surface et de filet, sa flèche cerclée
+  passe au citron et pivote ; la carte ne vire plus au lilas.
+- Avis : des citations séparées par des filets, le titre de la section
+  collé à gauche ; le passage retenu est en texte citron, plus en
+  surlignage ; portrait rond de 40 px, nom puis rôle en gris.
+- Pied : « À très vite. » en graisse 600, `clamp(40px, 5.4vw, 80px)`.
+- Ombres : deux seulement, courtes et neutres, sous ce qui flotte (la barre
+  et les étiquettes du portrait), à la place des cernes d'encre. Jamais de
+  lueur, jamais d'ombre colorée.
+
+### Au bureau : des composants travaillés (10 novembre 2026)
+
+Le soir de la passe « plus fin », Lilian : « j'aime pas les layout sur la
+version desktop ». Trois mises en page lui ont été montrées (tuiles « bento »,
+index à rail, fiche fixe) ; il les a refusées toutes les trois : « J'aime pas
+bento. Pas assez créatifs, composants trop simplistes. » Le défaut n'était pas
+la place des blocs mais leur dessin. **Jamais de grille de tuiles sur
+l'accueil ; un composant simple déplacé reste un composant simple.**
+
+À partir de 1100 px chaque section devient un objet dessiné, pris dans son
+métier. Tout est dans `robot/bureau.css`, sous `@media (min-width: 1100px)` ;
+sous 1100 px la page est celle des chapitres précédents, à trois changements
+près, communs à toutes les largeurs : un seul bouton dans l'ouverture, les
+chiffres sous les logos, la newsletter dans le pied. Les règles
+de la passe « plus fin » tiennent toujours (graisse 600, filets, une courbe,
+aucune lueur).
+
+- **Les fils** (`src/lib/robot/fils.ts`) : un trait de 1,5 px, deux ports
+  ronds de 3,5 px, un grain plus épais qui parcourt le fil. Ils sont tracés
+  par script d'après la place réelle des modules (`offsetLeft` / `offsetTop`,
+  pas la boîte à l'écran, pour ne pas suivre une entrée en cours) et retracés
+  quand le bloc change de taille. Sans script il n'y a pas de fils et rien ne
+  manque. Encre à 26 % sur blanc ; sur le canvas noir, `--r-trait-2` et un
+  grain citron.
+Le même soir, six retours de Lilian sur l'aperçu, qui font foi sur ce qui
+suit : « j'aime pas les stats ici » (les chiffres de l'ouverture), « CTA
+principal » (« Me contacter »), « retire ce cta, mets le tout en bas » (la
+newsletter), « pas explicite, trouver une animation par sujet, là on dirait
+un workflow » (la scène des formations), « pas d'animations ici, juste des
+belles cards » (le parcours d'un cas), « j'aime pas du tout, mets les avis
+dans des cards élégantes, trouve un beau layout » (la citation unique et son
+rail), et sur le contact : « trop d'informations, le formulaire, l'appel, et
+le mail. restons sur le formulaire point barre ». **Les fils ne servent donc
+qu'à l'ouverture ; un cas et un avis sont des cartes, sans mouvement ; une
+scène montre son sujet, pas un scénario ; le contact de l'accueil est un
+titre, une phrase et le formulaire, sans lien vers l'agenda ni adresse sous
+le bouton (à toutes les largeurs).**
+
+- **L'ouverture, un scénario** : les trois étiquettes du portrait deviennent
+  trois modules blancs à sa gauche (carré d'icône à la couleur de l'outil),
+  reliés au portrait (4/5, rayon 24 px) par trois fils. À l'arrivée, une
+  fois : les fils se dessinent, un grain les traverse. Ensuite un grain
+  repasse quand on survole un module ou le portrait. Un seul bouton, « Me
+  contacter », en citron. Nom à `clamp(60px, 5.2vw, 76px)`.
+- **« Ce que je fais », une scène par sujet** : un seul panneau lilas (rayon
+  28 px). À gauche la liste des quatre métiers (le choisi en pilule d'encre,
+  son icône sur citron), puis la phrase du métier en grand ; à droite, dans
+  une fenêtre noire de 4/3, la scène animée du métier
+  (`src/components/metiers/`, moteur `lib/metiers/scene.ts`), jouée une fois
+  quand elle arrive à l'écran, sans lueurs, sur le noir chaud, en Roboto
+  Flex. Chaque scène a la forme de son sujet : l'automatisation est un
+  scénario (une réservation, un paiement, un message, l'agenda), **l'agent
+  IA un téléphone** (`scene-appels.astro` : une cliente appelle, l'agent
+  décroche, l'échange se dit en bulles, le rendez-vous est déplacé ; puis un
+  message au support client et sa réponse ; « votre compte rendu » inscrit
+  les deux demandes), les outils métiers une
+  application et son dashboard, **les formations un atelier**
+  (`scene-cours.astro`) : la diapositive du module et ses trois points,
+  Lilian en vignette (une vraie photo de lui en formation, ni teintée ni
+  retouchée), « À vous : exercice 1 », le programme qui se coche et l'équipe
+  qui avance jusqu'à « Autonome ». Une scène qui ressemble à un scénario
+  alors que son sujet n'en est pas un est à refaire. Les agents IA se disent
+  comme Lilian les dit (10 novembre 2026) : support client, agent vocal,
+  « un agent qui prend les appels à ta place, qui répond aux clients à ta
+  place » ; jamais « l'agent prend la main », ni un texte tourné autour de la
+  main gardée par un humain. Pastilles : Make et n8n pour l'automatisation,
+  Claude Code et Codex pour les dashboards et outils métiers.
+- **Les clients, un défilé, puis les chiffres** : les logos passent sur une
+  ligne entre deux filets, bords fondus, 70 s par tour ; il s'arrête au
+  survol et par son bouton pause. En mouvement réduit il n'y a pas de défilé,
+  le mur reste un mur. C'est la seule boucle de la page. Dessous, les quatre
+  chiffres de l'audience sur une ligne à filets (à toutes les largeurs).
+- **Les projets, une pile de feuilles** : chaque cas est une grande feuille
+  (rayon 28 px) qui vient se poser sur la précédente au défilement (collante,
+  décalée de 14 px par feuille, seulement si la fenêtre fait 680 px de haut).
+  À gauche le client, le titre en clair, le détail, les outils, « Lire le
+  cas » ; à droite ses étapes en cartes (`robot/etapes.astro`) : un carré
+  d'icône à la couleur de l'outil, une ligne de contexte, l'étape en gras,
+  sur une grille de six colonnes (trois cartes puis deux pour un `parcours`,
+  numérotées de 01 à 05 ; deux puis trois pour un `flow`). La carte forte
+  (l'agent d'un `flow`, la dernière étape d'un `parcours`) est sur lilas.
+  Dessous, un écart avant / après pris dans `bascule`. **Rien n'y bouge** :
+  ni fil, ni grain, ni script.
+- **Les avis, trois cartes** : une grande carte lilas à gauche pour la
+  citation la plus courte, dite en grand (`clamp(44px, 3.6vw, 52px)`, graisse
+  600, le début à 62 % d'encre, le passage retenu à l'encre pleine : le
+  citron ne se lit pas sur lilas), la personne en bas ; à droite les deux
+  autres, l'une sur l'autre, en cartes sombres (rayon 28 px, filet d'un
+  pixel), citation de 21 px, passage retenu en citron, portrait de 48 px.
+  Aucun script.
+- **Mouvement** : rien ne tourne en boucle hors du défilé des logos. Les fils
+  de l'ouverture et les scènes jouent une fois, puis seulement sur un geste
+  du visiteur. En mouvement réduit tout est posé d'un coup.
+
+## « Citron et lilas » sur tout le site (10 novembre 2026)
+
+**Ce chapitre fait foi pour les pages intérieures et le blog.** Le 10 novembre
+2026, l'accueil validé, Lilian demande d'« aligner le reste du site sur cette
+nouvelle DA ». C'est, comme les fois précédentes, un échange de jetons : les
+noms de `@theme` et du carnet sont gardés, leurs valeurs changent dans le
+dernier bloc de `global.css` et de `carnet/carnet.css`. Ne jamais déduire une
+couleur du nom d'un jeton (`--violet` et `--color-peche` valent le citron).
+
+- Mêmes valeurs que l'accueil : papier `#0f0d0b`, surfaces `#1b1815` et
+  `#24201c`, filets `#332e29`, texte `#f8f4ef`, gris `#aaa198`, citron
+  `#ffd84d` pour ce qui agit (bouton d'appel, liens fléchés, liens du texte,
+  curseurs), lilas `#b9a6ff` pour les repères (trait droit sous `mark`,
+  trait des intertitres du blog, anneau de focus sur noir).
+- `Navigation` rend `robot/barre.astro` (la pilule blanche flottante, avec
+  les liens de la page) et `Footer` rend `robot/pied.astro` (« À très
+  vite. »). La page commence 96 px sous la barre.
+- `.bloc-encre` redevient l'île claire : blanche, à l'encre `#17130f`, sans
+  bord. La fin de page (`.fin__centre`) et la feuille de `/contact` sont des
+  îles claires elles aussi, avec les champs et le bouton « Envoyer » de
+  l'accueil (bord `#8f857a` d'un pixel, rayon 14 px, pilule citron sans
+  bord). Sur blanc le citron ne sert jamais de texte : les liens y sont à
+  l'encre, soulignés.
+- Roboto Flex partout, chargée par `Layout` ; plus de Geist Mono. Depuis la
+  passe « plus fin » (même jour, voir le chapitre de l'accueil) : titres en
+  graisse 600 (620 pour un `h1`), interlettrage serré, `h1`
+  `clamp(2.25rem, 1.5rem + 3vw, 3.5rem)` et `h2`
+  `clamp(1.75rem, 1.35rem + 1.6vw, 2.375rem)` ; le corps reste à 17 px
+  (18 px dans le blog). Ces valeurs sont dans le tout dernier bloc de
+  `global.css` (PASSE « PLUS FIN ») et de `carnet.css`.
+- Rayons 10 à 32 px, pilules 999 px ; le bouton d'appel est la pilule citron
+  sans bord, qui fonce (`#f6cb33`) et monte d'un pixel au survol. Traits du
+  carnet à un pixel (`--trait`, `--trait-fin`), anneau de focus de 2 px.
+- Le blog : colonne de lecture inchangée, titres à la taille de la tenue,
+  code sur `#24201c`, bloc d'inscription à la newsletter sur lilas pâle
+  `#e9e3ff` avec un champ et un bouton en pilules.
+- Les règles de structure de « La tenue commune » tiennent toujours (un seul
+  bouton d'appel, composants partagés, îles claires jamais en première ni en
+  dernière section sauf la fin de page).
+
+## Entre les deux (3 novembre 2026)
+
+**Histoire depuis le 10 novembre 2026 (ses couleurs et sa police ne valent plus).** Le 3 novembre 2026, Lilian demande une refonte
 « super simple, super sobre, avec des typo un peu robot ». Parmi six
 directions, il choisit la sixième, « Entre les deux » (entre une page
 monochrome et une page trop chargée), l'affine sur la maquette, puis demande

@@ -820,3 +820,91 @@
     margin-top: 64px;
   }
 }
+
+/* =========================================================================
+   « CITRON ET LILAS » SUR TOUT LE SITE, 10 NOVEMBRE 2026
+   Lilian : « aligner le reste du site sur cette nouvelle DA ». Les pages
+   intérieures et le blog prennent la tenue de l'accueil (`robot/robot.css`) :
+   noir chaud, texte clair, citron pour ce qui agit, lilas pour les surfaces
+   douces et les repères, Roboto Flex, des formes très arrondies. Comme les
+   fois d'avant, c'est un échange de jetons : les noms restent (`--violet`
+   vaut maintenant le citron, `--papier` le noir chaud), les composants ne
+   changent pas. Ne jamais déduire une couleur du nom d'un jeton.
+   ========================================================================= */
+
+:is(:root:has(.tenue-carnet), .tenue-carnet) {
+  --papier: #0f0d0b;
+  --blanc: #1b1815;
+  --encre: #f8f4ef;
+  --encre-doux: #aaa198;
+  --violet: #ffd84d;
+  --bleu-fonce: #ffe680;
+  --nuit: #1b1815;
+  --menthe-vive: #b9a6ff;
+  --menthe-texte: #b9a6ff;
+  --menthe-pale: #29243a;
+  --menthe-pale-filet: #4a4170;
+  --menthe-pale-texte: #d9d0ff;
+  --lilas: #29243a;
+  --menthe: #24201c;
+  --jaune: #29243a;
+  --rose: #24201c;
+  --bleu: #29243a;
+  --vert: #7fe0a3;
+  --vert-clair: #16241b;
+  --vert-point: #4fd68a;
+  --rouge: #ff8073;
+  --coeur: #ff8073;
+  --encre-filet: #332e29;
+  --encre-pointille: #6b6259;
+  --champ: #8f857a;
+
+  --carnet-titre: 'Roboto Flex Variable', 'Roboto Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --carnet-main: var(--carnet-titre);
+  --carnet-code: 'Roboto Mono', ui-monospace, monospace;
+
+  /* Roboto Flex porte mieux le grand que Geist Mono : les titres reprennent
+     de l'ampleur, le texte courant passe à 17 px comme sur l'accueil. */
+  --t-petit: 0.8125rem;
+  --t-ui: 0.9375rem;
+  --t-corps: 1.0625rem;
+  --t-chapo: 1.25rem;
+  --t-note: 1.375rem;
+  --t-carte: 1.625rem;
+  --t-section: clamp(1.875rem, 1.3rem + 2.2vw, 2.75rem);
+  --t-nom: clamp(2.5rem, 1.4rem + 4.4vw, 4.5rem);
+
+  --r-xs: 10px;
+  --r-s: 14px;
+  --r-m: 20px;
+  --r-l: 26px;
+  --r-xl: 32px;
+  --r-pilule: 999px;
+  --trait: 1.5px;
+  --trait-fin: 1.5px;
+}
+
+/* Une section `.sombre` n'a plus à retourner les jetons : toute la page est
+   sur le noir. Elle devient une surface à peine relevée. */
+.sombre {
+  --encre: #f8f4ef;
+  --encre-doux: #aaa198;
+  --encre-filet: #3d3731;
+  --encre-pointille: #6b6259;
+  --champ: #8f857a;
+  --blanc: #24201c;
+  --violet: #ffd84d;
+  --bleu-fonce: #ffe680;
+}
+.sombre ::selection { background: #ffd84d; color: #17130f; }
+
+/* Passe « plus fin » du 10 novembre 2026 (voir `robot/robot.css` et la fin
+   de `global.css`) : les titres du carnet perdent un cran, les traits
+   passent à un pixel. */
+:is(:root:has(.tenue-carnet), .tenue-carnet) {
+  --t-carte: 1.5rem;
+  --t-section: clamp(1.75rem, 1.35rem + 1.6vw, 2.375rem);
+  --t-nom: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+  --trait: 1px;
+  --trait-fin: 1px;
+}

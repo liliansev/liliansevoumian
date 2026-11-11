@@ -1,0 +1,837 @@
+---
+/*
+ * scene-appels — la scène du métier Agents IA sur l'accueil : « Un agent qui
+ * répond à votre place. »
+ *
+ * Elle montre ce que Lilian vend sous ce nom (10 novembre 2026) : du support
+ * client et de l'agent vocal, « un agent qui prend les appels à ta place, qui
+ * répond aux clients à ta place ». La première scène de ce métier
+ * (`scene-agents.astro`, un agent de recherche qui interroge des sources pour
+ * un cabinet de recrutement) racontait autre chose ; elle ne sert plus qu'à
+ * /explorations-metiers.
+ *
+ * Trois objets, ceux du sujet, sans fil ni module :
+ *   - un téléphone, à gauche : l'appel d'une cliente, l'onde de la voix, et
+ *     l'échange à mesure qu'il se dit ;
+ *   - le support client, en haut à droite : un message, et la réponse ;
+ *   - votre compte rendu, dessous : ce qui a été traité pendant que vous
+ *     étiez occupé.
+ *
+ * La scène, un seul mouvement à la fois : le téléphone sonne, l'agent
+ * décroche, quatre répliques, le rendez-vous est déplacé et la ligne
+ * s'inscrit au compte rendu ; puis un message arrive, l'agent écrit, répond,
+ * et la seconde ligne s'inscrit. Elle joue une fois, quand elle entre à
+ * l'écran, et s'arrête sur cette image.
+ *
+ * Rien n'y dit que l'agent « prend la main » ni qu'un humain la garde : ce
+ * n'est pas le propos (même consigne, même jour).
+ *
+ * Le panneau, les fenêtres, les pastilles et les états viennent du socle
+ * (`scene-metier.css`, `lib/metiers/scene.ts`). Ce composant écrit ce que le
+ * socle n'a pas : le téléphone, l'onde, les bulles, l'issue de l'appel et les
+ * lignes du compte rendu.
+ *
+ * Elle n'a que le grand plan (760 × 570) : sur l'accueil elle n'est montrée
+ * qu'à partir de 1100 px, dans un cadre d'au moins 600 px. Sous 520 px de
+ * large il faudrait lui écrire un plan étroit, comme aux autres scènes.
+ *
+ * Sans script ou en mouvement réduit, la scène est une image fixe : l'appel
+ * terminé, le message répondu, les deux lignes au compte rendu.
+ *
+ * Échange inventé pour la scène (un exemple, pas un cas client). Aucun nom de
+ * marque : les pictogrammes sont dessinés ici.
+ */
+import './scene-metier.css';
+
+/* L'appel : qui parle, ce qui se dit, et l'heure au compteur à ce moment. */
+const appel = [
+  { qui: 'client', texte: 'Bonjour, je voudrais déplacer mon rendez-vous.', duree: '0:04' },
+  { qui: 'agent', texte: 'Bien sûr. Vendredi à 10 h, cela vous convient ?', duree: '0:09' },
+  { qui: 'client', texte: 'Parfait, merci.', duree: '0:13' },
+  { qui: 'agent', texte: 'C’est noté, je vous envoie la confirmation.', duree: '0:18' },
+];
+const message = {
+  client: 'Bonjour, où en est ma commande ?',
+  agent: 'Elle est partie ce matin. Livraison demain, voici votre lien de suivi.',
+};
+const lignes = [
+  { genre: 'appel', titre: 'Rendez-vous déplacé', note: 'Appel · vendredi, 10 h' },
+  { genre: 'message', titre: 'Suivi de commande envoyé', note: 'Message · support client' },
+];
+const fin = appel[appel.length - 1].duree;
+
+const COCHE = 'M3.5 8.5l3 3 6-6.5';
+/* Pictogrammes sur une grille de 24. */
+const COMBINE = 'M6.6 3.5h2.6l1.3 3.6-1.7 1.3a11 11 0 0 0 6.8 6.8l1.3-1.7 3.6 1.3v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z';
+const BULLE = 'M20 11.5a7.5 7.5 0 0 1-11 6.6L4.5 19.5l1.4-4.2A7.5 7.5 0 1 1 20 11.5z';
+const PERSONNE = 'M12 11.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM5 19.5c.6-3.2 3.4-5 7-5s6.4 1.8 7 5';
+---
+
+<div
+  class="sm est-abouti"
+  data-scene-appels
+  role="img"
+  aria-label="Un agent IA répond à votre place. Une cliente appelle pour déplacer son rendez-vous : l’agent décroche, propose vendredi à 10 h et envoie la confirmation. Un client demande où en est sa commande : l’agent lui répond avec le lien de suivi. Les deux demandes sont inscrites à votre compte rendu, et aucun appel n’est manqué."
+>
+  <div class="sm-plan" aria-hidden="true" data-nosnippet>
+    {/* Pour qui lit le HTML sans la mise en page : ce plan est un décor, son
+        échange est inventé. */}
+    <span class="sr-only">Illustration, données fictives&nbsp;:</span>
+    <div class="sm-puces">
+      <span class="sm-puce">
+        <svg viewBox="0 0 24 24"><path d={PERSONNE} /></svg>
+        <span class="sm-puce__nom">Vous</span>
+        <b>Occupé</b>
+      </span>
+      <span class="sm-puce sm-puce--peche">
+        <svg viewBox="0 0 24 24"><path d={COMBINE} /></svg>
+        <span class="sm-puce__nom">Appels manqués</span>
+        <b>0</b>
+      </span>
+    </div>
+
+    {/* Le téléphone : l'appel, l'onde, l'échange. */}
+    <div class="sm-poste poste--appel" data-poste="appel">
+      <div class="combine">
+        <div class="appel">
+          <span class="appel__rond" data-rond>
+            <svg viewBox="0 0 24 24"><path d={COMBINE} /></svg>
+          </span>
+          <span class="appel__nom">
+            <b data-appel-titre>Appel terminé</b>
+            <span data-appel-note>Une cliente · {fin}</span>
+          </span>
+          <span class="sm-etat" data-etat="fait">Terminé</span>
+        </div>
+        <div class="onde" data-onde>
+          {Array.from({ length: 34 }, (_, i) => <i style={`--i:${i};--h:${[0.5, 0.9, 0.35, 0.7, 1, 0.45, 0.8, 0.3, 0.6][i % 9]}`}></i>)}
+        </div>
+        <div class="echange">
+          {appel.map((r) => (
+            <span class={`replique replique--${r.qui} est-dite`} data-replique data-qui={r.qui} data-duree={r.duree} data-lettres={r.texte.length}>
+              <span class="tete">
+                {r.qui === 'agent' ? (
+                  <svg viewBox="0 0 24 24"><rect x="4.5" y="8.5" width="15" height="11" rx="3.5" /><path d="M12 8.5V5.5M9.5 13.5v1.5M14.5 13.5v1.5" /><circle cx="12" cy="4.2" r="1.2" /></svg>
+                ) : (
+                  <svg viewBox="0 0 24 24"><path d={PERSONNE} /></svg>
+                )}
+              </span>
+              <span class="bulle">{r.texte}</span>
+            </span>
+          ))}
+        </div>
+        <span class="issue est-posee" data-issue>
+          <span class="issue__coche"><svg viewBox="0 0 16 16"><path d={COCHE} /></svg></span>
+          <span class="issue__texte">
+            <b>Rendez-vous déplacé</b>
+            <span>Vendredi, 10&nbsp;h · confirmation envoyée</span>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    {/* Le support client : un message, la réponse. */}
+    <div class="sm-poste poste--support" data-poste="support">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 24 24"><path d={BULLE} /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Support client</span>
+          <span class="sm-etat" data-etat="fait">Répondu</span>
+        </div>
+        <div class="echange echange--support">
+          <span class="replique replique--client est-dite" data-question>
+            <span class="tete"><svg viewBox="0 0 24 24"><path d={PERSONNE} /></svg></span>
+            <span class="bulle">{message.client}</span>
+          </span>
+          <span class="replique replique--agent est-dite" data-reponse>
+            <span class="tete">
+              <svg viewBox="0 0 24 24"><rect x="4.5" y="8.5" width="15" height="11" rx="3.5" /><path d="M12 8.5V5.5M9.5 13.5v1.5M14.5 13.5v1.5" /><circle cx="12" cy="4.2" r="1.2" /></svg>
+            </span>
+            <span class="bulle">{message.agent}</span>
+          </span>
+          <span class="frappe" data-frappe><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </div>
+
+    {/* Votre compte rendu : ce qui a été traité. */}
+    <div class="sm-poste poste--bilan" data-poste="bilan">
+      <div class="sm-fenetre">
+        <div class="sm-fenetre__barre">
+          <span class="sm-fenetre__icone">
+            <svg viewBox="0 0 16 16"><path d="M3 4.5h1M6.5 4.5h6.5M3 8h1M6.5 8h6.5M3 11.5h1M6.5 11.5h6.5" /></svg>
+          </span>
+          <span class="sm-fenetre__nom">Votre compte rendu</span>
+          <span class="sm-etat" data-etat="fait">À jour</span>
+        </div>
+        <div class="bilan">
+          {lignes.map((l) => (
+            <span class="ligne est-fait" data-ligne>
+              <span class="ligne__signe"><svg viewBox="0 0 24 24"><path d={l.genre === 'appel' ? COMBINE : BULLE} /></svg></span>
+              <span class="ligne__texte">
+                <b>{l.titre}</b>
+                <span>{l.note}</span>
+              </span>
+              <span class="temoin"><svg viewBox="0 0 16 16"><path d={COCHE} /></svg></span>
+            </span>
+          ))}
+          <span class="total">
+            <b data-total>{lignes.length}</b>
+            <span data-total-nom>demandes traitées à votre place</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Ce que le socle ne sait pas : la place des trois objets, et les pièces
+     d'un appel. Longueurs en pixels du plan ; les tailles de texte sont celles
+     du socle (`--sm-note`, `--sm-texte`, `--sm-fort`, `--sm-chiffre`), jamais
+     des pixels. */
+
+  /* Au chargement, la scène passe de l'image fixe à son repos : les
+     transitions de ce composant, plus précises que la règle du socle, sont
+     coupées ici aussi. */
+  .sm:not([data-pret]) .sm-plan *,
+  .sm:not([data-pret]) .sm-plan *::before,
+  .sm:not([data-pret]) .sm-plan *::after {
+    transition: none !important;
+  }
+
+  .sm-plan {
+    --jaune: var(--color-peche);
+    --filet-fort: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  }
+
+  .sm-puce svg {
+    stroke-width: 2;
+  }
+
+  .poste--appel {
+    top: 62px;
+    left: 26px;
+    width: 318px;
+  }
+
+  .poste--support {
+    top: 62px;
+    left: 362px;
+    width: 372px;
+  }
+
+  .poste--bilan {
+    top: 244px;
+    left: 362px;
+    width: 372px;
+  }
+
+  /* ── Le téléphone ──
+     Un combiné debout : plus arrondi qu'une fenêtre, sans barre, une fente
+     d'écouteur en haut. C'est sa silhouette qui dit « appel ». */
+  .combine {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 452px;
+    padding: 30px 16px 16px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 18%, transparent);
+    border-radius: 34px;
+    background: color-mix(in srgb, var(--color-night-deep) 93%, var(--color-ink));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent),
+      0 30px 60px -28px var(--color-night-deep),
+      0 12px 24px -16px var(--color-night-deep);
+  }
+
+  .combine::before {
+    content: '';
+    position: absolute;
+    top: 13px;
+    left: 50%;
+    width: 46px;
+    height: 4px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+    translate: -50% 0;
+  }
+
+  .appel {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  /* Le rond de l'appel : il sonne (un anneau net qui s'écarte), et reste
+     plein le temps que l'agent est en ligne. */
+  .appel__rond {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+    transition: background-color 260ms;
+  }
+
+  .appel__rond svg {
+    width: 19px;
+    height: 19px;
+    stroke: var(--color-ink);
+    stroke-width: 1.8;
+    transition: stroke 260ms;
+  }
+
+  .appel__rond::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--jaune);
+    border-radius: inherit;
+    opacity: 0;
+  }
+
+  .appel__rond.sonne::after {
+    animation: appels-sonnerie 560ms ease-out infinite;
+  }
+
+  .appel__rond.sonne svg {
+    animation: appels-tremble 280ms ease-in-out infinite alternate;
+  }
+
+  .appel__rond.est-pris {
+    background: var(--jaune);
+  }
+
+  .appel__rond.est-pris svg {
+    stroke: var(--color-night);
+  }
+
+  @keyframes appels-sonnerie {
+    from { opacity: 0.9; scale: 1; }
+    to { opacity: 0; scale: 1.42; }
+  }
+
+  @keyframes appels-tremble {
+    from { rotate: -9deg; }
+    to { rotate: 9deg; }
+  }
+
+  .appel__nom {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .appel__nom b {
+    font-size: var(--sm-fort);
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .appel__nom span {
+    color: var(--color-ink-mid);
+    font-size: var(--sm-note);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* L'onde de la voix : une rangée de barres. Elle ne bouge que pendant
+     qu'on parle, jaune quand c'est l'agent. */
+  .onde {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 22px;
+    margin-top: 14px;
+    padding-inline: 2px;
+  }
+
+  .onde i {
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+    transform: scaleY(0.16);
+    transition:
+      background-color 200ms,
+      transform 300ms var(--ease-out-quint);
+  }
+
+  .onde.parle i {
+    background: color-mix(in srgb, var(--color-ink) 62%, transparent);
+    animation: appels-onde 520ms ease-in-out infinite alternate;
+    animation-delay: calc(var(--i) * -137ms);
+  }
+
+  .onde.parle.parle--agent i {
+    background: var(--jaune);
+  }
+
+  @keyframes appels-onde {
+    from { transform: scaleY(0.16); }
+    to { transform: scaleY(var(--h, 0.8)); }
+  }
+
+  /* ── L'échange : des bulles ──
+     La cliente à gauche, sur papier ; l'agent à droite, cerclé de jaune. */
+  .echange {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 14px;
+  }
+
+  .replique {
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 240ms,
+      transform 420ms var(--ease-out-quint);
+  }
+
+  .replique.est-dite {
+    opacity: 1;
+    transform: none;
+  }
+
+  .replique--agent {
+    flex-direction: row-reverse;
+  }
+
+  .tete {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-ink) 13%, transparent);
+  }
+
+  .tete svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--color-ink);
+    stroke-width: 1.9;
+  }
+
+  .replique--agent .tete {
+    background: var(--jaune);
+  }
+
+  .replique--agent .tete svg {
+    stroke: var(--color-night);
+  }
+
+  .bulle {
+    max-width: 222px;
+    padding: 8px 12px 9px;
+    border-radius: 15px;
+    font-size: var(--sm-fort);
+    font-weight: 500;
+    line-height: 1.28;
+    text-wrap: pretty;
+  }
+
+  .replique--client .bulle {
+    border-bottom-left-radius: 5px;
+    background: var(--color-feuille);
+    color: var(--color-night);
+  }
+
+  .replique--agent .bulle {
+    border: 1px solid color-mix(in srgb, var(--jaune) 78%, transparent);
+    border-bottom-right-radius: 5px;
+    background: color-mix(in srgb, var(--jaune) 9%, transparent);
+    color: var(--color-ink);
+  }
+
+  /* L'issue de l'appel, au pied du téléphone : pleine et cochée. */
+  .issue {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: var(--jaune);
+    color: var(--color-night);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 240ms,
+      transform 420ms var(--ease-out-quint);
+  }
+
+  .issue.est-posee {
+    opacity: 1;
+    transform: none;
+  }
+
+  .issue__coche {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background: var(--color-night);
+  }
+
+  .issue__coche svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--jaune);
+    stroke-width: 2.2;
+  }
+
+  .issue__texte {
+    display: grid;
+    gap: 1px;
+  }
+
+  .issue__texte b {
+    font-size: var(--sm-fort);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .issue__texte span {
+    font-size: var(--sm-note);
+    font-weight: 500;
+  }
+
+  /* ── Le support client ── */
+  .sm-fenetre__icone svg[viewBox='0 0 24 24'] {
+    stroke-width: 2.2;
+  }
+
+  .echange--support {
+    position: relative;
+    margin: 0;
+    padding: 14px;
+  }
+
+  .echange--support .bulle {
+    max-width: 268px;
+  }
+
+  /* L'agent écrit : trois points, à la place de sa réponse le temps qu'elle
+     vienne. */
+  .frappe {
+    position: absolute;
+    right: 45px;
+    bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+    padding-inline: 13px;
+    border: 1px solid color-mix(in srgb, var(--jaune) 78%, transparent);
+    border-radius: 15px;
+    border-bottom-right-radius: 5px;
+    opacity: 0;
+    transition: opacity 180ms;
+  }
+
+  .frappe.ecrit {
+    opacity: 1;
+  }
+
+  .frappe i {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-full);
+    background: var(--jaune);
+    opacity: 0.35;
+  }
+
+  .frappe.ecrit i {
+    animation: appels-frappe 480ms ease-in-out infinite alternate;
+  }
+
+  .frappe.ecrit i:nth-child(2) { animation-delay: 160ms; }
+  .frappe.ecrit i:nth-child(3) { animation-delay: 320ms; }
+
+  @keyframes appels-frappe {
+    from { opacity: 0.35; }
+    to { opacity: 1; }
+  }
+
+  /* ── Le compte rendu ── */
+  /* Sa hauteur est donnée : le bas de la fenêtre s'aligne sur celui du
+     téléphone (62 + 452 = 244 + 34 + 236). */
+  .bilan {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 8px;
+    height: 236px;
+    padding: 14px 12px 12px;
+  }
+
+  .ligne {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    height: 62px;
+    padding-inline: 10px 12px;
+    border: 1px solid color-mix(in srgb, var(--color-ink) 11%, transparent);
+    border-radius: 10px;
+  }
+
+  .ligne__signe,
+  .ligne__texte {
+    opacity: 0;
+    transform: translateY(5px);
+    transition:
+      opacity 240ms,
+      transform 420ms var(--ease-out-quint);
+  }
+
+  .ligne.est-fait .ligne__signe,
+  .ligne.est-fait .ligne__texte {
+    opacity: 1;
+    transform: none;
+  }
+
+  .ligne__signe {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--color-ink) 10%, transparent);
+  }
+
+  .ligne__signe svg {
+    width: 15px;
+    height: 15px;
+    stroke: var(--color-ink);
+    stroke-width: 1.8;
+  }
+
+  .ligne__texte {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .ligne__texte b {
+    font-size: var(--sm-texte);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .ligne__texte span {
+    color: var(--color-ink-mid);
+    font-size: var(--sm-note);
+  }
+
+  /* Le témoin : un rond vide, qui se remplit et se coche. */
+  .temoin {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid color-mix(in srgb, var(--color-ink) 24%, transparent);
+    border-radius: var(--radius-full);
+    transition:
+      background-color 220ms,
+      border-color 220ms;
+  }
+
+  .temoin svg {
+    width: 11px;
+    height: 11px;
+    stroke: var(--color-night);
+    stroke-width: 2.2;
+    opacity: 0;
+    scale: 0.4;
+    transition:
+      opacity 180ms,
+      scale 320ms var(--ease-out-expo);
+  }
+
+  .est-fait > .temoin {
+    border-color: var(--jaune);
+    background: var(--jaune);
+  }
+
+  .est-fait > .temoin svg {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* Le total : le seul nombre de la scène à se lire de loin. */
+  .total {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    padding: 4px 10px 0;
+    border-top: 1px solid var(--filet-fort);
+  }
+
+  .total b {
+    min-width: 0.7em;
+    color: var(--jaune);
+    font-size: var(--sm-chiffre);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .total span {
+    color: var(--color-ink);
+    font-size: var(--sm-texte);
+    font-weight: 500;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .appel__rond.sonne::after,
+    .appel__rond.sonne svg,
+    .onde.parle i,
+    .frappe.ecrit i {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * La partition de la scène : ses états (repos, image fixe) et l'ordre de son
+   * tour. Le temps, la pause hors écran, l'échelle et l'annulation sont dans
+   * le moteur.
+   */
+  import { monterScenes } from '../../lib/metiers/scene';
+
+  type Valeur = 'attente' | 'cours' | 'fait';
+
+  monterScenes('[data-scene-appels]', (s) => {
+    const etatAppel = s.un('[data-poste="appel"] .sm-etat');
+    const etatSupport = s.un('[data-poste="support"] .sm-etat');
+    const etatBilan = s.un('[data-poste="bilan"] .sm-etat');
+    const rond = s.un('[data-rond]');
+    const titre = s.un('[data-appel-titre]');
+    const note = s.un('[data-appel-note]');
+    const onde = s.un('[data-onde]');
+    const repliques = s.tous('[data-replique]');
+    const issue = s.un('[data-issue]');
+    const question = s.un('[data-question]');
+    const reponse = s.un('[data-reponse]');
+    const frappe = s.un('[data-frappe]');
+    const lignes = s.tous('[data-ligne]');
+    const total = s.un('[data-total]');
+    const totalNom = s.un('[data-total-nom]');
+    const fin = repliques[repliques.length - 1]?.dataset.duree ?? '';
+
+    const ecrire = (etat: HTMLElement, texte: string, valeur: Valeur) => {
+      etat.textContent = texte;
+      etat.dataset.etat = valeur;
+    };
+    const changer = (etat: HTMLElement, texte: string, valeur: Valeur) => {
+      etat.textContent = texte;
+      s.basculer(etat, valeur);
+    };
+    const nomDuTotal = (n: number) => (n > 1 ? 'demandes traitées à votre place' : 'demande traitée à votre place');
+    /* `n` demandes inscrites au compte rendu. */
+    const inscrire = (n: number) => {
+      lignes.forEach((ligne, i) => ligne.classList.toggle('est-fait', i < n));
+      total.textContent = String(n);
+      totalNom.textContent = nomDuTotal(n);
+    };
+
+    /* ── Les états ── */
+
+    const poser = (fini: boolean) => {
+      ecrire(etatAppel, fini ? 'Terminé' : 'Sonnerie', fini ? 'fait' : 'attente');
+      ecrire(etatSupport, fini ? 'Répondu' : 'En veille', fini ? 'fait' : 'attente');
+      ecrire(etatBilan, fini ? 'À jour' : 'En attente', fini ? 'fait' : 'attente');
+      titre.textContent = fini ? 'Appel terminé' : 'Appel entrant';
+      note.textContent = fini ? `Une cliente · ${fin}` : 'Une cliente';
+      rond.classList.remove('sonne', 'est-pris');
+      onde.classList.remove('parle', 'parle--agent');
+      repliques.forEach((replique) => replique.classList.toggle('est-dite', fini));
+      issue.classList.toggle('est-posee', fini);
+      question.classList.toggle('est-dite', fini);
+      reponse.classList.toggle('est-dite', fini);
+      frappe.classList.remove('ecrit');
+      inscrire(fini ? lignes.length : 0);
+      s.racine.classList.toggle('est-abouti', fini);
+    };
+
+    const figer = () => poser(true);
+    const repos = () => poser(false);
+
+    /* ── Le tour ── */
+
+    async function tour() {
+      /* Le téléphone sonne ; l'agent décroche. */
+      await s.attendre(300);
+      rond.classList.add('sonne');
+      await s.attendre(1150);
+      rond.classList.remove('sonne');
+      rond.classList.add('est-pris');
+      changer(etatAppel, 'En ligne', 'cours');
+      s.tictac(titre, 'L’agent a décroché');
+      note.textContent = 'Une cliente · 0:01';
+      await s.attendre(380);
+
+      /* L'échange : une réplique après l'autre, l'onde suit qui parle. */
+      for (const replique of repliques) {
+        onde.classList.toggle('parle--agent', replique.dataset.qui === 'agent');
+        onde.classList.add('parle');
+        await s.attendre(220);
+        replique.classList.add('est-dite');
+        note.textContent = `Une cliente · ${replique.dataset.duree ?? ''}`;
+        await s.attendre(380 + Number(replique.dataset.lettres ?? 30) * 11);
+        onde.classList.remove('parle');
+        await s.attendre(160);
+      }
+      onde.classList.remove('parle--agent');
+
+      /* L'issue : le rendez-vous est déplacé, l'appel s'inscrit. */
+      issue.classList.add('est-posee');
+      rond.classList.remove('est-pris');
+      changer(etatAppel, 'Terminé', 'fait');
+      s.tictac(titre, 'Appel terminé');
+      await s.attendre(420);
+      inscrire(1);
+      changer(etatBilan, 'En cours', 'cours');
+      await s.attendre(620);
+
+      /* Un message arrive au support : l'agent écrit, puis répond. */
+      changer(etatSupport, 'Nouveau', 'cours');
+      question.classList.add('est-dite');
+      await s.attendre(680);
+      frappe.classList.add('ecrit');
+      await s.attendre(900);
+      frappe.classList.remove('ecrit');
+      await s.attendre(140);
+      reponse.classList.add('est-dite');
+      changer(etatSupport, 'Répondu', 'fait');
+      await s.attendre(520);
+
+      /* La chute : les deux demandes sont au compte rendu. */
+      inscrire(2);
+      await s.attendre(320);
+      changer(etatBilan, 'À jour', 'fait');
+      s.racine.classList.add('est-abouti');
+    }
+
+    return { figer, repos, tour };
+  });
+</script>

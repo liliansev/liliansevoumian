@@ -1,0 +1,71 @@
+---
+/*
+ * « Ce que je fais » : les quatre métiers (`data/metiers.ts`) en onglets. À
+ * gauche la liste, l'onglet choisi en citron ; à droite le grand panneau du
+ * métier, sur lilas, son icône, sa phrase, son texte, ses outils (une
+ * pastille par outil) et le lien vers son offre. Les flèches du clavier
+ * passent d'un onglet à l'autre. Sous 1000 px la liste devient une colonne
+ * d'icônes collante à gauche du panneau (Lilian, 10 novembre 2026 : ne plus
+ * remonter pour choisir puis redescendre pour lire) ; le nom reste lu par les
+ * lecteurs d'écran. Sans script, le premier panneau reste lisible.
+ *
+ * À partir de 1100 px (`bureau.css`), la section est une seule grande scène
+ * sur lilas : les quatre métiers en liste à gauche, la phrase du métier
+ * choisi dessous, et à droite sa scène animée (`components/metiers/`, une
+ * petite interface qui joue le métier une fois, quand on le choisit). Les
+ * scènes ne sont pas affichées en dessous : rien ne change sur téléphone.
+ */
+import { metiers } from '../../data/metiers';
+import Outils from './outils.astro';
+import SceneAutomatisation from '../metiers/scene-automatisation.astro';
+import SceneAppels from '../metiers/scene-appels.astro';
+import SceneCours from '../metiers/scene-cours.astro';
+import SceneSites from '../metiers/scene-sites.astro';
+
+/* Un métier sans scène garde son panneau, sans fenêtre à droite. */
+const scenes: Record<string, typeof SceneAutomatisation> = {
+  automatisation: SceneAutomatisation,
+  'agents-ia': SceneAppels,
+  dashboards: SceneSites,
+  formations: SceneCours,
+};
+
+const ICONES: Record<string, string> = {
+  automatisation: '<circle cx="10" cy="24" r="6"/><circle cx="38" cy="12" r="6"/><circle cx="38" cy="36" r="6"/><path d="M16 24h6c4 0 4-12 10-12M22 24c4 0 4 12 10 12"/>',
+  'agents-ia': '<rect x="7" y="17" width="34" height="24" rx="8"/><path d="M24 17v-6"/><circle cx="24" cy="9" r="2"/><circle cx="17.5" cy="28" r="2.2" fill="currentColor"/><circle cx="30.5" cy="28" r="2.2" fill="currentColor"/><path d="M20 34.5h8"/>',
+  dashboards: '<rect x="6" y="8" width="36" height="32" rx="3"/><path d="M14 32v-6M22 32V18M30 32v-9M38 14l-6 5-5-3-6 5"/>',
+  formations: '<rect x="6" y="8" width="36" height="24" rx="3"/><path d="M16 40l8-8 8 8M14 17h14M14 23h9"/><circle cx="35" cy="20" r="3"/>',
+};
+const icone = (id: string) => `<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONES[id]}</svg>`;
+const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
+---
+<section class="r-sec" id="services" aria-labelledby="titre-services">
+  <div class="r-wrap">
+    <header class="r-titre"><h2 id="titre-services">Ce que je fais</h2><p>Quatre métiers, un seul interlocuteur.</p></header>
+    <div class="r-onglets" data-r-onglets>
+      <div class="r-onglets__liste" role="tablist" aria-label="Mes métiers">
+        {metiers.map((m, i) => (
+          <button type="button" role="tab" id={`onglet-${m.id}`} aria-controls={`panneau-${m.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
+            <span class="r-onglet__ic" set:html={icone(m.id)} /><span class="r-onglet__nom">{m.nom}</span>
+          </button>
+        ))}
+      </div>
+      <div class="r-onglets__pans">
+        {metiers.map((m, i) => {
+          const Scene = scenes[m.id];
+          return (
+            <div class="r-pan" role="tabpanel" id={`panneau-${m.id}`} aria-labelledby={`onglet-${m.id}`} hidden={i !== 0}>
+              <div class="r-pan__ic" set:html={icone(m.id)} />
+              <h3>{m.nom}</h3>
+              <p class="r-pan__phrase">{m.phrase}</p>
+              <p class="r-pan__texte">{texteSeul(m.texte)}</p>
+              <Outils outils={m.outils} />
+              <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <span class="sr-only"> (nouvel onglet)</span>}</a>
+              {Scene && <div class="r-pan__scene"><Scene /></div>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+</section>

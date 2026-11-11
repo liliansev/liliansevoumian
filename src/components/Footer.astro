@@ -1,5 +1,5 @@
 ---
-import Pied from './sobre/pied.astro';
+import Pied from './robot/pied.astro';
 
 interface Props {
   /** Uniquement pour les pages sans bloc de contact final. */
@@ -8,10 +8,10 @@ interface Props {
   sansDate?: boolean;
 }
 
-/* Le pied des pages intérieures est celui de l'accueil (`sobre/pied.astro`,
-   « Entre les deux », 3 novembre 2026) : le logo, ce que Lilian publie et
+/* Le pied des pages intérieures est celui de l'accueil (`robot/pied.astro`,
+   « Citron et lilas », 10 novembre 2026) : le logo, ce que Lilian publie et
    les pages du site. */
 const { showContact = false } = Astro.props;
 ---
 
-<Pied surAccueil={false} source="pied" contact={showContact} />
+<div class="tenue-robot"><Pied surAccueil={false} source="pied" contact={showContact} /></div>

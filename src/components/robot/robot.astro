@@ -1,0 +1,10 @@
+---
+/*
+ * Le petit robot de l'accueil : une tête ronde citron, deux yeux qui
+ * clignent (et qui suivent la souris, script de `index.astro`), une antenne.
+ * Purement décoratif : toujours `aria-hidden`.
+ */
+interface Props { class?: string }
+const { class: classe } = Astro.props;
+---
+<svg class:list={['robot', classe]} viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="robot__ant" d="M32 12V5"/><circle class="robot__bout" cx="32" cy="5" r="3.5"/><rect class="robot__tete" x="8" y="12" width="48" height="40" rx="14"/><g class="robot__yeux"><rect x="20" y="26" width="7" height="10" rx="3.5"/><rect x="37" y="26" width="7" height="10" rx="3.5"/></g><path class="robot__bouche" d="M27 43q5 4 10 0"/></svg>

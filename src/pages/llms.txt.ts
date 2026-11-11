@@ -60,7 +60,7 @@ export const GET: APIRoute = async () => {
 
 - Nom : Lilian Sevoumian
 - Activité : automatisation, agents IA, outils métiers et formation, depuis 2020
-- Structures fondées : ${organisations.map((o) => `${o.nom} (${o.fondation.slice(0, 4)}, ${o.url})`).join(' ; ')}
+- ${organisations.length > 1 ? 'Structures fondées' : 'Structure fondée'} : ${organisations.map((o) => `${o.nom} (${o.fondation.slice(0, 4)}, ${o.url})`).join(' ; ')}
 - Certifications : Make niveau 5 (premier Français certifié, en 2022), Airtable Certified
 - Formation : plus de 300 personnes formées à Make, n8n et à l'IA
 - Entreprises accompagnées : plus de 100
@@ -79,7 +79,7 @@ ${parcours.map(ligneAnnee).join('\n')}
 ## Ce que je fais en mission
 
 - Automatiser un processus métier de bout en bout (n8n, Make)
-- Construire des agents IA qui prennent en charge une tâche entière
+- Construire des agents IA de support client et des agents vocaux, qui répondent aux clients et prennent les appels
 - Reprendre des automatisations existantes qui tombent en panne ou se sont empilées
 - Former les équipes à utiliser et comprendre ce qui a été livré
 - Construire des dashboards, portails clients et applications métiers, sur un périmètre chiffré séparément

@@ -1,0 +1,73 @@
+---
+/*
+ * La barre de tout le site, « Citron et lilas » (l'accueil le 10 novembre
+ * 2026, les autres pages le même jour, rendue par `Navigation`) : une pilule blanche cerclée
+ * d'encre qui flotte en haut de l'écran et se resserre dès qu'on défile.
+ * Le robot et « lilian » à gauche, les sections, puis le seul bouton
+ * d'appel, « Parlons de votre projet » (`BoutonReservation`). Sous 900 px,
+ * les liens passent dans un menu en `dialog`.
+ */
+import BoutonReservation from '../BoutonReservation.astro';
+import Robot from './robot.astro';
+
+interface Lien { href: string; label: string }
+interface Props {
+  /** Les liens : les sections de l'accueil (par défaut), les ancres d'une page d'offre, ou les pages du site. */
+  liens?: Lien[];
+  /** D'où vient le clic sur le bouton d'appel, dans les statistiques. */
+  source?: string;
+  sourceMenu?: string;
+  /** Où mène le logo : le haut de la page sur l'accueil, l'accueil ailleurs. */
+  marqueHref?: string;
+}
+const accueil: Lien[] = [
+  { href: '#services', label: 'Ce que je fais' },
+  { href: '#projets', label: 'Projets' },
+  { href: '#avis', label: 'Avis' },
+  { href: '/blog', label: 'Blog' },
+  { href: '#ecrire', label: 'Contact' },
+];
+const { liens = accueil, source = 'home_nav', sourceMenu = 'home_menu', marqueHref = '#main-content' } = Astro.props;
+const marqueLibelle = marqueHref === '/' ? "Lilian Sevoumian, retour à l'accueil" : 'Lilian Sevoumian, haut de page';
+const ici = Astro.url.pathname.replace(/\/$/, '') || '/';
+const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.startsWith(`${href}/`)) ? 'page' : undefined);
+---
+<header class="r-barre" data-r-barre>
+  <div class="r-barre__in">
+    <a class="r-barre__logo" href={marqueHref} aria-label={marqueLibelle}><Robot /><span aria-hidden="true">lilian</span></a>
+    <nav class="r-barre__liens" aria-label="Sections">
+      {liens.map((l) => <a href={l.href} aria-current={courant(l.href)}>{l.label}</a>)}
+    </nav>
+    <BoutonReservation source={source} class="r-btn r-btn--cta r-barre__cta">Parlons de votre projet</BoutonReservation>
+    <button class="r-btn r-btn--cta r-barre__menu" type="button" aria-haspopup="dialog" aria-controls="r-menu" data-r-menu-ouvrir>Menu</button>
+  </div>
+</header>
+<dialog class="r-menu tenue-robot" id="r-menu" aria-label="Menu" tabindex="-1">
+  <div class="r-menu__haut">
+    <span class="r-barre__logo" aria-hidden="true"><Robot /><span>lilian</span></span>
+    <button class="r-btn r-btn--trait" type="button" data-r-menu-fermer>Fermer</button>
+  </div>
+  {liens.map((l) => <a class="r-menu__lien" href={l.href} aria-current={courant(l.href)}>{l.label}</a>)}
+  <BoutonReservation source={sourceMenu} class="r-btn r-btn--cta r-menu__cta">Parlons de votre projet</BoutonReservation>
+</dialog>
+<script>
+  const barre = document.querySelector<HTMLElement>('[data-r-barre]');
+  const surDefile = () => barre?.classList.toggle('est-defile', window.scrollY > 40);
+  window.addEventListener('scroll', surDefile, { passive: true });
+  surDefile();
+  const menu = document.getElementById('r-menu') as HTMLDialogElement | null;
+  // Ouvert au doigt ou à la souris, le menu ne pose d'anneau de focus ni sur
+  // « Fermer » à l'ouverture ni sur « Menu » à la fermeture (Lilian, 10
+  // novembre 2026) ; au clavier (detail à 0), l'anneau reste.
+  let auPointeur = false;
+  document.querySelector('[data-r-menu-ouvrir]')?.addEventListener('click', (e) => {
+    auPointeur = (e as MouseEvent).detail > 0;
+    menu?.showModal();
+    if (auPointeur) menu?.focus();
+  });
+  document.querySelector('[data-r-menu-fermer]')?.addEventListener('click', () => menu?.close());
+  menu?.addEventListener('close', () => {
+    if (auPointeur) (document.activeElement as HTMLElement | null)?.blur();
+  });
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+</script>

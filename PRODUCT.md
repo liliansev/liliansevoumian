@@ -6,10 +6,6 @@
 
 web
 
-## Register
-
-brand
-
 ## Users
 
 Le site s'adresse d'abord à **quelqu'un qui vient de croiser Lilian ailleurs** et qui veut savoir à qui il a affaire. Il arrive après une vidéo YouTube, un post LinkedIn, un numéro de la newsletter, une formation, une recommandation, ou en tapant son nom dans un moteur de recherche ou un assistant IA.
@@ -55,14 +51,14 @@ Pour « qui je suis » : il fait ça depuis six ans, il l'a appliqué dans ses p
 
 ## Positioning
 
-Une seule et même personne construit pour des clients, enseigne ce qu'elle construit et le publie. Ce qu'un site voisin ne pourrait pas copier sans mentir, c'est l'addition, vérifiable ligne par ligne : freelance depuis 2020, plus de 100 entreprises accompagnées, premier Français certifié Make niveau 5, plus de 300 personnes formées, une chaîne YouTube, une newsletter, des cas clients aux résultats mesurés, une plateforme de formation (Augmentés, 2023) et une agence (agenceafk, 2026).
+Une seule et même personne construit pour des clients, enseigne ce qu'elle construit et le publie. Ce qu'un site voisin ne pourrait pas copier sans mentir, c'est l'addition, vérifiable ligne par ligne : freelance depuis 2020, plus de 100 entreprises accompagnées, premier Français certifié Make niveau 5, plus de 300 personnes formées, une chaîne YouTube, une newsletter, des cas clients aux résultats mesurés, une plateforme de formation (Augmentés, 2023). Son agence (agenceafk, 2026) est en retrait depuis le 10 novembre 2026 : le site ne la met plus en avant (voir « Evidence on Hand »).
 
 Le site ne présente donc pas « un freelance et ses offres » mais **un praticien et sa trajectoire** : ce qu'il a fait, ce qu'il fait maintenant, où le suivre.
 
 ## Operating Context
 
 - **Arrivées** : YouTube, LinkedIn, newsletter, recommandation, recherche sur le nom, réponse d'un assistant IA.
-- **Sorties** : la chaîne YouTube, la newsletter « Augmentés » sur Substack (newsletter.augmentes.fr, formulaire du blog et pied de page), les formations (augmentes.fr), l'agence (agenceafk.fr), la réservation d'un appel (Cal.com, toujours via `BoutonReservation`), LinkedIn.
+- **Sorties** : la chaîne YouTube, la newsletter « Augmentés » sur Substack (newsletter.augmentes.fr, formulaire du blog et pied de page), les formations (augmentes.fr), la réservation d'un appel (Cal.com, toujours via `BoutonReservation`), LinkedIn.
 - **Lecture par les moteurs** : données structurées `Person` et `ProfessionalService` dans `src/layouts/Layout.astro`, fiche `/llms.txt` générée au build depuis les mêmes sources que les pages (`src/pages/llms.txt.ts`), sitemap.
 - **Mesure** : DataFast, sans cookie, avec des objectifs par action (`data-fast-goal`). Voir `DATAFAST-FUNNEL.md`.
 - **Langue** : français. Une version anglaise est possible plus tard, sans engagement.
@@ -114,9 +110,11 @@ Ce qui peut être affirmé aujourd'hui, avec sa source. « LinkedIn » désigne 
 
 **Ce qu'il fait aujourd'hui**
 
-- **agenceafk** (agenceafk.fr), fondée en janvier 2026 : agents IA, automatisations Make et n8n et outils métiers sur mesure pour les entreprises de 5 à 50 personnes. Chaque projet part d'un processus réel et va jusqu'à un système utilisable en production (LinkedIn).
+- **agenceafk** (agenceafk.fr), fondée en janvier 2026 : agents IA, automatisations Make et n8n et outils métiers sur mesure pour les entreprises de 5 à 50 personnes. Chaque projet part d'un processus réel et va jusqu'à un système utilisable en production (LinkedIn). **En retrait depuis le 10 novembre 2026** (Lilian : « arrête de mettre en avant Agence AFK pour l'instant. Je mets ce projet un peu de côté ») : le site ne la cite plus comme activité, structure ou sortie (ni bouton, ni lien, ni « fondateur d'agenceafk » dans les résumés et le balisage). Sa fondation reste un fait daté du parcours. À remettre quand Lilian le dit.
 - **Augmentés** (augmentes.fr), fondée en novembre 2023 : formations pratiques à Make, n8n et à l'IA, pour les indépendants et les équipes, en ligne, à distance ou dans leurs locaux. Parcours Make sur apprendre-make.com, parcours n8n sur formation-n8n.com, formation en entreprise sur augmentes.fr (LinkedIn).
 - **Freelance en automatisation et agents IA**, depuis septembre 2020 : conception, reprise et maintenance de workflows (LinkedIn, `src/pages/llms.txt.ts`).
+- **Agents IA, tels que Lilian les formule** (10 novembre 2026) : du support client et de l'agent vocal, « un agent qui prend les appels à ta place, qui répond aux clients à ta place ». Ne pas écrire que l'agent « prend la main », ni tourner le texte autour de la main gardée par un humain. Sur l'accueil : « Un agent qui répond à votre place. » (`src/data/metiers.ts`).
+- **Outils des dashboards et outils métiers** (Lilian, 10 novembre 2026) : Claude Code et Codex, ceux avec lesquels il les construit ; Make et n8n pour l'automatisation (`src/data/metiers.ts`, `src/pages/llms.txt.ts`).
 - **Formateur invité** : Maria Schools (Lion, l'école pour mettre l'IA au service de son métier), de juillet à septembre 2026 (LinkedIn). La photo de classe de l'accueil y a été prise (précisé par Lilian le 14 octobre 2026).
 - **Rocket School** : trois jours de formation à l'automatisation avec une promotion, puis une photo de groupe publiée par Lilian sur LinkedIn et partagée par Léo Moulin (« On sort de trois jours d'automatisation avec… », novembre 2021). C'est la photo de groupe de l'accueil.
 - **Publication** : chaîne YouTube `@lilian.sevoumian`, 96 vidéos, 1,87 k abonnés et 103 094 vues (page publique de la chaîne, 1er octobre 2026) ; LinkedIn, 11 444 abonnés ; newsletter « Augmentés » sur l’IA et l’automatisation, tenue sur Substack (newsletter.augmentes.fr) ; le blog et le pied de page y mènent (`src/data/newsletter.ts`). La dernière vidéo est embarquée sur la page d'accueil (`src/components/home-content.astro`).

@@ -1,0 +1,32 @@
+---
+/*
+ * « Ils en parlent » : les trois recommandations de `data/avis.ts`, mot pour
+ * mot, l'une sous l'autre, séparées par un filet (plus de bulles de
+ * discussion depuis la passe « plus fin » du 10 novembre 2026). Le passage
+ * qui compte est en citron ; dessous, le portrait, le nom et le rôle.
+ *
+ * À partir de 1100 px (`bureau.css`), ce sont trois cartes : la première, la
+ * phrase la plus courte, en grand sur lilas, les deux autres à sa droite,
+ * l'une sur l'autre (Lilian, 10 novembre 2026 : « mets les avis dans des
+ * cards élégantes, trouve un beau layout » ; la citation unique avec son
+ * rail de personnes ne lui plaisait pas). Aucun script, rien ne bouge.
+ */
+import { Image } from 'astro:assets';
+import { avis } from '../../data/avis';
+---
+<section class="r-sec" id="avis" aria-labelledby="titre-avis">
+  <div class="r-wrap r-avis">
+    <header class="r-titre"><h2 id="titre-avis">Ils en parlent</h2><p>Trois personnes avec qui j’ai travaillé.</p></header>
+    <div class="r-fil">
+      {avis.map((a) => (
+        <figure class="r-avis__un">
+          <blockquote><p>{a.citation[0]}<mark>{a.citation[1]}</mark>{a.citation[2]}</p></blockquote>
+          <figcaption>
+            <Image src={a.image} alt="" width={56} height={56} densities={[1, 2]} loading="lazy" />
+            <span><strong>{a.nom}</strong>{a.role}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

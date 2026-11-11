@@ -19,6 +19,11 @@
  * dans une ligne à part, reliée au champ en erreur (`aria-describedby`), pour qu'une
  * erreur n'efface jamais l'adresse de secours (audit du 27 octobre 2026).
  *
+ * `note={false}` (l'accueil, 10 novembre 2026 : « restons sur le formulaire
+ * point barre ») retire cette ligne de la vue. L'adresse de secours ne
+ * disparaît pas pour autant : elle est écrite sans script (`noscript`), et
+ * ajoutée au message d'état quand l'envoi échoue (`data-secours`).
+ *
  * Contre les robots (28 octobre 2026, détail dans `lib/contact-message.ts`) :
  * quand le formulaire approche de l'écran ou prend le focus, la page demande
  * un jeton signé à `/api/contact` et l'envoie avec le message ; si elle a dû
@@ -41,13 +46,15 @@ interface Props {
   source: string;
   /** L'habit : la nuit du site (par défaut) ou le papier du carnet. */
   variante?: 'nuit' | 'carnet';
+  /** La ligne « Vous pouvez aussi écrire à… » sous le bouton. Sans elle, l'adresse n'est donnée que sans script ou après un échec. */
+  note?: boolean;
 }
 
-const { source, variante = 'nuit' } = Astro.props;
+const { source, variante = 'nuit', note = true } = Astro.props;
 const carnet = variante === 'carnet';
 ---
 
-<form class:list={['contact', carnet && 'contact--carnet']} action="/api/contact" method="post" novalidate data-formulaire-contact data-source={source}>
+<form class:list={['contact', carnet && 'contact--carnet']} action="/api/contact" method="post" novalidate data-formulaire-contact data-source={source} data-secours={note ? undefined : EMAIL_CONTACT}>
   <div class="contact__ligne">
     <div class="contact__champ">
       <label for="contact-email">Votre e-mail</label>
@@ -73,9 +80,17 @@ const carnet = variante === 'carnet';
       </button>
     )}
     <slot name="pied" />
-    <p class="contact__note">
-      Le message arrive directement dans ma boîte mail. Vous pouvez aussi écrire à <a class="lien-prose" href={`mailto:${EMAIL_CONTACT}`}>{EMAIL_CONTACT}</a>.
-    </p>
+    {note ? (
+      <p class="contact__note">
+        Le message arrive directement dans ma boîte mail. Vous pouvez aussi écrire à <a class="lien-prose" href={`mailto:${EMAIL_CONTACT}`}>{EMAIL_CONTACT}</a>.
+      </p>
+    ) : (
+      <noscript>
+        <p class="contact__note">
+          Sans JavaScript ce formulaire ne part pas : écrivez à <a class="lien-prose" href={`mailto:${EMAIL_CONTACT}`}>{EMAIL_CONTACT}</a>.
+        </p>
+      </noscript>
+    )}
     <p class="contact__statut" id="contact-statut" role="status" aria-live="polite" aria-atomic="true" data-contact-statut></p>
   </div>
 </form>
@@ -494,6 +509,8 @@ const carnet = variante === 'carnet';
       }
       const donnees = Object.fromEntries(new FormData(formulaire));
       const source = formulaire.dataset.source ?? '';
+      // Là où la ligne d'adresse n'est pas affichée, un échec la donne.
+      const secours = formulaire.dataset.secours ? ` Vous pouvez aussi écrire à ${formulaire.dataset.secours}.` : '';
       enCours = true;
       bouton.disabled = true;
       dire('Envoi en cours…', 'envoi');
@@ -519,9 +536,9 @@ const carnet = variante === 'carnet';
         // Un jeton refusé ne resservira pas : on en redemandera un au prochain essai.
         if (reponse.status === 403) jeton = null;
         renouvelerCaptcha();
-        dire(corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.', 'error');
+        dire((corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.') + secours, 'error');
       } catch {
-        dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.', 'error');
+        dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.' + secours, 'error');
       } finally {
         enCours = false;
         if (formulaire.dataset.envoye === undefined) bouton.disabled = false;

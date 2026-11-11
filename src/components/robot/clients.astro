@@ -1,0 +1,65 @@
+---
+/*
+ * Les clients : tous les logos de `data/clients.ts`, en blanc, dans un mur
+ * de cases séparées par des filets ; la case survolée s'éclaire. Les noms
+ * sans logo officiel sont composés en lettres. Aucun client nommé à la main.
+ * Dessous, les quatre chiffres de l'audience (`data/parcours.ts`), sur une
+ * ligne à filets : ils sont sortis de l'ouverture à la demande de Lilian le
+ * 10 novembre 2026 (« j'aime pas les stats ici »).
+ *
+ * À partir de 1100 px (`bureau.css`), le mur devient un défilé : une seule
+ * ligne de logos entre deux filets, qui glisse lentement et s'arrête au
+ * survol et par son bouton pause. La liste est rendue deux fois
+ * pour que la boucle n'ait pas de couture ; la copie est masquée aux
+ * lecteurs d'écran et n'est pas affichée sous 1100 px. En mouvement réduit,
+ * le mur reste un mur.
+ */
+import { clients } from '../../data/clients';
+import { audience } from '../../data/parcours';
+
+const chiffres = [
+  { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
+  { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
+  { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
+  { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
+];
+---
+<section class="r-sec r-sec--serre" id="clients" aria-labelledby="titre-clients">
+  <div class="r-wrap">
+    <header class="r-titre r-titre--petit">
+      <h2 id="titre-clients">Ils m’ont fait confiance</h2>
+      <button type="button" class="r-defile__pause" aria-pressed="false" data-r-pause>
+        <svg class="r-defile__arret" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/></svg>
+        <svg class="r-defile__lecture" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5.5 3.2v9.6l7.6-4.8z"/></svg>
+        <span class="sr-only">Mettre le défilé des logos en pause</span>
+      </button>
+    </header>
+    <div class="r-defile" data-r-defile>
+      {[false, true].map((copie) => (
+        <ul class:list={['r-tuiles', copie && 'r-tuiles--bis']} aria-hidden={copie ? 'true' : undefined}>
+          {clients.map((c) => (
+            <li>
+              {c.logo ? (
+                <img src={c.logo.src} alt={copie ? '' : c.nom} width={c.logo.largeur} height={c.logo.hauteur} style={c.logo.echelle ? `--e:${c.logo.echelle}` : undefined} loading="lazy" decoding="async" />
+              ) : <span>{c.nom}</span>}
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+    <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
+      {chiffres.map((c) => <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
+    </ul>
+  </div>
+</section>
+
+<script>
+  // Le bouton pause du défilé (au bureau seulement, il n'est pas affiché ailleurs).
+  const bouton = document.querySelector<HTMLButtonElement>('[data-r-pause]');
+  const defile = document.querySelector<HTMLElement>('[data-r-defile]');
+  bouton?.addEventListener('click', () => {
+    const arrete = bouton.getAttribute('aria-pressed') !== 'true';
+    bouton.setAttribute('aria-pressed', String(arrete));
+    defile?.classList.toggle('est-en-pause', arrete);
+  });
+</script>
