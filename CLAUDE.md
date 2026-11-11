@@ -33,7 +33,7 @@ src/
 │   ├── Navigation.astro       # la barre, la même partout : rend `robot/barre.astro` (pilule blanche flottante) avec les liens de la page et un seul bouton « Parlons de votre projet »
 │   ├── Footer.astro           # rend `robot/pied.astro` (« À très vite. »)
 │   ├── BoutonReservation.astro # le bouton d'appel : mène au formulaire de contact (goal contact_opened) ; `direct` pour l'agenda
-│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian ; une erreur de saisie s'écrit sous son champ, l'envoi, l'échec et l'envoi réussi à côté du bouton, qui reste focalisable (`aria-disabled`) et finit sur « Envoyé »
+│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian ; une erreur de saisie s'écrit sous son champ (toutes d'un coup à l'envoi, l'adresse vérifiée en quittant le champ, un domaine écorché proposé corrigé), le brouillon suit d'une page à l'autre (`sessionStorage`), l'envoi, l'échec et l'envoi réussi se lisent à côté du bouton, qui reste focalisable (`aria-disabled`) et finit sur « Envoyé », puis « Écrire un autre message »
 │   ├── tete-de-page.astro     # en-tête d'une page intérieure : retour, h1, chapô, bouton, preuves
 │   ├── partie.astro           # une partie d'une page de lecture : titre à gauche, texte à droite ; `clair` en fait une île claire
 │   ├── questions.astro        # la FAQ, la même partout : un accordéon classique, en `details`, sans script
@@ -48,9 +48,9 @@ src/
 │   │   ├── bureau.css         # à partir de 1100 px seulement : chaque section devient un composant dessiné (ouverture à fils, une scène par métier, pile de cas en cartes d'étapes, trois cartes d'avis) ; sous 1100 px elle ne change rien
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
-│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog` ; sur l'accueil quatre liens (pas de « Contact », le bouton y mène), le lien de la section à l'écran est marqué, et le bouton d'appel passe au trait quand le formulaire est à l'écran
-│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, un seul bouton « Me contacter » (après la photo sur téléphone) ; au bureau, un scénario : les trois étiquettes en modules reliés au portrait par des fils
-│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
+│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog` ; sur l'accueil quatre liens (pas de « Contact », le bouton y mène), le lien de la section à l'écran est marqué (dans le menu aussi), le bouton d'appel passe au trait quand le formulaire est à l'écran et reste dans la pilule à côté de « Menu » de 560 à 900 px ; la pilule ne change pas de largeur sous le pointeur
+│   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, un seul bouton « Parlons de votre projet » (après la photo sur téléphone ; c'était « Me contacter » jusqu'au 11 novembre 2026) ; au bureau, un scénario : les trois étiquettes en modules reliés au portrait par des fils
+│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 700 px : une colonne d'icônes à gauche, le panneau à droite ; de 700 à 1000 px chaque onglet écrit son nom) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
 │   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres de l'audience sur une ligne à filets (sortis de l'ouverture), leur signe en lilas ; au bureau, un défilé avec son bouton pause (un mur en mouvement réduit)
 │   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron ; au bureau, trois cartes : une grande sur lilas, deux sombres à sa droite ; aucun script
 │   │   ├── projets.astro      # les cas clients en cartes, ceux qui ont un avant / après d'abord ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
@@ -142,7 +142,7 @@ src/
 │   ├── index.astro
 │   ├── automatisations-ia.astro   # offre automation complète
 │   ├── outils-metiers.astro   # offre outils métiers (dashboards, portails, outils internes), sur devis ; remplace /sites-web-abonnement (redirigée) depuis le 28/10/2026
-│   ├── cas-clients/index.astro et [slug].astro
+│   ├── cas-clients/index.astro et [slug].astro   # l'index porte la grammaire de l'accueil (`.tenue-robot`) : une feuille par cas, le nom du client en lettres et son logo en signature, le registre avant / après dans un puits, son résultat phare en cellule lilas ; un cas sans écart mesuré montre son parcours
 │   ├── expert-make.astro · expert-n8n.astro   # contenu seul, charpente partagée
 │   ├── make-ou-n8n.astro · combien-coute-une-automatisation.astro · agent-ia-pour-pme.astro   # pages-réponses
 │   ├── reprendre-une-automatisation-qui-casse.astro
@@ -184,7 +184,7 @@ also wears crafted desktop components (DESIGN.md, *Au bureau : des composants
 travaillés*; Lilian rejected plain cards and any bento grid as « pas assez
 créatifs, composants trop simplistes »), then commented on the preview the
 same evening: a hero with three modules wired to the portrait
-(`lib/robot/fils.ts`) and one single button, « Me contacter »; one animated
+(`lib/robot/fils.ts`) and one single button (« Me contacter » then, « Parlons de votre projet » since 11 November 2026, the same name as the nav button and the form title); one animated
 scene per métier on a lilac stage, each shaped like its subject (« trouver
 une animation par sujet, là on dirait un workflow »: training is a workshop,
 `metiers/scene-cours.astro`, not a scenario; AI agents are a phone call and a
@@ -206,7 +206,14 @@ else in a scene is lilac and its fake button is ink), « Menu » and the
 newsletter button are outlined, the selected tab under 1100 px is lilac, the
 nav has four links and marks the section on screen, the blacks are three
 clear layers (page, sheet on `--r-surface-2`, step cards as `--r-noir`
-wells), and the form says its errors under the field. Inner pages and the blog
+wells), and the form says its errors under the field. The same day Lilian
+rejected the critique score and the case index (« n'est pas bonne, la critique
+a 20/32 aussi c'est pas bon on veut un score maximal »): DESIGN.md, *La
+reprise : viser la note maximale*, overrides « Le verrou » where they differ
+(one name for the call gesture, the call button stays in the nav pill from
+560 px, named tabs from 700 px, a form that prevents errors, a lilac sent
+confirmation, the case index rebuilt in the home's grammar, focus rings never
+lemon on inner pages). Inner pages and the blog
 get the « plus fin » pass from the very last block of `global.css` (PASSE « PLUS FIN ») and of
 `carnet.css`. The home lives in `components/robot/` under `.tenue-robot` and
 passes `carnet={false}` to Layout. Every other page gets the same look
@@ -343,8 +350,9 @@ one sequence (`documentaire/expertises.astro`; scenes in
   et Codex (dashboards et outils métiers).
 - Le citron ne sert qu'aux gestes (11 novembre 2026, DESIGN.md, *Le
   verrou*). Ne pas en remettre sur un état, un décor ou un survol : un état
-  est lilas, un bouton secondaire est au trait, et dans une scène un seul
-  objet est citron, son aboutissement. Le bouton « Envoyer » ne porte jamais
+  est lilas (la confirmation d'envoi du formulaire comprise), un bouton
+  secondaire est au trait, un anneau de focus n'est jamais citron, et dans
+  une scène un seul objet est citron, son aboutissement. Le bouton « Envoyer » ne porte jamais
   l'attribut `disabled` (il lâcherait le focus) : `aria-disabled`.
 - Un seul geste sur tout le site : « Parlons de votre projet » mène au
   formulaire de contact (14 octobre 2026 : la conversation `home-invite` est

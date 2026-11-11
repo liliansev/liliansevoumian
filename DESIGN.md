@@ -783,6 +783,76 @@ priment sur les lignes plus anciennes du chapitre.**
   celles des marques ; les onglets en icônes seules sous 1000 px et le bouton
   après la photo sur téléphone (décisions de Lilian).
 
+### La reprise : viser la note maximale (11 novembre 2026)
+
+Lilian, devant la critique à 20 sur 32 et l'index des cas : « n'est pas
+bonne, la critique a 20/32 aussi c'est pas bon on veut un score maximal ».
+L'accueil et `/cas-clients` sont repris, chacun relu par deux lecteurs
+indépendants (une revue de design, des mesures au navigateur) jusqu'à ce que
+chaque heuristique soit défendue. **Ces règles priment sur « Le verrou » là où
+elles le contredisent.**
+
+- **Un seul nom pour le geste.** Le bouton de l'ouverture dit « Parlons de
+  votre projet », comme la barre et le titre du formulaire où il mène
+  (« Me contacter » donnait deux noms à la même porte sur le même écran).
+- **La barre.** La pilule ne change jamais de largeur sous le pointeur (elle
+  attend qu'il la quitte). Entre 560 et 900 px elle porte le bouton d'appel à
+  côté de « Menu » ; sous 560 px, « Menu » seul. Le menu marque la section à
+  l'écran, se ferme d'un clic sur le voile, et rend le focus à « Menu » (sans
+  anneau au pointeur). Au survol un lien ne prend que l'encre : le fond dit
+  où l'on est et rien d'autre. Une ancre ou un focus au clavier s'arrête sous
+  la barre (`scroll-margin`).
+- **Les métiers.** La colonne d'icônes seules ne vaut plus que sous 700 px
+  (décision de Lilian pour le téléphone) ; de 700 à 1000 px chaque onglet
+  écrit son nom. Choisir un métier joue sa scène, y compris celui déjà
+  choisi. Chaque scène a sa commande dans le coin du plateau : « Pause » le
+  temps du tour (`aria-pressed`), puis « Rejouer » sur l'image fixe. Le texte
+  d'une scène est un cran au-dessus du socle ; le plateau a la hauteur de la
+  liste et s'arrondit avec le cadre.
+- **Le formulaire prévient.** Toutes les erreurs se lisent d'un coup à
+  l'envoi, le focus sur la première ; une adresse se vérifie en quittant le
+  champ et l'erreur dit ce qui manque ; un domaine écorché (« gmial.com »,
+  « .con ») est proposé corrigé en un clic, sans rien changer d'office ; le
+  brouillon suit le visiteur d'une page à l'autre (`sessionStorage`) ; le
+  décompte s'affiche à l'approche des 5 000 caractères et n'est annoncé
+  qu'aux paliers. Le formulaire garde sa largeur quoi qu'il dise. Parti : le
+  bouton dit « Envoyé », au trait, la confirmation est **lilas** (un état,
+  jamais citron : elle était citron pâle), et « Écrire un autre message »
+  rouvre le formulaire. Au doigt, le bouton d'appel pose le focus sur le
+  titre de la zone, pas dans un champ (le clavier ne s'ouvre pas sur la page).
+- **Les chiffres portent leur date** à l'œil aussi : « Audience relevée le
+  1er octobre 2026 » sous la ligne. « er » est un exposant (`position:
+  static` : le socle de Tailwind remonte déjà tout `sup`).
+- **Les avis.** La carte lilas est une affiche étroite (0,8 pour 1,2), sa
+  citation en très grand (`clamp(46px, 4.3vw, 64px)`) : elle remplit la carte,
+  sans hauteur imposée.
+- **Les bords et les signes.** Le bord d'une commande au trait se voit (3:1
+  au moins, sur blanc comme sur noir). Un lien qui ouvre un autre onglet le
+  montre d'une petite flèche (`.r-dehors`). Une seule courbe (`--r-sortie`),
+  l'échelle de rayons 32/28/24/18/14. Une étape de cas ne porte de troisième
+  ligne que si elle est la carte forte.
+- **L'index des cas (`/cas-clients`).** Il porte la grammaire de l'accueil
+  (`.tenue-robot`) : une feuille par cas sur `--r-surface-2`, ce qui a été
+  construit à gauche, la preuve à droite dans un puits `--r-noir`. À gauche :
+  le nom du client en lettres (comme sur l'accueil) et son secteur, son logo
+  ramené au blanc en signature à droite de la ligne quand il en a un, le
+  titre en clair (`enClair`), l'accroche, quatre pastilles d'outils au plus,
+  « Lire le cas ». À droite : le registre avant / après, quatre lignes au
+  plus, dont la première est le résultat phare, dit en grand dans une cellule
+  **lilas** précédée de la flèche d'écart de l'accueil ; un cas sans écart
+  mesuré montre son parcours numéroté, sans lilas, et sa réserve dessous.
+  Trois petites tailles de texte (13, 15, 16 px). Toute la feuille est le
+  lien du titre : au survol le titre se souligne en lilas et la flèche passe
+  au citron, au focus la feuille prend l'anneau lilas, à l'appui son bord.
+  Les puits partent tous du haut de la feuille.
+- **Les pages intérieures.** `tete-de-page` ne compte plus la barre deux fois
+  (le fil de retour arrive à moins de 70 px sous elle, il était à 171 px). Un anneau de
+  focus n'est jamais citron : lilas sur noir, encre et halo lilas sur une île
+  blanche (`--color-focus`). Dans la fin de page l'état de l'envoi se lit à
+  côté du bouton et la note passe dessous, puis s'efface une fois le message
+  parti. Une page de cas ouvre sur son accroche, la même phrase que sur
+  l'index, puis sa réserve en plus petit.
+
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 
 **Ce chapitre fait foi pour les pages intérieures et le blog.** Le 10 novembre
