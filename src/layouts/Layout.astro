@@ -688,14 +688,17 @@ const faqPageSchema = faqSchema ? {
 
         // « Parlons de votre projet » mène à /contact. Si la page porte déjà le
         // formulaire (sa fin-de-page), on y descend sans changer de page, et
-        // le curseur se pose dans le premier champ.
+        // le curseur se pose dans le premier champ. Si le formulaire est dans
+        // une zone déclarée (`data-contact-zone`, l'accueil), c'est le haut de
+        // la zone qui arrive sous la barre : son titre reste lisible.
         document.addEventListener('click', function (ev) {
           var a = ev.target && ev.target.closest ? ev.target.closest('a[data-contact-ouvrir]') : null;
           var formulaire = document.querySelector('[data-formulaire-contact]');
           if (!a || !formulaire || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button > 0) return;
           ev.preventDefault();
           var reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-          formulaire.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'center' });
+          var zone = formulaire.closest('[data-contact-zone]');
+          (zone || formulaire).scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: zone ? 'start' : 'center' });
           var champ = formulaire.querySelector('input:not([tabindex="-1"]), textarea');
           if (champ) champ.focus({ preventScroll: true });
         });

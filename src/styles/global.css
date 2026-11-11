@@ -706,7 +706,8 @@ body {
   .btn-primary:focus-visible :where(svg) { transform: none; }
 }
 
-.btn-primary:disabled {
+.btn-primary:disabled,
+.btn-primary[aria-disabled='true'] {
   opacity: 0.55;
   cursor: not-allowed;
 }
@@ -1843,7 +1844,9 @@ html .tenue-carnet .surligne {
 
 /* Sur lilas pâle, l'anneau du champ est à l'encre. */
 html .carnet .inscription__champ:focus-visible { outline: 3px solid #17130f; outline-offset: 2px; }
-html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(.contact__note, .contact__facultatif) { font-size: 0.875rem; color: #5f564c; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(.contact__note, .contact__facultatif) { color: #5f564c; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__note { font-size: 0.875rem; }
+/* « (facultatif) » garde la taille de son libellé : un point de plus et le champ du nom descendait de 2 px sous celui de l'e-mail. */
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact ::placeholder { color: #6b625a; opacity: 1; }
 
 /* Le robot accueille sur la page introuvable. */

@@ -1,7 +1,9 @@
 ---
 /*
  * Les projets clients (jamais les projets personnels, 14 octobre 2026), lus
- * dans les cas publiés, du plus récent au plus ancien : une carte par cas,
+ * dans les cas publiés : ceux qui ont un avant / après d'abord (le chapô
+ * promet « ce que ça a changé », la première feuille doit le montrer ;
+ * critique du 11 novembre 2026), puis du plus récent au plus ancien. Une carte par cas,
  * le client en petit (en lilas), un titre qui dit en clair ce qui a été
  * construit (`enClair`, jamais un chiffre seul : « 0 ressaisie » ne disait
  * rien, Lilian, 10 novembre 2026), le détail (`accroche`) et ses outils, une
@@ -19,7 +21,7 @@ import { getCollection } from 'astro:content';
 import Outils from './outils.astro';
 import Etapes from './etapes.astro';
 const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  (a, b) => Number(!!b.data.bascule) - Number(!!a.data.bascule) || b.data.date.getTime() - a.data.date.getTime(),
 );
 ---
 <section class="r-sec" id="projets" aria-labelledby="titre-projets">
@@ -49,3 +51,21 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
   </div>
 </section>
 
+<script>
+  // Au bureau la pile colle : une feuille vient recouvrir la précédente. Quand
+  // le clavier revient sur une feuille recouverte (Maj+Tab), son lien avait le
+  // focus sans être visible : la page remonte au point où cette feuille est
+  // seule en haut de la pile.
+  const pile = document.querySelector<HTMLElement>('.tenue-robot .r-cas');
+  pile?.addEventListener('focusin', (e) => {
+    const lien = e.target as HTMLElement;
+    const feuille = lien.closest<HTMLElement>('.r-carte-cas');
+    if (!feuille || !lien.matches(':focus-visible') || getComputedStyle(feuille).position !== 'sticky') return;
+    const feuilles = [...pile.querySelectorAll<HTMLElement>('.r-carte-cas')];
+    const ecart = parseFloat(getComputedStyle(pile).rowGap) || 0;
+    let haut = pile.getBoundingClientRect().top + window.scrollY;
+    for (const f of feuilles.slice(0, feuilles.indexOf(feuille))) haut += f.offsetHeight + ecart;
+    const cible = haut - (parseFloat(getComputedStyle(feuille).top) || 0);
+    if (window.scrollY > cible + 1) window.scrollTo({ top: cible });
+  });
+</script>

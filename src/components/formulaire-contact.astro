@@ -31,6 +31,12 @@
  * Le champ `website` est un piège. Une fois le message parti, le formulaire
  * se verrouille (champs et bouton désactivés) : on ne renvoie pas en rafale.
  *
+ * Les états (critique du 11 novembre 2026) : une erreur de saisie s'écrit
+ * sous le champ fautif, là où l'on corrige (le script y déplace la ligne
+ * d'état) ; l'envoi, l'échec et la confirmation s'écrivent à côté du bouton.
+ * Parti, le bouton dit « Envoyé » et les champs passent en retrait ; après un
+ * échec, l'adresse de secours est un lien `mailto:`.
+ *
  * `variante="carnet"` l'habille pour le papier du site (né avec l'accueil
  * « Le carnet » le 27 octobre 2026, repris par « Entre les deux » le 3
  * novembre) : champs blancs au filet gris, bouton bleu, ligne d'état à
@@ -73,10 +79,10 @@ const carnet = variante === 'carnet';
   <div class="contact__captcha" data-turnstile hidden></div>
   <div class="contact__pied">
     {carnet ? (
-      <button type="submit" class="pilule pilule-bleue contact__envoi">Envoyer</button>
+      <button type="submit" class="pilule pilule-bleue contact__envoi"><span data-contact-libelle>Envoyer</span></button>
     ) : (
       <button type="submit" class="btn-primary contact__envoi">
-        Envoyer <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+        <span data-contact-libelle>Envoyer</span> <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
       </button>
     )}
     <slot name="pied" />
@@ -104,9 +110,11 @@ const carnet = variante === 'carnet';
     text-align: left;
   }
 
+  /* `align-items: start` : une erreur écrite sous un champ n'étire pas son voisin. */
   .contact__ligne {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
     gap: 1rem;
   }
 
@@ -181,9 +189,14 @@ const carnet = variante === 'carnet';
     min-height: 44px;
   }
 
-  .contact__envoi[disabled] {
+  .contact__envoi[aria-disabled='true'] {
     opacity: 0.6;
     cursor: progress;
+  }
+
+  /* Parti : le bouton n'attend plus rien. */
+  .contact[data-envoye] .contact__envoi[aria-disabled='true'] {
+    cursor: default;
   }
 
   .contact__note {
@@ -213,6 +226,14 @@ const carnet = variante === 'carnet';
 
   .contact__statut[data-etat='error'] {
     color: var(--color-error);
+  }
+
+  /* L'adresse de secours, ajoutée par le script après un échec : un vrai lien. */
+  .contact__statut :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
   .contact__statut[data-etat='sent'] {
@@ -330,6 +351,14 @@ const carnet = variante === 'carnet';
     font-weight: 700;
   }
 
+  /* Parti : les champs gardent ce qui a été envoyé, en retrait. */
+  .contact--carnet[data-envoye] input,
+  .contact--carnet[data-envoye] textarea {
+    border-color: var(--encre-filet);
+    background: color-mix(in srgb, var(--encre) 4%, transparent);
+    color: var(--encre-doux);
+  }
+
   .contact--carnet .contact__note {
     flex-basis: 100%;
     color: var(--encre-doux);
@@ -390,9 +419,20 @@ const carnet = variante === 'carnet';
   const statut = formulaire?.querySelector<HTMLElement>('[data-contact-statut]');
   const bouton = formulaire?.querySelector<HTMLButtonElement>('button[type="submit"]');
   if (formulaire && statut && bouton) {
-    const dire = (texte: string, etat: 'sent' | 'error' | 'envoi') => {
+    const libelle = bouton.querySelector<HTMLElement>('[data-contact-libelle]');
+    const pied = statut.parentElement as HTMLElement;
+    // La ligne d'état. Une erreur de saisie se dit sous son champ (`champ`),
+    // le reste à côté du bouton ; `adresse` ajoute l'adresse de secours, en lien.
+    const dire = (texte: string, etat: 'sent' | 'error' | 'envoi', ou: { champ?: HTMLElement; adresse?: string } = {}) => {
+      const place = ou.champ?.parentElement ?? pied;
+      if (statut.parentElement !== place) place.append(statut);
       statut.textContent = texte;
       statut.dataset.etat = etat;
+      if (!ou.adresse) return;
+      const lien = document.createElement('a');
+      lien.href = `mailto:${ou.adresse}`;
+      lien.textContent = ou.adresse;
+      statut.append(' Vous pouvez aussi écrire à ', lien, '.');
     };
 
     // Le jeton signé, demandé une fois quand le formulaire approche de l'écran
@@ -501,18 +541,21 @@ const carnet = variante === 'carnet';
             ? 'Cette adresse semble incomplète : il manque peut-être le @ ou le domaine.'
             : 'Indiquez votre adresse e-mail, pour que je puisse vous répondre.',
           'error',
+          { champ: email },
         );
       }
       if (message.value.trim().length < 2) {
         signaler(message);
-        return dire('Écrivez votre message, même en une phrase.', 'error');
+        return dire('Écrivez votre message, même en une phrase.', 'error', { champ: message });
       }
       const donnees = Object.fromEntries(new FormData(formulaire));
       const source = formulaire.dataset.source ?? '';
       // Là où la ligne d'adresse n'est pas affichée, un échec la donne.
-      const secours = formulaire.dataset.secours ? ` Vous pouvez aussi écrire à ${formulaire.dataset.secours}.` : '';
+      const secours = { adresse: formulaire.dataset.secours };
       enCours = true;
-      bouton.disabled = true;
+      // `aria-disabled` et non `disabled` : désactivé pour de bon, le bouton
+      // lâcherait le focus sur la page, et le clavier repartirait du pied.
+      bouton.setAttribute('aria-disabled', 'true');
       dire('Envoi en cours…', 'envoi');
       try {
         const leJeton = await jetonFrais();
@@ -528,6 +571,7 @@ const carnet = variante === 'carnet';
           // Parti : le formulaire se fige sur ce qui a été envoyé.
           formulaire.dataset.envoye = '';
           for (const champ of formulaire.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')) champ.disabled = true;
+          if (libelle) libelle.textContent = 'Envoyé';
           dire(corps.message ?? 'Votre message est bien parti.', 'sent');
           const { datafast } = window as unknown as { datafast?: (nom: string, props?: Record<string, string>) => void };
           if (typeof datafast === 'function') datafast('lead_message', { canal: 'formulaire', source });
@@ -536,12 +580,12 @@ const carnet = variante === 'carnet';
         // Un jeton refusé ne resservira pas : on en redemandera un au prochain essai.
         if (reponse.status === 403) jeton = null;
         renouvelerCaptcha();
-        dire((corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.') + secours, 'error');
+        dire(corps?.message ?? 'Le message n’est pas parti. Réessayez dans quelques instants.', 'error', secours);
       } catch {
-        dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.' + secours, 'error');
+        dire('Le message n’est pas parti : vérifiez votre connexion puis réessayez.', 'error', secours);
       } finally {
         enCours = false;
-        if (formulaire.dataset.envoye === undefined) bouton.disabled = false;
+        if (formulaire.dataset.envoye === undefined) bouton.removeAttribute('aria-disabled');
       }
     });
   }

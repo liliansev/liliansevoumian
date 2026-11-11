@@ -6,6 +6,14 @@
  * Le robot et « lilian » à gauche, les sections, puis le seul bouton
  * d'appel, « Parlons de votre projet » (`BoutonReservation`). Sous 900 px,
  * les liens passent dans un menu en `dialog`.
+ *
+ * Critique du 11 novembre 2026 : le citron est aux gestes. « Menu » est donc
+ * un bouton au trait ; il n'y a plus de lien « Contact » à côté du bouton qui
+ * mène au même formulaire (deux noms pour une porte, et un lien hors
+ * `BoutonReservation`, donc hors statistiques) ; le lien de la section à
+ * l'écran est marqué (`aria-current="location"`) ; quand le formulaire est à
+ * l'écran, le bouton d'appel se repose (`est-au-contact`) et « Envoyer »
+ * reste le seul citron.
  */
 import BoutonReservation from '../BoutonReservation.astro';
 import Robot from './robot.astro';
@@ -25,7 +33,6 @@ const accueil: Lien[] = [
   { href: '#projets', label: 'Projets' },
   { href: '#avis', label: 'Avis' },
   { href: '/blog', label: 'Blog' },
-  { href: '#ecrire', label: 'Contact' },
 ];
 const { liens = accueil, source = 'home_nav', sourceMenu = 'home_menu', marqueHref = '#main-content' } = Astro.props;
 const marqueLibelle = marqueHref === '/' ? "Lilian Sevoumian, retour à l'accueil" : 'Lilian Sevoumian, haut de page';
@@ -39,7 +46,7 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
       {liens.map((l) => <a href={l.href} aria-current={courant(l.href)}>{l.label}</a>)}
     </nav>
     <BoutonReservation source={source} class="r-btn r-btn--cta r-barre__cta">Parlons de votre projet</BoutonReservation>
-    <button class="r-btn r-btn--cta r-barre__menu" type="button" aria-haspopup="dialog" aria-controls="r-menu" data-r-menu-ouvrir>Menu</button>
+    <button class="r-btn r-btn--trait r-barre__menu" type="button" aria-haspopup="dialog" aria-controls="r-menu" aria-expanded="false" data-r-menu-ouvrir>Menu</button>
   </div>
 </header>
 <dialog class="r-menu tenue-robot" id="r-menu" aria-label="Menu" tabindex="-1">
@@ -60,14 +67,41 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
   // « Fermer » à l'ouverture ni sur « Menu » à la fermeture (Lilian, 10
   // novembre 2026) ; au clavier (detail à 0), l'anneau reste.
   let auPointeur = false;
-  document.querySelector('[data-r-menu-ouvrir]')?.addEventListener('click', (e) => {
+  const ouvrir = document.querySelector('[data-r-menu-ouvrir]');
+  ouvrir?.addEventListener('click', (e) => {
     auPointeur = (e as MouseEvent).detail > 0;
     menu?.showModal();
+    ouvrir.setAttribute('aria-expanded', 'true');
     if (auPointeur) menu?.focus();
   });
   document.querySelector('[data-r-menu-fermer]')?.addEventListener('click', () => menu?.close());
   menu?.addEventListener('close', () => {
+    ouvrir?.setAttribute('aria-expanded', 'false');
     if (auPointeur) (document.activeElement as HTMLElement | null)?.blur();
   });
   menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+
+  if (barre && 'IntersectionObserver' in window) {
+    // La section à l'écran : son lien est marqué dans la barre. La bande
+    // d'observation est une ligne au tiers haut de la fenêtre.
+    const ancres = [...barre.querySelectorAll<HTMLAnchorElement>('.r-barre__liens a[href^="#"]')];
+    const sections = ancres.map((a) => document.getElementById(a.hash.slice(1))).filter((s): s is HTMLElement => !!s);
+    if (sections.length) {
+      const vues = new Set<Element>();
+      const guet = new IntersectionObserver((entrees) => {
+        for (const e of entrees) e.isIntersecting ? vues.add(e.target) : vues.delete(e.target);
+        const ici = sections.filter((s) => vues.has(s)).pop();
+        for (const a of ancres) {
+          if (ici && a.hash === `#${ici.id}`) a.setAttribute('aria-current', 'location');
+          else a.removeAttribute('aria-current');
+        }
+      }, { rootMargin: '-34% 0px -65% 0px' });
+      sections.forEach((s) => guet.observe(s));
+    }
+    // Le formulaire de contact à l'écran : le bouton d'appel se repose.
+    const formulaire = document.querySelector('[data-formulaire-contact]');
+    if (formulaire) {
+      new IntersectionObserver(([e]) => barre.classList.toggle('est-au-contact', e.isIntersecting), { rootMargin: '-80px 0px -25% 0px' }).observe(formulaire);
+    }
+  }
 </script>

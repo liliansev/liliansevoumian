@@ -17,12 +17,16 @@
 import { clients } from '../../data/clients';
 import { audience } from '../../data/parcours';
 
+// Le signe d'un chiffre (« + » devant, « er » derrière) est rendu à part, en lilas.
 const chiffres = [
   { nombre: audience.linkedin.nombre, libelle: audience.linkedin.libelle },
   { nombre: audience.youtube.nombre, libelle: audience.youtube.libelle },
   { nombre: audience.vues.nombre, libelle: audience.vues.libelle },
   { nombre: '1er', libelle: 'Français certifié Make niveau 5' },
-];
+].map((c) => {
+  const [, avant = '', valeur = c.nombre, apres = ''] = c.nombre.match(/^(\+?)([\d\s\u00a0.,]+)(.*)$/) ?? [];
+  return { ...c, avant, valeur, apres };
+});
 ---
 <section class="r-sec r-sec--serre" id="clients" aria-labelledby="titre-clients">
   <div class="r-wrap">
@@ -48,7 +52,7 @@ const chiffres = [
       ))}
     </div>
     <ul class="r-chiffres" aria-label={`Mon audience, chiffres relevés le ${audience.releveAffiche}`}>
-      {chiffres.map((c) => <li><strong>{c.nombre}</strong><span>{c.libelle}</span></li>)}
+      {chiffres.map((c) => <li><strong>{c.avant && <i>{c.avant}</i>}{c.valeur}{c.apres && <i>{c.apres}</i>}</strong><span>{c.libelle}</span></li>)}
     </ul>
   </div>
 </section>
@@ -62,4 +66,14 @@ const chiffres = [
     bouton.setAttribute('aria-pressed', String(arrete));
     defile?.classList.toggle('est-en-pause', arrete);
   });
+  // Les logos se chargent tous à l'approche de la section : dans le défilé, un
+  // logo attendu jusqu'à son entrée à l'écran arrivait après sa case.
+  if (defile && 'IntersectionObserver' in window) {
+    const guet = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      guet.disconnect();
+      defile.querySelectorAll('img').forEach((i) => { i.loading = 'eager'; });
+    }, { rootMargin: '800px 0px' });
+    guet.observe(defile);
+  }
 </script>

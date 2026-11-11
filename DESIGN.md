@@ -528,8 +528,9 @@ dans `src/components/robot/`, grammaire dans `robot.css`, rangée sous
   `#332e29`, texte `#f8f4ef`, gris `#aaa198`.
 - Deux sections blanches seulement : l'ouverture (arrondie en bas) et le
   contact (une île arrondie).
-- Citron `#ffd84d` pour les gestes : boutons, onglet choisi, flèche d'un cas
-  au survol, passage retenu d'un avis (en texte citron), tête du robot. Lilas
+- Citron `#ffd84d` pour les gestes : boutons, icône de l'onglet choisi au
+  bureau, flèche d'un cas au survol, passage retenu d'un avis (en texte
+  citron), tête du robot (liste précisée le 11 novembre, voir *Le verrou*). Lilas
   `#b9a6ff` pour les surfaces douces et les repères : le grand panneau du
   métier choisi (texte à l'encre), nom du client sur les cartes des cas,
   soulignement des liens sur noir, point de « À très vite. ».
@@ -583,7 +584,8 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
   titres de section, `--r-t-3` `clamp(22px, 2.1vw, 28px)` pour une carte.
   Le titre du mur de logos est une simple étiquette grise de 15 px.
 - Traits : des filets d'un pixel. Sur blanc l'encre à 12 % (`--r-filet`),
-  sur noir `#332e29` (`--r-trait`), `#4a433c` (`--r-trait-2`) au survol.
+  sur noir `#332e29` (`--r-trait`), `#4a433c` (`--r-trait-2`) pour ce qui
+  borde une carte ou une ligne, `#6a6157` (`--r-trait-3`) au survol.
   Plus aucun cerne d'encre de 2 px autour d'un bouton, de la barre ou du
   portrait.
 - Boutons : la pilule citron n'a plus de bord ; au survol elle fonce
@@ -603,7 +605,7 @@ est la main. **Ces règles priment sur les lignes plus anciennes du chapitre.**
   de couleur ; depuis le soir du 10 novembre ils sont sous les logos des
   clients, sur le noir, plus dans l'ouverture.
 - Clients : un mur de logos à filets, huit par ligne (quatre sous 1180 px),
-  logos à 66 % qui s'allument au survol.
+  logos à 82 % qui s'allument au survol.
 - Cas : au survol la carte change de surface et de filet, sa flèche cerclée
   passe au citron et pivote ; la carte ne vire plus au lilas.
 - Avis : des citations séparées par des filets, le titre de la section
@@ -699,7 +701,7 @@ le bouton (à toutes les largeurs).**
   ni fil, ni grain, ni script.
 - **Les avis, trois cartes** : une grande carte lilas à gauche pour la
   citation la plus courte, dite en grand (`clamp(44px, 3.6vw, 52px)`, graisse
-  600, le début à 62 % d'encre, le passage retenu à l'encre pleine : le
+  600, le début à 72 % d'encre, le passage retenu à l'encre pleine : le
   citron ne se lit pas sur lilas), la personne en bas ; à droite les deux
   autres, l'une sur l'autre, en cartes sombres (rayon 28 px, filet d'un
   pixel), citation de 21 px, passage retenu en citron, portrait de 48 px.
@@ -707,6 +709,79 @@ le bouton (à toutes les largeurs).**
 - **Mouvement** : rien ne tourne en boucle hors du défilé des logos. Les fils
   de l'ouverture et les scènes jouent une fois, puis seulement sur un geste
   du visiteur. En mouvement réduit tout est posé d'un coup.
+
+### Le verrou : critique, finitions et couleur (11 novembre 2026)
+
+La version en ligne validée, Lilian : « pas mal du tout, lance polish et
+colorize pour verrouiller ? mais un critique d'abord ? ». La critique (deux
+lectures indépendantes : une revue de design, 20 sur 32 aux heuristiques de
+Nielsen, et des mesures au navigateur) n'a trouvé aucun défaut bloquant ;
+l'écart tenait aux finitions et à la discipline de la couleur. **Ces règles
+priment sur les lignes plus anciennes du chapitre.**
+
+- **Le citron ne sert qu'aux gestes.** La liste entière : les boutons
+  d'appel, « Envoyer », la flèche d'un cas au survol, l'icône de l'onglet
+  choisi au bureau, le passage retenu d'un avis sur carte sombre, et dans
+  chaque scène un seul objet, son aboutissement (le créneau posé, le
+  rendez-vous déplacé, la colonne de l'objectif, « Autonome »). Le reste
+  d'une scène (états, compteurs, ports, coches) est en lilas : sous
+  `.tenue-robot .sm`, `--color-peche` vaut le lilas. Le faux bouton d'une
+  scène est à l'encre : en citron, il se lisait comme un vrai bouton et
+  c'était la plus grande surface citron de la page. « Menu » est un bouton au
+  trait ; « S’abonner à la newsletter » est au trait sur toutes les pages ;
+  un lien du pied se souligne en lilas au survol ; sous 1100 px l'onglet
+  choisi est lilas, icône à l'encre (une tuile citron de 56 px y pesait
+  autant qu'un bouton) ; l'anneau de focus d'une feuille de cas est lilas
+  comme les autres.
+- **La barre** : quatre liens et le bouton (« Contact » doublait « Parlons
+  de votre projet »). Le lien de la section à l'écran est marqué
+  (`aria-current="location"`, fond d'encre à 6 %). Quand le formulaire est à
+  l'écran le bouton d'appel passe au trait (`est-au-contact`) : il ne reste
+  qu'un citron, « Envoyer ».
+- **Le formulaire** (composant commun, donc toutes les pages) : une erreur
+  de saisie s'écrit sous son champ, avec sa marque, et le champ garde son
+  bord rouge même au focus. L'envoi en cours, l'échec et l'envoi réussi sont
+  trois boîtes à côté du bouton : neutre avec un anneau qui tourne, rosée
+  (texte `#8c1d18`), citron pâle `#fff1b8` avec une coche à l'encre. Pendant
+  l'envoi le bouton pâlit sans perdre son libellé ni le focus
+  (`aria-disabled`, jamais `disabled`) ; parti, il dit « Envoyé », au trait,
+  et les champs se grisent. En cas d'échec l'adresse de secours est un vrai
+  lien. Vide, la ligne d'état reste dans l'arbre d'accessibilité (masquée à
+  l'œil, pas en `display: none`). « Me contacter » fait arriver sur le titre
+  de la section, sous la barre, pas au milieu du formulaire.
+- **Les noirs, trois couches franches** : la page `#0f0d0b` ; une feuille de
+  cas ou une carte d'avis sombre sur `--r-surface-2` `#24201c` ; les cartes
+  d'étapes et l'écart avant / après en puits `--r-noir`. Filets
+  `--r-trait-2`, `--r-trait-3` au survol d'une feuille. Deux noirs voisins
+  (`#1b1815` sur `#0f0d0b`, 1,09:1) ne se distinguaient pas.
+- **Les projets** : les cas qui ont un avant / après viennent d'abord (le
+  chapô promet « ce que ça a changé »), puis du plus récent au plus ancien.
+  On n'invente pas d'écart pour un cas qui n'a pas de résultat mesuré. Au
+  clavier, revenir sur une feuille recouverte par la pile fait remonter la
+  page au point où cette feuille est seule en haut.
+- **Les clients** : logos et noms à 82 % (66 % se lisait gris), noms en
+  graisse 550. Dans le défilé chaque logo a une hauteur fixée, sa largeur
+  s'en déduit (en `auto` des deux côtés, quatre SVG sans taille propre
+  tombaient à 0 × 0), et tous se chargent à l'approche de la section. Le
+  signe d'un chiffre (« + », « er ») est en lilas.
+- **Les bords du bureau** : marges de 32 px entre 1100 et 1279 px ; le
+  panneau des métiers garde la même hauteur d'un onglet à l'autre ; 112 px
+  entre deux sections partout (80 px sur téléphone), y compris après la
+  pile ; la phrase d'un métier monte à 32 px, comme un titre de feuille ;
+  entre 521 et 860 px l'ouverture est centrée d'un bloc.
+- **Accessibilité mesurée** : `--r-encre-lilas` `#2f2748` pour le texte
+  secondaire posé sur lilas (6,6:1) ; la grande citation sur lilas à 72 %
+  d'encre (4,5:1 au moins) ; anneau lilas pour le bouton pause d'une scène ;
+  lien d'évitement à l'encre sur l'ouverture blanche ; onglets des métiers
+  avec `aria-orientation="vertical"`, Début et Fin ; « Menu » porte
+  `aria-expanded` ; un lien de texte fait 44 px de haut au doigt ; les liens
+  « Sur le site » du pied se lisent colonne par colonne.
+- **Laissé tel quel, exprès** : les pilules citron sans bord sur blanc (la
+  surface ne fait que 1,4:1, le libellé à l'encre 13:1 : c'est la passe
+  « plus fin ») ; le clignement du robot (un battement toutes les 4,5 s,
+  coupé en mouvement réduit) ; les couleurs des pastilles d'outils, qui sont
+  celles des marques ; les onglets en icônes seules sous 1000 px et le bouton
+  après la photo sur téléphone (décisions de Lilian).
 
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 

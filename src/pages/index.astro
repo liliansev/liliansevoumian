@@ -70,7 +70,7 @@ const pageSchema = {
 </Layout>
 
 <script>
-  // Les onglets des métiers : un clic, ou les flèches du clavier.
+  // Les onglets des métiers : un clic, ou au clavier les flèches, Début et Fin.
   document.querySelectorAll<HTMLElement>('[data-r-onglets]').forEach((bloc) => {
     const onglets = [...bloc.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
     const choisit = (choisi: HTMLButtonElement, focus = false) => {
@@ -87,9 +87,10 @@ const pageSchema = {
       o.addEventListener('click', () => choisit(o));
       o.addEventListener('keydown', (e) => {
         const pas = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (pas === undefined) return;
+        const bout = { Home: 0, End: onglets.length - 1 }[e.key];
+        if (pas === undefined && bout === undefined) return;
         e.preventDefault();
-        choisit(onglets[(i + pas + onglets.length) % onglets.length], true);
+        choisit(onglets[bout ?? (i + pas! + onglets.length) % onglets.length], true);
       });
     });
   });

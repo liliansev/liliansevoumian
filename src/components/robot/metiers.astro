@@ -43,7 +43,7 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
   <div class="r-wrap">
     <header class="r-titre"><h2 id="titre-services">Ce que je fais</h2><p>Quatre métiers, un seul interlocuteur.</p></header>
     <div class="r-onglets" data-r-onglets>
-      <div class="r-onglets__liste" role="tablist" aria-label="Mes métiers">
+      <div class="r-onglets__liste" role="tablist" aria-orientation="vertical" aria-label="Mes métiers">
         {metiers.map((m, i) => (
           <button type="button" role="tab" id={`onglet-${m.id}`} aria-controls={`panneau-${m.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
             <span class="r-onglet__ic" set:html={icone(m.id)} /><span class="r-onglet__nom">{m.nom}</span>

@@ -33,7 +33,7 @@ src/
 │   ├── Navigation.astro       # la barre, la même partout : rend `robot/barre.astro` (pilule blanche flottante) avec les liens de la page et un seul bouton « Parlons de votre projet »
 │   ├── Footer.astro           # rend `robot/pied.astro` (« À très vite. »)
 │   ├── BoutonReservation.astro # le bouton d'appel : mène au formulaire de contact (goal contact_opened) ; `direct` pour l'agenda
-│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian
+│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian ; une erreur de saisie s'écrit sous son champ, l'envoi, l'échec et l'envoi réussi à côté du bouton, qui reste focalisable (`aria-disabled`) et finit sur « Envoyé »
 │   ├── tete-de-page.astro     # en-tête d'une page intérieure : retour, h1, chapô, bouton, preuves
 │   ├── partie.astro           # une partie d'une page de lecture : titre à gauche, texte à droite ; `clair` en fait une île claire
 │   ├── questions.astro        # la FAQ, la même partout : un accordéon classique, en `details`, sans script
@@ -48,15 +48,15 @@ src/
 │   │   ├── bureau.css         # à partir de 1100 px seulement : chaque section devient un composant dessiné (ouverture à fils, une scène par métier, pile de cas en cartes d'étapes, trois cartes d'avis) ; sous 1100 px elle ne change rien
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
-│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog`
+│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog` ; sur l'accueil quatre liens (pas de « Contact », le bouton y mène), le lien de la section à l'écran est marqué, et le bouton d'appel passe au trait quand le formulaire est à l'écran
 │   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, un seul bouton « Me contacter » (après la photo sur téléphone) ; au bureau, un scénario : les trois étiquettes en modules reliés au portrait par des fils
 │   │   ├── metiers.astro      # les 4 métiers en onglets (sous 1000 px : une colonne d'icônes à gauche, le panneau à droite) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
-│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres de l'audience sur une ligne à filets (sortis de l'ouverture) ; au bureau, un défilé avec son bouton pause (un mur en mouvement réduit)
+│   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres de l'audience sur une ligne à filets (sortis de l'ouverture), leur signe en lilas ; au bureau, un défilé avec son bouton pause (un mur en mouvement réduit)
 │   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron ; au bureau, trois cartes : une grande sur lilas, deux sombres à sa droite ; aucun script
-│   │   ├── projets.astro      # les cas clients en cartes ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
+│   │   ├── projets.astro      # les cas clients en cartes, ceux qui ont un avant / après d'abord ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
 │   │   ├── etapes.astro       # les étapes d'un cas en cartes fixes, d'après son `flow` (deux puis trois) ou son `parcours` (trois puis deux, numérotées) ; ni fil ni script ; bureau seulement
 │   │   ├── contact.astro      # « Parlons de votre projet » et le formulaire seul : ni agenda ni adresse e-mail
-│   │   ├── pied.astro         # « À très vite. », les liens, et « S’abonner à la newsletter » tout en bas (sur toutes les pages, via Footer)
+│   │   ├── pied.astro         # « À très vite. », les liens, et « S’abonner à la newsletter » tout en bas, au trait (sur toutes les pages, via Footer)
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
 │   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section
@@ -197,8 +197,17 @@ dans des cards élégantes »). The newsletter button sits at the very bottom,
 in the footer of every page, and the home's contact block is the form alone
 (« restons sur le formulaire point barre »). All of it lives in `robot/bureau.css` inside
 `@media (min-width: 1100px)`; below 1100 px only the hero button, the
-figures and the footer changed. Inner pages and the blog
-get it from the very last block of `global.css` (PASSE « PLUS FIN ») and of
+figures and the footer changed. On 11 November 2026 the live version was locked
+with a critique, then polish and colorize (DESIGN.md, *Le verrou*, which
+overrides older lines): lemon is for actions only (call buttons, « Envoyer »,
+a case arrow on hover, the selected tab's icon on desktop, the highlighted
+passage of a dark testimonial, and one single outcome per scene; everything
+else in a scene is lilac and its fake button is ink), « Menu » and the
+newsletter button are outlined, the selected tab under 1100 px is lilac, the
+nav has four links and marks the section on screen, the blacks are three
+clear layers (page, sheet on `--r-surface-2`, step cards as `--r-noir`
+wells), and the form says its errors under the field. Inner pages and the blog
+get the « plus fin » pass from the very last block of `global.css` (PASSE « PLUS FIN ») and of
 `carnet.css`. The home lives in `components/robot/` under `.tenue-robot` and
 passes `carnet={false}` to Layout. Every other page gets the same look
 through a token swap: the carnet and `@theme` token names are kept
@@ -332,6 +341,11 @@ one sequence (`documentaire/expertises.astro`; scenes in
   tourner la phrase de l'accueil autour de la main gardée par un humain. Les
   pastilles d'outils de l'accueil : Make et n8n (automatisation), Claude Code
   et Codex (dashboards et outils métiers).
+- Le citron ne sert qu'aux gestes (11 novembre 2026, DESIGN.md, *Le
+  verrou*). Ne pas en remettre sur un état, un décor ou un survol : un état
+  est lilas, un bouton secondaire est au trait, et dans une scène un seul
+  objet est citron, son aboutissement. Le bouton « Envoyer » ne porte jamais
+  l'attribut `disabled` (il lâcherait le focus) : `aria-disabled`.
 - Un seul geste sur tout le site : « Parlons de votre projet » mène au
   formulaire de contact (14 octobre 2026 : la conversation `home-invite` est
   retirée, jugée trop compliquée par Lilian). Tout bouton d'appel passe par

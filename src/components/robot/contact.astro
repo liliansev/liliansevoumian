@@ -6,12 +6,14 @@
  * formulaire, l'appel, et le mail. restons sur le formulaire point barre ».
  * Ni lien vers l'agenda, ni adresse sous le bouton (`note={false}` : elle ne
  * revient que si l'envoi échoue ou sans script). Tous les « Parlons de votre
- * projet » de la page y mènent : Layout fait défiler jusqu'au formulaire.
+ * projet » de la page y mènent : Layout fait défiler jusqu'à la section
+ * (`data-contact-zone` : son titre arrive sous la barre, au lieu de centrer
+ * le formulaire et de cacher le titre sur téléphone).
  */
 import FormulaireContact from '../formulaire-contact.astro';
 import Robot from './robot.astro';
 ---
-<section class="r-contact" id="ecrire" aria-labelledby="titre-ecrire">
+<section class="r-contact" id="ecrire" aria-labelledby="titre-ecrire" data-contact-zone>
   <div class="r-wrap r-contact__grille">
     <div>
       <Robot class="r-contact__bot" />
