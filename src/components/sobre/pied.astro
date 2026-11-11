@@ -10,6 +10,7 @@
  */
 import BoutonReservation from '../BoutonReservation.astro';
 import { organisations, profils } from '../../data/parcours';
+import { newsletter } from '../../data/newsletter';
 
 interface Props {
   /** Sur l'accueil, le logo ramène en haut de page ; ailleurs, à l'accueil. */
@@ -25,6 +26,7 @@ const { surAccueil = false, source = 'pied', contact = false } = Astro.props;
 const dehors: { label: string; href: string; goal?: string }[] = [
   { label: 'YouTube', href: profils.youtube, goal: 'youtube_opened' },
   { label: 'LinkedIn', href: profils.linkedin },
+  { label: `Newsletter ${newsletter.nom}`, href: newsletter.url, goal: 'newsletter_opened' },
   ...organisations.map((o) => ({ label: o.nom, href: o.url, goal: o.goal })),
 ];
 

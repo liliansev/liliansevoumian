@@ -78,7 +78,6 @@ src/
 │   │   ├── barre.astro        # barre collante (nom, sections, « Écrire »), menu plein écran en `dialog`
 │   │   ├── ouverture.astro    # le nom, la signature, « S'abonner sur YouTube », l'audience datée (data/parcours.ts, `audience`), le polaroïd du NoCode Summit
 │   │   ├── defile.astro       # le défilé des logos des clients, avec son bouton pause (data/clients.ts)
-│   │   ├── suivre.astro       # module 1 : dernière vidéo et newsletter en cartes (dernier numéro dans data/derniere-newsletter.ts, inscription /api/newsletter), puis LinkedIn, Augmentés, agenceafk en liens
 │   │   ├── adore.astro        # module 2 : « J'adore… », huit autocollants, une couleur par type de travail
 │   │   ├── methode.astro      # module 3 : le kanban d'exemple ; un toucher fait avancer une carte, glisser, Entrée et flèches, remise à zéro
 │   │   ├── coulisses.astro    # module 4 : quatre polaroïds
@@ -97,7 +96,6 @@ src/
 │   │   ├── contrechamp.astro  # deux plans côte à côte (le champ, le contrechamp), chacun son incrustation, un seul sous-titre
 │   │   ├── en-ce-moment.astro # les projets en cours, une affiche chacun : le texte, et le plan qui parcourt le site au survol (data/projets.ts, `enCours`)
 │   │   ├── expertises.astro   # les 4 scènes des métiers en une séquence : un grand plan, la liste des plans au-dessus, la phrase en sous-titre (data/metiers.ts)
-│   │   ├── publications.astro # la dernière vidéo YouTube et la newsletter (même script que l'ancien home-content)
 │   │   ├── filmographie.astro # les projets clients en filmographie, lus dans les cas : un client par ligne, secteur et outils, phrase, lien, workflow en miniature
 │   │   ├── voix.astro         # « Ils en parlent » : une citation en grand, le rail des trois personnes à côté (la forme de l'ancien home-voices)
 │   │   ├── fin.astro          # la fin : `fin-de-page` sur la nuit, sans maille (id `fin`, chapitre « Contact » ; le générique de fin en est sorti le 14 octobre 2026)
@@ -108,7 +106,6 @@ src/
 │   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone. Ses métiers sont dans `data/metiers.ts`
 │   ├── metiers/               # les scènes des métiers + leur socle CSS (scene-metier.css) ; rejouées sur l'accueil au bureau (`robot/metiers.astro`), sans leurs lueurs. `scene-cours.astro` (un atelier : diapositive, exercice, équipe) est la scène des formations sur l'accueil et `scene-appels.astro` (un téléphone, le support client, le compte rendu) celle des agents IA ; `scene-formations.astro`, qui ressemblait à un workflow, et `scene-agents.astro`, un agent de recherche, ne servent plus qu'à /explorations-metiers
 │   ├── home-today-path.astro  # « Pourquoi moi » (panneau clair) + frise du parcours
-│   ├── home-content.astro     # la dernière vidéo YouTube (relevée par le serveur, voir `data/derniere-video.ts`) + newsletter écrite comme un mail
 │   ├── home-voices.astro      # trois recommandations, une voix à la fois, choisie par le visiteur
 │   │   # — page d'offre /automatisations-ia —
 │   ├── HeroManifesto.astro    # hero : titre, chapô, bouton
@@ -132,7 +129,7 @@ src/
 │   └── explorations/          # essais non retenus, page /explorations-metiers
 ├── content/
 │   └── cas-clients/           # 4 cas en .md, frontmatter typé
-├── data/                      # metiers.ts (les 4 métiers), projets.ts, faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, outils-metiers.ts, brands.ts
+├── data/                      # newsletter.ts (« Augmentés » sur Substack, la seule adresse de la newsletter), metiers.ts (les 4 métiers), projets.ts, faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, outils-metiers.ts, brands.ts
 ├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (adresse de contact), contact-message.ts (envoi du formulaire par Resend), roi.ts, metiers/scene.ts (moteur des scènes), robot/fils.ts (les fils de l'ouverture de l'accueil au bureau : tracé, ports, grain), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
 │   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire (avec son entrée d'historique ; « Précédent » rend le focus au bouton utilisé), suivi DataFast ; pose `data-clavier` sur `html` à la première tabulation (l'anneau de focus se montre alors quel que soit le pointeur)
@@ -156,8 +153,7 @@ src/
                                # par son propre conteneur (linkinbio-app), Caddy y envoie /liens* avant le site
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
-├── contact.ts                 # formulaire de contact (délègue à src/lib/contact-message)
-└── newsletter.ts              # inscription à la newsletter (délègue à src/lib/newsletter-signup)
+└── contact.ts                 # formulaire de contact (délègue à src/lib/contact-message)
 ```
 
 ## Design System
@@ -390,6 +386,10 @@ one sequence (`documentaire/expertises.astro`; scenes in
 - L'accueil ne nomme aucun client à la main. Le défilé des logos les cite
   tous, depuis `data/clients.ts` ; le pied de page mène à l'index des cas
   (`/cas-clients`), jamais à un cas en particulier.
+- La newsletter est « Augmentés », sur Substack (newsletter.augmentes.fr), depuis le 9 novembre 2026 :
+  le site n'inscrit personne lui-même (plus de Mailcheap ni de Lumail, plus de
+  `/api/newsletter`). Le bloc du blog (`blog/inscription.astro`) ouvre la page
+  d'inscription Substack, adresse préremplie ; goal `newsletter_opened`.
 - La dernière vidéo YouTube est relevée par le serveur de production
   (`deploy/server.mjs`, `/api/derniere-video`, flux des vidéos longues) et la
   page la remplace d'elle-même : rien à faire à chaque publication.

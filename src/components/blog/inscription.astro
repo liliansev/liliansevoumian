@@ -1,35 +1,37 @@
 ---
 /*
- * inscription : s'abonner à la newsletter hebdomadaire depuis le blog.
+ * inscription : s'abonner à la newsletter depuis le blog.
  *
- * Même liste et même route que la newsletter de l'accueil (`/api/newsletter`,
- * voir `lib/newsletter-signup.ts`). Aucun mail ne part tout seul quand un
- * article sort : le bloc promet donc la newsletter de la semaine, pas un
- * envoi par article (22 octobre 2026). Une phrase, un champ, un bouton.
- * Rien à vendre.
+ * La newsletter s'appelle « Augmentés » et vit sur Substack
+ * (`data/newsletter.ts`). Le bloc le dit tel quel : le visiteur sait où il
+ * s'inscrit. Le formulaire est un simple GET vers la page d'inscription de
+ * Substack, ouverte dans un nouvel onglet avec l'adresse déjà remplie : pas
+ * de script, pas de route serveur, pas de clé (9 novembre 2026, Mailcheap
+ * retiré). Le goal DataFast `newsletter_opened` part au clic sur le bouton.
  */
+import { newsletter } from '../../data/newsletter';
 
 interface Props {
   /** Le titre du bloc. */
   titre?: string;
+  /** La provenance du goal `newsletter_opened`. */
+  source?: string;
 }
 
-const { titre = 'Ma newsletter, chaque semaine.' } = Astro.props;
+const { titre = `Ma newsletter : ${newsletter.nom}.`, source = 'blog' } = Astro.props;
 ---
 
 <section id="inscription" aria-labelledby="inscription-titre" class="inscription">
   <h2 id="inscription-titre" class="inscription__titre">{titre}</h2>
-  <p class="inscription__texte">Un sujet par semaine : comment utiliser l’IA pour soi, son business et son quotidien. Pas de publicité, désinscription en&nbsp;un&nbsp;clic.</p>
-  <form data-inscription action="/api/newsletter" method="post" class="inscription__form">
+  <p class="inscription__texte">L’IA et l’automatisation au quotidien : ce que je teste, ce qui marche, ce que j’en garde pour mon travail. Elle est publiée sur Substack, gratuite, désinscription en&nbsp;un&nbsp;clic.</p>
+  <form action={newsletter.inscription} method="get" target="_blank" rel="noopener" class="inscription__form">
     <label for="inscription-email" class="sr-only">Votre adresse e-mail</label>
-    <input id="inscription-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="votre adresse e-mail" aria-describedby="inscription-statut" class="inscription__champ" />
-    <div hidden aria-hidden="true"><label for="inscription-website">Votre site</label><input id="inscription-website" name="website" tabindex="-1" autocomplete="off" /></div>
-    {/* Désactivé dans le HTML : sans le script, un envoi natif afficherait
-        la réponse JSON brute du serveur. */}
-    <button type="submit" disabled class="inscription__bouton">S’inscrire</button>
+    <input id="inscription-email" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="votre adresse e-mail" class="inscription__champ" />
+    <button type="submit" class="inscription__bouton" data-fast-goal="newsletter_opened" data-fast-goal-source={source}>S’abonner sur Substack</button>
   </form>
-  <p id="inscription-statut" role="status" aria-live="polite" aria-atomic="true" class="inscription__statut" hidden></p>
-  <noscript><p class="inscription__statut">Activez JavaScript pour vous inscrire.</p></noscript>
+  <p class="inscription__note">
+    Substack s’ouvre dans un nouvel onglet pour confirmer. <a href={newsletter.archive} target="_blank" rel="noopener noreferrer" class="inscription__lien" data-fast-goal="newsletter_opened" data-fast-goal-source={`${source}_archive`}>Lire les anciens numéros</a>
+  </p>
 </section>
 
 <style>
@@ -44,13 +46,13 @@ const { titre = 'Ma newsletter, chaque semaine.' } = Astro.props;
 
   .inscription__titre {
     margin: 0;
-    font-size: 1.0625rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    line-height: 1.45;
+    line-height: 1.4;
   }
 
   .inscription__texte {
-    margin: 0.3rem 0 0;
+    margin: 0.5rem 0 0;
     color: var(--carnet-gris);
     font-size: 1rem;
   }
@@ -80,7 +82,9 @@ const { titre = 'Ma newsletter, chaque semaine.' } = Astro.props;
     opacity: 1;
   }
 
-  .inscription__champ:focus-visible {
+  .inscription__champ:focus-visible,
+  .inscription__bouton:focus-visible,
+  .inscription__lien:focus-visible {
     outline: 2px solid var(--violet, #2b44f0);
     outline-offset: 2px;
   }
@@ -104,90 +108,15 @@ const { titre = 'Ma newsletter, chaque semaine.' } = Astro.props;
     background: var(--bleu-fonce, #1c2fc4);
   }
 
-  .inscription__bouton:disabled {
-    cursor: wait;
-  }
-
-  .inscription__statut {
+  .inscription__note {
     margin: 0.75rem 0 0;
     color: var(--carnet-gris);
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
 
-  .inscription__statut[data-state='error'] {
-    color: #b42318;
+  .inscription__lien {
+    color: var(--violet, #2b44f0);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 </style>
-
-<script>
-  // Même échange que le formulaire de l'accueil (`home-content`) : la réponse
-  // tient en deux champs, vérifiés ici à la main ; la validation qui compte
-  // reste côté serveur.
-  type Resultat = { status: 'pending' | 'subscribed' | 'error'; message: string };
-  const STATUTS: readonly string[] = ['pending', 'subscribed', 'error'];
-  const lireResultat = (brut: unknown): Resultat | null => {
-    if (typeof brut !== 'object' || brut === null) return null;
-    const { status, message } = brut as Record<string, unknown>;
-    if (typeof status !== 'string' || !STATUTS.includes(status)) return null;
-    if (typeof message !== 'string' || message.length === 0) return null;
-    return { status: status as Resultat['status'], message };
-  };
-
-  const form = document.querySelector<HTMLFormElement>('form[data-inscription]');
-  const email = form?.querySelector<HTMLInputElement>('input[type="email"]');
-  const button = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
-  const status = document.querySelector<HTMLParagraphElement>('#inscription-statut');
-  if (form && email && button && status) {
-    button.disabled = false;
-    const originalButton = button.textContent ?? 'S’inscrire';
-    let submitting = false;
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      if (submitting || !form.reportValidity()) return;
-      submitting = true;
-      button.disabled = true;
-      button.textContent = 'Inscription en cours…';
-      form.setAttribute('aria-busy', 'true');
-      status.hidden = false;
-      status.dataset.state = 'loading';
-      status.textContent = 'Votre demande est en cours d’envoi.';
-      email.removeAttribute('aria-invalid');
-
-      const submit = async () => {
-        const controleur = new AbortController();
-        const minuterie = window.setTimeout(() => controleur.abort(), 25_000);
-        try {
-          const data = new FormData(form);
-          const response = await fetch(form.action, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: data.get('email'), website: data.get('website') }),
-            signal: controleur.signal,
-          });
-          const result = lireResultat(await response.json().catch(() => null));
-          if (!result) throw new Error(`Réponse d’inscription illisible (HTTP ${response.status})`);
-          status.dataset.state = result.status;
-          status.textContent = result.message;
-          if (response.status === 422) email.setAttribute('aria-invalid', 'true');
-          if (response.ok && result.status !== 'error') form.reset();
-        } finally {
-          window.clearTimeout(minuterie);
-          submitting = false;
-          button.disabled = false;
-          button.textContent = originalButton;
-          form.removeAttribute('aria-busy');
-        }
-      };
-      submit().catch((erreur: unknown) => {
-        console.error('[blog] inscription en échec', erreur);
-        const nom = erreur instanceof Error ? erreur.name : '';
-        status.dataset.state = 'error';
-        status.textContent =
-          nom === 'AbortError' || nom === 'TimeoutError'
-            ? 'Le serveur met trop de temps à répondre. Réessayez dans une minute.'
-            : erreur instanceof TypeError && !navigator.onLine
-              ? 'Vous semblez hors ligne. Vérifiez votre connexion puis réessayez.'
-              : 'L’inscription n’a pas abouti de mon côté. Réessayez dans quelques instants.';
-      });
-    });
-  }
-</script>
