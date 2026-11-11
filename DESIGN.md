@@ -930,6 +930,28 @@ sans commande de pause (un clin d'œil bref toutes les 4,5 s, coupé en
 mouvement réduit) ;
 un bouton citron n'a pas de bord sur blanc (son libellé fait 13:1).
 
+### Relecture de confirmation (11 novembre 2026)
+
+Une relecture indépendante de `/cas-clients` sur la version du second tour l'a
+notée 31 sur 32 : les douze points demandés au tour d'avant passent, et il
+restait un écart de cohérence, corrigé depuis (la note de 31 est celle d'avant
+la correction).
+
+- **Un seul formulaire.** Le formulaire de la fin d'une page intérieure et de
+  `/contact` se dessine comme celui de l'accueil, état par état : envoi dans
+  une boîte à l'anneau qui tourne, échec dans une boîte rouge, message parti
+  dans une boîte lilas à la coche d'encre, erreur de saisie en ligne rouge sous
+  son champ. Il gardait une pastille verte et une pastille rouge d'avant
+  « Citron et lilas ». Les valeurs sont dans le dernier bloc de `global.css`
+  (« UN SEUL FORMULAIRE »), écrites en clair parce que les jetons `--r-*`
+  n'existent que sous `.tenue-robot`. La référence est le formulaire de
+  l'accueil tel qu'il est rendu : toute retouche de l'un se reporte sur
+  l'autre.
+- **La fenêtre de l'agenda** écrit son titre en Roboto Flex et ses deux boutons
+  de secours en pilules au trait.
+- **Sur l'index des cas**, un clic qui ne fait que défaire une sélection de
+  texte n'ouvre plus le cas.
+
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 
 **Ce chapitre fait foi pour les pages intérieures et le blog.** Le 10 novembre

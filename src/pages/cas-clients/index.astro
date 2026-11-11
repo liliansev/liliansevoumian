@@ -209,9 +209,15 @@ const titre =
       if (cible.closest('a, button')) return null;
       return cible.closest('.fiche')?.querySelector<HTMLAnchorElement>('.fiche__titre a') ?? null;
     };
+    // Un clic qui ne fait que défaire une sélection n'ouvre pas le cas : la
+    // sélection est lue à l'appui, avant que le navigateur ne l'efface.
+    let selectionAvant = false;
+    liste.addEventListener('pointerdown', () => {
+      selectionAvant = !(window.getSelection()?.isCollapsed ?? true);
+    });
     liste.addEventListener('click', (e) => {
       const lien = lienDe(e);
-      if (!lien || e.defaultPrevented || !window.getSelection()?.isCollapsed) return;
+      if (!lien || e.defaultPrevented || selectionAvant || !window.getSelection()?.isCollapsed) return;
       if (e.metaKey || e.ctrlKey || e.shiftKey) window.open(lien.href, '_blank', 'noopener');
       else lien.click();
     });

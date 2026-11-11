@@ -216,7 +216,9 @@ confirmation, the case index rebuilt in the home's grammar, focus rings never
 lemon on inner pages). A second round of two independent reviews followed the
 same day (DESIGN.md, *La reprise, second tour*, which overrides the paragraph
 above it where they differ; scores as measured: home 20, 25, then 29 out of
-32, case index 26 then 28): under 560 px the nav pill keeps the call button
+32, case index 26, 28, then 31 at the confirmation review, whose single gap is
+fixed since: the inner-page form is drawn like the home's in every state, see
+the last block of `global.css`, « UN SEUL FORMULAIRE »): under 560 px the nav pill keeps the call button
 with the robot alone and hides it while the hero button is on screen, phone
 tabs carry a short name under each icon in an 82 px column, the tabs block
 keeps one height, case cards share subgrid rows from 861 to 1099 px, → marks

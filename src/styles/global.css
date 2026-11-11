@@ -1959,16 +1959,12 @@ html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(input,
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__envoi[aria-disabled='true'] { opacity: 1; background: #fff1b8; transform: none; cursor: progress; }
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact[data-envoye] .contact__envoi { background: none; color: #4a4239; box-shadow: inset 0 0 0 1px rgb(23 19 15 / 0.2); cursor: default; }
 
-/* Une erreur ou un échec d'envoi se lit en 15 px, et revient à la ligne
-   dans la largeur du formulaire. */
-html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(.contact__statut, .contact__erreur) { font-size: 0.9375rem; overflow-wrap: anywhere; }
-
 /* L'état de l'envoi se lit à côté du bouton, comme sur l'accueil, et la note
    passe dessous sur toute la largeur : sa mesure de prose la faisait tenir à
    un pixel près, elle sautait à côté du bouton dès qu'il disait « Envoyé ».
    Parti, la note n'a plus rien à dire. */
-html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__pied { gap: 10px 16px; }
-html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__statut { order: 1; flex: 1 1 14rem; text-align: left; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__pied { gap: 8px 22px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__statut { order: 1; text-align: left; }
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__note { order: 2; flex: 0 0 100%; max-width: none; text-align: left; }
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact[data-envoye] .contact__note { display: none; }
 
@@ -1985,3 +1981,68 @@ html .tenue-carnet main:has(> .fin:last-child) + .tenue-robot .r-pied { padding-
    les liens du menu, les titres des cas, le logo et le lien d'évitement en
    gardaient une autre, héritée du socle (mesuré le 11 novembre 2026). */
 :root { --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* =========================================================================
+   UN SEUL FORMULAIRE (11 novembre 2026, relecture de confirmation)
+   Le formulaire de la fin d'une page intérieure et de /contact se dessine
+   comme celui de l'accueil, état par état : mêmes champs, même boîte d'état
+   (envoi à l'anneau, échec, parti en lilas), mêmes lignes d'erreur. Il
+   gardait une pastille verte et une pastille rouge d'avant « Citron et
+   lilas ». Les valeurs sont celles de `robot/robot.css`, écrites en clair :
+   les jetons `--r-*` n'existent que sous `.tenue-robot`. Mesuré : les styles
+   calculés des deux formulaires sont les mêmes dans chaque état.
+   ========================================================================= */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact { gap: 16px; line-height: 1.55; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__champ { gap: 7px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__champ label { color: #17130f; font-size: 17px; line-height: normal; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__facultatif { color: #17130f; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact :is(input, textarea) { padding-block: 13px; line-height: normal; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact textarea { min-height: 136px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact :is(input, textarea):hover { border-color: #4a4239; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact :is(input, textarea):focus { border-color: #17130f; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact [aria-invalid='true'],
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact [aria-invalid='true']:hover,
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact [aria-invalid='true']:focus { border-color: #b3261e; background: #fff4f2; box-shadow: none; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact [aria-invalid='true']:focus { box-shadow: 0 0 0 1px #b3261e, 0 0 0 4px rgb(179 38 30 / 0.22); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact[data-envoye] :is(input, textarea) { border-color: rgb(23 19 15 / 0.12); background: #f6f3ee; color: #4a4239; resize: none; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__envoi { height: 52px; min-height: 44px; padding-inline: 30px; gap: normal; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__encore { color: #17130f; font-size: 15px; font-weight: 550; line-height: 1.4; text-decoration: underline rgb(23 19 15 / 0.38); text-decoration-thickness: 1.5px; text-underline-offset: 5px; transition: text-decoration-color 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__encore:hover { text-decoration-color: #17130f; }
+@media (max-width: 520px) { html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__envoi { width: 100%; } }
+/* La ligne d'état : une boîte dans les trois cas, sa marque à l'encre. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut {
+  position: relative; flex: 1 1 260px; min-width: 0; box-sizing: border-box;
+  margin: 0; padding: 14px 16px 14px 44px; border-radius: 14px; max-width: none;
+  background: #f6f3ee; color: #17130f; font-size: 15px; font-weight: 550; line-height: 1.45; overflow-wrap: anywhere;
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut:empty { position: absolute; flex: none; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut[data-etat='error'] { background: #fff4f2; color: #8c1d18; font-weight: 600; box-shadow: inset 0 0 0 1px #b3261e; --marque: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 7.5v5.5M12 16.5h.01'/%3E%3C/svg%3E"); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut[data-etat='sent'] { background: #e9e3ff; color: #17130f; font-weight: 600; box-shadow: none; --marque: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut[data-etat]::before {
+  content: ''; position: absolute; left: 16px; top: 15px; display: block; width: 18px; height: 18px; margin: 0;
+  border-radius: 0; vertical-align: baseline; background: currentColor;
+  -webkit-mask: var(--marque) center / contain no-repeat; mask: var(--marque) center / contain no-repeat;
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut[data-etat='envoi']::before {
+  top: 16px; width: 16px; height: 16px; box-sizing: border-box; background: none; -webkit-mask: none; mask: none;
+  border: 2px solid rgb(23 19 15 / 0.2); border-top-color: #17130f; border-radius: 50%;
+  animation: r-tourne 0.8s linear infinite;
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__statut a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; font-weight: 600; }
+/* Sous un champ : une ligne rouge sans boîte, sa marque devant. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__erreur { position: relative; margin: 0; padding: 1px 0 0 25px; max-width: none; color: #8c1d18; font-size: 14px; font-weight: 500; line-height: 1.45; overflow-wrap: anywhere; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__erreur:empty { position: absolute; padding: 0; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__erreur:not(:empty)::before {
+  content: ''; position: absolute; left: 0; top: 3px; display: block; width: 17px; height: 17px; margin: 0;
+  border-radius: 0; vertical-align: baseline; background: currentColor; --marque: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 7.5v5.5M12 16.5h.01'/%3E%3C/svg%3E");
+  -webkit-mask: var(--marque) center / contain no-repeat; mask: var(--marque) center / contain no-repeat;
+}
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact :is(.contact__suggestion, .contact__compte) { margin: 0; max-width: none; color: #4a4239; font-size: 14px; font-weight: 400; line-height: 1.45; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__suggestion button { color: #17130f; font: inherit; font-weight: 600; text-decoration-color: #17130f; border-radius: 4px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__suggestion button:focus-visible { outline: 2px solid #17130f; outline-offset: 2px; }
+
+/* La fenêtre de l'agenda parle la langue du site : son titre en Roboto Flex
+   (il restait en mono), ses deux boutons de secours en pilules au trait. */
+html .cal-overlay .cal-overlay-title { font-family: 'Roboto Flex Variable', 'Roboto Flex', system-ui, sans-serif; font-size: 0.9375rem; font-weight: 600; letter-spacing: 0; }
+html .cal-overlay .cal-overlay-action { padding-inline: 1.25rem; border-radius: 999px; font-family: 'Roboto Flex Variable', 'Roboto Flex', system-ui, sans-serif; font-size: 0.9375rem; font-weight: 600; }
+html .cal-overlay .cal-overlay-close { border-radius: 999px; }
