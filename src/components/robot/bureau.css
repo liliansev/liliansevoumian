@@ -153,17 +153,8 @@
   .tenue-robot .r-etape--forte :is(.r-etape__sur, .r-etape__sous, .r-etape__rang) { color: var(--r-encre-lilas); }
   .tenue-robot .r-etape--forte .r-etape__ic { background: var(--r-encre); color: var(--r-lilas); }
 
-  /* L'écart : avant, après. */
-  .tenue-robot .r-ecart {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 18px;
-    padding: 14px 18px 15px; border-radius: 18px; border: 1px solid var(--r-trait-2); background: var(--r-noir);
-    font-size: 15px; line-height: 1.35;
-  }
-  .tenue-robot .r-ecart__mot { display: block; margin-bottom: 1px; font-size: 13px; color: var(--r-gris); }
-  .tenue-robot .r-ecart__avant { color: var(--r-gris); }
-  .tenue-robot .r-ecart__apres { color: var(--r-texte); font-weight: 550; }
-  .tenue-robot .r-ecart__vers { position: relative; width: 30px; height: 1.5px; background: var(--r-citron); }
-  .tenue-robot .r-ecart__vers::after { content: ''; position: absolute; right: 0; top: 50%; width: 7px; height: 7px; border: solid var(--r-citron); border-width: 1.5px 1.5px 0 0; transform: translateY(-50%) rotate(45deg); }
+  /* L'écart avant / après : dessiné dans `robot.css` (il se lit aussi sur
+     téléphone) ; ici il se range sous les cartes d'étapes. */
 
   /* ---------- les avis : trois cartes ----------
      Une grande sur lilas, pour la phrase la plus courte, dite en grand ; les

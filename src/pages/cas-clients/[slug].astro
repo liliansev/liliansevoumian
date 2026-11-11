@@ -322,7 +322,7 @@ const articleSchema = {
                   <p class="voisin__fait"><strong>{espaces(v.data.kpis[0].value)}</strong> {espaces(v.data.kpis[0].label)}</p>
                 )}
                 <span class="link-cta" aria-hidden="true">
-                  <span class="link-cta__label">Lire le détail</span>
+                  <span class="link-cta__label">Lire le cas</span>
                   <Icon name="lucide:arrow-right" class="link-cta__arrow" />
                 </span>
               </article>
@@ -549,11 +549,11 @@ const articleSchema = {
     color: var(--color-ink-low);
   }
 
-  /* La pêche ne marque QUE le contrôle, et par la couleur du mot : la pastille
-     pleine est réservée au bouton d'appel. `--color-accent-text` est la pêche
-     sur la nuit, la nuit dans une île claire. */
+  /* Le contrôle se marque par la couleur du mot, en lilas : c'est un repère,
+     pas un geste, et le citron ne sert qu'aux gestes (11 novembre 2026). Le
+     tableau est toujours posé sur le noir, jamais dans une île claire. */
   .nomenclature-role.est-controle {
-    color: var(--color-accent-text);
+    color: #b9a6ff;
     font-weight: 600;
   }
 
@@ -825,7 +825,7 @@ const articleSchema = {
   }
 
   /* Le bloc répond par son lien fléché, au survol comme au clavier : la
-     pastille se déroule sous « Lire le détail » et la flèche avance. */
+     pastille se déroule sous « Lire le cas » et la flèche avance. */
   .voisin:focus-within .link-cta__label::before {
     clip-path: inset(0 0 0 0 round 9999px);
   }

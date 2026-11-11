@@ -31,9 +31,12 @@ interface Props {
   publie?: string;
   /** Date de dernière mise à jour, au format ISO. Seule, elle s'affiche seule. */
   misAJour?: string;
+  /** La page enchaîne tout de suite sur son contenu (un index) : ni filet ni
+      grand écart sous l'en-tête. */
+  enchaine?: boolean;
 }
 
-const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves, publie, misAJour } = Astro.props;
+const { titre, titreLargeur = '16ch', chapo, retour, bouton, preuves, publie, misAJour, enchaine = false } = Astro.props;
 
 /* La date s'écrit dans la page, et pas seulement dans le balisage : un agent
    qui lit le texte n'a que cela pour juger de la fraîcheur d'un prix ou d'un
@@ -46,7 +49,7 @@ const enClair = (iso: string) => {
 const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
 ---
 
-<section data-section class="tete relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)]">
+<section data-section class:list={['tete relative px-[var(--spacing-section-x)]', enchaine ? 'tete--enchaine' : 'border-b border-[var(--color-divider)]']}>
   <div class="entree relative mx-auto max-w-[1200px]">
     {retour ? <Retour href={retour.href}>{retour.libelle}</Retour> : <Retour />}
     <h1 class="tete__titre" style={`max-width: calc(${titreLargeur} * 1.5);`} set:html={titre} />
@@ -69,6 +72,10 @@ const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
   /* Sous la barre fixe, puis l'écart d'une section. */
   .tete {
     padding-block: calc(var(--spacing-barre) + var(--spacing-bloc)) var(--spacing-section-y);
+  }
+
+  .tete--enchaine {
+    padding-bottom: var(--spacing-bloc);
   }
 
   .tete__titre {

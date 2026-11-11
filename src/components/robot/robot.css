@@ -305,9 +305,35 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 .tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: var(--r-citron); border-color: var(--r-citron); color: var(--r-encre); transform: rotate(45deg); }
 .tenue-robot .r-carte-cas:has(a:focus-visible) { outline: 2px solid var(--r-lilas); outline-offset: 3px; }
 .tenue-robot .r-carte-cas h3 a:focus-visible { outline: none; }
-/* Le texte de la carte est une boîte au bureau seulement ; son parcours dessiné et « Lire le cas » aussi (`bureau.css`). */
+/* Le texte de la carte est une boîte au bureau seulement ; ses étapes en cartes et « Lire le cas » aussi (`bureau.css`). */
 .tenue-robot .r-carte-cas__dit { display: contents; }
-.tenue-robot .r-carte-cas__montre, .tenue-robot .r-carte-cas__lire { display: none; }
+.tenue-robot .r-carte-cas__lire { display: none; }
+/* L'écart avant / après : la preuve du cas, en puits au noir de la page. Sa
+   flèche et le mot « Après » sont des repères, pas des gestes : lilas. */
+.tenue-robot .r-ecart {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 18px;
+  max-width: none; padding: 14px 18px 15px; border-radius: 18px; border: 1px solid var(--r-trait-2); background: var(--r-noir);
+  font-size: 15px; line-height: 1.35;
+}
+.tenue-robot .r-ecart__mot { display: block; margin-bottom: 1px; font-size: 13px; color: var(--r-gris); }
+.tenue-robot .r-ecart__apres .r-ecart__mot { color: var(--r-lilas); }
+.tenue-robot .r-ecart__avant { color: var(--r-gris); }
+.tenue-robot .r-ecart__apres { color: var(--r-texte); font-weight: 550; }
+.tenue-robot .r-ecart__vers { position: relative; width: 30px; height: 1.5px; background: var(--r-lilas); }
+.tenue-robot .r-ecart__vers::after { content: ''; position: absolute; right: 0; top: 50%; width: 7px; height: 7px; border: solid var(--r-lilas); border-width: 1.5px 1.5px 0 0; transform: translateY(-50%) rotate(45deg); }
+/* Sous 1100 px la carte n'a pas ses étapes en cartes, mais elle garde sa
+   preuve : le chapô promet « ce que ça a changé », et le téléphone ne le
+   montrait pas. Un cas sans écart mesuré n'en montre pas. */
+@media (max-width: 1099.98px) {
+  .tenue-robot .r-etapes { display: none; }
+  .tenue-robot .r-carte-cas__montre { margin-top: 10px; }
+  .tenue-robot .r-carte-cas__montre:not(:has(.r-ecart)) { display: none; }
+}
+/* Sur téléphone l'avant et l'après se suivent, l'un sous l'autre. */
+@media (max-width: 620px) {
+  .tenue-robot .r-ecart { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px 16px 15px; }
+  .tenue-robot .r-ecart__vers { display: none; }
+}
 
 /* Les avis : trois citations posées, séparées par des filets. */
 .tenue-robot .r-avis { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 48px; align-items: start; }
@@ -395,9 +421,20 @@ html:has(.tenue-robot) { scrollbar-color: #4a433c #0f0d0b; }
 }
 @keyframes r-tourne { to { transform: rotate(1turn); } }
 .tenue-robot .r-contact .contact.contact .contact__statut a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; font-weight: 600; }
-/* Sous un champ, une erreur de saisie : une ligne rouge, sans boîte. */
-.tenue-robot .r-contact .contact.contact .contact__champ .contact__statut { padding: 1px 0 0 25px; border-radius: 0; background: none; box-shadow: none; font-size: 14px; font-weight: 500; }
-.tenue-robot .r-contact .contact.contact .contact__champ .contact__statut[data-etat]::before { left: 0; top: 3px; width: 17px; height: 17px; }
+/* Sous un champ, une erreur de saisie : une ligne rouge, sans boîte, sa
+   marque devant. Chaque champ a la sienne (`contact__erreur`). */
+.tenue-robot .r-contact .contact.contact .contact__erreur { position: relative; margin: 0; padding: 1px 0 0 25px; max-width: none; color: #8c1d18; font-size: 14px; font-weight: 500; line-height: 1.45; }
+.tenue-robot .r-contact .contact.contact .contact__erreur:empty { position: absolute; padding: 0; }
+.tenue-robot .r-contact .contact.contact .contact__erreur:not(:empty)::before {
+  content: ''; position: absolute; left: 0; top: 3px; display: block; width: 17px; height: 17px; margin: 0;
+  border-radius: 0; vertical-align: baseline; background: currentColor;
+  --marque: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 7.5v5.5M12 16.5h.01'/%3E%3C/svg%3E");
+  -webkit-mask: var(--marque) center / contain no-repeat; mask: var(--marque) center / contain no-repeat;
+}
+/* Une adresse proposée, ce qu'il reste à écrire : à l'encre, en petit. */
+.tenue-robot .r-contact .contact.contact :is(.contact__suggestion, .contact__compte) { margin: 0; max-width: none; color: var(--r-encre-2); font-size: 14px; font-weight: 400; line-height: 1.45; }
+.tenue-robot .r-contact .contact.contact .contact__suggestion button { color: var(--r-encre); font: inherit; font-weight: 600; text-decoration-color: var(--r-encre); border-radius: 4px; }
+.tenue-robot .r-contact .contact.contact .contact__suggestion button:focus-visible { outline: 2px solid var(--r-encre); outline-offset: 2px; }
 
 /* ---------- le pied ---------- */
 .tenue-robot .r-pied { padding-block: 104px 40px; }

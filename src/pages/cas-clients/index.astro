@@ -2,35 +2,39 @@
 import Layout from '../../layouts/Layout.astro';
 import Navigation from '../../components/Navigation.astro';
 import Footer from '../../components/Footer.astro';
-import Retour from '../../components/retour.astro';
+import TeteDePage from '../../components/tete-de-page.astro';
 import FinDePage from '../../components/fin-de-page.astro';
-import { Icon } from 'astro-icon/components';
+import Outils from '../../components/robot/outils.astro';
 import { espaces } from '../../lib/espaces';
 import { getCollection } from 'astro:content';
-import { couleurOutil } from '../../data/outils';
 
 // Cas clients = collection Markdown locale (src/content/cas-clients/).
 // Brouillons (draft: true) : visibles en dev, exclus du build de prod.
 const showDrafts = !import.meta.env.PROD;
 const all = await getCollection('cas-clients');
+// Même ordre que sur l'accueil (`robot/projets.astro`) : les cas qui ont un
+// avant / après d'abord, puis du plus récent au plus ancien. La page promet
+// « avant et après » : sa première feuille doit le montrer.
 const entries = all
   .filter((entry) => showDrafts || !entry.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  .sort((a, b) => Number(!!b.data.bascule) - Number(!!a.data.bascule) || b.data.date.getTime() - a.data.date.getTime());
 
 /* Les espaces insécables du français, posées à l'affichage (`lib/espaces.ts`) :
    les textes des cas ne les portent pas. */
 
 // Le titre garde aussi sa forme d'origine : c'est elle que lit le balisage
-// de la collection.
+// de la collection. Sur la page, chaque cas porte son titre en clair
+// (`enClair` : ce qui a été construit), le nom du client au-dessus.
 const displayStudies = entries.map((entry) => ({
   slug: entry.id,
   title: entry.data.title,
-  titre: espaces(entry.data.title),
+  client: entry.data.client ?? entry.data.title,
   secteur: entry.data.secteur,
-  tags: entry.data.tags,
+  titre: espaces(entry.data.enClair ?? entry.data.title),
+  texte: espaces(entry.data.accroche ?? entry.data.description ?? ''),
   tools: entry.data.tools,
-  kpis: entry.data.kpis.map((kpi) => ({ value: espaces(kpi.value), label: espaces(kpi.label) })),
-  description: entry.data.description && espaces(entry.data.description),
+  ecarts: (entry.data.bascule ?? []).map((l) => ({ avant: espaces(l.avant), apres: espaces(l.apres) })),
+  parcours: (entry.data.parcours ?? []).map((e) => ({ qui: espaces(e.kicker), quoi: espaces(e.title) })),
   scopeNote: entry.data.scopeNote && espaces(entry.data.scopeNote),
 }));
 
@@ -60,10 +64,10 @@ const collectionSchema = {
 
 const total = displayStudies.length;
 
-// Le nombre de cas ouvre le chapô, en toutes lettres jusqu'à dix.
+// Le nombre de cas ouvre le titre, en toutes lettres jusqu'à dix.
 const EN_LETTRES = ['', 'Un', 'Deux', 'Trois', 'Quatre', 'Cinq', 'Six', 'Sept', 'Huit', 'Neuf', 'Dix'];
-const debut =
-  total > 0 ? `${EN_LETTRES[total] ?? total} projet${total > 1 ? 's' : ''}, automatisations` : 'Automatisations';
+const titre =
+  total > 1 ? `${EN_LETTRES[total] ?? total} cas clients, <mark>avant et après.</mark>` : 'Cas clients, <mark>avant et après.</mark>';
 ---
 
 <Layout
@@ -75,92 +79,84 @@ const debut =
   <Navigation ctaSource="cas_index_nav" />
 
   <main id="main-content">
-    <section
-      data-section
-      class="relative border-b border-[var(--color-divider)] px-[var(--spacing-section-x)]"
-    >
-      {/* Même dégagement sous la barre que `tete-de-page`. */}
-      <div class="relative max-w-[1200px] mx-auto pt-[calc(var(--spacing-barre)+var(--spacing-bloc))] pb-[var(--spacing-section-y)]">
+    <TeteDePage
+      titre={titre}
+      titreLargeur="14ch"
+      chapo="Des automatisations et des applications construites pour des clients. Pour chacune, ce que j’ai construit et ce que ça a changé, avec l’écart mesuré quand il y en a un."
+      enchaine
+    />
 
-        {/* L'en-tête arrive, il ne s'affiche pas : `.entree` fait monter ses
-            enfants directs l'un après l'autre, dans l'ordre où on les lit.
-            Ce sont des `@keyframes` jouées au chargement, pas un voile levé par
-            script : sans JS le titre est peint dans son état final. */}
-        <div class="entree mb-[var(--spacing-bloc)]">
-          <div class="mb-[var(--spacing-groupe)]"><Retour href="/" /></div>
-          <h1 class="m-0 max-w-[18ch]">Des projets métier, documentés.</h1>
-          <p class="mt-[var(--spacing-lie)] mb-0 text-[length:var(--text-body-large)] text-[var(--color-ink-mid)] leading-[1.5]">
-            {debut} et applications&nbsp;: le besoin de départ, la solution réalisée et les résultats disponibles, avec leur contexte.
-          </p>
-        </div>
-
-        {/* Une liste, pas une grille de cartes : un cas par rangée, ce qu'il
-            est à gauche, ce qu'il a donné à droite. Rien ne l'encadre et aucun
-            filet ne sépare les rangées : c'est l'espace qui le fait. */}
+    {/* Une feuille par cas, sur toute la colonne : ce qui a été construit à
+        gauche, la preuve à droite. La preuve est le registre entier de
+        l'avant et de l'après (l'accueil n'en montre que la première ligne) ;
+        un cas qui n'a pas d'écart mesuré montre son parcours, et le dit.
+        La page porte la grammaire de l'accueil (`.tenue-robot`) : mêmes
+        feuilles, mêmes pastilles d'outils, mêmes puits au noir de la page. */}
+    <section class="registre tenue-robot px-[var(--spacing-section-x)]" aria-label="Les cas clients">
+      <div class="registre__in">
         {total === 0 ? (
-          <div class="reveal">
-            <p class="m-0 text-[length:var(--text-body-large)] text-[var(--color-ink)]">
-              Les cas sont en cours de publication.
-            </p>
-            <p class="mt-[var(--spacing-colle)] mb-0 text-[var(--color-ink-mid)]">
-              Pour parler d’un projet proche du vôtre, écrivez-moi une phrase juste en dessous&nbsp;: je vous réponds moi-même.
-            </p>
+          <div class="registre__vide">
+            <p>Les cas sont en cours de publication.</p>
+            <p>Pour parler d’un projet proche du vôtre, écrivez-moi une phrase juste en dessous&nbsp;: je vous réponds moi-même.</p>
           </div>
         ) : (
-          <ul class="cas-liste reveal-stagger" role="list">
+          <ul class="registre__liste" role="list">
             {displayStudies.map((cs) => (
-              <li class="reveal">
-                <article class="cas">
-                  <div class="cas__tete">
-                    {/* Le lien est le titre, et il s'étend à toute la rangée
-                        (`::after`) : la rangée entière se clique, et un lecteur
-                        d'écran n'entend que le titre comme nom du lien. */}
-                    <h2 class="cas__titre">
-                      <a href={`/cas-clients/${cs.slug}`} class="cas__lien">{cs.titre}</a>
+              <li>
+                <article class="fiche" id={cs.slug}>
+                  <div class="fiche__dit">
+                    <p class="fiche__client">
+                      {cs.client}
+                      {cs.secteur && <span class="fiche__secteur">{cs.secteur}</span>}
+                    </p>
+                    {/* Le lien est le titre, et il s'étend à toute la feuille
+                        (`::after`) : la feuille entière se clique, et un
+                        lecteur d'écran n'entend que le titre comme nom du lien. */}
+                    <h2 class="fiche__titre">
+                      <a href={`/cas-clients/${cs.slug}`}>{cs.titre}</a>
                     </h2>
-                    {(cs.secteur || cs.tags.length > 0) && (
-                      <p class="cas__meta">
-                        {cs.secteur && <span class="cas__secteur">{cs.secteur}</span>}
-                        {cs.tags.length > 0 && <span>{cs.tags.join(', ')}</span>}
-                      </p>
-                    )}
+                    {cs.texte && <p class="fiche__texte">{cs.texte}</p>}
+                    {cs.tools.length > 0 && <Outils outils={cs.tools} />}
                   </div>
 
-                  {/* À droite, les résultats ; un cas qui n'a pas de chiffre y
-                      dit en une phrase ce qui a été réalisé. */}
-                  <div class="cas__preuves">
-                    {cs.kpis.length > 0 ? (
-                      <dl class="faits">
-                        {cs.kpis.slice(0, 3).map((kpi) => (
-                          <div>
-                            <dt class="fait__valeur">{kpi.value}</dt>
-                            <dd class="fait__detail">{kpi.label}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    ) : (
-                      cs.description && <p class="cas__resume">{cs.description}</p>
+                  <div class="fiche__preuve">
+                    {cs.ecarts.length > 0 ? (
+                      <div class="ecarts">
+                        <p class="ecarts__tete" aria-hidden="true"><span>Avant</span><span>Après</span></p>
+                        <ul class="ecarts__lignes" role="list" aria-label={`Avant et après chez ${cs.client}`}>
+                          {cs.ecarts.map((l) => (
+                            <li>
+                              <span class="ecarts__avant"><span class="sr-only">Avant&nbsp;: </span>{l.avant}</span>
+                              <span class="ecarts__apres"><span class="sr-only">Après&nbsp;: </span>{l.apres}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : cs.parcours.length > 0 && (
+                      <div class="ecarts ecarts--parcours">
+                        <p class="ecarts__tete" aria-hidden="true"><span>Le parcours dans l’application</span></p>
+                        <ol class="ecarts__lignes" role="list" aria-label={`Le parcours dans l’application de ${cs.client}`}>
+                          {cs.parcours.map((e, i) => (
+                            <li>
+                              <span class="ecarts__rang" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                              <span class="ecarts__avant">{e.qui}</span>
+                              <span class="ecarts__apres">{e.quoi}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
                     )}
-                    {cs.scopeNote && <p class="cas__reserve">{cs.scopeNote}</p>}
+                    {cs.scopeNote && <p class="fiche__reserve">{cs.scopeNote}</p>}
                   </div>
-
-                  <div class="cas__pied">
-                    {cs.tools.length > 0 && (
-                      <ul class="cas__outils" role="list" aria-label="Outils">
-                        {cs.tools.map((tool) => <li class="chip chip--outil" style={`--o:${couleurOutil(tool)}`}>{tool}</li>)}
-                      </ul>
-                    )}
-                    <span class="link-cta" aria-hidden="true">
-                      <span class="link-cta__label">Lire le détail</span>
-                      <Icon name="lucide:arrow-right" class="link-cta__arrow" />
-                    </span>
-                  </div>
+                  {/* Après la preuve sur téléphone, en bas à gauche au bureau. */}
+                  <span class="fiche__lire" aria-hidden="true">
+                    Lire le cas<span class="fiche__fleche">↗</span>
+                  </span>
                 </article>
               </li>
             ))}
           </ul>
         )}
-
       </div>
     </section>
 
@@ -174,209 +170,343 @@ const debut =
 </Layout>
 
 <style>
-  .cas-liste {
-    display: grid;
-    row-gap: var(--spacing-bloc);
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  /* La colonne est celle de l'en-tête (`tete-de-page`) : 1200 px, mêmes marges.
+     Pas d'écart dessous : `fin-de-page` apporte le sien. */
+
+  .registre__in {
+    max-width: 1200px;
+    margin-inline: auto;
   }
 
-  /* La règle de base plafonne un `li` à une mesure de prose : ici c'est une
-     rangée, sur toute la colonne. */
-  .cas-liste > li {
+  .registre__vide {
+    display: grid;
+    gap: 8px;
+    color: var(--r-texte-2);
+  }
+
+  .registre__liste {
+    display: grid;
+    gap: 20px;
+  }
+
+  /* Ces `li` portent une feuille ou une ligne du registre, pas de la prose :
+     la mesure de lecture de `global.css` (66ch) ne les concerne pas. */
+  .registre__liste > li,
+  .ecarts__lignes > li,
+  .ecarts__tete {
     max-width: none;
   }
 
-  .cas {
+  /* ---------- la feuille d'un cas ---------- */
+  .fiche {
     position: relative;
     display: grid;
-    gap: var(--spacing-lie);
+    gap: 24px;
+    padding: 24px 22px 22px;
+    border: 1px solid var(--r-trait-2);
+    border-radius: 22px;
+    background: var(--r-surface-2);
+    transition: border-color 0.3s;
+    /* Une ancre (`/cas-clients#humble-plus`) arrive sous la barre fixe. */
+    scroll-margin-top: 96px;
   }
 
-  .cas__titre {
-    max-width: 30ch;
-    margin: 0;
-    font-size: var(--text-title-lg);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+  .fiche__dit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
   }
 
-  .cas__lien {
-    color: inherit;
+  .fiche__client {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    margin-bottom: 8px;
+    color: var(--r-lilas);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .fiche__secteur {
+    color: var(--r-gris);
+    font-weight: 400;
+  }
+
+  .fiche__titre {
+    margin-bottom: 4px;
+    font-size: clamp(24px, 2.35vw, 32px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.024em;
+    text-wrap: balance;
+  }
+
+  .fiche__titre a {
     text-decoration: none;
   }
 
-  /* Toute la rangée se clique. La zone déborde un peu du texte, pour que le
-     cadre de focus ne le serre pas. */
-  .cas__lien::after {
+  .fiche__titre a::after {
     content: '';
     position: absolute;
-    inset: -0.75rem;
-    border-radius: var(--radius-md);
+    inset: 0;
+    border-radius: inherit;
   }
 
-  .cas__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1.25rem;
-    max-width: none;
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
+  .fiche__texte {
+    max-width: 30em;
+    margin-bottom: 4px;
+    color: var(--r-texte-2);
+    font-size: 16px;
+    text-wrap: pretty;
   }
 
-  .cas__secteur {
-    color: var(--color-ink-mid);
-  }
-
-  /* Les résultats, un par ligne : ce qu'on retient, puis ce qui le précise,
-     comme les faits de « Pourquoi moi » sur l'accueil. */
-  .faits {
-    display: grid;
-    gap: var(--spacing-lie);
-    margin: 0;
-  }
-
-  .fait__valeur {
-    color: var(--color-ink);
-    font-family: var(--font-display);
-    font-size: var(--text-title-lg);
+  /* « Lire le cas » : la même pilule au trait que sur l'accueil. Elle ne se
+     clique pas elle-même (toute la feuille est le lien) : au survol de la
+     feuille, sa flèche passe au citron et tourne. */
+  .fiche__lire {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    justify-self: start;
+    height: 44px;
+    padding: 0 6px 0 18px;
+    border: 1px solid var(--r-trait-2);
+    border-radius: 999px;
+    color: var(--r-texte);
+    font-size: 15px;
     font-weight: 600;
-    font-stretch: normal;
-    text-transform: none;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    letter-spacing: 0;
-    white-space: nowrap;
+    letter-spacing: -0.005em;
+    transition: border-color 0.25s;
   }
 
-  .fait__detail {
-    margin: 0.25rem 0 0;
-    color: var(--color-ink-mid);
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    line-height: 1.45;
-  }
-
-  .cas__resume {
-    margin: 0;
-    color: var(--color-ink-mid);
-    line-height: var(--leading-body);
-  }
-
-  .cas__reserve {
-    margin: var(--spacing-colle) 0 0;
-    color: var(--color-ink-low);
-    font-size: var(--text-body-sm);
-    line-height: 1.5;
-  }
-
-  .cas__pied {
+  .fiche__fleche {
     display: grid;
-    justify-items: start;
-    gap: var(--spacing-colle);
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--r-noir);
+    font-size: 16px;
+    transition:
+      transform 0.4s var(--r-sortie),
+      background-color 0.25s,
+      color 0.25s;
   }
 
-  /* Les outils ne se cliquent pas : le pointeur les traverse, la rangée reste
-     une seule cible. */
-  .cas__outils {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    pointer-events: none;
+  .fiche:has(a:focus-visible) {
+    outline: 2px solid var(--r-lilas);
+    outline-offset: 3px;
   }
 
-  /* La rangée répond par son lien fléché : la pastille se déroule sous
-     « Lire le détail » et la flèche avance, au survol comme au clavier. */
-  .cas:focus-within .link-cta__label::before {
-    clip-path: inset(0 0 0 0 round 9999px);
-  }
-
-  .cas:focus-within .link-cta__label {
-    color: var(--color-night);
-  }
-
-  .cas:focus-within :global(.link-cta__arrow) {
-    transform: translateX(4px);
-    color: var(--color-accent-text);
+  .fiche__titre a:focus-visible {
+    outline: none;
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .cas:hover .link-cta__label::before {
-      clip-path: inset(0 0 0 0 round 9999px);
+    .fiche:hover {
+      border-color: var(--r-trait-3);
     }
 
-    .cas:hover .link-cta__label {
-      color: var(--color-night);
+    .fiche:hover .fiche__lire {
+      border-color: var(--r-trait-3);
     }
 
-    .cas:hover :global(.link-cta__arrow) {
-      transform: translateX(4px);
-      color: var(--color-accent-text);
-    }
-  }
-
-  /* Le cadre de focus entoure la rangée, pas le seul titre. Même condition que
-     la règle générale : pas de cadre sur un écran purement tactile. */
-  @media (any-hover: hover), (any-pointer: fine) {
-    .cas__lien:focus-visible {
-      outline: none;
-    }
-
-    .cas__lien:focus-visible::after {
-      outline: 2px solid var(--color-focus);
-      outline-offset: 2px;
+    .fiche:hover .fiche__fleche {
+      background: var(--r-citron);
+      color: var(--r-encre);
+      transform: rotate(45deg);
     }
   }
 
-  /* À partir de la tablette : le cas à gauche, ses résultats à droite, sur
-     deux colonnes égales. */
-  @media (min-width: 48rem) {
-    .cas {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-template-rows: auto 1fr;
-      column-gap: var(--spacing-gouttiere);
-      align-items: start;
-    }
-
-    .cas__tete {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    .cas__pied {
-      grid-column: 1;
-      grid-row: 2;
-    }
-
-    .cas__preuves {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-    }
+  /* ---------- la preuve : le registre de l'avant et de l'après ---------- */
+  .fiche__preuve {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    min-width: 0;
   }
 
-  /* Grand écran : chaque résultat tient sur une ligne, la valeur puis ce qui
-     la précise. Les valeurs partagent une colonne, les précisions partent
-     toutes du même bord. */
-  @media (min-width: 64rem) {
-    .faits {
-      grid-template-columns: minmax(9.5rem, max-content) minmax(0, 1fr);
-      gap: 0.75rem var(--spacing-lie);
+  /* Un puits au noir de la page, creusé dans la feuille (les trois couches du
+     verrou : page, feuille, puits). */
+  .ecarts {
+    border: 1px solid var(--r-trait-2);
+    border-radius: 18px;
+    background: var(--r-noir);
+    font-size: 15px;
+    line-height: 1.35;
+  }
+
+  .ecarts__tete {
+    display: flex;
+    gap: 8px;
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--r-trait);
+    color: var(--r-gris);
+    font-size: 13px;
+    line-height: 1.3;
+  }
+
+  /* Sur téléphone les deux colonnes se suivent : l'en-tête se lit « Avant → Après ». */
+  .ecarts__tete span + span::before {
+    content: '→';
+    margin-right: 8px;
+    color: var(--r-lilas);
+  }
+
+  .ecarts__tete span + span {
+    color: var(--r-lilas);
+  }
+
+  .ecarts__lignes > li {
+    display: grid;
+    gap: 4px;
+    padding: 14px 18px 15px;
+  }
+
+  .ecarts__lignes > li + li {
+    border-top: 1px solid var(--r-trait);
+  }
+
+  .ecarts__avant {
+    color: var(--r-gris);
+  }
+
+  .ecarts__apres {
+    position: relative;
+    padding-left: 26px;
+    color: var(--r-texte);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.008em;
+    text-wrap: pretty;
+  }
+
+  /* La flèche de l'écart : un trait lilas (le citron est aux gestes). */
+  .ecarts__apres::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.68em;
+    width: 16px;
+    height: 1.5px;
+    background: var(--r-lilas);
+  }
+
+  .ecarts__apres::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0.68em;
+    width: 6px;
+    height: 6px;
+    border: solid var(--r-lilas);
+    border-width: 1.5px 1.5px 0 0;
+    transform: translateY(calc(-50% + 0.75px)) rotate(45deg);
+  }
+
+  /* Le parcours d'une application : un rang, qui agit, ce qu'il fait. Sur
+     téléphone, qui agit et ce qu'il fait se suivent sous le même rang. */
+  .ecarts--parcours .ecarts__lignes > li {
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: baseline;
+    gap: 2px 12px;
+  }
+
+  .ecarts--parcours .ecarts__avant,
+  .ecarts--parcours .ecarts__apres {
+    grid-column: 2;
+  }
+
+  .ecarts__rang {
+    color: var(--r-gris);
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ecarts--parcours .ecarts__apres {
+    padding-left: 0;
+  }
+
+  .ecarts--parcours .ecarts__apres::before,
+  .ecarts--parcours .ecarts__apres::after {
+    content: none;
+  }
+
+  .fiche__reserve {
+    padding-inline: 4px;
+    color: var(--r-gris);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  /* À partir de 620 px le registre tient sur deux colonnes : l'avant à
+     gauche, l'après à droite, alignés d'une ligne à l'autre. */
+  @media (min-width: 620px) {
+    .fiche {
+      padding: 28px;
+      border-radius: 28px;
+    }
+
+    .ecarts__tete,
+    .ecarts__lignes:not(ol) > li {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 4px 28px;
       align-items: baseline;
     }
 
-    .faits > div {
-      display: contents;
+    .ecarts__tete span + span::before {
+      content: none;
     }
 
-    .fait__detail {
-      margin: 0;
+    .ecarts__tete span + span {
+      padding-left: 26px;
+    }
+
+    .ecarts--parcours .ecarts__lignes > li {
+      grid-template-columns: 28px minmax(0, 0.42fr) minmax(0, 1fr);
+      gap: 4px 12px;
+    }
+
+    .ecarts--parcours .ecarts__avant,
+    .ecarts--parcours .ecarts__apres {
+      grid-column: auto;
+    }
+  }
+
+  /* Au bureau : ce qui a été construit à gauche, la preuve à droite. */
+  @media (min-width: 1000px) {
+    .fiche {
+      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+      grid-template-rows: 1fr auto;
+      gap: 28px 48px;
+    }
+
+    .fiche__dit {
+      grid-area: 1 / 1;
+      padding: 8px 0 0 8px;
+    }
+
+    .fiche__preuve {
+      grid-area: 1 / 2 / 3 / 3;
+      align-content: center;
+    }
+
+    .fiche__lire {
+      grid-area: 2 / 1;
+      margin: 0 0 4px 8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fiche,
+    .fiche__lire,
+    .fiche__fleche {
+      transition: none;
     }
   }
 </style>
