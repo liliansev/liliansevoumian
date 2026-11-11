@@ -52,19 +52,18 @@
   .tenue-robot .r-sticker--0 { top: 13%; animation-delay: 0.4s; }
   .tenue-robot .r-sticker--1 { top: calc(50% - 23px); animation-delay: 0.48s; }
   .tenue-robot .r-sticker--2 { bottom: 13%; animation-delay: 0.56s; }
-  .tenue-robot .r-sticker__ic { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--ic); flex-shrink: 0; }
+  .tenue-robot .r-sticker__ic { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--ic); flex-shrink: 0; }
   .tenue-robot .r-sticker__ic svg { width: 17px; height: 17px; }
-  /* « agents IA » prend sa majuscule de début de ligne ; « n8n » n'en a pas. */
-  .tenue-robot .r-sticker--2 .r-sticker__nom { display: inline-block; }
-  .tenue-robot .r-sticker--2 .r-sticker__nom::first-letter { text-transform: uppercase; }
-  .tenue-robot .r-sticker__detail { color: var(--r-encre-3); font-weight: 500; font-size: 14px; }
+  /* Le nom, et dessous ce qu'il faut en savoir (« certifié niv. 5 »). */
+  .tenue-robot .r-sticker__dit { display: grid; gap: 1px; }
+  .tenue-robot .r-sticker__detail { color: var(--r-encre-3); font-weight: 500; font-size: 12.5px; }
 
   .tenue-robot .r-hero .r-fils { display: block; position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 
   /* ---------- « Ce que je fais » : une scène sur lilas ---------- */
   .tenue-robot .r-onglets {
     display: block; position: relative;
-    --m-bord: 28px; --m-scene: clamp(600px, 60%, 712px);
+    --m-bord: 28px; --m-scene: clamp(616px, 62%, 736px);
     background: var(--r-lilas); color: var(--r-encre); border-radius: 28px; padding: var(--m-bord);
   }
   .tenue-robot .r-onglets__liste {
@@ -92,7 +91,7 @@
   .tenue-robot .r-pan__lien { justify-self: start; margin: 0 0 0 7px; padding-top: 0; }
   .tenue-robot .r-pan__scene {
     display: block; grid-column: 2; grid-row: 1 / -1; align-self: center;
-    aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; background: var(--r-noir);
+    aspect-ratio: 4 / 3; border-radius: 18px; overflow: hidden; background: var(--r-noir);
     animation-name: r-scene;
   }
   @keyframes r-scene { from { opacity: 0; } }
@@ -121,7 +120,7 @@
     font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
   }
   .tenue-robot .r-carte-cas__lire { display: inline; }
-  .tenue-robot .r-carte-cas__fleche { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--r-noir); transition: transform 0.4s var(--r-sortie), background-color 0.25s, color 0.25s; }
+  .tenue-robot .r-carte-cas__fleche { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--r-noir); transition: transform 0.4s var(--r-sortie), background-color 0.25s var(--r-sortie), color 0.25s var(--r-sortie); }
   /* Au survol la feuille garde son fond ; son filet s'éclaircit et la flèche répond. */
   .tenue-robot .r-carte-cas:hover { background: var(--r-surface-2); border-color: var(--r-trait-3); }
   .tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: none; border-color: var(--r-trait-3); color: var(--r-texte); transform: none; }
@@ -138,7 +137,7 @@
     background: var(--r-noir); border: 1px solid var(--r-trait-2);
   }
   .tenue-robot .r-etape__tete { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: auto; padding-bottom: 16px; }
-  .tenue-robot .r-etape__ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--o); color: var(--r-encre); flex-shrink: 0; }
+  .tenue-robot .r-etape__ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--o); color: var(--r-encre); flex-shrink: 0; }
   .tenue-robot .r-etape__ic svg { width: 19px; height: 19px; }
   .tenue-robot .r-etape__rang { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--r-gris); }
   .tenue-robot .r-etape__sur { font-size: 13px; line-height: 1.3; color: var(--r-gris); margin-bottom: 3px; }
@@ -157,11 +156,13 @@
      téléphone) ; ici il se range sous les cartes d'étapes. */
 
   /* ---------- les avis : trois cartes ----------
-     Une grande sur lilas, pour la phrase la plus courte, dite en grand ; les
-     deux autres à sa droite, l'une sur l'autre. Rien ne bouge. */
+     Une affiche lilas, étroite et haute, pour la phrase la plus courte, dite
+     en très grand ; les deux autres à sa droite, plus larges, l'une sur
+     l'autre. La phrase remplit l'affiche : plus large, elle laissait 170 px
+     vides entre la citation et la personne. Rien ne bouge. */
   .tenue-robot .r-avis { grid-template-columns: 1fr; gap: 0; }
   .tenue-robot .r-avis .r-titre { position: static; margin-bottom: 40px; }
-  .tenue-robot .r-fil { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 16px; }
+  .tenue-robot .r-fil { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); grid-template-rows: auto auto; gap: 16px; }
   .tenue-robot .r-avis__un,
   .tenue-robot .r-avis__un:first-child,
   .tenue-robot .r-avis__un:last-child {
@@ -173,11 +174,11 @@
   .tenue-robot .r-avis__un figcaption img { width: 48px; height: 48px; }
   /* La grande : la citation tient la carte, la personne est en bas. */
   .tenue-robot .r-avis__un:first-child {
-    grid-row: 1 / -1; padding: 44px 44px 36px; min-height: 480px; box-sizing: border-box;
+    grid-row: 1 / -1; padding: 44px 44px 36px; box-sizing: border-box;
     background: var(--r-lilas); border-color: var(--r-lilas); color: var(--r-encre);
   }
   .tenue-robot .r-avis__un:first-child blockquote {
-    max-width: 8.6em; font-size: clamp(44px, 3.6vw, 52px); line-height: 1.04; font-weight: 600; letter-spacing: -0.034em;
+    font-size: clamp(46px, 4.3vw, 64px); line-height: 1.03; font-weight: 600; letter-spacing: -0.036em;
     color: rgb(23 19 15 / 0.72);
   }
   .tenue-robot .r-avis__un:first-child blockquote p { text-wrap: balance; }
@@ -195,6 +196,12 @@
   /* La phrase des dashboards tient sur trois lignes, les autres sur deux : le
      panneau garde la hauteur de la plus longue, pour ne pas sauter d'un onglet à l'autre. */
   .tenue-robot .r-pan { min-height: 504px; }
+  /* Le plateau prend au moins cette hauteur : son bord haut tombe sur celui de
+     la liste, son bord bas sur celui du lien (à 1100 px il flottait 21 px plus
+     bas que la liste). Le plan s'y centre, le quadrillage remplit le reste. */
+  .tenue-robot .r-pan__scene { width: 100%; min-height: 504px; }
+  /* L'île du contact est en retrait de 12 px : son texte reprend l'axe des autres sections (32 px). */
+  .tenue-robot .r-contact .r-wrap { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
 }
 
 /* Entre 1100 et 1240 px tout tient, un cran plus serré. */
@@ -204,7 +211,6 @@
   /* Les deux petites cartes d'avis moins hautes : la grande garde ses proportions. */
   .tenue-robot .r-avis__un:not(:first-child) { gap: 24px; padding: 28px 30px 24px; }
   .tenue-robot .r-avis__un:not(:first-child) blockquote { font-size: 19px; }
-  .tenue-robot .r-avis__un:first-child { min-height: 0; }
 }
 
 /* La pile ne colle que si une feuille tient dans la fenêtre sous la barre. */
@@ -217,8 +223,8 @@
   .tenue-robot .r-titre--petit { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
   .tenue-robot .r-defile__pause {
     position: relative; display: grid; place-items: center; width: 32px; height: 32px; padding: 0;
-    border-radius: 50%; border: 1px solid var(--r-trait-2); background: none; color: var(--r-gris);
-    cursor: pointer; transition: color 0.2s, border-color 0.2s;
+    border-radius: 50%; border: 1px solid var(--r-trait-3); background: none; color: var(--r-gris);
+    cursor: pointer; transition: color 0.2s var(--r-sortie), border-color 0.2s var(--r-sortie);
   }
   /* La cible fait 44 px, le rond 32. */
   .tenue-robot .r-defile__pause::before { content: ''; position: absolute; inset: -6px; }
@@ -261,6 +267,17 @@
   --font-display: var(--r-flex);
   /* L'accent des scènes est le lilas : états, compteurs, ports, coches. */
   --color-peche: var(--r-lilas);
+  /* Une seule courbe de sortie sur la page, celle de la tenue. */
+  --ease-out-quint: var(--r-sortie);
+  --ease-out-expo: var(--r-sortie);
+}
+/* Le texte d'une scène porte son récit : un cran au-dessus du socle (11,5 px
+   au plan, soit 9 px à l'écran à 1100 px), sur un plateau un peu plus large. */
+.tenue-robot .r-pan__scene .sm {
+  --sm-note: 12.5px; --sm-texte: 13.5px; --sm-fort: 15px;
+  /* Le plateau s'arrondit lui aussi : à 1100 px, pendant le tour, ses coins
+     bas débordaient carrés de l'arrondi du cadre (mesuré, pas à 1280 ni 1440). */
+  border-radius: inherit;
 }
 /* Le citron n'y marque qu'une chose, ce que la scène obtient : le créneau
    posé dans l'agenda, le rendez-vous déplacé par l'agent, la colonne qui
@@ -271,7 +288,21 @@
 .tenue-robot .r-pan__scene .issue { --jaune: var(--r-citron); }
 .tenue-robot .r-pan__scene .sm .bouton { background: var(--r-encre); color: var(--r-papier); box-shadow: none; }
 .tenue-robot .r-pan__scene .sm .bouton svg { stroke: currentColor; }
-/* Le bouton pause est posé sur le plan sombre : son anneau est lilas, pas à l'encre du panneau. */
+/* La commande de la scène, dans le coin du plateau, toujours visible (elle ne
+   se montrait qu'au survol, et disparaissait le tour fini) : pause pendant le
+   tour, « Rejouer » ensuite, son nom écrit. Au trait : ce n'est pas un geste
+   qui mène au formulaire. Son anneau de focus est lilas, pas à l'encre du panneau. */
+.tenue-robot .r-pan__scene { position: relative; }
+.tenue-robot .r-pan__scene .sm-pause {
+  /* Dans la marge basse du plan, que les quatre scènes laissent libre. */
+  right: 10px; bottom: 6px; width: 28px; height: 28px; opacity: 1;
+  border: 1px solid var(--r-trait-3); background: rgb(15 13 11 / 0.88); color: var(--r-texte-2);
+  font: 550 12.5px/1 var(--r-flex); letter-spacing: 0; transition: color 0.2s var(--r-sortie), border-color 0.2s var(--r-sortie);
+}
+.tenue-robot .r-pan__scene .sm-pause::before { inset: -9px; }
+.tenue-robot .r-pan__scene .sm-pause:hover { color: var(--r-texte); border-color: var(--r-gris); }
+.tenue-robot .r-pan__scene .sm-pause[data-mode='rejouer'] { display: inline-flex; align-items: center; gap: 6px; width: auto; padding: 0 11px 0 9px; }
+.tenue-robot .r-pan__scene .sm-pause[data-mode='rejouer'] .sm-pause__nom { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
 .tenue-robot .r-pan .r-pan__scene .sm-pause:focus-visible { outline-color: var(--r-lilas); }
 .tenue-robot .sm::before { content: none; }
 /* Les halos des objets : on garde l'anneau net, on retire le flou. Les scènes

@@ -68,7 +68,7 @@ const offres = [
 ---
 
 <section id={id} data-section class="fin relative px-[var(--spacing-section-x)]">
-  <div class="fin__centre reveal">
+  <div class="fin__centre reveal" data-contact-zone>
     {/* Sur l'accueil, le titre répond à celui qui ouvre le récit (« Vous
         perdez du temps. ») : la page se ferme sur la même idée, rendue cette
         fois au visiteur. */}
@@ -125,6 +125,18 @@ const offres = [
     text-align: center;
   }
 
+  /* Le formulaire garde sa largeur quoi qu'il dise : centré comme le reste,
+     il épousait son contenu, et s'élargissait quand une erreur s'écrivait. */
+  .fin__centre > .carnet-ui {
+    justify-self: center;
+    width: min(100%, 42rem);
+  }
+
+  /* Au doigt, le bouton d'appel pose le focus sur le titre (voir Layout). */
+  .fin__titre:focus {
+    outline: none;
+  }
+
   .fin__titre {
     max-width: 17ch;
     margin: 0;
@@ -158,6 +170,11 @@ const offres = [
     font-size: var(--text-body-sm);
     line-height: 1.5;
     text-wrap: balance;
+  }
+
+  /* Le lien vers l'agenda ne se coupe pas en deux lignes. */
+  .fin__apres :global(a) {
+    white-space: nowrap;
   }
 
   .fin__prix {

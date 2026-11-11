@@ -24,8 +24,8 @@ import { resume, resumeCourt } from '../data/parcours';
 //
 // C'est une page de marque : qui il est, ce qu'il fait, pour qui, ce qu'on
 // en dit, un formulaire pour lui écrire. Ni prix ni chiffres de prestation.
-// Un seul geste dans l'ouverture : « Me contacter », qui mène au formulaire
-// du bas ; la newsletter est tout en bas, dans le pied. Grammaire dans
+// Un seul geste dans l'ouverture : « Parlons de votre projet », qui mène au
+// formulaire du bas ; la newsletter est tout en bas, dans le pied. Grammaire dans
 // `components/robot/robot.css`, détail dans DESIGN.md (dont la passe « plus
 // fin » : titres en graisse 600, filets d'un pixel, aucun rebond). Les autres
 // pages portent la même tenue par un échange de jetons ; l'accueil d'avant
@@ -82,6 +82,10 @@ const pageSchema = {
         if (panneau) panneau.hidden = !actif;
       });
       if (focus) choisi.focus();
+      // Choisir un métier joue sa scène, y compris celui qui est déjà choisi :
+      // c'est la façon de la revoir (au bureau, là où elle est affichée).
+      const scene = document.getElementById(choisi.getAttribute('aria-controls') ?? '')?.querySelector<HTMLElement>('.sm');
+      if (scene?.offsetParent) scene.dispatchEvent(new CustomEvent('sm:rejouer'));
     };
     onglets.forEach((o, i) => {
       o.addEventListener('click', () => choisit(o));

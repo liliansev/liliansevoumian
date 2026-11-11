@@ -4,11 +4,14 @@
  * se déplie une fois à l'arrivée, la ligne de métier, le chapô. À droite le
  * portrait, en couleurs d'origine (Lilian, 10 novembre 2026 : la photo n'est
  * ni retouchée ni teintée), avec trois petites pastilles ; celles des outils
- * portent la couleur de l'outil. Un seul geste, « Me contacter », en citron,
- * après la photo sur téléphone et sous le texte au bureau (Lilian, 10
- * novembre 2026 au soir : la newsletter descend dans le pied, `pied.astro`,
- * et les quatre chiffres sortent de l'ouverture pour passer sous les logos
- * des clients, `clients.astro`).
+ * portent la couleur de l'outil. Un seul geste, en citron, après la photo
+ * sur téléphone et sous le texte au bureau (Lilian, 10 novembre 2026 au
+ * soir : la newsletter descend dans le pied, `pied.astro`, et les quatre
+ * chiffres sortent de l'ouverture pour passer sous les logos des clients,
+ * `clients.astro`). Il porte le nom du geste du site, « Parlons de votre
+ * projet », comme le bouton de la barre et le titre du formulaire où il
+ * mène : c'était « Me contacter », et la même porte avait deux noms sur le
+ * même écran (seconde lecture du 11 novembre 2026).
  *
  * À partir de 1100 px (`bureau.css`), l'ouverture se lit comme un scénario,
  * son métier : les trois pastilles deviennent trois modules à gauche du
@@ -18,6 +21,9 @@
  * une fois à l'arrivée, puis un grain les parcourt quand on survole un module
  * ou le portrait. Sans script il n'y a pas de fils, et rien ne manque ; en
  * mouvement réduit ils sont posés d'un coup.
+ *
+ * `data-nom` : chaque mot du nom réserve sa largeur finale (`robot.css`), pour
+ * que le nom qui se déplie ne pousse pas la page sur téléphone.
  */
 import { Image } from 'astro:assets';
 import { Icon } from 'astro-icon/components';
@@ -29,27 +35,27 @@ import BoutonReservation from '../BoutonReservation.astro';
 /* `couleur` est le fond de la pastille sur téléphone, `pastille` celui du
    carré d'icône du module au bureau (le blanc n'y ferait rien sur blanc). */
 const autocollants = [
-  { nom: 'Make', detail: 'niv. 5', icone: 'simple-icons:make', couleur: couleurOutil('Make'), pastille: couleurOutil('Make') },
+  { nom: 'Make', detail: 'certifié niv.\u00a05', icone: 'simple-icons:make', couleur: couleurOutil('Make'), pastille: couleurOutil('Make') },
   { nom: 'n8n', detail: '', icone: 'simple-icons:n8n', couleur: couleurOutil('n8n'), pastille: couleurOutil('n8n') },
-  { nom: 'agents IA', detail: '', icone: 'lucide:bot', couleur: '#ffffff', pastille: couleurOutil('IA') },
+  { nom: 'Agents IA', detail: '', icone: 'lucide:bot', couleur: '#ffffff', pastille: couleurOutil('IA') },
 ];
 ---
 <section class="r-hero" id="a-propos" aria-labelledby="titre-ouverture">
   <div class="r-wrap r-hero__grille" data-r-scenario>
     <div class="r-hero__texte">
       <p class="r-salut"><Robot class="r-salut__bot" />Salut, je suis</p>
-      <h1 class="r-hero__nom" id="titre-ouverture"><span class="r-nom">Lilian</span> <span class="r-nom r-nom--2">Sevoumian</span></h1>
-      <p class="r-hero__sous">Freelance en automatisation et agents IA, depuis 2020.</p>
-      <p class="r-hero__chapo">J’automatise le travail répétitif des entreprises avec Make, n8n et des agents IA. Et je montre comment je fais sur YouTube.</p>
+      <h1 class="r-hero__nom" id="titre-ouverture"><span class="r-nom" data-nom="Lilian">Lilian</span> <span class="r-nom r-nom--2" data-nom="Sevoumian">Sevoumian</span></h1>
+      <p class="r-hero__sous">Freelance en automatisation et agents&nbsp;IA, depuis 2020.</p>
+      <p class="r-hero__chapo">J’automatise le travail répétitif des entreprises avec Make, n8n et des agents&nbsp;IA. Et je montre comment je fais sur YouTube.</p>
     </div>
     <figure class="r-portrait">
       <Image src={portrait} alt="Portrait de Lilian Sevoumian" width={560} widths={[320, 560, 840]} sizes="(max-width: 860px) 80vw, 460px" loading="eager" fetchpriority="high" />
       {autocollants.map((a, i) => (
-        <span class={`r-sticker r-sticker--${i}`} style={`--s:${a.couleur};--ic:${a.pastille}`} aria-hidden="true"><span class="r-sticker__ic"><Icon name={a.icone} /></span><span class="r-sticker__nom">{a.nom}</span>{a.detail && <Fragment>{' '}<span class="r-sticker__detail">{a.detail}</span></Fragment>}</span>
+        <span class={`r-sticker r-sticker--${i}`} style={`--s:${a.couleur};--ic:${a.pastille}`} aria-hidden="true"><span class="r-sticker__ic"><Icon name={a.icone} /></span><span class="r-sticker__dit"><span class="r-sticker__nom">{a.nom}</span>{a.detail && <Fragment>{' '}<span class="r-sticker__detail">{a.detail}</span></Fragment>}</span></span>
       ))}
     </figure>
     <p class="r-hero__actions">
-      <BoutonReservation source="home_hero" class="r-btn r-btn--cta r-btn--grand">Me contacter</BoutonReservation>
+      <BoutonReservation source="home_hero" class="r-btn r-btn--cta r-btn--grand">Parlons de votre projet</BoutonReservation>
     </p>
     <svg class="r-fils" aria-hidden="true" focusable="false"></svg>
   </div>

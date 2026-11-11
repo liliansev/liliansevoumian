@@ -1036,6 +1036,13 @@ a[href^="mailto:"] {
   outline-offset: 2px;
 }
 
+/* Le lien d'évitement pose le focus sur le contenu (Layout) : pas d'anneau
+   autour de toute la page. `html` devant : la règle passe l'anneau de la tenue. */
+html #main-content:focus,
+html #main-content:focus-visible {
+  outline: none;
+}
+
 /* =========================================================================
    SCROLLBAR HIDE UTILITY
    ========================================================================= */
@@ -1923,3 +1930,33 @@ html .carnet .inscription__bouton:hover { background: #f6cb33; }
   .tenue-carnet .btn-primary:hover,
   html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__envoi:hover { transform: none; }
 }
+
+/* =========================================================================
+   LE VERROU, PAGES INTÉRIEURES (11 novembre 2026)
+   Le formulaire de la fin de page se tient comme celui de l'accueil : un
+   état n'est jamais citron, et chaque état se lit à 3:1 au moins.
+   ========================================================================= */
+
+/* Un champ au focus : un filet d'encre et un halo lilas. L'anneau lilas seul
+   faisait 2,1:1 sur le blanc de l'île. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(input, textarea):focus { outline: none; border-color: #17130f; box-shadow: 0 0 0 1px #17130f, 0 0 0 4px #b9a6ff; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(input, textarea)[aria-invalid='true']:focus { border-color: #b3261e; box-shadow: 0 0 0 1px #b3261e, 0 0 0 4px rgb(179 38 30 / 0.22); }
+
+/* Pendant l'envoi le bouton pâlit sans perdre son libellé (l'opacité le
+   faisait tomber à 3,9:1). Parti, il n'y a plus de geste : il quitte le
+   citron, dit « Envoyé » et ne répond plus au survol. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact .contact__envoi[aria-disabled='true'] { opacity: 1; background: #fff1b8; transform: none; cursor: progress; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact.contact[data-envoye] .contact__envoi { background: none; color: #4a4239; box-shadow: inset 0 0 0 1px rgb(23 19 15 / 0.2); cursor: default; }
+
+/* Une erreur ou un échec d'envoi se lit en 15 px, et revient à la ligne
+   dans la largeur du formulaire. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact :is(.contact__statut, .contact__erreur) { font-size: 0.9375rem; overflow-wrap: anywhere; }
+
+/* L'état de l'envoi se lit à côté du bouton, comme sur l'accueil, et la note
+   passe dessous sur toute la largeur : sa mesure de prose la faisait tenir à
+   un pixel près, elle sautait à côté du bouton dès qu'il disait « Envoyé ».
+   Parti, la note n'a plus rien à dire. */
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__pied { gap: 10px 16px; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__statut { order: 1; flex: 1 1 14rem; text-align: left; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__note { order: 2; flex: 0 0 100%; max-width: none; text-align: left; }
+html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact[data-envoye] .contact__note { display: none; }

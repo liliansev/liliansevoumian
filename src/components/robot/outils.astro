@@ -4,6 +4,6 @@ import { couleurOutil } from '../../data/outils';
 interface Props { outils: readonly string[]; label?: string }
 const { outils, label = 'Outils' } = Astro.props;
 ---
-<ul class="r-outils" aria-label={label}>
+<ul class="r-outils" role="list" aria-label={label}>
   {outils.map((o) => <li style={`--o:${couleurOutil(o)}`}>{o}</li>)}
 </ul>

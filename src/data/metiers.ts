@@ -73,7 +73,7 @@ export const metiers = [
     phrase: 'J’apprends à vos équipes à le faire elles-mêmes.',
     texte:
       'Make, n8n et l’IA, appris sur vos propres cas, en ligne ou avec vos équipes.',
-    outils: ['Make', 'n8n', 'IA'],
+    outils: ['Make', 'n8n'],
     lien: { href: 'https://augmentes.fr', label: 'Voir les formations Augmentés', externe: true, goal: 'outbound_formations', source: 'home_services' },
   },
 ] as const;

@@ -60,7 +60,7 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
               <p class="r-pan__phrase">{m.phrase}</p>
               <p class="r-pan__texte">{texteSeul(m.texte)}</p>
               <Outils outils={m.outils} />
-              <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <span class="sr-only"> (nouvel onglet)</span>}</a>
+              <a class="r-lien r-pan__lien" href={m.lien.href} target={m.lien.externe ? '_blank' : undefined} rel={m.lien.externe ? 'noopener noreferrer' : undefined} data-fast-goal={m.lien.goal} data-fast-goal-source={m.lien.source}>{m.lien.label}{m.lien.externe && <Fragment><span class="r-dehors" aria-hidden="true">↗</span><span class="sr-only"> (nouvel onglet)</span></Fragment>}</a>
               {Scene && <div class="r-pan__scene"><Scene /></div>}
             </div>
           );

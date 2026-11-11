@@ -48,6 +48,13 @@
  * au pied de chaque page. À l'approche des 5 000 caractères, le reste
  * s'affiche au lieu de couper la frappe sans rien dire.
  *
+ * Troisième lecture (11 novembre 2026, mesures) : le formulaire a un nom ;
+ * l'adresse proposée est annoncée, se propose dès que la frappe se pose (elle
+ * est alors la suivante au clavier) et son bouton dit ce qu'il fait ; le
+ * décompte est relié au champ et n'est annoncé qu'aux paliers, pas à chaque
+ * touche ; un envoi par Entrée laisse le focus sur « Envoyé » au lieu de le
+ * lâcher sur la page ; « Écrire un autre message » rouvre le formulaire.
+ *
  * `variante="carnet"` l'habille pour le papier du site (né avec l'accueil
  * « Le carnet » le 27 octobre 2026, repris par « Entre les deux » le 3
  * novembre) : champs blancs au filet gris, bouton bleu, ligne d'état à
@@ -71,13 +78,13 @@ const { source, variante = 'nuit', note = true } = Astro.props;
 const carnet = variante === 'carnet';
 ---
 
-<form class:list={['contact', carnet && 'contact--carnet']} action="/api/contact" method="post" novalidate data-formulaire-contact data-source={source} data-secours={note ? undefined : EMAIL_CONTACT}>
+<form class:list={['contact', carnet && 'contact--carnet']} action="/api/contact" method="post" novalidate aria-label="Écrire à Lilian" data-formulaire-contact data-source={source} data-secours={note ? undefined : EMAIL_CONTACT}>
   <div class="contact__ligne">
     <div class="contact__champ">
       <label for="contact-email">Votre e-mail</label>
       <input id="contact-email" type="email" name="email" required maxlength="254" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="vous@entreprise.fr" />
       <p class="contact__erreur" id="contact-email-erreur" data-erreur="email" aria-live="polite"></p>
-      <p class="contact__suggestion" data-suggestion hidden>Vouliez-vous écrire <button type="button" data-suggestion-adresse></button>&nbsp;?</p>
+      <p class="contact__suggestion" data-suggestion aria-live="polite"></p>
     </div>
     <div class="contact__champ">
       <label for="contact-nom">Votre nom <span class="contact__facultatif">(facultatif)</span></label>
@@ -88,7 +95,8 @@ const carnet = variante === 'carnet';
     <label for="contact-message">Votre message</label>
     <textarea id="contact-message" name="message" required maxlength="5000" rows="5" placeholder="J’ai une société de… et j’aimerais…"></textarea>
     <p class="contact__erreur" id="contact-message-erreur" data-erreur="message" aria-live="polite"></p>
-    <p class="contact__compte" id="contact-message-compte" data-compte aria-live="polite"></p>
+    <p class="contact__compte" id="contact-message-compte" data-compte></p>
+    <p class="contact__annonce" data-compte-annonce aria-live="polite"></p>
   </div>
   <div hidden aria-hidden="true"><label for="contact-website">Votre site</label><input id="contact-website" name="website" tabindex="-1" autocomplete="off" /></div>
   <div class="contact__captcha" data-turnstile hidden></div>
@@ -114,6 +122,7 @@ const carnet = variante === 'carnet';
     )}
     <p class="contact__statut" id="contact-statut" role="status" aria-live="polite" aria-atomic="true" data-contact-statut></p>
   </div>
+  <button type="button" class="contact__encore" data-contact-encore hidden>Écrire un autre message</button>
 </form>
 
 <style>
@@ -211,7 +220,9 @@ const carnet = variante === 'carnet';
   }
 
   .contact__erreur:empty,
-  .contact__compte:empty {
+  .contact__suggestion:empty,
+  .contact__compte:empty,
+  .contact__annonce {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -220,10 +231,10 @@ const carnet = variante === 'carnet';
   }
 
   /* L'adresse proposée est un bouton écrit comme un lien ; 44 px au doigt
-     sans décaler la ligne. */
-  .contact__suggestion button {
-    padding: 10px 0;
-    margin: -10px 0;
+     sans décaler la ligne. `:global` : le bouton est créé par le script. */
+  .contact__suggestion :global(button) {
+    padding: 12px 0;
+    margin: -12px 0;
     border: 0;
     background: none;
     color: var(--color-ink);
@@ -260,6 +271,23 @@ const carnet = variante === 'carnet';
   /* Parti : le bouton n'attend plus rien. */
   .contact[data-envoye] .contact__envoi[aria-disabled='true'] {
     cursor: default;
+  }
+
+  /* « Écrire un autre message », sous la confirmation : un lien, 44 px au doigt. */
+  .contact__encore {
+    justify-self: start;
+    padding: 12px 0;
+    margin: -8px 0 -12px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
   }
 
   .contact__note {
@@ -398,7 +426,7 @@ const carnet = variante === 'carnet';
     color: var(--encre-doux);
   }
 
-  .contact--carnet .contact__suggestion button {
+  .contact--carnet .contact__suggestion :global(button) {
     color: var(--encre);
   }
 
@@ -469,7 +497,7 @@ const carnet = variante === 'carnet';
 
   .contact--carnet input::placeholder,
   .contact--carnet textarea::placeholder {
-    color: #8a8a85;
+    color: #6b625a;
   }
 
   .contact--carnet input:focus,
@@ -545,13 +573,17 @@ const carnet = variante === 'carnet';
       const ligne = fente(quel);
       if (!ligne) return;
       if (ligne.textContent !== texte) ligne.textContent = texte;
-      if (texte) {
-        champ.setAttribute('aria-invalid', 'true');
-        champ.setAttribute('aria-describedby', ligne.id);
-      } else {
-        champ.removeAttribute('aria-invalid');
-        champ.removeAttribute('aria-describedby');
-      }
+      if (texte) champ.setAttribute('aria-invalid', 'true');
+      else champ.removeAttribute('aria-invalid');
+      decrire(champ);
+    };
+    // Ce qui décrit un champ : son erreur s'il en a une, le décompte du message s'il s'affiche.
+    const decrire = (champ: HTMLInputElement | HTMLTextAreaElement) => {
+      const ids: string[] = [];
+      if (champ.getAttribute('aria-invalid') === 'true') ids.push(`${champ.id}-erreur`);
+      if (champ === message && formulaire.querySelector('[data-compte]')?.textContent) ids.push('contact-message-compte');
+      if (ids.length) champ.setAttribute('aria-describedby', ids.join(' '));
+      else champ.removeAttribute('aria-describedby');
     };
 
     // Une adresse au domaine écorché : on la propose corrigée, sans y toucher.
@@ -585,17 +617,24 @@ const carnet = variante === 'carnet';
       const mieux = proche ?? net;
       return mieux !== domaine ? `${adresse.slice(0, arobase)}@${mieux}` : '';
     };
+    // La ligne existe vide dès le départ (elle est annoncée quand elle se
+    // remplit) ; le bouton porte l'adresse, et son nom dit ce qu'il en fait.
     const suggestion = formulaire.querySelector<HTMLElement>('[data-suggestion]');
-    const proposee = suggestion?.querySelector<HTMLButtonElement>('[data-suggestion-adresse]');
+    const proposee = document.createElement('button');
+    proposee.type = 'button';
+    const retirer = () => { if (suggestion?.firstChild) suggestion.replaceChildren(); };
     const proposer = () => {
-      if (!suggestion || !proposee) return;
+      if (!suggestion) return;
       const mieux = corrigee(email.value.trim());
+      if (!mieux) return retirer();
+      if (proposee.textContent === mieux && suggestion.firstChild) return;
       proposee.textContent = mieux;
-      suggestion.hidden = !mieux;
+      proposee.setAttribute('aria-label', `Remplacer par ${mieux}`);
+      suggestion.replaceChildren('Vouliez-vous écrire ', proposee, '\u00a0?');
     };
-    proposee?.addEventListener('click', () => {
+    proposee.addEventListener('click', () => {
       email.value = proposee.textContent ?? email.value;
-      if (suggestion) suggestion.hidden = true;
+      retirer();
       marquer('email', defaut('email'));
       garder();
       email.focus();
@@ -620,12 +659,23 @@ const carnet = variante === 'carnet';
     } catch { /* pas de brouillon lisible */ }
 
     // Ce qu'il reste à écrire, quand la limite approche.
+    // Il s'écrit à chaque touche pour l'œil, mais n'est annoncé qu'aux paliers
+    // (500, 100, 20, 0) : une région vivante réécrite à chaque lettre coupait
+    // la parole au lecteur d'écran.
     const compte = formulaire.querySelector<HTMLElement>('[data-compte]');
+    const annonce = formulaire.querySelector<HTMLElement>('[data-compte-annonce]');
+    const PALIERS = [0, 20, 100, 500];
+    let palier: number | null = null;
     const compter = () => {
       if (!compte) return;
       const reste = message.maxLength - message.value.length;
       const texte = reste > 500 ? '' : reste > 0 ? `Encore ${reste} caractère${reste > 1 ? 's' : ''}.` : 'Limite de 5 000 caractères atteinte : la suite ne s’écrit plus.';
       if (compte.textContent !== texte) compte.textContent = texte;
+      decrire(message);
+      const atteint = PALIERS.find((p) => reste <= p) ?? Infinity;
+      // Au chargement (un brouillon retrouvé), rien n'est annoncé : seulement un palier franchi en écrivant.
+      if (annonce && palier !== null && atteint !== palier) annonce.textContent = atteint < palier ? texte : '';
+      palier = atteint;
     };
     compter();
 
@@ -706,12 +756,18 @@ const carnet = variante === 'carnet';
     let pose = 0;
     formulaire.addEventListener('input', (e) => {
       const champ = e.target as HTMLInputElement | HTMLTextAreaElement;
-      if (champ === email && suggestion) suggestion.hidden = true;
+      if (champ === email) retirer();
       if (champ === message) compter();
       if ((champ === email || champ === message) && champ.getAttribute('aria-invalid') === 'true') marquer(champ.name as Requis, defaut(champ.name as Requis));
       if (statut.dataset.etat === 'error') dire('');
       clearTimeout(pose);
-      pose = window.setTimeout(garder, 400);
+      pose = window.setTimeout(() => {
+        garder();
+        // La frappe s'est posée sur une adresse complète au domaine écorché :
+        // la correction se propose pendant qu'on est encore dans le champ, et
+        // la tabulation suivante tombe dessus.
+        if (document.activeElement === email && !defaut('email')) proposer();
+      }, 400);
     });
 
     // En quittant un champ rempli : on le vérifie tout de suite, là où il est.
@@ -726,6 +782,24 @@ const carnet = variante === 'carnet';
       if (champ === message && message.value.trim()) marquer('message', defaut('message'));
       clearTimeout(pose);
       garder();
+    });
+
+    // « Écrire un autre message » : le formulaire se rouvre, l'adresse et le
+    // nom restent, le message est vide et prend le focus. Un nouveau jeton
+    // sera demandé (et son délai attendu) : on ne renvoie pas en rafale.
+    const encore = formulaire.querySelector<HTMLButtonElement>('[data-contact-encore]');
+    encore?.addEventListener('click', () => {
+      delete formulaire.dataset.envoye;
+      for (const champ of formulaire.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')) champ.disabled = false;
+      message.value = '';
+      compter();
+      jeton = null;
+      void demanderJeton();
+      bouton.removeAttribute('aria-disabled');
+      if (libelle) libelle.textContent = 'Envoyer';
+      dire('');
+      encore.hidden = true;
+      message.focus();
     });
 
     let enCours = false;
@@ -767,10 +841,16 @@ const carnet = variante === 'carnet';
         if (reponse.ok && corps?.status === 'sent') {
           // Parti : le formulaire se fige sur ce qui a été envoyé.
           formulaire.dataset.envoye = '';
+          // Envoyé par Entrée depuis un champ : désactivé, il lâcherait le
+          // focus sur la page. Il passe au bouton, qui dit « Envoyé ».
+          const dansUnChamp = formulaire.contains(document.activeElement) && document.activeElement !== bouton;
           for (const champ of formulaire.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')) champ.disabled = true;
-          if (suggestion) suggestion.hidden = true;
+          if (dansUnChamp) bouton.focus({ preventScroll: true });
+          retirer();
           if (compte) compte.textContent = '';
+          if (annonce) annonce.textContent = '';
           if (libelle) libelle.textContent = 'Envoyé';
+          if (encore) encore.hidden = false;
           clearTimeout(pose);
           oublier();
           dire(corps.message ?? 'Votre message est bien parti.', 'sent');

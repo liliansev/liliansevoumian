@@ -686,6 +686,16 @@ const faqPageSchema = faqSchema ? {
           goal('case_opened', { href: a.getAttribute('href') });
         });
 
+        // Le lien d'évitement : le focus suit jusqu'au contenu (sans `tabindex`
+        // sur `main`, il restait sur la page et la tabulation repartait du haut).
+        var evite = document.querySelector('.skip-link');
+        if (evite) evite.addEventListener('click', function () {
+          var contenu = document.getElementById('main-content');
+          if (!contenu) return;
+          if (!contenu.hasAttribute('tabindex')) contenu.setAttribute('tabindex', '-1');
+          contenu.focus();
+        });
+
         // « Parlons de votre projet » mène à /contact. Si la page porte déjà le
         // formulaire (sa fin-de-page), on y descend sans changer de page, et
         // le curseur se pose dans le premier champ. Si le formulaire est dans
@@ -699,8 +709,15 @@ const faqPageSchema = faqSchema ? {
           var reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           var zone = formulaire.closest('[data-contact-zone]');
           (zone || formulaire).scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: zone ? 'start' : 'center' });
+          // Au doigt, un champ qui prend le focus ouvre le clavier sur la moitié
+          // de l'écran avant qu'on ait lu où l'on arrive : le focus va au titre
+          // de la zone. À la souris et au clavier, il va dans le premier champ.
+          var titre = zone ? zone.querySelector('h2') : null;
           var champ = formulaire.querySelector('input:not([tabindex="-1"]), textarea');
-          if (champ) champ.focus({ preventScroll: true });
+          if (titre && window.matchMedia('(pointer: coarse)').matches) {
+            titre.setAttribute('tabindex', '-1');
+            titre.focus({ preventScroll: true });
+          } else if (champ) champ.focus({ preventScroll: true });
         });
       })();
     </script>

@@ -18,16 +18,16 @@ kpis:
     label: "PDF pharmacie et Excel salle de sport"
 flow:
   describe: "Schéma du workflow Humble+ : les bons de commande PDF ou Excel arrivent par email, un agent Mistral extrait et contrôle les données, puis le workflow crée la commande Shopify, la facture Pennylane et soumet les cas sensibles à validation dans Slack."
-  trigger: { icon: "simple-icons:gmail", kicker: "Mail reçu", title: "PDF + XLS", sub: "pharmacie · salles" }
-  agent: { icon: "simple-icons:mistralai", kicker: "OCR + IA", title: "Extrait & contrôle", sub: "EAN · montants · client" }
+  trigger: { icon: "simple-icons:gmail", kicker: "E-mail reçu", title: "Bon de commande", sub: "PDF ou Excel" }
+  agent: { icon: "simple-icons:mistralai", kicker: "Mistral", title: "Lit et vérifie", sub: "produits · quantités · client" }
   actions:
-    - { icon: "simple-icons:shopify", kicker: "Shopify", title: "Commande" }
-    - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture" }
-    - { icon: "simple-icons:slack", kicker: "Contrôle", title: "Validation humaine" }
+    - { icon: "simple-icons:shopify", kicker: "Shopify", title: "Commande créée" }
+    - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture créée" }
+    - { icon: "simple-icons:slack", kicker: "Slack", title: "Validation humaine" }
 bascule:
-  - { avant: "Un email traité à la fois", apres: "Les commandes s’enchaînent" }
-  - { avant: "PDF et Excel dans la même entrée", apres: "Deux formats, un seul système" }
-  - { avant: "Surveillance technique commande par commande", apres: "Un point de validation dans Slack" }
+  - { avant: "Une commande à la fois, les autres attendaient", apres: "Les commandes s’enchaînent sans attente" }
+  - { avant: "Une quantité parfois prise pour un taux de TVA", apres: "Chaque ligne recalculée et vérifiée" }
+  - { avant: "Une surveillance commande par commande", apres: "Un point de validation dans Slack" }
 nomenclature:
   - { etape: "Emails de commande reçus", outil: "Gmail", role: "declencheur" }
   - { etape: "Détection du format de pièce jointe", outil: "n8n", role: "controle" }

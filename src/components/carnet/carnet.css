@@ -215,7 +215,7 @@
   color: var(--blanc);
   font-family: var(--carnet-titre);
   font-weight: 700;
-  outline: 3px solid var(--violet);
+  outline: 3px solid var(--color-focus);
 }
 
 :root:has(.tenue-carnet) .cal-overlay {
@@ -648,16 +648,19 @@
   color: var(--papier);
 }
 
+/* L'anneau de focus n'est pas un geste : il est lilas sur le noir, à l'encre
+   sur une île blanche (`--color-focus`), jamais citron (le verrou, 11
+   novembre 2026 ; `--violet` vaut le citron sur ces pages). */
 @media (any-hover: hover), (any-pointer: fine) {
   .tenue-carnet :focus-visible {
-    outline: 2px solid var(--violet);
+    outline: 2px solid var(--color-focus);
     outline-offset: 2px;
   }
 }
 
 @media (hover: none) and (pointer: coarse) {
   .tenue-carnet :is(input, textarea):focus-visible {
-    outline: 2px solid var(--violet);
+    outline: 2px solid var(--color-focus);
   }
 }
 

@@ -14,6 +14,11 @@
  * l'écran est marqué (`aria-current="location"`) ; quand le formulaire est à
  * l'écran, le bouton d'appel se repose (`est-au-contact`) et « Envoyer »
  * reste le seul citron.
+ *
+ * Seconde lecture du même jour : la pilule ne change plus de largeur sous le
+ * pointeur (elle se resserrait de 122 px par côté au clic sur un lien, et le
+ * pointeur immobile tombait sur le lien voisin) ; le menu marque lui aussi la
+ * section à l'écran, et sa fermeture rend le focus à « Menu ».
  */
 import BoutonReservation from '../BoutonReservation.astro';
 import Robot from './robot.astro';
@@ -59,7 +64,13 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
 </dialog>
 <script>
   const barre = document.querySelector<HTMLElement>('[data-r-barre]');
-  const surDefile = () => barre?.classList.toggle('est-defile', window.scrollY > 40);
+  // La pilule se resserre dès qu'on défile, jamais sous le pointeur : tant
+  // qu'il est dessus elle garde sa largeur, et se met à jour quand il la quitte.
+  const pilule = barre?.querySelector<HTMLElement>('.r-barre__in');
+  let dessus = false;
+  const surDefile = () => { if (!dessus) barre?.classList.toggle('est-defile', window.scrollY > 40); };
+  pilule?.addEventListener('pointerenter', (e) => { dessus = e.pointerType === 'mouse'; });
+  pilule?.addEventListener('pointerleave', () => { dessus = false; surDefile(); });
   window.addEventListener('scroll', surDefile, { passive: true });
   surDefile();
   const menu = document.getElementById('r-menu') as HTMLDialogElement | null;
@@ -75,23 +86,41 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
     if (auPointeur) menu?.focus();
   });
   document.querySelector('[data-r-menu-fermer]')?.addEventListener('click', () => menu?.close());
-  menu?.addEventListener('close', () => {
-    ouvrir?.setAttribute('aria-expanded', 'false');
-    if (auPointeur) (document.activeElement as HTMLElement | null)?.blur();
+  // Un clic à côté de la feuille (sur le voile) ferme le menu, comme Échap.
+  menu?.addEventListener('click', (e) => {
+    if (e.target !== menu) return;
+    const b = menu.getBoundingClientRect();
+    if (e.clientX < b.left || e.clientX > b.right || e.clientY < b.top || e.clientY > b.bottom) menu.close();
   });
+  // À la fermeture le focus revient sur « Menu » : lâché, il retombait sur la
+  // page entière et la tabulation suivante repartait du haut. Au pointeur il y
+  // revient sans anneau (`sans-anneau`, retiré dès que le bouton perd le focus).
+  // Si le lien choisi a posé le focus ailleurs (le bouton d'appel le pose dans
+  // le formulaire), il y reste.
+  const bouton = ouvrir as HTMLElement | null;
+  menu?.addEventListener('close', () => {
+    bouton?.setAttribute('aria-expanded', 'false');
+    const actif = document.activeElement;
+    if (actif && actif !== document.body && actif !== bouton && !menu.contains(actif)) return;
+    bouton?.classList.toggle('sans-anneau', auPointeur);
+    bouton?.focus({ preventScroll: true });
+  });
+  bouton?.addEventListener('blur', () => bouton.classList.remove('sans-anneau'));
   menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
 
   if (barre && 'IntersectionObserver' in window) {
     // La section à l'écran : son lien est marqué dans la barre. La bande
     // d'observation est une ligne au tiers haut de la fenêtre.
     const ancres = [...barre.querySelectorAll<HTMLAnchorElement>('.r-barre__liens a[href^="#"]')];
+    // Le menu des petits écrans porte la même marque.
+    const tous = [...ancres, ...(menu?.querySelectorAll<HTMLAnchorElement>('.r-menu__lien[href^="#"]') ?? [])];
     const sections = ancres.map((a) => document.getElementById(a.hash.slice(1))).filter((s): s is HTMLElement => !!s);
     if (sections.length) {
       const vues = new Set<Element>();
       const guet = new IntersectionObserver((entrees) => {
         for (const e of entrees) e.isIntersecting ? vues.add(e.target) : vues.delete(e.target);
         const ici = sections.filter((s) => vues.has(s)).pop();
-        for (const a of ancres) {
+        for (const a of tous) {
           if (ici && a.hash === `#${ici.id}`) a.setAttribute('aria-current', 'location');
           else a.removeAttribute('aria-current');
         }

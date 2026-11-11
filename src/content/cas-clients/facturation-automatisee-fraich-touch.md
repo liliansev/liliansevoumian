@@ -4,11 +4,11 @@ seoTitle: "Automatiser sa facturation HubSpot et Pennylane : cas client Make"
 description: "Fraich Touch est passée de 33 à 4 scénarios Make et de 16 factures en erreur à 0, en récupérant environ 4 h par semaine."
 client: "Fraich Touch"
 enClair: "La facturation HubSpot et Pennylane remise à plat"
-accroche: "J’ai remis à plat leur facturation HubSpot et Pennylane : 4 scénarios au lieu de 33, plus aucune facture en erreur, environ 4 h gagnées par semaine."
+accroche: "J’ai reconstruit leur facturation entre HubSpot, Pennylane et Notion : l’équipe suit chaque facture et récupère environ 4 h par semaine."
 secteur: "Agence de gestion de talents"
 date: 2026-01-30
 tags: ["Finances", "Ops"]
-tools: ["Make", "Notion", "HubSpot", "API"]
+tools: ["Make", "Notion", "HubSpot", "Pennylane"]
 kpis:
   - value: "~4 h/sem"
     label: "Récupérées par l’équipe"
@@ -18,16 +18,17 @@ kpis:
     label: "Pour former un nouveau collaborateur"
 flow:
   describe: "Schéma du workflow de facturation Fraich Touch : un deal signé dans HubSpot déclenche le calcul des échéances, puis la facture part dans Pennylane, son statut remonte dans Notion et l’envoi part chaque jour à 9 h."
-  trigger: { icon: "simple-icons:hubspot", kicker: "Deal signé", title: "HubSpot", sub: "commission · échéances" }
-  agent: { icon: "lucide:calculator", kicker: "Règles", title: "Calcule & découpe", sub: "TVA · échéances · VHR" }
+  trigger: { icon: "simple-icons:hubspot", kicker: "HubSpot", title: "Deal signé", sub: "commission · échéances" }
+  agent: { icon: "lucide:calculator", kicker: "Règles", title: "Calcule et découpe", sub: "TVA · jusqu’à 12 factures" }
   actions:
     - { icon: "lucide:receipt-text", kicker: "Pennylane", title: "Facture émise" }
     - { icon: "simple-icons:notion", kicker: "Notion", title: "Statut visible" }
     - { icon: "lucide:clock", kicker: "Chaque jour à 9 h", title: "Envoi finalisé" }
 bascule:
-  - { avant: "33 scénarios Make empilés, dont 28 reliques", apres: "4 scénarios propres et documentés" }
-  - { avant: "30 à 60 min pour régler une erreur", apres: "5 min" }
-  - { avant: "Une journée pour ajouter un pipeline annuel", apres: "30 minutes, une ligne dans Notion" }
+  - { avant: "16 factures bloquées, jamais envoyées", apres: "Chaque facture part à temps" }
+  - { avant: "33 scénarios Make empilés, dont 28 qui ne servaient plus", apres: "4 scénarios propres et documentés" }
+  - { avant: "30 à 60 minutes pour régler une erreur", apres: "5 minutes" }
+  - { avant: "Une journée pour ajouter une nouvelle année", apres: "30 minutes, une ligne dans Notion" }
   - { avant: "Plusieurs heures pour former un arrivant", apres: "30 minutes" }
 nomenclature:
   - { etape: "Changement de deal détecté", outil: "Webhooks HubSpot", role: "declencheur" }

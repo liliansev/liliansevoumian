@@ -69,9 +69,11 @@ const aJour = misAJour && misAJour !== publie ? misAJour : undefined;
 </section>
 
 <style>
-  /* Sous la barre fixe, puis l'écart d'une section. */
+  /* La page commence déjà sous la barre flottante (`main`, 96 px) : l'en-tête
+     n'ajoute que l'écart d'un groupe. Il comptait la barre une seconde fois,
+     et le fil de retour arrivait 171 px sous elle. */
   .tete {
-    padding-block: calc(var(--spacing-barre) + var(--spacing-bloc)) var(--spacing-section-y);
+    padding-block: var(--spacing-groupe) var(--spacing-section-y);
   }
 
   .tete--enchaine {

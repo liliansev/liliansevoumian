@@ -16,7 +16,9 @@
  * Chaque carte porte la couleur de son outil (`data/outils.ts`) quand on le
  * connaît : par `outil`, par un nom d'outil dans son sur-titre ou son titre,
  * ou par son icône de marque ; sinon le gris neutre. Une seule carte est sur
- * lilas : ce qui traite dans un `flow`, l'aboutissement d'un `parcours`.
+ * lilas : ce qui traite dans un `flow`, l'aboutissement d'un `parcours`. Elle
+ * seule porte une troisième ligne (`sub`) : sur les autres, elle faisait des
+ * cartes de hauteurs de texte différentes dans la même rangée.
  * Tout est décoratif (`aria-hidden`) ; une phrase dit la même chose aux
  * lecteurs d'écran.
  */
@@ -60,7 +62,7 @@ const cartes: (Noeud & { forte?: boolean })[] = flow
           </span>
           <span class="r-etape__sur">{n.kicker}</span>
           <strong>{n.title}</strong>
-          {n.sub && <span class="r-etape__sous">{n.sub}</span>}
+          {n.sub && n.forte && <span class="r-etape__sous">{n.sub}</span>}
         </li>
       ))}
     </ol>
