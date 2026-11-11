@@ -932,10 +932,17 @@ un bouton citron n'a pas de bord sur blanc (son libellé fait 13:1).
 
 ### Relecture de confirmation (11 novembre 2026)
 
-Une relecture indépendante de `/cas-clients` sur la version du second tour l'a
-notée 31 sur 32 : les douze points demandés au tour d'avant passent, et il
-restait un écart de cohérence, corrigé depuis (la note de 31 est celle d'avant
-la correction).
+Deux relectures indépendantes de la version du second tour : `/cas-clients`
+notée 31 sur 32 (les douze points demandés au tour d'avant passent, il restait
+un écart de cohérence) et l'accueil noté 31 sur 32 (les dix points demandés
+passent, il restait un écart de contrôle). Les deux écarts sont corrigés
+depuis ; les notes de 31 sont celles d'avant la correction.
+
+- **« Précédent » défait le saut en entier.** Après un bouton d'appel, le
+  retour du navigateur ramène le défilement et le focus, qui se repose sur le
+  bouton utilisé. Il restait dans un champ hors de l'écran : la barre d'espace
+  renvoyait au formulaire et une lettre s'y écrivait. « Suivant » remet le
+  focus dans le formulaire (`Layout.astro`, écouteur `popstate`).
 
 - **Un seul formulaire.** Le formulaire de la fin d'une page intérieure et de
   `/contact` se dessine comme celui de l'accueil, état par état : envoi dans

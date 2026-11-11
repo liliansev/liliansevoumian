@@ -707,11 +707,43 @@ const faqPageSchema = faqSchema ? {
         // le curseur se pose dans le premier champ. Si le formulaire est dans
         // une zone déclarée (`data-contact-zone`, l'accueil), c'est le haut de
         // la zone qui arrive sous la barre : son titre reste lisible.
+        // Au doigt, un champ qui prend le focus ouvre le clavier sur la moitié
+        // de l'écran avant qu'on ait lu où l'on arrive : le focus va au titre
+        // de la zone. À la souris et au clavier, il va dans le premier champ.
+        var ouvreur = null;
+        function focusDansLeFormulaire(formulaire) {
+          var zone = formulaire.closest('[data-contact-zone]');
+          var titre = zone ? zone.querySelector('h2') : null;
+          var champ = formulaire.querySelector('input:not([tabindex="-1"]), textarea');
+          if (titre && window.matchMedia('(pointer: coarse)').matches) {
+            titre.setAttribute('tabindex', '-1');
+            titre.focus({ preventScroll: true });
+          } else if (champ) champ.focus({ preventScroll: true });
+        }
+        // « Précédent » défait le saut en entier : le défilement revient (le
+        // navigateur s'en charge) et le focus aussi, sur le bouton qui avait
+        // mené au formulaire. Sans cela il restait dans un champ hors de
+        // l'écran : la barre d'espace y renvoyait, une lettre s'y écrivait.
+        // « Suivant » le remet dans le formulaire.
+        window.addEventListener('popstate', function () {
+          var formulaire = document.querySelector('[data-formulaire-contact]');
+          var ancre = formulaire ? formulaire.closest('section[id]') : null;
+          if (!ancre) return;
+          var dedans = ancre.contains(document.activeElement);
+          if (location.hash === '#' + ancre.id) {
+            if (!dedans) focusDansLeFormulaire(formulaire);
+            return;
+          }
+          if (!dedans) return;
+          if (ouvreur && ouvreur.isConnected) ouvreur.focus({ preventScroll: true });
+          if (ancre.contains(document.activeElement)) document.activeElement.blur();
+        });
         document.addEventListener('click', function (ev) {
           var a = ev.target && ev.target.closest ? ev.target.closest('a[data-contact-ouvrir]') : null;
           var formulaire = document.querySelector('[data-formulaire-contact]');
           if (!a || !formulaire || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button > 0) return;
           ev.preventDefault();
+          ouvreur = a;
           var reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           var zone = formulaire.closest('[data-contact-zone]');
           // Le saut laisse une entrée dans l'historique : « Précédent »
@@ -719,15 +751,7 @@ const faqPageSchema = faqSchema ? {
           var ancre = formulaire.closest('section[id]');
           if (ancre && location.hash !== '#' + ancre.id) history.pushState(null, '', '#' + ancre.id);
           (zone || formulaire).scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: zone ? 'start' : 'center' });
-          // Au doigt, un champ qui prend le focus ouvre le clavier sur la moitié
-          // de l'écran avant qu'on ait lu où l'on arrive : le focus va au titre
-          // de la zone. À la souris et au clavier, il va dans le premier champ.
-          var titre = zone ? zone.querySelector('h2') : null;
-          var champ = formulaire.querySelector('input:not([tabindex="-1"]), textarea');
-          if (titre && window.matchMedia('(pointer: coarse)').matches) {
-            titre.setAttribute('tabindex', '-1');
-            titre.focus({ preventScroll: true });
-          } else if (champ) champ.focus({ preventScroll: true });
+          focusDansLeFormulaire(formulaire);
         });
       })();
     </script>

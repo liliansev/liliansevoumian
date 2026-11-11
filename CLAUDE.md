@@ -135,7 +135,7 @@ src/
 ├── data/                      # metiers.ts (les 4 métiers), projets.ts, faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, outils-metiers.ts, brands.ts
 ├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (adresse de contact), contact-message.ts (envoi du formulaire par Resend), roi.ts, metiers/scene.ts (moteur des scènes), robot/fils.ts (les fils de l'ouverture de l'accueil au bureau : tracé, ports, grain), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
-│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire (avec son entrée d'historique), suivi DataFast ; pose `data-clavier` sur `html` à la première tabulation (l'anneau de focus se montre alors quel que soit le pointeur)
+│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire (avec son entrée d'historique ; « Précédent » rend le focus au bouton utilisé), suivi DataFast ; pose `data-clavier` sur `html` à la première tabulation (l'anneau de focus se montre alors quel que soit le pointeur)
 │   ├── PageExpertOutil.astro  # charpente des pages d'outil (/expert-make, /expert-n8n)
 │   └── PageReponse.astro      # charpente des pages-réponses (une question, sa réponse dans le chapô)
 ├── pages/
@@ -215,10 +215,11 @@ reprise : viser la note maximale*, overrides « Le verrou » where they differ
 confirmation, the case index rebuilt in the home's grammar, focus rings never
 lemon on inner pages). A second round of two independent reviews followed the
 same day (DESIGN.md, *La reprise, second tour*, which overrides the paragraph
-above it where they differ; scores as measured: home 20, 25, then 29 out of
-32, case index 26, 28, then 31 at the confirmation review, whose single gap is
-fixed since: the inner-page form is drawn like the home's in every state, see
-the last block of `global.css`, « UN SEUL FORMULAIRE »): under 560 px the nav pill keeps the call button
+above it where they differ; scores as measured: home 20, 25, 29, then 31 out of 32
+at the confirmation review, case index 26, 28, then 31; each kept one gap, both
+fixed since: Back after a call button returns focus to that button, and the
+inner-page form is drawn like the home's in every state, see the last block of
+`global.css`, « UN SEUL FORMULAIRE »): under 560 px the nav pill keeps the call button
 with the robot alone and hides it while the hero button is on screen, phone
 tabs carry a short name under each icon in an 82 px column, the tabs block
 keeps one height, case cards share subgrid rows from 861 to 1099 px, → marks
