@@ -182,6 +182,12 @@ const faqPageSchema = faqSchema ? {
       (function () {
         document.documentElement.classList.add('js-ready');
 
+        // Au clavier, l'anneau de focus se montre même sans souris (une
+        // tablette et son clavier) : la première tabulation le dit à la
+        // feuille de style, le premier toucher le retire (global.css, FOCUS).
+        addEventListener('keydown', function (e) { if (e.key === 'Tab') document.documentElement.setAttribute('data-clavier', ''); }, true);
+        addEventListener('pointerdown', function () { document.documentElement.removeAttribute('data-clavier'); }, true);
+
         // VERROU DE DÉFILEMENT PARTAGÉ, compté par propriétaire.
         // Deux surfaces bloquent le scroll — le menu mobile (Navigation) et
         // l'overlay cal.com (plus bas) — et chacune écrivait `body.overflow`
@@ -708,6 +714,10 @@ const faqPageSchema = faqSchema ? {
           ev.preventDefault();
           var reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           var zone = formulaire.closest('[data-contact-zone]');
+          // Le saut laisse une entrée dans l'historique : « Précédent »
+          // ramène là où on lisait, comme après un lien d'ancre.
+          var ancre = formulaire.closest('section[id]');
+          if (ancre && location.hash !== '#' + ancre.id) history.pushState(null, '', '#' + ancre.id);
           (zone || formulaire).scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: zone ? 'start' : 'center' });
           // Au doigt, un champ qui prend le focus ouvre le clavier sur la moitié
           // de l'écran avant qu'on ait lu où l'on arrive : le focus va au titre

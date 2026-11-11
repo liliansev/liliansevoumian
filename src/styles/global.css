@@ -463,6 +463,17 @@ body {
   }
 }
 
+/* Au clavier, l'anneau se montre quel que soit le pointeur : une tablette avec
+   un clavier et sans souris laissait sans indicateur tout arrêt qui n'a que
+   l'anneau générique (le lien de retour, « Envoyer », l'adresse proposée…).
+   `data-clavier` est posé par Layout à la première tabulation et retiré au
+   premier toucher : ni le tap ni un focus posé par script ne le déclenchent,
+   la règle du dessus tient. `:where` : le même poids que l'anneau générique. */
+:where(html[data-clavier]) :focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 /* Champs de saisie : ring focus même sur tactile pur (WCAG 2.4.7). Un champ
    focalisé engage toujours un clavier (virtuel ou physique) et n'est pas
    concerné par le cadre noir iOS des éléments non-form (liens, conteneurs). */
@@ -1960,3 +1971,17 @@ html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__statut { order: 1; flex: 1 1 14rem; text-align: left; }
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact .contact__note { order: 2; flex: 0 0 100%; max-width: none; text-align: left; }
 html .tenue-carnet :is(.fin__centre, .contact-page__feuille) .contact[data-envoye] .contact__note { display: none; }
+
+/* Le pied d'une page intérieure tient la colonne de la page (1200 px, les
+   marges des sections), pas celle de l'accueil : sous 1280 px son texte
+   partait de 20 px quand celui de la page partait de 24 à 55 px. */
+html .tenue-carnet .tenue-robot .r-pied .r-wrap { max-width: calc(1200px + 2 * var(--spacing-section-x)); padding-inline: var(--spacing-section-x); }
+
+/* Après la fin de page, qui porte déjà son écart, le pied en ajoutait 104 px :
+   219 px de noir entre l'île du contact et « À très vite. ». */
+html .tenue-carnet main:has(> .fin:last-child) + .tenue-robot .r-pied { padding-top: 48px; }
+
+/* Une seule courbe de sortie sur tout le site, celle de la tenue (`--r-sortie`) :
+   les liens du menu, les titres des cas, le logo et le lien d'évitement en
+   gardaient une autre, héritée du socle (mesuré le 11 novembre 2026). */
+:root { --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1); }

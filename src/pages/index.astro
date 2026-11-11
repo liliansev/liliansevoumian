@@ -73,18 +73,28 @@ const pageSchema = {
   // Les onglets des métiers : un clic, ou au clavier les flèches, Début et Fin.
   document.querySelectorAll<HTMLElement>('[data-r-onglets]').forEach((bloc) => {
     const onglets = [...bloc.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panneauDe = (o: HTMLButtonElement) => document.getElementById(o.getAttribute('aria-controls') ?? '');
+    // Un panneau au repos porte `data-repos`, plus `hidden` : la feuille de
+    // style décide s'il sort de la page (au bureau) ou s'il garde sa place,
+    // invisible, pour que le bloc ne change pas de hauteur (en dessous).
+    const repos = (o: HTMLButtonElement, oui: boolean) => {
+      const panneau = panneauDe(o);
+      if (!panneau) return;
+      panneau.hidden = false;
+      panneau.toggleAttribute('data-repos', oui);
+    };
+    onglets.forEach((o) => repos(o, o.getAttribute('aria-selected') !== 'true'));
     const choisit = (choisi: HTMLButtonElement, focus = false) => {
       onglets.forEach((o) => {
         const actif = o === choisi;
         o.setAttribute('aria-selected', String(actif));
         o.tabIndex = actif ? 0 : -1;
-        const panneau = document.getElementById(o.getAttribute('aria-controls') ?? '');
-        if (panneau) panneau.hidden = !actif;
+        repos(o, !actif);
       });
       if (focus) choisi.focus();
       // Choisir un métier joue sa scène, y compris celui qui est déjà choisi :
       // c'est la façon de la revoir (au bureau, là où elle est affichée).
-      const scene = document.getElementById(choisi.getAttribute('aria-controls') ?? '')?.querySelector<HTMLElement>('.sm');
+      const scene = panneauDe(choisi)?.querySelector<HTMLElement>('.sm');
       if (scene?.offsetParent) scene.dispatchEvent(new CustomEvent('sm:rejouer'));
     };
     onglets.forEach((o, i) => {

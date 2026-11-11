@@ -59,7 +59,7 @@ const collectionSchema = {
   "@type": "CollectionPage",
   "@id": "https://liliansevoumian.fr/cas-clients#collection",
   "name": "Cas clients : automatisations et applications métiers - Lilian Sevoumian",
-  "description": "Projets Make, n8n et Glide : contexte, fonctionnalités réalisées et résultats disponibles. Cas clients d’automatisation et d’applications métiers.",
+  "description": "Cas clients d’automatisation et d’applications métiers (Make, n8n, Glide) : ce que j’ai construit pour chacun et ce que ça a changé, avant et après.",
   "url": "https://liliansevoumian.fr/cas-clients",
   "mainEntity": {
     "@type": "ItemList",
@@ -83,7 +83,7 @@ const titre =
 
 <Layout
   title="Cas clients : automatisations et applications · Lilian Sevoumian"
-  description="Projets Make, n8n et Glide : contexte, fonctionnalités réalisées et résultats disponibles. Cas clients d’automatisation et d’applications métiers."
+  description="Cas clients d’automatisation et d’applications métiers (Make, n8n, Glide) : ce que j’ai construit pour chacun et ce que ça a changé, avant et après."
   breadcrumbs={breadcrumbs}
   articleSchema={collectionSchema}
 >
@@ -93,7 +93,7 @@ const titre =
     <TeteDePage
       titre={titre}
       titreLargeur="14ch"
-      chapo="Des automatisations et des applications construites pour des clients. Pour chacune, ce que j’ai construit et ce que ça a changé, avec l’écart mesuré quand il y en a un."
+      chapo="Ce que j’ai construit pour chaque client, et ce que ça a changé."
       enchaine
     />
 
@@ -116,7 +116,7 @@ const titre =
           <ul class="registre__liste" role="list">
             {displayStudies.map((cs, rang) => (
               <li>
-                <article class="fiche" id={cs.slug}>
+                <article class="fiche" id={cs.slug} aria-labelledby={`${cs.slug}-titre`}>
                   <div class="fiche__dit">
                     {/* Le client : son nom en lettres, comme sur l'accueil, et
                         son secteur ; son logo, ramené au blanc comme sur le
@@ -125,17 +125,19 @@ const titre =
                     <p class="fiche__client">
                       <span class="fiche__qui">
                         <span class="fiche__nom">{cs.client}</span>
-                        {cs.secteur && <span class="fiche__secteur">{cs.secteur}</span>}
+                        {cs.secteur && <Fragment><span class="sr-only">, </span><span class="fiche__secteur">{cs.secteur}</span></Fragment>}
                       </span>
                       {cs.logo && (
                         <img class="fiche__logo" src={cs.logo.src} alt="" width={cs.logo.largeur} height={cs.logo.hauteur} style={cs.logo.echelle ? `--e:${cs.logo.echelle}` : undefined} loading={rang < 2 ? 'eager' : 'lazy'} decoding="async" />
                       )}
                     </p>
-                    {/* Le lien est le titre, et il s'étend à toute la feuille
-                        (`::after`) : la feuille entière se clique, et un
-                        lecteur d'écran n'entend que le titre comme nom du lien. */}
-                    <h2 class="fiche__titre">
-                      <a href={`/cas-clients/${cs.slug}`}>{cs.titre}</a>
+                    {/* Le lien est le titre ; un lecteur d'écran l'entend avec
+                        le nom du client devant (quatre liens, quatre noms).
+                        Toute la feuille se clique : par le script du bas de
+                        page, qui laisse sélectionner son texte, et sans
+                        script par le `::after` du lien, étendu à la feuille. */}
+                    <h2 class="fiche__titre" id={`${cs.slug}-titre`}>
+                      <a href={`/cas-clients/${cs.slug}`}><span class="sr-only">{cs.client}&nbsp;: </span>{cs.titre}</a>
                     </h2>
                     {cs.texte && <p class="fiche__texte">{cs.texte}</p>}
                     {cs.tools.length > 0 && <Outils outils={cs.tools} />}
@@ -161,7 +163,7 @@ const titre =
                         <ol class="ecarts__lignes" role="list" aria-label={`Le parcours dans l’application de ${cs.client}`}>
                           {cs.parcours.map((e, i) => (
                             <li>
-                              <span class="ecarts__avant"><span class="ecarts__rang" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{e.qui}</span>
+                              <span class="ecarts__avant"><span class="ecarts__rang" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{e.qui}<span class="sr-only">&nbsp;: </span></span>
                               <span class="ecarts__apres">{e.quoi}</span>
                             </li>
                           ))}
@@ -172,7 +174,7 @@ const titre =
                   </div>
                   {/* Après la preuve sur téléphone, en bas à gauche au bureau. */}
                   <span class="fiche__lire" aria-hidden="true">
-                    Lire le cas<span class="fiche__fleche">↗</span>
+                    Lire le cas<span class="fiche__fleche">→</span>
                   </span>
                 </article>
               </li>
@@ -185,12 +187,40 @@ const titre =
     <FinDePage
       source="cas_index_fin"
       titre="Un projet qui ressemble à <mark>l’un de ceux-là&nbsp;?</mark>"
+      titreLargeur="24ch"
       suite="Écrivez-moi une phrase&nbsp;: je vous réponds moi-même."
     />
   </main>
 
   <Footer />
 </Layout>
+
+<script>
+  // Toute la feuille mène au cas, et son texte reste sélectionnable : un clic
+  // ailleurs que sur un lien suit le lien du titre, sauf si l'on vient de
+  // sélectionner du texte. Ctrl, Cmd, Maj ou le bouton du milieu ouvrent le
+  // cas dans un nouvel onglet, comme sur un lien. Sans script, le `::after`
+  // du titre couvre la feuille (voir la feuille de style).
+  const liste = document.querySelector<HTMLElement>('.registre__liste');
+  if (liste) {
+    liste.classList.add('est-prete');
+    const lienDe = (e: MouseEvent) => {
+      const cible = e.target as HTMLElement;
+      if (cible.closest('a, button')) return null;
+      return cible.closest('.fiche')?.querySelector<HTMLAnchorElement>('.fiche__titre a') ?? null;
+    };
+    liste.addEventListener('click', (e) => {
+      const lien = lienDe(e);
+      if (!lien || e.defaultPrevented || !window.getSelection()?.isCollapsed) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey) window.open(lien.href, '_blank', 'noopener');
+      else lien.click();
+    });
+    liste.addEventListener('auxclick', (e) => {
+      const lien = e.button === 1 ? lienDe(e) : null;
+      if (lien) window.open(lien.href, '_blank', 'noopener');
+    });
+  }
+</script>
 
 <style>
   /* La colonne est celle de l'en-tête (`tete-de-page`) : 1200 px, mêmes marges.
@@ -316,6 +346,16 @@ const titre =
     border-radius: inherit;
   }
 
+  /* Avec le script, c'est la feuille qui répond au clic : le lien ne la
+     couvre plus, et son texte se sélectionne. */
+  .est-prete .fiche {
+    cursor: pointer;
+  }
+
+  .est-prete .fiche__titre a::after {
+    content: none;
+  }
+
   .fiche__texte {
     max-width: 30em;
     margin-bottom: 4px;
@@ -326,7 +366,8 @@ const titre =
 
   /* « Lire le cas » : la même pilule au trait que sur l'accueil. Elle ne se
      clique pas elle-même (toute la feuille est le lien) : au survol de la
-     feuille, sa flèche passe au citron et tourne. */
+     feuille, sa flèche passe au citron et avance de deux pixels. Elle pointe
+     à droite : « ↗ » est le signe d'un lien qui ouvre un nouvel onglet. */
   .fiche__lire {
     display: inline-flex;
     align-items: center;
@@ -368,7 +409,8 @@ const titre =
   }
 
   /* Touchée ou cliquée, la feuille répond tout de suite : son filet passe au lilas. */
-  .fiche:has(.fiche__titre a:active) {
+  .fiche:has(.fiche__titre a:active),
+  .est-prete .fiche:active {
     border-color: var(--r-lilas);
   }
 
@@ -388,7 +430,7 @@ const titre =
     .fiche:hover .fiche__fleche {
       background: var(--r-citron);
       color: var(--r-encre);
-      transform: rotate(45deg);
+      transform: translateX(2px);
     }
   }
 
@@ -535,12 +577,13 @@ const titre =
     padding-left: 34px;
   }
 
+  /* Sur l'axe des lignes du registre : 18 px, plus le filet du puits. */
   .fiche__reserve {
     max-width: none;
-    padding-inline: 4px;
+    padding-inline: 19px;
     color: var(--r-gris);
     font-size: 15px;
-    line-height: 1.45;
+    line-height: 20px;
   }
 
   /* À partir de 620 px le registre tient sur trois colonnes, les mêmes pour
@@ -582,11 +625,12 @@ const titre =
     }
 
     /* La bande : l'avant à gauche, la flèche, puis la cellule lilas, qui
-       déborde de sa colonne pour que son texte reste sur l'axe des « après ». */
+       déborde de sa colonne des deux côtés : la ligne garde les marges des
+       autres, sa flèche et son texte restent sur leurs axes. */
     .ecarts__lignes > li.ecarts__phare {
       gap: 4px 16px;
       align-items: center;
-      padding: 4px 4px 4px 18px;
+      padding: 4px 18px;
     }
 
     .ecarts__phare .ecarts__avant {
@@ -600,7 +644,7 @@ const titre =
 
     .ecarts__phare .ecarts__apres {
       grid-column: auto;
-      margin-left: -16px;
+      margin-inline: -16px -14px;
       padding: 18px 14px 18px 16px;
     }
 
@@ -623,14 +667,50 @@ const titre =
       grid-area: 1 / 1;
     }
 
+    /* Le puits descend jusqu'au bas de la feuille, sur la ligne de « Lire
+       le cas » : ses lignes se partagent la hauteur, et la cellule lilas
+       prend toute celle de la sienne. */
     .fiche__preuve {
       grid-area: 1 / 2 / 3 / 3;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Le bouton suit les pastilles à la même distance sur chaque feuille. */
+    .ecarts,
+    .ecarts__lignes {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ecarts__lignes > li,
+    .ecarts--parcours .ecarts__lignes > li {
+      flex: 1 1 auto;
+      align-content: center;
+    }
+
+    .ecarts__lignes > li.ecarts__phare {
+      align-content: stretch;
+    }
+
+    .ecarts__phare .ecarts__apres {
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Le bouton tient le bas de la feuille, face au bas du puits. */
     .fiche__lire {
       grid-area: 2 / 1;
-      align-self: start;
+      align-self: end;
+    }
+  }
+
+  /* Un logo large ne pousse pas le secteur sur trois lignes : sur un petit
+     téléphone, et au bureau étroit où la colonne de gauche est la plus courte. */
+  @media (max-width: 399px), (min-width: 1100px) and (max-width: 1279px) {
+    .fiche__logo {
+      max-width: 88px;
     }
   }
 

@@ -658,6 +658,16 @@
   }
 }
 
+/* Au clavier, l'anneau se montre quel que soit le pointeur (`data-clavier`,
+   posé par Layout à la première tabulation, retiré au premier toucher) : une
+   tablette et son clavier, sans souris, laissaient le lien de retour,
+   « Envoyer » et le lien vers l'agenda sans indicateur. Ni le tap ni un focus
+   posé par script ne le déclenchent. `:where` : le poids de la règle du dessus. */
+:where(html[data-clavier]) .tenue-carnet :focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
 @media (hover: none) and (pointer: coarse) {
   .tenue-carnet :is(input, textarea):focus-visible {
     outline: 2px solid var(--color-focus);

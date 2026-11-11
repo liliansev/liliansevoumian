@@ -7,8 +7,9 @@
  * le client en petit (en lilas), un titre qui dit en clair ce qui a été
  * construit (`enClair`, jamais un chiffre seul : « 0 ressaisie » ne disait
  * rien, Lilian, 10 novembre 2026), le détail (`accroche`) et ses outils, une
- * pastille par outil. Toute la carte mène au cas ; au survol elle passe en
- * lilas.
+ * pastille par outil. Toute la carte mène au cas ; au survol sa flèche passe
+ * au citron et avance de deux pixels. Elle pointe à droite : « ↗ » est le
+ * signe d'un lien qui ouvre un nouvel onglet (`.r-dehors`).
  *
  * À partir de 1100 px (`bureau.css`), les cartes deviennent une pile : chaque
  * cas est une grande feuille qui vient se poser sur la précédente au
@@ -36,7 +37,7 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
             <h3><a href={`/cas-clients/${id}`}>{data.enClair ?? data.title}</a></h3>
             <p class="r-carte-cas__texte">{espaces(data.accroche ?? data.description)}</p>
             <Outils outils={data.tools.slice(0, 4)} />
-            <span class="r-carte-cas__f" aria-hidden="true"><span class="r-carte-cas__lire">Lire le cas</span><span class="r-carte-cas__fleche">↗</span></span>
+            <span class="r-carte-cas__f" aria-hidden="true"><span class="r-carte-cas__lire">Lire le cas</span><span class="r-carte-cas__fleche">→</span></span>
           </div>
           {(data.flow || data.parcours) && (
             <div class="r-carte-cas__montre">

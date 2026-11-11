@@ -161,16 +161,30 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 .tenue-robot .r-barre.est-au-contact .r-barre__cta:hover { border-color: var(--r-encre); }
 .tenue-robot .r-barre__menu { display: none; margin-left: auto; height: 44px; padding: 0 18px; }
 .tenue-robot .r-barre__menu.sans-anneau:focus-visible { outline: none; }
+/* Une section qui reçoit le focus par un lien du menu ne s'encadre pas. */
+.tenue-robot section[tabindex='-1']:focus-visible { outline: none; }
 @media (max-width: 900px) {
   .tenue-robot .r-barre__liens { display: none; }
   .tenue-robot .r-barre__menu { display: inline-flex; }
   .tenue-robot .r-barre__in { padding-right: 6px; gap: 8px; }
   /* Entre 560 et 900 px la pilule n'était qu'un logo, un vide et « Menu » : le
      bouton d'appel y tient, il y reste. */
-  .tenue-robot .r-barre__cta { margin-left: auto; }
+  .tenue-robot .r-barre__cta { margin-left: auto; height: 44px; }
   .tenue-robot .r-barre__cta + .r-barre__menu { margin-left: 0; }
 }
+/* Sous 560 px la barre garde le bouton d'appel, écrit un cran plus petit (il
+   garde ses 44 px de haut, comme « Menu » : c'est une cible au doigt) : le
+   robot seul à gauche (sans « lilian ») lui laisse la place. Sur l'accueil,
+   le bouton de l'ouverture vient après la photo et tombe souvent sous le
+   premier écran : celui de la barre s'efface tant que l'autre est à l'écran
+   (`voit-le-geste`, script de `barre.astro`), jamais les deux ensemble. */
 @media (max-width: 559.98px) {
+  .tenue-robot .r-barre .r-barre__logo > span { display: none; }
+  .tenue-robot .r-barre__cta { padding-inline: 14px; font-size: 14px; transition: opacity 0.25s var(--r-sortie), visibility 0.25s, transform 0.3s var(--r-sortie), background-color 0.2s var(--r-sortie), border-color 0.2s var(--r-sortie); }
+  .tenue-robot .r-barre.voit-le-geste .r-barre__cta { opacity: 0; visibility: hidden; }
+}
+/* Plus étroit encore, il ne tient plus à côté de « Menu ». */
+@media (max-width: 343.98px) {
   .tenue-robot .r-barre__cta { display: none; }
   .tenue-robot .r-barre__cta + .r-barre__menu { margin-left: auto; }
 }
@@ -184,6 +198,11 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 .r-menu.tenue-robot[open] { display: grid; gap: 2px; animation: r-pan 0.4s var(--r-sortie); }
 .r-menu.tenue-robot:focus { outline: none; }
 .r-menu.tenue-robot::backdrop { background: rgb(15 13 11 / 0.6); }
+/* La page ne défile pas derrière le menu ouvert. */
+html:has(.r-menu[open]) { overflow: hidden; scrollbar-gutter: stable; }
+/* Sans script, « Menu » n'ouvrirait rien : il ne s'affiche pas (`js-ready` est posé par Layout). */
+html:not(.js-ready) .tenue-robot .r-barre__menu { display: none; }
+.r-menu .r-menu__liens { display: grid; gap: 2px; }
 .r-menu .r-menu__haut { display: flex; justify-content: space-between; align-items: center; padding: 0 0 6px 6px; }
 .r-menu .r-btn--trait { height: 44px; }
 .r-menu .r-menu__lien { text-decoration: none; font-weight: 500; font-size: 19px; padding: 12px; border-radius: 14px; }
@@ -228,6 +247,8 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 .tenue-robot .r-sticker--1 { top: 30%; right: -2%; rotate: 3deg; animation-delay: 0.65s; }
 .tenue-robot .r-sticker--2 { bottom: 13%; left: -9%; rotate: 3deg; animation-delay: 0.75s; }
 @keyframes r-pose { from { opacity: 0; transform: translateY(8px); } }
+/* « certifié niv. 5 » se lit après « Make », pas du même souffle. */
+.tenue-robot .r-sticker__detail { font-weight: 500; color: color-mix(in srgb, var(--r-encre) 74%, transparent); }
 /* Le carré d'icône des modules et les fils n'existent qu'au bureau (`bureau.css`). */
 .tenue-robot .r-sticker__ic, .tenue-robot .r-fils { display: none; }
 
@@ -294,6 +315,10 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
   background: var(--r-lilas); color: var(--r-encre); border-radius: 28px; padding: 40px 44px 36px;
   animation: r-pan 0.5s var(--r-sortie);
 }
+/* Un panneau au repos (`data-repos`, script de `index.astro`) sort de la
+   page ; sous 1100 px il garde sa place, invisible (plus bas). */
+.tenue-robot .r-pan[data-repos] { display: none; }
+.tenue-robot .r-onglet__court { display: none; }
 @keyframes r-pan-cote { from { opacity: 0; transform: translateX(10px); } }
 @keyframes r-pan { from { opacity: 0; transform: translateY(8px); } }
 .tenue-robot .r-pan__ic { width: 40px; height: 40px; color: var(--r-encre); margin-bottom: 24px; }
@@ -337,7 +362,7 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 .tenue-robot .r-carte-cas__texte { color: var(--r-texte-2); font-size: 16px; flex: 1; margin-bottom: 12px; text-wrap: pretty; }
 .tenue-robot .r-carte-cas__f { position: absolute; top: 22px; right: 22px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--r-trait-2); color: var(--r-texte); font-size: 16px; transition: transform 0.4s var(--r-sortie), background-color 0.25s var(--r-sortie), border-color 0.25s var(--r-sortie), color 0.25s var(--r-sortie); }
 .tenue-robot .r-carte-cas:hover { background: var(--r-surface-2); border-color: var(--r-trait-2); }
-.tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: var(--r-citron); border-color: var(--r-citron); color: var(--r-encre); transform: rotate(45deg); }
+.tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: var(--r-citron); border-color: var(--r-citron); color: var(--r-encre); transform: translateX(2px); }
 .tenue-robot .r-carte-cas:has(a:focus-visible) { outline: 2px solid var(--r-lilas); outline-offset: 3px; }
 .tenue-robot .r-carte-cas h3 a:focus-visible { outline: none; }
 /* Le texte de la carte est une boîte au bureau seulement ; ses étapes en cartes et « Lire le cas » aussi (`bureau.css`). */
@@ -364,6 +389,45 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
   .tenue-robot .r-etapes { display: none; }
   .tenue-robot .r-carte-cas__montre { margin-top: 10px; }
   .tenue-robot .r-carte-cas__montre:not(:has(.r-ecart)) { display: none; }
+  /* Les quatre panneaux des métiers dans la même case : le bloc a la hauteur
+     du plus long, et la page ne saute plus quand on change de métier (jusqu'à
+     54 px sur téléphone). */
+  .tenue-robot .r-onglets__pans { display: grid; }
+  .tenue-robot .r-pan { grid-area: 1 / 1; height: auto; }
+  .tenue-robot .r-pan[data-repos] { display: flex; visibility: hidden; animation: none; }
+}
+/* De 861 à 1099 px, les cas vont par deux : leurs rangées sont partagées
+   (client, titre, texte, outils, écart), pour que les pastilles et les écarts
+   de deux cartes voisines tombent sur la même ligne. Un cas sans écart
+   mesuré s'arrête à ses outils : sa carte est plus courte, sans creux. Sa
+   marge basse négative annule son remplissage du bas dans le calcul de la
+   rangée des outils (un sous-quadrillage le compte dans sa dernière rangée :
+   26 px, 1 px de filet, et les 4 px de gouttière qu'une rangée du milieu
+   reçoit en plus) : sans elle, la voisine recevait un creux sous ses
+   pastilles, qui s'étiraient pour le remplir. */
+@media (min-width: 861px) and (max-width: 1099.98px) {
+  .tenue-robot .r-carte-cas { display: grid; grid-template-rows: subgrid; grid-row: span 5; align-content: start; }
+  .tenue-robot .r-carte-cas:not(:has(.r-ecart)) { grid-row: span 4; margin-bottom: -31px; }
+  .tenue-robot .r-carte-cas .r-outils { align-self: start; }
+  .tenue-robot .r-carte-cas__texte { margin-bottom: 4px; }
+  /* Deux écarts voisins ont la même hauteur de puits, même quand l'un tient sur une ligne de moins. */
+  .tenue-robot .r-carte-cas__montre { margin-top: 2px; display: grid; }
+  /* Le module « n8n » ne passe plus le bord de la colonne. */
+  .tenue-robot .r-sticker--1 { right: 1%; }
+  /* Quatre chiffres sur une ligne : le dernier libellé, le plus long, prend
+     sa largeur, les trois autres se partagent le reste. */
+  .tenue-robot .r-chiffres { grid-template-columns: repeat(3, minmax(0, 1fr)) max-content; }
+  .tenue-robot .r-chiffres li { padding-inline: 18px; }
+  .tenue-robot .r-chiffres li:first-child { padding-left: 0; }
+  .tenue-robot .r-chiffres li:last-child { padding-right: 0; }
+}
+/* De 700 à 1099 px l'onglet choisi écrit déjà le nom du métier, à côté du
+   panneau : le panneau s'ouvre sur sa phrase, comme au bureau (le titre reste
+   pour les lecteurs d'écran, l'icône est celle de l'onglet). */
+@media (min-width: 700px) and (max-width: 1099.98px) {
+  .tenue-robot .r-pan h3 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .tenue-robot .r-pan__ic { display: none; }
+  .tenue-robot .r-pan__phrase { margin-top: 0; font-size: clamp(22px, 2.5vw, 26px); font-weight: 600; line-height: 1.16; letter-spacing: -0.02em; text-wrap: balance; }
 }
 /* Sur téléphone l'avant et l'après se suivent, l'un sous l'autre. */
 @media (max-width: 620px) {
@@ -394,7 +458,9 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 /* Au doigt, le bouton d'appel pose le focus sur ce titre (le clavier ne s'ouvre pas sur la page) : sans anneau. */
 .tenue-robot .r-contact h2:focus { outline: none; }
 .tenue-robot .r-contact .contact.contact { display: grid; gap: 16px; }
-.tenue-robot .r-contact .contact .contact__ligne { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.tenue-robot .r-contact .contact .contact__ligne { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; --entre: 14px; }
+/* Sous l'e-mail, l'erreur et l'adresse proposée courent sous les deux champs (voir `formulaire-contact.astro`). */
+@media (min-width: 521px) { .tenue-robot .r-contact .contact .contact__ligne > .contact__champ:first-child > :is(.contact__erreur, .contact__suggestion):not(:empty) { width: calc(200% + 14px); } }
 .tenue-robot .r-contact .contact .contact__champ { display: grid; gap: 7px; }
 .tenue-robot .r-contact .contact.contact label { font: 600 14px var(--r-flex); color: var(--r-encre); text-transform: none; letter-spacing: normal; }
 .tenue-robot .r-contact .contact .contact__facultatif { font-weight: 400; color: var(--r-encre-3); }
@@ -521,12 +587,15 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 /* Sur téléphone la liste devient une colonne d'icônes (Lilian, 10 novembre
    2026) ; au-dessus de 700 px il y a la place d'écrire le nom de chaque métier. */
 @media (max-width: 699.98px) {
-  .tenue-robot .r-onglets { grid-template-columns: 56px minmax(0, 1fr); gap: 10px; }
-  .tenue-robot .r-onglets__liste button { justify-content: center; width: 56px; height: 56px; padding: 0; border-radius: 14px; }
+  .tenue-robot .r-onglets { grid-template-columns: 82px minmax(0, 1fr); gap: 10px; }
+  .tenue-robot .r-onglets__liste button { flex-direction: column; justify-content: center; gap: 2px; width: 82px; height: 64px; padding: 0; border-radius: 14px; }
   .tenue-robot .r-onglets__liste button:active { transform: scale(0.96); }
-  .tenue-robot .r-onglet__ic { background: none; width: 42px; height: 42px; padding: 7px; }
+  .tenue-robot .r-onglet__ic { background: none; width: 34px; height: 34px; padding: 4px; }
   .tenue-robot .r-onglets__liste button[aria-selected='true'] .r-onglet__ic { background: none; color: var(--r-encre); }
   .tenue-robot .r-onglet__nom { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  /* Le nom court sous l'icône. La tuile fait 82 px parce que « Automatisation »
+     en mesure 73 à 11 px, même en caractères étroits : à 68 px il était rogné. */
+  .tenue-robot .r-onglet__court { display: block; font: 600 11px/13px var(--r-flex); font-variation-settings: 'wdth' 66; white-space: nowrap; }
 }
 @media (max-width: 860px) {
   .tenue-robot .r-hero { padding-top: 118px; border-radius: 0 0 24px 24px; }
@@ -570,6 +639,14 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
   .tenue-robot .r-pied__liens a { padding-block: 11px; }
   .tenue-robot .r-hero__actions .r-btn { width: 100%; }
   .tenue-robot .r-contact .contact .contact__envoi { width: 100%; }
+  .tenue-robot .r-pied__contact .r-btn { width: 100%; }
+  /* Les chiffres en registre, une ligne chacun : le nombre, puis ce qu'il
+     compte. Par deux, deux libellés presque égaux tombaient l'un sur une
+     ligne, l'autre sur deux. */
+  .tenue-robot .r-chiffres { grid-template-columns: 1fr; row-gap: 0; margin-top: 28px; border-top: 1px solid var(--r-trait-2); }
+  .tenue-robot .r-chiffres li, .tenue-robot .r-chiffres li:nth-child(odd) { grid-template-columns: 7.4em minmax(0, 1fr); align-items: baseline; gap: 0 14px; padding: 13px 0 12px; border-left: 0; border-bottom: 1px solid var(--r-trait-2); }
+  .tenue-robot .r-chiffres strong { font-size: 26px; }
+  .tenue-robot .r-chiffres span { text-wrap: pretty; }
 }
 
 @media (prefers-reduced-motion: reduce) {

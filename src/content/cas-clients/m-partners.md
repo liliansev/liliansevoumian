@@ -4,7 +4,7 @@ seoTitle: "Scraping et qualification de prospects par agent IA : cas client Make
 description: "M Partners qualifie 23 cibles en 7 minutes et scrape 300 entreprises par semaine, sourcing des signaux et notation des profils compris."
 client: "M Partners"
 enClair: "Un agent IA qui trouve et qualifie les prospects"
-accroche: "J’ai construit l’agent IA qui lit les pages d’équipe, note chaque profil et envoie les bons contacts dans leur CRM."
+accroche: "J’ai construit l’agent IA qui lit la page « Équipe » de chaque entreprise, note chaque profil et envoie les bons contacts dans leur CRM."
 secteur: "Chasse de têtes · startups et capital-risque"
 date: 2026-05-05
 tags: ["Sales", "Ops"]
@@ -26,7 +26,7 @@ flow:
     - { icon: "lucide:mail", kicker: "E-mail", title: "Récapitulatif envoyé" }
 bascule:
   - { avant: "Une cinquantaine d’entreprises passées en revue par semaine", apres: "300 entreprises par semaine" }
-  - { avant: "1 à 3 heures pour 50 entreprises, à la main", apres: "7 à 10 minutes par passage" }
+  - { avant: "1 à 3 heures pour 50 entreprises, à la main", apres: "7 à 10 minutes à chaque lancement de l’agent" }
   - { avant: "Le dirigeant prospecte", apres: "Le dirigeant valide" }
 nomenclature:
   - { etape: "Détection des signaux de levée et de recrutement", outil: "Make", role: "declencheur" }

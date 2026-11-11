@@ -12,11 +12,11 @@ secteur: Coaching
 tags: [Application métier, Planning, Ops]
 tools: [Glide, Make]
 parcours:
-  - { icon: "lucide:calendar-plus", kicker: "Le client", title: "Publie une session", outil: "Glide" }
+  - { icon: "lucide:calendar-plus", kicker: "Deuxième Souffle", title: "Publie une session", outil: "Glide" }
   - { icon: "lucide:hand", kicker: "Le coach", title: "Se positionne", outil: "Glide" }
-  - { icon: "lucide:user-check", kicker: "Le client", title: "Affecte un coach", outil: "Glide" }
+  - { icon: "lucide:user-check", kicker: "Deuxième Souffle", title: "Affecte un coach", outil: "Glide" }
   - { icon: "lucide:clipboard-check", kicker: "Sur place", title: "Pointage", outil: "Glide" }
-  - { icon: "lucide:chart-column", kicker: "Dashboard du client", title: "Paiements des coachs estimés", outil: "Glide" }
+  - { icon: "lucide:chart-column", kicker: "Dashboard", title: "Paiements des coachs estimés", outil: "Glide" }
 draft: false
 ---
 

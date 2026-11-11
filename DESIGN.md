@@ -797,9 +797,9 @@ elles le contredisent.**
   (« Me contacter » donnait deux noms à la même porte sur le même écran).
 - **La barre.** La pilule ne change jamais de largeur sous le pointeur (elle
   attend qu'il la quitte). Entre 560 et 900 px elle porte le bouton d'appel à
-  côté de « Menu » ; sous 560 px, « Menu » seul. Le menu marque la section à
-  l'écran, se ferme d'un clic sur le voile, et rend le focus à « Menu » (sans
-  anneau au pointeur). Au survol un lien ne prend que l'encre : le fond dit
+  côté de « Menu » (sous 560 px : voir le second tour, plus bas). Le menu
+  marque la section à l'écran, se ferme d'un clic sur le voile, et rend le
+  focus à « Menu » quand on le ferme sans choisir (sans anneau au pointeur). Au survol un lien ne prend que l'encre : le fond dit
   où l'on est et rien d'autre. Une ancre ou un focus au clavier s'arrête sous
   la barre (`scroll-margin`).
 - **Les métiers.** La colonne d'icônes seules ne vaut plus que sous 700 px
@@ -852,6 +852,83 @@ elles le contredisent.**
   côté du bouton et la note passe dessous, puis s'efface une fois le message
   parti. Une page de cas ouvre sur son accroche, la même phrase que sur
   l'index, puis sa réserve en plus petit.
+
+### La reprise, second tour (11 novembre 2026)
+
+Les notes relevées, telles quelles (H7 et H10 sans objet, donc sur 32) :
+l'accueil à 20, puis 25, puis 29 ; `/cas-clients` à 26, puis 28. Ce que les
+deux dernières revues et leurs mesures ont demandé. **Ces règles priment sur
+le paragraphe du dessus là où elles le contredisent.**
+
+- **La barre au téléphone.** Sous 560 px la pilule garde le bouton d'appel
+  (écrit en 14 px, 44 px de haut comme « Menu » : c'est une cible au doigt) et
+  le robot seul, sans le nom ; sous 344 px, « Menu » seul. Tant que le bouton
+  de l'ouverture est à l'écran, celui de la barre s'efface (`voit-le-geste`) :
+  sous 560 px un seul bouton d'appel se voit à la fois. Devant le formulaire
+  il passe au trait.
+- **Le menu.** Ouvert, il fige la page derrière lui (`html:has(.r-menu[open])`,
+  gouttière stable). Un lien vers une section de la page y emmène le focus
+  (la section, sans anneau), plus à « Menu » : la tabulation suivante repart
+  de là et la page ne remonte pas. Ses liens sont une `nav` nommée. Sans
+  script, « Menu » ne s'affiche pas (le bouton d'appel reste).
+- **Le retour arrière.** Le bouton d'appel pose une entrée d'historique
+  (`#ecrire`) : « Précédent » ramène où l'on était, et deux clics n'en
+  empilent pas deux.
+- **Les métiers au téléphone.** Sous 700 px chaque icône porte son nom court
+  dessous (11 px : « Automatisation », « Agents IA », « Dashboards »,
+  « Formations ») dans une colonne de 82 px. Pas 68 : « Automatisation »
+  mesure 73 px et l'axe de chasse de Roboto Flex ne le resserre presque pas.
+  Le bloc garde la même hauteur quel que soit l'onglet : les panneaux au
+  repos restent dans la grille (`data-repos`, invisibles et inertes), ils ne
+  sont plus `hidden` une fois le script passé. De 700 à 1099 px le panneau ne
+  répète ni l'icône ni le nom de son onglet.
+- **Les chiffres au téléphone** se lisent en registre : le chiffre à gauche,
+  sa légende à droite, un filet entre les lignes.
+- **De 861 à 1099 px** les cartes de cas vont par deux et partagent leurs
+  rangées (`subgrid`) : noms, titres, accroches, pastilles et puits s'alignent
+  d'une carte à l'autre, deux puits voisins ont la même hauteur, et une carte
+  sans écart s'arrête sous ses pastilles (sa marge basse négative rend à la
+  rangée ce que le sous-grillage lui ajoutait).
+- **Les flèches.** → pour un lien du site (un cas, une offre), ↗ pour un lien
+  qui ouvre un autre onglet. Au survol la flèche d'un cas avance de 2 px.
+- **Le texte des scènes** monte d'un cran de 1100 à 1235 px (13,75, 14,75 et
+  16 px), là où le plateau est le plus réduit. La règle vient après celle du
+  socle, sinon elle ne s'applique pas.
+- **L'anneau au clavier, quel que soit le pointeur.** La règle du site tient :
+  pas d'anneau générique au doigt, ni sur un focus posé par script. Mais la
+  première tabulation pose `data-clavier` sur `html` (Layout ; retiré au
+  premier toucher) et l'anneau se montre alors partout : une tablette avec
+  son clavier, sans souris, laissait le lien de retour, « Envoyer » et le
+  lien vers l'agenda sans indicateur. La règle est écrite deux fois, dans
+  `global.css` et dans `carnet.css` (chargé après, son `:focus { outline:
+  none }` l'emportait).
+- **Le formulaire.** Tab aussitôt après la frappe propose quand même la
+  correction de l'adresse, et le focus arrive dessus ; sa zone de touche fait
+  44 px sans mordre sur le champ ; pendant l'envoi les champs sont en lecture
+  seule ; l'état de l'envoi vient à l'écran ; un échec s'annonce tout de suite
+  (`aria-live="assertive"`), le reste poliment ; le brouillon est gardé en
+  quittant la page (`pagehide`) ; l'erreur de l'adresse court sur les deux
+  colonnes.
+- **Une seule courbe sur tout le site** : `--ease-out-quint` prend la valeur
+  de `--r-sortie` (les liens du menu, le logo et le lien d'évitement en
+  gardaient une autre).
+- **Le pied** marque la page où l'on est (`aria-current="page"`). Sur
+  téléphone ses liens font 44 px au moins et le bouton de la newsletter prend
+  la largeur. Ses libellés sont ceux de la barre : une destination, un nom
+  (« Automatisation », « Principes »).
+- **L'index des cas.** Chaque feuille est un `article` nommé par son titre ;
+  le nom du client est dit dans le lien du titre ; le texte d'une feuille
+  reste sélectionnable (le clic sur la feuille n'ouvre le cas que si rien
+  n'est sélectionné) ; les puits descendent jusqu'au pied de la feuille et
+  « Lire le cas » s'y aligne. La fin d'une page intérieure ne donne plus
+  l'adresse e-mail (`note={false}`) : le formulaire, puis « Réservez un
+  appel ».
+
+Laissé tel quel, en connaissance de cause : sans script seul le premier
+métier se lit (les panneaux gardent `hidden` côté serveur) ; le robot cligne
+sans commande de pause (un clin d'œil bref toutes les 4,5 s, coupé en
+mouvement réduit) ;
+un bouton citron n'a pas de bord sur blanc (son libellé fait 13:1).
 
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 

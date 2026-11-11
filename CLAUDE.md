@@ -33,11 +33,11 @@ src/
 │   ├── Navigation.astro       # la barre, la même partout : rend `robot/barre.astro` (pilule blanche flottante) avec les liens de la page et un seul bouton « Parlons de votre projet »
 │   ├── Footer.astro           # rend `robot/pied.astro` (« À très vite. »)
 │   ├── BoutonReservation.astro # le bouton d'appel : mène au formulaire de contact (goal contact_opened) ; `direct` pour l'agenda
-│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian ; une erreur de saisie s'écrit sous son champ (toutes d'un coup à l'envoi, l'adresse vérifiée en quittant le champ, un domaine écorché proposé corrigé), le brouillon suit d'une page à l'autre (`sessionStorage`), l'envoi, l'échec et l'envoi réussi se lisent à côté du bouton, qui reste focalisable (`aria-disabled`) et finit sur « Envoyé », puis « Écrire un autre message »
+│   ├── formulaire-contact.astro # e-mail, nom, message, envoyés par /api/contact (Resend) dans la boîte de Lilian ; une erreur de saisie s'écrit sous son champ (toutes d'un coup à l'envoi, l'adresse vérifiée en quittant le champ, un domaine écorché proposé corrigé), le brouillon suit d'une page à l'autre (`sessionStorage`), l'envoi, l'échec et l'envoi réussi se lisent à côté du bouton, qui reste focalisable (`aria-disabled`) et finit sur « Envoyé », puis « Écrire un autre message » ; les champs passent en lecture seule pendant l'envoi, un échec s'annonce tout de suite (`aria-live="assertive"`), le brouillon est aussi gardé en quittant la page (`pagehide`)
 │   ├── tete-de-page.astro     # en-tête d'une page intérieure : retour, h1, chapô, bouton, preuves
 │   ├── partie.astro           # une partie d'une page de lecture : titre à gauche, texte à droite ; `clair` en fait une île claire
 │   ├── questions.astro        # la FAQ, la même partout : un accordéon classique, en `details`, sans script
-│   ├── fin-de-page.astro      # la fin de chaque page : une phrase, le formulaire de contact, le lien vers l'agenda (prix en une ligne sur l'accueil)
+│   ├── fin-de-page.astro      # la fin de chaque page : une phrase, le formulaire de contact (sans l'adresse e-mail dessous, `note={false}`), le lien vers l'agenda (prix en une ligne sur l'accueil) ; `titreLargeur` règle la mesure du titre
 │   ├── pourquoi-moi.astro     # île claire : portrait, notice à la troisième personne, puis « je »
 │   ├── retour.astro           # fil de retour d'une page intérieure
 │   ├── SectionHeader.astro    # titre + chapô d'une section (ni sur-titre ni filet)
@@ -48,15 +48,15 @@ src/
 │   │   ├── bureau.css         # à partir de 1100 px seulement : chaque section devient un composant dessiné (ouverture à fils, une scène par métier, pile de cas en cartes d'étapes, trois cartes d'avis) ; sous 1100 px elle ne change rien
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
-│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog` ; sur l'accueil quatre liens (pas de « Contact », le bouton y mène), le lien de la section à l'écran est marqué (dans le menu aussi), le bouton d'appel passe au trait quand le formulaire est à l'écran et reste dans la pilule à côté de « Menu » de 560 à 900 px ; la pilule ne change pas de largeur sous le pointeur
+│   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog` ; sur l'accueil quatre liens (pas de « Contact », le bouton y mène), le lien de la section à l'écran est marqué (dans le menu aussi), le bouton d'appel passe au trait quand le formulaire est à l'écran et reste dans la pilule à côté de « Menu » jusqu'à 900 px (sous 560 px : le robot sans le nom, et le bouton s'efface tant que celui de l'ouverture est à l'écran ; sous 344 px « Menu » seul) ; la pilule ne change pas de largeur sous le pointeur ; le menu ouvert fige la page, un de ses liens emmène le focus dans sa section, et « Menu » ne s'affiche pas sans script
 │   │   ├── ouverture.astro    # le nom, le portrait non retouché et ses trois étiquettes, un seul bouton « Parlons de votre projet » (après la photo sur téléphone ; c'était « Me contacter » jusqu'au 11 novembre 2026) ; au bureau, un scénario : les trois étiquettes en modules reliés au portrait par des fils
-│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 700 px : une colonne d'icônes à gauche, le panneau à droite ; de 700 à 1000 px chaque onglet écrit son nom) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
+│   │   ├── metiers.astro      # les 4 métiers en onglets (sous 700 px : une colonne de 82 px d'icônes avec leur nom court dessous, le panneau à droite ; de 700 à 1000 px chaque onglet écrit son nom ; le bloc garde sa hauteur d'un onglet à l'autre, les panneaux au repos portent `data-repos` au lieu de `hidden`) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
 │   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres de l'audience sur une ligne à filets (sortis de l'ouverture), leur signe en lilas ; au bureau, un défilé avec son bouton pause (un mur en mouvement réduit)
 │   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron ; au bureau, trois cartes : une grande sur lilas, deux sombres à sa droite ; aucun script
 │   │   ├── projets.astro      # les cas clients en cartes, ceux qui ont un avant / après d'abord ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
 │   │   ├── etapes.astro       # les étapes d'un cas en cartes fixes, d'après son `flow` (deux puis trois) ou son `parcours` (trois puis deux, numérotées) ; ni fil ni script ; bureau seulement
 │   │   ├── contact.astro      # « Parlons de votre projet » et le formulaire seul : ni agenda ni adresse e-mail
-│   │   ├── pied.astro         # « À très vite. », les liens, et « S’abonner à la newsletter » tout en bas, au trait (sur toutes les pages, via Footer)
+│   │   ├── pied.astro         # « À très vite. », les liens (la page où l'on est porte `aria-current`), et « S’abonner à la newsletter » tout en bas, au trait (sur toutes les pages, via Footer)
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
 │   ├── sobre/                 # l'accueil et la barre/le pied de tout le site
 │   │   ├── sobre.css          # la colonne de l'accueil (900 px) et ses titres de section
@@ -135,7 +135,7 @@ src/
 ├── data/                      # metiers.ts (les 4 métiers), projets.ts, faq.ts, home-faq.ts, make-ou-n8n.ts (une seule réponse pour tout le site), maintenance.ts et service-pricing.ts (les prix), parcours.ts, clients.ts, derniere-video.ts, realisations.ts, outils-metiers.ts, brands.ts
 ├── lib/                       # reservation.ts (agenda, libellé du bouton), contact.ts (adresse de contact), contact-message.ts (envoi du formulaire par Resend), roi.ts, metiers/scene.ts (moteur des scènes), robot/fils.ts (les fils de l'ouverture de l'accueil au bureau : tracé, ports, grain), blocs/atelier.ts (formes 3D, hors accueil)
 ├── layouts/
-│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire, suivi DataFast
+│   ├── Layout.astro           # SEO, JSON-LD, embed cal.com, défilement vers le formulaire (avec son entrée d'historique), suivi DataFast ; pose `data-clavier` sur `html` à la première tabulation (l'anneau de focus se montre alors quel que soit le pointeur)
 │   ├── PageExpertOutil.astro  # charpente des pages d'outil (/expert-make, /expert-n8n)
 │   └── PageReponse.astro      # charpente des pages-réponses (une question, sa réponse dans le chapô)
 ├── pages/
@@ -213,7 +213,18 @@ reprise : viser la note maximale*, overrides « Le verrou » where they differ
 (one name for the call gesture, the call button stays in the nav pill from
 560 px, named tabs from 700 px, a form that prevents errors, a lilac sent
 confirmation, the case index rebuilt in the home's grammar, focus rings never
-lemon on inner pages). Inner pages and the blog
+lemon on inner pages). A second round of two independent reviews followed the
+same day (DESIGN.md, *La reprise, second tour*, which overrides the paragraph
+above it where they differ; scores as measured: home 20, 25, then 29 out of
+32, case index 26 then 28): under 560 px the nav pill keeps the call button
+with the robot alone and hides it while the hero button is on screen, phone
+tabs carry a short name under each icon in an 82 px column, the tabs block
+keeps one height, case cards share subgrid rows from 861 to 1099 px, → marks
+an internal link and ↗ a new tab, the open menu locks the page and a menu
+link moves focus into its section, the keyboard focus ring shows on any
+pointer once Tab is pressed (`data-clavier`; the no-ring-on-touch rule of
+`global.css` still holds for taps and scripted focus), one easing curve
+site-wide. Inner pages and the blog
 get the « plus fin » pass from the very last block of `global.css` (PASSE « PLUS FIN ») and of
 `carnet.css`. The home lives in `components/robot/` under `.tenue-robot` and
 passes `carnet={false}` to Layout. Every other page gets the same look

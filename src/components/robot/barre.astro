@@ -19,6 +19,16 @@
  * pointeur (elle se resserrait de 122 px par côté au clic sur un lien, et le
  * pointeur immobile tombait sur le lien voisin) ; le menu marque lui aussi la
  * section à l'écran, et sa fermeture rend le focus à « Menu ».
+ *
+ * Dernière lecture du même jour : sous 560 px la barre porte elle aussi le
+ * bouton d'appel (le robot seul à gauche, sans « lilian », lui laisse la
+ * place). Sur l'accueil, où le bouton de l'ouverture vient après la photo et
+ * tombe souvent sous le premier écran, elle ne le montre que tant que ce
+ * bouton-là n'est pas à l'écran (`voit-le-geste`) : jamais les deux ensemble.
+ *
+ * Relecture de mesures du même jour : la page ne défile plus derrière le menu
+ * ouvert, ses liens sont dans une `nav`, et sans script « Menu », qui
+ * n'ouvrirait rien, ne s'affiche pas (les pages restent dans le pied).
  */
 import BoutonReservation from '../BoutonReservation.astro';
 import Robot from './robot.astro';
@@ -41,13 +51,16 @@ const accueil: Lien[] = [
 ];
 const { liens = accueil, source = 'home_nav', sourceMenu = 'home_menu', marqueHref = '#main-content' } = Astro.props;
 const marqueLibelle = marqueHref === '/' ? "Lilian Sevoumian, retour à l'accueil" : 'Lilian Sevoumian, haut de page';
+// L'accueil ouvre sur son propre bouton d'appel : la barre part du principe
+// qu'il est à l'écran, et le script la corrige dès qu'il sait.
+const gesteEnOuverture = marqueHref === '#main-content';
 const ici = Astro.url.pathname.replace(/\/$/, '') || '/';
 const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.startsWith(`${href}/`)) ? 'page' : undefined);
 ---
-<header class="r-barre" data-r-barre>
+<header class:list={['r-barre', gesteEnOuverture && 'voit-le-geste']} data-r-barre>
   <div class="r-barre__in">
     <a class="r-barre__logo" href={marqueHref} aria-label={marqueLibelle}><Robot /><span aria-hidden="true">lilian</span></a>
-    <nav class="r-barre__liens" aria-label="Sections">
+    <nav class="r-barre__liens" aria-label={marqueHref === '/' ? 'Navigation principale' : 'Sections'}>
       {liens.map((l) => <a href={l.href} aria-current={courant(l.href)}>{l.label}</a>)}
     </nav>
     <BoutonReservation source={source} class="r-btn r-btn--cta r-barre__cta">Parlons de votre projet</BoutonReservation>
@@ -59,7 +72,9 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
     <span class="r-barre__logo" aria-hidden="true"><Robot /><span>lilian</span></span>
     <button class="r-btn r-btn--trait" type="button" data-r-menu-fermer>Fermer</button>
   </div>
-  {liens.map((l) => <a class="r-menu__lien" href={l.href} aria-current={courant(l.href)}>{l.label}</a>)}
+  <nav class="r-menu__liens" aria-label={marqueHref === '/' ? 'Navigation principale' : 'Sections'}>
+    {liens.map((l) => <a class="r-menu__lien" href={l.href} aria-current={courant(l.href)}>{l.label}</a>)}
+  </nav>
   <BoutonReservation source={sourceMenu} class="r-btn r-btn--cta r-menu__cta">Parlons de votre projet</BoutonReservation>
 </dialog>
 <script>
@@ -106,7 +121,16 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
     bouton?.focus({ preventScroll: true });
   });
   bouton?.addEventListener('blur', () => bouton.classList.remove('sans-anneau'));
-  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+  // Un lien du menu vers une section de la page : le focus va à cette section,
+  // pas à « Menu », d'où la tabulation suivante repartait du haut (et la page
+  // remontait). La section ne s'encadre pas : le focus y est posé pour la suite.
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+    menu.close();
+    const cible = a.hash && a.pathname === location.pathname ? document.getElementById(a.hash.slice(1)) : null;
+    if (!cible) return;
+    if (!cible.hasAttribute('tabindex')) cible.setAttribute('tabindex', '-1');
+    cible.focus({ preventScroll: true });
+  }));
 
   if (barre && 'IntersectionObserver' in window) {
     // La section à l'écran : son lien est marqué dans la barre. La bande
@@ -115,22 +139,39 @@ const courant = (href: string) => (href.startsWith('/') && (ici === href || ici.
     // Le menu des petits écrans porte la même marque.
     const tous = [...ancres, ...(menu?.querySelectorAll<HTMLAnchorElement>('.r-menu__lien[href^="#"]') ?? [])];
     const sections = ancres.map((a) => document.getElementById(a.hash.slice(1))).filter((s): s is HTMLElement => !!s);
+    const vues = new Set<Element>();
+    // Devant le formulaire, aucune section n'est marquée : la dernière
+    // (« Avis ») le restait alors que l'île du contact remplissait l'écran.
+    let auContact = false;
+    const marquer = () => {
+      const ici = auContact ? undefined : sections.filter((s) => vues.has(s)).pop();
+      for (const a of tous) {
+        if (ici && a.hash === `#${ici.id}`) a.setAttribute('aria-current', 'location');
+        else a.removeAttribute('aria-current');
+      }
+    };
     if (sections.length) {
-      const vues = new Set<Element>();
       const guet = new IntersectionObserver((entrees) => {
         for (const e of entrees) e.isIntersecting ? vues.add(e.target) : vues.delete(e.target);
-        const ici = sections.filter((s) => vues.has(s)).pop();
-        for (const a of tous) {
-          if (ici && a.hash === `#${ici.id}`) a.setAttribute('aria-current', 'location');
-          else a.removeAttribute('aria-current');
-        }
+        marquer();
       }, { rootMargin: '-34% 0px -65% 0px' });
       sections.forEach((s) => guet.observe(s));
     }
+    // Le bouton d'appel de l'ouverture à l'écran : sur téléphone, celui de la
+    // barre s'efface (deux citrons pour une porte, sinon). Pas de bouton en
+    // ouverture : la barre garde le sien.
+    const gesteOuverture = document.querySelector('.r-hero [data-contact-ouvrir]');
+    if (gesteOuverture) {
+      new IntersectionObserver(([e]) => barre.classList.toggle('voit-le-geste', e.isIntersecting), { rootMargin: '-72px 0px 0px 0px' }).observe(gesteOuverture);
+    } else barre.classList.remove('voit-le-geste');
     // Le formulaire de contact à l'écran : le bouton d'appel se repose.
     const formulaire = document.querySelector('[data-formulaire-contact]');
     if (formulaire) {
-      new IntersectionObserver(([e]) => barre.classList.toggle('est-au-contact', e.isIntersecting), { rootMargin: '-80px 0px -25% 0px' }).observe(formulaire);
+      new IntersectionObserver(([e]) => {
+        auContact = e.isIntersecting;
+        barre.classList.toggle('est-au-contact', auContact);
+        if (sections.length) marquer();
+      }, { rootMargin: '-80px 0px -25% 0px' }).observe(formulaire);
     }
   }
 </script>

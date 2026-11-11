@@ -26,10 +26,10 @@ flow:
     - { icon: "lucide:clock", kicker: "Chaque jour à 9 h", title: "Envoi finalisé" }
 bascule:
   - { avant: "16 factures bloquées, jamais envoyées", apres: "Chaque facture part à temps" }
-  - { avant: "33 scénarios Make empilés, dont 28 qui ne servaient plus", apres: "4 scénarios propres et documentés" }
+  - { avant: "33 automatisations empilées, dont 28 ne servaient plus", apres: "4 automatisations, propres et documentées" }
   - { avant: "30 à 60 minutes pour régler une erreur", apres: "5 minutes" }
-  - { avant: "Une journée pour ajouter une nouvelle année", apres: "30 minutes, une ligne dans Notion" }
   - { avant: "Plusieurs heures pour former un arrivant", apres: "30 minutes" }
+  - { avant: "Une journée pour ajouter une nouvelle année", apres: "30 minutes, une ligne dans Notion" }
 nomenclature:
   - { etape: "Changement de deal détecté", outil: "Webhooks HubSpot", role: "declencheur" }
   - { etape: "Passage du deal en « BRAVO »", outil: "HubSpot", role: "declencheur" }

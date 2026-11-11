@@ -124,7 +124,7 @@
   /* Au survol la feuille garde son fond ; son filet s'éclaircit et la flèche répond. */
   .tenue-robot .r-carte-cas:hover { background: var(--r-surface-2); border-color: var(--r-trait-3); }
   .tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: none; border-color: var(--r-trait-3); color: var(--r-texte); transform: none; }
-  .tenue-robot .r-carte-cas:hover .r-carte-cas__fleche { background: var(--r-citron); color: var(--r-encre); transform: rotate(45deg); }
+  .tenue-robot .r-carte-cas:hover .r-carte-cas__fleche { background: var(--r-citron); color: var(--r-encre); transform: translateX(2px); }
   .tenue-robot .r-carte-cas__montre { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; min-width: 0; }
 
   /* Ce qui a été construit : des cartes, rien ne bouge. Deux rangées de même
@@ -278,6 +278,12 @@
   /* Le plateau s'arrondit lui aussi : à 1100 px, pendant le tour, ses coins
      bas débordaient carrés de l'arrondi du cadre (mesuré, pas à 1280 ni 1440). */
   border-radius: inherit;
+}
+/* Entre 1100 et 1235 px le plan d'une scène est réduit (616 px pour 760) :
+   son texte monte d'un cran, pour ne jamais passer sous 11 px à l'écran.
+   Après la règle du dessus, qu'il corrige (même poids). */
+@media (min-width: 1100px) and (max-width: 1235.98px) {
+  .tenue-robot .r-pan__scene .sm { --sm-note: 13.75px; --sm-texte: 14.75px; --sm-fort: 16px; }
 }
 /* Le citron n'y marque qu'une chose, ce que la scène obtient : le créneau
    posé dans l'agenda, le rendez-vous déplacé par l'agent, la colonne qui

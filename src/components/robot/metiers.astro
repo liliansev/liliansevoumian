@@ -4,10 +4,18 @@
  * gauche la liste, l'onglet choisi en citron ; à droite le grand panneau du
  * métier, sur lilas, son icône, sa phrase, son texte, ses outils (une
  * pastille par outil) et le lien vers son offre. Les flèches du clavier
- * passent d'un onglet à l'autre. Sous 1000 px la liste devient une colonne
- * d'icônes collante à gauche du panneau (Lilian, 10 novembre 2026 : ne plus
- * remonter pour choisir puis redescendre pour lire) ; le nom reste lu par les
- * lecteurs d'écran. Sans script, le premier panneau reste lisible.
+ * passent d'un onglet à l'autre. Sous 1000 px la liste colle à gauche du
+ * panneau (Lilian, 10 novembre 2026 : ne plus remonter pour choisir puis
+ * redescendre pour lire) ; sous 700 px c'est une colonne d'icônes, chacune
+ * avec son nom court dessous (`onglet`, en caractères étroits : trois métiers
+ * sur quatre n'avaient pas de nom tant qu'on ne les touchait pas), le nom
+ * entier restant celui que lisent les lecteurs d'écran. Sans script, le
+ * premier panneau reste lisible.
+ *
+ * Sous 1100 px les quatre panneaux occupent la même case : le bloc garde la
+ * hauteur du plus long, et la page ne saute plus quand on change de métier.
+ * Un panneau au repos porte `data-repos` (posé par le script de
+ * `index.astro`, qui retire `hidden` : cet attribut-là ne se redessine pas).
  *
  * À partir de 1100 px (`bureau.css`), la section est une seule grande scène
  * sur lilas : les quatre métiers en liste à gauche, la phrase du métier
@@ -46,7 +54,7 @@ const texteSeul = (html: string) => html.replace(/<[^>]+>/g, '');
       <div class="r-onglets__liste" role="tablist" aria-orientation="vertical" aria-label="Mes métiers">
         {metiers.map((m, i) => (
           <button type="button" role="tab" id={`onglet-${m.id}`} aria-controls={`panneau-${m.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
-            <span class="r-onglet__ic" set:html={icone(m.id)} /><span class="r-onglet__nom">{m.nom}</span>
+            <span class="r-onglet__ic" set:html={icone(m.id)} /><span class="r-onglet__nom">{m.nom}</span><span class="r-onglet__court" aria-hidden="true">{m.onglet}</span>
           </button>
         ))}
       </div>
