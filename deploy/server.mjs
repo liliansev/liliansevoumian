@@ -67,8 +67,7 @@ export function createRateLimiter({ max, windowMs, now = Date.now }) {
   };
 }
 /** Only expose through Caddy; it must overwrite X-Real-IP with the client IP. */
-export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNewsletter, sendContactMessage, contactLimits = { messages: 5, jetons: 30, windowMs: 600_000 }, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
-  let newsletterPromise;
+export function createSiteServer({ distDir = root, fetchImpl = fetch, sendContactMessage, contactLimits = { messages: 5, jetons: 30, windowMs: 600_000 }, track = trackAICrawlerResponse, analytics = true, timeoutMs = 10_000, videoTtlMs = 1_800_000, log = console.log } = {}) {
   let contactPromise;
   const contactMessages = createRateLimiter({ max: contactLimits.messages, windowMs: contactLimits.windowMs });
   const contactJetons = createRateLimiter({ max: contactLimits.jetons, windowMs: contactLimits.windowMs });
@@ -121,14 +120,6 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, signupNews
       if (url.pathname.endsWith('/') && url.pathname !== '/') return send(308, '', { Location: `${url.pathname.replace(/\/+$/, '')}${url.search}` });
       if (moved.has(url.pathname)) return send(308, '', { Location: `${moved.get(url.pathname)}${url.search}` });
       if (url.pathname.endsWith('/index.html')) return send(308, '', { Location: `${url.pathname.slice(0, -'/index.html'.length) || '/'}${url.search}` });
-      if (url.pathname === '/api/newsletter') {
-        if (req.method !== 'POST') return send(405, '', { Allow: 'POST' });
-        const bytes = await readBody(req, 4096);
-        if (!signupNewsletter) newsletterPromise ??= import('../runtime/newsletter-signup.mjs');
-        const signup = signupNewsletter ?? (await newsletterPromise).signupNewsletter;
-        const response = await signup(new Request(url, { method: 'POST', headers, body: bytes }), process.env.MAILCHEAP_API_KEY, origin, ip);
-        return send(response.status, Buffer.from(await response.arrayBuffer()), Object.fromEntries(response.headers));
-      }
       if (url.pathname === '/api/contact') {
         if (req.method !== 'POST' && req.method !== 'GET') return send(405, '', { Allow: 'GET, POST' });
         const wait = (req.method === 'GET' ? contactJetons : contactMessages)(ip ?? req.socket.remoteAddress ?? 'inconnu');

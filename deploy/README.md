@@ -7,8 +7,8 @@ The receiver accepts a commit archive, builds and tests a Docker image, checks a
 candidate container, then updates the app. A failed cutover restores the previous
 image. /docker/liliansevoumian/.env.previous preserves the last rollback image.
 
-Runtime secrets: /opt/liliansevoumian/secrets/runtime.env (MAILCHEAP_API_KEY for
-the newsletter, RESEND_API_KEY for the contact form). The contact form sends from
+Runtime secrets: /opt/liliansevoumian/secrets/runtime.env (RESEND_API_KEY for the
+contact form; the newsletter is a plain link to Substack and needs no key). The contact form sends from
 CONTACT_FROM (default formulaire@liliansevoumian.fr, a domain verified in Resend)
 to CONTACT_TO (default bonjour@liliansevoumian.fr); both are optional.
 TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY (Cloudflare Turnstile widget,
@@ -43,7 +43,7 @@ taken out of the config for one reload, otherwise Caddy keeps the cached one. Af
 
 Validation: pnpm exec tsc --noEmit; node --test deploy/server.test.mjs deploy/contact-message.test.mjs (after the esbuild bundle of runtime/);
 Docker build (includes Astro production build and tests), then check actual HTTPS
-routes and the newsletter validation path. Unit tests never send subscriber emails.
+routes and the contact form path.
 
 Rollback: copy /docker/liliansevoumian/.env.previous to .env and run
 `docker compose --project-directory /docker/liliansevoumian -f /docker/liliansevoumian/docker-compose.yml up -d --wait`.

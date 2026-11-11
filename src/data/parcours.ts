@@ -12,6 +12,7 @@
  * rendu ce jour-là, consigné dans PRODUCT.md, « Evidence on Hand ». Avant
  * d'ajouter une date, un chiffre ou un nom, l'y inscrire d'abord.
  */
+import { newsletter } from './newsletter';
 
 /** Les quatre faits du haut de page. `titre` est ce qu'on retient, `detail` le précise. */
 export const faits = [
@@ -221,7 +222,7 @@ export const profils = {
   github: 'https://github.com/liliansev',
   youtube: 'https://www.youtube.com/@lilian.sevoumian',
   // La newsletter « Augmentés », sur Substack.
-  newsletter: 'https://newsletter.augmentes.fr',
+  newsletter: newsletter.url,
 } as const;
 
 export const resumeCourt =

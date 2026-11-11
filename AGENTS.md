@@ -48,7 +48,6 @@ src/
 │   ├── home-services.astro    # 4 métiers (automatisation, agents IA, dashboards et outils métiers, formations) : un nom, une phrase, une ligne, la sortie ; une scène chacun, jouée une fois ; onglets sur téléphone
 │   ├── metiers/               # les 4 scènes des métiers + leur socle CSS (scene-metier.css)
 │   ├── home-today-path.astro  # « Pourquoi moi » (panneau clair) + frise du parcours
-│   ├── home-content.astro     # la dernière vidéo YouTube (relevée par le serveur, voir `data/derniere-video.ts`) + newsletter écrite comme un mail
 │   ├── home-voices.astro      # trois recommandations, une voix à la fois, choisie par le visiteur
 │   │   # — page d'offre /automatisations-ia —
 │   ├── HeroManifesto.astro    # hero : titre, chapô, bouton
@@ -93,7 +92,6 @@ src/
     └── global.css             # jetons @theme, « La tenue commune », dispositif de la DA
 api/
 ├── dfst-events.js             # proxy DataFast (cookieless)
-└── newsletter.ts              # inscription à la newsletter (délègue à src/lib/newsletter-signup)
 ```
 
 ## Design System
@@ -159,6 +157,10 @@ scene per service (`src/components/metiers/`, engine in
   aucun de ses blocs ne mène à un cas précis : un cas change, la page ne doit
   pas en dépendre. Les cas ont leur page ; la seule sortie de l'accueil vers
   eux est le lien vers leur index, sous les recommandations.
+- La newsletter est « Augmentés », sur Substack (newsletter.augmentes.fr), depuis le 9 novembre 2026 :
+  le site n'inscrit personne lui-même (plus de Mailcheap ni de Lumail, plus de
+  `/api/newsletter`). Le bloc du blog (`blog/inscription.astro`) ouvre la page
+  d'inscription Substack, adresse préremplie ; goal `newsletter_opened`.
 - La dernière vidéo YouTube est relevée par le serveur de production
   (`deploy/server.mjs`, `/api/derniere-video`, flux des vidéos longues) et la
   page la remplace d'elle-même : rien à faire à chaque publication.
