@@ -96,65 +96,6 @@
   }
   @keyframes r-scene { from { opacity: 0; } }
 
-  /* ---------- les projets : une pile de feuilles ---------- */
-  .tenue-robot .r-cas { grid-template-columns: 1fr; gap: 20px; }
-  .tenue-robot .r-carte-cas {
-    display: grid; grid-template-columns: minmax(0, 0.56fr) minmax(0, 1fr); gap: 0 40px; align-items: stretch;
-    min-height: 448px; box-sizing: border-box; padding: 28px; border-radius: 28px;
-    /* Trois couches qui se lisent : la page (noir), la feuille (la surface la
-       plus claire, un filet franc), et ses cartes, creusées dans la feuille au
-       noir de la page. Avant, page, feuille et cartes se suivaient à 1,09:1. */
-    background: var(--r-surface-2); border-color: var(--r-trait-2);
-    /* Une ombre courte vers le haut : la feuille se détache de celle qu'elle recouvre. */
-    box-shadow: 0 -14px 30px -22px rgb(0 0 0 / 0.9);
-  }
-  .tenue-robot .r-carte-cas h3 a::after { border-radius: 28px; }
-  .tenue-robot .r-carte-cas__dit { display: flex; flex-direction: column; gap: 8px; padding: 8px 0 4px 8px; }
-  .tenue-robot .r-carte-cas__client { padding-right: 0; margin-bottom: 12px; }
-  .tenue-robot .r-carte-cas h3 { font-size: clamp(26px, 2.35vw, 32px); line-height: 1.1; letter-spacing: -0.024em; padding-right: 0; margin-bottom: 10px; }
-  .tenue-robot .r-carte-cas__texte { flex: 0 1 auto; max-width: 27em; }
-  .tenue-robot .r-carte-cas__f {
-    position: static; margin-top: auto; align-self: flex-start;
-    width: auto; height: 44px; padding: 0 6px 0 18px; border-radius: 999px;
-    display: inline-flex; align-items: center; gap: 12px;
-    font-size: 15px; font-weight: 600; letter-spacing: -0.005em;
-  }
-  .tenue-robot .r-carte-cas__lire { display: inline; }
-  .tenue-robot .r-carte-cas__fleche { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--r-noir); transition: transform 0.4s var(--r-sortie), background-color 0.25s var(--r-sortie), color 0.25s var(--r-sortie); }
-  /* Au survol la feuille garde son fond ; son filet s'éclaircit et la flèche répond. */
-  .tenue-robot .r-carte-cas:hover { background: var(--r-surface-2); border-color: var(--r-trait-3); }
-  .tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: none; border-color: var(--r-trait-3); color: var(--r-texte); transform: none; }
-  .tenue-robot .r-carte-cas:hover .r-carte-cas__fleche { background: var(--r-citron); color: var(--r-encre); transform: translateX(2px); }
-  .tenue-robot .r-carte-cas__montre { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; min-width: 0; }
-
-  /* Ce qui a été construit : des cartes, rien ne bouge. Deux rangées de même
-     hauteur ; une seule carte sur lilas. */
-  .tenue-robot .r-etapes { display: grid; min-height: 0; }
-  .tenue-robot .r-etapes__liste { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: minmax(132px, 1fr); gap: 10px; }
-  .tenue-robot .r-etape {
-    grid-column: span 2; display: flex; flex-direction: column; min-width: 0; box-sizing: border-box;
-    padding: 16px 18px 17px; border-radius: 18px;
-    background: var(--r-noir); border: 1px solid var(--r-trait-2);
-  }
-  .tenue-robot .r-etape__tete { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: auto; padding-bottom: 16px; }
-  .tenue-robot .r-etape__ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--o); color: var(--r-encre); flex-shrink: 0; }
-  .tenue-robot .r-etape__ic svg { width: 19px; height: 19px; }
-  .tenue-robot .r-etape__rang { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--r-gris); }
-  .tenue-robot .r-etape__sur { font-size: 13px; line-height: 1.3; color: var(--r-gris); margin-bottom: 3px; }
-  .tenue-robot .r-etape strong { font-size: 17px; font-weight: 600; line-height: 1.2; letter-spacing: -0.012em; color: var(--r-texte); text-wrap: balance; }
-  .tenue-robot .r-etape__sous { margin-top: 5px; font-size: 13px; line-height: 1.3; color: var(--r-gris); }
-  /* Une file : trois étapes, puis la quatrième et l'aboutissement, plus large. */
-  .tenue-robot .r-etapes--file .r-etape:nth-child(5) { grid-column: span 4; }
-  /* Un éventail : ce qui déclenche et ce qui traite, puis les trois actions. */
-  .tenue-robot .r-etapes--eventail .r-etape:nth-child(-n + 2) { grid-column: span 3; }
-  .tenue-robot .r-etape--forte { background: var(--r-lilas); border-color: var(--r-lilas); }
-  .tenue-robot .r-etape--forte strong { color: var(--r-encre); }
-  .tenue-robot .r-etape--forte :is(.r-etape__sur, .r-etape__sous, .r-etape__rang) { color: var(--r-encre-lilas); }
-  .tenue-robot .r-etape--forte .r-etape__ic { background: var(--r-encre); color: var(--r-lilas); }
-
-  /* L'écart avant / après : dessiné dans `robot.css` (il se lit aussi sur
-     téléphone) ; ici il se range sous les cartes d'étapes. */
-
   /* ---------- les avis : trois cartes ----------
      Une affiche lilas, étroite et haute, pour la phrase la plus courte, dite
      en très grand ; les deux autres à sa droite, plus larges, l'une sur
@@ -206,16 +147,9 @@
 
 /* Entre 1100 et 1240 px tout tient, un cran plus serré. */
 @media (min-width: 1100px) and (max-width: 1239px) {
-  .tenue-robot .r-etape { padding-inline: 15px; }
-  .tenue-robot .r-etape strong { font-size: 16px; }
   /* Les deux petites cartes d'avis moins hautes : la grande garde ses proportions. */
   .tenue-robot .r-avis__un:not(:first-child) { gap: 24px; padding: 28px 30px 24px; }
   .tenue-robot .r-avis__un:not(:first-child) blockquote { font-size: 19px; }
-}
-
-/* La pile ne colle que si une feuille tient dans la fenêtre sous la barre. */
-@media (min-width: 1100px) and (min-height: 680px) {
-  .tenue-robot .r-carte-cas { position: sticky; top: calc(96px + var(--i) * 14px); }
 }
 
 /* ---------- les clients : un défilé (pas en mouvement réduit, où le mur reste un mur) ---------- */

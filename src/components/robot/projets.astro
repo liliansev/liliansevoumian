@@ -1,73 +1,175 @@
 ---
-/*
- * Les projets clients (jamais les projets personnels, 14 octobre 2026), lus
- * dans les cas publiés : ceux qui ont un avant / après d'abord (le chapô
- * promet « ce que ça a changé », la première feuille doit le montrer ;
- * critique du 11 novembre 2026), puis du plus récent au plus ancien. Une carte par cas,
- * le client en petit (en lilas), un titre qui dit en clair ce qui a été
- * construit (`enClair`, jamais un chiffre seul : « 0 ressaisie » ne disait
- * rien, Lilian, 10 novembre 2026), le détail (`accroche`) et ses outils, une
- * pastille par outil. Toute la carte mène au cas ; au survol sa flèche passe
- * au citron et avance de deux pixels. Elle pointe à droite : « ↗ » est le
- * signe d'un lien qui ouvre un nouvel onglet (`.r-dehors`).
- *
- * À partir de 1100 px (`bureau.css`), les cartes deviennent une pile : chaque
- * cas est une grande feuille qui vient se poser sur la précédente au
- * défilement, avec à droite ce qui a été construit, en cartes (`etapes.astro`,
- * d'après `flow` ou `parcours`) et, dessous, un écart avant / après pris dans
- * sa `bascule`. Rien n'y est animé (Lilian, 10 novembre 2026 : « pas
- * d'animations ici, juste des belles cards »).
- */
+// Les projets clients (jamais les projets personnels, 14 octobre 2026), lus
+// dans les cas publiés : ceux qui ont un avant / après d'abord, puis du plus
+// récent au plus ancien.
+//
+// « Schémas », choisie par Lilian le 12 novembre 2026 parmi trois
+// propositions (il avait écrit : « le violet est prédominant sur projets
+// clients », « tu as mis les cards numérotées, faudrait faire autre chose »).
+// Une feuille de plan par cas, sur un rail qui défile de côté : le client,
+// un titre qui dit en clair ce qui a été construit (`enClair`), le schéma de
+// ce montage, puis son bilan en un chiffre. Le schéma suit le `flow` du cas
+// (un déclencheur, le cœur sur l'île blanche, trois actions) ou son
+// `parcours` (une file d'étapes sur un fil, sans numéros, la dernière sur
+// blanc). Pas de lilas hors des anneaux de focus ; le citron n'est que sur la
+// flèche d'une feuille survolée, le geste. Rien n'y est animé (Lilian,
+// 10 novembre 2026 : « pas d'animations ici, juste des belles cards »).
+//
+// Toute la feuille mène au cas. Sans script, le rail défile au doigt, à la
+// molette et au clavier (Tab passe de feuille en feuille) ; avec, deux
+// boutons ronds le font avancer d'une feuille.
 import { getCollection } from 'astro:content';
-import Outils from './outils.astro';
-import Etapes from './etapes.astro';
+import { Icon } from 'astro-icon/components';
+import { couleursOutils } from '../../data/outils';
 import { espaces } from '../../lib/espaces';
+import './projets.css';
+
 const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DEV || !data.draft)).sort(
   (a, b) => Number(!!b.data.bascule) - Number(!!a.data.bascule) || b.data.date.getTime() - a.data.date.getTime(),
 );
+
+// Le chiffre du bilan, pris dans les `kpis` du cas : celui qui se lit seul
+// (pour Humble+, « 0 ressaisie » ne disait rien, Lilian, 10 novembre 2026).
+// Un cas sans `kpis` dit ce que dit son accroche, sans rien ajouter :
+// Deuxième Souffle, « une trentaine de coachs ».
+const CHIFFRE: Record<string, number> = { 'humble-plus': 1, 'facturation-automatisee-fraich-touch': 0, 'm-partners': 1 };
+const SANS_KPIS: Record<string, { value: string; label: string }> = {
+  'deuxieme-souffle': { value: '≈ 30', label: 'coachs sur la première version' },
+};
+const bilanDe = (id: string, kpis?: { value: string; label: string }[]) =>
+  (kpis && CHIFFRE[id] !== undefined ? kpis[CHIFFRE[id]] : undefined) ?? SANS_KPIS[id];
+
+// La couleur d'un nœud : celle de l'outil qu'il nomme (la même pastille que
+// partout ailleurs, `data/outils.ts`), sinon celle de la marque de son icône.
+interface Noeud { icon: string; kicker: string; title: string; outil?: string }
+const MARQUES: Record<string, string> = { hubspot: 'HubSpot', gmail: 'Gmail', mistralai: 'Mistral', anthropic: 'Claude', shopify: 'Shopify', slack: 'Slack', notion: 'Notion' };
+const teinte = (n: Noeud) => {
+  if (n.outil && couleursOutils[n.outil]) return couleursOutils[n.outil];
+  const nomme = Object.keys(couleursOutils).find((o) => o !== 'IA' && new RegExp(`(^|[^\\p{L}])${o}([^\\p{L}]|$)`, 'u').test(`${n.kicker} ${n.title}`));
+  if (nomme) return couleursOutils[nomme];
+  const marque = MARQUES[n.icon.split(':')[1] ?? ''];
+  return marque ? couleursOutils[marque] : '#cfc8bf';
+};
+const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <section class="r-sec" id="projets" aria-labelledby="titre-projets">
   <div class="r-wrap">
-    <header class="r-titre"><h2 id="titre-projets">Projets clients</h2><p>Ce que j’ai construit, et ce que ça a changé. <a class="r-lien" href="/cas-clients">Tous les cas clients</a></p></header>
-    <div class="r-cas">
-      {cas.map(({ id, data }, i) => (
-        <article class="r-carte-cas" style={`--i:${i}`}>
-          <div class="r-carte-cas__dit">
-            <p class="r-carte-cas__client">{data.client ?? data.secteur}</p>
-            <h3><a href={`/cas-clients/${id}`}>{data.enClair ?? data.title}</a></h3>
-            <p class="r-carte-cas__texte">{espaces(data.accroche ?? data.description)}</p>
-            <Outils outils={data.tools.slice(0, 4)} />
-            <span class="r-carte-cas__f" aria-hidden="true"><span class="r-carte-cas__lire">Lire le cas</span><span class="r-carte-cas__fleche">→</span></span>
-          </div>
-          {(data.flow || data.parcours) && (
-            <div class="r-carte-cas__montre">
-              <Etapes flow={data.flow} parcours={data.parcours} decrit={`Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`} />
-              {data.bascule && (
-                <p class="r-ecart"><span class="r-ecart__avant"><span class="r-ecart__mot">Avant</span>{espaces(data.bascule[0].avant)}</span><span class="r-ecart__vers" aria-hidden="true"></span><span class="r-ecart__apres"><span class="r-ecart__mot">Après</span>{espaces(data.bascule[0].apres)}</span></p>
+    <header class="r-titre r-sch__tete">
+      <div>
+        <h2 id="titre-projets">Projets clients</h2>
+        <p>Ce que j’ai construit, et ce que ça a changé. <a class="r-lien" href="/cas-clients">Tous les cas clients</a></p>
+      </div>
+      <div class="r-sch__commandes" hidden>
+        <button type="button" class="r-sch__rond" data-rail="-1" aria-controls="rail-projets" aria-label="Cas précédent"><span set:html={FLECHE} /></button>
+        <button type="button" class="r-sch__rond" data-rail="1" aria-controls="rail-projets" aria-label="Cas suivant"><span set:html={FLECHE} /></button>
+      </div>
+    </header>
+    <ul class="r-sch__rail" id="rail-projets" role="list" aria-label="Cas clients">
+      {cas.map(({ id, data }) => {
+        const bilan = bilanDe(id, data.kpis);
+        const apres = data.bascule?.[0]?.apres;
+        return (
+          <li class="r-sch__feuille">
+            <article aria-labelledby={`cas-${id}`}>
+            <p class="r-sch__client" aria-hidden="true">{data.client}{' '}<span>{data.secteur?.split(' · ')[0]}</span></p>
+            <h3 id={`cas-${id}`}><a href={`/cas-clients/${id}`}><span class="sr-only">{data.client} : </span>{data.enClair ?? data.title}</a></h3>
+            <div class="r-sch__plan" aria-hidden="true">
+              {data.flow ? (
+                <Fragment>
+                  <span class="r-noeud" style={`--o:${teinte(data.flow.trigger)}`}><span class="r-noeud__ic"><Icon name={data.flow.trigger.icon} /></span><span><small>{data.flow.trigger.kicker}</small>{data.flow.trigger.title}</span></span>
+                  <span class="r-sch__trait" />
+                  <span class="r-noeud r-noeud--coeur" style={`--o:${teinte(data.flow.agent)}`}><span class="r-noeud__ic"><Icon name={data.flow.agent.icon} /></span><span><small>{data.flow.agent.kicker}</small>{data.flow.agent.title}</span></span>
+                  <span class="r-sch__fourche" />
+                  <span class="r-sch__actions">
+                    {data.flow.actions.map((a) => <span class="r-sch__action" style={`--o:${teinte(a)}`}><span class="r-noeud__ic"><Icon name={a.icon} /></span>{a.title}</span>)}
+                  </span>
+                </Fragment>
+              ) : (
+                <span class="r-sch__file">
+                  {(data.parcours ?? []).map((e, i, t) => <span class:list={['r-sch__pas', i === t.length - 1 && 'r-sch__pas--fin']}><span class="r-sch__point" />{e.title}{e.kicker !== data.client && <small>{e.kicker}</small>}</span>)}
+                </span>
               )}
             </div>
-          )}
-        </article>
-      ))}
-    </div>
+            <p class="sr-only">{data.flow ? data.flow.describe : `Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`}</p>
+            <div class="r-sch__bilan">
+              {bilan ? (
+                <p class:list={['r-sch__chiffre', !/\d/.test(bilan.value) && 'r-sch__chiffre--mot']}><strong>{bilan.value}</strong><span>{espaces(bilan.label).replace(/ → /g, '\u00a0→\u00a0')}</span></p>
+              ) : apres ? (
+                <p class="r-sch__chiffre"><span>{espaces(apres)}</span></p>
+              ) : null}
+              <span class="r-sch__fleche" aria-hidden="true" set:html={FLECHE} />
+            </div>
+            </article>
+          </li>
+        );
+      })}
+    </ul>
+    <div class="r-sch__jauge" aria-hidden="true" hidden><span></span></div>
   </div>
 </section>
 
 <script>
-  // Au bureau la pile colle : une feuille vient recouvrir la précédente. Quand
-  // le clavier revient sur une feuille recouverte (Maj+Tab), son lien avait le
-  // focus sans être visible : la page remonte au point où cette feuille est
-  // seule en haut de la pile.
-  const pile = document.querySelector<HTMLElement>('.tenue-robot .r-cas');
-  pile?.addEventListener('focusin', (e) => {
-    const lien = e.target as HTMLElement;
-    const feuille = lien.closest<HTMLElement>('.r-carte-cas');
-    if (!feuille || !lien.matches(':focus-visible') || getComputedStyle(feuille).position !== 'sticky') return;
-    const feuilles = [...pile.querySelectorAll<HTMLElement>('.r-carte-cas')];
-    const ecart = parseFloat(getComputedStyle(pile).rowGap) || 0;
-    let haut = pile.getBoundingClientRect().top + window.scrollY;
-    for (const f of feuilles.slice(0, feuilles.indexOf(feuille))) haut += f.offsetHeight + ecart;
-    const cible = haut - (parseFloat(getComputedStyle(feuille).top) || 0);
-    if (window.scrollY > cible + 1) window.scrollTo({ top: cible });
+  // Deux boutons font avancer le rail d'une feuille. Au bout du rail le bouton
+  // reste focalisable mais se dit inactif (`aria-disabled`, jamais `disabled`,
+  // qui lâcherait le focus). Une jauge sous le rail dit où l'on en est, sans
+  // numéros. Au clavier, la feuille qui prend le focus vient entière à l'écran.
+  // `--vw` est la largeur de la page sans sa barre de défilement (`100vw` la
+  // compte) : le rail s'aligne sur la colonne au pixel près.
+  const reduit = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const largeur = () => document.documentElement.style.setProperty('--vw', `${document.documentElement.clientWidth}px`);
+  largeur();
+  addEventListener('resize', largeur, { passive: true });
+  document.querySelectorAll<HTMLElement>('#projets').forEach((section) => {
+    const rail = section.querySelector<HTMLElement>('.r-sch__rail');
+    const commandes = section.querySelector<HTMLElement>('.r-sch__commandes');
+    const jauge = section.querySelector<HTMLElement>('.r-sch__jauge');
+    if (!rail || !commandes || !jauge) return;
+    const boutons = [...commandes.querySelectorAll<HTMLButtonElement>('[data-rail]')];
+    const feuilles = [...rail.querySelectorAll<HTMLElement>('.r-sch__feuille')];
+    const etat = () => {
+      const fin = rail.scrollWidth - rail.clientWidth;
+      // Tout tient : ni boutons ni jauge.
+      commandes.hidden = jauge.hidden = fin <= 4;
+      boutons[0].setAttribute('aria-disabled', String(rail.scrollLeft <= 4));
+      boutons[1].setAttribute('aria-disabled', String(rail.scrollLeft >= fin - 2));
+      jauge.style.setProperty('--vue', String(rail.clientWidth / rail.scrollWidth));
+      jauge.style.setProperty('--pos', String(fin > 0 ? rail.scrollLeft / fin : 0));
+    };
+    // La feuille calée sur la colonne (au bout du rail, la dernière qui peut l'être).
+    const courante = () => {
+      const fin = rail.scrollWidth - rail.clientWidth;
+      if (rail.scrollLeft >= fin - 16) return feuilles.findIndex((f) => f.offsetLeft - feuilles[0].offsetLeft >= fin - 16);
+      let meilleure = 0;
+      feuilles.forEach((f, i) => {
+        const d = (g: HTMLElement) => Math.abs(g.offsetLeft - feuilles[0].offsetLeft - rail.scrollLeft);
+        if (d(f) < d(feuilles[meilleure])) meilleure = i;
+      });
+      return meilleure;
+    };
+    // Au départ la première feuille est calée sur la colonne : la feuille i
+    // l'est quand le rail a défilé de l'écart qui la sépare de la première.
+    const va = (i: number) => {
+      const f = feuilles[Math.max(0, Math.min(feuilles.length - 1, i))];
+      const fin = rail.scrollWidth - rail.clientWidth;
+      const ecart = f.offsetLeft - feuilles[0].offsetLeft;
+      // À moins de 16 px du bout, on va au bout : la dernière feuille se cale
+      // alors sur le bord droit de la colonne, et aucun clic ne reste pour
+      // quelques pixels.
+      const left = ecart >= fin - 16 ? fin : ecart;
+      rail.scrollTo({ left, behavior: reduit() ? 'auto' : 'smooth' });
+    };
+    boutons.forEach((b) => b.addEventListener('click', () => {
+      if (b.getAttribute('aria-disabled') === 'true') return;
+      va(courante() + Number(b.dataset.rail));
+    }));
+    rail.addEventListener('focusin', (e) => {
+      const f = (e.target as HTMLElement).closest<HTMLElement>('.r-sch__feuille');
+      if (!f) return;
+      const r = f.getBoundingClientRect(), v = rail.getBoundingClientRect();
+      if (r.left < v.left || r.right > v.right) va(feuilles.indexOf(f));
+    });
+    rail.addEventListener('scroll', etat, { passive: true });
+    new ResizeObserver(etat).observe(rail);
+    etat();
   });
 </script>

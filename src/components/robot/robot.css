@@ -348,47 +348,7 @@ html:not(.js-ready) .tenue-robot .r-barre__menu { display: none; }
 /* La copie du défilé et son bouton pause n'existent qu'au bureau (`bureau.css`). */
 .tenue-robot .r-tuiles--bis, .tenue-robot .r-defile__pause { display: none; }
 
-/* Les projets clients. */
-.tenue-robot .r-cas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.tenue-robot .r-carte-cas {
-  position: relative; display: flex; flex-direction: column; gap: 8px;
-  background: var(--r-surface); border: 1px solid var(--r-trait); border-radius: 24px; padding: 28px 28px 26px;
-  transition: background-color 0.3s var(--r-sortie), border-color 0.3s var(--r-sortie);
-}
-.tenue-robot .r-carte-cas__client { color: var(--r-lilas); font-weight: 500; font-size: 15px; margin-bottom: 14px; padding-right: 56px; }
-.tenue-robot .r-carte-cas h3 { font-size: var(--r-t-3); font-weight: 600; letter-spacing: -0.02em; line-height: 1.14; margin-bottom: 8px; padding-right: 40px; text-wrap: balance; }
-.tenue-robot .r-carte-cas h3 a { text-decoration: none; }
-.tenue-robot .r-carte-cas h3 a::after { content: ''; position: absolute; inset: 0; border-radius: 24px; }
-.tenue-robot .r-carte-cas__texte { color: var(--r-texte-2); font-size: 16px; flex: 1; margin-bottom: 12px; text-wrap: pretty; }
-.tenue-robot .r-carte-cas__f { position: absolute; top: 22px; right: 22px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--r-trait-2); color: var(--r-texte); font-size: 16px; transition: transform 0.4s var(--r-sortie), background-color 0.25s var(--r-sortie), border-color 0.25s var(--r-sortie), color 0.25s var(--r-sortie); }
-.tenue-robot .r-carte-cas:hover { background: var(--r-surface-2); border-color: var(--r-trait-2); }
-.tenue-robot .r-carte-cas:hover .r-carte-cas__f { background: var(--r-citron); border-color: var(--r-citron); color: var(--r-encre); transform: translateX(2px); }
-.tenue-robot .r-carte-cas:has(a:focus-visible) { outline: 2px solid var(--r-lilas); outline-offset: 3px; }
-.tenue-robot .r-carte-cas h3 a:focus-visible { outline: none; }
-/* Le texte de la carte est une boîte au bureau seulement ; ses étapes en cartes et « Lire le cas » aussi (`bureau.css`). */
-.tenue-robot .r-carte-cas__dit { display: contents; }
-.tenue-robot .r-carte-cas__lire { display: none; }
-/* L'écart avant / après : la preuve du cas, en puits au noir de la page. Sa
-   flèche et le mot « Après » sont des repères, pas des gestes : lilas. */
-.tenue-robot .r-ecart {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: start; gap: 18px;
-  max-width: none; padding: 14px 18px 15px; border-radius: 18px; border: 1px solid var(--r-trait-2); background: var(--r-noir);
-  font-size: 15px; line-height: 1.35;
-}
-.tenue-robot .r-ecart__mot { display: block; margin-bottom: 1px; font-size: 13px; color: var(--r-gris); }
-.tenue-robot .r-ecart__apres .r-ecart__mot { color: var(--r-lilas); }
-.tenue-robot .r-ecart__avant { color: var(--r-gris); }
-.tenue-robot .r-ecart__apres { color: var(--r-texte); font-weight: 550; }
-/* « Avant » et « Après » partent de la même ligne, même quand un côté tient en une ligne et l'autre en deux ; la flèche reste au milieu. */
-.tenue-robot .r-ecart__vers { position: relative; align-self: center; width: 30px; height: 1.5px; background: var(--r-lilas); }
-.tenue-robot .r-ecart__vers::after { content: ''; position: absolute; right: 0; top: 50%; width: 7px; height: 7px; border: solid var(--r-lilas); border-width: 1.5px 1.5px 0 0; transform: translateY(-50%) rotate(45deg); }
-/* Sous 1100 px la carte n'a pas ses étapes en cartes, mais elle garde sa
-   preuve : le chapô promet « ce que ça a changé », et le téléphone ne le
-   montrait pas. Un cas sans écart mesuré n'en montre pas. */
 @media (max-width: 1099.98px) {
-  .tenue-robot .r-etapes { display: none; }
-  .tenue-robot .r-carte-cas__montre { margin-top: 10px; }
-  .tenue-robot .r-carte-cas__montre:not(:has(.r-ecart)) { display: none; }
   /* Les quatre panneaux des métiers dans la même case : le bloc a la hauteur
      du plus long, et la page ne saute plus quand on change de métier (jusqu'à
      54 px sur téléphone). */
@@ -396,22 +356,7 @@ html:not(.js-ready) .tenue-robot .r-barre__menu { display: none; }
   .tenue-robot .r-pan { grid-area: 1 / 1; height: auto; }
   .tenue-robot .r-pan[data-repos] { display: flex; visibility: hidden; animation: none; }
 }
-/* De 861 à 1099 px, les cas vont par deux : leurs rangées sont partagées
-   (client, titre, texte, outils, écart), pour que les pastilles et les écarts
-   de deux cartes voisines tombent sur la même ligne. Un cas sans écart
-   mesuré s'arrête à ses outils : sa carte est plus courte, sans creux. Sa
-   marge basse négative annule son remplissage du bas dans le calcul de la
-   rangée des outils (un sous-quadrillage le compte dans sa dernière rangée :
-   26 px, 1 px de filet, et les 4 px de gouttière qu'une rangée du milieu
-   reçoit en plus) : sans elle, la voisine recevait un creux sous ses
-   pastilles, qui s'étiraient pour le remplir. */
 @media (min-width: 861px) and (max-width: 1099.98px) {
-  .tenue-robot .r-carte-cas { display: grid; grid-template-rows: subgrid; grid-row: span 5; align-content: start; }
-  .tenue-robot .r-carte-cas:not(:has(.r-ecart)) { grid-row: span 4; margin-bottom: -31px; }
-  .tenue-robot .r-carte-cas .r-outils { align-self: start; }
-  .tenue-robot .r-carte-cas__texte { margin-bottom: 4px; }
-  /* Deux écarts voisins ont la même hauteur de puits, même quand l'un tient sur une ligne de moins. */
-  .tenue-robot .r-carte-cas__montre { margin-top: 2px; display: grid; }
   /* Le module « n8n » ne passe plus le bord de la colonne. */
   .tenue-robot .r-sticker--1 { right: 1%; }
   /* Quatre chiffres sur une ligne : le dernier libellé, le plus long, prend
@@ -428,11 +373,6 @@ html:not(.js-ready) .tenue-robot .r-barre__menu { display: none; }
   .tenue-robot .r-pan h3 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .tenue-robot .r-pan__ic { display: none; }
   .tenue-robot .r-pan__phrase { margin-top: 0; font-size: clamp(22px, 2.5vw, 26px); font-weight: 600; line-height: 1.16; letter-spacing: -0.02em; text-wrap: balance; }
-}
-/* Sur téléphone l'avant et l'après se suivent, l'un sous l'autre. */
-@media (max-width: 620px) {
-  .tenue-robot .r-ecart { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px 16px 15px; }
-  .tenue-robot .r-ecart__vers { display: none; }
 }
 
 /* Les avis : trois citations posées, séparées par des filets. */
@@ -609,7 +549,6 @@ html:not(.js-ready) .tenue-robot .r-barre__menu { display: none; }
   .tenue-robot .r-chiffres { grid-template-columns: 1fr 1fr; margin-top: 32px; row-gap: 24px; }
   .tenue-robot .r-chiffres li { padding: 4px 16px 4px 20px; }
   .tenue-robot .r-chiffres li:nth-child(odd) { padding-left: 0; border-left: 0; }
-  .tenue-robot .r-cas { grid-template-columns: 1fr; }
   .tenue-robot .r-sec { --r-sec-haut: 80px; padding-block: var(--r-sec-haut) 80px; }
   .tenue-robot .r-sec--serre, .tenue-robot .r-sec--suite { --r-sec-haut: 0px; }
   .tenue-robot .r-sec--serre { padding-block: 0; }
@@ -630,7 +569,6 @@ html:not(.js-ready) .tenue-robot .r-barre__menu { display: none; }
   .tenue-robot .r-tuiles span { font-size: 12px; line-height: 1.15; }
   .tenue-robot .r-pan { padding: 24px 22px 20px; border-radius: 24px; }
   .tenue-robot .r-pan__ic { width: 36px; height: 36px; margin-bottom: 12px; }
-  .tenue-robot .r-carte-cas { padding: 24px 22px 22px; }
   .tenue-robot .r-sticker { font-size: 12px; padding: 7px 10px; }
   .tenue-robot .r-sticker--0 { left: -5%; }
   .tenue-robot .r-sticker--2 { left: -6%; }

@@ -688,7 +688,8 @@ le bouton (à toutes les largeurs).**
   survol et par son bouton pause. En mouvement réduit il n'y a pas de défilé,
   le mur reste un mur. C'est la seule boucle de la page. Dessous, les quatre
   chiffres de l'audience sur une ligne à filets (à toutes les largeurs).
-- **Les projets, une pile de feuilles** : chaque cas est une grande feuille
+- **Les projets, une pile de feuilles** (remplacée le 12 novembre 2026, voir
+  *Les projets en schémas*) : chaque cas est une grande feuille
   (rayon 28 px) qui vient se poser sur la précédente au défilement (collante,
   décalée de 14 px par feuille, seulement si la fenêtre fait 680 px de haut).
   À gauche le client, le titre en clair, le détail, les outils, « Lire le
@@ -958,6 +959,57 @@ depuis ; les notes de 31 sont celles d'avant la correction.
   de secours en pilules au trait.
 - **Sur l'index des cas**, un clic qui ne fait que défaire une sélection de
   texte n'ouvre plus le cas.
+
+### Les projets en schémas (12 novembre 2026)
+
+**Cette partie prime sur toutes les lignes plus anciennes sur les projets de
+l'accueil** (la pile de feuilles, ses étapes en cartes, l'écart avant /
+après). Le 12 novembre 2026 Lilian écrit : « le violet est prédominant sur
+projets clients et les layouts peuvent être améliorés, tu as mis les cards
+numérotées, faudrait faire autre chose ». Trois mises en page lui sont
+montrées côte à côte (un registre à lignes, un diptyque avant / après, des
+schémas) ; il répond « J'aime bien schémas. Fais ça et repasse un coup de
+polish ».
+
+- **Un rail de feuilles de plan** (`robot/projets.astro`, `robot/projets.css`),
+  à toutes les largeurs : une feuille par cas, sur `--r-surface-2` au
+  pointillé de 24 px, rayon 28 px ; 392 px de large au bureau, 360 px dès
+  768 px, 84 % sur téléphone (la suivante dépasse). Le rail court d'un bord de
+  la fenêtre à l'autre, ses feuilles se calent sur la colonne au départ et à
+  l'arrivée (`--vw`, la largeur sans la barre de défilement). Les feuilles
+  partagent leurs rangées : client, titre, schéma, bilan sont sur les mêmes
+  lignes d'une feuille à l'autre.
+- **Le schéma dit ce qui a été construit**, d'après le cas : un `flow` est un
+  déclencheur, un trait, le cœur du montage sur l'île blanche, une fourche et
+  trois actions ; un `parcours` est une file d'étapes sur un fil, des points
+  et **pas de numéros**, la dernière étape sur blanc. Chaque icône a la
+  couleur de son outil (`data/outils.ts`). Une phrase cachée décrit le schéma
+  aux lecteurs d'écran.
+- **Le bilan** est un chiffre pris dans les `kpis` du cas (celui qui se lit
+  seul : « ×6 », « ~4 h/sem ») ; un résultat en mots (« Sans attente ») prend
+  la taille d'un titre de feuille, pas celle d'un chiffre ; un cas sans `kpis`
+  dit ce que dit son accroche (« ≈ 30 coachs sur la première version »). On
+  n'en invente pas.
+- **Couleurs** : pas de lilas hors des états (anneau de focus, titre souligné
+  d'une feuille désignée, comme dans l'index des cas) ; le citron sur la seule
+  flèche d'une feuille survolée ou focalisée. Survol et clavier disent la même
+  chose.
+- **Commandes** : deux boutons ronds au trait dans l'en-tête, à partir de
+  560 px, qui vont d'une feuille à la suivante (`aria-disabled` au bout,
+  jamais `disabled`) ; au clavier la feuille qui prend le focus vient entière
+  à l'écran. Une jauge de 2 px sous le rail montre la part à l'écran, sans
+  chiffre. Rien n'est animé, hors le défilement du rail (instantané en
+  mouvement réduit).
+- `robot/etapes.astro` et la pile collante sont retirés.
+
+Deux relectures indépendantes (une revue de design, une revue de mesures au
+navigateur, de 320 à 1440 px). Notes de la revue de design, sur 32, telles
+que mesurées : 22, puis 27 au second tour. Les deux points qu'elle relevait
+encore (le titre ne se soulignait pas, « Sans attente » restait à 40 px au
+bureau) sont corrigés depuis, sans nouvelle notation. Restent, choisis :
+l'icône de chaque outil garde sa couleur (règle du site), et au bout du rail
+la dernière feuille se cale à droite, la première visible tombe alors à 8 px
+de la colonne à 1440 px.
 
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 
