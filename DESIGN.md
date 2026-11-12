@@ -985,11 +985,12 @@ polish ».
   et **pas de numéros**, la dernière étape sur blanc. Chaque icône a la
   couleur de son outil (`data/outils.ts`). Une phrase cachée décrit le schéma
   aux lecteurs d'écran.
-- **Le bilan** est un chiffre pris dans les `kpis` du cas (celui qui se lit
-  seul : « ×6 », « ~4 h/sem ») ; un résultat en mots (« Sans attente ») prend
-  la taille d'un titre de feuille, pas celle d'un chiffre ; un cas sans `kpis`
-  dit ce que dit son accroche (« ≈ 30 coachs sur la première version »). On
-  n'en invente pas.
+- **Le bilan** dit en quelques mots ce que le montage a changé (« Plus aucune
+  ressaisie », « Quatre heures gagnées »), à la taille d'un titre de feuille,
+  puis le fait qui le prouve, chiffre compris (« 300 lues chaque semaine,
+  contre une cinquantaine à la main »). Jamais un chiffre seul : Lilian, le
+  12 novembre 2026, « pas des chiffres sans contexte comme ça ». Chaque phrase
+  reprend un fait du cas (`BILAN` dans `projets.astro`) ; on n'en invente pas.
 - **Couleurs** : pas de lilas hors des états (anneau de focus, titre souligné
   d'une feuille désignée, comme dans l'index des cas) ; le citron sur la seule
   flèche d'une feuille survolée ou focalisée. Survol et clavier disent la même

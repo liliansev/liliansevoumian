@@ -8,7 +8,7 @@
 // clients », « tu as mis les cards numérotées, faudrait faire autre chose »).
 // Une feuille de plan par cas, sur un rail qui défile de côté : le client,
 // un titre qui dit en clair ce qui a été construit (`enClair`), le schéma de
-// ce montage, puis son bilan en un chiffre. Le schéma suit le `flow` du cas
+// ce montage, puis son bilan en quelques mots. Le schéma suit le `flow` du cas
 // (un déclencheur, le cœur sur l'île blanche, trois actions) ou son
 // `parcours` (une file d'étapes sur un fil, sans numéros, la dernière sur
 // blanc). Pas de lilas hors des anneaux de focus ; le citron n'est que sur la
@@ -28,17 +28,18 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
   (a, b) => Number(!!b.data.bascule) - Number(!!a.data.bascule) || b.data.date.getTime() - a.data.date.getTime(),
 );
 
-// Le chiffre du bilan, pris dans les `kpis` du cas : celui qui se lit seul
-// (pour Humble+, « 0 ressaisie » ne disait rien, Lilian, 10 novembre 2026).
-// Un cas sans `kpis` dit ce que dit son accroche, sans rien ajouter :
-// Deuxième Souffle, « une trentaine de coachs » ; Zelok, ses trois scénarios.
-const CHIFFRE: Record<string, number> = { 'humble-plus': 1, 'facturation-automatisee-fraich-touch': 0, 'm-partners': 1 };
-const SANS_KPIS: Record<string, { value: string; label: string }> = {
-  'deuxieme-souffle': { value: '≈ 30', label: 'coachs sur la première version' },
-  zelok: { value: '3', label: 'scénarios Make entre l’agenda, les e-mails et le CRM' },
+// Le bilan d'une feuille : ce que le montage a changé, dit en quelques mots,
+// puis le fait qui le prouve. Lilian, 12 novembre 2026 : « j'aime pas ces
+// titres, mets des choses plus concises, pas des chiffres sans contexte ».
+// Chaque phrase reprend un fait du cas (ses `kpis`, son accroche, son corps),
+// sans rien ajouter.
+const BILAN: Record<string, { titre: string; fait: string }> = {
+  'humble-plus': { titre: 'Plus aucune ressaisie', fait: 'Du bon de commande à la facture, Shopify et Pennylane compris' },
+  'm-partners': { titre: 'Six fois plus d’entreprises', fait: '300 lues chaque semaine, contre une cinquantaine à la main' },
+  'facturation-automatisee-fraich-touch': { titre: 'Quatre heures gagnées', fait: 'Chaque semaine, par l’équipe, sur la facturation' },
+  'deuxieme-souffle': { titre: 'Une trentaine de coachs', fait: 'Organisés dans l’application dès sa première version' },
+  zelok: { titre: 'Chaque prospect suivi', fait: 'Rendez-vous, réponse ou e-mail ouvert : tout arrive dans HubSpot' },
 };
-const bilanDe = (id: string, kpis?: { value: string; label: string }[]) =>
-  (kpis && CHIFFRE[id] !== undefined ? kpis[CHIFFRE[id]] : undefined) ?? SANS_KPIS[id];
 
 // La couleur d'un nœud : celle de l'outil qu'il nomme (la même pastille que
 // partout ailleurs, `data/outils.ts`), sinon celle de la marque de son icône,
@@ -72,7 +73,7 @@ const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="tru
     </header>
     <ul class="r-sch__rail" id="rail-projets" role="list" aria-label="Cas clients">
       {cas.map(({ id, data }) => {
-        const bilan = bilanDe(id, data.kpis);
+        const bilan = BILAN[id];
         const apres = data.bascule?.[0]?.apres;
         return (
           <li class="r-sch__feuille">
@@ -99,7 +100,7 @@ const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="tru
             <p class="sr-only">{data.flow ? data.flow.describe : `Le parcours dans l’application : ${(data.parcours ?? []).map((e) => e.title.toLowerCase()).join(', ')}.`}</p>
             <div class="r-sch__bilan">
               {bilan ? (
-                <p class:list={['r-sch__chiffre', !/\d/.test(bilan.value) && 'r-sch__chiffre--mot']}><strong>{bilan.value}</strong><span>{espaces(bilan.label).replace(/ → /g, '\u00a0→\u00a0')}</span></p>
+                <p class="r-sch__chiffre"><strong>{bilan.titre}</strong><span>{espaces(bilan.fait).replace(/-/g, '\u2011')}</span></p>
               ) : apres ? (
                 <p class="r-sch__chiffre"><span>{espaces(apres)}</span></p>
               ) : null}

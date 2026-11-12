@@ -96,14 +96,12 @@
 .tenue-robot .r-sch__pas--fin small { color: var(--r-encre-3); }
 .tenue-robot .r-sch__pas--fin .r-sch__point { background: var(--r-encre); border-color: var(--r-encre); }
 
-/* Le bilan : un chiffre, ce qu'il mesure, et la flèche du lien. Les chiffres
+/* Le bilan : ce qui a changé, le fait qui le prouve, et la flèche du lien. Les chiffres
    de deux feuilles voisines partent de la même ligne, quelle que soit la
    longueur de leur libellé ; la flèche reste en bas. */
 .tenue-robot .r-sch__bilan { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--r-trait-2); }
 .tenue-robot .r-sch__chiffre { margin: 0; display: grid; gap: 6px; min-width: 0; }
-.tenue-robot .r-sch__chiffre strong { font-size: 36px; font-weight: 620; line-height: 1; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-/* Un résultat dit en mots (« Sans attente ») n'est pas un chiffre : il prend la taille d'un titre de feuille. */
-.tenue-robot .r-sch__chiffre.r-sch__chiffre--mot strong { font-size: 26px; font-weight: 600; letter-spacing: -0.022em; line-height: 1.1; }
+.tenue-robot .r-sch__chiffre strong { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; text-wrap: balance; }
 .tenue-robot .r-sch__chiffre span { max-width: 20em; font-size: 14px; line-height: 1.35; color: var(--r-texte-2); text-wrap: pretty; }
 .tenue-robot .r-sch__fleche {
   display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
@@ -124,8 +122,7 @@
 /* Sur téléphone les boutons laissent le titre seul sur sa ligne : le rail se fait au doigt. */
 @media (max-width: 559.98px) {
   .tenue-robot .r-sch__commandes { display: none; }
-  .tenue-robot .r-sch__chiffre strong { font-size: 30px; white-space: normal; }
-  .tenue-robot .r-sch__chiffre.r-sch__chiffre--mot strong { font-size: 22px; }
+  .tenue-robot .r-sch__chiffre strong { font-size: 21px; }
   .tenue-robot .r-sch__actions { gap: 6px; }
   .tenue-robot .r-sch__action { padding-inline: 3px; font-size: 12.5px; }
 }
@@ -143,9 +140,8 @@
     grid-auto-columns: 392px;
   }
   .tenue-robot .r-sch__feuille { min-height: 0; padding: 26px 26px 22px; }
-  .tenue-robot .r-sch__chiffre.r-sch__chiffre--mot strong { font-size: 28px; }
   .tenue-robot .r-sch__feuille h3 { font-size: 24px; margin-bottom: 28px; }
-  .tenue-robot .r-sch__chiffre strong { font-size: 40px; }
+  .tenue-robot .r-sch__chiffre strong { font-size: 26px; }
 }
 /* La marge de la colonne : 32 px jusqu'à 1279 px, 20 px au-delà (`bureau.css`). */
 @media (min-width: 1280px) {
