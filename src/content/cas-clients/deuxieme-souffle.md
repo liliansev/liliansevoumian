@@ -15,7 +15,7 @@ parcours:
   - { icon: "lucide:calendar-plus", kicker: "Deuxième Souffle", title: "Publie une session", outil: "Glide" }
   - { icon: "lucide:hand", kicker: "Le coach", title: "Se positionne", outil: "Glide" }
   - { icon: "lucide:user-check", kicker: "Deuxième Souffle", title: "Affecte un coach", outil: "Glide" }
-  - { icon: "lucide:clipboard-check", kicker: "Sur place", title: "Pointage", outil: "Glide" }
+  - { icon: "lucide:clipboard-check", kicker: "Sur place", title: "Pointe sa présence", outil: "Glide" }
   - { icon: "lucide:chart-column", kicker: "Dashboard", title: "Paiements des coachs estimés", outil: "Glide" }
 draft: false
 ---

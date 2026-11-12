@@ -45,7 +45,7 @@ src/
 │   ├── Outil.astro            # logo + nom d'un outil dans le fil du texte
 │   ├── robot/                 # l'accueil « Citron et lilas » (10 novembre 2026), le seul rendu sur `/`
 │   │   ├── robot.css          # la grammaire, rangée sous `.tenue-robot` : noir chaud, citron (gestes), lilas (surfaces), Roboto Flex ; passe « plus fin » : titres en graisse 600, filets d'un pixel, une seule courbe sans rebond
-│   │   ├── bureau.css         # à partir de 1100 px seulement : chaque section devient un composant dessiné (ouverture à fils, une scène par métier, pile de cas en cartes d'étapes, trois cartes d'avis) ; sous 1100 px elle ne change rien
+│   │   ├── bureau.css         # à partir de 1100 px seulement : chaque section devient un composant dessiné (ouverture à fils, une scène par métier, trois cartes d’avis) ; sous 1100 px elle ne change rien ; les projets ont leur propre fichier, `projets.css`
 │   │   ├── robot.astro        # le petit robot (SVG décoratif) ; ses yeux suivent la souris (script de index.astro) ; quatre endroits seulement : barre, salut, contact, pied
 │   │   ├── outils.astro       # une pastille par outil, chacune sa couleur (data/outils.ts)
 │   │   ├── barre.astro        # la barre flottante en pilule blanche, menu en `dialog` ; sur l'accueil quatre liens (pas de « Contact », le bouton y mène), le lien de la section à l'écran est marqué (dans le menu aussi), le bouton d'appel passe au trait quand le formulaire est à l'écran et reste dans la pilule à côté de « Menu » jusqu'à 900 px (sous 560 px : le robot sans le nom, et le bouton s'efface tant que celui de l'ouverture est à l'écran ; sous 344 px « Menu » seul) ; la pilule ne change pas de largeur sous le pointeur ; le menu ouvert fige la page, un de ses liens emmène le focus dans sa section, et « Menu » ne s'affiche pas sans script
@@ -53,8 +53,7 @@ src/
 │   │   ├── metiers.astro      # les 4 métiers en onglets (sous 700 px : une colonne de 82 px d'icônes avec leur nom court dessous, le panneau à droite ; de 700 à 1000 px chaque onglet écrit son nom ; le bloc garde sa hauteur d'un onglet à l'autre, les panneaux au repos portent `data-repos` au lieu de `hidden`) ; au bureau, un panneau lilas avec la scène animée du métier (`metiers/scene-*.astro`, une par sujet ; les agents IA jouent `scene-appels.astro`, un téléphone et un support client, les formations `scene-cours.astro`, un atelier)
 │   │   ├── clients.astro      # le mur de logos à filets (data/clients.ts), puis les quatre chiffres de l'audience sur une ligne à filets (sortis de l'ouverture), leur signe en lilas ; au bureau, un défilé avec son bouton pause (un mur en mouvement réduit)
 │   │   ├── avis.astro         # trois citations séparées par des filets, le passage retenu en texte citron ; au bureau, trois cartes : une grande sur lilas, deux sombres à sa droite ; aucun script
-│   │   ├── projets.astro      # les cas clients en cartes, ceux qui ont un avant / après d'abord ; au bureau, une pile de feuilles qui se recouvrent au défilement, chacune avec ses étapes en cartes et un écart avant / après ; rien n'y est animé
-│   │   ├── etapes.astro       # les étapes d'un cas en cartes fixes, d'après son `flow` (deux puis trois) ou son `parcours` (trois puis deux, numérotées) ; ni fil ni script ; bureau seulement
+│   │   ├── projets.astro      # « Schémas » (12 novembre 2026) : un rail de feuilles de plan, une par cas, ceux qui ont un avant / après d'abord ; le schéma du `flow` ou du `parcours` (sans numéros), le bilan en quelques mots puis le fait qui le prouve (jamais un chiffre seul) ; deux boutons ronds dès 560 px, une jauge ; styles dans `projets.css`
 │   │   ├── contact.astro      # « Parlons de votre projet » et le formulaire seul : ni agenda ni adresse e-mail
 │   │   ├── pied.astro         # « À très vite. », les liens (la page où l'on est porte `aria-current`), et « S’abonner à la newsletter » tout en bas, au trait (sur toutes les pages, via Footer)
 │   │   # — la tenue « Entre les deux » (3 novembre 2026), celle des autres pages ; `sobre/` n'est plus l'accueil mais entete/pied servent partout —
@@ -186,8 +185,11 @@ une animation par sujet, là on dirait un workflow »: training is a workshop,
 `metiers/scene-cours.astro`, not a scenario; AI agents are a phone call and a
 support chat answered by the agent, `metiers/scene-appels.astro`); a logo marquee with a pause
 button, then the four audience figures (out of the hero: « j'aime pas les
-stats ici »); stacked case sheets whose steps are static cards
-(`robot/etapes.astro`; « pas d'animations ici, juste des belles cards »);
+stats ici »); stacked case sheets whose steps were static cards
+(« pas d'animations ici, juste des belles cards »; replaced on 12 November 2026
+by a rail of plan sheets, « Schémas », after « le violet est prédominant »
+and « tu as mis les cards numérotées, faudrait faire autre chose »: DESIGN.md,
+*Les projets en schémas*, which overrides older lines on the projects);
 three testimonial cards, one large on lilac and two dark (« mets les avis
 dans des cards élégantes »). The newsletter button sits at the very bottom,
 in the footer of every page, and the home's contact block is the form alone

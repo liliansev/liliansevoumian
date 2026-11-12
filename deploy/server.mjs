@@ -4,6 +4,7 @@ import { resolve, sep, extname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isIP } from 'node:net';
 import { createHash } from 'node:crypto';
+import { brotliCompressSync, gzipSync, constants as zlib } from 'node:zlib';
 import { classifyAICrawlerUserAgent, trackAICrawlerResponse } from '@datafast/ai-crawl';
 const origin = 'https://liliansevoumian.fr';
 const root = fileURLToPath(new URL('../dist', import.meta.url));
@@ -43,6 +44,29 @@ const moved = new Map([
   ['/offres', '/automatisations-ia'], ['/about', '/'], ['/legal', '/mentions-legales'],
   ['/sites-web-abonnement', '/outils-metiers'],
 ]);
+/* Le texte part compressé (12 novembre 2026 : l'accueil envoyait 130 Ko de
+   HTML et près de 200 Ko de CSS bloquant tels quels, et ses scènes ne
+   démarraient qu'une fois tout arrivé). Brotli si le navigateur le prend,
+   sinon gzip ; chaque fichier n'est compressé qu'une fois, puis gardé. */
+const compressible = new Set(['html', 'css', 'js', 'mjs', 'json', 'xml', 'txt', 'svg']);
+const compressed = new Map();
+export function encodingFor(header) {
+  const accepted = typeof header === 'string' ? header.toLowerCase() : '';
+  if (/\bbr\b/.test(accepted)) return 'br';
+  if (/\bgzip\b/.test(accepted)) return 'gzip';
+  return null;
+}
+function compress(key, bytes, encoding) {
+  const id = `${encoding}:${key}`;
+  let entry = compressed.get(id);
+  if (!entry || entry.source !== bytes.length) {
+    const out = encoding === 'br' ? brotliCompressSync(bytes, { params: { [zlib.BROTLI_PARAM_QUALITY]: 10, [zlib.BROTLI_PARAM_SIZE_HINT]: bytes.length } }) : gzipSync(bytes, { level: 9 });
+    entry = { source: bytes.length, bytes: out };
+    if (compressed.size > 500) compressed.clear();
+    compressed.set(id, entry);
+  }
+  return entry.bytes;
+}
 const etagOf = bytes => `"${createHash('sha1').update(bytes).digest('base64url').slice(0, 27)}"`;
 const matches = (header, etag) => typeof header === 'string' && header.split(',').some(tag => { const value = tag.trim(); return value === '*' || value.replace(/^W\//, '') === etag; });
 class HttpError extends Error { constructor(status) { super(`HTTP ${status}`); this.status = status; } }
@@ -199,9 +223,12 @@ export function createSiteServer({ distDir = root, fetchImpl = fetch, sendContac
       const file = await load(decoded);
       if (!file) { const page = await load('/404.html'); return send(404, page?.bytes ?? 'Not found', { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }); }
       const ext = extname(file.filename).slice(1).toLowerCase();
-      const caching = { 'Cache-Control': cacheControl(url.pathname, ext), ETag: etagOf(file.bytes) };
+      const encoding = compressible.has(ext) && file.bytes.length > 1024 ? encodingFor(req.headers['accept-encoding']) : null;
+      const etag = etagOf(file.bytes);
+      const caching = { 'Cache-Control': cacheControl(url.pathname, ext), ETag: encoding ? `${etag.slice(0, -1)}-${encoding}"` : etag, ...(compressible.has(ext) ? { Vary: 'Accept-Encoding' } : {}) };
       if (matches(req.headers['if-none-match'], caching.ETag)) { res.writeHead(304, caching); return res.end(); }
-      return send(200, file.bytes, { 'Content-Type': mime[ext] ?? 'application/octet-stream', ...caching });
+      if (!encoding) return send(200, file.bytes, { 'Content-Type': mime[ext] ?? 'application/octet-stream', ...caching });
+      return send(200, compress(file.filename, file.bytes, encoding), { 'Content-Type': mime[ext], ...caching, 'Content-Encoding': encoding });
     }
     handle().catch(error => { if (!res.headersSent) send(error instanceof HttpError ? error.status : 500, error instanceof HttpError ? error.message : 'Internal server error', { 'Cache-Control': 'no-store' }); else res.destroy(); if (!(error instanceof HttpError)) console.error(error); });
   });

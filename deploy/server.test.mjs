@@ -11,6 +11,7 @@ async function fixture(t, options = {}) {
   await writeFile(join(dir, 'index.html'), 'home'); await writeFile(join(dir, 'offre/index.html'), 'offer');
   await writeFile(join(dir, '404.html'), 'missing'); await writeFile(join(dir, '_astro/a.woff2'), 'font');
   await mkdir(join(dir, 'logos')); await writeFile(join(dir, 'logos/a.webp'), 'image');
+  await writeFile(join(dir, 'grand.css'), 'a{}'.repeat(2000));
   await symlink('/etc/passwd', join(dir, 'escape'));
   const server = createSiteServer({ distDir: dir, analytics: false, ...options });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -136,4 +137,20 @@ test('contact messages are rate limited per IP, tokens separately', async t => {
   assert.equal(calls, 3);
   for (let i = 0; i < 3; i++) assert.equal((await fetch(`${url}/api/contact`, { headers: { 'X-Real-IP': '203.0.113.1' } })).status, 200);
   assert.equal((await fetch(`${url}/api/contact`, { headers: { 'X-Real-IP': '203.0.113.1' } })).status, 429);
+});
+test('text files over 1 KB go out compressed, brotli first, each encoding with its own ETag', async t => {
+  const { url, server } = await fixture(t);
+  void server;
+  const { brotliDecompressSync, gunzipSync } = await import('node:zlib');
+  const raw = (path, headers = {}) => new Promise((resolve, reject) => { const req = request(url + path, { headers }, res => { const parts = []; res.on('data', c => parts.push(c)); res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(parts) })); }); req.on('error', reject); req.end(); });
+  const tiny = await raw('/', { 'Accept-Encoding': 'br' });
+  assert.equal(tiny.headers['content-encoding'], undefined); assert.equal(tiny.headers.vary, 'Accept-Encoding');
+  const font = await raw('/_astro/a.woff2', { 'Accept-Encoding': 'br' }); assert.equal(font.headers.vary, undefined);
+  const big = await raw('/grand.css', { 'Accept-Encoding': 'gzip, deflate, br' });
+  assert.equal(big.headers['content-encoding'], 'br'); assert.equal(brotliDecompressSync(big.body).toString(), 'a{}'.repeat(2000));
+  assert.ok(big.body.length < 200); assert.match(big.headers.etag, /-br"$/);
+  const again = await raw('/grand.css', { 'Accept-Encoding': 'br', 'If-None-Match': big.headers.etag }); assert.equal(again.status, 304);
+  const gz = await raw('/grand.css', { 'Accept-Encoding': 'gzip' });
+  assert.equal(gz.headers['content-encoding'], 'gzip'); assert.equal(gunzipSync(gz.body).toString(), 'a{}'.repeat(2000));
+  const plain = await raw('/grand.css'); assert.equal(plain.headers['content-encoding'], undefined); assert.equal(plain.body.length, 6000);
 });

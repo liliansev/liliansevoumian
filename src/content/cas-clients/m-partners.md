@@ -13,7 +13,7 @@ kpis:
   - value: "~10 min"
     label: "Par run, contre 1 à 3 h pour 50 entreprises à la main"
   - value: "×6"
-    label: "Capacité de scraping hebdomadaire (~50 → 300)"
+    label: "Entreprises lues chaque semaine (~50 → 300)"
   - value: "23"
     label: "Cibles qualifiées sur 4 entreprises (run mesuré, ~7 min)"
 flow:
