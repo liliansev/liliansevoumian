@@ -40,7 +40,8 @@ const bilanDe = (id: string, kpis?: { value: string; label: string }[]) =>
   (kpis && CHIFFRE[id] !== undefined ? kpis[CHIFFRE[id]] : undefined) ?? SANS_KPIS[id];
 
 // La couleur d'un nœud : celle de l'outil qu'il nomme (la même pastille que
-// partout ailleurs, `data/outils.ts`), sinon celle de la marque de son icône.
+// partout ailleurs, `data/outils.ts`), sinon celle de la marque de son icône,
+// sinon aucune.
 interface Noeud { icon: string; kicker: string; title: string; outil?: string }
 const MARQUES: Record<string, string> = { hubspot: 'HubSpot', gmail: 'Gmail', mistralai: 'Mistral', anthropic: 'Claude', shopify: 'Shopify', slack: 'Slack', notion: 'Notion' };
 const teinte = (n: Noeud) => {
@@ -48,8 +49,12 @@ const teinte = (n: Noeud) => {
   const nomme = Object.keys(couleursOutils).find((o) => o !== 'IA' && new RegExp(`(^|[^\\p{L}])${o}([^\\p{L}]|$)`, 'u').test(`${n.kicker} ${n.title}`));
   if (nomme) return couleursOutils[nomme];
   const marque = MARQUES[n.icon.split(':')[1] ?? ''];
-  return marque ? couleursOutils[marque] : '#cfc8bf';
+  return marque ? couleursOutils[marque] : undefined;
 };
+// Un nœud sans outil (« Chaque semaine », « Règles ») n'a pas de couleur : sa
+// tuile reste au trait, la couleur ne marque qu'un outil nommé.
+const style = (n: Noeud) => { const t = teinte(n); return t ? `--o:${t}` : undefined; };
+const neutre = (n: Noeud) => !teinte(n);
 const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 ---
 <section class="r-sec" id="projets" aria-labelledby="titre-projets">
@@ -76,12 +81,12 @@ const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="tru
             <div class="r-sch__plan" aria-hidden="true">
               {data.flow ? (
                 <Fragment>
-                  <span class="r-noeud" style={`--o:${teinte(data.flow.trigger)}`}><span class="r-noeud__ic"><Icon name={data.flow.trigger.icon} /></span><span><small>{data.flow.trigger.kicker}</small>{data.flow.trigger.title}</span></span>
+                  <span class:list={['r-noeud', neutre(data.flow.trigger) && 'est-neutre']} style={style(data.flow.trigger)}><span class="r-noeud__ic"><Icon name={data.flow.trigger.icon} /></span><span><small>{data.flow.trigger.kicker}</small>{data.flow.trigger.title}</span></span>
                   <span class="r-sch__trait" />
-                  <span class="r-noeud r-noeud--coeur" style={`--o:${teinte(data.flow.agent)}`}><span class="r-noeud__ic"><Icon name={data.flow.agent.icon} /></span><span><small>{data.flow.agent.kicker}</small>{data.flow.agent.title}</span></span>
+                  <span class:list={['r-noeud r-noeud--coeur', neutre(data.flow.agent) && 'est-neutre']} style={style(data.flow.agent)}><span class="r-noeud__ic"><Icon name={data.flow.agent.icon} /></span><span><small>{data.flow.agent.kicker}</small>{data.flow.agent.title}</span></span>
                   <span class="r-sch__fourche" />
                   <span class="r-sch__actions">
-                    {data.flow.actions.map((a) => <span class="r-sch__action" style={`--o:${teinte(a)}`}><span class="r-noeud__ic"><Icon name={a.icon} /></span>{a.title}</span>)}
+                    {data.flow.actions.map((a) => <span class:list={['r-sch__action', neutre(a) && 'est-neutre']} style={style(a)}><span class="r-noeud__ic"><Icon name={a.icon} /></span>{a.title}</span>)}
                   </span>
                 </Fragment>
               ) : (
@@ -113,10 +118,10 @@ const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="tru
   // reste focalisable mais se dit inactif (`aria-disabled`, jamais `disabled`,
   // qui lâcherait le focus). Une jauge sous le rail dit où l'on en est, sans
   // numéros. Au clavier, la feuille qui prend le focus vient entière à l'écran.
-  // `--vw` est la largeur de la page sans sa barre de défilement (`100vw` la
+  // `--vw` est la largeur du corps de page, sans la gouttière de défilement (`100vw` la
   // compte) : le rail s'aligne sur la colonne au pixel près.
   const reduit = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const largeur = () => document.documentElement.style.setProperty('--vw', `${document.documentElement.clientWidth}px`);
+  const largeur = () => document.documentElement.style.setProperty("--vw", `${document.body.clientWidth}px`);
   largeur();
   addEventListener('resize', largeur, { passive: true });
   document.querySelectorAll<HTMLElement>('#projets').forEach((section) => {

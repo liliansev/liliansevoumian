@@ -63,6 +63,9 @@
 .tenue-robot .r-noeud small { display: block; margin-bottom: 2px; font-size: 12.5px; font-weight: 400; color: var(--r-gris); }
 .tenue-robot .r-noeud__ic { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; background: var(--o); color: var(--r-encre); }
 .tenue-robot .r-noeud__ic svg { width: 18px; height: 18px; }
+/* Un nœud sans outil : la tuile au trait, l'icône grise. */
+.tenue-robot .est-neutre > .r-noeud__ic { background: none; box-shadow: inset 0 0 0 1px var(--r-trait-3); color: var(--r-texte-2); }
+.tenue-robot .r-noeud--coeur.est-neutre > .r-noeud__ic { background: var(--r-encre); box-shadow: none; color: var(--r-papier); }
 /* Le cœur du montage : l'île blanche du schéma, un cran plus haute. */
 .tenue-robot .r-noeud--coeur { padding-block: 14px; background: var(--r-papier); border-color: var(--r-papier); color: var(--r-encre); }
 .tenue-robot .r-noeud--coeur small { color: var(--r-encre-3); }
@@ -80,7 +83,7 @@
 .tenue-robot .r-sch__action {
   display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 6px; border-radius: 14px;
   background: var(--r-noir); border: 1px solid var(--r-trait-2);
-  font-size: 13px; font-weight: 550; line-height: 1.25; text-align: center; text-wrap: balance; hyphens: auto;
+  font-size: 13px; font-weight: 550; line-height: 1.25; text-align: center; text-wrap: balance; hyphens: auto; hyphenate-limit-chars: 10 5 4;
 }
 .tenue-robot .r-sch__action .r-noeud__ic { width: 30px; height: 30px; border-radius: 9px; }
 /* Une application : une file d'étapes sur un fil, des points et pas de numéros. */

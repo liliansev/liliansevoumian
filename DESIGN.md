@@ -1002,14 +1002,17 @@ polish ».
   mouvement réduit).
 - `robot/etapes.astro` et la pile collante sont retirés.
 
+- **Un nœud sans outil** (« Chaque semaine », « Règles », « Envoi finalisé »)
+  a une tuile au trait et une icône grise : la couleur ne marque qu'un outil
+  nommé. Les libellés restent en mots simples (« Entreprises lues chaque
+  semaine », pas « capacité de scraping »).
+
 Deux relectures indépendantes (une revue de design, une revue de mesures au
-navigateur, de 320 à 1440 px). Notes de la revue de design, sur 32, telles
-que mesurées : 22, puis 27 au second tour. Les deux points qu'elle relevait
-encore (le titre ne se soulignait pas, « Sans attente » restait à 40 px au
-bureau) sont corrigés depuis, sans nouvelle notation. Restent, choisis :
-l'icône de chaque outil garde sa couleur (règle du site), et au bout du rail
-la dernière feuille se cale à droite, la première visible tombe alors à 8 px
-de la colonne à 1440 px.
+navigateur, de 320 à 1440 px), quatre tours. Notes de la revue de design, sur
+32 (H7 et H10 sans objet), telles que mesurées : 22, 27, 30, puis 32. La
+revue de mesures passe à toutes les largeurs. Reste, choisi : au bout du
+rail la dernière feuille se cale à droite sur la colonne, la feuille de gauche
+tombe alors à 8 px de la colonne à 1440 et 768 px.
 
 ## « Citron et lilas » sur tout le site (10 novembre 2026)
 
