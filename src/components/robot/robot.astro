@@ -8,3 +8,21 @@ interface Props { class?: string }
 const { class: classe } = Astro.props;
 ---
 <svg class:list={['robot', classe]} viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path class="robot__ant" d="M32 12V5"/><circle class="robot__bout" cx="32" cy="5" r="3.5"/><rect class="robot__tete" x="8" y="12" width="48" height="40" rx="14"/><g class="robot__yeux"><rect x="20" y="26" width="7" height="10" rx="3.5"/><rect x="37" y="26" width="7" height="10" rx="3.5"/></g><path class="robot__bouche" d="M27 43q5 4 10 0"/></svg>
+<script>
+  // Toutes les 4,5 s, les robots à l'écran clignent une fois (0,36 s). Rien
+  // ne tourne entre deux clins d'œil, ni onglet caché, ni mouvement réduit.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const vus = new Set<Element>();
+    const guet = new IntersectionObserver((entrees) => {
+      for (const e of entrees) e.isIntersecting ? vus.add(e.target) : vus.delete(e.target);
+    });
+    document.querySelectorAll('.robot').forEach((r) => {
+      guet.observe(r);
+      r.addEventListener('animationend', () => r.classList.remove('cligne'));
+    });
+    setInterval(() => {
+      if (document.hidden) return;
+      vus.forEach((r) => r.classList.add('cligne'));
+    }, 4500);
+  }
+</script>
