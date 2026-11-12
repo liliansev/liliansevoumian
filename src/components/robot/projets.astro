@@ -31,10 +31,11 @@ const cas = (await getCollection('cas-clients', ({ data }) => import.meta.env.DE
 // Le chiffre du bilan, pris dans les `kpis` du cas : celui qui se lit seul
 // (pour Humble+, « 0 ressaisie » ne disait rien, Lilian, 10 novembre 2026).
 // Un cas sans `kpis` dit ce que dit son accroche, sans rien ajouter :
-// Deuxième Souffle, « une trentaine de coachs ».
+// Deuxième Souffle, « une trentaine de coachs » ; Zelok, ses trois scénarios.
 const CHIFFRE: Record<string, number> = { 'humble-plus': 1, 'facturation-automatisee-fraich-touch': 0, 'm-partners': 1 };
 const SANS_KPIS: Record<string, { value: string; label: string }> = {
   'deuxieme-souffle': { value: '≈ 30', label: 'coachs sur la première version' },
+  zelok: { value: '3', label: 'scénarios Make entre l’agenda, les e-mails et le CRM' },
 };
 const bilanDe = (id: string, kpis?: { value: string; label: string }[]) =>
   (kpis && CHIFFRE[id] !== undefined ? kpis[CHIFFRE[id]] : undefined) ?? SANS_KPIS[id];

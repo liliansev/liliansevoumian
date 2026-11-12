@@ -44,7 +44,11 @@ const displayStudies = entries.map((entry) => {
     texte: espaces(entry.data.accroche ?? entry.data.description ?? ''),
     tools: entry.data.tools.slice(0, 4),
     ecarts: (entry.data.bascule ?? []).slice(0, 4).map((l) => ({ avant: espaces(l.avant), apres: espaces(l.apres) })),
-    parcours: (entry.data.parcours ?? []).map((e) => ({ qui: espaces(e.kicker), quoi: espaces(e.title) })),
+    // Un cas sans écart mesuré montre son parcours ; s'il n'a qu'un `flow`
+    // (Zelok, 12 novembre 2026), la file de son montage : le déclencheur, le
+    // cœur, puis les trois actions, cinq lignes comme un parcours.
+    parcours: (entry.data.parcours ?? (entry.data.bascule || !entry.data.flow ? [] : [entry.data.flow.trigger, entry.data.flow.agent, ...entry.data.flow.actions])).map((e) => ({ qui: espaces(e.kicker), quoi: espaces(e.title) })),
+    parcoursTete: entry.data.parcours ? 'Le parcours dans l’application' : 'Le montage',
     scopeNote: entry.data.scopeNote && espaces(entry.data.scopeNote),
   };
 });
@@ -159,8 +163,8 @@ const titre =
                       </div>
                     ) : cs.parcours.length > 0 && (
                       <div class="ecarts ecarts--parcours">
-                        <p class="ecarts__tete" aria-hidden="true"><span>Le parcours dans l’application</span></p>
-                        <ol class="ecarts__lignes" role="list" aria-label={`Le parcours dans l’application de ${cs.client}`}>
+                        <p class="ecarts__tete" aria-hidden="true"><span>{cs.parcoursTete}</span></p>
+                        <ol class="ecarts__lignes" role="list" aria-label={`${cs.parcoursTete} de ${cs.client}`}>
                           {cs.parcours.map((e, i) => (
                             <li>
                               <span class="ecarts__avant"><span class="ecarts__rang" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{e.qui}<span class="sr-only">&nbsp;: </span></span>
