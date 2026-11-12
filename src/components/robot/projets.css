@@ -34,7 +34,9 @@
 .tenue-robot .r-sch__feuille {
   position: relative; scroll-snap-align: start; display: grid; grid-row: span 4; grid-template-rows: subgrid; grid-template-columns: minmax(0, 1fr); box-sizing: border-box;
   min-height: 520px; padding: 22px 20px 20px; border-radius: 28px; border: 1px solid var(--r-trait-2);
-  background: radial-gradient(circle at 1px 1px, rgb(248 244 239 / 0.085) 1px, transparent 1.2px) 12px 12px / 24px 24px, var(--r-surface-2);
+  /* La trame de points est une image, pas un dégradé : Safari repeint un
+     dégradé répété case par case à chaque défilement. */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='1' cy='1' r='1' fill='%23f8f4ef' fill-opacity='.085'/%3E%3C/svg%3E") 12px 12px / 24px 24px, var(--r-surface-2);
   transition: border-color 0.3s var(--r-sortie);
 }
 .tenue-robot .r-sch__feuille > article { display: contents; }

@@ -95,9 +95,13 @@ html:has(main > .r-hero) { scroll-padding-top: 96px; }
 .tenue-robot .robot__tete { fill: var(--r-citron); stroke: var(--robot-trait, var(--r-encre)); stroke-width: 2.5; }
 .tenue-robot .robot__ant { stroke: var(--robot-trait, var(--r-encre)); stroke-width: 2.5; stroke-linecap: round; }
 .tenue-robot .robot__bout { fill: var(--r-lilas); stroke: var(--robot-trait, var(--r-encre)); stroke-width: 2; }
-.tenue-robot .robot__yeux { fill: var(--r-encre); transform-origin: 32px 31px; animation: r-cligne 4.5s infinite; transition: translate 0.12s var(--r-sortie); }
+.tenue-robot .robot__yeux { fill: var(--r-encre); transform-origin: 32px 31px; transition: translate 0.12s var(--r-sortie); }
+/* Le clin d'œil ne dure qu'un instant, posé par le script de `robot.astro`
+   toutes les 4,5 s sur les robots à l'écran : une animation sans fin sur un
+   SVG se repeint à chaque image, et sur iPhone la barre fixe ramait. */
+.tenue-robot .robot.cligne .robot__yeux { animation: r-cligne 0.36s; }
 .tenue-robot .robot__bouche { fill: none; stroke: var(--r-encre); stroke-width: 2.5; stroke-linecap: round; }
-@keyframes r-cligne { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes r-cligne { 0%, 100% { transform: scaleY(1); } 38% { transform: scaleY(0.1); } }
 
 /* ---------- boutons et liens ---------- */
 .tenue-robot .r-btn {

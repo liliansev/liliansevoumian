@@ -123,7 +123,16 @@ const FLECHE = '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="tru
   // `--vw` est la largeur du corps de page, sans la gouttière de défilement (`100vw` la
   // compte) : le rail s'aligne sur la colonne au pixel près.
   const reduit = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const largeur = () => document.documentElement.style.setProperty("--vw", `${document.body.clientWidth}px`);
+  // Posée sur la section, et seulement quand elle change : sur la racine, chaque
+  // `resize` (iOS en envoie à chaque repli de sa barre d'adresse) recalculait
+  // les styles de toute la page.
+  let vw = 0;
+  const largeur = () => {
+    const l = document.body.clientWidth;
+    if (l === vw) return;
+    vw = l;
+    document.querySelectorAll<HTMLElement>('#projets').forEach((s) => s.style.setProperty('--vw', `${l}px`));
+  };
   largeur();
   addEventListener('resize', largeur, { passive: true });
   document.querySelectorAll<HTMLElement>('#projets').forEach((section) => {
